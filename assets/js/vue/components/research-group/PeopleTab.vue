@@ -19,20 +19,20 @@
 </template>
 
 <script>
-    export default {
-        name: "PeopleTab",
-        props: {
-            personResearchGroups: {},
-        },
-        data() {
-            return {
-                sortedPeople: []
-            }
-        },
-        created() {
-            this.sortedPeople = this.$options.filters.sort('person.lastName', this.personResearchGroups);
-        }
-    }
+export default {
+  name: 'PeopleTab',
+  props: {
+    personResearchGroups: {},
+  },
+  data() {
+    return {
+      sortedPeople: [],
+    };
+  },
+  created() {
+    this.sortedPeople = this.$options.filters.sort('person.lastName', this.personResearchGroups);
+  },
+};
 </script>
 
 <style scoped lang="scss">

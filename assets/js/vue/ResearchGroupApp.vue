@@ -21,39 +21,41 @@
 </template>
 
 <script>
-import PublicationsTab from "./components/research-group/PublicationsTab";
-import OverviewTab from "./components/research-group/OverviewTab";
-import DatasetsTab from "./components/research-group/DatasetsTab";
-import PeopleTab from "./components/research-group/PeopleTab";
-import {getApi} from "@/vue/utils/axiosService";
+import { getApi } from '@/vue/utils/axiosService';
+import PublicationsTab from '@/vue/components/research-group/PublicationsTab';
+import OverviewTab from '@/vue/components/research-group/OverviewTab';
+import DatasetsTab from '@/vue/components/research-group/DatasetsTab';
+import PeopleTab from '@/vue/components/research-group/PeopleTab';
 
 export default {
-    name: "ResearchGroupApp",
-    components: {PublicationsTab, OverviewTab, DatasetsTab, PeopleTab},
-    props: {
-        id: {
-            type: Number
-        }
+  name: 'ResearchGroupApp',
+  components: {
+    PublicationsTab, OverviewTab, DatasetsTab, PeopleTab,
+  },
+  props: {
+    id: {
+      type: Number,
     },
-    data() {
-        return {
-            researchGroupData: {},
-            showData: false
-        }
-    },
-    created() {
-        getApi(
-            Routing.generate('pelagos_api_research_groups_get') + "/" + this.id,
-            {thisComponent: this, addLoading: true}
-        ).then(response => {
-            this.researchGroupData = response.data;
-            this.showData = true;
-        }).catch(error => {
-            console.log(error);
-            this.showData = false;
-        });
-    }
-}
+  },
+  data() {
+    return {
+      researchGroupData: {},
+      showData: false,
+    };
+  },
+  created() {
+    getApi(
+      // eslint-disable-next-line no-undef
+      `${Routing.generate('pelagos_api_research_groups_get')}/${this.id}`,
+      { thisComponent: this, addLoading: true },
+    ).then((response) => {
+      this.researchGroupData = response.data;
+      this.showData = true;
+    }).catch(() => {
+      this.showData = false;
+    });
+  },
+};
 </script>
 
 <style scoped>

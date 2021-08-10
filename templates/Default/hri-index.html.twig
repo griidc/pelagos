@@ -1,0 +1,102 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('grp-home') }}
+
+{% endblock %}
+
+{% block body %}
+    <div class="bootstrap">
+        <div class="container">
+
+            <div class="row align-items-center my-3">
+                <div class="col-lg-7">
+                    <img class="img-fluid rounded mb-4" src="{{ asset("build/images/harte-building.png") }}" alt="Harte Building">
+                </div>
+                <div class="col-lg-5">
+                    <h1 class="font-weight-light">Harte Research Institute</h1>
+                    <p>HRI is set apart from other marine research institutions by its use of the HRI Model, a unique
+                        interdisciplinary way of working that integrates our science with economic, policy and
+                        sociological expertise. While our solutions are science-driven, the challenges facing the
+                        Gulf of Mexico can't be solved by science working alone. HRI scientists are encouraged to think
+                        broadly and pursue partnerships to create lasting solutions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4 mb-5">
+                    <div class="card card-product">
+                        <div class="card-body">
+                            <div class="p-2">
+                                <img class="card-img-top p-2 w-50 mx-auto d-block" src="{{ asset("build/images/icon-find.png") }}" alt="Search data icon">
+                            </div>
+                            <div class="p-2">
+                                <h4 class="card-title text-center">
+                                    <a href="{{ path('pelagos_app_ui_searchpage_default') }}" class="stretched-link" target="_blank">
+                                        Search Data
+                                    </a>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card card-product">
+                        <div class="card-body">
+                            <div class="p-2">
+                                <img class="card-img-top p-2 w-50 mx-auto d-block" src="{{ asset("build/images/icon-submit.png") }}" alt="Submit data icon">
+                            </div>
+                            <div class="p-2">
+                                <h4 class="card-title text-center">
+                                    <a href="{{ path('pelagos_app_ui_datasetsubmission_info') }}" target="_blank" class="stretched-link">
+                                        Submit Data
+                                    </a>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card card-product">
+                        <div class="card-body">
+                            <div class="p-2">
+                                <img class="card-img-top p-2 w-50 mx-auto d-block" src="{{ asset("build/images/icon-monitoring.png") }}" alt="Monitor data icon">
+                            </div>
+                            <div class="p-2">
+                                <h4 class="card-title text-center">
+                                    <a href="{{ path('pelagos_app_ui_datasetmonitoring_default') }}" target="_blank" class="stretched-link">
+                                        Monitor data
+                                    </a>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <div id="picklist" ></div>
+            </div>
+        </div>
+        <footer class="py-5 bg-dark">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; HRI - GRIIDC 2021</p>
+            </div>
+        </footer>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+      window.fundingCycles = {{ fundingCycles | json_encode | raw }}
+        window.projectDirectors = {{ projectDirectors | json_encode | raw }}
+    </script>
+
+    {{ encore_entry_script_tags('grp-home') }}
+{% endblock %}

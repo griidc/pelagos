@@ -6,7 +6,7 @@
                     <AvatarCard :person-details="personProfileData"/>
                 </div>
                 <div class="col-md-8">
-                    <UserDetailsCard :person-details="personProfileData" @loadPersonData="queryPersonData" />
+                    <UserDetailsCard :person-details="personProfileData" />
                 </div>
             </div>
         </div>
@@ -14,43 +14,43 @@
 </template>
 
 <script>
-import AvatarCard from "@/vue/components/person-profile/AvatarCard";
-import UserDetailsCard from "@/vue/components/person-profile/UserDetailsCard";
-import {getApi} from "@/vue/utils/axiosService";
+import AvatarCard from '@/vue/components/person-profile/AvatarCard';
+import UserDetailsCard from '@/vue/components/person-profile/UserDetailsCard';
+import { getApi } from '@/vue/utils/axiosService';
 
 export default {
-    name: "PersonProfile",
-    components: {AvatarCard, UserDetailsCard},
-    props: {
-        personId: {
-            type: Number
-        }
+  name: 'PersonProfile',
+  components: { AvatarCard, UserDetailsCard },
+  props: {
+    personId: {
+      type: Number,
     },
-    data() {
-        return {
-            showProfile: false,
-            personProfileData: {},
-            avatarInfo: {}
-        }
+  },
+  data() {
+    return {
+      showProfile: false,
+      personProfileData: {},
+      avatarInfo: {},
+    };
+  },
+  created() {
+    this.queryPersonData();
+  },
+  methods: {
+    queryPersonData() {
+      getApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_get_person')}/${this.personId}`,
+        { thisComponent: this, addLoading: true },
+      ).then((response) => {
+        this.personProfileData = response.data;
+        this.showProfile = true;
+      }).catch(() => {
+        this.showProfile = false;
+      });
     },
-    created() {
-        this.queryPersonData();
-    },
-    methods: {
-      queryPersonData: function() {
-        getApi(
-            Routing.generate('pelagos_api_get_person') + "/" + this.personId,
-            {thisComponent: this, addLoading: true}
-        ).then(response => {
-            this.personProfileData = response.data;
-            this.showProfile = true;
-        }).catch(error => {
-            console.log(error);
-            this.showProfile = false;
-        });
-      }
-    }
-}
+  },
+};
 </script>
 
 <style scoped lang="scss">

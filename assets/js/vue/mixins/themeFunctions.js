@@ -1,7 +1,9 @@
-export const themeFunctions = {
+const themeFunctions = {
   methods: {
-    getThemeProperty: function (prop) {
-      return getComputedStyle(document.body).getPropertyValue("--" + prop);
-    }
-  }
-}
+    getThemeProperty(prop) {
+      return getComputedStyle(document.body).getPropertyValue(`--${prop}`);
+    },
+  },
+};
+
+export default themeFunctions;

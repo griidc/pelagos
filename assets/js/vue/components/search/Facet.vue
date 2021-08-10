@@ -10,13 +10,13 @@
                 <div class="input-group pb-3" v-show="['researchGroup', 'projectDirector'].includes(facetName.queryParam)">
                     <input class="form-control" placeholder="Search" type="text" v-model="facetSearch">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button">
+                        <button class="btn btn-alternate" type="button">
                             <i class="fa fa-search"></i></button>
                     </div>
                 </div>
                 <form>
                     <div v-bind:class="facetScrollable">
-                        <label class="form-check" v-for="facet in filteredFacets">
+                        <label class="form-check" v-for="facet in filteredFacets" v-bind:key="facet.id">
                             <input class="form-check-input facet-aggregation"
                                    :value="facet.id" type="checkbox"
                                    :id="facetName.queryParam + '_' + facet.id"
@@ -52,92 +52,91 @@
 <script>
 const maxFacetsToDisplay = 10;
 export default {
-    name: "FacetGroups",
-    props: {
-        facetInfo : {
-            type: Array
-        },
-        facetName: {
-            type: Object
-        },
-        formValues: {
-            type: Object
+  name: 'FacetGroups',
+  props: {
+    facetInfo: {
+      type: Array,
+    },
+    facetName: {
+      type: Object,
+    },
+    formValues: {
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      facetSearch: '',
+      listOfCheckedFacets: [],
+    };
+  },
+  methods: {
+    facetChange() {
+      this.$emit('facetClicked', `${this.facetName.queryParam}=${this.listOfCheckedFacets.join(',')}`);
+    },
+    facetCheckBox() {
+      if (this.facetName.queryParam in this.formValues) {
+        if (this.formValues[this.facetName.queryParam]) {
+          const splitFacets = this.formValues[this.facetName.queryParam].split(',');
+          this.listOfCheckedFacets = [];
+          splitFacets.forEach((value) => {
+            this.listOfCheckedFacets.push(value);
+          });
+        } else {
+          this.listOfCheckedFacets = [];
         }
+      }
     },
-    data: function() {
-        return {
-            facetSearch: '',
-            listOfCheckedFacets: []
-        }
+    statusTooltip(datasetStatus) {
+      let datasetStatusTooltip = '';
+      switch (true) {
+        case (datasetStatus === 'Available'):
+          datasetStatusTooltip = 'This dataset is available for download.';
+          break;
+        case (datasetStatus === 'Restricted'):
+          datasetStatusTooltip = 'This dataset is restricted for download.';
+          break;
+        case (datasetStatus === 'Submitted'):
+          datasetStatusTooltip = 'This dataset has been submitted and is not available for download.';
+          break;
+        case (datasetStatus === 'Identified'):
+          datasetStatusTooltip = 'This dataset has not been submitted and is not available for download.';
+          break;
+        default:
+          break;
+      }
+      return datasetStatusTooltip;
     },
-    methods: {
-        facetChange: function () {
-            this.$emit('facetClicked', this.facetName.queryParam + '=' + this.listOfCheckedFacets.join(","));
-        },
-        facetCheckBox: function () {
-            if (this.facetName.queryParam in this.formValues) {
-                if (this.formValues[this.facetName.queryParam]) {
-                    let splitFacets = this.formValues[this.facetName.queryParam].split(",");
-                    this.listOfCheckedFacets = [];
-                    splitFacets.forEach((value) => {
-                        this.listOfCheckedFacets.push(value);
-                    });
-                } else {
-                    this.listOfCheckedFacets = [];
-
-                }
-            }
-        },
-        statusTooltip: function (datasetStatus) {
-            let datasetStatusTooltip = "";
-            switch (true) {
-                case (datasetStatus === "Available"):
-                    datasetStatusTooltip = "This dataset is available for download.";
-                    break;
-                case (datasetStatus === "Restricted"):
-                    datasetStatusTooltip = "This dataset is restricted for download.";
-                    break;
-                case (datasetStatus === "Submitted"):
-                    datasetStatusTooltip = "This dataset has been submitted and is not available for download.";
-                    break;
-                case (datasetStatus === "Identified"):
-                    datasetStatusTooltip = "This dataset has not been submitted and is not available for download.";
-                    break;
-            }
-            return datasetStatusTooltip;
-        }
+  },
+  computed: {
+    filteredFacets() {
+      if (this.facetName.queryParam === 'researchGroup') {
+        return this.facetInfo.filter((facetItem) => {
+          const facetItemName = facetItem.shortName + facetItem.name;
+          return facetItemName.toLowerCase().indexOf(this.facetSearch.toLowerCase()) > -1;
+        });
+      } if (this.facetName.queryParam === 'projectDirector') {
+        return this.facetInfo.filter((facetItem) => facetItem.name.toLowerCase().indexOf(this.facetSearch.toLowerCase()) > -1);
+      }
+      return this.facetInfo;
     },
-    computed: {
-        filteredFacets: function () {
-            if (this.facetName.queryParam === 'researchGroup') {
-                return this.facetInfo.filter(facetItem => {
-                    const facetItemName = facetItem.shortName + facetItem.name;
-                    return facetItemName.toLowerCase().indexOf(this.facetSearch.toLowerCase()) > -1;
-                })
-            } else if (this.facetName.queryParam === 'projectDirector') {
-                return this.facetInfo.filter(facetItem => {
-                    return facetItem.name.toLowerCase().indexOf(this.facetSearch.toLowerCase()) > -1;
-                });
-            } else {
-                return this.facetInfo;
-            }
-        },
-        facetScrollable: function () {
-            const scrollableClass = 'scrollable-facet';
-            if (this.facetInfo.length > maxFacetsToDisplay) {
-                return scrollableClass;
-            }
-        }
+    facetScrollable() {
+      const scrollableClass = 'scrollable-facet';
+      if (this.facetInfo.length > maxFacetsToDisplay) {
+        return scrollableClass;
+      }
+      return null;
     },
-    created() {
-        this.facetCheckBox();
+  },
+  created() {
+    this.facetCheckBox();
+  },
+  watch: {
+    formValues() {
+      this.facetCheckBox();
     },
-    watch: {
-        formValues: function () {
-            this.facetCheckBox();
-        },
-    }
-}
+  },
+};
 </script>
 
 <style scoped>
