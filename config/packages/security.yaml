@@ -21,8 +21,8 @@ security:
             guard:
                authenticators:
                    - App\Security\PersonTokenAuthenticator
-               provider: pelagos_account
             # https://symfony.com/doc/current/security.html#firewalls-authentication
+
         main:
             # allow anonymous access
             anonymous: lazy
@@ -47,4 +47,4 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-        
+
