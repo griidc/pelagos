@@ -24,6 +24,7 @@ security:
                authenticators:
                    - App\Security\PersonTokenAuthenticator
                provider: person_token
+            # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
         main:
