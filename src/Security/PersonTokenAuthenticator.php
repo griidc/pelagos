@@ -43,7 +43,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @param Request $request A Request object.
      *
-     * @return boolean True if this a login request.
+     * @return boolean True if person_token exists.
      */
     public function supports(Request $request)
     {
@@ -77,8 +77,17 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
         return $userProvider->loadUserByUsername($credentials);
     }
 
+    /**
+     * Returns true if the credentials are valid.
+     *
+     * @param string        $credentials Credentials Array.
+     * @param UserInterface $user        The user.
+     *
+     * @return boolean True if the credentials are valid.
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
+        // No additional checking is needed.
         return true;
     }
 
