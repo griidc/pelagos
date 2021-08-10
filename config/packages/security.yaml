@@ -1,15 +1,10 @@
 security:
-    # leave session alone
-    session_fixation_strategy: none
-
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         pelagos_account:
             entity:
                 class: App\Entity\Account
                 property: userId
-        person_token:
-            id: App\Security\PersonTokenUserProvider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -23,12 +18,11 @@ security:
             # allow anonymous access
             anonymous: lazy
             # use a Person Token, if present
-            simple_preauth:
-                authenticator: App\Security\PersonTokenAuthenticator
-                provider: person_token
-            # activate different ways to authenticate
+            guard:
+               authenticators:
+                   - App\Security\PersonTokenAuthenticator
+               provider: pelagos_account
             # https://symfony.com/doc/current/security.html#firewalls-authentication
-
         main:
             # allow anonymous access
             anonymous: lazy
