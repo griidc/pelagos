@@ -147,7 +147,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        throw new \Exception('Not used: entry_point from other authentication is used');
+        throw new \Exception('This should not be reached, token?');
     }
 
     /**
