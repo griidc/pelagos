@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20200624193858 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema) :void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
@@ -36,7 +36,7 @@ final class Version20200624193858 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_FEFE73FC304051B3 ON dataset_submission (fileset_id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema) :void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
