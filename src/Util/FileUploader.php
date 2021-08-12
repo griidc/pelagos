@@ -3,7 +3,9 @@
 namespace App\Util;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FileUploader
 {
@@ -94,10 +96,16 @@ class FileUploader
             fclose($chunk);
             unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
-        // Success
-        fclose($targetFile);
         rmdir($chunksFolder);
+        $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
+        fclose($targetFile);
+        if ($targetFileSize !== $fileSize) {
+            unlink($targetFileName);
+            rmdir($targetDirectory);
+            throw new HttpException(Response::HTTP_BAD_REQUEST, "File size does not match!\n Expected file size is:$fileSize, and got $targetFileSize!");
+        }
 
+        // Success
         return array(
             'path' => $targetFileName,
             'name' => $fileName,
