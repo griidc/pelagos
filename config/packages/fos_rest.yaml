@@ -1,16 +1,12 @@
 # Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
 fos_rest:
-    routing_loader:
-        default_format: json
-        include_format: false
+    routing_loader: false
+    body_listener: true
     view:
         view_response_listener:  true
     serializer:
       serialize_null: true
-    exception:
-        enabled: true
-        messages:
-          'Symfony\Component\HttpKernel\Exception\BadRequestHttpException': true
+    exception: false
 #    format_listener:
 #        rules:
 #            - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
