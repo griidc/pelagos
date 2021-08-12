@@ -6,7 +6,7 @@ use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroupRole;
 use App\Util\FundingOrgFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Person Research group Entity Repository class.
