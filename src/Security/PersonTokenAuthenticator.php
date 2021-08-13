@@ -45,7 +45,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return boolean True if person_token exists.
      */
-    public function supports(Request $request)
+    public function supports(Request $request) :bool
     {
         return $request->query->has('person_token');
     }
@@ -130,9 +130,9 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      */
     // Next line to be ignored because implemented function does not have type-hint on $providerKey.
     // phpcs:ignore
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) : ?Response
     {
-        return;
+        return null;
     }
 
     /**
