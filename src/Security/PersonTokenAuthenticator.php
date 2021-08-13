@@ -72,7 +72,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return UserInterface Return the user.
      */
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider) :UserInterface
     {
         return $userProvider->loadUserByUsername($credentials);
     }
@@ -85,7 +85,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return boolean True if the credentials are valid.
      */
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user) :bool
     {
         // No additional checking is needed.
         return true;
@@ -126,7 +126,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      * @param TokenInterface $token       A Symfony user token, req by interface.
      * @param string         $providerKey The name of the used firewall key.
      *
-     * @return Response The response or null to continue request.
+     * @return Response|null The response or null to continue request.
      */
     // Next line to be ignored because implemented function does not have type-hint on $providerKey.
     // phpcs:ignore
@@ -152,8 +152,10 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
 
     /**
      * Remember me is not supported.
+     *
+     * @return bool
      */
-    public function supportsRememberMe()
+    public function supportsRememberMe() :bool
     {
         return false;
     }
