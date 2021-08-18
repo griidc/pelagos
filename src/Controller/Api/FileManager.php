@@ -12,7 +12,9 @@ use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use PHPUnit\Util\Json;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,7 +54,11 @@ class FileManager extends AbstractFOSRestController
     public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $fileMetadata = $fileUploader->combineChunks($request);
+        try {
+            $fileMetadata = $fileUploader->combineChunks($request);
+        } catch (\Exception $exception) {
+            return new JsonResponse(['code' => 400, 'message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
 
         $fileName = $fileMetadata['name'];
         $filePath = $fileMetadata['path'];
