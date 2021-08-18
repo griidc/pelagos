@@ -354,6 +354,11 @@ const initDropzone = () => {
     maxFilesize: null,
     clickable: '#upload-file-button',
     timeout: 0,
+    error: function error(file, message, xhr) {
+      if (xhr.status === 401) {
+        myFileManager.$parent.showPopupError(message.message);
+      }
+    },
     uploadprogress(file) {
       if (file.xhr.status === 204) {
         if (myFileManager.$parent.totalFileSize
