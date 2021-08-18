@@ -2,10 +2,9 @@
 
 namespace App\Util;
 
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FileUploader
 {
@@ -70,6 +69,8 @@ class FileUploader
      *
      * @param Request $request Symfony request instance.
      *
+     * @throws \Exception
+     *
      * @return array
      */
     public function combineChunks(Request $request): array
@@ -99,10 +100,10 @@ class FileUploader
         rmdir($chunksFolder);
         $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
         fclose($targetFile);
-        if ($targetFileSize !== $fileSize) {
+        if ($targetFileSize === $fileSize) {
             unlink($targetFileName);
             rmdir($targetDirectory);
-            throw new HttpException(Response::HTTP_BAD_REQUEST, "File size does not match!\n Expected file size is:$fileSize, and got $targetFileSize!");
+            throw new UploadException("File size does not match!\n Expected file size is:$fileSize, and got $targetFileSize!");
         }
 
         // Success
