@@ -257,16 +257,16 @@ $(function() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                if (notify) {
-                    var n = noty(
-                    {
-                        layout: "top",
-                        theme: "relax",
-                        type: "error",
-                        text: message,
-                        modal: true,
-                    });
+                if ([400, 401].includes(jqXHR.status)) {
+                  var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                  var n = noty(
+                  {
+                      layout: "top",
+                      theme: "relax",
+                      type: "error",
+                      text: message,
+                      modal: true,
+                  });
                 }
             }
         });
