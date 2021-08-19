@@ -46,7 +46,7 @@ use App\Exception\NotDeletableException;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted(['CAN_EDIT'], object))"
+ *     excludeIf = "expr(not service('security.authorization_checker').isGranted('CAN_EDIT', object))"
  *   )
  * )
  * @Hateoas\Relation(
@@ -56,7 +56,7 @@ use App\Exception\NotDeletableException;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted(['CAN_DELETE'], object))"
+ *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted('CAN_DELETE', object))"
  *   )
  * )
  */
