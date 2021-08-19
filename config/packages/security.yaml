@@ -1,7 +1,4 @@
 security:
-    # leave session alone
-    session_fixation_strategy: none
-
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         pelagos_account:
@@ -23,9 +20,10 @@ security:
             # allow anonymous access
             anonymous: lazy
             # use a Person Token, if present
-            simple_preauth:
-                authenticator: App\Security\PersonTokenAuthenticator
-                provider: person_token
+            guard:
+               authenticators:
+                   - App\Security\PersonTokenAuthenticator
+               provider: person_token
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -53,4 +51,4 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-        
+

@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -68,6 +69,8 @@ class FileUploader
      *
      * @param Request $request Symfony request instance.
      *
+     * @throws \Exception
+     *
      * @return array
      */
     public function combineChunks(Request $request): array
@@ -94,10 +97,16 @@ class FileUploader
             fclose($chunk);
             unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
-        // Success
-        fclose($targetFile);
         rmdir($chunksFolder);
+        $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
+        fclose($targetFile);
+        if ($targetFileSize !== $fileSize) {
+            unlink($targetFileName);
+            rmdir($targetDirectory);
+            throw new UploadException("File size does not match!\n Expected file size is:$fileSize, and got $targetFileSize!");
+        }
 
+        // Success
         return array(
             'path' => $targetFileName,
             'name' => $fileName,
