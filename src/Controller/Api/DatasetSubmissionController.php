@@ -184,8 +184,6 @@ class DatasetSubmissionController extends EntityController
      * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_EDIT", subject="datasetSubmission")
-     *
      *
      * @Route(
      *     "/api/dataset_submission/{id}",
