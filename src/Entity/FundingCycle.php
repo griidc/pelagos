@@ -204,8 +204,7 @@ class FundingCycle extends Entity
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
-     *     minMessage = "Sort position must be {{ limit }} or more.",
-     *     maxMessage = "Sort position must be {{ limit }} or less.",
+     *     notInRangeMessage = "Sort position must be in between 1 and 2147483647",
      *     invalidMessage = "Sort position must be a positive integer."
      * )
      */

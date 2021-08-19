@@ -259,7 +259,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $response = new RedirectResponse($targetPath);
 
-        $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
+        $cookie = Cookie::create('GRIIDC_USERNAME', $token->getUser()->getUserId());
         $response->headers->setCookie($cookie);
 
         return $response;
@@ -368,6 +368,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $loginAttempt = new LoginAttempts($user);
         $loginAttempt->setCreator($anonymousPerson);
         $this->entityManager->persist($loginAttempt);
-        $this->entityManager->flush($loginAttempt);
+        $this->entityManager->flush();
     }
 }
