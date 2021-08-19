@@ -7,6 +7,8 @@ fos_rest:
     serializer:
         serialize_null: true
     exception:
+        serialize_exceptions: false
+        exception_listener: false
         enabled: true
         messages:
             'Symfony\Component\HttpKernel\Exception\BadRequestHttpException': true
