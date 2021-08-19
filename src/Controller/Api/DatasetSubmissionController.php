@@ -26,6 +26,7 @@ use App\Entity\Fileset;
 use App\Util\UrlValidation;
 
 use App\Form\DatasetSubmissionType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * The Dataset Submission api controller.
@@ -181,6 +182,9 @@ class DatasetSubmissionController extends EntityController
      *         description="An internal error has occurred."
      *     )
      * )
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("CAN_EDIT", subject="datasetSubmission")
      *
      *
      * @Route(
