@@ -100,10 +100,16 @@ class FileUploader
         rmdir($chunksFolder);
         $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
         fclose($targetFile);
-        if ($targetFileSize !== $fileSize) {
+        if ($targetFileSize === $fileSize) {
             unlink($targetFileName);
             rmdir($targetDirectory);
-            throw new UploadException("File size does not match!\n Expected file size is:$fileSize, and got $targetFileSize!");
+            throw new UploadException(
+                'The uploaded file size for file - ' . $fileName . ' ' .
+                'does not match expected size. ' .
+                'Expected Size - ' . $fileSize . ' bytes, ' .
+                'Uploaded Size - ' . $targetFileSize . ' bytes. ' .
+                'This file has not been successfully uploaded, please try uploading the file again.'
+            );
         }
 
         // Success
