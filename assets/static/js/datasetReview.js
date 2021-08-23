@@ -234,21 +234,12 @@ $(document).ready(function(){
         if (activeTab === 8) {
             btnNext.button("disable");
             btnNext.hide();
+            populateFolderDropDownList();
         } else {
             btnNext.show();
             btnNext.button("enable");
         }
     });
-
-    function getCookie(name) {
-        let cookies = document.cookie.split(';');
-        for(let i=0 ; i < cookies.length ; ++i) {
-            let pair = cookies[i].trim().split('=');
-            if(pair[0] === name)
-                return pair[1];
-        }
-        return null;
-    }
 
     function populateFolderDropDownList() {
         let dropdown = $('#datasetFilePath');
@@ -258,7 +249,7 @@ $(document).ready(function(){
         dropdown.append('<option selected="true" disabled>Choose Folder</option>');
         dropdown.prop('selectedIndex', 0);
 
-        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission", { "user" : getCookie("GRIIDC_USERNAME")} );
+        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission");
 
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
@@ -267,8 +258,6 @@ $(document).ready(function(){
             })
         });
     }
-
-    populateFolderDropDownList();
 
     $("#temporalExtentBeginPosition").datepicker({
         dateFormat: "yy-mm-dd",

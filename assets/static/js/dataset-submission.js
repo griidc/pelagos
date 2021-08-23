@@ -179,8 +179,6 @@ $(function() {
             break;
     }
 
-    populateFolderDropDownList();
-
     $("button").button();
 
     $("#btn-upload").qtip();
@@ -211,6 +209,7 @@ $(function() {
         if (activeTab == 4) {
             $("#btn-next").button("disable");
             $("#btn-next").hide();
+            populateFolderDropDownList();
         } else {
             $("#btn-next").show();
             $("#btn-next").button("enable");
@@ -230,16 +229,6 @@ $(function() {
         saveDatasetSubmission(true);
     });
 
-    function getCookie(name) {
-        let cookies = document.cookie.split(';');
-        for(let i=0 ; i < cookies.length ; ++i) {
-            let pair = cookies[i].trim().split('=');
-            if(pair[0] === name)
-                return pair[1];
-        }
-        return null;
-    }
-
     function populateFolderDropDownList() {
         let dropdown = $('#datasetFilePath');
 
@@ -248,7 +237,7 @@ $(function() {
         dropdown.append('<option selected="true" disabled>Choose Folder</option>');
         dropdown.prop('selectedIndex', 0);
 
-        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission", { "user" : getCookie("GRIIDC_USERNAME")} );
+        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission");
 
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {

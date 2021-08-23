@@ -408,8 +408,6 @@ class DatasetSubmissionController extends EntityController
     /**
      * Returns a list of global ingest folders.
      *
-     * @param Request           $request           The request object.
-     *
      * @Route(
      *     "/api/dataset_submission_folder_list",
      *     name="pelagos_api_get_folder_list_dataset_submission",
@@ -421,9 +419,9 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response
      */
-    public function getGlobalIngestFolders(Request $request): Response
+    public function getGlobalIngestFolders(): Response
     {
-        $path = $request->get('user');
+        $user = $this->getUser();
         /* TODO */
         return $this->makeJsonResponse([
             ".dotfolder",
