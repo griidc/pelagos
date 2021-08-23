@@ -1,4 +1,3 @@
-/* eslint-disable */
 var $ = jQuery.noConflict();
 
 var geowizard;
