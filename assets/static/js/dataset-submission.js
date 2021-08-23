@@ -179,6 +179,8 @@ $(function() {
             break;
     }
 
+    populateFolderDropDownList();
+
     $("button").button();
 
     $("#btn-upload").qtip();
@@ -227,6 +229,34 @@ $(function() {
     $("#btn-save").click(function() {
         saveDatasetSubmission(true);
     });
+
+    function getCookie(name) {
+        let cookies = document.cookie.split(';');
+        for(let i=0 ; i < cookies.length ; ++i) {
+            let pair = cookies[i].trim().split('=');
+            if(pair[0] === name)
+                return pair[1];
+        }
+        return null;
+    }
+
+    function populateFolderDropDownList() {
+        let dropdown = $('#datasetFilePath');
+
+        dropdown.empty();
+
+        dropdown.append('<option selected="true" disabled>Choose Folder</option>');
+        dropdown.prop('selectedIndex', 0);
+
+        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission", { "user" : getCookie("GRIIDC_USERNAME")} );
+
+        // Populate dropdown with list of folders
+        $.getJSON(url, function (data) {
+            $.each(data, function (key, value) {
+                dropdown.append($('<option></option>').attr('value', value).text(value));
+            })
+        });
+    }
 
     function saveDatasetSubmission(notify)
     {
