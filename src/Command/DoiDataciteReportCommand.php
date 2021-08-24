@@ -93,7 +93,7 @@ class DoiDataciteReportCommand extends Command
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -105,6 +105,8 @@ class DoiDataciteReportCommand extends Command
         $output->writeln('The output file is ' . $this->outputFileName);
 
         $this->createDataciteReport();
+
+        return 0;
     }
 
     /**

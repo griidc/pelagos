@@ -81,7 +81,7 @@ class ColdStorageFlagCommand extends Command
      * @throws \Exception If stubfile not readable/accessible.
      * @throws \Exception If infofile not readable/accessible.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -136,7 +136,7 @@ class ColdStorageFlagCommand extends Command
                     $datasetSubmission->setDatasetFileUri($stubFileName);
 
                     $this->entityManager->persist($datasetSubmission);
-                    $this->entityManager->flush($datasetSubmission);
+                    $this->entityManager->flush();
 
                     //Use rabbitmq to process dataset file and persist the file details. This will
                     //Trigger filer and hasher (via filer) to complete the process.
