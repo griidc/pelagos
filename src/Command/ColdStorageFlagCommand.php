@@ -150,4 +150,6 @@ class ColdStorageFlagCommand extends Command
             throw new \Exception("Error: Could not open $infoFileName.");
         }
     }
+    
+    return 0;
 }
