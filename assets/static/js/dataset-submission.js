@@ -209,6 +209,7 @@ $(function() {
         if (activeTab == 4) {
             $("#btn-next").button("disable");
             $("#btn-next").hide();
+            populateFolderDropDownList();
         } else {
             $("#btn-next").show();
             $("#btn-next").button("enable");
@@ -227,6 +228,24 @@ $(function() {
     $("#btn-save").click(function() {
         saveDatasetSubmission(true);
     });
+
+    function populateFolderDropDownList() {
+        let dropdown = $('#datasetFilePath');
+
+        dropdown.empty();
+
+        dropdown.append('<option selected="true" disabled>Choose Folder</option>');
+        dropdown.prop('selectedIndex', 0);
+
+        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission");
+
+        // Populate dropdown with list of folders
+        $.getJSON(url, function (data) {
+            $.each(data, function (key, value) {
+                dropdown.append($('<option></option>').attr('value', value).text(value));
+            })
+        });
+    }
 
     function saveDatasetSubmission(notify)
     {

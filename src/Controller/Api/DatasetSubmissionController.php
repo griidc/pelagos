@@ -404,4 +404,32 @@ class DatasetSubmissionController extends EntityController
 
         return $urlValidation->validateUrl($erddapUrl);
     }
+
+    /**
+     * Returns a list of global ingest folders.
+     *
+     * @Route(
+     *     "/api/dataset_submission_folder_list",
+     *     name="pelagos_api_get_folder_list_dataset_submission",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getGlobalIngestFolders(): Response
+    {
+        $user = $this->getUser();
+        /* TODO */
+        return $this->makeJsonResponse([
+            ".dotfolder",
+            "H1.x123.456.7890",
+            "H1.x123.456:7891",
+            "R2.x137.108.0003",
+            "Spaces in foldername",
+            "c1.x123.456:7890"
+        ]);
+    }
 }
