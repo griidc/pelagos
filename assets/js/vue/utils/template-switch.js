@@ -24,7 +24,7 @@ const templateVariables = {
     displayTextBlock: true,
     researchAwardOption: 'Grant Award',
     cardHeadingText: 'View Project Overview By',
-  }
+  },
 };
 
 export default {
