@@ -2,24 +2,24 @@
 
 namespace App\Security;
 
+use App\Entity\Account;
+use App\Repository\PersonTokenRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
-use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
+use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 /**
  * An authenticator for PersonTokens.
  *
- * @see SimplePreAuthenticatorInterface
- * @see AuthenticationFailureHandlerInterface
+ * @see AbstractFormLoginAuthenticator
  */
-class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
+class PersonTokenAuthenticator extends AbstractGuardAuthenticator
 {
     /**
      * An instance of Twig.
@@ -29,7 +29,7 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
     private $twig;
 
     /**
-     * Constructor that saves an instance of Twig into a class variable.
+     * Constructor.
      *
      * @param \Twig_Environment $twig An instance of Twig.
      */
@@ -39,82 +39,56 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
     }
 
     /**
-     * Create a PreAuthenticatedToken containing the token string.
+     * Get the authentication credentials from the request and return them.
      *
-     * @param Request $request     The Symfony request object.
-     * @param string  $providerKey The provider key.
+     * @param Request $request A Request object.
      *
-     * @return PreAuthenticatedToken|null A new authentication token or null if token is not set.
+     * @return boolean True if person_token exists.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
-    // phpcs:ignore
-    public function createToken(Request $request, $providerKey)
+    public function supports(Request $request) :bool
     {
-        $tokenString = $request->query->get('person_token');
-
-        if (!$tokenString) {
-            // Skip Person Token authentication if token is not set.
-            return null;
-        }
-
-        // Return an unauthenticated token containing the token string.
-        return new PreAuthenticatedToken(
-            'anon.',
-            $tokenString,
-            $providerKey
-        );
+        return $request->query->has('person_token');
     }
 
     /**
-     * Authenticate a Symfony authentication token.
+     * Get the authentication credentials from the request and return them.
      *
-     * @param TokenInterface        $token        The token to authenticate.
-     * @param UserProviderInterface $userProvider The User Provider to use for authentication.
-     * @param string                $providerKey  The provider key.
+     * @param Request $request A Request object.
      *
-     * @throws \InvalidArgumentException When attemptong to user this authenticator with a
-     *                                  userProvider that is not a PersonTokenUserProvider.
-     *
-     * @return PreAuthenticatedToken An authenticated Symfony authentication token.
+     * @return string Return the credential person token.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
-    // phpcs:ignore
-    public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
+    public function getCredentials(Request $request)
     {
-        if (!$userProvider instanceof PersonTokenUserProvider) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'The user provider must be an instance of PersonTokenUserProvider (%s was given).',
-                    get_class($userProvider)
-                )
-            );
-        }
-
-        $tokenString = $token->getCredentials();
-
-        $account = $userProvider->loadUserByUsername($tokenString);
-
-        return new PreAuthenticatedToken(
-            $account,
-            $tokenString,
-            $providerKey,
-            $account->getRoles()
-        );
+        return $request->query->get('person_token');
     }
 
     /**
-     * Check whether a token is supported by this authenticator.
+     * Return a UserInterface object based on the credentials.
      *
-     * @param TokenInterface $token       The token to check.
-     * @param string         $providerKey The provider key.
+     * @param string                $credentials  Person token credential.
+     * @param UserProviderInterface $userProvider A User Provider.
      *
-     * @return boolean Whether the token is supported.
+     * @throws AuthenticationException When the token is invalid or expired.
+     *
+     * @return UserInterface Return the user.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
-    // phpcs:ignore
-    public function supportsToken(TokenInterface $token, $providerKey)
+    public function getUser($credentials, UserProviderInterface $userProvider) :UserInterface
     {
-        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
+        return $userProvider->loadUserByUsername($credentials);
+    }
+
+    /**
+     * Returns true if the credentials are valid.
+     *
+     * @param string        $credentials Credentials Array.
+     * @param UserInterface $user        The user.
+     *
+     * @return boolean True if the credentials are valid.
+     */
+    public function checkCredentials($credentials, UserInterface $user) :bool
+    {
+        // No additional checking is needed.
+        return true;
     }
 
     /**
@@ -143,5 +117,46 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
             strtr($exception->getMessageKey(), $exception->getMessageData()),
             403
         );
+    }
+
+    /**
+     * Authentication success.
+     *
+     * @param Request        $request     A Symfony Request, req by interface.
+     * @param TokenInterface $token       A Symfony user token, req by interface.
+     * @param string         $providerKey The name of the used firewall key.
+     *
+     * @return Response|null The response or null to continue request.
+     */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) : ?Response
+    {
+        return null;
+    }
+
+    /**
+     * Override to control what happens when the user hits a secure page but isn't logged in yet.
+     *
+     * @param Request                 $request   A Symfony Request, req by interface.
+     * @param AuthenticationException $exception The exception thrown.
+     *
+     * @throws \Exception This should not be reached.
+     *
+     * @return void
+     */
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        throw new \Exception('This should not be reached, token?');
+    }
+
+    /**
+     * Remember me is not supported.
+     *
+     * @return bool
+     */
+    public function supportsRememberMe() :bool
+    {
+        return false;
     }
 }

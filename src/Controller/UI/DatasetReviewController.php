@@ -141,10 +141,11 @@ class DatasetReviewController extends AbstractController
                 return true;
             }
         } else {
-            if ($this->isGranted(array('ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'))) {
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') or $this->isGranted('ROLE_SUBJECT_MATTER_EXPERT')) {
                 return true;
             }
         }
+
         return false;
     }
 

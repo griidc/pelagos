@@ -354,6 +354,11 @@ const initDropzone = () => {
     maxFilesize: null,
     clickable: '#upload-file-button',
     timeout: 0,
+    error: function error(file, errorMessage, xhr) {
+      if ([400, 401].includes(xhr.status)) {
+        myFileManager.$parent.showPopupError(errorMessage.message);
+      }
+    },
     uploadprogress(file) {
       if (file.xhr.status === 204) {
         if (myFileManager.$parent.totalFileSize
@@ -397,7 +402,7 @@ const initDropzone = () => {
       }).catch((error) => {
         currentFile.accepted = false;
         // eslint-disable-next-line no-underscore-dangle
-        myDropzone._errorProcessing([currentFile], error.message);
+        myDropzone._errorProcessing([currentFile], error.response.data, error.request);
       });
     },
   });
