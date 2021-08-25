@@ -234,7 +234,7 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
     }
   }).catch((error) => {
     if (error.response) {
-      myFileManager.$parent.showPopupError(error.response.data.message);
+      myFileManager.$parent.showPopupError(error.request);
     }
     reject(error);
   });
@@ -248,7 +248,7 @@ const deleteItem = (item) => new Promise((resolve, reject) => {
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.response.data.message);
+    myFileManager.$parent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -263,7 +263,7 @@ const moveItem = (item, destinationDirectory) => new Promise((resolve, reject) =
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.response.data.message);
+    myFileManager.$parent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -278,7 +278,7 @@ const renameItem = (item, name) => new Promise((resolve, reject) => {
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.response.data.message);
+    myFileManager.$parent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -331,11 +331,11 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
         }
         resolve();
       }).catch((error) => {
-        myFileManager.$parent.showPopupError(error.response.data.message);
+        myFileManager.$parent.showPopupError(error.request);
         reject(error);
       });
     }).catch((error) => {
-      myFileManager.$parent.showPopupError(error.response.data.message);
+      myFileManager.$parent.showPopupError(error.request);
       reject(error);
     });
   });
@@ -364,11 +364,7 @@ const initDropzone = () => {
     clickable: '#upload-file-button',
     timeout: 0,
     error: function error(file, errorMessage, xhr) {
-      if ([401].includes(xhr.status)) {
-        myFileManager.$parent.showPopupError(errorMessage.message, true);
-      } else if ([400].includes(xhr.status)) {
-        myFileManager.$parent.showPopupError(errorMessage.message);
-      }
+      myFileManager.$parent.showPopupError(xhr);
     },
     uploadprogress(file) {
       if (file.xhr.status === 204) {
@@ -669,12 +665,14 @@ export default {
       destinationDir = args.directory.path;
     },
 
-    showPopupError(message, showLoginButton = false) {
-      if (showLoginButton) {
+    showPopupError(xhr) {
+      if ([401].includes(xhr.status)) {
         this.errorTitle = 'Session Expired!';
-        this.showLoginButton = showLoginButton;
+        this.showLoginButton = true;
       }
-      this.errorMessage = message;
+
+      const data = JSON.parse(xhr.responseText);
+      this.errorMessage = data.message;
       this.isPopupVisible = true;
     },
 
