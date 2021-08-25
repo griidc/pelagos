@@ -33,12 +33,10 @@
             </template>
         </DxPopup>
         <DxPopup
-            :title="errorTitle"
+            title="Error"
             :visible.sync="isPopupVisible"
             :close-on-outside-click="true"
             :show-title="true"
-            :showCloseButton="!showLoginButton"
-            :closeOnOutsideClick="!showLoginButton"
             :width="300"
             :height="250">
             <template>
@@ -47,13 +45,6 @@
                     {{ errorMessage }}
                 </p>
             </template>
-            <DxToolbarItem
-              widget="dxButton"
-              location="center"
-              toolbar="bottom"
-              :visible.sync="showLoginButton"
-              :options="loginButtonOptions">
-            </DxToolbarItem>
         </DxPopup>
         <DxPopup
             title="Duplicate Filenames"
@@ -187,7 +178,7 @@ import 'devextreme/dist/css/dx.light.css';
 import {
   DxFileManager, DxItem, DxPermissions, DxToolbar,
 } from 'devextreme-vue/file-manager';
-import { DxPopup, DxToolbarItem } from 'devextreme-vue/popup';
+import { DxPopup } from 'devextreme-vue/popup';
 import { DxButton } from 'devextreme-vue/button';
 import { DxProgressBar } from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
@@ -364,9 +355,7 @@ const initDropzone = () => {
     clickable: '#upload-file-button',
     timeout: 0,
     error: function error(file, errorMessage, xhr) {
-      if ([401].includes(xhr.status)) {
-        myFileManager.$parent.showPopupError(errorMessage.message, true);
-      } else if ([400].includes(xhr.status)) {
+      if ([400, 401].includes(xhr.status)) {
         myFileManager.$parent.showPopupError(errorMessage.message);
       }
     },
@@ -480,7 +469,6 @@ export default {
     DxItem,
     DxPopup,
     DxButton,
-    DxToolbarItem,
     DxProgressBar,
   },
 
@@ -516,16 +504,6 @@ export default {
       downloadedSize: 0,
       totalDownloadSize: 0,
       downloadPopup: false,
-      errorTitle: 'Error',
-      showLoginButton: false,
-      loginButtonOptions: {
-        type: 'danger',
-        text: 'Continue to Login Form',
-        onClick: () => {
-          // eslint-disable-next-line no-undef
-          window.location.href = Routing.generate('security_login', { destination: window.location.href });
-        },
-      },
     };
   },
 
@@ -669,11 +647,7 @@ export default {
       destinationDir = args.directory.path;
     },
 
-    showPopupError(message, showLoginButton = false) {
-      if (showLoginButton) {
-        this.errorTitle = 'Session Expired!';
-        this.showLoginButton = showLoginButton;
-      }
+    showPopupError(message) {
       this.errorMessage = message;
       this.isPopupVisible = true;
     },
