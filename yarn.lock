@@ -948,10 +948,10 @@
     "@babel/helper-validator-identifier" "^7.14.5"
     to-fast-properties "^2.0.0"
 
-"@devexpress/utils@1.3":
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/@devexpress/utils/-/utils-1.3.6.tgz#a08c9b926ab27b5abda7e4782b33dc14dc6f96cf"
-  integrity sha512-xgnNb5X6m6qjNrNiBzXOxnMdQmA+fIhZef0YntpmY7bmeoq20aVu2Zow8Cdeiq8oMV8ap9uXdpLY6H6w1K7Zwg==
+"@devexpress/utils@1.3.10":
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/@devexpress/utils/-/utils-1.3.10.tgz#f8225ee31ef0bc1bc150da70df0ae905ed43af0e"
+  integrity sha512-cq1bxLqbvhfoXDjLBZQAG7RBdxiVKhTxZnmY7hT4ZNPBMV7xESO0Q5xHH8rHaiPdXAxLJKciOtibaC7DxO86wA==
   dependencies:
     tslib "2.0.1"
 
@@ -2203,10 +2203,15 @@ core-js-compat@^3.14.0, core-js-compat@^3.15.0, core-js-compat@^3.6.2:
     browserslist "^4.16.6"
     semver "7.0.0"
 
-core-js@^3.0.0, core-js@^3.6.5:
+core-js@^3.0.0:
   version "3.15.2"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.15.2.tgz#740660d2ff55ef34ce664d7e2455119c5bdd3d61"
   integrity sha512-tKs41J7NJVuaya8DxIOCnl8QuPHx5/ZVbFo1oKgVl1qHFBBrDctzQGtuLjPpRdNTWmKPH6oEvgN/MUID+l485Q==
+
+core-js@^3.6.5:
+  version "3.16.3"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.16.3.tgz#1f2d43c51a9ed014cc6c83440af14697ae4b75f2"
+  integrity sha512-lM3GftxzHNtPNUJg0v4pC2RC6puwMd6VZA7vXUczi+SKmCWSf4JwO89VJGMqbzmB7jlK7B5hr3S64PqwFL49cA==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -2521,26 +2526,26 @@ detect-node@^2.0.4:
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
 
-devexpress-diagram@2.0.28:
-  version "2.0.28"
-  resolved "https://registry.yarnpkg.com/devexpress-diagram/-/devexpress-diagram-2.0.28.tgz#8d49cdbfe9cf5fa2763e218d9c5b4651b45b2ce6"
-  integrity sha512-2dS6LcZCK2Zr72JIXrNcf9G0WElSO2o6UMxFSriYyzLP4U9FVpcV/5JalHpDrXlY+YsjkzrtCyoQBpyhGkWUNA==
+devexpress-diagram@2.0.36:
+  version "2.0.36"
+  resolved "https://registry.yarnpkg.com/devexpress-diagram/-/devexpress-diagram-2.0.36.tgz#e7bcac4616895c091aebe3a033dcc6b061d8c7e1"
+  integrity sha512-nWGpMsGhD1mpP+KhE12yADOjTdmQmSrlw6f6dJ3AzZESu+FmoQID1LVHLxofgTSVO/uGCmrXUD8H7uJsrVmflQ==
   dependencies:
-    "@devexpress/utils" "1.3"
+    "@devexpress/utils" "1.3.10"
     es6-object-assign "^1.1.0"
 
-devexpress-gantt@2.0.38:
-  version "2.0.38"
-  resolved "https://registry.yarnpkg.com/devexpress-gantt/-/devexpress-gantt-2.0.38.tgz#f92c488b8288af937cb338790a7c3d5d428366de"
-  integrity sha512-UNl7h36EMW3uHugHZL356B4gNkLkoNryJmFTbWETYdNrGsDwTnnOVMxw411h1FpoOjHI9/f8m8B5mqIS0e58ng==
+devexpress-gantt@2.0.40:
+  version "2.0.40"
+  resolved "https://registry.yarnpkg.com/devexpress-gantt/-/devexpress-gantt-2.0.40.tgz#fadc96c833b364abc7815503350caeb6ffa24d99"
+  integrity sha512-0+ZfOKO+zIDSaGBZgIoafid95zAPvS1kQv8szNn2p0newrQpnVosWzV5pKWHLZRwT7yziBY+6bQ/xwNdG9iShg==
   dependencies:
     "@devexpress/utils" "1.3.2"
     tslib "2.1.0"
 
-devextreme-quill@~1.1.2:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/devextreme-quill/-/devextreme-quill-1.1.4.tgz#95bf63a4c3dc58427a2244717fdb545c0575b1bf"
-  integrity sha512-/hgp8VzEoaabZNeq/xBx2ELuJkqy4SSlKb/tm8hpasDjOxoiHETawVlUna5iZ7Qyl+FoamhPWbJYpe4ALmydfQ==
+devextreme-quill@~1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/devextreme-quill/-/devextreme-quill-1.1.5.tgz#bf89aaa5d94fea5ddc383e90ff591f1939ddbc63"
+  integrity sha512-fM3cFXGaA19PjTgNav7gJDEU2rNu+/8UOWQU4Ndq3QunZ9zm3HXlWhiQFAKdLWaAcvwSJHQ+9ZrORwPBl23AlQ==
   dependencies:
     core-js "^3.6.5"
     eventemitter3 "^4.0.0"
@@ -2556,18 +2561,18 @@ devextreme-vue@^20.1.6:
   integrity sha512-bGMhL9vaiMNe3zsg/lNqtEoKt1rRQCeNSeMh82qMYSNod2LMPZm1cNEuqopRXvdHYgValte3SLo0sH3CrWvABg==
 
 devextreme@^20.1.6:
-  version "20.2.8"
-  resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-20.2.8.tgz#1f42c92d3ce42519a3e33f3b159fb507e2841e5f"
-  integrity sha512-BtPhdiKnscrsIb2Pozrd5mDOELN5PbBkslamQ3PhJOqfEnKPA6P99qk2aA6nIMV99RdlYGEK3YCsxPSIMf2m1A==
+  version "20.2.9"
+  resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-20.2.9.tgz#83d3bd85d8f842d0f7db982589a2cecb8835cf50"
+  integrity sha512-V+Z+AtdUXEpTkMOVXDGnvULOHuc9Fvqh5sfbdul2Wq6/ujUW6j2L0qWnU1ykHyZGLrBUmUKtBnZGKKZRw5ZTyQ==
   dependencies:
-    devexpress-diagram "2.0.28"
-    devexpress-gantt "2.0.38"
-    devextreme-quill "~1.1.2"
+    devexpress-diagram "2.0.36"
+    devexpress-gantt "2.0.40"
+    devextreme-quill "~1.1.5"
     jszip "^2.0.0 || ^3.0.0"
     preact "^10.4.5"
     rrule "2.6.6"
     showdown "^1.9.1"
-    turndown "^7.0.0"
+    turndown "~7.0.0"
 
 dir-glob@^3.0.1:
   version "3.0.1"
@@ -4133,9 +4138,9 @@ jsprim@^1.2.2:
     verror "1.10.0"
 
 "jszip@^2.0.0 || ^3.0.0":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.6.0.tgz#839b72812e3f97819cc13ac4134ffced95dd6af9"
-  integrity sha512-jgnQoG9LKnWO3mnVNBnfhkh0QknICd1FGSrXcgrl67zioyJ4wgx25o9ZqwNtrROSflGBCGYnJfjrIyRIby1OoQ==
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.7.1.tgz#bd63401221c15625a1228c556ca8a68da6fda3d9"
+  integrity sha512-ghL0tz1XG9ZEmRMcEN2vt7xabrDdqHHeykgARpmZ0BiIctWxM47Vt63ZO2dnp4QYt/xJVLLy5Zv1l/xRdh2byg==
   dependencies:
     lie "~3.3.0"
     pako "~1.0.2"
@@ -4322,9 +4327,9 @@ lru-cache@^6.0.0:
     yallist "^4.0.0"
 
 luxon@^1.21.3:
-  version "1.27.0"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.27.0.tgz#ae10c69113d85dab8f15f5e8390d0cbeddf4f00f"
-  integrity sha512-VKsFsPggTA0DvnxtJdiExAucKdAnwbCCNlMM5ENvHlxubqWd0xhZcdb4XgZ7QFNhaRhilXCFxHuoObP5BNA4PA==
+  version "1.28.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"
+  integrity sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==
 
 make-dir@^3.0.2, make-dir@^3.1.0:
   version "3.1.0"
@@ -6541,10 +6546,10 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-turndown@^7.0.0:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/turndown/-/turndown-7.1.1.tgz#96992f2d9b40a1a03d3ea61ad31b5a5c751ef77f"
-  integrity sha512-BEkXaWH7Wh7e9bd2QumhfAXk5g34+6QUmmWx+0q6ThaVOLuLUqsnkq35HQ5SBHSaxjSfSM7US5o4lhJNH7B9MA==
+turndown@~7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/turndown/-/turndown-7.0.0.tgz#19b2a6a2d1d700387a1e07665414e4af4fec5225"
+  integrity sha512-G1FfxfR0mUNMeGjszLYl3kxtopC4O9DRRiMlMDDVHvU1jaBkGFg4qxIyjIk2aiKLHyDyZvZyu4qBO2guuYBy3Q==
   dependencies:
     domino "^2.1.6"
 
