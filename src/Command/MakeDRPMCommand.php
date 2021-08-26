@@ -67,7 +67,7 @@ class MakeDRPMCommand extends Command
      *
      * @throws \Exception If username not found.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -103,5 +103,7 @@ class MakeDRPMCommand extends Command
         } else {
             throw new \Exception('The username ' . $username . ' was not found in system.');
         }
+
+        return 0;
     }
 }

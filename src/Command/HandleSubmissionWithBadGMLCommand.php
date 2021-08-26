@@ -64,7 +64,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
      * @throws \Exception When dataset not found.
      * @throws \Exception When datasetSubmission not found.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -95,5 +95,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
         $this->entityManager->flush();
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
+
+        return 0;
     }
 }
