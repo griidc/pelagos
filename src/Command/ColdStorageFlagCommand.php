@@ -2,21 +2,18 @@
 
 namespace App\Command;
 
-use App\Entity\File;
-use App\Entity\Fileset;
-use App\Message\DatasetSubmissionFiler;
-use App\Message\RenameFile;
 use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 use App\Entity\Person;
-
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * This command marks a dataset as cold-stored.
@@ -42,22 +39,13 @@ class ColdStorageFlagCommand extends Command
     protected $entityManager;
 
     /**
-     * Symfony messenger bus interface.
-     *
-     * @var MessageBusInterface $messageBus
-     */
-    protected $messageBus;
-
-    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param MessageBusInterface    $messageBus    Symfony messenger bus interface.
      */
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->messageBus = $messageBus;
         parent::__construct();
     }
 
@@ -69,8 +57,12 @@ class ColdStorageFlagCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Marks dataset in input file is cold-stored and updates datafile')
-            ->addArgument('infofile', InputArgument::REQUIRED, 'Filename of the coldinfo-formatted textfile required.');
+            ->setDescription('Marks specified dataset as cold-stored and updates fileset with provided files')
+            ->addOption('udi', 'udi', InputOption::VALUE_REQUIRED, 'UDI of dataset to flag as cold stored')
+            ->addOption('originalfilesize', 'fs', InputOption::VALUE_REQUIRED, 'Original file size')
+            ->addOption('originalfilehash', 'fh', InputOption::VALUE_REQUIRED, 'Original sha256 hash')
+            ->addOption('originalfilename', 'fn', InputOption::VALUE_REQUIRED, 'Original file name')
+            ;
     }
 
     /**
@@ -81,8 +73,6 @@ class ColdStorageFlagCommand extends Command
      *
      * @throws \Exception If cannot find dataset with provided UDI.
      * @throws \Exception If cannot find dataset submission in dataset.
-     * @throws \Exception If stubfile not readable/accessible.
-     * @throws \Exception If infofile not readable/accessible.
      *
      * @return void
      */
@@ -90,94 +80,37 @@ class ColdStorageFlagCommand extends Command
     {
         $systemPerson = $this->entityManager->find(Person::class, 0);
 
-        $infoFileName = $input->getArgument('infofile');
-        if (file_exists($infoFileName)) {
-            $infoFileContents = file($infoFileName);
-            $udi = trim($infoFileContents[0]);
+        $io = new SymfonyStyle($input, $output);
+        $udi = $input->getArgument('udi');
+        $size = $input->getArgument('originalfilesize');
+        $hash = $input->getArgument('originalfilehash');
+        $originalFilename = $input->getArgument('originalfilename');
 
-            $nudi = preg_replace('/:/', '.', $udi);
-            $infoPath = pathinfo($infoFileName)['dirname'];
-            $size = preg_replace('/size \(bytes\): /', '', trim($infoFileContents[1]));
-            $hash = preg_replace('/orig sha256: /', '', trim($infoFileContents[2]));
-            $originalFilename = preg_replace('/original filename: /', '', trim($infoFileContents[3]));
-            $stubFileName = "$infoPath/$nudi-manifest.zip";
+        $io->note("UDI: ($udi)");
+        $io->note("Original Size: ($size)");
+        $io->note("Original Hash: ($hash)");
+        $io->note("Original Filename: ($originalFilename)");
+        $io->note("Attempting to flag $udi as Cold Stored.");
 
-            if (file_exists($stubFileName)) {
-                $output->writeln("UDI: ($udi)");
-                $output->writeln("Original Size: ($size)");
-                $output->writeln("Original Hash: ($hash)");
-                $output->writeln("Original Filename: ($originalFilename)");
-                $output->writeln("stubFileName: ($stubFileName)");
-                $output->writeln("Attempting to flag $udi as Cold Stored.");
-
-                $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
-
-                if (count($datasets) == 0) {
-                    throw new \Exception('Could not find a dataset with the udi provided.');
-                } else {
-                    $output->writeln('Dataset Found.');
-                }
-                $dataset = $datasets[0];
-
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if (!($datasetSubmission instanceof DatasetSubmission)) {
-                    throw new \Exception('Could not find Dataset Submission.');
-                } else {
-                    $output->writeln('Submission Found.');
-                    $fileset = $datasetSubmission->getFileset();
-
-                    if (!$fileset instanceof Fileset) {
-                        $fileset = new Fileset();
-                        $datasetSubmission->setFileset($fileset);
-                    } else {
-                        $files = $fileset->getProcessedAndNewFiles();
-                        // Delete existing files on the fileset
-                        foreach ($files as $file) {
-                            if ($file->getStatus() === File::FILE_NEW) {
-                                $deleteFile = unlink($file->getPhysicalFilePath());
-                                $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
-                                if ($deleteFile and $deleteFolder) {
-                                    $file->getFileset()->removeFile($file);
-                                } else {
-                                    throw new \Exception('Unable to delete file');
-                                }
-                            } elseif ($file->getStatus() === File::FILE_DONE) {
-                                $file->setStatus(File::FILE_DELETED);
-                                $renameMessage = new RenameFile($file->getId());
-                                $this->messageBus->dispatch($renameMessage);
-                            }
-                        }
-                    }
-
-                    // Set Modifier
-                    $datasetSubmission->setModifier($systemPerson);
-
-                    // Set filesize, hash, and original filename. (Cold Storage attributes).
-                    $datasetSubmission->setDatasetFileColdStorageAttributes($size, $hash, $originalFilename);
-
-                    // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
-
-                    $manifestFile = new File();
-                    $manifestFile->setPhysicalFilePath($stubFileName);
-                    $manifestFile->setFilePathName(basename($stubFileName));
-                    $fileset->addFile($manifestFile);
-
-                    $this->entityManager->persist($fileset);
-                    $this->entityManager->persist($datasetSubmission);
-                    $this->entityManager->flush();
-
-                    //Use rabbitmq to process dataset file and persist the file details. This will
-                    //Trigger filer and hasher (via filer) to complete the process.
-                    $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
-                    $this->messageBus->dispatch($datasetSubmissionFilerMessage);
-                }
-            } else {
-                throw new \Exception("Could not open $stubFileName, expected to be at same location as $infoFileName.");
-            }
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
+        if (count($datasets) == 0) {
+            throw new \Exception('Could not find a dataset with the udi provided.');
         } else {
-            throw new \Exception("Error: Could not open $infoFileName.");
+            $io->note('Dataset Found.');
+        }
+
+        $dataset = $datasets[0];
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        if (!($datasetSubmission instanceof DatasetSubmission)) {
+            throw new \Exception('Could not find Dataset Submission.');
+        } else {
+            $io->note('Submission Found.');
+
+            $datasetSubmission->setModifier($systemPerson);
+            $datasetSubmission->setDatasetFileColdStorageAttributes($size, $hash, $originalFilename);
+
+            $this->entityManager->persist($datasetSubmission);
+            $this->entityManager->flush();
         }
     }
 }
