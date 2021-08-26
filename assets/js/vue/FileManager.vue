@@ -355,13 +355,7 @@ const initDropzone = () => {
     clickable: '#upload-file-button',
     timeout: 0,
     error: function error(file, errorMessage, xhr) {
-<<<<<<< HEAD
-      if ([400, 401].includes(xhr.status)) {
-        myFileManager.$parent.showPopupError(errorMessage.message);
-      }
-=======
       myFileManager.$parent.showPopupError(xhr);
->>>>>>> develop
     },
     uploadprogress(file) {
       if (file.xhr.status === 204) {
@@ -651,10 +645,6 @@ export default {
       destinationDir = args.directory.path;
     },
 
-<<<<<<< HEAD
-    showPopupError(message) {
-      this.errorMessage = message;
-=======
     showPopupError(xhr) {
       if ([401].includes(xhr.status)) {
         this.errorTitle = 'Session Expired!';
@@ -663,7 +653,6 @@ export default {
 
       const data = JSON.parse(xhr.responseText);
       this.errorMessage = data.message;
->>>>>>> develop
       this.isPopupVisible = true;
     },
 
