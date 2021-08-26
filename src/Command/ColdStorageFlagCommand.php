@@ -74,7 +74,7 @@ class ColdStorageFlagCommand extends Command
      * @throws \Exception If cannot find dataset with provided UDI.
      * @throws \Exception If cannot find dataset submission in dataset.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -112,5 +112,6 @@ class ColdStorageFlagCommand extends Command
             $this->entityManager->persist($datasetSubmission);
             $this->entityManager->flush();
         }
+        return 0;
     }
 }

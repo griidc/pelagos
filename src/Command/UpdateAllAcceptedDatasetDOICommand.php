@@ -79,7 +79,7 @@ class UpdateAllAcceptedDatasetDOICommand extends Command
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -91,5 +91,7 @@ class UpdateAllAcceptedDatasetDOICommand extends Command
             $this->messageBus->dispatch($doiMessage);
             echo 'Requesting DOI update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
         }
+
+        return 0;
     }
 }
