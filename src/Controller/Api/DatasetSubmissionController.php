@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+use App\Util\IngestUtil;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,7 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use App\Entity\Account;
 use App\Entity\File;
 use App\Entity\DatasetSubmission;
 use App\Entity\Fileset;
@@ -405,5 +408,27 @@ class DatasetSubmissionController extends EntityController
         }
 
         return $urlValidation->validateUrl($erddapUrl);
+    }
+
+    /**
+     * Returns a list of global ingest folders.
+     *
+     * @Route(
+     *     "/api/dataset_submission_folder_list",
+     *     name="pelagos_api_get_folder_list_dataset_submission",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
+    {
+        if (!($this->getUser() instanceof Account)) {
+            throw new AccessDeniedException('User is either not logged in or does not have an account');
+        }
+        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
     }
 }
