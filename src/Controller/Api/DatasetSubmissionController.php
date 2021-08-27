@@ -19,7 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use App\Entity\Account;
 use App\Entity\File;
 use App\Entity\DatasetSubmission;
 use App\Entity\Fileset;
@@ -422,7 +424,9 @@ class DatasetSubmissionController extends EntityController
      */
     public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
     {
-        $username = 'kthyng';
-        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($username));
+        if (!($this->getUser() instanceof Account)) {
+            throw new AccessDeniedException('User is either not logged in or does not have an account');
+        }
+        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
     }
 }
