@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+use App\Util\IngestUtil;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -419,17 +420,9 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response
      */
-    public function getGlobalIngestFolders(): Response
+    public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
     {
-        $user = $this->getUser();
-        /* TODO */
-        return $this->makeJsonResponse([
-            ".dotfolder",
-            "H1.x123.456.7890",
-            "H1.x123.456:7891",
-            "R2.x137.108.0003",
-            "Spaces in foldername",
-            "c1.x123.456:7890"
-        ]);
+        $username = 'kthyng';
+        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($username));
     }
 }
