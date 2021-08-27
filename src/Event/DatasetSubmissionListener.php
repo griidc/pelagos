@@ -118,20 +118,20 @@ class DatasetSubmissionListener extends EventListener
     }
 
     /**
-     * Method to send an email to DRMs when HTML was found for a dataset file.
+     * Method to send an email to DRMs when large file is submitted via ingest.
      *
      * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onHtmlFound(EntityEvent $event)
+    public function onLargeFileSubmitted(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
 
         // email DRMs
         $this->sendMailMsg(
             $this->twig->load(
-                'Email/data-repository-managers.html-found-for-dataset.email.twig'
+                'Email/data-repository-managers.large-file-ingest.email.twig'
             ),
             array('datasetSubmission' => $datasetSubmission),
             $this->getDRPMs($datasetSubmission->getDataset())
