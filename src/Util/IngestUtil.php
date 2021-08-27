@@ -25,10 +25,12 @@ class IngestUtil
     /**
      * Constructor.
      *
+     * @param string $ingestApiUrl The API URL.
      */
-    public function __construct()
-    {
-        $this->url = 'http://griidc-ingest.tamucc.edu:3000/getFolders';
+    public function __construct(
+        string $ingestApiUrl
+    ) {
+        $this->url = $ingestApiUrl;
     }
 
     /**
