@@ -247,6 +247,28 @@ $(function() {
         });
     }
 
+    const loggedOutPopup = $("#loggedOutPopup").dxPopup({
+        width: 300,
+        height: 250,
+        showTitle: true,
+        title: "Session Expired!",
+        visible: false,
+        dragEnabled: false,
+        closeOnOutsideClick: false,
+        showCloseButton: false,
+        toolbarItems: [{
+          widget: "dxButton",
+          toolbar: "bottom",
+          options: {
+            type: "danger",
+            text: "Continue to Login Form",
+            onClick: function(e) {
+                window.location.href = Routing.generate("security_login", {"destination":window.location.href})
+              }
+            },
+        }]
+    }).dxPopup("instance");
+
     function saveDatasetSubmission(notify)
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
@@ -281,16 +303,18 @@ $(function() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                if (notify) {
-                    var n = noty(
-                    {
-                        layout: "top",
-                        theme: "relax",
-                        type: "error",
-                        text: message,
-                        modal: true,
-                    });
+                if ([401].includes(jqXHR.status)) {
+                    loggedOutPopup.show();
+                } else if ([400].includes(jqXHR.status)) {
+                  var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                  var n = noty(
+                  {
+                      layout: "top",
+                      theme: "relax",
+                      type: "error",
+                      text: message,
+                      modal: true,
+                  });
                 }
             }
         });

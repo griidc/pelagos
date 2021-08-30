@@ -1,6 +1,6 @@
 <template>
     <div class="border p-3 card-product">
-        <h4 class="text-center">View Project Overview By:</h4>
+        <h4 class="text-center">{{ cardHeadingText }}:</h4>
         <div class="row">
             <div class="col-6 border-right">
                 <b-form-group>
@@ -41,11 +41,12 @@
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
 <script>
+import templateSwitch from '@/vue/utils/template-switch';
+
 export default {
   name: 'FundingCyclesList',
   props: {
@@ -67,6 +68,7 @@ export default {
       disableResearchGroups: true,
       disableResGrpBtn: true,
       disableProjDirBtn: true,
+      cardHeadingText: templateSwitch.getProperty('cardHeadingText'),
     };
   },
   methods: {

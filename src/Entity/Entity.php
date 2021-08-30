@@ -45,8 +45,7 @@ abstract class Entity
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
-     *     minMessage = "ID must be {{ limit }} or more.",
-     *     maxMessage = "ID must be {{ limit }} or less",
+     *     notInRangeMessage = "ID must be in between 1 and 2147483647",
      *     invalidMessage = "ID must be a positive integer",
      *     groups = {"id"}
      * )

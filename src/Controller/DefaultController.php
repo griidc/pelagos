@@ -9,14 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
 use App\Entity\PersonResearchGroup;
-use App\Entity\ResearchGroup;
-use App\Entity\ResearchGroupRole;
-use App\Repository\PersonResearchGroupRepository;
 use App\Util\FundingOrgFilter;
 
 /**
@@ -24,45 +20,6 @@ use App\Util\FundingOrgFilter;
  */
 class DefaultController extends AbstractController
 {
-
-    /**
-     * The index action.
-     *
-     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
-     *
-     * @Route("/", name="pelagos_nas_homepage", condition="'%custom_template%' matches '/nas-grp-base/'")
-     *
-     * @return Response A Response instance.
-     */
-    public function nasIndex(FundingOrgFilter $fundingOrgFilter)
-    {
-        $filter = array();
-        if ($fundingOrgFilter->isActive()) {
-            $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
-        }
-
-        $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
-
-        $leadershipPersons = $this->get('doctrine')->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
-
-        $projectDirectorList = $this->getProjectDirectorList($leadershipPersons);
-
-        $fundingCycleList = array();
-
-        foreach ($fundingCycles as $fundingCycle) {
-            $fundingCycleList[] = array(
-                'id' => $fundingCycle->getId(),
-                'name' => $fundingCycle->getName(),
-                'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
-            );
-        }
-
-        return $this->render('Default/nas-grp-index.html.twig', array(
-            'fundingCycles' => $fundingCycleList,
-            'projectDirectors' => $projectDirectorList
-        ));
-    }
-
     /**
      * Get research groups array in the funding cycle.
      *
@@ -114,8 +71,39 @@ class DefaultController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function index()
+    public function index(FundingOrgFilter $fundingOrgFilter)
     {
+        $customTemplate = $this->getParameter('custom_template');
+
+        if ($customTemplate) {
+            $customTemplate = str_replace("base", "index", $customTemplate);
+            $filter = array();
+            if ($fundingOrgFilter->isActive()) {
+                $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
+            }
+
+            $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+
+            $leadershipPersons = $this->get('doctrine')->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
+
+            $projectDirectorList = $this->getProjectDirectorList($leadershipPersons);
+
+            $fundingCycleList = array();
+
+            foreach ($fundingCycles as $fundingCycle) {
+                $fundingCycleList[] = array(
+                    'id' => $fundingCycle->getId(),
+                    'name' => $fundingCycle->getName(),
+                    'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
+                );
+            }
+
+            return $this->render("Default/$customTemplate", array(
+                'fundingCycles' => $fundingCycleList,
+                'projectDirectors' => $projectDirectorList
+            ));
+        }
+
         if ($this->getParameter('kernel.debug')) {
             return $this->render('Default/index.html.twig');
         } else {

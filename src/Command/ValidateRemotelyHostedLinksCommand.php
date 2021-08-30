@@ -94,7 +94,7 @@ class ValidateRemotelyHostedLinksCommand extends Command
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -137,5 +137,7 @@ class ValidateRemotelyHostedLinksCommand extends Command
                 array('griidc@gomri.org' => 'GRIIDC')
             );
         }
+
+        return 0;
     }
 }

@@ -91,7 +91,7 @@ class Udi
 
         $udiEntity = new UdiEntity($udi);
         $this->entityManager->persist($udiEntity);
-        $this->entityManager->flush($udiEntity);
+        $this->entityManager->flush();
 
         $dataset->setUdi($udi);
         return $udi;
