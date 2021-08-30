@@ -109,7 +109,7 @@ class DatasetSubmissionListener extends EventListener
         // Added if-statement so that emails are sent to data-managers only when a dataset is submitted
         // and not when a review is ended.
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-            and  $datasetSubmission->getDataset()->getDatasetStatus() === Dataset::DATASET_STATUS_SUBMITTED ) {
+            and $datasetSubmission->getDataset()->getDatasetStatus() === Dataset::DATASET_STATUS_SUBMITTED) {
             //email DRMs
             $this->sendMailMsg(
                 $this->twig->load('Email/data-repository-managers.dataset-processed.email.twig'),
