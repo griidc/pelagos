@@ -8,6 +8,6 @@ on {{ datasetSubmission.submissionTimeStamp.format('c') }}
 
 {% block body_text %}
     {{ datasetSubmission.datasetFileUri}} submitted by
-    {{ datasetSubmission.submitter.firstName + ' ' + datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+    {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
     on {{ datasetSubmission.submissionTimeStamp.format('c') }}
 {% endblock %}
