@@ -427,7 +427,7 @@ class DatasetSubmissionController extends EntityController
     public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
     {
         if (!($this->getUser() instanceof Account)) {
-            throw new AccessDeniedException('User is either not logged in or does not have an account');
+            throw new AccessDeniedException('Must be logged in');
         }
         return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
     }

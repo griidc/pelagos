@@ -20,7 +20,7 @@ class IngestUtil
      *
      * @var string
      */
-    private $url;
+    private $ingestApiUrl;
 
     /**
      * Constructor.
@@ -30,7 +30,7 @@ class IngestUtil
     public function __construct(
         string $ingestApiUrl
     ) {
-        $this->url = $ingestApiUrl;
+        $this->ingestApiUrl = $ingestApiUrl;
     }
 
     /**
@@ -47,7 +47,7 @@ class IngestUtil
     {
         $client = new Client();
         $metadata = array();
-        $url = $this->url . '/' . $username;
+        $url = $this->ingestApiUrl . '/' . $username;
         try {
             $response = $client->request('GET', $url);
         } catch (ClientException $exception) {
@@ -55,7 +55,6 @@ class IngestUtil
         } catch (ServerException $exception) {
             throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
         }
-        $data = json_decode($response->getBody()->getContents(), true);
-        return $data;
+        return(json_decode($response->getBody()->getContents(), true));
     }
 }
