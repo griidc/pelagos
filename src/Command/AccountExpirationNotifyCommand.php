@@ -126,7 +126,7 @@ class AccountExpirationNotifyCommand extends Command
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -183,6 +183,8 @@ class AccountExpirationNotifyCommand extends Command
                 )
             );
         }
+
+        return 0;
     }
 
     /**

@@ -272,7 +272,7 @@ class EntityHandler
             $metadata->setIdGenerator(new AssignedGenerator());
         }
         $this->entityManager->persist($entity);
-        $this->entityManager->flush($entity);
+        $this->entityManager->flush();
         // If the entity has been manually assigned an ID.
         if ($id !== null) {
             // Restore the original ID generator for entities of this class.
@@ -314,7 +314,7 @@ class EntityHandler
         // Set the modifier to the currently authenticated user.
         $entity->setModifier($this->getAuthenticatedPerson());
         $this->entityManager->persist($entity);
-        $this->entityManager->flush($entity);
+        $this->entityManager->flush();
         $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }

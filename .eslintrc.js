@@ -14,6 +14,9 @@ module.exports = {
   plugins: [
     'vue',
   ],
+  ignorePatterns: [
+    'assets/static/js/*.js',
+  ],
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'max-len': ['warn', { code: 120 }],

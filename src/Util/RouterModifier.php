@@ -6,11 +6,12 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 
 /**
  * This class is a custom router modifier.
  */
-class RouterModifier implements RouterInterface, ServiceSubscriberInterface
+class RouterModifier implements RouterInterface, ServiceSubscriberInterface, WarmableInterface
 {
     /**
      * The original (inner) Router Interface.
@@ -110,7 +111,7 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface
         return $this->innerRouter->match($pathinfo);
     }
     
-     /**
+    /**
      * Return subscribed services.
      *
      * @return array
@@ -120,5 +121,17 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface
         return [
             'App\Util\RouterModifier' => self::class,
         ];
+    }
+    
+    /**
+     * Warms up the cache.
+     *
+     * @param string $cacheDir The cache directory
+     *
+     * @return array A list of classes or files to preload.
+     */
+    public function warmUp($cacheDir)
+    {
+        return [];
     }
 }
