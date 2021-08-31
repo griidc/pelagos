@@ -1,0 +1,13 @@
+{% block subject 'Large File for ' ~ datasetSubmission.dataset.udi ' ~ submitted' %}
+
+{% block body_html %}
+{{ datasetSubmission.datasetFileUri}} submitted by
+{{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+{% endblock %}
+
+{% block body_text %}
+    {{ datasetSubmission.datasetFileUri}} submitted by
+    {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+    on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+{% endblock %}
