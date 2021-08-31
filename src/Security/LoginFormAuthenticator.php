@@ -8,10 +8,10 @@ use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -259,7 +259,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $response = new RedirectResponse($targetPath);
 
-        $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
+        $cookie = Cookie::create('GRIIDC_USERNAME', $token->getUser()->getUserId());
         $response->headers->setCookie($cookie);
 
         return $response;
@@ -322,18 +322,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Override to control what happens when the user hits a secure page but isn't logged in yet.
      *
-     * @param Request                 $request   A Symfony Request, req by interface.
-     * @param AuthenticationException $exception The exception thrown.
+     * @param Request                      $request       A Symfony Request, req by interface.
+     * @param AuthenticationException|null $authException The exception thrown.
      *
-     * @throws HttpException When the request is a JSON request.
-     *
-     * @return RedirectResponse
+     * @return Response
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         // Is this a JSON request?
         if (false !== strpos($request->getRequestFormat(), 'json')) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, $authException->getMessage());
+            return new JsonResponse(['code' => 401, 'message' => 'Session expired! Please log in again'], Response::HTTP_UNAUTHORIZED);
         }
 
         return new RedirectResponse($this->getLoginUrl());
@@ -370,6 +368,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $loginAttempt = new LoginAttempts($user);
         $loginAttempt->setCreator($anonymousPerson);
         $this->entityManager->persist($loginAttempt);
-        $this->entityManager->flush($loginAttempt);
+        $this->entityManager->flush();
     }
 }

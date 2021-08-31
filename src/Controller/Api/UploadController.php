@@ -44,32 +44,4 @@ class UploadController extends EntityController
 
         return $this->makeNoContentResponse();
     }
-
-    /**
-     * Combine file chunks.
-     *
-     * @param Request      $request      The Symfony request object.
-     * @param FileUploader $fileUploader File upload handler service.
-     *
-     * @View()
-     *
-     * @Route(
-     *     "/api/files/combine-chunks/{id}",
-     *     name="pelagos_api_combine_chunks",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @return Response The result of the post.
-     */
-    public function combineChunks(Request $request, FileUploader $fileUploader)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        try {
-            $fileMetadata = $fileUploader->combineChunks($request);
-        } catch (\Exception $exception) {
-            throw new BadRequestHttpException($exception->getMessage());
-        }
-        return $this->makeJsonResponse($fileMetadata);
-    }
 }

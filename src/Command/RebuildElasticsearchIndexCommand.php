@@ -74,7 +74,7 @@ class RebuildElasticsearchIndexCommand extends Command
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return void
+     * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -98,5 +98,7 @@ class RebuildElasticsearchIndexCommand extends Command
             $elapsedTimeSeconds = $elapsedTime->format('%s');
             $output->writeln('     ' . $dataset->getUdi() . " indexed. ($counter/$count $elapsedTimeSeconds sec)");
         }
+
+        return 0;
     }
 }

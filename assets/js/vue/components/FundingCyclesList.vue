@@ -1,7 +1,7 @@
 <template>
     <div class="border p-3 card-product">
         <h4 class="text-center">{{ cardHeadingText }}:</h4>
-        <div class="row" v-if="themeTemplateName === 'GRP'">
+        <div class="row">
             <div class="col-6 border-right">
                 <b-form-group>
                     <label class="col-form-label">
@@ -41,16 +41,6 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-md-center m-3" v-else>
-            <div class="form-inline">
-                <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" class="w-75">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Please select a Research Area --</b-form-select-option>
-                    </template>
-                </b-form-select>
-                <b-button class="form-control ml-3" variant="secondary" @click="researchGroupButton" :disabled="disableResGrpBtn">Go</b-button>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -79,7 +69,6 @@ export default {
       disableResGrpBtn: true,
       disableProjDirBtn: true,
       cardHeadingText: templateSwitch.getProperty('cardHeadingText'),
-      themeTemplateName: templateSwitch.getProperty('name'),
     };
   },
   methods: {
@@ -129,9 +118,6 @@ export default {
   created() {
     this.populateFundingCycles();
     this.populateProjectDirectors();
-    if (this.themeTemplateName === 'HRI') {
-      this.selectedFundingCycle = this.fundingCycles[0].id;
-    }
   },
   watch: {
     selectedFundingCycle() {

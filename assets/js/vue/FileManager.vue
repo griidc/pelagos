@@ -33,10 +33,12 @@
             </template>
         </DxPopup>
         <DxPopup
-            title="Error"
+            :title="errorTitle"
             :visible.sync="isPopupVisible"
             :close-on-outside-click="true"
             :show-title="true"
+            :showCloseButton="!showLoginButton"
+            :closeOnOutsideClick="!showLoginButton"
             :width="300"
             :height="250">
             <template>
@@ -45,6 +47,13 @@
                     {{ errorMessage }}
                 </p>
             </template>
+            <DxToolbarItem
+              widget="dxButton"
+              location="center"
+              toolbar="bottom"
+              :visible.sync="showLoginButton"
+              :options="loginButtonOptions">
+            </DxToolbarItem>
         </DxPopup>
         <DxPopup
             title="Duplicate Filenames"
@@ -178,7 +187,7 @@ import 'devextreme/dist/css/dx.light.css';
 import {
   DxFileManager, DxItem, DxPermissions, DxToolbar,
 } from 'devextreme-vue/file-manager';
-import { DxPopup } from 'devextreme-vue/popup';
+import { DxPopup, DxToolbarItem } from 'devextreme-vue/popup';
 import { DxButton } from 'devextreme-vue/button';
 import { DxProgressBar } from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
@@ -225,7 +234,7 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
     }
   }).catch((error) => {
     if (error.response) {
-      myFileManager.$parent.showPopupError(error.response.data.message);
+      myFileManager.$parent.showPopupError(error.request);
     }
     reject(error);
   });
@@ -239,7 +248,7 @@ const deleteItem = (item) => new Promise((resolve, reject) => {
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.response.data.message);
+    myFileManager.$parent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -254,7 +263,7 @@ const moveItem = (item, destinationDirectory) => new Promise((resolve, reject) =
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.response.data.message);
+    myFileManager.$parent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -269,7 +278,7 @@ const renameItem = (item, name) => new Promise((resolve, reject) => {
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.response.data.message);
+    myFileManager.$parent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -322,11 +331,11 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
         }
         resolve();
       }).catch((error) => {
-        myFileManager.$parent.showPopupError(error.response.data.message);
+        myFileManager.$parent.showPopupError(error.request);
         reject(error);
       });
     }).catch((error) => {
-      myFileManager.$parent.showPopupError(error.response.data.message);
+      myFileManager.$parent.showPopupError(error.request);
       reject(error);
     });
   });
@@ -354,6 +363,9 @@ const initDropzone = () => {
     maxFilesize: null,
     clickable: '#upload-file-button',
     timeout: 0,
+    error: function error(file, errorMessage, xhr) {
+      myFileManager.$parent.showPopupError(xhr);
+    },
     uploadprogress(file) {
       if (file.xhr.status === 204) {
         if (myFileManager.$parent.totalFileSize
@@ -397,7 +409,7 @@ const initDropzone = () => {
       }).catch((error) => {
         currentFile.accepted = false;
         // eslint-disable-next-line no-underscore-dangle
-        myDropzone._errorProcessing([currentFile], error.message);
+        myDropzone._errorProcessing([currentFile], error.response.data, error.request);
       });
     },
   });
@@ -464,6 +476,7 @@ export default {
     DxItem,
     DxPopup,
     DxButton,
+    DxToolbarItem,
     DxProgressBar,
   },
 
@@ -499,6 +512,16 @@ export default {
       downloadedSize: 0,
       totalDownloadSize: 0,
       downloadPopup: false,
+      errorTitle: 'Error',
+      showLoginButton: false,
+      loginButtonOptions: {
+        type: 'danger',
+        text: 'Continue to Login Form',
+        onClick: () => {
+          // eslint-disable-next-line no-undef
+          window.location.href = Routing.generate('security_login', { destination: window.location.href });
+        },
+      },
     };
   },
 
@@ -642,8 +665,14 @@ export default {
       destinationDir = args.directory.path;
     },
 
-    showPopupError(message) {
-      this.errorMessage = message;
+    showPopupError(xhr) {
+      if ([401].includes(xhr.status)) {
+        this.errorTitle = 'Session Expired!';
+        this.showLoginButton = true;
+      }
+
+      const data = JSON.parse(xhr.responseText);
+      this.errorMessage = data.message;
       this.isPopupVisible = true;
     },
 
