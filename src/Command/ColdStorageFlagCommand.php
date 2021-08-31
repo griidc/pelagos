@@ -58,10 +58,10 @@ class ColdStorageFlagCommand extends Command
     {
         $this
             ->setDescription('Marks specified dataset as cold-stored and updates fileset with provided files')
-            ->addOption('udi', 'udi', InputOption::VALUE_REQUIRED, 'UDI of dataset to flag as cold stored')
-            ->addOption('originalfilesize', 'fs', InputOption::VALUE_REQUIRED, 'Original file size')
-            ->addOption('originalfilehash', 'fh', InputOption::VALUE_REQUIRED, 'Original sha256 hash')
-            ->addOption('originalfilename', 'fn', InputOption::VALUE_REQUIRED, 'Original file name')
+            ->addOption('udi', null, InputOption::VALUE_REQUIRED, 'UDI of dataset to flag as cold stored')
+            ->addOption('originalfilesize', null, InputOption::VALUE_REQUIRED, 'Original file size')
+            ->addOption('originalfilehash', null, InputOption::VALUE_REQUIRED, 'Original sha256 hash')
+            ->addOption('originalfilename', null, InputOption::VALUE_REQUIRED, 'Original file name')
             ;
     }
 
@@ -81,10 +81,10 @@ class ColdStorageFlagCommand extends Command
         $systemPerson = $this->entityManager->find(Person::class, 0);
 
         $io = new SymfonyStyle($input, $output);
-        $udi = $input->getArgument('udi');
-        $size = $input->getArgument('originalfilesize');
-        $hash = $input->getArgument('originalfilehash');
-        $originalFilename = $input->getArgument('originalfilename');
+        $udi = $input->getOption('udi');
+        $size = $input->getOption('originalfilesize');
+        $hash = $input->getOption('originalfilehash');
+        $originalFilename = $input->getOption('originalfilename');
 
         $io->note("UDI: ($udi)");
         $io->note("Original Size: ($size)");
