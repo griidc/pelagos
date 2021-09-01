@@ -82,24 +82,23 @@ class ColdStorageFlagCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
         $udi = $input->getOption('udi');
-        $size = $input->getOption('originalfilesize');
-        $hash = $input->getOption('originalfilehash');
-        $originalFilename = $input->getOption('originalfilename');
+        $originalFileSize = $input->getOption('originalfilesize');
+        $originalFileHash = $input->getOption('originalfilehash');
+        $originalFileName = $input->getOption('originalfilename');
 
         $io->note("UDI: ($udi)");
-        $io->note("Original Size: ($size)");
-        $io->note("Original Hash: ($hash)");
-        $io->note("Original Filename: ($originalFilename)");
+        $io->note("Original Size: ($originalFileSize)");
+        $io->note("Original Hash: ($originalFileHash)");
+        $io->note("Original File Name: ($originalFileName)");
         $io->note("Attempting to flag $udi as Cold Stored.");
 
-        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
-        if (count($datasets) == 0) {
-            throw new \Exception('Could not find a dataset with the udi provided.');
-        } else {
+        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+        if ($dataset instanceof Dataset) {
             $io->note('Dataset Found.');
+        } else {
+            throw new \Exception('Could not find a dataset with the udi provided.');
         }
 
-        $dataset = $datasets[0];
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!($datasetSubmission instanceof DatasetSubmission)) {
             throw new \Exception('Could not find Dataset Submission.');
@@ -107,7 +106,7 @@ class ColdStorageFlagCommand extends Command
             $io->note('Submission Found.');
 
             $datasetSubmission->setModifier($systemPerson);
-            $datasetSubmission->setDatasetFileColdStorageAttributes($size, $hash, $originalFilename);
+            $datasetSubmission->setDatasetFileColdStorageAttributes($originalFileSize, $originalFileHash, $originalFileName);
 
             $this->entityManager->persist($datasetSubmission);
             $this->entityManager->flush();
