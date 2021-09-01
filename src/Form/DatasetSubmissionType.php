@@ -282,6 +282,11 @@ class DatasetSubmissionType extends AbstractType
                     ])
                 ]
             ))
+            ->add('datasetFilePath', Type\ChoiceType::class, array(
+                'label' => 'Dataset File Path',
+                'required' => false,
+                'mapped' => false,
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),

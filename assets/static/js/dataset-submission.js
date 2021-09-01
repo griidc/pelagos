@@ -164,13 +164,18 @@ $(function() {
     });
 
     var fileTabs = $("#filetabs");
+
     fileTabs.tabs();
+
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
             fileTabs.tabs("option", "active", 0);
             break;
-        case "HTTP":
+        case "SFTP":
             fileTabs.tabs("option", "active", 1);
+            break;
+        case "HTTP":
+            fileTabs.tabs("option", "active", 2);
             break;
     }
 
@@ -204,6 +209,7 @@ $(function() {
         if (activeTab == 4) {
             $("#btn-next").button("disable");
             $("#btn-next").hide();
+            populateFolderDropDownList();
         } else {
             $("#btn-next").show();
             $("#btn-next").button("enable");
@@ -222,6 +228,24 @@ $(function() {
     $("#btn-save").click(function() {
         saveDatasetSubmission(true);
     });
+
+    function populateFolderDropDownList() {
+        let dropdown = $('#datasetFilePath');
+
+        dropdown.empty();
+
+        dropdown.append('<option selected="true" disabled>Choose Folder</option>');
+        dropdown.prop('selectedIndex', 0);
+
+        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission");
+
+        // Populate dropdown with list of folders
+        $.getJSON(url, function (data) {
+            $.each(data, function (key, value) {
+                dropdown.append($('<option></option>').attr('value', value).text(value));
+            })
+        });
+    }
 
     const loggedOutPopup = $("#loggedOutPopup").dxPopup({
         width: 300,
@@ -242,8 +266,8 @@ $(function() {
                 window.location.href = Routing.generate("security_login", {"destination":window.location.href})
               }
             },
-          }]
-      }).dxPopup("instance");
+        }]
+    }).dxPopup("instance");
 
     function saveDatasetSubmission(notify)
     {
