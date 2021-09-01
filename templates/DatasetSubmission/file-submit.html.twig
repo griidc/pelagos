@@ -64,11 +64,11 @@
                                     </div>
                                 </div>
                                 <div class="fwtextboxcont">
-                                    {% if sftpuser %}
-                                        {{ form_row(form.datasetFilePath) }}
-                                    {% else %}
-                                        {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
+                                    <select name="datasetFilePath" id="datasetFilePath"
+                                    {% if sftpuser == false %}
+                                        disabled="disabled"
                                     {% endif %}
+                                    \>
                                 </div>
                             </td>
                         </tr>
@@ -114,8 +114,10 @@
 						If data is available to the general public, select "None". Select "Restricted" if data cannot be shared.
 					</div>
 				</span>
+                    {{ form_row(form.datasetFileUri, { attr: { class: 'ignore'} }) }}
                     {{ form_widget(form.restrictions) }}
                 </td>
+
             </tr>
         </table>
     </fieldset>

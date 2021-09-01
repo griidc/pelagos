@@ -425,6 +425,22 @@ $(function() {
         }
     });
 
+    $("#datasetFilePath").on("keyup change", function() {
+        console.log('made it here');
+        console.log($(this).val());
+        let filesTabValidator = $("#filesTabValidator");
+        if ($(this).val()) {
+            $(this).valid();
+            filesTabValidator.val("valid");
+            $('label.error[for="filesTabValidator"]').remove();
+            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
+            $("#datasetFileUri").val($(this).val());
+        } else {
+            filesTabValidator.val("");
+            filesTabValidator.addClass("error");
+        }
+    });
+
 
     function select2ContactPerson() {
         $(".contactperson").not("#contact-prototype .contactperson").select2({
