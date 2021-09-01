@@ -429,6 +429,7 @@ class DatasetSubmissionController extends EntityController
         if (!($this->getUser() instanceof Account)) {
             throw new AccessDeniedException('Must be logged in');
         }
-        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
+        $jsonResponse = $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
+        return $jsonResponse;
     }
 }
