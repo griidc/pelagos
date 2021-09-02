@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use GuzzleHttp\Client;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * A utility query the Ingest server API.
@@ -44,7 +45,7 @@ class IngestUtil
         try {
             $response = $client->request('GET', $url);
         } catch (\Exception $exception) {
-            throw new \Exception($exception->getMessage(), $exception->getCode());
+            throw new HttpException($exception->getCode(), $exception->getMessage());
         } 
         return(json_decode($response->getBody()->getContents(), true));
     }
