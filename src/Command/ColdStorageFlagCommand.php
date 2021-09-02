@@ -109,7 +109,6 @@ class ColdStorageFlagCommand extends Command
             $datasetSubmission->setModifier($systemPerson);
             $datasetSubmission->setDatasetFileColdStorageAttributes($originalFileSize, $originalFileHash, $originalFileName);
 
-            $this->entityManager->persist($datasetSubmission);
             $this->entityManager->flush();
         }
 
