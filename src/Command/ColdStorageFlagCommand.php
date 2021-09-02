@@ -111,6 +111,9 @@ class ColdStorageFlagCommand extends Command
             $this->entityManager->persist($datasetSubmission);
             $this->entityManager->flush();
         }
+
+        $io->success('Done!');
+        
         return 0;
     }
 }
