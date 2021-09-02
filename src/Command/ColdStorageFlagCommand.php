@@ -96,7 +96,8 @@ class ColdStorageFlagCommand extends Command
         if ($dataset instanceof Dataset) {
             $io->note('Dataset Found.');
         } else {
-            throw new \Exception('Could not find a dataset with the udi provided.');
+            $io->error('Could not find a dataset with the udi provided.');
+            return 1;
         }
 
         $datasetSubmission = $dataset->getDatasetSubmission();
