@@ -71,9 +71,6 @@ class ColdStorageFlagCommand extends Command
      * @param InputInterface  $input  Command args.
      * @param OutputInterface $output Output txt.
      *
-     * @throws \Exception If cannot find dataset with provided UDI.
-     * @throws \Exception If cannot find dataset submission in dataset.
-     *
      * @return integer Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -96,13 +93,14 @@ class ColdStorageFlagCommand extends Command
         if ($dataset instanceof Dataset) {
             $io->note('Dataset Found.');
         } else {
-            $io->error('Could not find a dataset with the udi provided.');
+            $io->error('Could not find a dataset with UDI ' . $udi);
             return 1;
         }
 
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!($datasetSubmission instanceof DatasetSubmission)) {
-            throw new \Exception('Could not find Dataset Submission.');
+            $io->error('Could not find Dataset Submission in dataset ' . $udi);
+            return 1;
         } else {
             $io->note('Submission Found.');
 
