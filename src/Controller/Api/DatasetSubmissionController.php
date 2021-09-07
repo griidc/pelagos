@@ -430,6 +430,5 @@ class DatasetSubmissionController extends EntityController
             throw new AccessDeniedException('Must be logged in');
         }
         return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
-        return $jsonResponse;
     }
 }
