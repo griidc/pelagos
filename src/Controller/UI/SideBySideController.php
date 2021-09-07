@@ -71,7 +71,7 @@ class SideBySideController extends AbstractController
             return $this->redirect('/user/login?destination=' . $request->getPathInfo());
         }
 
-        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') or $this->isGranted('ROLE_SUBJECT_MATTER_EXPERT')) {
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') and !$this->isGranted('ROLE_SUBJECT_MATTER_EXPERT')) {
             return $this->render('template/AdminOnly.html.twig');
         }
 
