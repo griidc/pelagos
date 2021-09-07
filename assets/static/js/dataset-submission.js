@@ -281,8 +281,13 @@ $(function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 if ([401].includes(jqXHR.status)) {
                     loggedOutPopup.show();
-                } else if ([400].includes(jqXHR.status)) {
-                  var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                } else {
+                    if (jqXHR.status != 0) {
+                        var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                    } else {
+                        var message = "Server is Unreachable, please try again later!";
+                    }
+
                   var n = noty(
                   {
                       layout: "top",
