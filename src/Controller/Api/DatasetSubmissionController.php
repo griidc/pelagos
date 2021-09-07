@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+use App\Util\IngestUtil;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,7 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use App\Entity\Account;
 use App\Entity\File;
 use App\Entity\DatasetSubmission;
 use App\Entity\Fileset;
@@ -421,17 +424,11 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response
      */
-    public function getGlobalIngestFolders(): Response
+    public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
     {
-        $user = $this->getUser();
-        /* TODO */
-        return $this->makeJsonResponse([
-            ".dotfolder",
-            "H1.x123.456.7890",
-            "H1.x123.456:7891",
-            "R2.x137.108.0003",
-            "Spaces in foldername",
-            "c1.x123.456:7890"
-        ]);
+        if (!($this->getUser() instanceof Account)) {
+            throw new AccessDeniedException('Must be logged in');
+        }
+        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
     }
 }
