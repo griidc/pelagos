@@ -19,7 +19,7 @@
     overflow-x: hidden;
 }
 
-.home-image {
+#home-image {
     width: 800px;
     height: 400px;
 }
