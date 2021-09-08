@@ -436,6 +436,11 @@ $(document).ready(function(){
         });
     }
 
+    if ($("#remotelyHostedUrl").val() !== ''){
+        $(this).valid();
+        $("#filesTabValidator").val("valid");
+    }
+    
     // SFTP/GridFTP and HTTP/FTP
     $("#remotelyHostedUrl").on("keyup change", function() {
         let filesTabValidator = $("#filesTabValidator");
