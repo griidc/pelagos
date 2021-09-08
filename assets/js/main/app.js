@@ -56,8 +56,42 @@ function setContentHeight() {
   $('.page-pelagos-full #main-wrapper').height(newheight);
 }
 
+function localHour(chicagoHour) {
+  // messy stuff goes here
+  const localHour = chicagoHour;
+  return localHour;
+}
+
+function maintenanceWindowAlert(windowDay, chicagoHour, duration) {
+  (function loop() {
+    let now = new Date();
+
+    const year = now.getUTCFullYear();
+    const monthIndex = now.getUTCMonth();
+    const date = now.getUTCDate();
+    const day = now.getDay();
+
+    const hour = localHour(chicagoHour);
+
+    const startingWindowTimestamp = (new Date(year, monthIndex, date, hour).getTime());
+    const endingWindowTimestamp = startingWindowTimestamp + 3600 * 1000 * duration;
+
+    if (windowDay === day && Date.now() >= startingWindowTimestamp && Date.now() < endingWindowTimestamp) {
+      console.log("We're inside maintenance window.");
+    } else {
+      console.log('not in maintenance window');
+    }
+
+    now = new Date(); // allow for time passing
+    const delay = 60000 - (now % 60000); // exact ms to next minute interval
+    setTimeout(loop, delay);
+  }());
+}
+
 $(document).ready(() => {
   $('#pelagos-menu-1').hoverIntent(hoverIn, hoverOut, 'li');
+  // tuesday = 2, hr=15 (maintenance starting hr in America/Chicago time)
+  maintenanceWindowAlert(2, 15, 2);
 
   $(window).resize(() => {
     setContentHeight();
