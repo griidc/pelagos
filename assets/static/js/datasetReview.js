@@ -441,6 +441,11 @@ $(document).ready(function(){
         });
     }
 
+    if ($("#datasetFileUri").val() !== ''){
+        $(this).valid();
+        $("#filesTabValidator").val("valid");
+    }
+
     // SFTP/GridFTP and HTTP/FTP
     $("#remotelyHostedUrl,#datasetFileUri").on("keyup change", function() {
         let filesTabValidator = $("#filesTabValidator");
