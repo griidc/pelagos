@@ -426,8 +426,6 @@ $(function() {
     });
 
     $("#datasetFilePath").on("keyup change", function() {
-        console.log('made it here');
-        console.log($(this).val());
         let filesTabValidator = $("#filesTabValidator");
         if ($(this).val()) {
             $(this).valid();
@@ -440,7 +438,6 @@ $(function() {
             filesTabValidator.addClass("error");
         }
     });
-
 
     function select2ContactPerson() {
         $(".contactperson").not("#contact-prototype .contactperson").select2({
