@@ -279,23 +279,22 @@ $(function() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                let message = "Server is Unreachable, please try again later!";
                 if ([401].includes(jqXHR.status)) {
                     loggedOutPopup.show();
                 } else {
                     if (jqXHR.status != 0) {
-                        var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                    } else {
-                        var message = "Server is Unreachable, please try again later!";
+                        message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                     }
 
-                  var n = noty(
-                  {
-                      layout: "top",
-                      theme: "relax",
-                      type: "error",
-                      text: message,
-                      modal: true,
-                  });
+                    var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "error",
+                        text: message,
+                        modal: true,
+                    });
                 }
             }
         });
