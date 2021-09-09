@@ -56,7 +56,7 @@ function setContentHeight() {
   $('.page-pelagos-full #main-wrapper').height(newheight);
 }
 
-function localHour(chicagoHour) {
+function chicagoToLocalHour(chicagoHour) {
   // messy stuff goes here
   const localHour = chicagoHour;
   return localHour;
@@ -71,14 +71,16 @@ function maintenanceWindowAlert(windowDay, chicagoHour, duration) {
     const date = now.getUTCDate();
     const day = now.getDay();
 
-    const hour = localHour(chicagoHour);
+    const hour = chicagoToLocalHour(chicagoHour);
 
     const startingWindowTimestamp = (new Date(year, monthIndex, date, hour).getTime());
     const endingWindowTimestamp = startingWindowTimestamp + 3600 * 1000 * duration;
 
     if (windowDay === day && Date.now() >= startingWindowTimestamp && Date.now() < endingWindowTimestamp) {
+      // eslint-disable-next-line no-console
       console.log("We're inside maintenance window.");
     } else {
+      // eslint-disable-next-line no-console
       console.log('not in maintenance window');
     }
 
