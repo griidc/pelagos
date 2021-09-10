@@ -18,3 +18,8 @@
     max-height: 200px;
     overflow-x: hidden;
 }
+
+#home-image {
+    width: 800px;
+    height: 400px;
+}
