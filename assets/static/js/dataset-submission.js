@@ -233,20 +233,43 @@ $(function() {
         closeOnOutsideClick: false,
         showCloseButton: false,
         toolbarItems: [{
-          widget: "dxButton",
-          toolbar: "bottom",
-          options: {
+            widget: "dxButton",
+            toolbar: "bottom",
+            options: {
             type: "danger",
             text: "Continue to Login Form",
             onClick: function(e) {
                 window.location.href = Routing.generate("security_login", {"destination":window.location.href})
               }
             },
-          }]
-      }).dxPopup("instance");
+        }]
+    }).dxPopup("instance");
+
+    const errorPopup = $("#errorPopup").dxPopup({
+        width: 300,
+        height: 250,
+        showTitle: true,
+        title: "Something went wrong!",
+        visible: false,
+        dragEnabled: true,
+        closeOnOutsideClick: true,
+        showCloseButton: true,
+    }).dxPopup("instance")
 
     function saveDatasetSubmission(notify)
     {
+        if (notify) {
+            var dsNoty = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: "info",
+                    text: 'Saving Dataset Submission...',
+                    modal: true,
+                    closeWith: [],
+                });
+        }
+
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
         var url = Routing.generate("pelagos_api_dataset_submission_put");
 
@@ -256,6 +279,7 @@ $(function() {
             url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PUT",
             data: formData,
+            timeout: 30000,
             success: function(data, textStatus, jqXHR) {
                 $("#btn-discard").button("enable");
                 formHash = $("#regForm").serialize();
@@ -279,20 +303,19 @@ $(function() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                let message = "Server is Unreachable, please try again later!";
                 if ([401].includes(jqXHR.status)) {
                     loggedOutPopup.show();
-                } else if ([400].includes(jqXHR.status)) {
-                  var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                  var n = noty(
-                  {
-                      layout: "top",
-                      theme: "relax",
-                      type: "error",
-                      text: message,
-                      modal: true,
-                  });
+                } else {
+                    if (jqXHR.status != 0) {
+                        message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                    }
+                    errorPopup.show();
+                    $("#errorPopupText").html(message);
                 }
             }
+        }).always(function(){
+            dsNoty.close();
         });
 
     }
