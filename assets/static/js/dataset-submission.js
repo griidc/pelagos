@@ -315,7 +315,9 @@ $(function() {
                 }
             }
         }).always(function(){
-            dsNoty.close();
+            if (notify) {
+                dsNoty.close();
+            }
         });
     }
 
