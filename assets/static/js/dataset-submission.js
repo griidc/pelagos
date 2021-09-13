@@ -317,7 +317,6 @@ $(function() {
         }).always(function(){
             dsNoty.close();
         });
-
     }
 
     $("#temporalExtentBeginPosition").datepicker({
