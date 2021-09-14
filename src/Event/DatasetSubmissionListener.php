@@ -54,6 +54,8 @@ class DatasetSubmissionListener extends EventListener
 
         if ($datasetSubmission->getDatasetFileTransferType() === DatasetSubmission::TRANSFER_TYPE_SFTP) {
             $this->onLargeFileSubmitted($event);
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+            $this->entityManager->flush();
         }
     }
 
@@ -101,6 +103,8 @@ class DatasetSubmissionListener extends EventListener
 
         if ($datasetSubmission->getDatasetFileTransferType() === DatasetSubmission::TRANSFER_TYPE_SFTP) {
             $this->onLargeFileSubmitted($event);
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+            $this->entityManager->flush();
         }
     }
 
