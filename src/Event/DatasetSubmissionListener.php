@@ -19,6 +19,7 @@ class DatasetSubmissionListener extends EventListener
      */
     public function onSubmitted(EntityEvent $event)
     {
+        /** @var DatasetSubmission $datasetSubmission */
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
@@ -50,6 +51,10 @@ class DatasetSubmissionListener extends EventListener
             array('dataset' => $dataset),
             $this->getAllDRPMs()
         );
+
+        if ($datasetSubmission->getDatasetFileTransferType() === DatasetSubmission::TRANSFER_TYPE_SFTP) {
+            $this->onLargeFileSubmitted($event);
+        }
     }
 
     /**
@@ -61,6 +66,7 @@ class DatasetSubmissionListener extends EventListener
      */
     public function onResubmitted(EntityEvent $event)
     {
+        /** @var DatasetSubmission $datasetSubmission */
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
@@ -92,6 +98,10 @@ class DatasetSubmissionListener extends EventListener
             array('datasetSubmission' => $datasetSubmission),
             $this->getAllDRPMs()
         );
+
+        if ($datasetSubmission->getDatasetFileTransferType() === DatasetSubmission::TRANSFER_TYPE_SFTP) {
+            $this->onLargeFileSubmitted($event);
+        }
     }
 
     /**

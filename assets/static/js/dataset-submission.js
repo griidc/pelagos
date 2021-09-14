@@ -144,7 +144,7 @@ $(function() {
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
-            filesTabValidator: "Please upload a file or add remotely hosted url"
+            filesTabValidator: "Please upload a file, or add remotely hosted url, or select large file folder"
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -242,7 +242,7 @@ $(function() {
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
             $.each(data, function (key, value) {
-                dropdown.append($('<option></option>').attr('value', value).text(value));
+                dropdown.append($('<option></option>').attr('value', value).text(key));
             })
         });
     }
