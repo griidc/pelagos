@@ -162,6 +162,12 @@ $(function() {
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
+            filesUploaded: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            },
+            remotelyHostedUrl: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
