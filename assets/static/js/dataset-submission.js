@@ -136,15 +136,32 @@ $(function() {
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    if ($("#remotelyHostedUrl").val()) {
+        $("#datasetFileTransferType").val("HTTP");
+    }
+
+    $("#remotelyHostedUrl, #files-uploaded").on("keyup change", function() {
+        $(this).valid();
+        // get the datasetFileTransferType from the active tab
+        let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+    });
+
     $("#regForm").validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            filesUploaded:{
+                require_from_group: [1, '.files']
+            },
+            remotelyHostedUrl:{
+                require_from_group: [1, '.files']
+            }
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
-            filesTabValidator: "Please upload a file or add remotely hosted url"
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -386,26 +403,6 @@ $(function() {
     $(".contactperson").on("select2:unselecting", function(e) {
         $(this).parent().find(".contactinformation span").text("");
     });
-
-    if ($("#remotelyHostedUrl").val() !== ''){
-        $(this).valid();
-        $("#filesTabValidator").val("valid");
-    }
-
-    // SFTP/GridFTP and HTTP/FTP
-    $("#remotelyHostedUrl").on("keyup change", function() {
-        let filesTabValidator = $("#filesTabValidator");
-        if ($(this).val()) {
-            $(this).valid();
-            filesTabValidator.val("valid");
-            $('label.error[for="filesTabValidator"]').remove();
-            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
-        } else {
-            filesTabValidator.val("");
-            filesTabValidator.addClass("error");
-        }
-    });
-
 
     function select2ContactPerson() {
         $(".contactperson").not("#contact-prototype .contactperson").select2({
