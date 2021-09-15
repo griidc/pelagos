@@ -221,7 +221,7 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
     `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`,
   ).then((response) => {
     resolve(response.data);
-    const filesUploaded = document.getElementById('files-uploaded');
+    const filesUploaded = document.getElementById('filesUploaded');
     const datasetFileTransferType = document.getElementById('datasetFileTransferType');
     if (response.data.length > 0) {
       filesUploaded.value = 'valid';
