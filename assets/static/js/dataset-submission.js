@@ -152,12 +152,6 @@ $(function() {
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
-            filesUploaded:{
-                require_from_group: [1, '.files']
-            },
-            remotelyHostedUrl:{
-                require_from_group: [1, '.files']
-            }
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
@@ -177,6 +171,10 @@ $(function() {
                 form.submit();
             }
         },
+    });
+
+    $.validator.addClassRules("files", {
+        require_from_group: [1,".files"]
     });
 
     $("#dtabs").tabs({
