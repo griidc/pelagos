@@ -48,7 +48,7 @@ $(document).ready(function(){
         $("#datasetFileTransferType").val("HTTP");
     }
 
-    $("#remotelyHostedUrl, #files-uploaded").on("keyup change", function() {
+    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
         $(this).valid();
         // get the datasetFileTransferType from the active tab
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
