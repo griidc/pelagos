@@ -226,9 +226,6 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
     if (response.data.length > 0) {
       filesUploaded.value = 'valid';
       datasetFileTransferType.value = 'upload';
-    } else {
-      filesUploaded.value = '';
-      datasetFileTransferType.value = '';
     }
   }).catch((error) => {
     if (error.response) {

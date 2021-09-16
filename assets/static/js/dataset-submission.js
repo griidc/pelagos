@@ -140,7 +140,7 @@ $(function() {
         $("#datasetFileTransferType").val("HTTP");
     }
 
-    $("#remotelyHostedUrl, #files-uploaded").on("keyup change", function() {
+    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
         $(this).valid();
         // get the datasetFileTransferType from the active tab
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
@@ -165,11 +165,9 @@ $(function() {
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
-            if ($(".ignore").valid()) {
-                formHash = $("#regForm").serialize();
-                $("#regForm").prop("unsavedChanges", false);
-                form.submit();
-            }
+            formHash = $("#regForm").serialize();
+            $("#regForm").prop("unsavedChanges", false);
+            form.submit();
         },
     });
 
@@ -353,6 +351,10 @@ $(function() {
         var valid = $("#regForm").valid();
 
         if (false === valid) {
+            $("#filesUploaded").rules("remove");
+
+            $("#remotelyHostedUrl").rules("remove");
+
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
@@ -379,6 +381,19 @@ $(function() {
         } else {
             $(".invaliddsform").hide();
             $(".validdsform").show();
+
+
+            $("#filesUploaded").rules("add", {
+                require_from_group: [1,".files"]
+            });
+
+            $("#remotelyHostedUrl").rules("add", {
+                require_from_group: [1,".files"]
+            });
+
+            // $.validator.addClassRules("files", {
+            //     require_from_group: [1,".files"]
+            // });
         }
     });
 
