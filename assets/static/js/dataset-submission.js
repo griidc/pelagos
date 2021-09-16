@@ -171,10 +171,6 @@ $(function() {
         },
     });
 
-    $.validator.addClassRules("files", {
-        require_from_group: [1,".files"]
-    });
-
     $("#dtabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
@@ -352,7 +348,6 @@ $(function() {
 
         if (false === valid) {
             $("#filesUploaded").rules("remove");
-
             $("#remotelyHostedUrl").rules("remove");
 
             $(".tabimg").show();
@@ -382,7 +377,6 @@ $(function() {
             $(".invaliddsform").hide();
             $(".validdsform").show();
 
-
             $("#filesUploaded").rules("add", {
                 require_from_group: [1,".files"]
             });
@@ -390,10 +384,6 @@ $(function() {
             $("#remotelyHostedUrl").rules("add", {
                 require_from_group: [1,".files"]
             });
-
-            // $.validator.addClassRules("files", {
-            //     require_from_group: [1,".files"]
-            // });
         }
     });
 
