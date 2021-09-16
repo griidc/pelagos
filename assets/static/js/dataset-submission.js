@@ -153,6 +153,9 @@ $(function() {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
         },
+        groups: {
+            files: "filesUploaded remotelyHostedUrl"
+        },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",

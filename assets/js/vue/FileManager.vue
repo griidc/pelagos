@@ -226,7 +226,12 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
     if (response.data.length > 0) {
       filesUploaded.value = 'valid';
       datasetFileTransferType.value = 'upload';
+    } else {
+      filesUploaded.value = '';
     }
+    const event = document.createEvent('HTMLEvents');
+    event.initEvent('change', true, false);
+    filesUploaded.dispatchEvent(event);
   }).catch((error) => {
     if (error.response) {
       myFileManager.$parent.showPopupError(error.request);
