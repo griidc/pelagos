@@ -44,15 +44,41 @@ $(document).ready(function(){
 
     var remoteURL = Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") });
 
+    if ($("#remotelyHostedUrl").val()) {
+        $("#datasetFileTransferType").val("HTTP");
+    }
+
+    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
+        $(this).valid();
+        // get the datasetFileTransferType from the active tab
+        let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+    });
+
     regForm.validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            filesUploaded:{
+                require_from_group: [1, '.files']
+            },
+            remotelyHostedUrl:{
+                require_from_group: [1, '.files']
+            }
+        },
+        groups: {
+            files: "filesUploaded remotelyHostedUrl"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
-            filesTabValidator: "Please upload a file or add remotely hosted url"
+            filesUploaded: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            },
+            remotelyHostedUrl: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
@@ -435,27 +461,6 @@ $(document).ready(function(){
             }
         });
     }
-
-    if ($("#remotelyHostedUrl").val() !== ''){
-        $(this).valid();
-        $("#filesTabValidator").val("valid");
-    }
-    
-    // SFTP/GridFTP and HTTP/FTP
-    $("#remotelyHostedUrl").on("keyup change", function() {
-        let filesTabValidator = $("#filesTabValidator");
-        if ($(this).val()) {
-            $(this).valid();
-            filesTabValidator.val("valid");
-            $('label.error[for="filesTabValidator"]').remove();
-            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
-        } else {
-            filesTabValidator.val("");
-            filesTabValidator.addClass("error");
-            $("#datasetFileTransferType").val("");
-        }
-    });
-
 
     $("#temporalInfoQuestion").on("change", function (e) {
         checkTemporalNilReason();
