@@ -67,6 +67,9 @@ $(document).ready(function(){
                 require_from_group: [1, '.files']
             }
         },
+        groups: {
+            files: "filesUploaded remotelyHostedUrl"
+        },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
