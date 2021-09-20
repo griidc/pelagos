@@ -143,6 +143,7 @@ class DownloadController extends AbstractController
                     $filename
                 );
                 $response->headers->set('Content-Disposition', $disposition);
+                #$response->headers->set('Content-type', 'application/octet-stream');
 
                 if ($this->getUser()) {
                     $type = get_class($this->getUser());
