@@ -88,9 +88,7 @@ $(document).ready(function(){
         },
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
-            if ($(".ignore").valid()) {
-                form.submit();
-            }
+            form.submit();
         }
     });
 
