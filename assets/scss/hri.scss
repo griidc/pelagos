@@ -93,6 +93,11 @@ body {
   font-weight: 300;
 }
 
+#home-image {
+  width: 600px;
+  height: auto;
+}
+
 /* Menu bar style */
 
 .main_menu {
@@ -198,7 +203,7 @@ body {
 
 @media only screen and (min-width: 0px) and (max-width: 1091px) {
   .navbar-brand {
-    max-width: 150px;
+    max-width: 200px;
   }
 
   .login-bar {
@@ -244,7 +249,7 @@ body {
   }
 
   .logo {
-    width: 300px;
+    width: 325px;
     margin-top: 5px;
   }
 
