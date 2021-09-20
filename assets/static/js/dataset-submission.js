@@ -136,23 +136,41 @@ $(function() {
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    if ($("#remotelyHostedUrl").val()) {
+        $("#datasetFileTransferType").val("HTTP");
+    }
+
+    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
+        $(this).valid();
+        // get the datasetFileTransferType from the active tab
+        let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+    });
+
     $("#regForm").validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
         },
+        groups: {
+            files: "filesUploaded remotelyHostedUrl"
+        },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
-            filesTabValidator: "Please upload a file, or add remotely hosted url, or select large file folder"
+            filesUploaded: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            },
+            remotelyHostedUrl: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
-            if ($(".ignore").valid()) {
-                formHash = $("#regForm").serialize();
-                $("#regForm").prop("unsavedChanges", false);
-                form.submit();
-            }
+            formHash = $("#regForm").serialize();
+            $("#regForm").prop("unsavedChanges", false);
+            form.submit();
         },
     });
 
@@ -356,6 +374,9 @@ $(function() {
         var valid = $("#regForm").valid();
 
         if (false === valid) {
+            $("#filesUploaded").rules("remove");
+            $("#remotelyHostedUrl").rules("remove");
+
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
@@ -382,6 +403,14 @@ $(function() {
         } else {
             $(".invaliddsform").hide();
             $(".validdsform").show();
+
+            $("#filesUploaded").rules("add", {
+                require_from_group: [1,".files"]
+            });
+
+            $("#remotelyHostedUrl").rules("add", {
+                require_from_group: [1,".files"]
+            });
         }
     });
 
@@ -409,34 +438,6 @@ $(function() {
 
     $(".contactperson").on("select2:unselecting", function(e) {
         $(this).parent().find(".contactinformation span").text("");
-    });
-
-    // SFTP/GridFTP and HTTP/FTP
-    $("#remotelyHostedUrl").on("keyup change", function() {
-        let filesTabValidator = $("#filesTabValidator");
-        if ($(this).val()) {
-            $(this).valid();
-            filesTabValidator.val("valid");
-            $('label.error[for="filesTabValidator"]').remove();
-            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
-        } else {
-            filesTabValidator.val("");
-            filesTabValidator.addClass("error");
-        }
-    });
-
-    $("#datasetFilePath").on("keyup change", function() {
-        let filesTabValidator = $("#filesTabValidator");
-        if ($(this).val()) {
-            $(this).valid();
-            filesTabValidator.val("valid");
-            $('label.error[for="filesTabValidator"]').remove();
-            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
-            $("#datasetFileUri").val($(this).val());
-        } else {
-            filesTabValidator.val("");
-            filesTabValidator.addClass("error");
-        }
     });
 
     function select2ContactPerson() {
