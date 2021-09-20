@@ -273,6 +273,10 @@ class DatasetSubmissionType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ))
+            ->add('datasetFileUri', Type\HiddenType::class, array(
+                'required' => false,
+                'mapped' => true,
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),

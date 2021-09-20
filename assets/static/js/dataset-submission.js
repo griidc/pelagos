@@ -154,16 +154,19 @@ $(function() {
             temporalExtentEndPosition: "trueISODate",
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl"
+            files: "filesUploaded remotelyHostedUrl datasetFileUri"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
             filesUploaded: {
-                require_from_group: "Please upload a file, or add remotely hosted url"
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             },
             remotelyHostedUrl: {
-                require_from_group: "Please upload a file, or add remotely hosted url"
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
+            },
+            datasetFileUri: {
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             }
         },
         ignore: ".ignore,.prototype",
@@ -376,6 +379,7 @@ $(function() {
         if (false === valid) {
             $("#filesUploaded").rules("remove");
             $("#remotelyHostedUrl").rules("remove");
+            $("#datasetFileUri").rules("remove");
 
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
@@ -409,6 +413,10 @@ $(function() {
             });
 
             $("#remotelyHostedUrl").rules("add", {
+                require_from_group: [1,".files"]
+            });
+
+            $("#datasetFileUri").rules("add", {
                 require_from_group: [1,".files"]
             });
         }
