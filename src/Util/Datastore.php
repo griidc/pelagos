@@ -4,7 +4,7 @@ namespace App\Util;
 
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
-use phpDocumentor\Reflection\Types\Boolean;
+
 use Psr\Log\LoggerInterface;
 
 /**
@@ -68,9 +68,9 @@ class Datastore
      *
      * @param string $filePath The file's path.
      *
-     * @return string
+     * @return string|false
      */
-    public function getMimeType(string $filePath): string
+    public function getMimeType(string $filePath)
     {
         return $this->datastoreFlysystem->getMimetype($filePath);
     }
