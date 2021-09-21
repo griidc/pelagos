@@ -632,14 +632,6 @@ function areTabsValid()
             });
         });
 
-        if (typeof $("#datasetFileUri").val() !== "undefined") {
-            if ($("#datasetFileUri").val() === "") {
-                $("#filetabimg").prop("src", imgWarning);
-                isValid = false;
-            } else {
-                $("#filetabimg").prop("src", imgCheck);
-            }
-        }
         return isValid;
     } else {
         return false;
