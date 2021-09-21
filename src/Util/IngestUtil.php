@@ -46,7 +46,7 @@ class IngestUtil
             $response = $client->request('GET', $url);
         } catch (\Exception $exception) {
             throw new HttpException($exception->getCode(), $exception->getMessage());
-        } 
+        }
         return json_decode($response->getBody()->getContents(), true);
     }
 }
