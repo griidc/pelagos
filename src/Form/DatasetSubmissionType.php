@@ -273,15 +273,6 @@ class DatasetSubmissionType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ))
-            ->add('filesTabValidator', Type\HiddenType::class, array(
-                'mapped' => false,
-                'required' => true,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please upload a file or add remotely hosted url'
-                    ])
-                ]
-            ))
             ->add('datasetFilePath', Type\ChoiceType::class, array(
                 'label' => 'Dataset File Path',
                 'required' => false,
