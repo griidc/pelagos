@@ -146,7 +146,7 @@ class DownloadController extends AbstractController
                 );
 
                 if (empty($mimeType)) {
-                    $mimeType = 'application/octet-stream';                 
+                    $mimeType = 'application/octet-stream';
                 }
                 $response->headers->set('Content-Disposition', $disposition);
                 $response->headers->set('Content-type', $mimeType);
