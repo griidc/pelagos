@@ -54,11 +54,7 @@
                                     </div>
                                 </div>
                                 <div class="fwtextboxcont">
-                                    {% if sftpuser %}
-                                        {{ form_row(form.datasetFilePath) }}
-                                    {% else %}
-                                        {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
-                                    {% endif %}
+                                    <input type="text" name="datasetFileUri" id="datasetFileUri" value="{{ form.datasetFileUri.vars.value }}" class="valid files"\>
                                 </div>
                             </td>
                         </tr>

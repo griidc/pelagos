@@ -140,12 +140,17 @@ $(function() {
         $("#datasetFileTransferType").val("HTTP");
     }
 
-    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
+    $("#remotelyHostedUrl, #filesUploaded, #datasetFileUri").on("keyup change", function() {
         $(this).valid();
         // get the datasetFileTransferType from the active tab
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
+
+    });
+
+    $("#datasetFilePath").on("keyup change", function() {
+        $("#datasetFileUri").val($(this).val()).trigger("change");
     });
 
     $("#regForm").validate({
@@ -154,16 +159,19 @@ $(function() {
             temporalExtentEndPosition: "trueISODate",
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl"
+            files: "filesUploaded remotelyHostedUrl datasetFileUri"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
             filesUploaded: {
-                require_from_group: "Please upload a file, or add remotely hosted url"
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             },
             remotelyHostedUrl: {
-                require_from_group: "Please upload a file, or add remotely hosted url"
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
+            },
+            datasetFileUri: {
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             }
         },
         ignore: ".ignore,.prototype",
@@ -260,7 +268,7 @@ $(function() {
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
             $.each(data, function (key, value) {
-                dropdown.append($('<option></option>').attr('value', value).text(value));
+                dropdown.append($('<option></option>').attr('value', value).text(key));
             })
         });
     }
@@ -376,6 +384,7 @@ $(function() {
         if (false === valid) {
             $("#filesUploaded").rules("remove");
             $("#remotelyHostedUrl").rules("remove");
+            $("#datasetFileUri").rules("remove");
 
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
@@ -409,6 +418,10 @@ $(function() {
             });
 
             $("#remotelyHostedUrl").rules("add", {
+                require_from_group: [1,".files"]
+            });
+
+            $("#datasetFileUri").rules("add", {
                 require_from_group: [1,".files"]
             });
         }

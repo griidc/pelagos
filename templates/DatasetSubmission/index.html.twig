@@ -80,8 +80,9 @@
                 Sorry, but you can only create or edit dataset submissions for datasets associated with your research groups.
         </div>
         {% include 'DatasetSubmission/form.html.twig' %}
+
     {% elseif datasetSubmission.status == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE')
-              and (datasetSubmission.getFileset.isDone == false)
+              and datasetSubmission.getFileset and datasetSubmission.getFileset.isDone == false
     %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
