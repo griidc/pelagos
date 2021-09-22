@@ -24,6 +24,7 @@ use App\Event\EntityEventDispatcher;
 use App\Form\DIFType;
 use App\Security\Voter\DIFVoter;
 use App\Util\Udi;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * The DIF api controller.
@@ -397,6 +398,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs", name="pelagos_api_difs_post", methods={"POST"}, defaults={"_format"="json"})
      *
