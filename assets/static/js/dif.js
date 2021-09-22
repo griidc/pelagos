@@ -562,10 +562,14 @@ function createDIF(form)
         formReset(true);
     })
     .fail(function() {
+        let errorMessage = "Server is Unreachable, please try again later!";
+        if (response && response.message) {
+            errorMessage = response.message;
+        }
         confirmDialog.title = "Unable to perform desired action on DIF";
         confirmDialog.message = '<div><img src="' + imgCancel + '">' +
                     "<p>The application with DIF ID: " + udi + " failed to complete action!" +
-                    "<br>Error message: " + response.message + "</p></div>";
+                    "<br>Error message: " + errorMessage + "</p></div>";
     })
     .always(function() {
         hideSpinner();
