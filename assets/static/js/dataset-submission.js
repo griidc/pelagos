@@ -307,7 +307,7 @@ $(function() {
                 if ([401].includes(jqXHR.status)) {
                     loggedOutPopup.show();
                 } else {
-                    if (jqXHR.status != 0) {
+                    if (jqXHR.status !== 0) {
                         message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                     }
                     errorPopup.show();
