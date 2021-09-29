@@ -1,5 +1,7 @@
 import { Spinner } from 'spin.js';
 
+require('spin.js/spin.css');
+
 const spinnerDiv = document.createElement('div');
 spinnerDiv.style.display = 'none';
 spinnerDiv.classList.add('spinnermodal');

@@ -4,6 +4,7 @@ global.jQuery = $;
 global.$ = global.jQuery;
 global.queryString = require('query-string');
 global.loadingSpinner = require('./spinner');
+global.errorDialog = require('./errorDialog');
 
 require('jquery-migrate');
 
