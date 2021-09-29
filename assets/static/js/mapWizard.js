@@ -26,12 +26,26 @@ function MapWizard(json)
     var diaHeight = $(window).height()*.8;
 
     $.ajaxSetup({
-        timeout: 60000,
-        error: function(x, t, m) {
-            var message;
-            if (typeof m.message != "undefined")
-            {message = m.message;}else{message = m;};
-            console.log("Error in Ajax:"+t+" Message:"+message);
+        timeout: 20000,
+        error: function(jqXHR, textStatus, errorThrown) {
+            let message = "Server is Unreachable, please try again later!";
+            if (jqXHR.status !== 0) {
+                message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+            }
+            console.log("Error in Ajax:" + textStatus + ", Message:" + message);
+            var n = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: "error",
+                    text: message,
+                    modal: true,
+                    animation: {
+                        open: "animated fadeIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                    }
+                }
+            );
         }
     });
 
@@ -75,6 +89,22 @@ function MapWizard(json)
                     message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                 }
                 console.log("FAILS: " + message);
+                var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "error",
+                        text: message,
+                        modal: true,
+                        animation: {
+                            open: "animated fadeIn", // Animate.css class names
+                            close: "animated fadeOut", // Animate.css class names
+                            easing: "swing", // unavailable - no need
+                            speed: 500 // unavailable - no need
+                        }
+                    }
+                );
+
                 loadingSpinner.hideSpinner();
             });
     }
@@ -109,6 +139,21 @@ function MapWizard(json)
                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                     }
                     console.log("FAILS: " + message);
+                    var n = noty(
+                        {
+                            layout: "top",
+                            theme: "relax",
+                            type: "error",
+                            text: message,
+                            modal: true,
+                            animation: {
+                                open: "animated fadeIn", // Animate.css class names
+                                close: "animated fadeOut", // Animate.css class names
+                                easing: "swing", // unavailable - no need
+                                speed: 500 // unavailable - no need
+                            }
+                        }
+                    );
                     loadingSpinner.hideSpinner();
                 });
         });
@@ -637,6 +682,21 @@ function MapWizard(json)
                                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                                     }
                                     console.log("FAILS: " + message);
+                                    var n = noty(
+                                        {
+                                            layout: "top",
+                                            theme: "relax",
+                                            type: "error",
+                                            text: message,
+                                            modal: true,
+                                            animation: {
+                                                open: "animated fadeIn", // Animate.css class names
+                                                close: "animated fadeOut", // Animate.css class names
+                                                easing: "swing", // unavailable - no need
+                                                speed: 500 // unavailable - no need
+                                            }
+                                        }
+                                    );
                                     loadingSpinner.hideSpinner();
                                 });
                                 closeDialog();
@@ -657,6 +717,21 @@ function MapWizard(json)
                                 message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                             }
                             console.log("FAILS: " + message);
+                            var n = noty(
+                                {
+                                    layout: "top",
+                                    theme: "relax",
+                                    type: "error",
+                                    text: message,
+                                    modal: true,
+                                    animation: {
+                                        open: "animated fadeIn", // Animate.css class names
+                                        close: "animated fadeOut", // Animate.css class names
+                                        easing: "swing", // unavailable - no need
+                                        speed: 500 // unavailable - no need
+                                    }
+                                }
+                            );
                             loadingSpinner.hideSpinner();
                         });
                     }
