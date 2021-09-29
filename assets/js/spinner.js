@@ -38,4 +38,4 @@ function showSpinner() {
   spinnerDiv.style.display = 'block';
 }
 
-export { showSpinner, hideSpinner };
+export default { showSpinner, hideSpinner };

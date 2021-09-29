@@ -6,7 +6,10 @@ require('devextreme/dist/css/dx.light.css');
 const Popup = require('devextreme/ui/popup');
 // const Button = require('devextreme/ui/button');
 
-const errorPopup = new Popup(document.createElement('div'), {
+const errorDialogDiv = document.createElement('div');
+document.body.appendChild(errorDialogDiv);
+
+const errorPopup = new Popup(errorDialogDiv, {
   contentTemplate: template,
   width: 400,
   height: 300,
@@ -18,13 +21,9 @@ const errorPopup = new Popup(document.createElement('div'), {
   showCloseButton: true,
 });
 
-function showError(message) {
+const showError = (message) => {
   errorPopup.show();
-//   document.getElementById('errorDialogMessage').innerHTML = message;
-}
+  document.getElementById('errorDialogMessage').innerHTML = message;
+};
 
-function help() {
-  // I do nothing!
-}
-
-export default { showError, help };
+export default showError;

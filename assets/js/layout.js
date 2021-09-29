@@ -1,10 +1,14 @@
+import errorDialog from './errorDialog';
+import loadingSpinner from './spinner';
+
 const $ = require('jquery');
 
 global.jQuery = $;
 global.$ = global.jQuery;
 global.queryString = require('query-string');
-global.loadingSpinner = require('./spinner');
-global.errorDialog = require('./errorDialog');
+
+global.loadingSpinner = loadingSpinner;
+global.showErrorDialog = errorDialog;
 
 require('jquery-migrate');
 

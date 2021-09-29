@@ -90,7 +90,7 @@ function MapWizard(json)
                 }
                 console.log("FAILS: " + message);
                 loadingSpinner.hideSpinner();
-                errorDialog.showError(message);
+                showErrorDialog(message);
             });
     }
 
@@ -124,7 +124,7 @@ function MapWizard(json)
                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                     }
                     console.log("FAILS: " + message);
-                    errorDialog.showError(message);
+                    showErrorDialog(message);
                     loadingSpinner.hideSpinner();
                 });
         });
@@ -653,7 +653,7 @@ function MapWizard(json)
                                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                                     }
                                     console.log("FAILS: " + message);
-                                    errorDialog.showError(message);
+                                    showErrorDialog(message);
                                     loadingSpinner.hideSpinner();
                                 });
                                 closeDialog();
@@ -674,7 +674,7 @@ function MapWizard(json)
                                 message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                             }
                             console.log("FAILS: " + message);
-                            errorDialog.showError(message);
+                            showErrorDialog(message);
                             loadingSpinner.hideSpinner();
                         });
                     }
