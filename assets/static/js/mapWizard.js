@@ -89,23 +89,8 @@ function MapWizard(json)
                     message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                 }
                 console.log("FAILS: " + message);
-                var n = noty(
-                    {
-                        layout: "top",
-                        theme: "relax",
-                        type: "error",
-                        text: message,
-                        modal: true,
-                        animation: {
-                            open: "animated fadeIn", // Animate.css class names
-                            close: "animated fadeOut", // Animate.css class names
-                            easing: "swing", // unavailable - no need
-                            speed: 500 // unavailable - no need
-                        }
-                    }
-                );
-
                 loadingSpinner.hideSpinner();
+                errorDialog.showError(message);
             });
     }
 
@@ -139,21 +124,7 @@ function MapWizard(json)
                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                     }
                     console.log("FAILS: " + message);
-                    var n = noty(
-                        {
-                            layout: "top",
-                            theme: "relax",
-                            type: "error",
-                            text: message,
-                            modal: true,
-                            animation: {
-                                open: "animated fadeIn", // Animate.css class names
-                                close: "animated fadeOut", // Animate.css class names
-                                easing: "swing", // unavailable - no need
-                                speed: 500 // unavailable - no need
-                            }
-                        }
-                    );
+                    errorDialog.showError(message);
                     loadingSpinner.hideSpinner();
                 });
         });
@@ -682,21 +653,7 @@ function MapWizard(json)
                                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                                     }
                                     console.log("FAILS: " + message);
-                                    var n = noty(
-                                        {
-                                            layout: "top",
-                                            theme: "relax",
-                                            type: "error",
-                                            text: message,
-                                            modal: true,
-                                            animation: {
-                                                open: "animated fadeIn", // Animate.css class names
-                                                close: "animated fadeOut", // Animate.css class names
-                                                easing: "swing", // unavailable - no need
-                                                speed: 500 // unavailable - no need
-                                            }
-                                        }
-                                    );
+                                    errorDialog.showError(message);
                                     loadingSpinner.hideSpinner();
                                 });
                                 closeDialog();
@@ -717,21 +674,7 @@ function MapWizard(json)
                                 message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                             }
                             console.log("FAILS: " + message);
-                            var n = noty(
-                                {
-                                    layout: "top",
-                                    theme: "relax",
-                                    type: "error",
-                                    text: message,
-                                    modal: true,
-                                    animation: {
-                                        open: "animated fadeIn", // Animate.css class names
-                                        close: "animated fadeOut", // Animate.css class names
-                                        easing: "swing", // unavailable - no need
-                                        speed: 500 // unavailable - no need
-                                    }
-                                }
-                            );
+                            errorDialog.showError(message);
                             loadingSpinner.hideSpinner();
                         });
                     }
