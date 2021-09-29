@@ -58,6 +58,16 @@ body {
     width: 980px;
 }
 
+.spinnermodal {
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 0, 0, 0, .2 ) ;
+}
+
 h1 {
     font-family: inherit;
     font-size: 1.733em;

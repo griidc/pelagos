@@ -3,6 +3,7 @@ const $ = require('jquery');
 global.jQuery = $;
 global.$ = global.jQuery;
 global.queryString = require('query-string');
+global.loadingSpinner = require('./spinner');
 
 require('jquery-migrate');
 

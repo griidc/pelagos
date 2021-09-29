@@ -554,12 +554,21 @@ function GeoViz()
             return jQuery.ajax({
                 url: Routing.generate("pelagos_app_gml_towkt"),
                 type: "POST",
+                context: document.body,
                 data: {gml: GML},
-                context: document.body
+                dataType: "json",
+                converters:
+                {
+                    "text json": function(json)
+                    {
+                        data = JSON.parse(json);
+                        return data.hasOwnProperty('wkt') ? data.wkt : data;
+                    },
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    return $.Deferred().reject();
+                },
             })
-                .done(function (wkt) {
-                    return wkt;
-                })
         } else {
             return Promise.resolve(false);
         }
@@ -571,11 +580,20 @@ function GeoViz()
             url: Routing.generate("pelagos_app_gml_fromwkt"),
             type: "POST",
             data: {wkt: WKT},
-            context: document.body
-            })
-            .done(function(gml) {
-                return gml;
-        });
+            context: document.body,
+            dataType: "json",
+            converters:
+            {
+                "text json": function(json)
+                {
+                    data = JSON.parse(json);
+                    return data.hasOwnProperty('gml') ? data.gml : data;
+                },
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                return $.Deferred().reject();
+            },
+        })
     }
 
     this.addFeatureFromWKT = function (WKT,Attributes,Style)

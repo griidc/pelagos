@@ -68,6 +68,14 @@ function MapWizard(json)
                 var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
                 smlGeoViz.gotoAllFeatures();
                 geometryType = smlGeoViz.getSingleFeatureClass();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                let message = "Server is Unreachable, please try again later!";
+                if (jqXHR.status !== 0) {
+                    message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+                }
+                console.log("FAILS: " + message);
+                loadingSpinner.hideSpinner();
             });
     }
 
@@ -94,6 +102,14 @@ function MapWizard(json)
                     var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
                     smlGeoViz.gotoAllFeatures();
                     geometryType = smlGeoViz.getSingleFeatureClass();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    let message = "Server is Unreachable, please try again later!";
+                    if (jqXHR.status !== 0) {
+                        message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+                    }
+                    console.log("FAILS: " + message);
+                    loadingSpinner.hideSpinner();
                 });
         });
 
@@ -602,27 +618,53 @@ function MapWizard(json)
             }
             else
             {
-                var myWKT = wizGeoViz.getWKT(myWKTid);
-                var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-                //run GML validation if the SEW is opened with dataset review,
-                if (true === validateGeometry) {
-                    validateGeometryFromWkt(wgsWKT).then(function(isValid) {
-                        if (isValid === "Valid Geometry") {
-                            wizGeoViz.wktToGML(wgsWKT).then(function(gml){
-                                $(gmlField).val(gml);
-                                $(gmlField).trigger("change");
-                                $(descField).val("");
-                            })
+                try {
+                    var myWKT = wizGeoViz.getWKT(myWKTid);
+                    var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
+
+                    //run GML validation if the SEW is opened with dataset review,
+                    if (true === validateGeometry) {
+                        validateGeometryFromWkt(wgsWKT).then(function(isValid) {
+                            if (isValid === "Valid Geometry") {
+                                wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                                    $(gmlField).val(gml);
+                                    $(gmlField).trigger("change");
+                                    $(descField).val("");
+                                })
+                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                    let message = "Server is Unreachable, please try again later!";
+                                    if (jqXHR.status !== 0) {
+                                        message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+                                    }
+                                    console.log("FAILS: " + message);
+                                    loadingSpinner.hideSpinner();
+                                });
+                                closeDialog();
+                                loadingSpinner.hideSpinner();
+                            }
+                        })
+                    } else {
+                        wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                            $(gmlField).val(gml);
+                            $(gmlField).trigger("change");
+                            $(descField).val("");
                             closeDialog();
-                        }
-                    })
-                } else {
-                    wizGeoViz.wktToGML(wgsWKT).then(function(gml){
-                        $(gmlField).val(gml);
-                        $(gmlField).trigger("change");
-                        $(descField).val("");
-                        closeDialog();
-                    })
+                            loadingSpinner.hideSpinner();
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            let message = "Server is Unreachable, please try again later!";
+                            if (jqXHR.status !== 0) {
+                                message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+                            }
+                            console.log("FAILS: " + message);
+                            loadingSpinner.hideSpinner();
+                        });
+                    }
+                }
+                catch (error) {
+                    console.log('error happend!');
+                    console.error(error);
+                    loadingSpinner.hideSpinner();
                 }
             }
         } else {
@@ -719,6 +761,7 @@ function MapWizard(json)
         .button({ icons: { primary: "ui-icon ui-icon-disk"}},{disabled: true})
         .click(function()
         {
+            loadingSpinner.showSpinner();
             saveFeature();
         })
         .end()
