@@ -128,6 +128,7 @@ class DownloadController extends AbstractController
                         stream_copy_to_stream($fileStream['fileStream'], $outputStream);
                     });
                     $filename = $datasetSubmission->getDatasetFileName();
+                    $mimeType = $dataStore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';
                 } else {
                     $zipFilePath = $fileset->getZipFilePath();
                     $response = new StreamedResponse(function () use ($zipFilePath) {
@@ -136,13 +137,16 @@ class DownloadController extends AbstractController
                         stream_copy_to_stream($fileStream, $outputStream);
                     });
                     $filename = basename($zipFilePath);
+                    $mimeType = 'application/zip';
                 }
 
                 $disposition = HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
                     $filename
                 );
+                
                 $response->headers->set('Content-Disposition', $disposition);
+                $response->headers->set('Content-type', $mimeType);
 
                 if ($this->getUser()) {
                     $type = get_class($this->getUser());
