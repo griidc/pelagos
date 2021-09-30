@@ -1,10 +1,7 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'devextreme/dist/css/dx.light.css';
+import Popup from 'devextreme/ui/popup';
 import template from '../html/errorDialog.html';
-
-require('devextreme/dist/css/dx.light.css');
-
-const Popup = require('devextreme/ui/popup');
-// const Button = require('devextreme/ui/button');
 
 const errorDialogDiv = document.createElement('div');
 document.body.appendChild(errorDialogDiv);
@@ -19,9 +16,27 @@ const errorPopup = new Popup(errorDialogDiv, {
   dragEnabled: true,
   closeOnOutsideClick: true,
   showCloseButton: true,
+  toolbarItems: [{
+    widget: 'dxButton',
+    toolbar: 'bottom',
+    visible: false,
+    options: {
+      type: 'danger',
+      text: 'Continue to Login Form',
+      onClick() {
+        // eslint-disable-next-line no-undef
+        window.location.href = Routing.generate('security_login', { destination: window.location.href });
+      },
+    },
+  }],
 });
 
-const showError = (message) => {
+const showError = (message, showLogoutButton = false) => {
+  const toolbarItems = errorPopup.option('toolbarItems');
+  errorPopup.option('closeOnOutsideClick', !showLogoutButton);
+  errorPopup.option('showCloseButton', !showLogoutButton);
+  toolbarItems[0].visible = showLogoutButton;
+  errorPopup.option('toolbarItems', toolbarItems);
   errorPopup.show();
   document.getElementById('errorDialogMessage').innerHTML = message;
 };
