@@ -1,6 +1,5 @@
 var $ = jQuery.noConflict();
 
-var spinner;
 var target;
 var formHash;
 var difValidator;
@@ -33,8 +32,6 @@ $(document).ready(function()
     imgFolderGray = $("#imgfoldergray").attr("src");
     imgThrobber = $("#imgthrobber").attr("src");
     imgCancel = $("#imgCancel").attr("src");
-
-    initSpinner();
 
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
@@ -266,6 +263,7 @@ $(document).ready(function()
 
     $.ajaxSetup({
         error: function(jqXHR, textStatus, errorThrown) {
+            loadingSpinner.hideSpinner();
             let message = "Server is Unreachable, please try again later!";
             if (jqXHR.status !== 0) {
                 message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
@@ -340,12 +338,12 @@ function difStatus(id, status)
     message += msgtext + "</p></div>";
 
     $.when(formChanged()).done(function() {
-        showSpinner();
+        loadingSpinner.showSpinner();
         $.ajax({
             url: url,
             type: "PATCH",
             success: function(json, textStatus, jqXHR) {
-                hideSpinner();
+                loadingSpinner.hideSpinner();
                 formReset(true);
 
                 $("<div>"+message+"</div>").dialog({
@@ -374,7 +372,7 @@ function difStatus(id, status)
                 if (x.status == 400 || x.status == 403) {
                     errorMessage = x.responseJSON.message;
                 }
-                $("#spinner").hide();
+                loadingSpinner.hideSpinner();
                 $("<div>"+errorMessage+"</div>").dialog({
                     autoOpen: true,
                     height: "auto",
@@ -410,7 +408,7 @@ function getQueryParams(qs) {
 function treeSearch()
 {
     var searchValue = $("#fltResults").val().trim();
-    showSpinner();
+    loadingSpinner.showSpinner();
     $("#diftree").on("search.jstree", function (e, data) {
         if (data.res.length <= 0)
         {
@@ -428,7 +426,7 @@ function treeSearch()
 
     $("#diftree").jstree(true).search(searchValue);
 
-    hideSpinner();
+    loadingSpinner.hideSpinner();
 }
 
 function setFormStatus()
@@ -488,7 +486,7 @@ function createDIF(form)
     var buttonValue = $('[name="button"]', form).val();
     var confirmDialog = { title: "", message: ""};
 
-    showSpinner();
+    loadingSpinner.showSpinner();
     formHash = Form.serialize();
     $.ajax({
         url: url,
@@ -582,7 +580,7 @@ function createDIF(form)
                     "<br>Error message: " + errorMessage + "</p></div>";
     })
     .always(function() {
-        hideSpinner();
+        loadingSpinner.hideSpinner();
 
         $("<div>"+confirmDialog.message+"</div>").dialog({
             autoOpen: true,
@@ -622,7 +620,7 @@ function updateDIF(form)
         url = url + "/" + resourceId;
     }
 
-    showSpinner();
+    loadingSpinner.showSpinner();
     formHash = Form.serialize();
     $.ajax({
         url: url,
@@ -716,7 +714,7 @@ function updateDIF(form)
                 "If the problem still persists after you re-login, please contact the administrator.</p></div>";
         }
 
-        hideSpinner();
+        loadingSpinner.hideSpinner();
         formReset(true);
         //loadDIFS();
 
@@ -768,41 +766,6 @@ function treeFilter()
     $("#diftree").html(difTreeHTML);
     $("#diftree").jstree("destroy");
     loadDIFS($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
-}
-
-function initSpinner()
-{
-    var opts = {
-        lines: 13, // The number of lines to draw
-        length: 40, // The length of each line
-        width: 15, // The line thickness
-        radius: 50, // The radius of the inner circle
-        corners: 1, // Corner roundness (0..1)
-        rotate: 0, // The rotation offset
-        direction: 1, // 1: clockwise, -1: counterclockwise
-        color: "#000", // #rgb or #rrggbb or array of colors
-        speed: 1, // Rounds per second
-        trail: 60, // Afterglow percentage
-        shadow: true, // Whether to render a shadow
-        hwaccel: true, // Whether to use hardware acceleration
-        className: "spinner", // The CSS class to assign to the spinner
-        zIndex: 2000000000, // The z-index (defaults to 2000000000)
-        top: "50%", // Top position relative to parent
-        left: "50%" // Left position relative to parent
-    };
-
-    target = document.getElementById("spinner");
-    spinner = new Spinner(opts).spin(target);
-}
-
-function showSpinner()
-{
-    $("#spinner").show();
-}
-
-function hideSpinner()
-{
-    $("#spinner").hide();
 }
 
 function getNode(UDI, ID)
@@ -971,7 +934,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
                 }
                 $('[name="primaryPointOfContact"]').addClass("required");
             }
-            hideSpinner();
+            loadingSpinner.hideSpinner();
             var researchGroupLocked = $("#researchGroup option[value=" + researchGroup + "]").attr("locked");
             if (researchGroupLocked == "true") {
                 $("#status").val("closedout");
@@ -1033,7 +996,7 @@ function fillForm(Form, UDI, ID)
 
     $.when(formChanged()).done(function() {
 
-        showSpinner();
+        loadingSpinner.showSpinner();
 
         var url = $("#difForm").attr("action");
 
@@ -1095,7 +1058,7 @@ function fillForm(Form, UDI, ID)
             });
             formHash = $("#difForm").serialize();
             setFormStatus();
-            //hideSpinner();
+            //loadingSpinner.hideSpinner();
         });
     });
 }

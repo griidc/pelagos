@@ -29,7 +29,7 @@ function MapWizard(json)
         timeout: 20000,
         error: function(jqXHR, textStatus, errorThrown) {
             let message = "Server is Unreachable, please try again later!";
-            if (jqXHR.status !== 0) {
+            if (jqXHR.status & jqXHR.status !== 0) {
                 message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
             }
             console.log("Error in Ajax:" + textStatus + ", Message:" + message);
@@ -85,10 +85,9 @@ function MapWizard(json)
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 let message = "Server is Unreachable, please try again later!";
-                if (jqXHR.status !== 0) {
+                if (jqXHR.status & jqXHR.status !== 0) {
                     message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                 }
-                console.log("FAILS: " + message);
                 loadingSpinner.hideSpinner();
                 showErrorDialog(message);
             });
@@ -120,10 +119,9 @@ function MapWizard(json)
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     let message = "Server is Unreachable, please try again later!";
-                    if (jqXHR.status !== 0) {
+                    if (jqXHR.status & jqXHR.status !== 0) {
                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                     }
-                    console.log("FAILS: " + message);
                     showErrorDialog(message);
                     loadingSpinner.hideSpinner();
                 });
@@ -634,55 +632,46 @@ function MapWizard(json)
             }
             else
             {
-                try {
-                    var myWKT = wizGeoViz.getWKT(myWKTid);
-                    var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
+                var myWKT = wizGeoViz.getWKT(myWKTid);
+                var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
 
-                    //run GML validation if the SEW is opened with dataset review,
-                    if (true === validateGeometry) {
-                        validateGeometryFromWkt(wgsWKT).then(function(isValid) {
-                            if (isValid === "Valid Geometry") {
-                                wizGeoViz.wktToGML(wgsWKT).then(function(gml){
-                                    $(gmlField).val(gml);
-                                    $(gmlField).trigger("change");
-                                    $(descField).val("");
-                                })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    let message = "Server is Unreachable, please try again later!";
-                                    if (jqXHR.status !== 0) {
-                                        message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
-                                    }
-                                    console.log("FAILS: " + message);
-                                    showErrorDialog(message);
-                                    loadingSpinner.hideSpinner();
-                                });
-                                closeDialog();
+                //run GML validation if the SEW is opened with dataset review,
+                if (true === validateGeometry) {
+                    validateGeometryFromWkt(wgsWKT).then(function(isValid) {
+                        if (isValid === "Valid Geometry") {
+                            wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                                $(gmlField).val(gml);
+                                $(gmlField).trigger("change");
+                                $(descField).val("");
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                let message = "Server is Unreachable, please try again later!";
+                                if (jqXHR.status & jqXHR.status !== 0) {
+                                    message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+                                }
+                                showErrorDialog(message);
                                 loadingSpinner.hideSpinner();
-                            }
-                        })
-                    } else {
-                        wizGeoViz.wktToGML(wgsWKT).then(function(gml){
-                            $(gmlField).val(gml);
-                            $(gmlField).trigger("change");
-                            $(descField).val("");
+                            });
                             closeDialog();
                             loadingSpinner.hideSpinner();
-                        })
-                        .fail(function (jqXHR, textStatus, errorThrown) {
-                            let message = "Server is Unreachable, please try again later!";
-                            if (jqXHR.status !== 0) {
-                                message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
-                            }
-                            console.log("FAILS: " + message);
-                            showErrorDialog(message);
-                            loadingSpinner.hideSpinner();
-                        });
-                    }
-                }
-                catch (error) {
-                    console.log('error happend!');
-                    console.error(error);
-                    loadingSpinner.hideSpinner();
+                        }
+                    })
+                } else {
+                    wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                        $(gmlField).val(gml);
+                        $(gmlField).trigger("change");
+                        $(descField).val("");
+                        closeDialog();
+                        loadingSpinner.hideSpinner();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        let message = "Server is Unreachable, please try again later!";
+                        if (jqXHR.status & jqXHR.status !== 0) {
+                            message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+                        }
+                        showErrorDialog(message);
+                        loadingSpinner.hideSpinner();
+                    });
                 }
             }
         } else {

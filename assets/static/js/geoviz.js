@@ -570,7 +570,7 @@ function GeoViz()
                 },
             })
         } else {
-            return Promise.resolve(false);
+            return $.Deferred().resolve(false);
         }
     }
 

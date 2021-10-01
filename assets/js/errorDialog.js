@@ -1,5 +1,5 @@
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'devextreme/dist/css/dx.light.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import Popup from 'devextreme/ui/popup';
 import template from '../html/errorDialog.html';
 
@@ -32,11 +32,14 @@ const errorPopup = new Popup(errorDialogDiv, {
 });
 
 const showError = (message, showLogoutButton = false) => {
-  const toolbarItems = errorPopup.option('toolbarItems');
-  errorPopup.option('closeOnOutsideClick', !showLogoutButton);
-  errorPopup.option('showCloseButton', !showLogoutButton);
-  toolbarItems[0].visible = showLogoutButton;
-  errorPopup.option('toolbarItems', toolbarItems);
+  if (showLogoutButton) {
+    const toolbarItems = errorPopup.option('toolbarItems');
+    toolbarItems[0].visible = showLogoutButton;
+    errorPopup.option('closeOnOutsideClick', !showLogoutButton);
+    errorPopup.option('showCloseButton', !showLogoutButton);
+    errorPopup.option('title', 'Session Expired!');
+    errorPopup.option('toolbarItems', toolbarItems);
+  }
   errorPopup.show();
   document.getElementById('errorDialogMessage').innerHTML = message;
 };

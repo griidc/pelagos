@@ -241,39 +241,6 @@ $(function() {
         saveDatasetSubmission(true);
     });
 
-    const loggedOutPopup = $("#loggedOutPopup").dxPopup({
-        width: 300,
-        height: 250,
-        showTitle: true,
-        title: "Session Expired!",
-        visible: false,
-        dragEnabled: false,
-        closeOnOutsideClick: false,
-        showCloseButton: false,
-        toolbarItems: [{
-            widget: "dxButton",
-            toolbar: "bottom",
-            options: {
-            type: "danger",
-            text: "Continue to Login Form",
-            onClick: function(e) {
-                window.location.href = Routing.generate("security_login", {"destination":window.location.href})
-              }
-            },
-        }]
-    }).dxPopup("instance");
-
-    const errorPopup = $("#errorPopup").dxPopup({
-        width: 300,
-        height: 250,
-        showTitle: true,
-        title: "Something went wrong!",
-        visible: false,
-        dragEnabled: true,
-        closeOnOutsideClick: true,
-        showCloseButton: true,
-    }).dxPopup("instance")
-
     function saveDatasetSubmission(notify)
     {
         if (notify) {
@@ -323,13 +290,12 @@ $(function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 let message = "Server is Unreachable, please try again later!";
                 if ([401].includes(jqXHR.status)) {
-                    loggedOutPopup.show();
+                    showErrorDialog('Your Login Session has Expired!', true);
                 } else {
                     if (jqXHR.status !== 0) {
                         message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                     }
-                    errorPopup.show();
-                    $("#errorPopupText").html(message);
+                    showErrorDialog(message);
                 }
             }
         }).always(function(){
