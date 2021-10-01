@@ -1,7 +1,19 @@
 import 'devextreme/dist/css/dx.light.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Popup from 'devextreme/ui/popup';
-import template from '../html/errorDialog.html';
+
+const template = `
+<div>
+    <p>
+        <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
+    </p>
+    <span id="errorDialogMessage">
+        Sorry the server is broken<br>
+        come back later!<br>
+        Or e-mail praneeth@gmail.com
+    </span>
+</div>
+`;
 
 const errorDialogDiv = document.createElement('div');
 document.body.appendChild(errorDialogDiv);
@@ -31,7 +43,7 @@ const errorPopup = new Popup(errorDialogDiv, {
   }],
 });
 
-const showError = (message, showLogoutButton = false) => {
+const showError = (message = null, showLogoutButton = false) => {
   if (showLogoutButton) {
     const toolbarItems = errorPopup.option('toolbarItems');
     toolbarItems[0].visible = showLogoutButton;
@@ -41,7 +53,9 @@ const showError = (message, showLogoutButton = false) => {
     errorPopup.option('toolbarItems', toolbarItems);
   }
   errorPopup.show();
-  document.getElementById('errorDialogMessage').innerHTML = message;
+  if (message) {
+    document.getElementById('errorDialogMessage').innerHTML = message;
+  }
 };
 
 export default showError;

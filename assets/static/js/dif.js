@@ -275,7 +275,8 @@ $(document).ready(function()
                     theme: "relax",
                     type: "error",
                     text: message,
-                    modal: true,
+                    modal: false,
+                    timeout: 2000,
                     animation: {
                         open: "animated fadeIn", // Animate.css class names
                         close: "animated fadeOut", // Animate.css class names

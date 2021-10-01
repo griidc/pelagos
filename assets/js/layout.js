@@ -1,5 +1,5 @@
-import errorDialog from './errorDialog';
-import loadingSpinner from './spinner';
+import errorDialog from './modules/errorDialog';
+import loadingSpinner from './modules/spinner';
 
 const $ = require('jquery');
 
