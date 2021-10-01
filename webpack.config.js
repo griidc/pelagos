@@ -22,11 +22,6 @@ Encore
     runtimeCompilerBuild: false,
   })
 
-  .addLoader({
-    test: /\.html$/i,
-    loader: 'html-loader',
-  })
-
 /*
      * ENTRY CONFIG
      *
