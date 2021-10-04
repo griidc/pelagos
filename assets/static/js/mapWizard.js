@@ -68,8 +68,8 @@ function MapWizard(json)
                 if (jqXHR.status & jqXHR.status !== 0) {
                     message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                 }
-                loadingSpinner.hideSpinner();
-                showErrorDialog(message);
+                pelagosUI.loadingSpinner.hideSpinner();
+                pelagosUI.showErrorDialog(message);
             });
     }
 
@@ -102,8 +102,8 @@ function MapWizard(json)
                     if (jqXHR.status & jqXHR.status !== 0) {
                         message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                     }
-                    showErrorDialog(message);
-                    loadingSpinner.hideSpinner();
+                    pelagosUI.showErrorDialog(message);
+                    pelagosUI.loadingSpinner.hideSpinner();
                 });
         });
 
@@ -629,11 +629,11 @@ function MapWizard(json)
                                 if (jqXHR.status & jqXHR.status !== 0) {
                                     message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                                 }
-                                showErrorDialog(message);
-                                loadingSpinner.hideSpinner();
+                                pelagosUI.showErrorDialog(message);
+                                pelagosUI.loadingSpinner.hideSpinner();
                             });
                             closeDialog();
-                            loadingSpinner.hideSpinner();
+                            pelagosUI.loadingSpinner.hideSpinner();
                         }
                     })
                 } else {
@@ -642,15 +642,15 @@ function MapWizard(json)
                         $(gmlField).trigger("change");
                         $(descField).val("");
                         closeDialog();
-                        loadingSpinner.hideSpinner();
+                        pelagosUI.loadingSpinner.hideSpinner();
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
                         let message = "";
                         if (jqXHR.status & jqXHR.status !== 0) {
                             message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
                         }
-                        showErrorDialog(message);
-                        loadingSpinner.hideSpinner();
+                        pelagosUI.showErrorDialog(message);
+                        pelagosUI.loadingSpinner.hideSpinner();
                     });
                 }
             }
@@ -748,7 +748,7 @@ function MapWizard(json)
         .button({ icons: { primary: "ui-icon ui-icon-disk"}},{disabled: true})
         .click(function()
         {
-            loadingSpinner.showSpinner();
+            pelagosUI.loadingSpinner.showSpinner();
             saveFeature();
         })
         .end()

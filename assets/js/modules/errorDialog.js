@@ -10,7 +10,7 @@ const errorTemplate = `
     <span id="errorDialogMessage">
         Sorry the server is broken<br>
         come back later!<br>
-        Or e-mail praneeth@gmail.com
+        Or e-mail fake@mail.com
     </span>
 </div>
 `;

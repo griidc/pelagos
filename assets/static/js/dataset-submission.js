@@ -290,12 +290,12 @@ $(function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 let message = "Server is Unreachable, please try again later!";
                 if ([401].includes(jqXHR.status)) {
-                    showErrorDialog('Your Login Session has Expired!', true);
+                    pelagosUI.showErrorDialog('Your Login Session has Expired!', true);
                 } else {
                     if (jqXHR.status !== 0) {
                         message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                     }
-                    showErrorDialog(message);
+                    pelagosUI.showErrorDialog(message);
                 }
             }
         }).always(function(){

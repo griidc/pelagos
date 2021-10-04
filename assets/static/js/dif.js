@@ -263,7 +263,7 @@ $(document).ready(function()
 
     $.ajaxSetup({
         error: function(jqXHR, textStatus, errorThrown) {
-            loadingSpinner.hideSpinner();
+            pelagosUI.loadingSpinner.hideSpinner();
             let message = "Server is Unreachable, please try again later!";
             if (jqXHR.status !== 0) {
                 message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
@@ -339,12 +339,12 @@ function difStatus(id, status)
     message += msgtext + "</p></div>";
 
     $.when(formChanged()).done(function() {
-        loadingSpinner.showSpinner();
+        pelagosUI.loadingSpinner.showSpinner();
         $.ajax({
             url: url,
             type: "PATCH",
             success: function(json, textStatus, jqXHR) {
-                loadingSpinner.hideSpinner();
+                pelagosUI.loadingSpinner.hideSpinner();
                 formReset(true);
 
                 $("<div>"+message+"</div>").dialog({
@@ -373,7 +373,7 @@ function difStatus(id, status)
                 if (x.status == 400 || x.status == 403) {
                     errorMessage = x.responseJSON.message;
                 }
-                loadingSpinner.hideSpinner();
+                pelagosUI.loadingSpinner.hideSpinner();
                 $("<div>"+errorMessage+"</div>").dialog({
                     autoOpen: true,
                     height: "auto",
@@ -409,7 +409,7 @@ function getQueryParams(qs) {
 function treeSearch()
 {
     var searchValue = $("#fltResults").val().trim();
-    loadingSpinner.showSpinner();
+    pelagosUI.loadingSpinner.showSpinner();
     $("#diftree").on("search.jstree", function (e, data) {
         if (data.res.length <= 0)
         {
@@ -427,7 +427,7 @@ function treeSearch()
 
     $("#diftree").jstree(true).search(searchValue);
 
-    loadingSpinner.hideSpinner();
+    pelagosUI.loadingSpinner.hideSpinner();
 }
 
 function setFormStatus()
@@ -487,7 +487,7 @@ function createDIF(form)
     var buttonValue = $('[name="button"]', form).val();
     var confirmDialog = { title: "", message: ""};
 
-    loadingSpinner.showSpinner();
+    pelagosUI.loadingSpinner.showSpinner();
     formHash = Form.serialize();
     $.ajax({
         url: url,
@@ -581,7 +581,7 @@ function createDIF(form)
                     "<br>Error message: " + errorMessage + "</p></div>";
     })
     .always(function() {
-        loadingSpinner.hideSpinner();
+        pelagosUI.loadingSpinner.hideSpinner();
 
         $("<div>"+confirmDialog.message+"</div>").dialog({
             autoOpen: true,
@@ -621,7 +621,7 @@ function updateDIF(form)
         url = url + "/" + resourceId;
     }
 
-    loadingSpinner.showSpinner();
+    pelagosUI.loadingSpinner.showSpinner();
     formHash = Form.serialize();
     $.ajax({
         url: url,
@@ -715,7 +715,7 @@ function updateDIF(form)
                 "If the problem still persists after you re-login, please contact the administrator.</p></div>";
         }
 
-        loadingSpinner.hideSpinner();
+        pelagosUI.loadingSpinner.hideSpinner();
         formReset(true);
         //loadDIFS();
 
@@ -935,7 +935,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
                 }
                 $('[name="primaryPointOfContact"]').addClass("required");
             }
-            loadingSpinner.hideSpinner();
+            pelagosUI.loadingSpinner.hideSpinner();
             var researchGroupLocked = $("#researchGroup option[value=" + researchGroup + "]").attr("locked");
             if (researchGroupLocked == "true") {
                 $("#status").val("closedout");
@@ -997,7 +997,7 @@ function fillForm(Form, UDI, ID)
 
     $.when(formChanged()).done(function() {
 
-        loadingSpinner.showSpinner();
+        pelagosUI.loadingSpinner.showSpinner();
 
         var url = $("#difForm").attr("action");
 
@@ -1059,7 +1059,7 @@ function fillForm(Form, UDI, ID)
             });
             formHash = $("#difForm").serialize();
             setFormStatus();
-            //loadingSpinner.hideSpinner();
+            //pelagosUI.loadingSpinner.hideSpinner();
         });
     });
 }

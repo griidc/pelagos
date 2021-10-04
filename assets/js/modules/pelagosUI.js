@@ -1,4 +1,4 @@
 import loadingSpinner from './spinner';
-import errorDialog from './errorDialog';
+import showErrorDialog from './errorDialog';
 
-export { loadingSpinner, errorDialog };
+export { loadingSpinner, showErrorDialog };
