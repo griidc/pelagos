@@ -1,5 +1,6 @@
 import { Spinner } from 'spin.js';
 import 'spin.js/spin.css';
+import '../../css/spinner.css';
 
 const spinnerDiv = document.createElement('div');
 spinnerDiv.style.display = 'none';

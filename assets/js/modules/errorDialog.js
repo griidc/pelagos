@@ -2,7 +2,7 @@ import 'devextreme/dist/css/dx.light.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Popup from 'devextreme/ui/popup';
 
-const template = `
+const errorTemplate = `
 <div>
     <p>
         <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
@@ -19,7 +19,7 @@ const errorDialogDiv = document.createElement('div');
 document.body.appendChild(errorDialogDiv);
 
 const errorPopup = new Popup(errorDialogDiv, {
-  contentTemplate: template,
+  contentTemplate: errorTemplate,
   width: 400,
   height: 300,
   showTitle: true,

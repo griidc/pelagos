@@ -1,5 +1,4 @@
-import errorDialog from './modules/errorDialog';
-import loadingSpinner from './modules/spinner';
+import * as pelagosUI from './modules/pelagosUI';
 
 const $ = require('jquery');
 
@@ -7,8 +6,7 @@ global.jQuery = $;
 global.$ = global.jQuery;
 global.queryString = require('query-string');
 
-global.loadingSpinner = loadingSpinner;
-global.showErrorDialog = errorDialog;
+global.pelagosUI = pelagosUI;
 
 require('jquery-migrate');
 
