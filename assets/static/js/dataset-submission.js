@@ -146,7 +146,11 @@ $(function() {
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
-
+        if ($(this).val()) {
+            $("#submitButton").button("enable");
+        } else {
+            $("#submitButton").button("disable");
+        }
     });
 
     $("#datasetFilePath").on("keyup change", function() {
@@ -406,6 +410,7 @@ $(function() {
         var valid = $("#regForm").valid();
 
         if (false === valid) {
+            $("#submitButton").button("disable");
             $("#filesUploaded").rules("remove");
             $("#remotelyHostedUrl").rules("remove");
             $("#datasetFileUri").rules("remove");
@@ -436,7 +441,7 @@ $(function() {
         } else {
             $(".invaliddsform").hide();
             $(".validdsform").show();
-
+            $("#submitButton").button("enable");
             $("#filesUploaded").rules("add", {
                 require_from_group: [1,".files"]
             });
