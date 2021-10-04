@@ -136,23 +136,41 @@ $(function() {
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    if ($("#remotelyHostedUrl").val()) {
+        $("#datasetFileTransferType").val("HTTP");
+    }
+
+    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
+        $(this).valid();
+        // get the datasetFileTransferType from the active tab
+        let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+    });
+
     $("#regForm").validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
         },
+        groups: {
+            files: "filesUploaded remotelyHostedUrl"
+        },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
-            filesTabValidator: "Please upload a file or add remotely hosted url"
+            filesUploaded: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            },
+            remotelyHostedUrl: {
+                require_from_group: "Please upload a file, or add remotely hosted url"
+            }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
-            if ($(".ignore").valid()) {
-                formHash = $("#regForm").serialize();
-                $("#regForm").prop("unsavedChanges", false);
-                form.submit();
-            }
+            formHash = $("#regForm").serialize();
+            $("#regForm").prop("unsavedChanges", false);
+            form.submit();
         },
     });
 
@@ -233,20 +251,43 @@ $(function() {
         closeOnOutsideClick: false,
         showCloseButton: false,
         toolbarItems: [{
-          widget: "dxButton",
-          toolbar: "bottom",
-          options: {
+            widget: "dxButton",
+            toolbar: "bottom",
+            options: {
             type: "danger",
             text: "Continue to Login Form",
             onClick: function(e) {
                 window.location.href = Routing.generate("security_login", {"destination":window.location.href})
               }
             },
-          }]
-      }).dxPopup("instance");
+        }]
+    }).dxPopup("instance");
+
+    const errorPopup = $("#errorPopup").dxPopup({
+        width: 300,
+        height: 250,
+        showTitle: true,
+        title: "Something went wrong!",
+        visible: false,
+        dragEnabled: true,
+        closeOnOutsideClick: true,
+        showCloseButton: true,
+    }).dxPopup("instance")
 
     function saveDatasetSubmission(notify)
     {
+        if (notify) {
+            var dsNoty = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: "info",
+                    text: 'Saving Dataset Submission...',
+                    modal: true,
+                    closeWith: [],
+                });
+        }
+
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
         var url = Routing.generate("pelagos_api_dataset_submission_put");
 
@@ -256,6 +297,7 @@ $(function() {
             url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PUT",
             data: formData,
+            timeout: 30000,
             success: function(data, textStatus, jqXHR) {
                 $("#btn-discard").button("enable");
                 formHash = $("#regForm").serialize();
@@ -279,22 +321,22 @@ $(function() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                let message = "Server is Unreachable, please try again later!";
                 if ([401].includes(jqXHR.status)) {
                     loggedOutPopup.show();
-                } else if ([400].includes(jqXHR.status)) {
-                  var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                  var n = noty(
-                  {
-                      layout: "top",
-                      theme: "relax",
-                      type: "error",
-                      text: message,
-                      modal: true,
-                  });
+                } else {
+                    if (jqXHR.status !== 0) {
+                        message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                    }
+                    errorPopup.show();
+                    $("#errorPopupText").html(message);
                 }
             }
+        }).always(function(){
+            if (notify) {
+                dsNoty.close();
+            }
         });
-
     }
 
     $("#temporalExtentBeginPosition").datepicker({
@@ -332,6 +374,9 @@ $(function() {
         var valid = $("#regForm").valid();
 
         if (false === valid) {
+            $("#filesUploaded").rules("remove");
+            $("#remotelyHostedUrl").rules("remove");
+
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
@@ -358,6 +403,14 @@ $(function() {
         } else {
             $(".invaliddsform").hide();
             $(".validdsform").show();
+
+            $("#filesUploaded").rules("add", {
+                require_from_group: [1,".files"]
+            });
+
+            $("#remotelyHostedUrl").rules("add", {
+                require_from_group: [1,".files"]
+            });
         }
     });
 
@@ -386,21 +439,6 @@ $(function() {
     $(".contactperson").on("select2:unselecting", function(e) {
         $(this).parent().find(".contactinformation span").text("");
     });
-
-    // SFTP/GridFTP and HTTP/FTP
-    $("#remotelyHostedUrl").on("keyup change", function() {
-        let filesTabValidator = $("#filesTabValidator");
-        if ($(this).val()) {
-            $(this).valid();
-            filesTabValidator.val("valid");
-            $('label.error[for="filesTabValidator"]').remove();
-            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
-        } else {
-            filesTabValidator.val("");
-            filesTabValidator.addClass("error");
-        }
-    });
-
 
     function select2ContactPerson() {
         $(".contactperson").not("#contact-prototype .contactperson").select2({

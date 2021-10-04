@@ -9,12 +9,12 @@
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Upload</a></li>
                 <li datasetFileTransferType="HTTP"><a href="#tabs-2">Enter URL</a></li>
             </ul>
-            {{ form_widget(form.filesTabValidator) }}
-
+            <label for="files" class="error"></label>
             <div id="tabs-1"> <!-- Upload -->
                 You may upload files or folders using Drag and Drop or via the Upload Button.<br>
                 <fieldset>
                     <div id="dropzone-uploader">
+                        <input id="filesUploaded" name="filesUploaded" type="hidden" value="" class="files">
                         <div id="file-manager-app" data-write-mode="{{ (mode == 'view') ? false : true }}"  data-id="{{ datasetSubmission.id }}"></div>
                     </div>
                 </fieldset>
@@ -27,7 +27,7 @@
                         <tr>
                             <td>
                                 {{ form_label(form.remotelyHostedUrl) }}
-                                {{ form_widget(form.remotelyHostedUrl) }}
+                                {{ form_widget(form.remotelyHostedUrl, { 'attr': {'class': 'files'} }) }}
                                 <span class="helpSection">
                                     <img class="info" src="{{ asset('build/images/info32.png') }}">
                                     <div class="tooltiptext">

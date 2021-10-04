@@ -105,9 +105,10 @@ function GeoViz()
 
         dstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["default"]);
         dstyle.graphicZIndex = 1;
-        dstyle.fillOpacity = 0;
-        dstyle.strokeOpacity = 0.5;
-        dstyle.strokeWidth = 2;
+        dstyle.fillOpacity = 0.0;
+        dstyle.strokeWidth = 4;
+        dstyle.strokeOpacity = 1.0;
+        dstyle.pointRadius = 12;
 
         defaultStyle = new OpenLayers.Style(dstyle);
 
