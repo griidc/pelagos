@@ -268,8 +268,17 @@ $(function() {
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
             $.each(data, function (key, value) {
-                let display = value.substring(0,10);
-                dropdown.append($('<option></option>').attr('value', value).text(display));
+                // remove trailing slash if exists from string.
+                value = value.replace(/\/$/, "");
+                let splitPath = value.toString().split("/");
+                dropdown.append($('<option></option>').attr('value', value).text(
+                    '/'
+                    + splitPath[splitPath.length - 3]
+                    + '/'
+                    + splitPath[splitPath.length - 2]
+                    + '/'
+                    + splitPath[splitPath.length - 1]
+                ));
             })
         });
     }
