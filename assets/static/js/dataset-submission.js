@@ -146,7 +146,7 @@ $(function() {
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
-        if ($(this).val()) {
+        if ($("#remotelyHostedUrl").val() || $("#filesUploaded").val() || $("#datasetFileUri").val()) {
             $("#submitButton").button("enable");
         } else {
             $("#submitButton").button("disable");
