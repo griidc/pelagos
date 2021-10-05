@@ -268,7 +268,8 @@ $(function() {
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
             $.each(data, function (key, value) {
-                dropdown.append($('<option></option>').attr('value', value).text(key));
+                let display = value.substring(0,10);
+                dropdown.append($('<option></option>').attr('value', value).text(display));
             })
         });
     }
