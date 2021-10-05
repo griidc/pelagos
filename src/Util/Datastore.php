@@ -62,6 +62,18 @@ class Datastore
 
         return $resource;
     }
+    
+    /**
+     * Queries Flysys for a file's mimetype
+     *
+     * @param string $filePath The file's path.
+     *
+     * @return string|false
+     */
+    public function getMimeType(string $filePath)
+    {
+        return $this->datastoreFlysystem->getMimetype($filePath);
+    }
 
     /**
      * Moves an uploaded file to datastore disk location.

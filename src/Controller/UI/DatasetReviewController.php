@@ -530,10 +530,10 @@ class DatasetReviewController extends AbstractController
                         $newFileset->setZipFileSha256Hash($fileset->getZipFileSha256Hash());
                         $newFileset->setZipFileSize($fileset->getZipFileSize());
                     }
+                    $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
+                    $datasetSubmission->setFileset($newFileset);
+                    $this->entityHandler->update($datasetSubmission);
                 }
-                $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
-                $datasetSubmission->setFileset($newFileset);
-                $this->entityHandler->update($datasetSubmission);
             }
 
             $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
