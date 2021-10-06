@@ -146,7 +146,11 @@ $(function() {
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
-
+        if ($("#remotelyHostedUrl").val() || $("#filesUploaded").val() || $("#datasetFileUri").val()) {
+            $("#submitButton").button("enable");
+        } else {
+            $("#submitButton").button("disable");
+        }
     });
 
     $("#datasetFilePath").on("keyup change", function() {
@@ -158,21 +162,19 @@ $(function() {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
         },
+        errorPlacement: function(error, element) {
+            if (element.is("#filesUploaded") || element.is("#remotelyHostedUrl") || element.is("#datasetFileUri")) {
+                return false;
+            } else {
+                error.insertAfter(element);
+            }
+        },
         groups: {
             files: "filesUploaded remotelyHostedUrl datasetFileUri"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
-            filesUploaded: {
-                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
-            },
-            remotelyHostedUrl: {
-                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
-            },
-            datasetFileUri: {
-                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
-            }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -404,6 +406,7 @@ $(function() {
         var valid = $("#regForm").valid();
 
         if (false === valid) {
+            $("#submitButton").button("disable");
             $("#filesUploaded").rules("remove");
             $("#remotelyHostedUrl").rules("remove");
             $("#datasetFileUri").rules("remove");
@@ -434,7 +437,7 @@ $(function() {
         } else {
             $(".invaliddsform").hide();
             $(".validdsform").show();
-
+            $("#submitButton").button("enable");
             $("#filesUploaded").rules("add", {
                 require_from_group: [1,".files"]
             });
