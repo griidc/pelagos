@@ -252,6 +252,10 @@ $(document).ready(function(){
         dtabs.tabs({active:activeTab});
     });
 
+    $("#datasetFilePath").on("keyup change", function() {
+        $("#datasetFileUri").val($(this).val()).trigger("change");
+    });
+
     function populateFolderDropDownList() {
         let dropdown = $('#datasetFilePath');
 
