@@ -184,7 +184,11 @@ function MapWizard(json)
                 }
 
                 wizPromise.resolve();
-            });
+            })
+            .fail(function (jqXHR, errorThrown, errorText) {
+                pelagosUI.loadingSpinner.hideSpinner();
+                handleError(jqXHR);
+            })
         });
     }
 
