@@ -26,7 +26,7 @@ function MapWizard(json)
     var diaHeight = $(window).height()*.8;
 
     $.ajaxSetup({
-        timeout: 20000,
+        timeout: 10000,
     });
 
     init();
@@ -64,13 +64,19 @@ function MapWizard(json)
                 geometryType = smlGeoViz.getSingleFeatureClass();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                let message = "Server is Unreachable, please try again later!";
-                if (jqXHR.status & jqXHR.status !== 0) {
-                    message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
-                }
                 pelagosUI.loadingSpinner.hideSpinner();
-                pelagosUI.showErrorDialog(message);
+                handleError(jqXHR);
             });
+    }
+
+    function handleError(jqXHR)
+    {
+        console.log('i ran');
+        let message = "Server is Unreachable, please try again later!";
+        if (jqXHR.status & jqXHR.status !== 0) {
+            message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+        }
+        pelagosUI.showErrorDialog(message);
     }
 
     function init()
@@ -98,12 +104,8 @@ function MapWizard(json)
                     geometryType = smlGeoViz.getSingleFeatureClass();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                    let message = "Server is Unreachable, please try again later!";
-                    if (jqXHR.status & jqXHR.status !== 0) {
-                        message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
-                    }
-                    pelagosUI.showErrorDialog(message);
                     pelagosUI.loadingSpinner.hideSpinner();
+                    handleError(jqXHR);
                 });
         });
 
@@ -625,12 +627,8 @@ function MapWizard(json)
                                 $(descField).val("");
                             })
                             .fail(function (jqXHR, textStatus, errorThrown) {
-                                let message = "";
-                                if (jqXHR.status & jqXHR.status !== 0) {
-                                    message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
-                                }
-                                pelagosUI.showErrorDialog(message);
                                 pelagosUI.loadingSpinner.hideSpinner();
+                                handleError(jqXHR);
                             });
                             closeDialog();
                             pelagosUI.loadingSpinner.hideSpinner();
@@ -645,12 +643,8 @@ function MapWizard(json)
                         pelagosUI.loadingSpinner.hideSpinner();
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
-                        let message = "";
-                        if (jqXHR.status & jqXHR.status !== 0) {
-                            message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
-                        }
-                        pelagosUI.showErrorDialog(message);
                         pelagosUI.loadingSpinner.hideSpinner();
+                        handleError(jqXHR);
                     });
                 }
             }
