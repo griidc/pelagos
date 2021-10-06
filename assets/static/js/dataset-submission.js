@@ -270,15 +270,9 @@ $(function() {
             $.each(data, function (key, value) {
                 // remove trailing slash if exists from string.
                 value = value.replace(/\/$/, "");
-                let splitPath = value.toString().split("/");
-                dropdown.append($('<option></option>').attr('value', value).text(
-                    '/'
-                    + splitPath[splitPath.length - 3]
-                    + '/'
-                    + splitPath[splitPath.length - 2]
-                    + '/'
-                    + splitPath[splitPath.length - 1]
-                ));
+                const regex = new RegExp('(?:.(?!\/.*\/.*\/))+$');
+                let text = regex.exec(value)[0];
+                dropdown.append($('<option></option>').attr('value', value).text(text));
             })
         });
     }
