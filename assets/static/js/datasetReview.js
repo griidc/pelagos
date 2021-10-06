@@ -269,7 +269,9 @@ $(document).ready(function(){
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
             $.each(data, function (key, value) {
-                dropdown.append($('<option></option>').attr('value', value).text(key));
+                const regex = new RegExp('(?:.(?!\/.*\/.*\/))+$');
+                let text = regex.exec(value)[0];
+                dropdown.append($('<option></option>').attr('value', value).text(text));
             })
         });
     }
