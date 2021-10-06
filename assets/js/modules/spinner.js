@@ -4,7 +4,7 @@ import '../../css/spinner.css';
 
 const spinnerDiv = document.createElement('div');
 spinnerDiv.style.display = 'none';
-spinnerDiv.classList.add('spinnermodal');
+spinnerDiv.classList.add('spinner-modal');
 document.body.appendChild(spinnerDiv);
 
 new Spinner(
