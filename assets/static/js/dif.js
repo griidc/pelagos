@@ -352,20 +352,30 @@ function difStatus(id, status)
                 });
             },
             error: function(x, t, m) {
-                var errorMessage;
+                let errorMessage;
+                let title;
                 if (typeof m.message != "undefined") {
                     errorMessage = m.message;}else{message = m;
                 }
-                if (x.status == 400 || x.status == 403) {
-                    errorMessage = x.responseJSON.message;
+
+                if (x.status === 0) {
+                    title = 'Something went wrong!';
+                    errorMessage = '<div><img src="' + imgCancel + '">' +
+                      '<p>Server is Unreachable, please try again later!</p></div>';
+
+                } else if (x.status === 401) {
+                    title = 'Session Expired!';
+                    errorMessage = '<div><img src="' + imgCancel + '">' +
+                      '<p>Session expired! Please log in again</p></div>';
                 }
+
                 pelagosUI.loadingSpinner.hideSpinner();
                 $("<div>"+errorMessage+"</div>").dialog({
                     autoOpen: true,
                     height: "auto",
                     resizable: false,
                     minWidth: 300,
-                    title: "Error",
+                    title: title,
                     modal: true,
                     buttons: {
                         OK: function() {
@@ -556,15 +566,22 @@ function createDIF(form)
 
         formReset(true);
     })
-    .fail(function() {
-        let errorMessage = "Server is Unreachable, please try again later!";
-        if (response && response.message) {
-            errorMessage = response.message;
+    .fail(function(jqXHR) {
+        if (jqXHR.status === 0) {
+            confirmDialog.title = 'Something went wrong!';
+            confirmDialog.message = '<div><img src="' + imgCancel + '">' +
+              '<p>Server is Unreachable, please try again later!</p></div>';
+
+        } else if (jqXHR.status === 401) {
+            confirmDialog.title = 'Session Expired!';
+            confirmDialog.message = '<div><img src="' + imgCancel + '">' +
+              '<p>Session expired! Please log in again</p></div>';
+        } else {
+            confirmDialog.title = 'Unable to perform desired action on DIF';
+            confirmDialog.message = '<div><img src="' + imgCancel + '">' +
+              '<p>The application with DIF ID: ' + udi + ' failed to complete action!' +
+              '<br>Error message: ' + response.message + '</p></div>';
         }
-        confirmDialog.title = "Unable to perform desired action on DIF";
-        confirmDialog.message = '<div><img src="' + imgCancel + '">' +
-                    "<p>The application with DIF ID: " + udi + " failed to complete action!" +
-                    "<br>Error message: " + errorMessage + "</p></div>";
     })
     .always(function() {
         pelagosUI.loadingSpinner.hideSpinner();
@@ -624,7 +641,7 @@ function updateDIF(form)
             response.status = "success";
         }
     })
-    .then(function() {
+      .then(function() {
         // Update the status if submit was pressed
         if (buttonValue === "submit") {
             // It was the submit button
@@ -660,7 +677,53 @@ function updateDIF(form)
             return $.Deferred().resolve();
         }
     })
-    .always(function() {
+      .fail(function (jqXHR) {
+        pelagosUI.loadingSpinner.hideSpinner();
+        let title;
+        let message;
+        if (jqXHR.status === 0) {
+            title = 'Something went wrong!';
+            message = '<div><img src="' + imgCancel + '">' +
+              '<p>Server is Unreachable, please try again later!</p></div>';
+        } else if (jqXHR.status === 401) {
+            title = 'Session Expired!';
+            message = '<div><img src="' + imgCancel + '">' +
+              '<p>Session expired! Please log in again</p></div>';
+        }
+
+        if (response.status === "error") {
+            if (response.message === "Can only approve a submitted DIF") {
+                title = "Unable to approve DIF";
+                message = '<div><img src="' + imgCancel + '">' +
+                  "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
+                  "<br></p></div>";
+            } else {
+                title = "Unable to perform desired action on DIF";
+                message = '<div><img src="' + imgCancel + '">' +
+                  "<p>The application with DIF ID: " + udi + " failed to complete action!" +
+                  "<br></p></div>";
+            }
+        }
+
+        $("<div>" + message + "</div>").dialog({
+            autoOpen: true,
+            resizable: false,
+            minWidth: 300,
+            height: "auto",
+            width: "auto",
+            modal: true,
+            title: title,
+            buttons: {
+                OK: function () {
+                    $(this).dialog("close");
+                    scrollToTop();
+                    treeFilter();
+                    return $.Deferred().resolve();
+                }
+            }
+        });
+    })
+      .then(function() {
         if (response.status === "success") {
             // Then show the dialog according the how it was saved.
             if (buttonValue === "save") {
@@ -683,45 +746,30 @@ function updateDIF(form)
                     "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
                     "<br></p></div>";
             }
-        } else if (response.status === "error") {
-            if (response.message === "Can only approve a submitted DIF") {
-                var title = "Unable to approve DIF";
-                var message = '<div><img src="' + imgCancel + '">' +
-                    "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
-                    "<br></p></div>";
-            } else {
-                var title = "Unable to perform desired action on DIF";
-                var message = '<div><img src="' + imgCancel + '">' +
-                    "<p>The application with DIF ID: " + udi + " failed to complete action!" +
-                    "<br></p></div>";
-            }
-        } else {
-            var title = "Unable to process DIF form";
-            var message = "<div><p>There was an error processing your request. Your session might have expired.<br>" +
-                "If the problem still persists after you re-login, please contact the administrator.</p></div>";
-        }
 
-        pelagosUI.loadingSpinner.hideSpinner();
-        formReset(true);
-        //loadDIFS();
+            pelagosUI.loadingSpinner.hideSpinner();
+            formReset(true);
+            //loadDIFS();
 
-        $("<div>" + message + "</div>").dialog({
-            autoOpen: true,
-            resizable: false,
-            minWidth: 300,
-            height: "auto",
-            width: "auto",
-            modal: true,
-            title: title,
-            buttons: {
-                OK: function () {
-                    $(this).dialog("close");
-                    scrollToTop();
-                    treeFilter();
-                    return $.Deferred().resolve();
+            $("<div>" + message + "</div>").dialog({
+                autoOpen: true,
+                resizable: false,
+                minWidth: 300,
+                height: "auto",
+                width: "auto",
+                modal: true,
+                title: title,
+                buttons: {
+                    OK: function () {
+                        $(this).dialog("close");
+                        scrollToTop();
+                        treeFilter();
+                        return $.Deferred().resolve();
+                    }
                 }
-            }
-        });
+            });
+
+        }
     });
 }
 
