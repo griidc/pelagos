@@ -270,7 +270,11 @@ $(function() {
         // Populate dropdown with list of folders
         $.getJSON(url, function (data) {
             $.each(data, function (key, value) {
-                dropdown.append($('<option></option>').attr('value', value).text(key));
+                // remove trailing slash if exists from string.
+                value = value.replace(/\/$/, "");
+                const regex = new RegExp('(?:.(?!\/.*\/.*\/))+$');
+                let text = regex.exec(value)[0];
+                dropdown.append($('<option></option>').attr('value', value).text(text));
             })
         });
     }
