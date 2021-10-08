@@ -8,9 +8,8 @@ const errorTemplate = `
         <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
     </p>
     <span id="errorDialogMessage">
-        Sorry the server is broken<br>
-        come back later!<br>
-        Or e-mail fake@mail.com
+        The server request could not be completed!<br>
+        Please try again later, or if the problem persists contact GRIIDC.
     </span>
 </div>
 `;

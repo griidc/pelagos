@@ -71,11 +71,11 @@ function MapWizard(json)
 
     function handleError(jqXHR)
     {
-        console.log('i ran');
-        let message = "Server is Unreachable, please try again later!";
+        let message = "";
         if (jqXHR.status & jqXHR.status !== 0) {
             message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
         }
+        pelagosUI.loadingSpinner.hideSpinner();
         pelagosUI.showErrorDialog(message);
     }
 
@@ -674,7 +674,7 @@ function MapWizard(json)
             if(xhr.status === 400) {
                 showDialog("Invalid Geometry", xhr.responseText);
             }
-            else showDialog("Error " + xhr.status, xhr.statusText);
+            else handleError(xhr);
         });
     }
 
