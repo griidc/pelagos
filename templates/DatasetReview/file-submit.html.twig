@@ -54,7 +54,15 @@
                                     </div>
                                 </div>
                                 <div class="fwtextboxcont">
-                                    <input type="text" name="datasetFileUri" id="datasetFileUri" value="{{ form.datasetFileUri.vars.value }}" class="valid files"\>
+                                    <label for="datasetFileUri"> User submitted:</label>
+                                    <input type="text" name="datasetFileUri" id="datasetFileUri" value="{{ form.datasetFileUri.vars.value }}" class="valid files">
+                                    <hr>
+                                    <label for="datasetFilePath">Reviewer Ingest folders: </label>
+                                    <select name="datasetFilePath" id="datasetFilePath"
+                                            {% if sftpuser == false %}
+                                        disabled="disabled"
+                                            {% endif %}>
+                                    </select>
                                 </div>
                             </td>
                         </tr>
