@@ -641,7 +641,7 @@ function updateDIF(form)
             response.status = "success";
         }
     })
-      .then(function() {
+    .then(function() {
         // Update the status if submit was pressed
         if (buttonValue === "submit") {
             // It was the submit button
@@ -677,7 +677,7 @@ function updateDIF(form)
             return $.Deferred().resolve();
         }
     })
-      .fail(function (jqXHR) {
+    .fail(function (jqXHR) {
         pelagosUI.loadingSpinner.hideSpinner();
         let title;
         let message;
@@ -723,52 +723,52 @@ function updateDIF(form)
             }
         });
     })
-      .then(function() {
+    .then(function() {
         if (response.status === "success") {
             // Then show the dialog according the how it was saved.
             if (buttonValue === "save") {
                 var title = "DIF Saved";
                 var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
-                    + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
+                  + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
             } else if (buttonValue === "update") {
                 var title = "DIF Updated";
                 var message = '<div><img src="' + imgInfo + '"><p>Thank you for updating DIF with ID:  ' + udi + ".</p></div>";
             } else if (buttonValue === "submit") {
                 var title = "DIF Submitted";
                 var message = '<div><img src="' + imgInfo + '">' +
-                    "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
-                    "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
-                    "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
-                    "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
+                  "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
+                  "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
+                  "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
+                  "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
             } else if (buttonValue === "approve") {
                 var title = "DIF Updated and Approved";
                 var message = '<div><img src="' + imgInfo + '">' +
-                    "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
-                    "<br></p></div>";
+                  "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
+                  "<br></p></div>";
             }
 
             pelagosUI.loadingSpinner.hideSpinner();
             formReset(true);
             //loadDIFS();
 
-            $("<div>" + message + "</div>").dialog({
-                autoOpen: true,
-                resizable: false,
-                minWidth: 300,
-                height: "auto",
-                width: "auto",
-                modal: true,
-                title: title,
-                buttons: {
-                    OK: function () {
-                        $(this).dialog("close");
-                        scrollToTop();
-                        treeFilter();
-                        return $.Deferred().resolve();
+            $('<div>' + message + '</div>')
+                .dialog({
+                    autoOpen: true,
+                    resizable: false,
+                    minWidth: 300,
+                    height: 'auto',
+                    width: 'auto',
+                    modal: true,
+                    title: title,
+                    buttons: {
+                        OK: function () {
+                            $(this).dialog('close');
+                            scrollToTop();
+                            treeFilter();
+                            return $.Deferred().resolve();
+                        }
                     }
-                }
-            });
-
+              });
         }
     });
 }
