@@ -1,0 +1,26 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+    .error-centered {
+        position: absolute;
+        width: 600px;
+        height: 200px;
+        top: 50%;
+        left: 50%;
+        margin: -100px 0 0 -300px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="error-centered">
+    <h1>ERROR PAGE TEMPLATE!</h1>
+    <img src="{{ asset('build/images/oil-spill.png') }}"><br>
+    {% block error %}{% endblock %}
+    <p>Thank you for using error page!</p>
+</div>
+{% endblock %}
