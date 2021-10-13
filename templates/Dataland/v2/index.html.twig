@@ -75,6 +75,18 @@
                             {{ dataset.datasetSubmission.purpose }}
                         </p>
                     </div>
+                    <div class="py-2">
+                        <h6><strong>Supplemental Informenation:</strong></h6>
+                        <p>
+                            {{ dataset.datasetSubmission.suppParams ~ ' '
+                            dataset.datasetSubmission.suppMethods ~ ' '
+                            dataset.datasetSubmission.suppInstruments ~ ' '
+                            dataset.datasetSubmission.suppSampScalesRates ~ ' '
+                            dataset.datasetSubmission.suppErrorAnalysis ~ ' '
+                            dataset.datasetSubmission.suppProvenance
+                            | raw}}
+                        </p>
+                    </div>
                     {% include 'Dataland/v2/publications.html.twig' %}
                     {% include 'Dataland/v2/file-manager.html.twig' %}
                     <hr>
