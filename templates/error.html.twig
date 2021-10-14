@@ -6,21 +6,27 @@
 <style>
     .error-centered {
         position: absolute;
-        width: 600px;
+        width: 800px;
         height: 200px;
         top: 50%;
         left: 50%;
-        margin: -100px 0 0 -300px;
+        margin: -100px 0 0 -400px;
         text-align: center;
+        font-weight:bold;
+        font-family:monospace;
     }
 </style>
 {% endblock %}
 
 {% block body %}
+<div class="messages error">
+    <h2 class="element-invisible">Error message</h2>
+    {{status_text}}
+</div>
 <div class="error-centered">
-    <h1>ERROR PAGE TEMPLATE!</h1>
+    <span style="font-size:42px;">Oops, something went wrong! ({{ status_code }})</span>
     <img src="{{ asset('build/images/oil-spill.png') }}"><br>
     {% block error %}{% endblock %}
-    <p>Thank you for using error page!</p>
+    <p>If the problem persists, please contact GRIIDC.</p>
 </div>
 {% endblock %}
