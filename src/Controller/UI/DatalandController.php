@@ -9,6 +9,7 @@ use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -129,9 +130,10 @@ class DatalandController extends AbstractController
      *
      * @return Response
      */
-    public function metadataAction(string $udi)
+    public function metadataAction(string $udi, Request $request)
     {
         $dataset = $this->getDataset($udi);
+        $attachment = $request->get('attachment');
 
         if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
             throw new BadRequestHttpException('The dataset with udi ' . $udi . ' has not yet been accepted.');
@@ -144,7 +146,9 @@ class DatalandController extends AbstractController
         $response = new Response($this->metadataUtil
             ->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
-        $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
+        if ($attachment) {
+            $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
+        }
         return $response;
     }
 

@@ -59,3 +59,26 @@ if (geovizMap.attr('description') !== '' && geovizMap.attr('wkt') === '') {
   dlmap.addFeatureFromWKT(geovizMap.attr('wkt'), { udi: geovizMap.attr('udi') });
   dlmap.gotoAllFeatures();
 }
+
+const metadataDownloadBtn = document.getElementById('metadata-download');
+if (metadataDownloadBtn) {
+  metadataDownloadBtn.addEventListener('click', () => {
+    // eslint-disable-next-line no-undef
+    window.location = Routing.generate(
+      'pelagos_app_ui_dataland_metadata',
+      { udi: metadataDownloadBtn.dataset.udi, attachment: true },
+    );
+  });
+}
+
+const metadataDownloadLink = document.getElementById('metadata-link');
+if (metadataDownloadLink) {
+  metadataDownloadLink.addEventListener('click', () => {
+    window.open(
+      // eslint-disable-next-line no-undef
+      Routing.generate('pelagos_app_ui_dataland_metadata',
+        { udi: metadataDownloadLink.dataset.udi }),
+      '_blank',
+    );
+  });
+}
