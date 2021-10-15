@@ -25,8 +25,8 @@
 </div>
 <div class="error-centered">
     <span style="font-size:42px;">Oops, something went wrong! ({{ status_code }})</span>
-    <img src="{{ asset('build/images/oil-spill.png') }}"><br>
-    {% block error %}{% endblock %}
-    <p>If the problem persists, please contact GRIIDC.</p>
+    {# <img src="{{ asset('build/images/oil-spill.png') }}"><br> #}
+    <p>{% block error %}{% endblock %}</p>
+    <p><i>If the problem persists, please contact GRIIDC.</i></p>
 </div>
 {% endblock %}
