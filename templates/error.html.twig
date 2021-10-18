@@ -1,32 +1,18 @@
 {% extends "base.html.twig" %}
 
-{% block stylesheets %}
-{{ parent() }}
-
-<style>
-    .error-centered {
-        position: absolute;
-        width: 800px;
-        height: 200px;
-        top: 50%;
-        left: 50%;
-        margin: -100px 0 0 -400px;
-        text-align: center;
-        font-weight:bold;
-        font-family:monospace;
-    }
-</style>
-{% endblock %}
-
 {% block body %}
-<div class="messages error">
-    <h2 class="element-invisible">Error message</h2>
-    {{status_text}}
-</div>
-<div class="error-centered">
-    <span style="font-size:42px;">Oops, something went wrong! ({{ status_code }})</span>
-    {# <img src="{{ asset('build/images/oil-spill.png') }}"><br> #}
-    <p>{% block error %}{% endblock %}</p>
-    <p><i>If the problem persists, please contact GRIIDC.</i></p>
+<div class="bootstrap">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 mx-auto">
+                <div class="jumbotron ">
+                    <h1 class="display-1 text-primary">{{ status_code }}</h1>
+                    <h1 class="display-4">Oops, something went wrong!</h1>
+                    <p class="lead">{% block error %}{% endblock %}</p>
+                    <p class="lead text-muted">If the problem persists, please contact GRIIDC.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
