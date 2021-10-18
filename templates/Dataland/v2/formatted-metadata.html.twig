@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Formatted Metadata{% endblock %}
+
+{% block body %}
+    <div class="mx-1">
+        {% if rawxml %}
+            {{ rawxml|transformXml('xml-to-html-ISO.xsl')|raw }}
+        {% else %}
+            No Metadata Available
+        {% endif %}
+    </div>
+{% endblock %}
+

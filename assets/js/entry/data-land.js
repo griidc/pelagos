@@ -66,17 +66,18 @@ if (metadataDownloadBtn) {
     // eslint-disable-next-line no-undef
     window.location = Routing.generate(
       'pelagos_app_ui_dataland_metadata',
-      { udi: metadataDownloadBtn.dataset.udi, attachment: true },
+      { udi: metadataDownloadBtn.dataset.udi },
     );
   });
 }
 
 const metadataDownloadLink = document.getElementById('metadata-link');
 if (metadataDownloadLink) {
-  metadataDownloadLink.addEventListener('click', () => {
+  metadataDownloadLink.addEventListener('click', (event) => {
+    event.preventDefault();
     window.open(
       // eslint-disable-next-line no-undef
-      Routing.generate('pelagos_app_ui_dataland_metadata',
+      Routing.generate('pelagos_app_ui_dataland_formatted_metadata',
         { udi: metadataDownloadLink.dataset.udi }),
       '_blank',
     );

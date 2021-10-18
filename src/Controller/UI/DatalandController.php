@@ -130,10 +130,9 @@ class DatalandController extends AbstractController
      *
      * @return Response
      */
-    public function metadataAction(string $udi, Request $request)
+    public function metadataAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
-        $attachment = $request->get('attachment');
 
         if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
             throw new BadRequestHttpException('The dataset with udi ' . $udi . ' has not yet been accepted.');
@@ -146,9 +145,7 @@ class DatalandController extends AbstractController
         $response = new Response($this->metadataUtil
             ->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
-        if ($attachment) {
-            $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
-        }
+        $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
     }
 
@@ -306,6 +303,36 @@ class DatalandController extends AbstractController
                 'rawxml' => $rawXml,
                 'wkt' => $wkt,
                 'datasetSubmissionLockStatus' => true
+            )
+        );
+    }
+
+    /**
+     * Return the formatted metadata for a dataset as a file.
+     *
+     * @param string $udi The UDI of the dataset to return metadata for.
+     *
+     * @throws BadRequestHttpException When the dataset status is not accepted.
+     *
+     * @Route("/data/{udi}/formatted-metadata", name="pelagos_app_ui_dataland_formatted_metadata")
+     *
+     * @return Response
+     */
+    public function getFormattedMetadata(string $udi)
+    {
+        $dataset = $this->getDataset($udi);
+
+        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
+            throw new BadRequestHttpException('The dataset with udi ' . $udi . ' has not yet been accepted.');
+        }
+
+        $boundingBoxArray = $this->getBoundingBox($dataset);
+        $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
+
+        return $this->render(
+            'Dataland/v2/formatted-metadata.html.twig',
+            array(
+                'rawxml' => $rawXml,
             )
         );
     }
