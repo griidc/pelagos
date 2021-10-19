@@ -1,0 +1,23 @@
+{% if dataset.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE'),
+    constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED')] %}
+    <div class="py-2">
+        <div class="card text-center text-light">
+            <div class="card-header bg-chart-primary">
+                ISO 19115-2 Metadata
+            </div>
+            <div class="card-body">
+                <button type="button" class="btn btn-primary" id="metadata-download" data-udi="{{ dataset.udi }}">
+                    <img src="{{ asset('build/images/download-icon.svg') }}">
+                    &nbsp;
+                    Download Metadata
+                </button>
+                <hr>
+                <a href="" id="metadata-link" data-udi="{{ dataset.udi }}">
+                    <img src="{{ asset('build/images/up-right-arrow-icon.svg') }}">
+                    &nbsp;
+                    View Metadata
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}

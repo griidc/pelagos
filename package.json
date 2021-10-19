@@ -45,6 +45,7 @@
         "postcss-loader": "^5.0.0",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
+        "spin.js": "^4.1.1",
         "v-tooltip": "^2.0.3",
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0",

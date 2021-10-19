@@ -459,6 +459,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs/{id}", name="pelagos_api_difs_put", methods={"PUT"}, defaults={"_format"="json"})
      *
@@ -501,6 +502,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs/{id}", name="pelagos_api_difs_patch", methods={"PATCH"}, defaults={"_format"="json"})
      *
@@ -545,6 +547,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs/{id}/submit", name="pelagos_api_difs_submit", methods={"PATCH"}, defaults={"_format"="json"})
      *
@@ -609,6 +612,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs/{id}/approve", name="pelagos_api_difs_approve", methods={"PATCH"}, defaults={"_format"="json"})
      *
@@ -677,6 +681,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs/{id}/reject", name="pelagos_api_difs_reject", methods={"PATCH"}, defaults={"_format"="json"})
      *
@@ -741,6 +746,7 @@ class DIFController extends EntityController
      *     )
      * )
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route("/api/difs/{id}/unlock", name="pelagos_api_difs_unlock", methods={"PATCH"}, defaults={"_format"="json"})
      *
@@ -804,6 +810,8 @@ class DIFController extends EntityController
      * @throws BadRequestHttpException   When DIF can not be unlocked.
      *
      * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"}, defaults={"_format"="json"})
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
