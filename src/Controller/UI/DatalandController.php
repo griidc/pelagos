@@ -9,6 +9,7 @@ use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -302,6 +303,36 @@ class DatalandController extends AbstractController
                 'rawxml' => $rawXml,
                 'wkt' => $wkt,
                 'datasetSubmissionLockStatus' => true
+            )
+        );
+    }
+
+    /**
+     * Return the formatted metadata for a dataset as a file.
+     *
+     * @param string $udi The UDI of the dataset to return metadata for.
+     *
+     * @throws BadRequestHttpException When the dataset status is not accepted.
+     *
+     * @Route("/data/{udi}/formatted-metadata", name="pelagos_app_ui_dataland_formatted_metadata")
+     *
+     * @return Response
+     */
+    public function getFormattedMetadata(string $udi)
+    {
+        $dataset = $this->getDataset($udi);
+
+        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
+            throw new BadRequestHttpException('The dataset with udi ' . $udi . ' has not yet been accepted.');
+        }
+
+        $boundingBoxArray = $this->getBoundingBox($dataset);
+        $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
+
+        return $this->render(
+            'Dataland/v2/formatted-metadata.html.twig',
+            array(
+                'rawxml' => $rawXml,
             )
         );
     }
