@@ -1,8 +1,12 @@
+import * as pelagosUI from './modules/pelagosUI';
+
 const $ = require('jquery');
 
 global.jQuery = $;
 global.$ = global.jQuery;
 global.queryString = require('query-string');
+
+global.pelagosUI = pelagosUI;
 
 require('jquery-migrate');
 

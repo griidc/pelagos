@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+
+<head>
+    <title>Formatted Metadata
+    </title>
+</head>
+
+{% block body %}
+    <div class="mx-1">
+        {% if rawxml %}
+            {{ rawxml|transformXml('xml-to-html-ISO.xsl')|raw }}
+        {% else %}
+            No Metadata Available
+        {% endif %}
+    </div>
+{% endblock %}
+</html>
