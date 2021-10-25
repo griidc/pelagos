@@ -155,4 +155,13 @@ table.dataTable.stripe tbody tr:hover {
     display:none;
 }
 
+.submission-submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+.submission-submit .ui-widget {
+    font-size: 16px !important;
+}
 
