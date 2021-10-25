@@ -1,6 +1,5 @@
 var $ = jQuery.noConflict();
 
-var spinner;
 var target;
 var formHash;
 var difValidator;
@@ -33,8 +32,6 @@ $(document).ready(function()
     imgFolderGray = $("#imgfoldergray").attr("src");
     imgThrobber = $("#imgthrobber").attr("src");
     imgCancel = $("#imgCancel").attr("src");
-
-    initSpinner();
 
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
@@ -265,15 +262,13 @@ $(document).ready(function()
     });
 
     $.ajaxSetup({
-        error: function(x, t, m) {
-            var message;
-            if (typeof m.message != "undefined") {
-                message = m.message;}else{message = m;
+        error: function(jqXHR, textStatus, errorThrown) {
+            pelagosUI.loadingSpinner.hideSpinner();
+            let message = "Server is Unreachable, please try again later!";
+            if (jqXHR.status !== 0) {
+                message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
             }
-            if ((x.status == 400 || x.status == 403) && x.responseJSON) {
-                message = x.responseJSON.message;
-            }
-            console.log("Error in Ajax:"+t+", Message:"+message)
+            console.log("Error in Ajax:" + textStatus + ", Message:" + message);
         }
     });
 
@@ -330,12 +325,12 @@ function difStatus(id, status)
     message += msgtext + "</p></div>";
 
     $.when(formChanged()).done(function() {
-        showSpinner();
+        pelagosUI.loadingSpinner.showSpinner();
         $.ajax({
             url: url,
             type: "PATCH",
             success: function(json, textStatus, jqXHR) {
-                hideSpinner();
+                pelagosUI.loadingSpinner.hideSpinner();
                 formReset(true);
 
                 $("<div>"+message+"</div>").dialog({
@@ -357,20 +352,30 @@ function difStatus(id, status)
                 });
             },
             error: function(x, t, m) {
-                var errorMessage;
+                let errorMessage;
+                let title;
                 if (typeof m.message != "undefined") {
                     errorMessage = m.message;}else{message = m;
                 }
-                if (x.status == 400 || x.status == 403) {
-                    errorMessage = x.responseJSON.message;
+
+                if (x.status === 0) {
+                    title = 'Something went wrong!';
+                    errorMessage = '<div><img src="' + imgCancel + '">' +
+                      '<p>Server is Unreachable, please try again later!</p></div>';
+
+                } else if (x.status === 401) {
+                    title = 'Session Expired!';
+                    errorMessage = '<div><img src="' + imgCancel + '">' +
+                      '<p>Session expired! Please log in again</p></div>';
                 }
-                $("#spinner").hide();
+
+                pelagosUI.loadingSpinner.hideSpinner();
                 $("<div>"+errorMessage+"</div>").dialog({
                     autoOpen: true,
                     height: "auto",
                     resizable: false,
                     minWidth: 300,
-                    title: "Error",
+                    title: title,
                     modal: true,
                     buttons: {
                         OK: function() {
@@ -400,7 +405,7 @@ function getQueryParams(qs) {
 function treeSearch()
 {
     var searchValue = $("#fltResults").val().trim();
-    showSpinner();
+    pelagosUI.loadingSpinner.showSpinner();
     $("#diftree").on("search.jstree", function (e, data) {
         if (data.res.length <= 0)
         {
@@ -418,7 +423,7 @@ function treeSearch()
 
     $("#diftree").jstree(true).search(searchValue);
 
-    hideSpinner();
+    pelagosUI.loadingSpinner.hideSpinner();
 }
 
 function setFormStatus()
@@ -478,7 +483,7 @@ function createDIF(form)
     var buttonValue = $('[name="button"]', form).val();
     var confirmDialog = { title: "", message: ""};
 
-    showSpinner();
+    pelagosUI.loadingSpinner.showSpinner();
     formHash = Form.serialize();
     $.ajax({
         url: url,
@@ -561,18 +566,25 @@ function createDIF(form)
 
         formReset(true);
     })
-    .fail(function() {
-        let errorMessage = "Server is Unreachable, please try again later!";
-        if (response && response.message) {
-            errorMessage = response.message;
+    .fail(function(jqXHR) {
+        if (jqXHR.status === 0) {
+            confirmDialog.title = 'Something went wrong!';
+            confirmDialog.message = '<div><img src="' + imgCancel + '">' +
+              '<p>Server is Unreachable, please try again later!</p></div>';
+
+        } else if (jqXHR.status === 401) {
+            confirmDialog.title = 'Session Expired!';
+            confirmDialog.message = '<div><img src="' + imgCancel + '">' +
+              '<p>Session expired! Please log in again</p></div>';
+        } else {
+            confirmDialog.title = 'Unable to perform desired action on DIF';
+            confirmDialog.message = '<div><img src="' + imgCancel + '">' +
+              '<p>The application with DIF ID: ' + udi + ' failed to complete action!' +
+              '<br>Error message: ' + response.message + '</p></div>';
         }
-        confirmDialog.title = "Unable to perform desired action on DIF";
-        confirmDialog.message = '<div><img src="' + imgCancel + '">' +
-                    "<p>The application with DIF ID: " + udi + " failed to complete action!" +
-                    "<br>Error message: " + errorMessage + "</p></div>";
     })
     .always(function() {
-        hideSpinner();
+        pelagosUI.loadingSpinner.hideSpinner();
 
         $("<div>"+confirmDialog.message+"</div>").dialog({
             autoOpen: true,
@@ -612,7 +624,7 @@ function updateDIF(form)
         url = url + "/" + resourceId;
     }
 
-    showSpinner();
+    pelagosUI.loadingSpinner.showSpinner();
     formHash = Form.serialize();
     $.ajax({
         url: url,
@@ -665,50 +677,33 @@ function updateDIF(form)
             return $.Deferred().resolve();
         }
     })
-    .always(function() {
-        if (response.status === "success") {
-            // Then show the dialog according the how it was saved.
-            if (buttonValue === "save") {
-                var title = "DIF Saved";
-                var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
-                    + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
-            } else if (buttonValue === "update") {
-                var title = "DIF Updated";
-                var message = '<div><img src="' + imgInfo + '"><p>Thank you for updating DIF with ID:  ' + udi + ".</p></div>";
-            } else if (buttonValue === "submit") {
-                var title = "DIF Submitted";
-                var message = '<div><img src="' + imgInfo + '">' +
-                    "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
-                    "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
-                    "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
-                    "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
-            } else if (buttonValue === "approve") {
-                var title = "DIF Updated and Approved";
-                var message = '<div><img src="' + imgInfo + '">' +
-                    "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
-                    "<br></p></div>";
-            }
-        } else if (response.status === "error") {
-            if (response.message === "Can only approve a submitted DIF") {
-                var title = "Unable to approve DIF";
-                var message = '<div><img src="' + imgCancel + '">' +
-                    "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
-                    "<br></p></div>";
-            } else {
-                var title = "Unable to perform desired action on DIF";
-                var message = '<div><img src="' + imgCancel + '">' +
-                    "<p>The application with DIF ID: " + udi + " failed to complete action!" +
-                    "<br></p></div>";
-            }
-        } else {
-            var title = "Unable to process DIF form";
-            var message = "<div><p>There was an error processing your request. Your session might have expired.<br>" +
-                "If the problem still persists after you re-login, please contact the administrator.</p></div>";
+    .fail(function (jqXHR) {
+        pelagosUI.loadingSpinner.hideSpinner();
+        let title;
+        let message;
+        if (jqXHR.status === 0) {
+            title = 'Something went wrong!';
+            message = '<div><img src="' + imgCancel + '">' +
+              '<p>Server is Unreachable, please try again later!</p></div>';
+        } else if (jqXHR.status === 401) {
+            title = 'Session Expired!';
+            message = '<div><img src="' + imgCancel + '">' +
+              '<p>Session expired! Please log in again</p></div>';
         }
 
-        hideSpinner();
-        formReset(true);
-        //loadDIFS();
+        if (response.status === "error") {
+            if (response.message === "Can only approve a submitted DIF") {
+                title = "Unable to approve DIF";
+                message = '<div><img src="' + imgCancel + '">' +
+                  "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
+                  "<br></p></div>";
+            } else {
+                title = "Unable to perform desired action on DIF";
+                message = '<div><img src="' + imgCancel + '">' +
+                  "<p>The application with DIF ID: " + udi + " failed to complete action!" +
+                  "<br></p></div>";
+            }
+        }
 
         $("<div>" + message + "</div>").dialog({
             autoOpen: true,
@@ -727,6 +722,54 @@ function updateDIF(form)
                 }
             }
         });
+    })
+    .then(function() {
+        if (response.status === "success") {
+            // Then show the dialog according the how it was saved.
+            if (buttonValue === "save") {
+                var title = "DIF Saved";
+                var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
+                  + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
+            } else if (buttonValue === "update") {
+                var title = "DIF Updated";
+                var message = '<div><img src="' + imgInfo + '"><p>Thank you for updating DIF with ID:  ' + udi + ".</p></div>";
+            } else if (buttonValue === "submit") {
+                var title = "DIF Submitted";
+                var message = '<div><img src="' + imgInfo + '">' +
+                  "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
+                  "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
+                  "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
+                  "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
+            } else if (buttonValue === "approve") {
+                var title = "DIF Updated and Approved";
+                var message = '<div><img src="' + imgInfo + '">' +
+                  "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
+                  "<br></p></div>";
+            }
+
+            pelagosUI.loadingSpinner.hideSpinner();
+            formReset(true);
+            //loadDIFS();
+
+            $('<div>' + message + '</div>')
+                .dialog({
+                    autoOpen: true,
+                    resizable: false,
+                    minWidth: 300,
+                    height: 'auto',
+                    width: 'auto',
+                    modal: true,
+                    title: title,
+                    buttons: {
+                        OK: function () {
+                            $(this).dialog('close');
+                            scrollToTop();
+                            treeFilter();
+                            return $.Deferred().resolve();
+                        }
+                    }
+              });
+        }
     });
 }
 
@@ -758,41 +801,6 @@ function treeFilter()
     $("#diftree").html(difTreeHTML);
     $("#diftree").jstree("destroy");
     loadDIFS($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
-}
-
-function initSpinner()
-{
-    var opts = {
-        lines: 13, // The number of lines to draw
-        length: 40, // The length of each line
-        width: 15, // The line thickness
-        radius: 50, // The radius of the inner circle
-        corners: 1, // Corner roundness (0..1)
-        rotate: 0, // The rotation offset
-        direction: 1, // 1: clockwise, -1: counterclockwise
-        color: "#000", // #rgb or #rrggbb or array of colors
-        speed: 1, // Rounds per second
-        trail: 60, // Afterglow percentage
-        shadow: true, // Whether to render a shadow
-        hwaccel: true, // Whether to use hardware acceleration
-        className: "spinner", // The CSS class to assign to the spinner
-        zIndex: 2000000000, // The z-index (defaults to 2000000000)
-        top: "50%", // Top position relative to parent
-        left: "50%" // Left position relative to parent
-    };
-
-    target = document.getElementById("spinner");
-    spinner = new Spinner(opts).spin(target);
-}
-
-function showSpinner()
-{
-    $("#spinner").show();
-}
-
-function hideSpinner()
-{
-    $("#spinner").hide();
 }
 
 function getNode(UDI, ID)
@@ -961,7 +969,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
                 }
                 $('[name="primaryPointOfContact"]').addClass("required");
             }
-            hideSpinner();
+            pelagosUI.loadingSpinner.hideSpinner();
             var researchGroupLocked = $("#researchGroup option[value=" + researchGroup + "]").attr("locked");
             if (researchGroupLocked == "true") {
                 $("#status").val("closedout");
@@ -1023,7 +1031,7 @@ function fillForm(Form, UDI, ID)
 
     $.when(formChanged()).done(function() {
 
-        showSpinner();
+        pelagosUI.loadingSpinner.showSpinner();
 
         var url = $("#difForm").attr("action");
 
@@ -1085,7 +1093,7 @@ function fillForm(Form, UDI, ID)
             });
             formHash = $("#difForm").serialize();
             setFormStatus();
-            //hideSpinner();
+            //pelagosUI.loadingSpinner.hideSpinner();
         });
     });
 }

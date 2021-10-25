@@ -1,0 +1,57 @@
+<hr>
+<div class="py-2">
+    <h6><strong>Data Parameters and Units:</strong></h6>
+    <p>
+        {{ dataset.datasetSubmission.suppParams | raw}}
+    </p>
+</div>
+
+{% if dataset.datasetSubmission.suppMethods %}
+<hr>
+<div class="py-2">
+    <h6><strong>Methods:</strong></h6>
+    <p>
+        {{ dataset.datasetSubmission.suppMethods | raw}}
+    </p>
+</div>
+{% endif %}
+
+{% if dataset.datasetSubmission.suppInstruments %}
+<hr>
+<div class="py-2">
+    <h6><strong>Instruments:</strong></h6>
+    <p>
+        {{ dataset.datasetSubmission.suppInstruments | raw}}
+    </p>
+</div>
+{% endif %}
+
+{% if dataset.datasetSubmission.suppSampScalesRates %}
+<hr>
+<div class="py-2">
+    <h6><strong>Sampling Scales and Rates:</strong></h6>
+    <p>
+        {{ dataset.datasetSubmission.suppSampScalesRates | raw}}
+    </p>
+</div>
+{% endif %}
+
+{% if dataset.datasetSubmission.suppErrorAnalysis %}
+<hr>
+<div class="py-2">
+    <h6><strong>Error Analysis:</strong></h6>
+    <p>
+        {{ dataset.datasetSubmission.suppErrorAnalysis  | raw}}
+    </p>
+</div>
+{% endif %}
+
+{% if dataset.datasetSubmission.suppProvenance %}
+<hr>
+<div class="py-2">
+    <h6><strong>Provenance and Historical References:</strong></h6>
+    <p>
+        {{ dataset.datasetSubmission.suppProvenance | raw}}
+    </p>
+</div>
+{% endif %}

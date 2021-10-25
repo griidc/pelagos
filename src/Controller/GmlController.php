@@ -45,17 +45,9 @@ class GmlController extends AbstractController
             try {
                 $wkt = $geometryUtil->convertGmlToWkt($gml);
             } catch (InvalidGmlException $e) {
-                return new Response(
-                    $e->getMessage(),
-                    Response::HTTP_BAD_REQUEST,
-                    array('content-type' => 'text/plain')
-                );
+                throw new BadRequestHttpException($e->getMessage());
             }
-            return new Response(
-                $wkt,
-                Response::HTTP_OK,
-                array('content-type' => 'text/plain')
-            );
+            return new JsonResponse(['wkt' => $wkt]);
         } else {
             throw new BadRequestHttpException('No GML given. (Parameter:gml)');
         }
@@ -81,16 +73,17 @@ class GmlController extends AbstractController
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
             $statement->bindValue('wkt', $wkt);
-            $statement->execute();
+            try {
+                $statement->execute();
+            } catch (\Throwable $th) {
+                throw new BadRequestHttpException("Error while trying to convert Well Known Text (wkt=$wkt)");
+            }
+
             $results = $statement->fetchAll();
             $gml = $results[0]['st_asgml'];
             $gml = $this->addGMLid($gml);
 
-            return new Response(
-                $gml,
-                Response::HTTP_OK,
-                array('content-type' => 'text/plain')
-            );
+            return new JsonResponse(['gml' => $gml]);
         } else {
             throw new BadRequestHttpException('No Well Know Text given. (Parameter:wkt)');
         }

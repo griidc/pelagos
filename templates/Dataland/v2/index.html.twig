@@ -75,21 +75,9 @@
                             {{ dataset.datasetSubmission.purpose }}
                         </p>
                     </div>
+                    {% include 'Dataland/v2/supplemental-info.html.twig' %}
                     {% include 'Dataland/v2/publications.html.twig' %}
                     {% include 'Dataland/v2/file-manager.html.twig' %}
-                    <hr>
-                    <div class="py-2">
-                        <h6><strong>Formatted Metadata:</strong></h6>
-                        <div class="border border-chart-secondary">
-                            <div class="mx-1">
-                                {% if rawxml %}
-                                    {{ rawxml|transformXml('xml-to-html-ISO.xsl')|raw }}
-                                {% else %}
-                                    No Metadata Available
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
                 </main>
                 <aside class="col-lg-3">
                     {% include 'Dataland/v2/detail-cards.html.twig' %}

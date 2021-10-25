@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<div class="bootstrap">
+    <div class="container">
+        <div class="d-flex flex-column align-items-center jumbotron">
+            <div class="p-2">
+                <h1 class="display-1 text-primary">{{ status_code }}</h1>
+            </div>
+            <div class="p-2">
+                <h1 class="display-4">Oops, something went wrong!</h1>
+                <p class="lead">{% block error %}{% endblock %}</p>
+                <p class="lead text-muted">If the problem persists, please contact GRIIDC.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
