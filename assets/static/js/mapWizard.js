@@ -26,13 +26,7 @@ function MapWizard(json)
     var diaHeight = $(window).height()*.8;
 
     $.ajaxSetup({
-        timeout: 60000,
-        error: function(x, t, m) {
-            var message;
-            if (typeof m.message != "undefined")
-            {message = m.message;}else{message = m;};
-            console.log("Error in Ajax:"+t+" Message:"+message);
-        }
+        timeout: 10000,
     });
 
     init();
@@ -68,7 +62,21 @@ function MapWizard(json)
                 var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
                 smlGeoViz.gotoAllFeatures();
                 geometryType = smlGeoViz.getSingleFeatureClass();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                pelagosUI.loadingSpinner.hideSpinner();
+                handleError(jqXHR);
             });
+    }
+
+    function handleError(jqXHR)
+    {
+        let message = "";
+        if (jqXHR.status & jqXHR.status !== 0) {
+            message = jqXHR.responseText == null ? errorThrown: jqXHR.responseJSON.message;
+        }
+        pelagosUI.loadingSpinner.hideSpinner();
+        pelagosUI.showErrorDialog(message);
     }
 
     function init()
@@ -94,6 +102,10 @@ function MapWizard(json)
                     var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
                     smlGeoViz.gotoAllFeatures();
                     geometryType = smlGeoViz.getSingleFeatureClass();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    pelagosUI.loadingSpinner.hideSpinner();
+                    handleError(jqXHR);
                 });
         });
 
@@ -172,7 +184,11 @@ function MapWizard(json)
                 }
 
                 wizPromise.resolve();
-            });
+            })
+            .fail(function (jqXHR, errorThrown, errorText) {
+                pelagosUI.loadingSpinner.hideSpinner();
+                handleError(jqXHR);
+            })
         });
     }
 
@@ -604,6 +620,7 @@ function MapWizard(json)
             {
                 var myWKT = wizGeoViz.getWKT(myWKTid);
                 var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
+
                 //run GML validation if the SEW is opened with dataset review,
                 if (true === validateGeometry) {
                     validateGeometryFromWkt(wgsWKT).then(function(isValid) {
@@ -613,7 +630,12 @@ function MapWizard(json)
                                 $(gmlField).trigger("change");
                                 $(descField).val("");
                             })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                pelagosUI.loadingSpinner.hideSpinner();
+                                handleError(jqXHR);
+                            });
                             closeDialog();
+                            pelagosUI.loadingSpinner.hideSpinner();
                         }
                     })
                 } else {
@@ -622,7 +644,12 @@ function MapWizard(json)
                         $(gmlField).trigger("change");
                         $(descField).val("");
                         closeDialog();
+                        pelagosUI.loadingSpinner.hideSpinner();
                     })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        pelagosUI.loadingSpinner.hideSpinner();
+                        handleError(jqXHR);
+                    });
                 }
             }
         } else {
@@ -647,7 +674,7 @@ function MapWizard(json)
             if(xhr.status === 400) {
                 showDialog("Invalid Geometry", xhr.responseText);
             }
-            else showDialog("Error " + xhr.status, xhr.statusText);
+            else handleError(xhr);
         });
     }
 
@@ -719,6 +746,7 @@ function MapWizard(json)
         .button({ icons: { primary: "ui-icon ui-icon-disk"}},{disabled: true})
         .click(function()
         {
+            pelagosUI.loadingSpinner.showSpinner();
             saveFeature();
         })
         .end()

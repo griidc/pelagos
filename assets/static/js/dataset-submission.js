@@ -360,11 +360,10 @@ $(function() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if ([401].includes(jqXHR.status)) {
-                    loggedOutPopup.show();
+                    pelagosUI.showErrorDialog('Your Login Session has Expired!', true);
                 } else {
                     if (jqXHR.status === 0) {
-                        errorPopup.show();
-                        $("#errorPopupText").html("Server is Unreachable, please try again later!");
+                        pelagosUI.showErrorDialog(message);
                     }
                 }
             }
