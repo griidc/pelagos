@@ -283,39 +283,6 @@ $(function() {
         });
     }
 
-    const loggedOutPopup = $("#loggedOutPopup").dxPopup({
-        width: 300,
-        height: 250,
-        showTitle: true,
-        title: "Session Expired!",
-        visible: false,
-        dragEnabled: false,
-        closeOnOutsideClick: false,
-        showCloseButton: false,
-        toolbarItems: [{
-            widget: "dxButton",
-            toolbar: "bottom",
-            options: {
-            type: "danger",
-            text: "Continue to Login Form",
-            onClick: function(e) {
-                window.location.href = Routing.generate("security_login", {"destination":window.location.href})
-              }
-            },
-        }]
-    }).dxPopup("instance");
-
-    const errorPopup = $("#errorPopup").dxPopup({
-        width: 300,
-        height: 250,
-        showTitle: true,
-        title: "Something went wrong!",
-        visible: false,
-        dragEnabled: true,
-        closeOnOutsideClick: true,
-        showCloseButton: true,
-    }).dxPopup("instance")
-
     function saveDatasetSubmission(notify)
     {
         if (notify) {
