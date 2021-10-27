@@ -48,7 +48,7 @@ $(document).ready(function(){
         $("#datasetFileTransferType").val("HTTP");
     }
 
-    $("#remotelyHostedUrl, #filesUploaded, #datasetFileUri").on("keyup change", function() {
+    $("#remotelyHostedUrl, #filesUploaded, #largeFileUri").on("keyup change", function() {
         $(this).valid();
         // get the datasetFileTransferType from the active tab
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
@@ -66,12 +66,12 @@ $(document).ready(function(){
             remotelyHostedUrl:{
                 require_from_group: [1, '.files']
             },
-            datasetFileUri:{
+            largeFileUri:{
                 require_from_group: [1, '.files']
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl datasetFileUri"
+            files: "filesUploaded remotelyHostedUrl largeFileUri"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
@@ -82,7 +82,7 @@ $(document).ready(function(){
             remotelyHostedUrl: {
                 require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             },
-            datasetFileUri: {
+            largeFileUri: {
                 require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             }
         },
@@ -253,7 +253,7 @@ $(document).ready(function(){
     });
 
     $("#datasetFilePath").on("keyup change", function() {
-        $("#datasetFileUri").val($(this).val()).trigger("change");
+        $("#largeFileUri").val($(this).val()).trigger("change");
     });
 
     $("#clearLargeFilePath").on("click", function () {
