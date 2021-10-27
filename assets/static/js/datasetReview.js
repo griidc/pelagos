@@ -256,12 +256,17 @@ $(document).ready(function(){
         $("#datasetFileUri").val($(this).val()).trigger("change");
     });
 
+    $("#clearLargeFilePath").on("click", function () {
+        $("#datasetFilePath")[0].selectedIndex = 0;
+        $("#datasetFileUri").val("");
+    });
+
     function populateFolderDropDownList() {
         let dropdown = $('#datasetFilePath');
 
         dropdown.empty();
 
-        dropdown.append('<option selected="true" disabled>Choose Folder</option>');
+        dropdown.append('<option selected="true" value="">Choose Folder</option>');
         dropdown.prop('selectedIndex', 0);
 
         const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission");
