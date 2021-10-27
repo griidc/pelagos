@@ -273,11 +273,6 @@ class DatasetSubmissionType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ))
-            ->add('datasetFileUri', Type\HiddenType::class, array(
-                'label' => 'Dataset File Path',
-                'required' => false,
-                'mapped' => true,
-            ))
             ->add('largeFileUri', Type\HiddenType::class, array(
                 'label' => 'Large File Path',
                 'required' => false,
