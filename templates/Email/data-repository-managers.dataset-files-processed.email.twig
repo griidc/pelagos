@@ -1,0 +1,187 @@
+{% block subject 'New dataset file(s)/url(s) for ' ~ datasetSubmission.dataset.udi %}
+
+{% if datasetSubmission.fileset is defined and datasetSubmission.fileset is not null %}
+    {% if datasetSubmission.largeFileUri and datasetSubmission.remotelyHostedUrl %}
+        {% block body_html %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:<br>
+            <br>
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }} <br>
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}<br>
+            UDI: {{ datasetSubmission.dataset.udi }}<br>
+            Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+            <br>
+            <br>
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+            <br>
+            <br>
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}<br>
+            <br>
+            {{ datasetSubmission.remotelyHostedUrl }}<br>
+        {% endblock %}
+
+        {% block body_text %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:
+
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }}
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}
+            UDI: {{ datasetSubmission.dataset.udi }}
+            Dataset Title: {{ datasetSubmission.dataset.title }}
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+
+
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+
+
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}
+
+            {{ datasetSubmission.remotelyHostedUrl }}
+
+        {% endblock %}
+    {% elseif datasetSubmission.remotelyHostedUrl %}
+        {% block body_html %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:<br>
+            <br>
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }} <br>
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}<br>
+            UDI: {{ datasetSubmission.dataset.udi }}<br>
+            Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+            <br>
+            <br>
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}<br>
+            <br>
+            {{ datasetSubmission.remotelyHostedUrl }}<br>
+        {% endblock %}
+
+        {% block body_text %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:
+
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }}
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}
+            UDI: {{ datasetSubmission.dataset.udi }}
+            Dataset Title: {{ datasetSubmission.dataset.title }}
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+
+
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}
+
+            {{ datasetSubmission.remotelyHostedUrl }}
+
+        {% endblock %}
+
+    {% elseif datasetSubmission.largeFileUri %}
+        {% block body_html %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:<br>
+            <br>
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }} <br>
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}<br>
+            UDI: {{ datasetSubmission.dataset.udi }}<br>
+            Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+            <br>
+            <br>
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+        {% endblock %}
+
+        {% block body_text %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:
+
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }}
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}
+            UDI: {{ datasetSubmission.dataset.udi }}
+            Dataset Title: {{ datasetSubmission.dataset.title }}
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+
+
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+        {% endblock %}
+    {% else %}
+        {% block body_html %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:<br>
+            <br>
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }} <br>
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}<br>
+            UDI: {{ datasetSubmission.dataset.udi }}<br>
+            Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+        {% endblock %}
+
+        {% block body_text %}
+            New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:
+
+            Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+            Number of Files: {{ datasetSubmission.fileset.numberOfFiles }}
+            Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}
+            UDI: {{ datasetSubmission.dataset.udi }}
+            Dataset Title: {{ datasetSubmission.dataset.title }}
+            Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+        {% endblock %}
+    {% endif %}
+{% else %}
+    {% if datasetSubmission.largeFileUri and datasetSubmission.remotelyHostedUrl %}
+        {% block body_html %}
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+            <br>
+            <br>
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}<br>
+            <br>
+            {{ datasetSubmission.remotelyHostedUrl }}<br>
+        {% endblock %}
+
+        {% block body_text %}
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+
+
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}
+
+            {{ datasetSubmission.remotelyHostedUrl }}
+
+        {% endblock %}
+    {% elseif datasetSubmission.remotelyHostedUrl %}
+        {% block body_html %}
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}<br>
+            <br>
+            {{ datasetSubmission.remotelyHostedUrl }}<br>
+        {% endblock %}
+
+        {% block body_text %}
+            The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}
+
+            {{ datasetSubmission.remotelyHostedUrl }}
+
+        {% endblock %}
+
+    {% elseif datasetSubmission.largeFileUri %}
+        {% block body_html %}
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+        {% endblock %}
+
+        {% block body_text %}
+            {{ datasetSubmission.largeFileUri}} submitted by
+            {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }} for {{ datasetSubmission.dataset.udi}}
+            on {{ datasetSubmission.submissionTimeStamp.format('c') }}
+        {% endblock %}
+    {% endif %}
+{% endif %}

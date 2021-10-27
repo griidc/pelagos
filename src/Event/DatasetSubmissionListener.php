@@ -126,7 +126,7 @@ class DatasetSubmissionListener extends EventListener
             and $datasetSubmission->getDataset()->getDatasetStatus() === Dataset::DATASET_STATUS_SUBMITTED) {
             //email DRMs
             $this->sendMailMsg(
-                $this->twig->load('Email/data-repository-managers.dataset-processed.email.twig'),
+                $this->twig->load('Email/data-repository-managers.dataset-files-processed.email.twig'),
                 array('datasetSubmission' => $datasetSubmission),
                 $this->getDRPMs($datasetSubmission->getDataset())
             );
