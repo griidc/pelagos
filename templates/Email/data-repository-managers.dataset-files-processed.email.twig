@@ -20,7 +20,7 @@
      {% if datasetSubmission.largeFileUri %}
         Dataset File Path for large file: {{ datasetSubmission.largeFileUri}}<br>
      {% else %}
-         N/A
+         N/A<br>
      {% endif %}
      <br>
      <h3>Remotely Hosted Url</h3>
@@ -54,7 +54,7 @@
     {% else %}
         N/A
     {% endif %}
-    
+
     Remotely Hosted Url
     {% if datasetSubmission.remotelyHostedUrl %}
         The following URL was provided : {{ datasetSubmission.remotelyHostedUrl }}
