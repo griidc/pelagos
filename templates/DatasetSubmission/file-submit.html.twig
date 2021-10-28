@@ -17,7 +17,9 @@
         <div style="background: transparent;" id="filetabs">
             <ul>
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Upload</a></li>
-                <li datasetFileTransferType="SFTP"><a href="#tabs-2">Large Files</a></li>
+                {% if largefile_tab != 'disabled_hidden' %}
+                    <li datasetFileTransferType="SFTP"><a href="#tabs-2">Large Files</a></li>
+                {% endif %}
                 <li datasetFileTransferType="HTTP"><a href="#tabs-3">Enter URL</a></li>
             </ul>
             <div id="tabs-1"> <!-- Upload -->
@@ -31,7 +33,14 @@
             </div> <!-- tabs-1 -->
 
             {% set sftpuser=app.user.isPosix() %}
-            <div id="tabs-2"> <!-- Upload via SFTP/Ingest-->
+            {% if largefile_tab != 'disabled_hidden' %}
+                {% if largefile_tab == 'disabled_message'%}
+                    <div id="tabs-2" class="disabled-tab"> <!-- Upload via SFTP/Ingest-->
+                    <p><h2>This section of the data management portal has been temporarily disabled by GRIIDC staff. This may coincide with a maintenance window where the GRIIDC
+                    large data storage system needs to be taken offline.</h2></p>
+                {% else %}
+                    <div id="tabs-2"> <!-- Upload via SFTP/Ingest-->
+                {% endif %}
                 <p>Dataset files that are too large via the normal Upload mechanism can be uploaded to the griidc-ingest
                     server using Globus or SFTP and then the folder selected below.  See your
 <a href="{{ path('pelagos_app_ui_person_profile_page', {'id': app.user.id}) }}" TARGET="_NEW">user profile page</a>
@@ -75,6 +84,7 @@
                     </table>
                 </fieldset>
             </div> <!-- tabs-2 -->
+            {% endif %}
 
             <div id="tabs-3"> <!-- Remotely Hosted Tab -->
                 If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.

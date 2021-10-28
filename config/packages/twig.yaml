@@ -8,3 +8,4 @@ twig:
         google_analytics_id: "%env(GOOGLE_ANALYTICS_ID)%"
         pelagos_readonly_message: "%env(PELAGOS_READONLY_MESSAGE)%"
         custom_base_template: "%env(CUSTOM_BASE_TEMPLATE)%"
+        largefile_tab: "%env(LARGEFILE_TAB)%"

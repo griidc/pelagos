@@ -158,3 +158,9 @@ table.dataTable.stripe tbody tr:hover {
 #clearLargeFilePath {
     margin-left: 30px;
 }
+
+.disabled-tab
+{
+    pointer-events: none;
+    background-color:lightgray;
+}
