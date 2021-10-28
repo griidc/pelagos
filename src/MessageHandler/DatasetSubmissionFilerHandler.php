@@ -98,7 +98,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmissionId
         );
         $fileset = $datasetSubmission->getFileset();
-        if ($fileset instanceof Fileset and $fileset->getNumberOfFiles() !== $fileset->getDeletedFiles()) {
+        if ($fileset instanceof Fileset and count($fileset->getAllFiles()) !== count($fileset->getDeletedFiles())) {
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
 
