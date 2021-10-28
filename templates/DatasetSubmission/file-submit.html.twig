@@ -35,9 +35,9 @@
             {% set sftpuser=app.user.isPosix() %}
             {% if largefile_tab != 'disabled_hidden' %}
                 {% if largefile_tab == 'disabled_message'%}
-                    <div id="tabs-2" class="disabled-tab"> <!-- Upload via SFTP/Ingest-->
+                    <div id="tabs-2" class="disabled-tab" style="background-color: lightgray"> <!-- Upload via SFTP/Ingest-->
                     <p><h2>This section of the data management portal has been temporarily disabled by GRIIDC staff. This may coincide with a maintenance window where the GRIIDC
-                    large data storage system needs to be taken offline.</h2></p>
+                    large data storage system needs to be taken offline. You may still submit smaller datasets or remotely hosted datasets at this time.</h2></p>
                 {% else %}
                     <div id="tabs-2"> <!-- Upload via SFTP/Ingest-->
                 {% endif %}

@@ -162,5 +162,4 @@ table.dataTable.stripe tbody tr:hover {
 .disabled-tab
 {
     pointer-events: none;
-    background-color:lightgray;
 }
