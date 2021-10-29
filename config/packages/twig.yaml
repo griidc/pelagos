@@ -9,3 +9,4 @@ twig:
         pelagos_readonly_message: "%env(PELAGOS_READONLY_MESSAGE)%"
         custom_base_template: "%env(CUSTOM_BASE_TEMPLATE)%"
         largefile_tab: "%env(LARGEFILE_TAB)%"
+
