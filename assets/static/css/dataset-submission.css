@@ -159,7 +159,7 @@ table.dataTable.stripe tbody tr:hover {
     margin-left: 30px;
 }
 
-.disabled-tab
+.ui-tabs .ui-tabs-panel.disabled-tab
 {
     pointer-events: none;
 }
