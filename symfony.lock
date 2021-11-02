@@ -1,7 +1,4 @@
 {
-    "behat/transliterator": {
-        "version": "v1.3.0"
-    },
     "brick/math": {
         "version": "0.9.1"
     },
@@ -157,9 +154,6 @@
             "config/packages/fos_rest.yaml"
         ]
     },
-    "gedmo/doctrine-extensions": {
-        "version": "v2.4.42"
-    },
     "guzzlehttp/guzzle": {
         "version": "6.5.2"
     },
@@ -203,9 +197,6 @@
             "config/packages/jms_serializer.yaml",
             "config/packages/prod/jms_serializer.yaml"
         ]
-    },
-    "jsor/doctrine-postgis": {
-        "version": "v1.7.0"
     },
     "laminas/laminas-code": {
         "version": "3.4.1"
