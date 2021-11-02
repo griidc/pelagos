@@ -258,7 +258,7 @@ $(document).ready(function(){
 
     $("#clearLargeFilePath").on("click", function () {
         $("#datasetFilePath")[0].selectedIndex = 0;
-        $("#datasetFileUri").val("");
+        $("#largeFileUri").val("");
     });
 
     function populateFolderDropDownList() {
