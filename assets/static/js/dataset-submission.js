@@ -259,7 +259,7 @@ $(function() {
 
     $("#clearLargeFilePath").on("click", function () {
         $("#datasetFilePath")[0].selectedIndex = 0;
-        $("#largeFileUri").val("");
+        $("#largeFileUri").val("").trigger("change");
     });
 
     function populateFolderDropDownList() {
