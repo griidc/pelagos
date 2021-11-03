@@ -126,6 +126,7 @@ function MapWizard(json)
     function initWiz()
     {
         return $.Deferred(function() {
+            pelagosUI.loadingSpinner.showSpinner();
             var wizPromise = this;
             //Synchonous load of HTML, then append to DIV
             $.ajax({
@@ -186,9 +187,11 @@ function MapWizard(json)
                 wizPromise.resolve();
             })
             .fail(function (jqXHR, errorThrown, errorText) {
-                pelagosUI.loadingSpinner.hideSpinner();
                 handleError(jqXHR);
             })
+            .always(function (){
+                pelagosUI.loadingSpinner.hideSpinner();
+            });
         });
     }
 
