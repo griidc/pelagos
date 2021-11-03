@@ -26,7 +26,7 @@ function MapWizard(json)
     var diaHeight = $(window).height()*.8;
 
     $.ajaxSetup({
-        timeout: 10000,
+        timeout: 60000,
     });
 
     init();
@@ -126,6 +126,8 @@ function MapWizard(json)
     function initWiz()
     {
         return $.Deferred(function() {
+            pelagosUI.loadingSpinner.showSpinner();
+
             var wizPromise = this;
             //Synchonous load of HTML, then append to DIV
             $.ajax({
@@ -189,6 +191,9 @@ function MapWizard(json)
                 pelagosUI.loadingSpinner.hideSpinner();
                 handleError(jqXHR);
             })
+            .always(function () {
+                pelagosUI.loadingSpinner.hideSpinner();
+            });
         });
     }
 
