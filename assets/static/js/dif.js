@@ -33,6 +33,10 @@ $(document).ready(function()
     imgThrobber = $("#imgthrobber").attr("src");
     imgCancel = $("#imgCancel").attr("src");
 
+    $.ajaxSetup({
+        timeout: 60000,
+    });
+
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         position: {
