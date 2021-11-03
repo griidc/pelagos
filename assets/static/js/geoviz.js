@@ -558,6 +558,7 @@ function GeoViz()
                 context: document.body,
                 data: {gml: GML},
                 dataType: "json",
+                timeout: 10000,
                 converters:
                 {
                     "text json": function(json)
@@ -583,6 +584,7 @@ function GeoViz()
             data: {wkt: WKT},
             context: document.body,
             dataType: "json",
+            timeout: 10000,
             converters:
             {
                 "text json": function(json)

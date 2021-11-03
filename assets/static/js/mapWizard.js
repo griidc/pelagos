@@ -26,7 +26,7 @@ function MapWizard(json)
     var diaHeight = $(window).height()*.8;
 
     $.ajaxSetup({
-        timeout: 10000,
+        timeout: 60000,
     });
 
     init();
