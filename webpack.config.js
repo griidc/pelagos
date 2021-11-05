@@ -1,5 +1,6 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -92,5 +93,13 @@ Encore
     },
   )
 
-  .enableIntegrityHashes();
+  .enableIntegrityHashes()
+
+  .addPlugin(new WorkboxPlugin.GenerateSW({
+    include: [/\.(?:css|woff|woff2|ttf)$/],
+    maximumFileSizeToCacheInBytes: 10485760,
+  }))
+
+  ;
+
 module.exports = Encore.getWebpackConfig();

@@ -2,9 +2,16 @@
  * App.js the main app for the base template.
  */
 
+import { Workbox } from 'workbox-window';
 import '../../scss/griidc.scss';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+
+if ('serviceWorker' in navigator) {
+  const wb = new Workbox('/build/service-worker.js');
+
+  wb.register();
+}
 
 const $ = require('jquery');
 
