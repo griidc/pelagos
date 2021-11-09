@@ -171,8 +171,6 @@ class DatasetSubmissionController extends AbstractController
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
-                    and $datasetSubmission->getFileset() instanceof Fileset
-                    and $datasetSubmission->getFileset()->isDone()
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
