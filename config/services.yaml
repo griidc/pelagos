@@ -99,6 +99,9 @@ services:
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
         $doiApiPrefix: "%env(DOI_API_PREFIX)%"
         $doiApiUrl: "%env(DOI_API_URL)%"
+    
+    App\Util\IngestUtil:
+        $ingestApiUrl: "%env(INGEST_API_URL)%"
 
     App\Util\Ldap\Ldap:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
