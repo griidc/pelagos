@@ -6,6 +6,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
 
+use App\Event\EntityEventDispatcher;
 use App\Message\DatasetSubmissionFiler;
 use App\Message\ProcessFile;
 use App\Message\ZipDatasetFiles;
@@ -52,6 +53,13 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     protected $entityManager;
 
     /**
+     * The entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
      * DatasetSubmissionFilerHandler constructor.
      *
      * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
@@ -63,12 +71,14 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         DatasetSubmissionRepository $datasetSubmissionRepository,
         LoggerInterface $filerLogger,
         MessageBusInterface $messageBus,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EntityEventDispatcher $entityEventDispatcher
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
         $this->messageBus = $messageBus;
         $this->entityManager = $entityManager;
+        $this->entityEventDispatcher = $entityEventDispatcher;
     }
 
     /**
@@ -88,7 +98,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmissionId
         );
         $fileset = $datasetSubmission->getFileset();
-        if ($fileset instanceof Fileset) {
+        if ($fileset instanceof Fileset and count($fileset->getAllFiles()) !== count($fileset->getDeletedFiles())) {
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
 
@@ -113,9 +123,8 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             }
             $this->logger->info('Dataset submission process completed', $loggingContext);
         } else {
-            if ($datasetSubmission->getRemotelyHostedUrl()) {
-                $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-            }
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
         }
         $this->entityManager->flush();
     }
