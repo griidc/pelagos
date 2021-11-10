@@ -87,11 +87,11 @@ class PelagosFileCheckerCommand extends Command
                 if ($fix) {
                     $file->setStatus('done');
                 }
+            } elseif ($sha256Hash !== $fileHash and $errorMessage === '') {
+                $io->text("BAD HASH MATCH: udi:$udi, expectedHash:$sha256Hash, calculatedHash:$fileHash, file:$filePath");
             } else {
                 $io->text("BAD:$errorMessage udi:$udi, hash:$sha256Hash, file:$filePath");
             }
-
-            $udi = $file->getFileset()->getDatasetSubmission()->getDataset()->getUdi();
         }
 
         $this->entityManager->flush();
