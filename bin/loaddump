@@ -59,6 +59,7 @@ dbportname=${database_url_parts[3]}
 IFS='/' read -ra partname_array <<< "$dbportname"
 dbport=${partname_array[0]} # unused
 parameters__database_name=${partname_array[1]}
+parameters__database_name=`echo $parameters__database_name | sed s/\?.*$//`
 
 echo "WARNING!!!: This will destroy all data in the $parameters__database_name database on $parameters__database_host!"
 read -r -p "Are you sure you want to do this? [y/N] " response
