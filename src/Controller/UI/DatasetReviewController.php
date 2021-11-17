@@ -436,7 +436,8 @@ class DatasetReviewController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
-        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+        $entityManager = $this->getDoctrine()->getManager();
+        $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
@@ -475,34 +476,8 @@ class DatasetReviewController extends AbstractController
             if ($fileset instanceof Fileset) {
                 foreach ($fileset->getNewFiles() as $file) {
                     $file->setStatus(File::FILE_IN_QUEUE);
-                    $this->entityHandler->update($file);
                 }
             }
-
-            $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
-            $this->entityHandler->update($datasetSubmission);
-
-            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
-                $this->entityHandler->update($distributionPoint);
-            }
-
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $this->entityHandler->update($datasetContact);
-            }
-
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $this->entityHandler->update($metadataContact);
-            }
-
-            foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
-                $this->entityHandler->update($datasetLink);
-            }
-
-            // update MDAPP logs after action is executed.
-            $this->entityEventDispatcher->dispatch(
-                $datasetSubmission,
-                $eventName
-            );
 
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
@@ -532,9 +507,17 @@ class DatasetReviewController extends AbstractController
                     }
                     $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
                     $datasetSubmission->setFileset($newFileset);
-                    $this->entityHandler->update($datasetSubmission);
+                    $entityManager->persist($newFileset);
                 }
             }
+
+            $entityManager->flush();
+
+            // update MDAPP logs after action is executed.
+            $this->entityEventDispatcher->dispatch(
+                $datasetSubmission,
+                $eventName
+            );
 
             $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
             $messageBus->dispatch($datasetSubmissionFilerMessage);

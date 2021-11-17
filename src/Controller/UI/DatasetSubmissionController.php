@@ -207,7 +207,8 @@ class DatasetSubmissionController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
-        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+        $entityManager = $this->getDoctrine()->getManager();
+        $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
@@ -248,24 +249,10 @@ class DatasetSubmissionController extends AbstractController
             if ($fileset instanceof Fileset) {
                 foreach ($fileset->getNewFiles() as $file) {
                     $file->setStatus(File::FILE_IN_QUEUE);
-                    $this->entityHandler->update($file);
                 }
             }
 
-            $this->entityHandler->update($datasetSubmission);
-
-            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
-                $this->entityHandler->update($distributionPoint);
-            }
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $this->entityHandler->update($datasetContact);
-            }
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $this->entityHandler->update($metadataContact);
-            }
-            foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
-                $this->entityHandler->update($datasetLink);
-            }
+            $entityManager->flush();
 
             $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
