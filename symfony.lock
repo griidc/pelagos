@@ -115,6 +115,12 @@
     "exsyst/swagger": {
         "version": "v0.4.1"
     },
+    "ezimuel/guzzlestreams": {
+        "version": "3.0.1"
+    },
+    "ezimuel/ringphp": {
+        "version": "1.2.0"
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
@@ -162,12 +168,6 @@
     },
     "guzzlehttp/psr7": {
         "version": "1.6.1"
-    },
-    "guzzlehttp/ringphp": {
-        "version": "1.1.1"
-    },
-    "guzzlehttp/streams": {
-        "version": "3.0.0"
     },
     "hamcrest/hamcrest-php": {
         "version": "v2.0.0"
@@ -243,6 +243,9 @@
     },
     "nikic/php-parser": {
         "version": "v4.3.0"
+    },
+    "nyholm/dsn": {
+        "version": "2.0.0"
     },
     "ocramius/package-versions": {
         "version": "1.5.1"
