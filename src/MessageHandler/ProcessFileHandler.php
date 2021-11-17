@@ -108,11 +108,14 @@ class ProcessFileHandler implements MessageHandlerInterface
 
         $filePath = $file->getPhysicalFilePath();
         $fileStream = fopen($filePath, 'r');
-        try {
+        if ($fileStream === false) {
+            $file->setDescription("Unreadable File!");
+            $file->setStatus(File::FILE_ERROR);
+            $this->entityManager->flush();
+            return;
+        } else {
             $fileHash = StreamInfo::calculateHash(array('fileStream' => $fileStream));
             $file->setFileSha256Hash($fileHash);
-        } catch (\Exception $e) {
-            $this->logger->warning(sprintf('Unable to hash file. Message: %s', $e->getMessage()));
         }
 
         try {
@@ -123,11 +126,12 @@ class ProcessFileHandler implements MessageHandlerInterface
             $file->setPhysicalFilePath($newFileDestination);
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
+            $file->setDescription("Error writing to store:" . $exception->getMessage());
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
             return;
         }
-        
+
         try {
             unlink($filePath);
             rmdir(dirname($filePath));
