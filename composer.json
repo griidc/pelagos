@@ -6,7 +6,7 @@
     "homepage": "https://github.com/griidc/pelagos/",
     "license": "BSD-2-Clause",
     "require": {
-        "php": "^7.3.0",
+        "php": "^7.4.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -65,7 +65,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "7.3.0"
+            "php": "7.4.0"
         }
     },
     "autoload": {
