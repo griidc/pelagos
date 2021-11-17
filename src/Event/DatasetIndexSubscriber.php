@@ -3,7 +3,7 @@
 namespace App\Event;
 
 use App\Twig\Extensions as TwigExtentions;
-use FOS\ElasticaBundle\Event\TransformEvent;
+use FOS\ElasticaBundle\Event\PostTransformEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -37,11 +37,11 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
     /**
      * Populate calculated fields in the Dataset index.
      *
-     * @param TransformEvent $event The event that triggeref this.
+     * @param PostTransformEvent $event The event that triggered this.
      *
      * @return void
      */
-    public function populateCalculatedFields(TransformEvent $event)
+    public function populateCalculatedFields(PostTransformEvent $event)
     {
         $dataset = $event->getObject();
 
@@ -137,7 +137,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            TransformEvent::POST_TRANSFORM => 'populateCalculatedFields',
+            PostTransformEvent::POST_TRANSFORM => 'populateCalculatedFields',
         );
     }
 }
