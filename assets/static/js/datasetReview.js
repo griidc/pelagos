@@ -88,10 +88,12 @@ $(document).ready(function(){
         },
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
+            $("#acceptDatasetBtn, #endReviewBtn, #requestRevisionsBtn").button("disable");
+            pelagosUI.loadingSpinner.showSpinner();
             form.submit();
         }
     });
-
+    
     // load qTip descriptions
     $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({
