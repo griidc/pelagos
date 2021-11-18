@@ -12,6 +12,7 @@
      {% if datasetSubmission.fileset is defined and datasetSubmission.fileset is not null %}
         Number of Files: {{ datasetSubmission.fileset.numberOfFiles }} <br>
         Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}<br>
+        Files with error: {{ datasetSubmission.fileset.numberOfErroredFiles }}<br>
      {% else %}
          N/A<br>
      {% endif %}
@@ -44,6 +45,7 @@
     {% if datasetSubmission.fileset is defined and datasetSubmission.fileset is not null %}
         Number of Files: {{ datasetSubmission.fileset.numberOfFiles }}
         Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}
+        Files with error: {{ datasetSubmission.fileset.numberOfErroredFiles }}
     {% else %}
         N/A
     {% endif %}
