@@ -107,9 +107,10 @@ class ProcessFileHandler implements MessageHandlerInterface
         );
 
         $filePath = $file->getPhysicalFilePath();
-        $fileStream = fopen($filePath, 'r');
+        @$fileStream = fopen($filePath, 'r');
+
         if ($fileStream === false) {
-            $file->setDescription("Unreadable File!");
+            $file->setDescription("Unreadable Queued File:" . error_get_last()['message']);
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
             return;
