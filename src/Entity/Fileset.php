@@ -393,4 +393,16 @@ class Fileset extends Entity
     {
         return count($this->getProcessedAndNewFiles());
     }
+
+    /**
+     * Returns the number of errored files in the fileset.
+     *
+     * @return integer
+     */
+    public function getNumberOfErroredFiles(): int
+    {
+        return count($this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_ERROR;
+        }));
+    }
 }

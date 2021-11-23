@@ -180,6 +180,8 @@ $(function() {
         submitHandler: function(form) {
             formHash = $("#regForm").serialize();
             $("#regForm").prop("unsavedChanges", false);
+            $("#submitButton").button("disable");
+            pelagosUI.loadingSpinner.showSpinner();
             form.submit();
         },
     });
