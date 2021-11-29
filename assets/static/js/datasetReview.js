@@ -48,7 +48,7 @@ $(document).ready(function(){
         $("#datasetFileTransferType").val("HTTP");
     }
 
-    $("#remotelyHostedUrl, #filesUploaded").on("keyup change", function() {
+    $("#remotelyHostedUrl, #filesUploaded, #largeFileUri").on("keyup change", function() {
         $(this).valid();
         // get the datasetFileTransferType from the active tab
         let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
@@ -65,29 +65,35 @@ $(document).ready(function(){
             },
             remotelyHostedUrl:{
                 require_from_group: [1, '.files']
+            },
+            largeFileUri:{
+                require_from_group: [1, '.files']
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl"
+            files: "filesUploaded remotelyHostedUrl largeFileUri"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
             filesUploaded: {
-                require_from_group: "Please upload a file, or add remotely hosted url"
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             },
             remotelyHostedUrl: {
-                require_from_group: "Please upload a file, or add remotely hosted url"
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
+            },
+            largeFileUri: {
+                require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
             }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
-            if ($(".ignore").valid()) {
-                form.submit();
-            }
+            $("#acceptDatasetBtn, #endReviewBtn, #requestRevisionsBtn").button("disable");
+            pelagosUI.loadingSpinner.showSpinner();
+            form.submit();
         }
     });
-
+    
     // load qTip descriptions
     $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({
@@ -218,13 +224,18 @@ $(document).ready(function(){
     });
 
     var fileTabs = $("#filetabs");
+
     fileTabs.tabs();
+
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
             fileTabs.tabs("option", "active", 0);
             break;
-        case "HTTP":
+        case "SFTP":
             fileTabs.tabs("option", "active", 1);
+            break;
+        case "HTTP":
+            fileTabs.tabs("option", "active", 2);
             break;
     }
 
@@ -243,6 +254,35 @@ $(document).ready(function(){
         dtabs.tabs({active:activeTab});
     });
 
+    $("#datasetFilePath").on("keyup change", function() {
+        $("#largeFileUri").val($(this).val()).trigger("change");
+    });
+
+    $("#clearLargeFilePath").on("click", function () {
+        $("#datasetFilePath")[0].selectedIndex = 0;
+        $("#largeFileUri").val("").trigger("change");
+    });
+
+    function populateFolderDropDownList() {
+        let dropdown = $('#datasetFilePath');
+
+        dropdown.empty();
+
+        dropdown.append('<option selected="true" value="">Choose Folder</option>');
+        dropdown.prop('selectedIndex', 0);
+
+        const url = Routing.generate("pelagos_api_get_folder_list_dataset_submission");
+
+        // Populate dropdown with list of folders
+        $.getJSON(url, function (data) {
+            $.each(data, function (key, value) {
+                const regex = new RegExp('(?:.(?!\/.*\/.*\/))+$');
+                let text = regex.exec(value)[0];
+                dropdown.append($('<option></option>').attr('value', value).text(text));
+            })
+        });
+    }
+
     dtabs.on("active", function() {
         var activeTab = $("#dtabs").tabs("option","active");
         if (activeTab === 0) {
@@ -255,6 +295,7 @@ $(document).ready(function(){
         if (activeTab === 8) {
             btnNext.button("disable");
             btnNext.hide();
+            populateFolderDropDownList();
         } else {
             btnNext.show();
             btnNext.button("enable");
@@ -623,14 +664,6 @@ function areTabsValid()
             });
         });
 
-        if (typeof $("#datasetFileUri").val() !== "undefined") {
-            if ($("#datasetFileUri").val() === "") {
-                $("#filetabimg").prop("src", imgWarning);
-                isValid = false;
-            } else {
-                $("#filetabimg").prop("src", imgCheck);
-            }
-        }
         return isValid;
     } else {
         return false;

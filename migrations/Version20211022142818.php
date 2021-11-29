@@ -1,36 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20180927210830 extends AbstractMigration
+final class Version20211022142818 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE dif ADD approved_date TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
-        $this->addSql('ALTER TABLE dif_audit ADD approved_date TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
+        $this->addSql('ALTER TABLE dataset_submission ADD large_file_uri TEXT DEFAULT NULL');
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE dif DROP approved_date');
-        $this->addSql('ALTER TABLE dif_audit DROP approved_date');
+        $this->addSql('ALTER TABLE dataset_submission DROP large_file_uri');
     }
 }

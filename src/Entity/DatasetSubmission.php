@@ -568,6 +568,18 @@ class DatasetSubmission extends Entity
     protected $datasetFileUri;
 
     /**
+     * The uri to the large file location.
+     *
+     * This specifies the location of the source of the large file url on a server.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     *
+     */
+    protected $largeFileUri;
+
+    /**
      * The dataset file transfer status.
      *
      * Legacy DB column: dataset_download_status
@@ -995,6 +1007,7 @@ class DatasetSubmission extends Entity
             $this->setRestrictions($entity->getRestrictions());
             $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
             $this->setDatasetFileUri($entity->getDatasetFileUri());
+            $this->setLargeFileUri($entity->getLargeFileUri());
             $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
             $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setPurpose($entity->getPurpose());
@@ -1622,6 +1635,28 @@ class DatasetSubmission extends Entity
     public function getDatasetFileUri() : ?string
     {
         return $this->datasetFileUri;
+    }
+
+    /**
+     * Set the large file URI.
+     *
+     * @param string|null $largeFileUri The dataset file URI.
+     *
+     * @return void
+     */
+    public function setLargeFileUri(?string $largeFileUri)
+    {
+        $this->largeFileUri = $largeFileUri;
+    }
+
+    /**
+     * Get the large file URI.
+     *
+     * @return string|null
+     */
+    public function getLargeFileUri() : ?string
+    {
+        return $this->largeFileUri;
     }
 
     /**

@@ -336,6 +336,11 @@ class DatasetSubmissionTest extends TestCase
             'foobar',
             $this->datasetSubmission->getDatasetFileUri()
         );
+        $this->datasetSubmission->setLargeFileUri('largefoobar');
+        $this->assertEquals(
+            'largefoobar',
+            $this->datasetSubmission->getLargeFileUri()
+        );
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->assertEquals(
             DatasetSubmission::TRANSFER_STATUS_COMPLETED,

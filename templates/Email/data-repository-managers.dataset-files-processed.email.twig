@@ -1,0 +1,66 @@
+{% block subject 'New dataset file(s)/url(s) for ' ~ datasetSubmission.dataset.udi %}
+
+ {% block body_html %}
+     New Dataset Files Submitted for {{ datasetSubmission.dataset.udi }}:<br>
+     <br>
+     Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+     UDI: {{ datasetSubmission.dataset.udi }}<br>
+     Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+     Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+     SubmissionTimeStamp: {{ datasetSubmission.submissionTimeStamp.format('c') }}<br>
+     <h3>Files</h3>
+     {% if datasetSubmission.fileset is defined and datasetSubmission.fileset is not null %}
+        Number of Files: {{ datasetSubmission.fileset.numberOfFiles }} <br>
+        Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}<br>
+        Files with error: {{ datasetSubmission.fileset.numberOfErroredFiles }}<br>
+     {% else %}
+         N/A<br>
+     {% endif %}
+     <br>
+     <h3>Large File Uri</h3>
+     {% if datasetSubmission.largeFileUri %}
+        Dataset File Path for large file: {{ datasetSubmission.largeFileUri}}<br>
+     {% else %}
+         N/A<br>
+     {% endif %}
+     <br>
+     <h3>Remotely Hosted Url</h3>
+     {% if datasetSubmission.remotelyHostedUrl %}
+         The following URL was provided : {{ datasetSubmission.remotelyHostedUrl }}
+     {% else %}
+         N/A<br>
+     {% endif %}
+ {% endblock%}
+
+{% block body_text %}
+    New Dataset Files/Urls Submitted for {{ datasetSubmission.dataset.udi }}:
+
+    Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+    UDI: {{ datasetSubmission.dataset.udi }}
+    Dataset Title: {{ datasetSubmission.dataset.title }}
+    Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+    SubmissionTimeStamp: {{ datasetSubmission.submissionTimeStamp.format('c') }}
+
+    Files
+    {% if datasetSubmission.fileset is defined and datasetSubmission.fileset is not null %}
+        Number of Files: {{ datasetSubmission.fileset.numberOfFiles }}
+        Total File Size:  {{ datasetSubmission.fileset.fileSize|formatBytes }}
+        Files with error: {{ datasetSubmission.fileset.numberOfErroredFiles }}
+    {% else %}
+        N/A
+    {% endif %}
+
+    Large File Uri
+    {% if datasetSubmission.largeFileUri %}
+        Dataset File Path for large file: {{ datasetSubmission.largeFileUri}}
+    {% else %}
+        N/A
+    {% endif %}
+
+    Remotely Hosted Url
+    {% if datasetSubmission.remotelyHostedUrl %}
+        The following URL was provided : {{ datasetSubmission.remotelyHostedUrl }}
+    {% else %}
+        N/A
+    {% endif %}
+{% endblock %}
