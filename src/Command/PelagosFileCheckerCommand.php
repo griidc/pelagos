@@ -108,7 +108,7 @@ class PelagosFileCheckerCommand extends Command
             // if ($sha256Hash === $fileHash) {
             //     $io->text("OK: udi:$udi, hash:$sha256Hash, file:$filePath");
             //     if ($fix) {
-            $file->setStatus('queue');
+            $file->setStatus(File::FILE_IN_QUEUE);
             //     }
             // } elseif ($sha256Hash !== $fileHash and $errorMessage === '') {
             //     $io->text("BAD HASH MATCH: udi:$udi, expectedHash:$sha256Hash, calculatedHash:$fileHash, file:$filePath");
