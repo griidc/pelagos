@@ -21,7 +21,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class PelagosFileCheckerCommand extends Command
 {
     protected static $defaultName = 'pelagos:file-checker';
-    protected static $defaultDescription = 'Checks and fixes files';
+    protected static $defaultDescription = 'Requeues Files';
 
     /**
      * A Doctrine ORM EntityManager instance.
@@ -92,29 +92,7 @@ class PelagosFileCheckerCommand extends Command
 
         /** @var File $file */
         foreach ($files as $file) {
-            // $sha256Hash = $file->getFileSha256Hash();
-
-            // $filePath = $file->getPhysicalFilePath();
-            // $udi = $file->getFileset()->getDatasetSubmission()->getDataset()->getUdi();
-            // $errorMessage = '';
-            // try {
-            //     $fileStream = $this->datastore->getFile($filePath);
-            //     $fileHash = StreamInfo::calculateHash($fileStream);
-            // } catch (Exception $e) {
-            //     $fileHash = 'ERROR';
-            //     $errorMessage = $e->getMessage();
-            // }
-
-            // if ($sha256Hash === $fileHash) {
-            //     $io->text("OK: udi:$udi, hash:$sha256Hash, file:$filePath");
-            //     if ($fix) {
             $file->setStatus(File::FILE_IN_QUEUE);
-            //     }
-            // } elseif ($sha256Hash !== $fileHash and $errorMessage === '') {
-            //     $io->text("BAD HASH MATCH: udi:$udi, expectedHash:$sha256Hash, calculatedHash:$fileHash, file:$filePath");
-            // } else {
-            //     $io->text("BAD:$errorMessage udi:$udi, hash:$sha256Hash, file:$filePath");
-            // }
         }
 
         $this->entityManager->flush();
