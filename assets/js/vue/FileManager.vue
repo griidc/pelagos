@@ -363,7 +363,39 @@ const initDropzone = () => {
     maxFilesize: null,
     clickable: '#upload-file-button',
     timeout: 0,
+    accept(file, done) {
+      if (file.size === 0) {
+        done('zero file');
+      } else {
+        done();
+      }
+    },
     error: function error(file, errorMessage, xhr) {
+      if (file.size === 0) {
+        console.log(file);
+         const chunkData = {};
+      chunkData.dzuuid = file.upload.uuid;
+      chunkData.dztotalchunkcount = file.upload.totalChunkCount;
+      chunkData.fileName = file.name;
+      chunkData.dztotalfilesize = file.size;
+      postApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_add_file_dataset_submission')
+        }/${
+          datasetSubmissionId}`,
+        chunkData,
+      ).then((response) => {
+        if (response.data.isRenamed === true) {
+          myFileManager.$parent.filesRenamed += 1;
+        }
+        done();
+      }).catch((error) => {
+        file.accepted = false;
+        // eslint-disable-next-line no-underscore-dangle
+        myDropzone._errorProcessing([file], error.response.data, error.request);
+      });
+        return;
+      }
       myFileManager.$parent.showPopupError(xhr);
     },
     uploadprogress(file) {
