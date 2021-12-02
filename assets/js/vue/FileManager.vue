@@ -372,28 +372,29 @@ const initDropzone = () => {
     },
     error: function error(file, errorMessage, xhr) {
       if (file.size === 0) {
-        console.log(file);
-         const chunkData = {};
-      chunkData.dzuuid = file.upload.uuid;
-      chunkData.dztotalchunkcount = file.upload.totalChunkCount;
-      chunkData.fileName = file.name;
-      chunkData.dztotalfilesize = file.size;
-      postApi(
+        const chunkData = {};
+        chunkData.dzuuid = file.upload.uuid;
+        chunkData.dztotalchunkcount = file.upload.totalChunkCount;
+        chunkData.fileName = file.name;
+        chunkData.dztotalfilesize = file.size;
+        postApi(
         // eslint-disable-next-line no-undef
-        `${Routing.generate('pelagos_api_add_file_dataset_submission')
-        }/${
-          datasetSubmissionId}`,
-        chunkData,
-      ).then((response) => {
-        if (response.data.isRenamed === true) {
-          myFileManager.$parent.filesRenamed += 1;
-        }
-        done();
-      }).catch((error) => {
-        file.accepted = false;
-        // eslint-disable-next-line no-underscore-dangle
-        myDropzone._errorProcessing([file], error.response.data, error.request);
-      });
+          `${Routing.generate('pelagos_api_add_file_dataset_submission')
+          }/${
+            datasetSubmissionId}`,
+          chunkData,
+        ).then((response) => {
+          if (response.data.isRenamed === true) {
+            myFileManager.$parent.filesRenamed += 1;
+          }
+          // eslint-disable-next-line no-undef
+          done();
+        }).catch((errorResponse) => {
+          // eslint-disable-next-line no-param-reassign
+          file.accepted = false;
+          // eslint-disable-next-line no-underscore-dangle
+          myDropzone._errorProcessing([file], errorResponse.response.data, errorResponse.request);
+        });
         return;
       }
       myFileManager.$parent.showPopupError(xhr);
