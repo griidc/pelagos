@@ -115,7 +115,7 @@ class PelagosImportFilesToDatasetCommand extends Command
                     $this->messageBus->dispatch($deleteFileMessage);
                     $fileset->removeFile($deleteFile);
                 } else {
-                    throw new \Exception("Original $physicalFilePath file can not be located in the fileset, QUITTING!");
+                    throw new \Exception('Original .dat file can not be located in the fileset, QUITTING!');
                     return 1;
                 }
             }
