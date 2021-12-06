@@ -97,7 +97,7 @@ class FileUploader
             fclose($chunk);
             unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
-        rmdir($chunksFolder);
+        @rmdir($chunksFolder);
         $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
         fclose($targetFile);
         if ($targetFileSize !== $fileSize) {
