@@ -8,7 +8,6 @@ use App\Event\EntityEventDispatcher;
 use App\Message\ProcessFile;
 use App\Message\ScanFileForVirus;
 use App\Message\ZipDatasetFiles;
-use App\Repository\FileRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
@@ -110,7 +109,9 @@ class ProcessFileHandler implements MessageHandlerInterface
         @$fileStream = fopen($filePath, 'r');
 
         if ($fileStream === false) {
-            $file->setDescription("Unreadable Queued File:" . error_get_last()['message']);
+            $lastErrorMessage = error_get_last()['message'];
+            $this->logger->error(sprintf('Unreadable Queued File: "%s"', $lastErrorMessage, $loggingContext));
+            $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
             return;
@@ -125,6 +126,12 @@ class ProcessFileHandler implements MessageHandlerInterface
                 $fileset->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
+        } catch (\League\Flysystem\Exception $fileExistException) {
+            $this->logger->warning(sprintf('Rejecting: Unable to add file to datastore. Message: "%s"', $fileExistException->getMessage()), $loggingContext);
+            $file->setDescription("Error writing to store:" . $fileExistException->getMessage());
+            $file->setStatus(File::FILE_ERROR);
+            $this->entityManager->flush();
+            throw new \Exception($fileExistException->getMessage());
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setDescription("Error writing to store:" . $exception->getMessage());
@@ -144,6 +151,7 @@ class ProcessFileHandler implements MessageHandlerInterface
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
 
+        $file->setDescription('');
         $file->setStatus(File::FILE_DONE);
 
         $this->logger->info('Flushing data', $loggingContext);
