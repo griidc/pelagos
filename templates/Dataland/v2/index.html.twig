@@ -53,6 +53,7 @@
                         </p>
                     </div>
                     <hr>
+                    {% if dataset.datasetSubmission.spatialExtent %}
                     <div class="py-2">
                         <div id="dlolmap" style="width: 100%;height:480px;"
                             wkt="{{wkt|default}}"
@@ -62,6 +63,7 @@
                         </div>
                     </div>
                     <hr>
+                    {% endif %}
                     <div class="py-2">
                         <h6><strong>Suggested Citation:</strong></h6>
                         <p>
