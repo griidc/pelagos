@@ -567,6 +567,13 @@ export default {
     myFileManager = this.$refs.myFileManager;
   },
 
+  computed: {
+    getUploadBackgroundImageUrl() {
+      // eslint-disable-next-line global-require
+      return require('../../images/dropzone.png');
+    },
+  },
+
   methods: {
     onSelectionChanged(args) {
       const isDirectory = (fileItem) => fileItem.isDirectory;
@@ -596,6 +603,14 @@ export default {
       this.totalFiles = 0;
       this.totalFileSize = 0;
       this.doneFileSize = 0;
+      if (this.writeMode) {
+        const fileManagerContainerElement = document.querySelector('.dx-datagrid.dx-gridbase-container');
+        if (fileManagerContainerElement) {
+          fileManagerContainerElement.style.backgroundImage = `url(${this.getUploadBackgroundImageUrl})`;
+          fileManagerContainerElement.style.backgroundPosition = 'center';
+          fileManagerContainerElement.style.backgroundRepeat = 'no-repeat';
+        }
+      }
     },
 
     stopProcess() {
@@ -736,12 +751,6 @@ export default {
 </script>
 
 <style>
-.dx-datagrid.dx-gridbase-container {
-    background-image: url("../../images/dropzone.png");
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 .progress-dialog {
     align-items: center;
     text-align: center;
