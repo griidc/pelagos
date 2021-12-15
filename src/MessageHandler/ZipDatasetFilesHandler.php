@@ -3,6 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
 use App\Message\ZipDatasetFiles;
 use App\Repository\FileRepository;
 use App\Util\Datastore;
@@ -93,16 +94,22 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
+        $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
+        $udi = $datasetSubmission->getDataset()->getUdi();
         $loggingContext = array(
             'dataset_submission_id' => $datasetSubmissionId,
             'process' => getmypid(),
+            'udi' => $udi,
         );
         $this->logger->info('Zip worker starting', $loggingContext);
         $fileIds = $zipDatasetFiles->getFileIds();
-
-        $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
+        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $udi) . '.zip';
+        $fileset = $datasetSubmission->getFileset();
+        if ($fileset->getStatus() === Fileset::FILESET_BEING_ZIPPED) {
+            $this->logger->warning('Zipfile is already being zipped!: ' . $destinationPath, $loggingContext);
+            return;
+        }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
-        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
         $this->logger->info('Zipfile opened: ' . $destinationPath, $loggingContext);
         try {
             $fileStream = fopen($destinationPath, 'w+');
@@ -120,7 +127,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $this->zipFiles->finish();
             $this->logger->info('Zipfile closed: ' . $destinationPath, $loggingContext);
             rewind($fileStream);
-            $fileset = $datasetSubmission->getFileset();
+            $fileset->setStatus(Fileset::FILESET_DONE);
             $fileset->setZipFilePath($destinationPath);
             $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
             $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));

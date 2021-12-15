@@ -16,6 +16,21 @@ use Doctrine\Common\Collections\Expr\Comparison;
 class Fileset extends Entity
 {
     /**
+     * Status value for a File that has been newly uploaded, not yet proccessed by "Filer".
+     */
+    const FILESET_NEW = 'new';
+
+    /**
+     * Status value for a File that has been deleted. (File still exists on disk!)
+     */
+    const FILESET_BEING_ZIPPED = 'zipped';
+
+    /**
+     * Status value for a File that has been proccessed.
+     */
+    const FILESET_DONE = 'done';
+
+    /**
      * Collection of files.
      *
      * @var Collection
@@ -55,6 +70,11 @@ class Fileset extends Entity
      * @ORM\OneToOne(targetEntity="DatasetSubmission", mappedBy="fileset", cascade={"persist", "remove"})
      */
     protected $datasetSubmission;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $status = self::FILESET_NEW;
 
 
     /**
@@ -353,6 +373,30 @@ class Fileset extends Entity
     public function setZipFileSha256Hash(string $zipFileSha256Hash): void
     {
         $this->zipFileSha256Hash = $zipFileSha256Hash;
+    }
+
+    /**
+     * Getter for Status.
+     *
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * Setter for Status.
+     *
+     * @param string $status The status of the file.
+     *
+     * @see FILESET_* constants.
+     *
+     * @return void
+     */
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
     }
 
     /**

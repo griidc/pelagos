@@ -4,6 +4,7 @@ namespace App\MessageHandler;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
+use App\Entity\Fileset;
 use App\Event\EntityEventDispatcher;
 use App\Message\ProcessFile;
 use App\Message\ScanFileForVirus;
@@ -165,8 +166,8 @@ class ProcessFileHandler implements MessageHandlerInterface
             }
             // Dispatch message to zip files
             $this->logger->info('All files are done, zipping', $loggingContext);
-            $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
+
+            $fileset->setStatus(Fileset::FILESET_BEING_ZIPPED);
 
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
@@ -177,6 +178,7 @@ class ProcessFileHandler implements MessageHandlerInterface
             // Update dataset's availability status
             $dataset->updateAvailabilityStatus();
             $this->entityManager->flush();
+            $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
         }
