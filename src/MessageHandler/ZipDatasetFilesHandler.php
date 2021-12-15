@@ -105,7 +105,10 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $fileIds = $zipDatasetFiles->getFileIds();
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $udi) . '.zip';
         $fileset = $datasetSubmission->getFileset();
-        if ($fileset->getStatus() === (Fileset::FILESET_BEING_ZIPPED || Fileset::FILESET_DONE)) {
+        if (
+            $fileset->getStatus() === Fileset::FILESET_BEING_ZIPPED
+            or $fileset->getStatus() === Fileset::FILESET_DONE
+        ) {
             $this->logger->warning('Zipfile is already being zipped!: ' . $destinationPath, $loggingContext);
             return;
         }
