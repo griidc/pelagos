@@ -116,8 +116,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $this->logger->info('Zipfile opened: ' . $destinationPath, $loggingContext);
         try {
             $fileStream = fopen($destinationPath, 'w+');
-            $lock = flock($fileStream, LOCK_EX);
-            if (!$lock) {
+            if (!flock($fileStream, LOCK_EX|LOCK_NB)) {
                 $this->logger->warning('Zipfile could not lock file: ' . $destinationPath, $loggingContext);
                 return;
             }
