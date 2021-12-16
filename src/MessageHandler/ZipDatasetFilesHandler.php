@@ -102,9 +102,14 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             'udi' => $udi,
         );
         $this->logger->info('Zip worker starting', $loggingContext);
-        $fileIds = $zipDatasetFiles->getFileIds();
+        // $fileIds = $zipDatasetFiles->getFileIds();
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $udi) . '.zip';
         $fileset = $datasetSubmission->getFileset();
+        if (!$fileset->isDone()) {
+            $this->logger->warning('Fileset is not done yet!', $loggingContext);
+            throw new \Exception('Fileset not done!');
+        }
+
         if (
             $fileset->getStatus() === Fileset::FILESET_BEING_ZIPPED
             or $fileset->getStatus() === Fileset::FILESET_DONE
@@ -112,10 +117,17 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $this->logger->warning('Zipfile is already being zipped!: ' . $destinationPath, $loggingContext);
             return;
         } else {
+            $this->logger->info('Zip being zipped', $loggingContext);
             $fileset->setStatus(Fileset::FILESET_BEING_ZIPPED);
             $this->entityManager->flush();
         }
+
+        $fileIds = array();
+        foreach ($fileset->getProcessedFiles() as $file) {
+            $fileIds[] = $file->getId();
+        }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
+
         try {
             $fileStream = fopen($destinationPath, 'w+');
             if (!flock($fileStream, LOCK_EX|LOCK_NB)) {

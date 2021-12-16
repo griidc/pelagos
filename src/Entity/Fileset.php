@@ -378,9 +378,9 @@ class Fileset extends Entity
     /**
      * Getter for Status.
      *
-     * @return string
+     * @return string|null
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
