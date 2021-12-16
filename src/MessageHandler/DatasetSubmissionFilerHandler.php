@@ -83,7 +83,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         MessageBusInterface $messageBus,
         EntityManagerInterface $entityManager,
         EntityEventDispatcher $entityEventDispatcher,
-        Datastore $datastore,
+        Datastore $datastore
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
