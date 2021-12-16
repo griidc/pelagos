@@ -167,8 +167,6 @@ class ProcessFileHandler implements MessageHandlerInterface
             // Dispatch message to zip files
             $this->logger->info('All files are done, zipping', $loggingContext);
 
-            $fileset->setStatus(Fileset::FILESET_BEING_ZIPPED);
-
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );

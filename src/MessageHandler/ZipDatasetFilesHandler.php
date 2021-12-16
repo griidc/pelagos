@@ -111,15 +111,18 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         ) {
             $this->logger->warning('Zipfile is already being zipped!: ' . $destinationPath, $loggingContext);
             return;
+        } else {
+            $fileset->setStatus(Fileset::FILESET_BEING_ZIPPED);
+            $this->entityManager->flush();
         }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
-        $this->logger->info('Zipfile opened: ' . $destinationPath, $loggingContext);
         try {
             $fileStream = fopen($destinationPath, 'w+');
             if (!flock($fileStream, LOCK_EX|LOCK_NB)) {
                 $this->logger->warning('Zipfile could not lock file: ' . $destinationPath, $loggingContext);
                 return;
             }
+            $this->logger->info('Zipfile opened: ' . $destinationPath, $loggingContext);
             $outputStream = array('fileStream' => $fileStream);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
