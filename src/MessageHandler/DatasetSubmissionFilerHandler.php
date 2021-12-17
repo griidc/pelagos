@@ -5,20 +5,15 @@ namespace App\MessageHandler;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
-
 use App\Event\EntityEventDispatcher;
 use App\Message\DatasetSubmissionFiler;
-use App\Message\ProcessFile;
 use App\Message\ScanFileForVirus;
 use App\Message\ZipDatasetFiles;
-
-use App\Util\StreamInfo;
-
 use App\Repository\DatasetSubmissionRepository;
 use App\Util\Datastore;
+use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -109,72 +104,48 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             'udi' => $udi,
             'dataset_submission_id' => $datasetSubmissionId
         );
+        // Log processing start.
+        $this->logger->info('Dataset submission process started', $loggingContext);
+
         $fileset = $datasetSubmission->getFileset();
-        if ($fileset instanceof Fileset and count($fileset->getAllFiles()) !== count($fileset->getDeletedFiles())) {
-            // Log processing complete.
-            $this->logger->info('Dataset submission process started', $loggingContext);
-
-            // if ($fileset->isDone()) {
-            //     $fileIds = array();
-            //     foreach ($fileset->getProcessedFiles() as $file) {
-            //         $fileIds[] = $file->getId();
-            //     }
-            //     // Dispatch message to zip files
-            //     // $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            //     // $this->messageBus->dispatch($zipFiles);
-            // }
-
+        if ($fileset instanceof Fileset) {
             foreach ($fileset->getQueuedFiles() as $file) {
                 if ($file instanceof File) {
-                    // $fileId = $file->getId();
-                    // $processFile = new ProcessFile($fileId);
-                    // $this->messageBus->dispatch($processFile);
-                    $this->ProcessFile($file, $loggingContext);
+                    $this->processFile($file, $loggingContext);
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
             }
 
-            // $datasetSubmissionId = $datasetSubmission->getId();
-            // foreach ($fileset->getProcessedFiles() as $file) {
-            //     $fileIds[] = $file->getId();
-            // }
-            // Dispatch message to zip files
-
-
-            $datasetSubmission->setDatasetFileTransferStatus(
-                DatasetSubmission::TRANSFER_STATUS_COMPLETED
-            );
-
-            // Dispatch entity event.
-            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
-            // Update dataset's availability status
-            $dataset->updateAvailabilityStatus();
-            // $this->entityManager->flush();
-
-            // $this->logger->info('All files are done, zipping', $loggingContext);
-
-            // $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            // $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
-
             $this->logger->info('Dataset submission all files done', $loggingContext);
-        } else {
-            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
         }
+
+        // Set Transfer Status to complete.
+        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+        // Dispatch entity event.
+        $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
+        // Update dataset's availability status
+        $dataset->updateAvailabilityStatus();
 
         $this->logger->info('Flushing data', $loggingContext);
         $this->entityManager->flush();
-
         $this->logger->info('All files are done, zipping', $loggingContext);
-        $fileIds = array();
-        // $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-        $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
-
+        $this->messageBus->dispatch(new ZipDatasetFiles($datasetSubmissionId));
         $this->logger->info('Dataset submission process completed', $loggingContext);
     }
 
-    private function ProcessFile(File $file, array $loggingContext) :void
+    /**
+     * Function to process file.
+     *
+     * Add a file to the datastore, and calculates hash,
+     * and queue's for virus scan.
+     *
+     * @param File  $file           The File.
+     * @param array $loggingContext Logging Context.
+     *
+     * @return void
+     */
+    private function processFile(File $file, array $loggingContext) :void
     {
         $fileId = $file->getId();
         $fileset = $file->getFileset();
@@ -186,7 +157,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->error(sprintf('Unreadable Queued File: "%s"', $lastErrorMessage, $loggingContext));
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
-            // $this->entityManager->flush();
             return;
         } else {
             $fileHash = StreamInfo::calculateHash(array('fileStream' => $fileStream));
@@ -203,13 +173,12 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->warning(sprintf('Rejecting: Unable to add file to datastore. Message: "%s"', $fileExistException->getMessage()), $loggingContext);
             $file->setDescription("Error writing to store:" . $fileExistException->getMessage());
             $file->setStatus(File::FILE_ERROR);
-            // $this->entityManager->flush();
+            $this->entityManager->flush();
             throw new \Exception($fileExistException->getMessage());
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setDescription("Error writing to store:" . $exception->getMessage());
             $file->setStatus(File::FILE_ERROR);
-            // $this->entityManager->flush();
             return;
         }
 
@@ -226,7 +195,5 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
 
         $file->setDescription('');
         $file->setStatus(File::FILE_DONE);
-
-        // $this->entityManager->flush();
     }
 }
