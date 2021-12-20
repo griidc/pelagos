@@ -143,6 +143,8 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * @param File  $file           The File.
      * @param array $loggingContext Logging Context.
      *
+     * @throws Exception When file couldn't we written by the Datastore.
+     *
      * @return void
      */
     private function processFile(File $file, array $loggingContext) :void
