@@ -139,6 +139,13 @@ class InformationProduct extends Entity
         return $this->creators;
     }
 
+    /**
+     * Set the creators of the Information Product.
+     *
+     * @param string $creators The creators of the Information Product.
+     *
+     * @return self
+     */
     public function setCreators(string $creators): self
     {
         $this->creators = $creators;
@@ -146,11 +153,22 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Get the publisher of the Information Product.
+     *
+     * @return string|null
+     */
     public function getPublisher(): ?string
     {
         return $this->publisher;
     }
 
+    /**
+     * Set the publisher of the Information Product.
+     *
+     * @param string $publisher
+     * @return self
+     */
     public function setPublisher(string $publisher): self
     {
         $this->publisher = $publisher;
@@ -158,11 +176,22 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Get the External DOI.
+     *
+     * @return string|null
+     */
     public function getExternalDoi(): ?string
     {
         return $this->externalDoi;
     }
 
+    /**
+     * Set the external DOI.
+     *
+     * @param string|null $externalDoi
+     * @return self
+     */
     public function setExternalDoi(?string $externalDoi): self
     {
         $this->externalDoi = $externalDoi;
@@ -170,11 +199,22 @@ class InformationProduct extends Entity
         return $this;
     }
 
-    public function getPublished(): ?bool
+    /**
+     * Is the Information Producted published?
+     *
+     * @return boolean|null
+     */
+    public function isPublished(): ?bool
     {
         return $this->published;
     }
 
+    /**
+     * Set the published state of the Information Product.
+     *
+     * @param boolean $published
+     * @return self
+     */
     public function setPublished(bool $published): self
     {
         $this->published = $published;
@@ -182,11 +222,22 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Get the remote resource flag of this Information Product.
+     *
+     * @return boolean|null
+     */
     public function getRemoteResource(): ?bool
     {
         return $this->remoteResource;
     }
 
+    /**
+     * Set the remote resource flag of this Information Product.
+     *
+     * @param boolean $remoteResource
+     * @return self
+     */
     public function setRemoteResource(bool $remoteResource): self
     {
         $this->remoteResource = $remoteResource;
@@ -195,6 +246,8 @@ class InformationProduct extends Entity
     }
 
     /**
+     * Get the Research Groups for this Information Product.
+     *
      * @return Collection|ResearchGroup[]
      */
     public function getResearchGroups(): Collection
@@ -202,6 +255,13 @@ class InformationProduct extends Entity
         return $this->researchGroups;
     }
 
+
+    /**
+     * Add a Research Group to this Information Product.
+     *
+     * @param ResearchGroup $researchGroup
+     * @return self
+     */
     public function addResearchGroup(ResearchGroup $researchGroup): self
     {
         if (!$this->researchGroups->contains($researchGroup)) {
@@ -211,6 +271,12 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Remove a Research Group from this Information Product.
+     *
+     * @param ResearchGroup $researchGroup
+     * @return self
+     */
     public function removeResearchGroup(ResearchGroup $researchGroup): self
     {
         $this->researchGroups->removeElement($researchGroup);
