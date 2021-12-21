@@ -200,7 +200,7 @@ class InformationProduct extends Entity
     }
 
     /**
-     * Is the Information Producted published?
+     * Is the Information Product published?
      *
      * @return boolean|null
      */
