@@ -118,7 +118,7 @@ class InformationProduct extends Entity
     /**
      * Set the title for this Information Product.
      *
-     * @param string|null $shortTitle The title for this Information Product.
+     * @param string|null $title The title for this Information Product.
      *
      * @return self
      */
@@ -190,6 +190,7 @@ class InformationProduct extends Entity
      * Set the external DOI.
      *
      * @param string|null $externalDoi
+     *
      * @return self
      */
     public function setExternalDoi(?string $externalDoi): self
@@ -213,6 +214,7 @@ class InformationProduct extends Entity
      * Set the published state of the Information Product.
      *
      * @param boolean $published
+     *
      * @return self
      */
     public function setPublished(bool $published): self
@@ -236,6 +238,7 @@ class InformationProduct extends Entity
      * Set the remote resource flag of this Information Product.
      *
      * @param boolean $remoteResource
+     *
      * @return self
      */
     public function setRemoteResource(bool $remoteResource): self
@@ -260,6 +263,7 @@ class InformationProduct extends Entity
      * Add a Research Group to this Information Product.
      *
      * @param ResearchGroup $researchGroup
+     *
      * @return self
      */
     public function addResearchGroup(ResearchGroup $researchGroup): self
@@ -275,6 +279,7 @@ class InformationProduct extends Entity
      * Remove a Research Group from this Information Product.
      *
      * @param ResearchGroup $researchGroup
+     *
      * @return self
      */
     public function removeResearchGroup(ResearchGroup $researchGroup): self
