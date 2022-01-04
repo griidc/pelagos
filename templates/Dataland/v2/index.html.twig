@@ -19,7 +19,7 @@
 {% block body %}
     <div class="bootstrap">
         <div class="container">
-            <div class="row">
+            <div class="row pb-5">
                 <main class="col-lg-9 overflow-auto">
                     <div class="pt-3">
                         {% include 'Dataland/v2/status-badge.html.twig' %}
@@ -53,6 +53,7 @@
                         </p>
                     </div>
                     <hr>
+                    {% if dataset.datasetSubmission.spatialExtent %}
                     <div class="py-2">
                         <div id="dlolmap" style="width: 100%;height:480px;"
                             wkt="{{wkt|default}}"
@@ -62,6 +63,7 @@
                         </div>
                     </div>
                     <hr>
+                    {% endif %}
                     <div class="py-2">
                         <h6><strong>Suggested Citation:</strong></h6>
                         <p>
