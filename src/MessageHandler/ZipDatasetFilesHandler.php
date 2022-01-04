@@ -3,6 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
 use App\Message\ZipDatasetFiles;
 use App\Repository\FileRepository;
 use App\Util\Datastore;
@@ -93,13 +94,21 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
         $this->logger->info('Zip worker starting');
-        $fileIds = $zipDatasetFiles->getFileIds();
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
-        $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
-        $this->logger->info('Zipfile opened: ' . $destinationPath);
+        $fileset = $datasetSubmission->getFileset();
+        if (!$fileset instanceof Fileset) {
+            $this->logger->info('Not a fileset');
+            return;
+        }
+        $fileIds = array();
+        foreach ($fileset->getProcessedFiles() as $file) {
+            $fileIds[] = $file->getId();
+        }
+        $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
         try {
+            $this->logger->info('Zipfile opened: ' . $destinationPath);
             $fileStream = fopen($destinationPath, 'w+');
             $outputStream = array('fileStream' => $fileStream);
             $this->zipFiles->start($outputStream, basename($destinationPath));
