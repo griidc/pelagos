@@ -55,6 +55,7 @@ class InformationProduct extends Entity
      *
      * @Assert\NotBlank(
      *     message="A publisher is required."
+     * )
      *
      */
     private $publisher;
