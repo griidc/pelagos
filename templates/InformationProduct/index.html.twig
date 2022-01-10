@@ -13,5 +13,8 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        window.researchGroups = {{ researchGroups | json_encode | raw }}
+    </script>
     {{ encore_entry_script_tags('information-product') }}
 {% endblock %}

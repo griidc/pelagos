@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\ResearchGroup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,6 +21,14 @@ class InformationProductController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('InformationProduct/index.html.twig');
+        $researchGroupList = [];
+        $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
+        foreach ($researchGroups as $researchGroup) {
+            $researchGroupList[] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+            );
+        }
+        return $this->render('InformationProduct/index.html.twig', array('researchGroups' => $researchGroupList));
     }
 }
