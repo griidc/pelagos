@@ -3,8 +3,10 @@
 namespace App\Controller\Api;
 
 use App\Entity\InformationProduct;
+use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,9 +28,9 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function getInformationProduct(InformationProduct $informationProduct): Response
+    public function getInformationProduct(InformationProduct $informationProduct, SerializerInterface $serializer): Response
     {
-        return new JsonResponse($informationProduct);
+        return new Response($serializer->serialize($informationProduct, 'json'));
     }
 
     /**
@@ -39,28 +41,36 @@ class InformationProductController extends AbstractFOSRestController
      * @return Response
      *
      * @Route (
-     *     "/api/information_product/{id}",
+     *     "/api/information_product",
      *     name="pelagos_api_create_information_product",
      *     methods={"POST"},
      *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
      * )
      */
     public function createInformationProduct(Request $request): Response
     {
+        $response = Response::HTTP_BAD_REQUEST;
+        $id = null;
+        $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
+        $entityManager = $this->getDoctrine()->getManager();
         $informationProduct = new InformationProduct();
         $form = $this->createForm(InformationProductType::class, $informationProduct);
+        $request->request->set($form->getName(), $prefilledRequestDataBag);
+        $researchGroupsIds = explode(',', $request->get('researchGroups'));
+        $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
+        foreach ($researchGroups as $researchGroup) {
+            $informationProduct->addResearchGroup($researchGroup);
+        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($informationProduct);
             $entityManager->flush();
-
             $id = $informationProduct->getId();
-
-            return new JsonResponse(["id"=>$id], Response::HTTP_CREATED);
+            $response = Response::HTTP_CREATED;
         }
+
+        return new JsonResponse(['id' => $id], $response);
     }
 
     /**
@@ -83,6 +93,7 @@ class InformationProductController extends AbstractFOSRestController
     {
         $form = $this->createForm(InformationProductType::class, $informationProduct);
         $form->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
@@ -116,5 +127,30 @@ class InformationProductController extends AbstractFOSRestController
 
             return new JsonResponse(Response::HTTP_OK);
         }
+    }
+
+    /**
+     * Will output an array which can be inserted into the @param string $json
+     * @return array
+     * @throws \Exception
+     * @throws Exception*@see Request::request::set
+     * Such request can be then passed to proper form @see FormInterface::handleRequest()
+     * With this - data sent via axios post can be processed like it normally should like via standard POST call
+     *
+     */
+    private function jsonToRequestDataBag(string $json): array
+    {
+        $dataArray = json_decode($json, true);
+
+        if( JSON_ERROR_NONE !== json_last_error() ){
+            $message = "Provided json is not valid";
+            $this->logger->critical($message, [
+                'jsonLastErrorMessage' => json_last_error_msg(),
+            ]);
+
+            throw new \Exception($message, Response::HTTP_BAD_REQUEST);
+        }
+
+        return $dataArray;
     }
 }

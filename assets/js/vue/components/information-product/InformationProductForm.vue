@@ -10,7 +10,7 @@
                 <b-form-input
                         id="title"
                         v-model="form.title"
-                        placeholder="Enter title"
+                        placeholder="Enter Title"
                         required
                 ></b-form-input>
             </b-form-group>
@@ -44,38 +44,29 @@
             <b-form-group
                     id="input-group-4"
                     label="External DOI"
-                    label-for="doi"
+                    label-for="externalDoi"
             >
                 <b-form-input
-                        id="doi"
-                        v-model="form.doi"
+                        id="externalDoi"
+                        v-model="form.externalDoi"
                         placeholder="Enter DOI"
                 ></b-form-input>
             </b-form-group>
 
             <b-form-group id="input-group-4" label="Research Groups" label-for="research-groups">
-                <b-form-select
+                <b-form-input
+                        v-model="form.researchGroups"
+                        list="researchGroupList"
                         id="research-groups"
-                        v-model="form.selectedResearchGroup"
-                        multiple
-                        :options="researchGroupOptions"
-                        required
-                >
-                    <template v-slot:first>
-                        <b-form-select-option
-                                :value="null"
-                                disabled
-                        >
-                            -- Please select a Research Group --
-                        </b-form-select-option>
-                    </template>
-                </b-form-select>
+                        placeholder="Type to search...">
+                </b-form-input>
+                <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
             </b-form-group>
 
-            <b-form-group id="input-group-5" label="Published" label-for="publish">
+            <b-form-group id="input-group-5" label="Published" label-for="published">
                 <b-form-select
-                        id="publish"
-                        v-model="form.publish"
+                        id="published"
+                        v-model="form.published"
                         :options="booleanOptions"
                         required
                 ></b-form-select>
@@ -84,33 +75,29 @@
             <b-form-group id="input-group-6" label="Remote Resource" label-for="remote-resource">
                 <b-form-select
                         id="remote-resource"
-                        v-model="form.remote"
+                        v-model="form.remoteResource"
                         :options="booleanOptions"
                         required
                 ></b-form-select>
             </b-form-group>
 
-            <b-button type="submit" variant="primary">Submit</b-button>
-            <b-button type="reset" variant="danger">Reset</b-button>
+            <div class="p-2">
+                <b-button type="submit" variant="alternate">Submit</b-button>
+                <b-button type="reset" variant="dark">Reset</b-button>
+            </div>
         </b-form>
     </div>
 </template>
 
 <script>
+import { postApi } from '@/vue/utils/axiosService';
+
 export default {
   name: 'InformationProductForm',
   data() {
     return {
-      form: {
-        title: '',
-        creators: '',
-        publisher: '',
-        doi: '',
-        selectedResearchGroup: [],
-        publish: null,
-        remote: null,
-      },
-      researchGroupOptions: [],
+      form: this.initialFormValues(),
+      researchGroupOptions: null,
       booleanOptions: [
         { text: 'Select One', value: null },
         { text: 'Yes', value: true },
@@ -123,20 +110,46 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      alert(JSON.stringify(this.form));
+      postApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_create_information_product')}`,
+        this.form,
+      ).then((response) => {
+        console.log(response);
+      }).catch((error) => {
+        console.log(error);
+      });
     },
     onReset(event) {
       event.preventDefault();
+      this.form = this.initialFormValues();
+      // Trick to reset/clear native browser form validation state
+      this.show = false;
+      this.$nextTick(() => {
+        this.show = true;
+      });
     },
     populateResearchGroups() {
       this.researchGroupOptions = [];
-      this.selectedResearchGroup = null;
+      this.researchGroups = null;
       window.researchGroups.forEach((researchGroup) => {
         this.researchGroupOptions.push({
           value: researchGroup.id,
           text: this.$options.filters.truncate(researchGroup.name, 100),
         });
       });
+    },
+
+    initialFormValues() {
+      return {
+        title: '',
+        creators: '',
+        publisher: '',
+        externalDoi: '',
+        researchGroups: null,
+        published: null,
+        remoteResource: null,
+      };
     },
   },
 
@@ -147,5 +160,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
