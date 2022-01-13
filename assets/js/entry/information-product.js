@@ -3,6 +3,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import InformationProductApp from '@/vue/InformationProductApp';
 import '../../css/search-ui.css';
 import filters from '@/vue/utils/filters';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
