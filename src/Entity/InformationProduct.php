@@ -262,6 +262,25 @@ class InformationProduct extends Entity
         return $this->researchGroups;
     }
 
+    /**
+     * Get the Research Groups List for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("researchGroups")
+     *
+     * @return array
+     */
+    public function getResearchGroupList(): array
+    {
+        $researchGroupList = [];
+
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            $researchGroupList[] = $researchGroup->getId();
+        }
+
+        return $researchGroupList;
+    }
+
 
     /**
      * Add a Research Group to this Information Product.

@@ -56,7 +56,7 @@ class InformationProductController extends AbstractFOSRestController
         $informationProduct = new InformationProduct();
         $form = $this->createForm(InformationProductType::class, $informationProduct);
         $request->request->set($form->getName(), $prefilledRequestDataBag);
-        $researchGroupsIds = explode(',', $request->get('researchGroups'));
+        $researchGroupsIds = $request->get('selectedResearchGroups');
         $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
         foreach ($researchGroups as $researchGroup) {
             $informationProduct->addResearchGroup($researchGroup);
