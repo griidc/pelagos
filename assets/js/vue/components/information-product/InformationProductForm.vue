@@ -49,20 +49,22 @@
                 ></b-form-input>
             </b-form-group>
 
-            <b-badge
-                    variant="secondary"
-                    v-for="selectedResearchGroup in form.selectedResearchGroups"
-                    v-bind:key="selectedResearchGroup"
-                    class="mr-2">
+            <h5>
+                <b-badge
+                        variant="secondary"
+                        v-for="selectedResearchGroup in form.selectedResearchGroups"
+                        v-bind:key="selectedResearchGroup"
+                        class="mr-2">
                     {{ getResearchGroupName(selectedResearchGroup) }}
-                  <button
-                          type="button"
-                          class="close"
-                          aria-label="Dismiss"
-                          v-on:click="removeResearchGroup(selectedResearchGroup)">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-            </b-badge>
+                    <button
+                            type="button"
+                            class="close"
+                            aria-label="Dismiss"
+                            v-on:click="removeResearchGroup(selectedResearchGroup)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </b-badge>
+            </h5>
 
             <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
 
@@ -119,17 +121,17 @@
                 container=".dx-viewport">
             <template>
                 <div>
-                    <h3>
+                    <h6>
                         Information Product is Created
-                    </h3>
+                    </h6>
                     <p>
-                        Information Product ID: {{ informationProductId }}}
+                        Information Product ID: {{ informationProductId }}
                     </p>
                 </div>
             </template>
         </DxPopup>
         <DxPopup
-                :visible.sync="rgExistsErrorModal"
+                :visible.sync="errorDialog"
                 :drag-enabled="false"
                 :close-on-outside-click="true"
                 :show-title="true"
@@ -140,7 +142,7 @@
             <template>
                 <p>
                     <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
-                    Research Group already linked!
+                    {{ errorMessage }}
                 </p>
             </template>
         </DxPopup>
@@ -170,7 +172,8 @@ export default {
       ipCreatedSuccessModal: false,
       informationProductId: null,
       addResearchGroup: '',
-      rgExistsErrorModal: false,
+      errorDialog: false,
+      errorMessage: '',
     };
   },
 
@@ -182,10 +185,11 @@ export default {
         `${Routing.generate('pelagos_api_create_information_product')}`,
         this.form,
       ).then((response) => {
-        this.successModal = true;
+        this.ipCreatedSuccessModal = true;
         this.informationProductId = response.data.id;
-      }).catch((error) => {
-        console.log(error);
+      }).catch(() => {
+        this.errorMessage = 'Unable to create Information Product';
+        this.errorDialog = true;
       });
     },
     onReset(event) {
@@ -231,7 +235,8 @@ export default {
           this.researchGroupOptions.splice(index, 1);
         }
       } else {
-        this.rgExistsErrorModal = true;
+        this.errorMessage = 'Research Group already linked';
+        this.errorDialog = true;
       }
       this.addResearchGroup = '';
     },
