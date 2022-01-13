@@ -109,7 +109,7 @@
             </div>
         </b-form>
         <DxPopup
-                :visible.sync="successModal"
+                :visible.sync="ipCreatedSuccessModal"
                 :drag-enabled="false"
                 :close-on-outside-click="true"
                 :show-title="true"
@@ -118,7 +118,7 @@
                 title="Success!"
                 container=".dx-viewport">
             <template>
-                <div id="textBlock">
+                <div>
                     <h3>
                         Information Product is Created
                     </h3>
@@ -126,6 +126,22 @@
                         Information Product ID: {{ informationProductId }}}
                     </p>
                 </div>
+            </template>
+        </DxPopup>
+        <DxPopup
+                :visible.sync="rgExistsErrorModal"
+                :drag-enabled="false"
+                :close-on-outside-click="true"
+                :show-title="true"
+                :width="400"
+                :height="200"
+                title="Error!"
+                container=".dx-viewport">
+            <template>
+                <p>
+                    <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
+                    Research Group already linked!
+                </p>
             </template>
         </DxPopup>
     </div>
@@ -151,9 +167,10 @@ export default {
         { text: 'No', value: false },
       ],
       show: true,
-      successModal: false,
+      ipCreatedSuccessModal: false,
       informationProductId: null,
       addResearchGroup: '',
+      rgExistsErrorModal: false,
     };
   },
 
@@ -205,10 +222,16 @@ export default {
 
     addResearchGroupLink(event) {
       event.preventDefault();
-      this.form.selectedResearchGroups.push(this.addResearchGroup);
-      const index = this.researchGroupOptions.indexOf(this.addResearchGroup);
-      if (index > -1) {
-        this.researchGroupOptions.splice(index, 1);
+      if (!this.form.selectedResearchGroups.includes(this.addResearchGroup)) {
+        this.form.selectedResearchGroups.push(this.addResearchGroup);
+        const index = this.researchGroupOptions.findIndex((
+          researchGroup,
+        ) => Number(this.addResearchGroup) === Number(researchGroup.value));
+        if (index > -1) {
+          this.researchGroupOptions.splice(index, 1);
+        }
+      } else {
+        this.rgExistsErrorModal = true;
       }
       this.addResearchGroup = '';
     },
