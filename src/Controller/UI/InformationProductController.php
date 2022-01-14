@@ -27,6 +27,7 @@ class InformationProductController extends AbstractController
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
             );
         }
         return $this->render('InformationProduct/index.html.twig', array('researchGroups' => $researchGroupList));

@@ -5,7 +5,8 @@
             <b-form-group
                     id="input-group-1"
                     label="Title"
-                    label-for="title">
+                    label-for="title"
+                    description="Brief description about the Information Product">
                 <b-form-input
                         id="title"
                         v-model="form.title"
@@ -17,7 +18,8 @@
             <b-form-group
                     id="input-group-2"
                     label="Creators"
-                    label-for="creators">
+                    label-for="creators"
+                    description="e.g. John Doe, Jan Doe, etc">
                 <b-form-input
                         id="creators"
                         v-model="form.creators"
@@ -29,7 +31,8 @@
             <b-form-group
                     id="input-group-3"
                     label="Publisher"
-                    label-for="publisher">
+                    label-for="publisher"
+                    description="e.g. John Doe, Jan Doe, etc">
                 <b-form-input
                         id="publisher"
                         v-model="form.publisher"
@@ -41,7 +44,8 @@
             <b-form-group
                     id="input-group-4"
                     label="External DOI"
-                    label-for="externalDoi">
+                    label-for="externalDoi"
+                    description="e.g. 10.1234/xyz">
                 <b-form-input
                         id="externalDoi"
                         v-model="form.externalDoi"
@@ -55,7 +59,7 @@
                         v-for="selectedResearchGroup in form.selectedResearchGroups"
                         v-bind:key="selectedResearchGroup"
                         class="mr-2">
-                    {{ getResearchGroupName(selectedResearchGroup) }}
+                    {{ getResearchGroupShortName(selectedResearchGroup) }}
                     <button
                             type="button"
                             class="close"
@@ -68,20 +72,29 @@
 
             <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
 
-            <b-form inline @submit="addResearchGroupLink">
-                <label for="add-research-groups" class="pr-2">Find Research Groups:</label>
-                <b-form-input
-                        v-model="addResearchGroup"
-                        list="researchGroupList"
-                        id="add-research-groups"
-                        class="px-2 mx-2"
-                        placeholder="Type to search...">
-                </b-form-input>
-                <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
-                <b-button type="submit" variant="primary">Add</b-button>
-            </b-form>
+            <b-form-group
+                    id="input-group-4"
+                    label="Add Research Groups"
+                    label-for="add-research-groups"
+                    description="Please click the link button to link it to this Information Product">
+                <b-form inline>
+                    <b-form-input
+                            v-model="addedRgShortName"
+                            list="researchGroupList"
+                            id="add-research-groups"
+                            placeholder="Type to search...">
+                    </b-form-input>
+                    <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
+                    <b-button type="button" class="ml-2" v-on:click="linkResearchGroup()">Link Research Group</b-button>
+                </b-form>
+            </b-form-group>
 
-            <b-form-group id="input-group-5" label="Published" label-for="published" v-slot="{ ariaDescribedby }">
+            <b-form-group
+                    id="input-group-5"
+                    label="Published"
+                    label-for="published"
+                    v-slot="{ ariaDescribedby }"
+                    description="Do you want to publish it?">
                 <b-form-radio-group
                         id="radio-group-1"
                         v-model="form.published"
@@ -95,7 +108,8 @@
                     id="input-group-6"
                     label="Remote Resource"
                     label-for="remote-resource"
-                    v-slot="{ ariaDescribedby }">
+                    v-slot="{ ariaDescribedby }"
+                    description="Is it a Remote Resource?">
                 <b-form-radio-group
                         id="radio-group-2"
                         v-model="form.remoteResource"
@@ -171,9 +185,9 @@ export default {
       show: true,
       ipCreatedSuccessModal: false,
       informationProductId: null,
-      addResearchGroup: '',
       errorDialog: false,
       errorMessage: '',
+      addedRgShortName: '',
     };
   },
 
@@ -206,8 +220,7 @@ export default {
       this.researchGroups = null;
       window.researchGroups.forEach((researchGroup) => {
         this.researchGroupOptions.push({
-          value: researchGroup.id,
-          text: this.$options.filters.truncate(researchGroup.name, 100),
+          text: this.$options.filters.truncate(this.getResearchGroupShortName(researchGroup.id), 50),
         });
       });
     },
@@ -224,13 +237,13 @@ export default {
       };
     },
 
-    addResearchGroupLink(event) {
-      event.preventDefault();
-      if (!this.form.selectedResearchGroups.includes(this.addResearchGroup)) {
-        this.form.selectedResearchGroups.push(this.addResearchGroup);
+    linkResearchGroup() {
+      const researchGroupId = this.getResearchGroupIdFromShortName(this.addedRgShortName);
+      if (!this.form.selectedResearchGroups.includes(researchGroupId)) {
+        this.form.selectedResearchGroups.push(researchGroupId);
         const index = this.researchGroupOptions.findIndex((
           researchGroup,
-        ) => Number(this.addResearchGroup) === Number(researchGroup.value));
+        ) => Number(researchGroupId) === Number(researchGroup.value));
         if (index > -1) {
           this.researchGroupOptions.splice(index, 1);
         }
@@ -238,17 +251,21 @@ export default {
         this.errorMessage = 'Research Group already linked';
         this.errorDialog = true;
       }
-      this.addResearchGroup = '';
+      this.addedRgShortName = '';
     },
 
-    getResearchGroupName(id) {
-      let researchGroupName = '';
+    getResearchGroupShortName(id) {
+      let researchGroupShortName = '';
       window.researchGroups.forEach((researchGroup) => {
         if (Number(id) === Number(researchGroup.id)) {
-          researchGroupName = researchGroup.name;
+          if (researchGroup.shortName) {
+            researchGroupShortName = researchGroup.shortName;
+          } else {
+            researchGroupShortName = this.$options.filters.truncate(researchGroup.name, 50);
+          }
         }
       });
-      return this.$options.filters.truncate(researchGroupName, 50);
+      return researchGroupShortName;
     },
 
     removeResearchGroup(id) {
@@ -260,6 +277,23 @@ export default {
         value: id,
         text: window.researchGroups.find((researchGroup) => Number(id) === researchGroup.id),
       });
+    },
+
+    getResearchGroupIdFromShortName() {
+      let researchGroupId;
+      window.researchGroups.forEach((researchGroup) => {
+        let researchGroupShortName = '';
+        if (researchGroup.shortName) {
+          researchGroupShortName = researchGroup.shortName;
+        } else {
+          researchGroupShortName = this.$options.filters.truncate(researchGroup.name, 50);
+        }
+
+        if (this.addedRgShortName === researchGroupShortName) {
+          researchGroupId = researchGroup.id;
+        }
+      });
+      return researchGroupId;
     },
   },
 
@@ -277,5 +311,8 @@ export default {
     font-size: 100%;
     text-shadow: 0 1px 0 rgba(#000, .5);
     }
+}
+#add-research-groups {
+  width: 75%;
 }
 </style>
