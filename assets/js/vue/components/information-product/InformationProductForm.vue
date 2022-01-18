@@ -219,9 +219,7 @@ export default {
       this.researchGroupOptions = [];
       this.researchGroups = null;
       window.researchGroups.forEach((researchGroup) => {
-        this.researchGroupOptions.push({
-          text: this.$options.filters.truncate(this.getResearchGroupShortName(researchGroup.id), 50),
-        });
+        this.addToResearchGroupOptions(researchGroup.id);
       });
     },
 
@@ -273,10 +271,7 @@ export default {
       if (index > -1) {
         this.form.selectedResearchGroups.splice(index, 1);
       }
-      this.researchGroupOptions.push({
-        value: id,
-        text: window.researchGroups.find((researchGroup) => Number(id) === researchGroup.id),
-      });
+      this.addToResearchGroupOptions(id);
     },
 
     getResearchGroupIdFromShortName() {
@@ -294,6 +289,12 @@ export default {
         }
       });
       return researchGroupId;
+    },
+
+    addToResearchGroupOptions(researchGroupId) {
+      this.researchGroupOptions.push({
+        text: this.getResearchGroupShortName(researchGroupId),
+      });
     },
   },
 
