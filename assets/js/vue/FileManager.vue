@@ -245,7 +245,8 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
 const deleteItem = (item) => new Promise((resolve, reject) => {
   deleteApi(
     // eslint-disable-next-line no-undef
-    `${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`,
+    `${Routing.generate('pelagos_api_file_delete')}`
+    + `/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}&fileId=${item.dataItem.fileId}`,
   ).then(() => {
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
