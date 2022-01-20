@@ -133,6 +133,28 @@ class Fileset extends Entity
         });
     }
 
+     /**
+     * Getter for file by ID.
+     *
+     * @param integer $id The file ID.
+     *
+     * @throws Exception When the file by ID was not found.
+     *
+     * @return File|null
+     */
+    public function getFileById(int $id) : ?File
+    {
+        $files = $this->files->filter(function (File $file) use ($id) {
+            return $file->getId() === $id;
+        });
+
+        if ($files->count() === 0) {
+            throw new \Exception("File with id:$id not found!");
+        }
+
+        return $files->first();
+    }
+
     /**
      * Adder for file entity.
      *

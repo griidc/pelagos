@@ -42,6 +42,7 @@ class FolderStructureGenerator
             if (!in_array($filePathParts[0], array_column($folderJson, 'name'))) {
                 if (!$isDir) {
                     $folderJson[] = array(
+                        'fileId' => $file->getId(),
                         'name' => $filePathParts[0],
                         'isDirectory' => false,
                         'size' => $file->getFileSize(),
