@@ -140,7 +140,7 @@ class Fileset extends Entity
      *
      * @throws Exception When the file by ID was not found.
      *
-     * @return File
+     * @return File|null
      */
     public function getFileById(int $id) : ?File
     {
