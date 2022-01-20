@@ -127,10 +127,11 @@ class FileManager extends AbstractFOSRestController
         MessageBusInterface $messageBus
     ): Response {
         $deleteFilePath = $request->get('path');
+        $deleteFileId = $request->get('fileId');
         $isDir = $request->get('isDir');
         $fileset = $datasetSubmission->getFileset();
-        if (!$deleteFilePath) {
-            throw new BadRequestHttpException('Please provide a file path');
+        if ((!$deleteFilePath and $isDir === true) or !$deleteFileId) {
+            throw new BadRequestHttpException('Please provide a file path/id');
         }
         if ($fileset instanceof Fileset) {
             if ($isDir === 'true') {
@@ -139,7 +140,7 @@ class FileManager extends AbstractFOSRestController
                     $this->deleteFile($file, $messageBus);
                 }
             } else {
-                $existingFile = $fileset->getExistingFile($deleteFilePath);
+                $existingFile = $fileset->getFileById($deleteFileId);
                 $this->deleteFile($existingFile, $messageBus);
             }
             $entityManager->flush();
