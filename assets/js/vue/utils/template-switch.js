@@ -25,6 +25,18 @@ const templateVariables = {
     researchAwardOption: 'Grant Award',
     cardHeadingText: 'View Project Overview By',
   },
+  HRI: {
+    name: 'HRI',
+    status: 'Dataset Status',
+    fundingCycle: 'Funding Cycles',
+    researchGroup: 'Research Groups',
+    fundingOrg: 'Funding Organizations',
+    showFundingCycles: false,
+    showProjectDirector: false,
+    showFundingOrgFacet: false,
+    displayTextBlock: false,
+    researchAwardOption: 'Research Award',
+  },
 };
 
 export default {
