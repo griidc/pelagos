@@ -55,7 +55,7 @@ if (geovizMap.attr('description') !== '' && geovizMap.attr('wkt') === '') {
   const imagePath = geovizMap.attr('labimage');
   dlmap.addImage(imagePath, 0.4);
   dlmap.makeStatic();
-} else if (geovizMap.attr('wkt') !== '') {
+} else if (geovizMap.attr('wkt')) {
   dlmap.addFeatureFromWKT(geovizMap.attr('wkt'), { udi: geovizMap.attr('udi') });
   dlmap.gotoAllFeatures();
 }
