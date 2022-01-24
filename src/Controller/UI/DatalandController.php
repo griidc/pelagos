@@ -68,7 +68,7 @@ class DatalandController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/data/v1/{udi}", name="pelagos_app_ui_dataland_default")
+     * @Route("/data/v1/{udi}", name="pelagos_app_ui_dataland_v1")
      *
      * @return Response
      */
@@ -204,7 +204,7 @@ class DatalandController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/data/{udi}", name="pelagos_app_ui_dataland_v2")
+     * @Route("/data/{udi}", name="pelagos_app_ui_dataland_default")
      *
      * @return Response
      */
