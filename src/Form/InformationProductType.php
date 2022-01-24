@@ -25,14 +25,6 @@ class InformationProductType extends AbstractType
             ->add('remoteResource')
             ->add('creationTimeStamp')
             ->add('modificationTimeStamp')
-//            ->add('researchGroups', CollectionType::class, array(
-//                'label' => 'Research Groups',
-//                'entry_type' => ChoiceType::class,
-//                'entry_options' => array(
-//                    'choices' => ["701", "807"],
-//                ),
-//                'required' => true,
-//            ))
             ->add('creator')
             ->add('modifier')
         ;
