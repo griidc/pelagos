@@ -68,7 +68,7 @@ class DatalandController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/data/{udi}", name="pelagos_app_ui_dataland_default")
+     * @Route("/data/v1/{udi}", name="pelagos_app_ui_dataland_default")
      *
      * @return Response
      */
@@ -150,58 +150,6 @@ class DatalandController extends AbstractController
     }
 
     /**
-     * Download the dataset file.
-     *
-     * @param string    $udi       The UDI of the dataset to download.
-     * @param DataStore $dataStore The data store.
-     *
-     * @throws \Exception When the dataset is marked as remotely hosted, but remotelyHostedUrl does not contain a valid URL.
-     *
-     * @Route("/data/{udi}/download", name="pelagos_app_ui_dataland_download")
-     *
-     * @return BinaryFileResponse
-     */
-    public function downloadAction(string $udi, DataStore $dataStore)
-    {
-        $dataset = $this->getDataset($udi);
-
-        if ($dataset->getAvailabilityStatus()
-            === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
-            if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                and null !== $dataset->getDatasetSubmission()->getRemotelyHostedUrl()
-                and preg_match('/^http/', $dataset->getDatasetSubmission()->getRemotelyHostedUrl())) {
-                return new RedirectResponse($dataset->getDatasetSubmission()->getRemotelyHostedUrl());
-            } else {
-                throw new \Exception("Could not find valid url for remotely hosted dataset: $udi");
-            }
-        }
-
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException('You must be logged in to download dataset files');
-        }
-
-        if ($dataset->getAvailabilityStatus() !== DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
-            throw $this->createAccessDeniedException('This dataset is not publicly available');
-        }
-
-        $fileInfo = $dataStore->getDownloadFileInfo($udi, 'dataset');
-
-        $filename = null;
-
-        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
-            $filename = $dataset->getDatasetSubmission()->getDatasetFileName();
-        }
-
-        if (null === $filename) {
-            $filename = str_replace(':', '-', $fileInfo->getBaseName());
-        }
-
-        $response = new BinaryFileResponse($fileInfo->getRealPath());
-        $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
-        return $response;
-    }
-
-    /**
      * Get the Dataset for an UDI.
      *
      * @param string $udi The UDI to get the dataset for.
@@ -256,7 +204,7 @@ class DatalandController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/data/v2/{udi}", name="pelagos_app_ui_dataland_v2")
+     * @Route("/data/{udi}", name="pelagos_app_ui_dataland_v2")
      *
      * @return Response
      */
