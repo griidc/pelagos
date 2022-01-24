@@ -1,7 +1,7 @@
 {
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^5.11.1",
-        "@symfony/webpack-encore": "^1.6.1",
+        "@symfony/webpack-encore": "^1.8.1",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
         "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
@@ -49,6 +49,7 @@
         "v-tooltip": "^2.0.3",
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0",
+        "webpack-dev-server": "^4.7.3",
         "xbytes": "^1.7.0"
     }
 }
