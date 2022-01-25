@@ -84,7 +84,7 @@
         </div>
         <footer class="py-5 bg-dark">
             <div class="container">
-                <p class="m-0 text-center text-white">Copyright &copy; GRP - GRIIDC 2020</p>
+                <p class="m-0 text-center text-white">Copyright &copy; GRP - GRIIDC 2022</p>
             </div>
         </footer>
     </div>
@@ -92,11 +92,11 @@
 
 {% block javascripts %}
     {{ parent() }}
-    
+
     <script>
         window.fundingCycles = {{ fundingCycles | json_encode | raw }}
         window.projectDirectors = {{ projectDirectors | json_encode | raw }}
     </script>
-    
+
     {{ encore_entry_script_tags('grp-home') }}
 {% endblock %}
