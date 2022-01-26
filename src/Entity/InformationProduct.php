@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Information Product Entity class.
@@ -93,6 +94,8 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @ORM\ManyToMany(targetEntity=ResearchGroup::class)
+     *
+     * @Serializer\Exclude
      */
     private $researchGroups;
 
@@ -257,6 +260,25 @@ class InformationProduct extends Entity
     public function getResearchGroups(): Collection
     {
         return $this->researchGroups;
+    }
+
+    /**
+     * Get the Research Groups List for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("researchGroups")
+     *
+     * @return array
+     */
+    public function getResearchGroupList(): array
+    {
+        $researchGroupList = [];
+
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            $researchGroupList[] = $researchGroup->getId();
+        }
+
+        return $researchGroupList;
     }
 
 
