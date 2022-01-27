@@ -71,6 +71,9 @@
             </h5>
 
             <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
+            <p v-if="!researchGroupsSelected" class="alert alert-warning">
+              Please select at least one research group!
+            </p>
 
             <b-form-group
                     id="input-group-4"
@@ -120,7 +123,7 @@
             </b-form-group>
 
             <div class="py-2">
-                <b-button type="submit" variant="alternate">Submit</b-button>
+                <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
                 <b-button type="reset" variant="dark">Reset</b-button>
             </div>
         </b-form>
@@ -190,7 +193,17 @@ export default {
       addedRgShortName: '',
     };
   },
-
+  computed: {
+    researchGroupsSelected () {
+      return this.form.selectedResearchGroups.length > 0;
+    },
+    formValid () {
+      return this.researchGroupsSelected
+        && this.form.title !== ""
+        && this.form.creators !== ""
+        && this.form.publisher !== "";
+    }
+  },
   methods: {
     onSubmit(event) {
       event.preventDefault();
@@ -201,6 +214,7 @@ export default {
       ).then((response) => {
         this.ipCreatedSuccessModal = true;
         this.informationProductId = response.data.id;
+        event.target.reset();
       }).catch(() => {
         this.errorMessage = 'Unable to create Information Product';
         this.errorDialog = true;

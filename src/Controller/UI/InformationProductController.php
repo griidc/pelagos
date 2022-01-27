@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Entity\ResearchGroup;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,6 +17,8 @@ class InformationProductController extends AbstractController
      * The information product page.
      *
      * @Route("/information-product", name="pelagos_app_ui_information_product")
+     *
+     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      *
      * @return Response A Response instance.
      */
