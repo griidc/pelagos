@@ -71,6 +71,9 @@
             </h5>
 
             <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
+            <p class="alert alert-warning" v-if="!researchGroupsSelected">
+              Please select at least one research group!
+            </p>
 
             <b-form-group
                     id="input-group-4"
@@ -85,7 +88,9 @@
                             placeholder="Type to search...">
                     </b-form-input>
                     <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
-                    <b-button type="button" class="ml-2" v-on:click="linkResearchGroup()">Link Research Group</b-button>
+                    <b-button :disabled="isNaN(this.selectedResearchGroup)" type="button" class="ml-2" v-on:click="linkResearchGroup()" >
+                      Link Research Group
+                    </b-button>
                 </b-form>
             </b-form-group>
 
@@ -120,7 +125,7 @@
             </b-form-group>
 
             <div class="py-2">
-                <b-button type="submit" variant="alternate">Submit</b-button>
+                <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
                 <b-button type="reset" variant="dark">Reset</b-button>
             </div>
         </b-form>
@@ -190,7 +195,20 @@ export default {
       addedRgShortName: '',
     };
   },
-
+  computed: {
+    researchGroupsSelected () {
+      return this.form.selectedResearchGroups.length > 0;
+    },
+    formValid () {
+      return this.researchGroupsSelected
+        && this.form.title !== ""
+        && this.form.creators !== ""
+        && this.form.publisher !== "";
+    },
+    selectedResearchGroup () {
+      return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
+    },
+  },
   methods: {
     onSubmit(event) {
       event.preventDefault();
@@ -201,6 +219,7 @@ export default {
       ).then((response) => {
         this.ipCreatedSuccessModal = true;
         this.informationProductId = response.data.id;
+        event.target.reset();
       }).catch(() => {
         this.errorMessage = 'Unable to create Information Product';
         this.errorDialog = true;
@@ -236,7 +255,7 @@ export default {
     },
 
     linkResearchGroup() {
-      const researchGroupId = this.getResearchGroupIdFromShortName(this.addedRgShortName);
+      const researchGroupId = this.selectedResearchGroup;
       if (!this.form.selectedResearchGroups.includes(researchGroupId)) {
         this.form.selectedResearchGroups.push(researchGroupId);
         const index = this.researchGroupOptions.findIndex((
