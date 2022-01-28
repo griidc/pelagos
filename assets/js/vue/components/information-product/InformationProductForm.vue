@@ -71,7 +71,7 @@
             </h5>
 
             <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
-            <p v-if="!researchGroupsSelected" class="alert alert-warning">
+            <p class="alert alert-warning" v-if="!researchGroupsSelected">
               Please select at least one research group!
             </p>
 
@@ -88,7 +88,9 @@
                             placeholder="Type to search...">
                     </b-form-input>
                     <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
-                    <b-button type="button" class="ml-2" v-on:click="linkResearchGroup()">Link Research Group</b-button>
+                    <b-button :disabled="isNaN(this.selectedResearchGroup)" type="button" class="ml-2" v-on:click="linkResearchGroup()" >
+                      Link Research Group
+                    </b-button>
                 </b-form>
             </b-form-group>
 
@@ -202,7 +204,10 @@ export default {
         && this.form.title !== ""
         && this.form.creators !== ""
         && this.form.publisher !== "";
-    }
+    },
+    selectedResearchGroup () {
+      return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
+    },
   },
   methods: {
     onSubmit(event) {
@@ -250,7 +255,7 @@ export default {
     },
 
     linkResearchGroup() {
-      const researchGroupId = this.getResearchGroupIdFromShortName(this.addedRgShortName);
+      const researchGroupId = this.selectedResearchGroup;
       if (!this.form.selectedResearchGroups.includes(researchGroupId)) {
         this.form.selectedResearchGroups.push(researchGroupId);
         const index = this.researchGroupOptions.findIndex((
