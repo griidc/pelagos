@@ -47,6 +47,11 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     const REPORT_VERSION_THREE = 3;
 
+    /**
+     * Report version number 4.
+     */
+    const REPORT_VERSION_FOUR = 4;
+
 
     /**
      * The default action.
@@ -115,7 +120,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         if ($id) {
             return $this->getReport($id, self::REPORT_VERSION_TWO);
         }
-        
+
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
@@ -203,6 +208,62 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
+     * Research group dataset status report for dataset monitoring.
+     *
+     * @param Request       $request         Message information for this Request.
+     * @param EntityHandler $entityHandler   The entity handler.
+     * @param string|null   $id              Research group id.
+     *
+     * @Route(
+     *     "/report-researchgroup/grp-detail-report/{id}",
+     *     name="pelagos_app_ui_reportresearchgroup_detailreport",
+     *     )
+     *
+     * @return Response|StreamedResponse A Symfony Response instance.
+     */
+    public function getGrpResearchDetailReport(Request $request, EntityHandler $entityHandler, string $id = null)
+    {
+        if (isset($id) and is_int($id)) {
+            return $this->getReport($id, self::REPORT_VERSION_FOUR);
+        }
+
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('template/AdminOnly.html.twig');
+        }
+
+        //  fetch all the Research Groups
+        $allResearchGroups = $entityHandler->getAll(ResearchGroup::class, array('name' => 'ASC'));
+        //  put all the names in an array with the associated doctrine id
+        $researchGroupNames = array();
+        foreach ($allResearchGroups as $rg) {
+            $researchGroupNames[$rg->getName()] = $rg->getId();
+        }
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            ReportResearchGroupDatasetStatusType::class,
+            $researchGroupNames
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $researchGroupId = $request->get('ResearchGroupSelector');
+                return $this->getReport($researchGroupId, self::REPORT_VERSION_FOUR);
+            }
+        }
+
+        return $this->render(
+            'Reports/ReportResearchGroupDatasetStatus.html.twig',
+            array(
+                'form' => $form->createView(),
+                'reportTitle' => 'Research Group Detail Report',
+            )
+        );
+    }
+
+    /**
      * Generate report action for Dataset Research group.
      *
      * @param integer $researchGroupId The Research Group ID.
@@ -216,7 +277,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             ->findOneBy(array('id' => $researchGroupId));
         $researchGroupName = $researchGroup->getName();
 
-        if ($version === self::REPORT_VERSION_THREE and $researchGroup instanceof ResearchGroup) {
+        if (
+            $version === (self::REPORT_VERSION_THREE or self::REPORT_VERSION_FOUR)
+            and $researchGroup instanceof ResearchGroup
+        ) {
             $researchGroupName = $researchGroup->getFundingCycle()->getName() . '_' .
                 $this->getProjectDirectorLastName($researchGroup) . '_' .
                 $researchGroup->getShortName() . '_' .

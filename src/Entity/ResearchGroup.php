@@ -426,7 +426,7 @@ class ResearchGroup extends Entity
      *
      * @access public
      *
-     * @return string String containing fundingCycles of research group.
+     * @return FundingCycle String containing fundingCycles of research group.
      */
     public function getFundingCycle()
     {
