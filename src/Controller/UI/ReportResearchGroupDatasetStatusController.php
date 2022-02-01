@@ -10,6 +10,9 @@ use App\Entity\DIF;
 
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerBuilder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -46,12 +49,6 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * Report version number 3.
      */
     const REPORT_VERSION_THREE = 3;
-
-    /**
-     * Report version number 4.
-     */
-    const REPORT_VERSION_FOUR = 4;
-
 
     /**
      * The default action.
@@ -223,13 +220,13 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     public function getGrpResearchDetailReport(Request $request, EntityHandler $entityHandler, string $id = null)
     {
-        if (isset($id) and is_int($id)) {
-            return $this->getReport($id, self::REPORT_VERSION_FOUR);
-        }
-
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
+        }
+
+        if (isset($id) and is_int($id)) {
+            return $this->getResearchGrpJson($id);
         }
 
         //  fetch all the Research Groups
@@ -250,7 +247,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $researchGroupId = $request->get('ResearchGroupSelector');
-                return $this->getReport($researchGroupId, self::REPORT_VERSION_FOUR);
+                return $this->getResearchGrpJson($researchGroupId);
             }
         }
 
@@ -261,6 +258,45 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 'reportTitle' => 'Research Group Detail Report',
             )
         );
+    }
+
+    /**
+     * Get Research Group data as JSON.
+     *
+     * @param integer $researchGroupId
+     *
+     * @return Response
+     */
+    private function getResearchGrpJson(int $researchGroupId): Response
+    {
+        $serializer = SerializerBuilder::create()->build();
+
+        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
+            ->findOneBy(array('id' => $researchGroupId));
+
+        $json = $serializer->serialize(
+            $researchGroup,
+            'json',
+            SerializationContext::create()->enableMaxDepthChecks()
+        );
+
+        $data = json_decode($json);
+
+        // Remove un needed elements.
+        unset($data->funding_cycle);
+        unset($data->_links);
+        unset($data->creator);
+        unset($data->modifier);
+
+        foreach ($data->person_research_groups as $personResearchGroup) {
+            unset($personResearchGroup->_links);
+            unset($personResearchGroup->creator);
+            unset($personResearchGroup->modifier);
+        }
+
+        $filename = $researchGroup->getShortName() . '.json';
+        $header = array('Content-Disposition' => "attachment; filename=$filename;");
+        return new JsonResponse($data, 200, $header);
     }
 
     /**
@@ -278,7 +314,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $researchGroupName = $researchGroup->getName();
 
         if (
-            $version === (self::REPORT_VERSION_THREE or self::REPORT_VERSION_FOUR)
+            $version === (self::REPORT_VERSION_THREE)
             and $researchGroup instanceof ResearchGroup
         ) {
             $researchGroupName = $researchGroup->getFundingCycle()->getName() . '_' .
