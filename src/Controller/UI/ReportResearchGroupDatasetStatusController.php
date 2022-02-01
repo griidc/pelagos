@@ -313,10 +313,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             ->findOneBy(array('id' => $researchGroupId));
         $researchGroupName = $researchGroup->getName();
 
-        if (
-            $version === (self::REPORT_VERSION_THREE)
-            and $researchGroup instanceof ResearchGroup
-        ) {
+        if ($version === self::REPORT_VERSION_THREE and $researchGroup instanceof ResearchGroup) {
             $researchGroupName = $researchGroup->getFundingCycle()->getName() . '_' .
                 $this->getProjectDirectorLastName($researchGroup) . '_' .
                 $researchGroup->getShortName() . '_' .
