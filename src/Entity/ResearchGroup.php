@@ -100,6 +100,10 @@ class ResearchGroup extends Entity
      *
      * @ORM\Column(type="citext", unique=true, nullable=true)
      *
+     * @Assert\NotBlank(
+     *     message="Short Name is required"
+     * )
+     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )

@@ -41,7 +41,7 @@ class ResearchGroupType extends AbstractType
             ))
             ->add('shortName', TextType::class, array(
                 'label' => 'Short Name:',
-                'required' => false
+                'required' => true
             ))
             ->add('fundingCycle', EntityType::class, array(
                 'label' => 'Funding Cycle',
