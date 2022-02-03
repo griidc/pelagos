@@ -15,6 +15,9 @@
                 <b-tab title="Publications">
                     <PublicationsTab :datasets="researchGroupData.datasets"/>
                 </b-tab>
+                <b-tab title="Information Products">
+                  <InformationProductsTab />
+                </b-tab>
             </b-tabs>
         </b-card>
     </div>
@@ -26,11 +29,12 @@ import PublicationsTab from '@/vue/components/research-group/PublicationsTab';
 import OverviewTab from '@/vue/components/research-group/OverviewTab';
 import DatasetsTab from '@/vue/components/research-group/DatasetsTab';
 import PeopleTab from '@/vue/components/research-group/PeopleTab';
+import InformationProductsTab from '@/vue/components/research-group/InformationProductsTab';
 
 export default {
   name: 'ResearchGroupApp',
   components: {
-    PublicationsTab, OverviewTab, DatasetsTab, PeopleTab,
+    PublicationsTab, OverviewTab, DatasetsTab, PeopleTab, InformationProductsTab,
   },
   props: {
     id: {
@@ -50,6 +54,7 @@ export default {
       { thisComponent: this, addLoading: true },
     ).then((response) => {
       this.researchGroupData = response.data;
+      console.log(response.data);
       this.showData = true;
     }).catch(() => {
       this.showData = false;

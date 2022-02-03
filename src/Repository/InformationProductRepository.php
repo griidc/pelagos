@@ -22,19 +22,18 @@ class InformationProductRepository extends ServiceEntityRepository
     // /**
     //  * @return InformationProduct[] Returns an array of InformationProduct objects
     //  */
-    /*
+
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
+        return $this->createQueryBuilder('informationProduct')
+            ->innerJoin('informationProduct.researchGroups', 'rg')
+            ->andWhere('rg.id = :val')
             ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?InformationProduct
@@ -47,4 +46,6 @@ class InformationProductRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    // select * from information_products where research_group_id = '';
 }

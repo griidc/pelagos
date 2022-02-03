@@ -5,12 +5,14 @@ namespace App\Controller\Api;
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
+use App\Repository\InformationProductRepository;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use JMS\Serializer\SerializationContext;
 
 class InformationProductController extends AbstractFOSRestController
 {
@@ -28,9 +30,15 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function getInformationProduct(InformationProduct $informationProduct, SerializerInterface $serializer): Response
+    public function getInformationProduct(InformationProduct $informationProduct, SerializerInterface $serializer, InformationProductRepository $informationProductRepository): Response
     {
-        return new Response($serializer->serialize($informationProduct, 'json'));
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
+        $researchGroupId = 936;
+        $informationProducts = $informationProductRepository->findByExampleField($researchGroupId);
+
+        return new Response($serializer->serialize($informationProducts, 'json', $context));
     }
 
     /**
@@ -142,7 +150,7 @@ class InformationProductController extends AbstractFOSRestController
     {
         $dataArray = json_decode($json, true);
 
-        if( JSON_ERROR_NONE !== json_last_error() ){
+        if (JSON_ERROR_NONE !== json_last_error()) {
             $message = "Provided json is not valid";
             $this->logger->critical($message, [
                 'jsonLastErrorMessage' => json_last_error_msg(),
@@ -152,5 +160,22 @@ class InformationProductController extends AbstractFOSRestController
         }
 
         return $dataArray;
+    }
+
+    /**
+     * @param InformationProduct $informationProduct The id of the information product.
+     *
+     * @Route (
+     *     "/api/information_product/{id}",
+     *     name="pelagos_api_get_information_product",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @return Response
+     */
+    public function getInformationProductByResearchGroupId()
+    {
     }
 }
