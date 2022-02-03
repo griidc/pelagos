@@ -10,8 +10,10 @@ use App\Entity\DIF;
 
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\ForwardCompatibility\Result;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -225,7 +227,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             return $this->render('template/AdminOnly.html.twig');
         }
 
-        if (isset($id) and is_int($id)) {
+        if (isset($id)) {
             return $this->getResearchGrpJson($id);
         }
 
@@ -274,10 +276,14 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
             ->findOneBy(array('id' => $researchGroupId));
 
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
+
         $json = $serializer->serialize(
             $researchGroup,
             'json',
-            SerializationContext::create()->enableMaxDepthChecks()
+            $context
         );
 
         $data = json_decode($json);
@@ -292,9 +298,16 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             unset($personResearchGroup->_links);
             unset($personResearchGroup->creator);
             unset($personResearchGroup->modifier);
+            unset($personResearchGroup->person->creator);
+            unset($personResearchGroup->person->modifier);
+            unset($personResearchGroup->role->creator);
+            unset($personResearchGroup->role->modifier);
         }
 
-        $filename = $researchGroup->getShortName() . '.json';
+        $filename = $researchGroup->getId()
+            . '_' . $researchGroup->getShortName()
+            . '_' . date('Ymd')
+            . '.json';
         $header = array('Content-Disposition' => "attachment; filename=$filename;");
         return new JsonResponse($data, 200, $header);
     }
