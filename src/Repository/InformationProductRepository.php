@@ -49,6 +49,4 @@ class InformationProductRepository extends ServiceEntityRepository
         ;
     }
     */
-
-    // select * from information_products where research_group_id = '';
 }

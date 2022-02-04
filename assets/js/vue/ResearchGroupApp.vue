@@ -54,7 +54,6 @@ export default {
       { thisComponent: this, addLoading: true },
     ).then((response) => {
       this.researchGroupData = response.data;
-      console.log(response.data);
       this.showData = true;
     }).catch(() => {
       this.showData = false;
