@@ -16,7 +16,7 @@
                     <PublicationsTab :datasets="researchGroupData.datasets"/>
                 </b-tab>
                 <b-tab title="Information Products">
-                  <InformationProductsTab />
+                  <InformationProductsTab :rgId="researchGroupData.id"/>
                 </b-tab>
             </b-tabs>
         </b-card>
