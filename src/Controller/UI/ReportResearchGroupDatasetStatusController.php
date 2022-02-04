@@ -7,16 +7,12 @@ use App\Entity\ResearchGroup;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\ForwardCompatibility\Result;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
-use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -218,9 +214,9 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *     name="pelagos_app_ui_reportresearchgroup_detailreport",
      *     )
      *
-     * @return Response|StreamedResponse A Symfony Response instance.
+     * @return Response|JsonResponse A Symfony Response instance.
      */
-    public function getGrpResearchDetailReport(Request $request, EntityHandler $entityHandler, string $id = null)
+    public function getResearchDetailReport(Request $request, EntityHandler $entityHandler, string $id = null): Response
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -265,7 +261,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     /**
      * Get Research Group data as JSON.
      *
-     * @param integer $researchGroupId
+     * @param integer $researchGroupId The research group to generate json for.
      *
      * @return Response
      */
