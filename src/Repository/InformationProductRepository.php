@@ -19,22 +19,24 @@ class InformationProductRepository extends ServiceEntityRepository
         parent::__construct($registry, InformationProduct::class);
     }
 
-    // /**
-    //  * @return InformationProduct[] Returns an array of InformationProduct objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Find one by research group id.
+     *
+     * @param integer $researchGroupId Research group id associated.
+     *
+     * @return array
+     */
+    public function findOneByResearchGroupId(int $researchGroupId): array
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('informationProduct')
+            ->innerJoin('informationProduct.researchGroups', 'rg')
+            ->andWhere('rg.id = :val')
+            ->setParameter('val', $researchGroupId)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?InformationProduct

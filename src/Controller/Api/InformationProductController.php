@@ -5,18 +5,23 @@ namespace App\Controller\Api;
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
+use App\Repository\InformationProductRepository;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use JMS\Serializer\SerializationContext;
 
 class InformationProductController extends AbstractFOSRestController
 {
 
     /**
-     * @param InformationProduct $informationProduct The id of the information product.
+     * Get Information Product.
+     *
+     * @param InformationProduct  $informationProduct The id of the information product.
+     * @param SerializerInterface $serializer         JMS Serializer instance.
      *
      * @Route (
      *     "/api/information_product/{id}",
@@ -142,7 +147,7 @@ class InformationProductController extends AbstractFOSRestController
     {
         $dataArray = json_decode($json, true);
 
-        if( JSON_ERROR_NONE !== json_last_error() ){
+        if (JSON_ERROR_NONE !== json_last_error()) {
             $message = "Provided json is not valid";
             $this->logger->critical($message, [
                 'jsonLastErrorMessage' => json_last_error_msg(),
@@ -152,5 +157,34 @@ class InformationProductController extends AbstractFOSRestController
         }
 
         return $dataArray;
+    }
+
+    /**
+     * Find Information Product by associated research group id.
+     *
+     * @param ResearchGroup                $researchGroup                The id of the research group.
+     * @param SerializerInterface          $serializer                   JMS serializer instance.
+     * @param InformationProductRepository $informationProductRepository Entity repository to get the entity.
+     * @Route (
+     *     "/api/information_product_by_research_group_id/{id}",
+     *     name="pelagos_api_get_information_product_by_research_group_id",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @return Response
+     */
+    public function getInformationProductByResearchGroupId(
+        ResearchGroup $researchGroup,
+        SerializerInterface $serializer,
+        InformationProductRepository $informationProductRepository
+    ): Response {
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
+        $informationProducts = $informationProductRepository->findOneByResearchGroupId($researchGroup->getId());
+
+        return new Response($serializer->serialize($informationProducts, 'json', $context));
     }
 }
