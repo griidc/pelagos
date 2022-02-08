@@ -224,7 +224,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         }
 
         if (isset($id)) {
-            return $this->getResearchGrpJson($id);
+            return $this->getResearchGrpJson($id, true);
         }
 
         //  fetch all the Research Groups
@@ -265,7 +265,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return Response
      */
-    private function getResearchGrpJson(int $researchGroupId): Response
+    private function getResearchGrpJson(int $researchGroupId, bool $stream = false): Response
     {
         $serializer = SerializerBuilder::create()->build();
 
@@ -304,7 +304,11 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             . '_' . $researchGroup->getShortName()
             . '_' . date('Ymd')
             . '.json';
-        $header = array('Content-Disposition' => "attachment; filename=$filename;");
+        if (!$stream) {
+            $header = array('Content-Disposition' => "attachment; filename=$filename;");
+        } else {
+            $header = array();
+        }
         return new JsonResponse($data, 200, $header);
     }
 
