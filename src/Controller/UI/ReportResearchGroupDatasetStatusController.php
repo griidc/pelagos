@@ -210,7 +210,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * @param string|null   $id              Research group id.
      *
      * @Route(
-     *     "/report-researchgroup/grp-detail-report/{id}",
+     *     "/report-researchgroup/detail-report/{id}",
      *     name="pelagos_app_ui_reportresearchgroup_detailreport",
      *     )
      *
