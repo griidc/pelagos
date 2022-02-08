@@ -22,16 +22,16 @@ class InformationProductRepository extends ServiceEntityRepository
     /**
      * Find one by research group id.
      *
-     * @param integer $rgId Research group id associated.
+     * @param integer $researchGroupId Research group id associated.
      *
      * @return array
      */
-    public function findOneByResearchGroupId(int $rgId): array
+    public function findOneByResearchGroupId(int $researchGroupId): array
     {
         return $this->createQueryBuilder('informationProduct')
             ->innerJoin('informationProduct.researchGroups', 'rg')
             ->andWhere('rg.id = :val')
-            ->setParameter('val', $rgId)
+            ->setParameter('val', $researchGroupId)
             ->getQuery()
             ->getResult()
         ;

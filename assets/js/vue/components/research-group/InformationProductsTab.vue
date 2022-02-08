@@ -11,7 +11,7 @@
         Publisher: {{ informationProduct.publisher }}
       </b-card-text>
       <b-card-text class="text-muted">
-        {{ informationProduct.externalDoi }}
+        DOI:{{ informationProduct.externalDoi }}
       </b-card-text>
     </b-card>
   </b-card-group>
