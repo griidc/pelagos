@@ -196,16 +196,16 @@ export default {
     };
   },
   computed: {
-    researchGroupsSelected () {
+    researchGroupsSelected() {
       return this.form.selectedResearchGroups.length > 0;
     },
-    formValid () {
+    formValid() {
       return this.researchGroupsSelected
-        && this.form.title !== ""
-        && this.form.creators !== ""
-        && this.form.publisher !== "";
+        && this.form.title !== ''
+        && this.form.creators !== ''
+        && this.form.publisher !== '';
     },
-    selectedResearchGroup () {
+    selectedResearchGroup() {
       return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
     },
   },
