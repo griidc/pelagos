@@ -83,7 +83,6 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 $researchGroupId = $form->getData()['ResearchGroupSelector'];
                 $researchGroup = $entityHandler
                    ->getBy(ResearchGroup::class, ['id' => $researchGroupId])[0];
-
                 return $this->writeCsvResponse(
                     $this->getData(['researchGroup' => $researchGroup]),
                     $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId, self::REPORT_VERSION_ONE)
