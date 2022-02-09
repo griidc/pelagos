@@ -26,5 +26,4 @@ class FundingOrganizationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, FundingOrganization::class);
     }
-
 }
