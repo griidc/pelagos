@@ -95,6 +95,16 @@
             </b-form-group>
 
             <b-form-group
+                    id="input-group-file"
+                    label="File"
+                    label-for="published"
+                    description="Upload a file.">
+                <div id="dropzone-uploader" class="dropzone">
+                </div>
+                <b-button id="upload-file-button" type="button" variant="primary">Upload File</b-button>
+            </b-form-group>
+
+            <b-form-group
                     id="input-group-5"
                     label="Published"
                     label-for="published"
@@ -173,6 +183,12 @@ import { postApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
+import Dropzone from 'dropzone';
+import "dropzone/dist/dropzone.css";
+
+Dropzone.autoDiscover = false;
+
+const ZERO_FILE = 'zero file';
 
 export default {
   name: 'InformationProductForm',
@@ -208,6 +224,9 @@ export default {
     selectedResearchGroup() {
       return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
     },
+  },
+  mounted() {
+    initDropzone();
   },
   methods: {
     onSubmit(event) {
@@ -320,6 +339,92 @@ export default {
   created() {
     this.populateResearchGroups();
   },
+};
+
+let myDropzone;
+
+const addFileToDataset = (file, done) => {
+  const currentFile = file;
+  let fileName = '';
+  // if (destinationDir) {
+  //   fileName = `${destinationDir}/`;
+  // }
+  if (currentFile.fullPath) {
+    fileName += currentFile.fullPath ?? currentFile.name;
+  } else if (currentFile.webkitRelativePath) {
+    fileName += currentFile.webkitRelativePath;
+  } else {
+    fileName += currentFile.name;
+  }
+  const chunkData = {};
+  chunkData.dzuuid = file.upload.uuid;
+  chunkData.dztotalchunkcount = file.upload.totalChunkCount;
+  chunkData.fileName = fileName;
+  chunkData.dztotalfilesize = file.size;
+  // postApi(
+  //   // eslint-disable-next-line no-undef
+  //   `${Routing.generate('pelagos_api_add_file_dataset_submission')
+  //   }/${
+  //     datasetSubmissionId}`,
+  //   chunkData,
+  // ).then((response) => {
+  //   if (response.data.isRenamed === true) {
+  //     myFileManager.$parent.filesRenamed += 1;
+  //   }
+  //   if (file.size === 0) {
+  //     done(ZERO_FILE);
+  //   } else {
+      done();
+  //   }
+  // }).catch((error) => {
+  //   // eslint-disable-next-line no-param-reassign
+  //   file.accepted = false;
+  //   // eslint-disable-next-line no-underscore-dangle
+  //   myDropzone._errorProcessing([file], error.response.data, error.request);
+  // });
+};
+
+const initDropzone = () => {
+  myDropzone = new Dropzone('div#dropzone-uploader', {
+    // eslint-disable-next-line no-undef
+    url: `${Routing.generate('pelagos_api_post_chunks')}`,
+    chunking: true,
+    chunkSize: 1024 * 1024 * 10,
+    forceChunking: true,
+    parallelChunkUploads: false,
+    parallelUploads: 10,
+    retryChunks: true,
+    retryChunksLimit: 3,
+    maxFilesize: null,
+    clickable: '#upload-file-button',
+    timeout: 0,
+    maxFiles: 1,
+    addRemoveLinks: true,
+    removedfile: function (file) {
+      file.previewElement.remove()
+    },
+    accept(file, done) {
+      if (file.size === 0) {
+        addFileToDataset(file, done);
+      } else {
+        done();
+      }
+    },
+    error: function error(file, errorMessage, xhr) {
+      if (file.size === 0 && errorMessage === ZERO_FILE) {
+        // eslint-disable-next-line no-param-reassign
+        file.accepted = true;
+        // eslint-disable-next-line no-param-reassign
+        file.status = 'success';
+        return;
+      }
+      // myFileManager.$parent.showPopupError(xhr);
+    },
+    chunksUploaded(file, done) {
+      // All chunks have been uploaded. Perform any other actions
+      addFileToDataset(file, done);
+    },
+  });
 };
 </script>
 
