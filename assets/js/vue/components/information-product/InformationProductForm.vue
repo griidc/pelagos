@@ -102,8 +102,8 @@
                 <div id="dropzone-uploader" class="dropzone">
                 </div>
                 <b-button id="upload-file-button" type="button" variant="primary">Upload File</b-button>
-                <input type="hidden" id="file"/>
             </b-form-group>
+            <input type="hidden" v-model="form.file" name="file"/>
 
             <b-form-group
                     id="input-group-5"
@@ -232,6 +232,7 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
+      console.log(this.form);
       postApi(
         // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_api_create_information_product')}`,
@@ -271,6 +272,7 @@ export default {
         selectedResearchGroups: [],
         published: false,
         remoteResource: false,
+        file: 177070,
       };
     },
 
