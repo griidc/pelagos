@@ -322,11 +322,22 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Get the Remote URI for this Information Product.
+     *
+     * @return string|null
+     */
     public function getRemoteUri(): ?string
     {
         return $this->remoteUri;
     }
 
+    /**
+     * Set the Remote URI for this Information Product.
+     *
+     * @param string|null $remoteUri
+     * @return self
+     */
     public function setRemoteUri(?string $remoteUri): self
     {
         $this->remoteUri = $remoteUri;
@@ -334,11 +345,22 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Get the file for this Information Product.
+     *
+     * @return File|null
+     */
     public function getFile(): ?File
     {
         return $this->file;
     }
 
+    /**
+     * Set the file for this Information Product.
+     *
+     * @param File|null $file
+     * @return self
+     */
     public function setFile(?File $file): self
     {
         $this->file = $file;
