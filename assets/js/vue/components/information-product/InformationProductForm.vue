@@ -102,6 +102,7 @@
                 <div id="dropzone-uploader" class="dropzone">
                 </div>
                 <b-button id="upload-file-button" type="button" variant="primary">Upload File</b-button>
+                <input type="hidden" id="file"/>
             </b-form-group>
 
             <b-form-group
@@ -392,7 +393,7 @@ const initDropzone = () => {
     chunkSize: 1024 * 1024 * 10,
     forceChunking: true,
     parallelChunkUploads: false,
-    parallelUploads: 10,
+    parallelUploads: 1,
     retryChunks: true,
     retryChunksLimit: 3,
     maxFilesize: null,

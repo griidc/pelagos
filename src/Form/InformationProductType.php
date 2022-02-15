@@ -23,10 +23,11 @@ class InformationProductType extends AbstractType
             ->add('externalDoi')
             ->add('published')
             ->add('remoteResource')
-            ->add('creationTimeStamp')
-            ->add('modificationTimeStamp')
-            ->add('creator')
-            ->add('modifier')
+            ->add('file')
+            // ->add('creationTimeStamp')
+            // ->add('modificationTimeStamp')
+            // ->add('creator')
+            // ->add('modifier')
         ;
     }
 
