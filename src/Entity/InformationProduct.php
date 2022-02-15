@@ -100,6 +100,16 @@ class InformationProduct extends Entity
     private $researchGroups;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $remoteUri;
+
+    /**
+     * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
+     */
+    private $file;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -308,6 +318,52 @@ class InformationProduct extends Entity
     public function removeResearchGroup(ResearchGroup $researchGroup): self
     {
         $this->researchGroups->removeElement($researchGroup);
+
+        return $this;
+    }
+
+    /**
+     * Get the Remote URI for this Information Product.
+     *
+     * @return string|null
+     */
+    public function getRemoteUri(): ?string
+    {
+        return $this->remoteUri;
+    }
+
+    /**
+     * Set the Remote URI for this Information Product.
+     *
+     * @param string|null $remoteUri
+     * @return self
+     */
+    public function setRemoteUri(?string $remoteUri): self
+    {
+        $this->remoteUri = $remoteUri;
+
+        return $this;
+    }
+
+    /**
+     * Get the file for this Information Product.
+     *
+     * @return File|null
+     */
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    /**
+     * Set the file for this Information Product.
+     *
+     * @param File|null $file
+     * @return self
+     */
+    public function setFile(?File $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }
