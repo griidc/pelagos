@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 use App\Entity\FundingOrganization;
 use App\Form\ReportFundingOrganizationType;
 use App\Repository\FundingOrganizationRepository;
@@ -18,8 +19,8 @@ class ReportFundingOrganizationController extends ReportController
     // The format used to put the date and time in the report file name
     const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d';
 
-    // Limit the research group name to this to keep filename length at 100.
-    const MAXRESEARCHGROUPLENGTH = 46;
+    // Limit the funding org name to this to keep filename length at 100.
+    const MAXFUNDINGORGLENGTH = 46;
 
     /**
      * The default action.
@@ -81,7 +82,7 @@ class ReportFundingOrganizationController extends ReportController
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
 
-        $researchGroupNameSubstring = substr($fundingOrgName, 0, self::MAXRESEARCHGROUPLENGTH);
+        $researchGroupNameSubstring = substr($fundingOrgName, 0, self::MAXFUNDINGORGLENGTH);
         $tempFileName = $fundingOrgName
             . '_'
             . $nowDateTimeString
@@ -121,7 +122,7 @@ class ReportFundingOrganizationController extends ReportController
                 $datasetCount = $this->getDatasetStatusCount($researchGroup->serializeDatasets());
                 $dataRow = array(
                     'fundingCycle' => $fundingCycle->getName(),
-                    'researchGroup' => substr($researchGroup->getName(), 0, self::MAXRESEARCHGROUPLENGTH),
+                    'researchGroup' => $researchGroup->getName(),
                     'identified' => $datasetCount['identified'],
                     'submitted' => $datasetCount['submitted'],
                     'available' => $datasetCount['available'],
@@ -151,7 +152,10 @@ class ReportFundingOrganizationController extends ReportController
         foreach ($datasets as $dataset) {
             $availabilityStatus = $dataset['availabilityStatus'];
             if ($availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE) {
-                $identified++;
+                $identifiedStatus = $dataset->getIdentifiedStatus();
+                if ($identifiedStatus === DIF::STATUS_APPROVED) {
+                    $identified++;
+                }
             } elseif (in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL
