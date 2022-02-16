@@ -1,0 +1,8 @@
+{% extends "template/UI.html.twig" %}
+
+{% block body %}
+    <h1>{{reportTitle|default('Funding Organization Report')}}</h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}
