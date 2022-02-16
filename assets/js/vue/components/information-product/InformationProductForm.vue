@@ -235,7 +235,6 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      console.log(this.form);
       postApi(
         // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_api_create_information_product')}`,
