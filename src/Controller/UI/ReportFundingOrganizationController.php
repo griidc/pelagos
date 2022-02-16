@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 use App\Entity\FundingOrganization;
 use App\Form\ReportFundingOrganizationType;
 use App\Repository\FundingOrganizationRepository;
@@ -17,9 +18,6 @@ class ReportFundingOrganizationController extends ReportController
 {
     // The format used to put the date and time in the report file name
     const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d';
-
-    // Limit the research group name to this to keep filename length at 100.
-    const MAXRESEARCHGROUPLENGTH = 46;
 
     /**
      * The default action.
@@ -36,7 +34,6 @@ class ReportFundingOrganizationController extends ReportController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
-        $entityManager = $this->getDoctrine()->getManager();
         //  fetch all the Funding Organizations
         $fundingOrgs = $fundingOrganizationRepository->findAll();
         //  put all the names in an array with the associated doctrine id
@@ -73,15 +70,13 @@ class ReportFundingOrganizationController extends ReportController
      * Create a CSV download filename that contains the funding org name and the date/timeto.
      *
      * @param string  $fundingOrgName The name of the Funding Organization which is the subject of the report.
-     * @param string  $fundingOrgId   The ID of the Funding Organization which is the subject of the report.
      *
      * @return string
      */
-    private function createCsvReportFileName(string $fundingOrgName, string $fundingOrgId)
+    private function createCsvReportFileName(string $fundingOrgName)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
 
-        $researchGroupNameSubstring = substr($fundingOrgName, 0, self::MAXRESEARCHGROUPLENGTH);
         $tempFileName = $fundingOrgName
             . '_'
             . $nowDateTimeString
@@ -121,7 +116,7 @@ class ReportFundingOrganizationController extends ReportController
                 $datasetCount = $this->getDatasetStatusCount($researchGroup->serializeDatasets());
                 $dataRow = array(
                     'fundingCycle' => $fundingCycle->getName(),
-                    'researchGroup' => substr($researchGroup->getName(), 0, self::MAXRESEARCHGROUPLENGTH),
+                    'researchGroup' => $researchGroup->getName(),
                     'identified' => $datasetCount['identified'],
                     'submitted' => $datasetCount['submitted'],
                     'available' => $datasetCount['available'],
@@ -151,7 +146,10 @@ class ReportFundingOrganizationController extends ReportController
         foreach ($datasets as $dataset) {
             $availabilityStatus = $dataset['availabilityStatus'];
             if ($availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE) {
-                $identified++;
+                $identifiedStatus = $dataset->getIdentifiedStatus();
+                if ($identifiedStatus === DIF::STATUS_APPROVED) {
+                    $identified++;
+                }
             } elseif (in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL
