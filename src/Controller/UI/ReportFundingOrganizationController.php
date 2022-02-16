@@ -19,9 +19,6 @@ class ReportFundingOrganizationController extends ReportController
     // The format used to put the date and time in the report file name
     const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d';
 
-    // Limit the funding org name to this to keep filename length at 100.
-    const MAXFUNDINGORGLENGTH = 46;
-
     /**
      * The default action.
      *
@@ -37,7 +34,6 @@ class ReportFundingOrganizationController extends ReportController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
-        $entityManager = $this->getDoctrine()->getManager();
         //  fetch all the Funding Organizations
         $fundingOrgs = $fundingOrganizationRepository->findAll();
         //  put all the names in an array with the associated doctrine id
@@ -74,15 +70,13 @@ class ReportFundingOrganizationController extends ReportController
      * Create a CSV download filename that contains the funding org name and the date/timeto.
      *
      * @param string  $fundingOrgName The name of the Funding Organization which is the subject of the report.
-     * @param string  $fundingOrgId   The ID of the Funding Organization which is the subject of the report.
      *
      * @return string
      */
-    private function createCsvReportFileName(string $fundingOrgName, string $fundingOrgId)
+    private function createCsvReportFileName(string $fundingOrgName)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
 
-        $researchGroupNameSubstring = substr($fundingOrgName, 0, self::MAXFUNDINGORGLENGTH);
         $tempFileName = $fundingOrgName
             . '_'
             . $nowDateTimeString
