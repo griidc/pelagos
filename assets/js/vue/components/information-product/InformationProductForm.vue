@@ -191,6 +191,8 @@ Dropzone.autoDiscover = false;
 
 const ZERO_FILE = 'zero file';
 
+let thisComponent;
+
 export default {
   name: 'InformationProductForm',
   components: {
@@ -228,6 +230,7 @@ export default {
   },
   mounted() {
     initDropzone();
+    thisComponent = this;
   },
   methods: {
     onSubmit(event) {
@@ -272,7 +275,7 @@ export default {
         selectedResearchGroups: [],
         published: false,
         remoteResource: false,
-        file: 177070,
+        file: '',
       };
     },
 
@@ -346,12 +349,9 @@ export default {
 
 let myDropzone;
 
-const addFileToDataset = (file, done) => {
+const addFileToInformationProduct = (file, done) => {
   const currentFile = file;
   let fileName = '';
-  // if (destinationDir) {
-  //   fileName = `${destinationDir}/`;
-  // }
   if (currentFile.fullPath) {
     fileName += currentFile.fullPath ?? currentFile.name;
   } else if (currentFile.webkitRelativePath) {
@@ -364,27 +364,21 @@ const addFileToDataset = (file, done) => {
   chunkData.dztotalchunkcount = file.upload.totalChunkCount;
   chunkData.fileName = fileName;
   chunkData.dztotalfilesize = file.size;
-  // postApi(
-  //   // eslint-disable-next-line no-undef
-  //   `${Routing.generate('pelagos_api_add_file_dataset_submission')
-  //   }/${
-  //     datasetSubmissionId}`,
-  //   chunkData,
-  // ).then((response) => {
-  //   if (response.data.isRenamed === true) {
-  //     myFileManager.$parent.filesRenamed += 1;
-  //   }
-  //   if (file.size === 0) {
-  //     done(ZERO_FILE);
-  //   } else {
-      done();
-  //   }
-  // }).catch((error) => {
-  //   // eslint-disable-next-line no-param-reassign
-  //   file.accepted = false;
-  //   // eslint-disable-next-line no-underscore-dangle
-  //   myDropzone._errorProcessing([file], error.response.data, error.request);
-  // });
+  postApi(
+    // eslint-disable-next-line no-undef
+    `${Routing.generate('pelagos_api_add_file_information_product')}`,
+    chunkData,
+  ).then((response) => {
+    const fileId = response.data.id;
+    file.fileId = fileId;
+    thisComponent.form.file = fileId;
+    done();
+  }).catch((error) => {
+    // eslint-disable-next-line no-param-reassign
+    file.accepted = false;
+    // eslint-disable-next-line no-underscore-dangle
+    myDropzone._errorProcessing([file], error.response.data, error.request);
+  });
 };
 
 const initDropzone = () => {
@@ -406,26 +400,13 @@ const initDropzone = () => {
     removedfile: function (file) {
       file.previewElement.remove()
     },
-    accept(file, done) {
-      if (file.size === 0) {
-        addFileToDataset(file, done);
-      } else {
-        done();
-      }
-    },
     error: function error(file, errorMessage, xhr) {
-      if (file.size === 0 && errorMessage === ZERO_FILE) {
-        // eslint-disable-next-line no-param-reassign
-        file.accepted = true;
-        // eslint-disable-next-line no-param-reassign
-        file.status = 'success';
-        return;
-      }
-      // myFileManager.$parent.showPopupError(xhr);
+      this.errorMessage = 'Unable to save file.';
+      this.errorDialog = true;
     },
     chunksUploaded(file, done) {
       // All chunks have been uploaded. Perform any other actions
-      addFileToDataset(file, done);
+      addFileToInformationProduct(file, done);
     },
   });
 };

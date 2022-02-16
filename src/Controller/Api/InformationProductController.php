@@ -2,12 +2,16 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
 use App\Repository\InformationProductRepository;
+use App\Util\FileUploader;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +39,11 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function getInformationProduct(InformationProduct $informationProduct, SerializerInterface $serializer): Response
     {
-        return new Response($serializer->serialize($informationProduct, 'json'));
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
+
+        return new Response($serializer->serialize($informationProduct, 'json', $context));
     }
 
     /**
@@ -186,5 +194,48 @@ class InformationProductController extends AbstractFOSRestController
         $informationProducts = $informationProductRepository->findOneByResearchGroupId($researchGroup->getId());
 
         return new Response($serializer->serialize($informationProducts, 'json', $context));
+    }
+
+    /**
+     * Adds a file to a dataset submission.
+     *
+     * @param Request                $request           The request body sent with file metadata.
+     * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
+     * @param FileUploader           $fileUploader      File upload handler service.
+     *
+     * @Route(
+     *     "/api/add_file_to_information_product",
+     *     name="pelagos_api_add_file_information_product",
+     *     methods={"POST"}
+     *     )
+     *
+     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
+     *
+     * @return Response
+     */
+    public function addFileToInformationProduct(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader) : Response
+    {
+        try {
+            $fileMetadata = $fileUploader->combineChunks($request);
+        } catch (\Exception $exception) {
+            return new JsonResponse(['code' => 400, 'message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        $fileName = $fileMetadata['name'];
+        $filePath = $fileMetadata['path'];
+        $fileSize = $fileMetadata['size'];
+
+        $newFile = new File();
+        $newFile->setFilePathName(trim($fileName));
+        $newFile->setFileSize($fileSize);
+        $newFile->setUploadedAt(new \DateTime('now'));
+        $newFile->setUploadedBy($this->getUser()->getPerson());
+        $newFile->setPhysicalFilePath($filePath);
+        $newFile->setDescription('Information Product File');
+        $entityManager->persist($newFile);
+        $entityManager->flush();
+
+        $id = $newFile->getId();
+        return new JsonResponse(array("id" => $id));
     }
 }
