@@ -100,6 +100,10 @@ class ResearchGroup extends Entity
      *
      * @ORM\Column(type="citext", unique=true, nullable=true)
      *
+     * @Assert\NotBlank(
+     *     message="Short Name is required"
+     * )
+     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
@@ -426,7 +430,7 @@ class ResearchGroup extends Entity
      *
      * @access public
      *
-     * @return string String containing fundingCycles of research group.
+     * @return FundingCycle String containing fundingCycles of research group.
      */
     public function getFundingCycle()
     {
