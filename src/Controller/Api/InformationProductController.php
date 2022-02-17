@@ -6,17 +6,20 @@ use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
+use App\Message\RenameFile;
 use App\Repository\InformationProductRepository;
 use App\Util\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use JMS\Serializer\SerializationContext;
 
 class InformationProductController extends AbstractFOSRestController
 {
@@ -237,5 +240,69 @@ class InformationProductController extends AbstractFOSRestController
 
         $id = $newFile->getId();
         return new JsonResponse(array("id" => $id));
+    }
+
+    /**
+     * Delete a file or folder.
+     *
+     * @param File                   $file              The file to be deleted.
+     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
+     * @param MessageBusInterface    $messageBus        Message bus interface.
+     *
+     * @Route(
+     *     "/api/information_product_file_delete/{id}",
+     *     name="pelagos_api_ip_file_delete",
+     *     methods={"DELETE"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @throws BadRequestException When the file doesn't exist, or is not the right kind of file.
+     *
+     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
+     *
+     * @return Response
+     */
+    public function delete(
+        File $file,
+        EntityManagerInterface $entityManager,
+        MessageBusInterface $messageBus
+    ): Response {
+        if (empty($file->getFileset())) {
+            $this->deleteFile($file, $messageBus);
+            $entityManager->remove($file);
+            $entityManager->flush();
+        } else {
+            throw new BadRequestHttpException('Is this an Information Product File?');
+        }
+
+        return new Response(
+            null,
+            Response::HTTP_NO_CONTENT
+        );
+    }
+
+    /**
+     * Delete individual file from disk or mark as deleted.
+     *
+     * @param File                $file       File entity that needs to be deleted.
+     * @param MessageBusInterface $messageBus Message bus interface.
+     *
+     * @throws BadRequestHttpException If the file could not be deleted.
+     *
+     * @return void
+     */
+    private function deleteFile(File $file, MessageBusInterface $messageBus) : void
+    {
+        if ($file->getStatus() === File::FILE_NEW) {
+            $deleteFile = unlink($file->getPhysicalFilePath());
+            $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
+            if (!$deleteFile or !$deleteFolder) {
+                throw new BadRequestHttpException('Unable to delete file');
+            }
+        } elseif ($file->getStatus() === File::FILE_DONE) {
+            $file->setStatus(File::FILE_DELETED);
+            $renameMessage = new RenameFile($file->getId());
+            $messageBus->dispatch($renameMessage);
+        }
     }
 }

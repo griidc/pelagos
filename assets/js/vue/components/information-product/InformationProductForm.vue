@@ -180,7 +180,7 @@
 </template>
 
 <script>
-import { postApi } from '@/vue/utils/axiosService';
+import { postApi, deleteApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
@@ -397,7 +397,18 @@ const initDropzone = () => {
     maxFiles: 1,
     addRemoveLinks: true,
     removedfile: function (file) {
-      file.previewElement.remove()
+      if (typeof file.fileId !== 'undefined') {
+        deleteApi(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_api_ip_file_delete')}/${file.fileId}`,
+        ).then(() => {
+          thisComponent.form.file = '';
+        }).catch(() => {
+          this.errorMessage = 'Unable to delete File from Information Product';
+          this.errorDialog = true;
+        });
+      }
+      file.previewElement.remove();
     },
     error: function error(file, errorMessage, xhr) {
       this.errorMessage = 'Unable to save file.';
