@@ -394,8 +394,17 @@ const initDropzone = () => {
     maxFilesize: null,
     clickable: '#upload-file-button',
     timeout: 0,
-    maxFiles: 1,
     addRemoveLinks: true,
+    accept(file, done) {
+      if (myDropzone.getAcceptedFiles().length > 0) {
+        file.previewElement.remove();
+        thisComponent.errorMessage = 'Only one file allowed!';
+        thisComponent.errorDialog = true;
+        done('Only one file allowed!');
+      } else {
+        done();
+      }
+    },
     removedfile: function (file) {
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
