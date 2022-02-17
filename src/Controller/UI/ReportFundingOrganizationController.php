@@ -146,7 +146,7 @@ class ReportFundingOrganizationController extends ReportController
         foreach ($datasets as $dataset) {
             $availabilityStatus = $dataset['availabilityStatus'];
             if ($availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE) {
-                $identifiedStatus = $dataset->getIdentifiedStatus();
+                $identifiedStatus = $dataset['dif']['status'];
                 if ($identifiedStatus === DIF::STATUS_APPROVED) {
                     $identified++;
                 }
