@@ -100,11 +100,21 @@ class InformationProduct extends Entity
     private $researchGroups;
 
     /**
+     * The remote uri for this Information Product.
+     *
+     * @var string
+     *
      * @ORM\Column(type="text", nullable=true)
      */
     private $remoteUri;
 
     /**
+     * The file for this Information Product.
+     *
+     * @var File
+     *
+     * @Serializer\MaxDepth(1)
+     *
      * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
      */
     private $file;

@@ -95,6 +95,17 @@
             </b-form-group>
 
             <b-form-group
+                    id="input-group-file"
+                    label="File"
+                    label-for="published"
+                    description="Upload a file.">
+                <div id="dropzone-uploader" class="dropzone">
+                </div>
+                <b-button id="upload-file-button" type="button" variant="primary">Upload File</b-button>
+            </b-form-group>
+            <input type="hidden" v-model="form.file" name="file"/>
+
+            <b-form-group
                     id="input-group-5"
                     label="Published"
                     label-for="published"
@@ -169,10 +180,18 @@
 </template>
 
 <script>
-import { postApi } from '@/vue/utils/axiosService';
+import { postApi, deleteApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
+import Dropzone from 'dropzone';
+import "dropzone/dist/dropzone.css";
+
+Dropzone.autoDiscover = false;
+
+const ZERO_FILE = 'zero file';
+
+let thisComponent;
 
 export default {
   name: 'InformationProductForm',
@@ -208,6 +227,10 @@ export default {
     selectedResearchGroup() {
       return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
     },
+  },
+  mounted() {
+    initDropzone();
+    thisComponent = this;
   },
   methods: {
     onSubmit(event) {
@@ -251,6 +274,7 @@ export default {
         selectedResearchGroups: [],
         published: false,
         remoteResource: false,
+        file: '',
       };
     },
 
@@ -320,6 +344,90 @@ export default {
   created() {
     this.populateResearchGroups();
   },
+};
+
+let myDropzone;
+
+const addFileToInformationProduct = (file, done) => {
+  const currentFile = file;
+  let fileName = '';
+  if (currentFile.fullPath) {
+    fileName += currentFile.fullPath ?? currentFile.name;
+  } else if (currentFile.webkitRelativePath) {
+    fileName += currentFile.webkitRelativePath;
+  } else {
+    fileName += currentFile.name;
+  }
+  const chunkData = {};
+  chunkData.dzuuid = file.upload.uuid;
+  chunkData.dztotalchunkcount = file.upload.totalChunkCount;
+  chunkData.fileName = fileName;
+  chunkData.dztotalfilesize = file.size;
+  postApi(
+    // eslint-disable-next-line no-undef
+    `${Routing.generate('pelagos_api_add_file_information_product')}`,
+    chunkData,
+  ).then((response) => {
+    const fileId = response.data.id;
+    file.fileId = fileId;
+    thisComponent.form.file = fileId;
+    done();
+  }).catch((error) => {
+    // eslint-disable-next-line no-param-reassign
+    file.accepted = false;
+    // eslint-disable-next-line no-underscore-dangle
+    myDropzone._errorProcessing([file], error.response.data, error.request);
+  });
+};
+
+const initDropzone = () => {
+  myDropzone = new Dropzone('div#dropzone-uploader', {
+    // eslint-disable-next-line no-undef
+    url: `${Routing.generate('pelagos_api_post_chunks')}`,
+    chunking: true,
+    chunkSize: 1024 * 1024 * 10,
+    forceChunking: true,
+    parallelChunkUploads: false,
+    parallelUploads: 1,
+    retryChunks: true,
+    retryChunksLimit: 3,
+    maxFilesize: null,
+    clickable: '#upload-file-button',
+    timeout: 0,
+    addRemoveLinks: true,
+    accept(file, done) {
+      if (myDropzone.getAcceptedFiles().length > 0) {
+        file.previewElement.remove();
+        thisComponent.errorMessage = 'Only one file allowed!';
+        thisComponent.errorDialog = true;
+        done('Only one file allowed!');
+      } else {
+        done();
+      }
+    },
+    removedfile: function (file) {
+      if (typeof file.fileId !== 'undefined') {
+        deleteApi(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_api_ip_file_delete')}/${file.fileId}`,
+        ).then(() => {
+          thisComponent.form.file = '';
+        }).catch(() => {
+          this.errorMessage = 'Unable to delete File from Information Product';
+          this.errorDialog = true;
+        });
+      }
+      file.previewElement.remove();
+    },
+    error: function error(file, errorMessage, xhr) {
+      this.errorMessage = 'Unable to save file.';
+      this.errorDialog = true;
+    },
+    chunksUploaded(file, done) {
+      // All chunks have been uploaded. Perform any other actions
+      addFileToInformationProduct(file, done);
+    },
+  });
 };
 </script>
 

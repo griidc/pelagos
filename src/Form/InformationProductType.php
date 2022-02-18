@@ -2,13 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\File;
 use App\Entity\InformationProduct;
-
-use App\Entity\ResearchGroup;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,11 +20,11 @@ class InformationProductType extends AbstractType
             ->add('externalDoi')
             ->add('published')
             ->add('remoteResource')
-            ->add('creationTimeStamp')
-            ->add('modificationTimeStamp')
-            ->add('creator')
-            ->add('modifier')
-        ;
+            ->add('file', EntityType::class, [
+                'class' => File::class,
+                'choice_label' => 'id',
+            ])
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
