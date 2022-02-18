@@ -99,11 +99,25 @@
                     label="File"
                     label-for="published"
                     description="Upload a file.">
-                <div id="dropzone-uploader" class="dropzone">
+                <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri !== '')?'dropzone-uploader-disabled':''">
                 </div>
-                <b-button id="upload-file-button" type="button" variant="primary">Upload File</b-button>
+                <b-button :disabled="form.remoteUri !== ''" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
             <input type="hidden" v-model="form.file" name="file"/>
+
+            <b-form-group
+                    id="input-group-remote-uri"
+                    label="Remote URI"
+                    label-for="remoteUri"
+                    description="Enter the remote URI">
+                <b-form-input
+                        :disabled="form.file !== ''"
+                        id="remoteUri"
+                        type="url"
+                        v-model="form.remoteUri"
+                        placeholder="Enter Remote URI"
+                ></b-form-input>
+            </b-form-group>
 
             <b-form-group
                     id="input-group-5"
@@ -185,11 +199,9 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
 import Dropzone from 'dropzone';
-import "dropzone/dist/dropzone.css";
+import 'dropzone/dist/dropzone.css';
 
 Dropzone.autoDiscover = false;
-
-const ZERO_FILE = 'zero file';
 
 let thisComponent;
 
@@ -229,6 +241,7 @@ export default {
     },
   },
   mounted() {
+    // eslint-disable-next-line no-use-before-define
     initDropzone();
     thisComponent = this;
   },
@@ -275,6 +288,7 @@ export default {
         published: false,
         remoteResource: false,
         file: '',
+        remoteUri: '',
       };
     },
 
@@ -369,6 +383,7 @@ const addFileToInformationProduct = (file, done) => {
     chunkData,
   ).then((response) => {
     const fileId = response.data.id;
+    // eslint-disable-next-line no-param-reassign
     file.fileId = fileId;
     thisComponent.form.file = fileId;
     done();
@@ -405,7 +420,7 @@ const initDropzone = () => {
         done();
       }
     },
-    removedfile: function (file) {
+    removedfile: (file) => {
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
           // eslint-disable-next-line no-undef
@@ -419,7 +434,7 @@ const initDropzone = () => {
       }
       file.previewElement.remove();
     },
-    error: function error(file, errorMessage, xhr) {
+    error: function error() {
       this.errorMessage = 'Unable to save file.';
       this.errorDialog = true;
     },
@@ -442,5 +457,11 @@ const initDropzone = () => {
 }
 #add-research-groups {
   width: 75%;
+}
+.dropzone-uploader-disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: 50%;
+  background-color:lightgray;
 }
 </style>
