@@ -377,23 +377,4 @@ class InformationProduct extends Entity
 
         return $this;
     }
-
-    /**
-     * Returns the file link.
-     *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("fileLink")
-     *
-     * @return string
-     */
-    public function getFileLink(): string
-    {
-        $file = $this->getFile();
-        if ($file instanceof File) {
-            return $file->getFilePathName() . ' ('
-            . $file->getFileSize() . ')';
-        } else {
-            return '';
-        }
-    }
 }

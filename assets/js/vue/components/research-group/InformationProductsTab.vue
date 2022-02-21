@@ -14,10 +14,16 @@
         DOI:{{ informationProduct.externalDoi }}
       </b-card-text>
       <b-card-text v-if="informationProduct.file" class="text-muted">
-        File:{{ informationProduct.fileLink }}
+        File:
+        <a :href="`${downloadUrl}/${informationProduct.file.id}`">
+          {{ informationProduct.file.filePathName }}
+        </a> ({{ humanSize(informationProduct.file.fileSize)   }})
       </b-card-text>
       <b-card-text v-if="informationProduct.remoteUri" class="text-muted">
-        Remote Link:{{ informationProduct.remoteUri }}
+        Remote Link:
+        <a :href="informationProduct.remoteUri">
+          {{ informationProduct.remoteUri }}
+        </a>
       </b-card-text>
     </b-card>
   </b-card-group>
@@ -25,6 +31,7 @@
 
 <script>
 import { getApi } from '@/vue/utils/axiosService';
+import xbytes from 'xbytes';
 
 export default {
   name: 'InformationProductsTab',
@@ -35,6 +42,7 @@ export default {
     return {
       informationProductData: [],
       showData: false,
+      downloadUrl: `${Routing.generate('pelagos_api_ip_file_download')}`,
     };
   },
   created() {
@@ -49,6 +57,11 @@ export default {
       this.showData = false;
     });
   },
+  methods: {
+    humanSize(fileSize) {
+      return xbytes(fileSize);
+    },
+  }
 };
 </script>
 
