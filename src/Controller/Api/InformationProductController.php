@@ -245,7 +245,7 @@ class InformationProductController extends AbstractFOSRestController
     }
 
     /**
-     * Delete a file or folder.
+     * Download a file.
      *
      * @param File                   $file              The file to be deleted.
      *
