@@ -24,6 +24,7 @@ class InformationProductType extends AbstractType
                 'class' => File::class,
                 'choice_label' => 'id',
             ])
+            ->add('remoteUri')
             ;
     }
 

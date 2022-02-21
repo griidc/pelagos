@@ -13,6 +13,12 @@
       <b-card-text class="text-muted">
         DOI:{{ informationProduct.externalDoi }}
       </b-card-text>
+      <b-card-text v-if="informationProduct.file" class="text-muted">
+        File:{{ informationProduct.fileLink }}
+      </b-card-text>
+      <b-card-text v-if="informationProduct.remoteUri" class="text-muted">
+        Remote Link:{{ informationProduct.remoteUri }}
+      </b-card-text>
     </b-card>
   </b-card-group>
 </template>
