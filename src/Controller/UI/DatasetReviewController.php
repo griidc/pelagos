@@ -548,8 +548,7 @@ class DatasetReviewController extends AbstractController
         // List of dataset submission statuses to check.
         $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
 
-        if (
-            in_array($datasetSubmission->getStatus(), $statuses)
+        if (in_array($datasetSubmission->getStatus(), $statuses)
             and $datasetSubmission->getFileset() instanceof Fileset
             and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
         ) {
