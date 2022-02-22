@@ -256,6 +256,8 @@ class InformationProductController extends AbstractFOSRestController
      *     requirements={"id"="\d+"}
      *     )
      *
+     * @throws BadRequestHttpException When file is not found.
+     *
      * @return Response
      */
     public function dowloadFile(InformationProduct $informationProduct): Response
