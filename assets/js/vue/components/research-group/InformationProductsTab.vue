@@ -15,7 +15,7 @@
       </b-card-text>
       <b-card-text v-if="informationProduct.file" class="text-muted">
         File:
-        <a :href="`${downloadUrl}/${informationProduct.file.id}`">
+        <a :href="`${downloadUrl}/${informationProduct.id}`">
           {{ informationProduct.file.filePathName }}
         </a> ({{ humanSize(informationProduct.file.fileSize)   }})
       </b-card-text>

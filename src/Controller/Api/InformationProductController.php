@@ -247,7 +247,7 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Download a file.
      *
-     * @param File                   $file              The file to be deleted.
+     * @param InformationProduct $informationProduct The information product, that has the file.
      *
      * @Route(
      *     "/api/information_product_file_download/{id}",
@@ -258,8 +258,12 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function dowloadFile(File $file): Response
+    public function dowloadFile(InformationProduct $informationProduct): Response
     {
+        $file = $informationProduct->getFile();
+        if (!$file instanceof File) {
+            throw new BadRequestHttpException('File not found!');
+        }
         $filePhysicalPath = $file->getPhysicalFilePath();
         @$fileStream = fopen($filePhysicalPath, 'r');
         $response = new StreamedResponse();
