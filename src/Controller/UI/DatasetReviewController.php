@@ -200,7 +200,7 @@ class DatasetReviewController extends AbstractController
             $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
         } else {
             if ($datasetSubmission instanceof DatasetSubmission) {
-                if ($this->areFilesBeingProcessed($datasetSubmission)) {
+                if ($this->isDatasetBeingProcessed($datasetSubmission)) {
                     $this->addToFlashDisplayQueue($request, $udi, 'processing');
                 } else {
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
@@ -383,6 +383,8 @@ class DatasetReviewController extends AbstractController
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
+        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+
         $eventName = 'start_review';
 
         // Create Dataset submission entity.
@@ -541,14 +543,16 @@ class DatasetReviewController extends AbstractController
      *
      * @return boolean
      */
-    private function areFilesBeingProcessed(DatasetSubmission $datasetSubmission)
+    private function isDatasetBeingProcessed(DatasetSubmission $datasetSubmission)
     {
         // List of dataset submission statuses to check.
         $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
-        if (in_array($datasetSubmission->getStatus(), $statuses)) {
-            if ($datasetSubmission->getFileset() instanceof Fileset) {
-                return $datasetSubmission->getFileset()->isQueued();
-            }
+
+        if (in_array($datasetSubmission->getStatus(), $statuses)
+            and $datasetSubmission->getFileset() instanceof Fileset
+            and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
+        ) {
+                return true;
         }
 
         return false;
