@@ -147,6 +147,33 @@ class InformationProductController extends AbstractFOSRestController
         }
     }
 
+
+    /**
+     * Get all Information Products.
+     *
+     * @param Request $request
+
+     * @return Response
+     *
+     * @Route (
+     *     "/api/information_products",
+     *     name="pelagos_api_get_all_information_product",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     * )
+     */
+    public function getAllInformationProducts(InformationProductRepository $informationProductRepository, SerializerInterface $serializer)
+    {
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
+
+        $informationProducts = $informationProductRepository->findAll();
+
+        return new Response($serializer->serialize($informationProducts, 'json', $context));
+
+    }
+
     /**
      * Will output an array which can be inserted into the @param string $json
      * @return array

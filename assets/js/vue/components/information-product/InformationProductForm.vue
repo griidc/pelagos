@@ -101,9 +101,11 @@
                     description="Upload a file.">
                 <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri !== '')?'dropzone-uploader-disabled':''">
                 </div>
+                <p> Filename: {{ fileName }} </p>
                 <b-button :disabled="form.remoteUri !== ''" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
-            <input type="hidden" v-model="form.file" name="file"/>
+            <input type="text" v-model="form.file" name="file"/>
+
 
             <b-form-group
                     id="input-group-remote-uri"
@@ -224,6 +226,7 @@ export default {
       errorDialog: false,
       errorMessage: '',
       addedRgShortName: '',
+      fileName: 'NO FILE',
     };
   },
   computed: {
@@ -241,9 +244,9 @@ export default {
     },
   },
   mounted() {
+    thisComponent = this;
     // eslint-disable-next-line no-use-before-define
     initDropzone();
-    thisComponent = this;
   },
   methods: {
     onSubmit(event) {
@@ -386,6 +389,8 @@ const addFileToInformationProduct = (file, done) => {
     // eslint-disable-next-line no-param-reassign
     file.fileId = fileId;
     thisComponent.form.file = fileId;
+    thisComponent.fileName = fileName;
+
     done();
   }).catch((error) => {
     // eslint-disable-next-line no-param-reassign
@@ -421,6 +426,7 @@ const initDropzone = () => {
       }
     },
     removedfile: (file) => {
+      console.log(file);
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
           // eslint-disable-next-line no-undef
@@ -443,6 +449,25 @@ const initDropzone = () => {
       addFileToInformationProduct(file, done);
     },
   });
+
+  myDropzone.on('addedfile', (file) => {
+    if (typeof file.fileId !== 'undefined') {
+      thisComponent.form.file = file.fileId;
+    }
+  });
+
+  var existingFiles = [
+            { name: "Filename 1.pdf", size: 12345678, fileId: 13784389 },
+            { name: "Filename 2.pdf", size: 12345678 },
+            { name: "Filename 3.pdf", size: 12345678 },
+            { name: "Filename 4.pdf", size: 12345678 },
+            { name: "Filename 5.pdf", size: 12345678 }
+        ];
+
+  myDropzone.emit("addedfile", existingFiles[0]);
+  //myDropzone.emit("thumbnail", existingFiles[i], "/image/url");
+  myDropzone.emit("complete", existingFiles[0]);
+
 };
 </script>
 
