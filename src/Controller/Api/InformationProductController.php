@@ -260,7 +260,7 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function dowloadFile(InformationProduct $informationProduct): Response
+    public function downloadFile(InformationProduct $informationProduct): Response
     {
         $file = $informationProduct->getFile();
         if (!$file instanceof File) {
