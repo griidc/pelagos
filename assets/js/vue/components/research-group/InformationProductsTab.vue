@@ -42,6 +42,7 @@ export default {
     return {
       informationProductData: [],
       showData: false,
+      // eslint-disable-next-line no-undef
       downloadUrl: `${Routing.generate('pelagos_api_ip_file_download')}`,
     };
   },
