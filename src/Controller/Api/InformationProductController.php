@@ -14,9 +14,11 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -240,6 +242,49 @@ class InformationProductController extends AbstractFOSRestController
 
         $id = $newFile->getId();
         return new JsonResponse(array("id" => $id));
+    }
+
+    /**
+     * Download a file.
+     *
+     * @param InformationProduct $informationProduct The information product, that has the file.
+     *
+     * @Route(
+     *     "/api/information_product_file_download/{id}",
+     *     name="pelagos_api_ip_file_download",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @throws BadRequestHttpException When file is not found.
+     *
+     * @return Response
+     */
+    public function downloadFile(InformationProduct $informationProduct): Response
+    {
+        $file = $informationProduct->getFile();
+        if (!$file instanceof File) {
+            throw new BadRequestHttpException('File not found!');
+        }
+        $filePhysicalPath = $file->getPhysicalFilePath();
+        @$fileStream = fopen($filePhysicalPath, 'r');
+        $response = new StreamedResponse();
+        $response->setCallback(function () use ($fileStream) {
+            $outputStream = fopen('php://output', 'wb');
+            stream_copy_to_stream($fileStream, $outputStream);
+        });
+        $filename = $file->getFilePathName();
+        $mimeType = mime_content_type($fileStream) ?: 'application/octet-stream';
+
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $filename
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-type', $mimeType);
+
+        return $response;
     }
 
     /**
