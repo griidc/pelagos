@@ -49,7 +49,6 @@
         "v-tooltip": "^2.0.3",
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0",
-        "webpack-dev-server": "4.7.3",
         "xbytes": "^1.7.0"
     }
 }

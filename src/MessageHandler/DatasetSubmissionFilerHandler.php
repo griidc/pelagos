@@ -8,10 +8,10 @@ use App\Entity\Fileset;
 use App\Event\EntityEventDispatcher;
 use App\Message\DatasetSubmissionFiler;
 use App\Message\ScanFileForVirus;
-use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
+use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -65,12 +65,28 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     private $datastore;
 
     /**
+     * Zip files utility class.
+     *
+     * @var ZipFiles
+     */
+    private $zipFiles;
+
+    /**
+     * Download directory for the zip file.
+     *
+     * @var string
+     */
+    private $downloadDirectory;
+
+    /**
      * DatasetSubmissionFilerHandler constructor.
      *
      * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
      * @param LoggerInterface             $filerLogger                 Name hinted filer logger.
      * @param MessageBusInterface         $messageBus                  Symfony messenger bus interface instance.
      * @param EntityManagerInterface      $entityManager               The entity manager.
+     * @param string                      $downloadDirectory           Temporary download directory path.
+     * @param ZipFiles                    $zipFiles                    Zip files utility instance.
      */
     public function __construct(
         DatasetSubmissionRepository $datasetSubmissionRepository,
@@ -78,7 +94,9 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         MessageBusInterface $messageBus,
         EntityManagerInterface $entityManager,
         EntityEventDispatcher $entityEventDispatcher,
-        Datastore $datastore
+        Datastore $datastore,
+        string $downloadDirectory,
+        ZipFiles $zipFiles
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
@@ -86,6 +104,8 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $this->entityManager = $entityManager;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->datastore = $datastore;
+        $this->downloadDirectory = $downloadDirectory;
+        $this->zipFiles = $zipFiles;
     }
 
     /**
@@ -106,6 +126,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         );
         // Log processing start.
         $this->logger->info('Dataset submission process started', $loggingContext);
+        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
 
         $fileset = $datasetSubmission->getFileset();
         if ($fileset instanceof Fileset) {
@@ -116,7 +137,26 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                     $this->logger->alert('File object does not exist');
                 }
             }
-
+            $filesInfo = array();
+            foreach ($fileset->getProcessedFiles() as $file) {
+                $filesInfo[$file->getId()]['filePathName'] = $file->getFilePathName();
+                $filesInfo[$file->getId()]['physicalFilePath'] = $file->getPhysicalFilePath();
+            }
+            $this->logger->info('Zipfile opened: ' . $destinationPath);
+            $fileStream = fopen($destinationPath, 'w+');
+            $outputStream = array('fileStream' => $fileStream);
+            $this->zipFiles->start($outputStream, basename($destinationPath));
+            foreach ($filesInfo as $fileItemInfo) {
+                $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName']);
+                $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
+            }
+            $this->zipFiles->finish();
+            $this->logger->info('Zipfile closed: ' . $destinationPath);
+            rewind($fileStream);
+            $fileset->setZipFilePath($destinationPath);
+            $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
+            $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));
+            $this->logger->info('All files are done, zipping', $loggingContext);
             $this->logger->info('Dataset submission all files done', $loggingContext);
         }
 
@@ -129,8 +169,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
 
         $this->logger->info('Flushing data', $loggingContext);
         $this->entityManager->flush();
-        $this->logger->info('All files are done, zipping', $loggingContext);
-        $this->messageBus->dispatch(new ZipDatasetFiles($datasetSubmissionId));
         $this->logger->info('Dataset submission process completed', $loggingContext);
     }
 
