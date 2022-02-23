@@ -17,7 +17,7 @@
         File:
         <a :href="`${downloadUrl}/${informationProduct.id}`">
           {{ informationProduct.file.filePathName }}
-        </a> ({{ humanSize(informationProduct.file.fileSize)   }})
+        </a> ({{ humanSize(informationProduct.file.fileSize) }})
       </b-card-text>
       <b-card-text v-if="informationProduct.remoteUri" class="text-muted">
         Remote Link:
