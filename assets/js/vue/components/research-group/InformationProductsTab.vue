@@ -62,7 +62,7 @@ export default {
     humanSize(fileSize) {
       return xbytes(fileSize);
     },
-  }
+  },
 };
 </script>
 
