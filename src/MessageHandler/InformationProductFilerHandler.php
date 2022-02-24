@@ -46,7 +46,7 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
     protected $entityManager;
 
     /**
-     * DatasetSubmissionFilerHandler constructor.
+     * Information Product Filer constructor.
      *
      * @param InformationProductRepository $datasetSubmissionRepository Dataset Submission Repository.
      * @param LoggerInterface              $ipFileLogger                 Name hinted filer logger.
