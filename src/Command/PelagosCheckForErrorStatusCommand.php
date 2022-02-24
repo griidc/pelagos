@@ -7,13 +7,13 @@ use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\Constraints\Length;
 
 class PelagosCheckForErrorStatusCommand extends Command
 {
@@ -64,8 +64,8 @@ class PelagosCheckForErrorStatusCommand extends Command
             $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
         }
 
+        $io->note('checking: ' . count($datasets) . ' dataset(s).');
         foreach ($datasets as $dataset) {
-            $io->note('checking: ' . $dataset->getUdi());
             /** @var Dataset $dataset */
             $datasetSubmission = $dataset->getDatasetSubmission();
             if ($datasetSubmission instanceof DatasetSubmission) {
@@ -74,10 +74,13 @@ class PelagosCheckForErrorStatusCommand extends Command
                     $files = $fileset->getAllFiles()->filter(function (File $file) {
                         return $file->getStatus() === File::FILE_ERROR;
                     });
-
+                    $fileCountInError = count($files);
+                    if ($fileCountInError > 0) {
+                        $io->warning('Dataset ' . $dataset->getUdi() . ' has the following ' . $fileCountInError . ' files in error.');
+                    }
                     /** @var File $file */
                     foreach ($files as $file) {
-                        $io->warning('UDI: ' . $dataset->getUdi() . ' file id: ' . $file->getId() . ' is in error.');
+                        $io->writeln($file->getFilePathName());
                     }
                 }
             }
