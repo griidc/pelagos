@@ -85,7 +85,9 @@ class InformationProductController extends AbstractFOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $informationProduct->setCreator($this->getUser()->getPerson());
             $file = $informationProduct->getFile();
-            $file->setStatus(file::FILE_IN_QUEUE);
+            if ($file instanceof File) {
+                $file->setStatus(file::FILE_IN_QUEUE);
+            }
             $entityManager->persist($informationProduct);
             $entityManager->flush();
             $id = $informationProduct->getId();

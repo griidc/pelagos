@@ -71,18 +71,21 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         $informationProductId = $informationProductFiler->getInformationProductId();
         $informationProduct = $this->informationProductRepository->find($informationProductId);
 
+        $loggingContext = array(
+            'information_product_id' => $informationProductId,
+        );
+
         $file = $informationProduct->getFile();
+        if (!$file instanceof File ) {
+            $this->logger->error("No file for this IP, bye!", $loggingContext);
+            return;
+        }
         $fileId = $file->getId();
         $filePath = $file->getPhysicalFilePath();
         @$fileStream = fopen($filePath, 'r');
 
         $systemPerson = $this->entityManager->find(Person::class, 0);
         $file->setModifier($systemPerson);
-
-        $loggingContext = array(
-            'information_product_id' => $informationProductId,
-            'file' => $filePath,
-        );
 
         $this->logger->info('Dataset submission process started', $loggingContext);
 
