@@ -1,5 +1,5 @@
 monolog:
-    channels: ['mailer', 'filer', 'retriever', 'file_processing','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper', 'rename_file', 'delete_folder']
+    channels: ['mailer', 'filer', 'retriever', 'file_processing','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper', 'rename_file', 'delete_folder', 'ip_filer']
 
     handlers:
         mailer:
@@ -67,3 +67,9 @@ monolog:
             path: "%kernel.logs_dir%/delete_folder.log"
             level: info
             channels: [ delete_folder ]
+
+        ip_filer:
+            type: stream
+            path: "%kernel.logs_dir%/ip_filer.log"
+            level: info
+            channels: [ip_filer]
