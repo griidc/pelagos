@@ -1,0 +1,20 @@
+{% extends 'base.html.twig'%}
+{% block title %}Edit Information Product{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('information-product') }}
+{%endblock stylesheets  %}
+
+{% block body %}
+    <div id="information-product"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.researchGroups = {{ researchGroups | json_encode | raw }}
+        window.informationProduct = {{ informationProduct | raw }}
+    </script>
+    {{ encore_entry_script_tags('information-product') }}
+{% endblock %}

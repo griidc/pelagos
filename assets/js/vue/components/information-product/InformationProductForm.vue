@@ -104,9 +104,6 @@
                 <p> Filename: {{ fileName }} </p>
                 <b-button :disabled="form.remoteUri !== ''" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
-            <input type="text" v-model="form.file" name="file"/>
-
-
             <b-form-group
                     id="input-group-remote-uri"
                     label="Remote URI"
@@ -151,9 +148,18 @@
                 ></b-form-radio-group>
             </b-form-group>
 
-            <div class="py-2">
-                <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
-                <b-button type="reset" variant="dark">Reset</b-button>
+            <div class="py-2" v-if="editMode">
+                <b-button
+                    :disabled="!formValid"
+                    type="button"
+                    variant="alternate"
+                    @click="updateInformationProduct"
+                >Update</b-button>
+                <b-button type="button" variant="dark" @click="deleteInformationProduct">Delete</b-button>
+            </div>
+            <div class="py-2" v-else>
+              <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
+              <b-button type="reset" variant="dark">Reset</b-button>
             </div>
         </b-form>
         <DxPopup
@@ -227,6 +233,7 @@ export default {
       errorMessage: '',
       addedRgShortName: '',
       fileName: 'NO FILE',
+      editMode: false,
     };
   },
   computed: {
@@ -247,6 +254,11 @@ export default {
     thisComponent = this;
     // eslint-disable-next-line no-use-before-define
     initDropzone();
+    if (Object.keys(window.informationProduct).length > 0) {
+      this.editMode = true;
+      this.populateFormInitialValues();
+      console.log('hi');
+    }
   },
   methods: {
     onSubmit(event) {
@@ -356,6 +368,23 @@ export default {
         text: this.getResearchGroupShortName(researchGroupId),
       });
     },
+
+    updateInformationProduct() {},
+
+    deleteInformationProduct() {},
+
+    populateFormInitialValues() {
+      this.form.title = window.informationProduct.title;
+      this.form.creators = window.informationProduct.creators;
+      this.form.publisher = window.informationProduct.publisher;
+      this.form.externalDoi = window.informationProduct.externalDoi;
+      this.form.selectedResearchGroups = window.informationProduct.researchGroups;
+      this.form.published = window.informationProduct.published;
+      this.form.remoteResource = window.informationProduct.remoteResource;
+      this.form.file = (Object.keys(window.informationProduct.file).length > 0 ? window.informationProduct.file.id : null);
+      this.form.remoteUri = window.informationProduct.remoteUri;
+      this.fileName = window.informationProduct.file.filePathName;
+    },
   },
 
   created() {
@@ -426,7 +455,6 @@ const initDropzone = () => {
       }
     },
     removedfile: (file) => {
-      console.log(file);
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
           // eslint-disable-next-line no-undef
@@ -434,40 +462,39 @@ const initDropzone = () => {
         ).then(() => {
           thisComponent.form.file = '';
         }).catch(() => {
-          this.errorMessage = 'Unable to delete File from Information Product';
-          this.errorDialog = true;
+          thisComponent.errorMessage = 'Unable to delete File from Information Product';
+          thisComponent.errorDialog = true;
         });
       }
       file.previewElement.remove();
     },
     error: function error() {
-      this.errorMessage = 'Unable to save file.';
-      this.errorDialog = true;
+      thisComponent.errorMessage = 'Unable to save file.';
+      thisComponent.errorDialog = true;
     },
     chunksUploaded(file, done) {
       // All chunks have been uploaded. Perform any other actions
       addFileToInformationProduct(file, done);
     },
   });
+  if (Object.keys(window.informationProduct).length > 0) {
+    if (Object.keys(window.informationProduct.file).length > 0) {
+      myDropzone.on('addedfile', (file) => {
+        if (typeof file.fileId !== 'undefined') {
+          thisComponent.form.file = file.fileId;
+        }
+      });
 
-  myDropzone.on('addedfile', (file) => {
-    if (typeof file.fileId !== 'undefined') {
-      thisComponent.form.file = file.fileId;
+      const existingFile = {
+        name: window.informationProduct.file.filePathName,
+        size: window.informationProduct.file.fileSize,
+        fileId: window.informationProduct.file.fileId,
+      };
+
+      myDropzone.emit('addedfile', existingFile);
+      myDropzone.emit('complete', existingFile);
     }
-  });
-
-  var existingFiles = [
-            { name: "Filename 1.pdf", size: 12345678, fileId: 13784389 },
-            { name: "Filename 2.pdf", size: 12345678 },
-            { name: "Filename 3.pdf", size: 12345678 },
-            { name: "Filename 4.pdf", size: 12345678 },
-            { name: "Filename 5.pdf", size: 12345678 }
-        ];
-
-  myDropzone.emit("addedfile", existingFiles[0]);
-  //myDropzone.emit("thumbnail", existingFiles[i], "/image/url");
-  myDropzone.emit("complete", existingFiles[0]);
-
+  }
 };
 </script>
 

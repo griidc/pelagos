@@ -4,6 +4,8 @@ namespace App\Controller\UI;
 
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,16 +42,17 @@ class InformationProductController extends AbstractController
     /**
      * The information product page.
      *
-     * @Route("/information-product/{id}", name="pelagos_app_ui_edit_information_product")
+     * @Route("/information-product/{id}", name="pelagos_app_ui_edit_information_product", requirements={"id"="\d+"})
      *
      * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      *
      * @return Response A Response instance.
      */
-    public function edit(int $id): Response
+    public function edit(InformationProduct $informationProduct, SerializerInterface $serializer): Response
     {
-
-        dd($id);
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
         foreach ($researchGroups as $researchGroup) {
@@ -59,6 +62,12 @@ class InformationProductController extends AbstractController
                 'shortName' => $researchGroup->getShortName(),
             );
         }
-        return $this->render('InformationProduct/index.html.twig', array('researchGroups' => $researchGroupList));
+        return $this->render(
+            'InformationProduct/edit.html.twig',
+            array(
+                'researchGroups' => $researchGroupList,
+                'informationProduct' => $serializer->serialize($informationProduct, 'json', $context),
+            )
+        );
     }
 }
