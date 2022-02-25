@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="m-2">
         <h4 class="text-center">Information Products</h4>
         <DxDataGrid
             :data-source="data"
@@ -8,6 +8,8 @@
             :row-alternation-enabled="true"
             :column-auto-width="true"
         >
+            <DxLoadPanel :enabled="true"/>
+
             <DxPaging :page-size="10"/>
             <DxPager
                 :visible="true"
@@ -86,6 +88,7 @@ import {
   DxPager,
   DxHeaderFilter,
   DxButton,
+  DxLoadPanel,
 } from 'devextreme-vue/data-grid';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
@@ -101,6 +104,7 @@ export default {
     DxPager,
     DxHeaderFilter,
     DxButton,
+    DxLoadPanel,
   },
   data() {
     return {
