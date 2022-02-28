@@ -45,15 +45,13 @@ class PelagosCheckForErrorStatusCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addArgument('udi', InputArgument::OPTIONAL, 'The UDI')
-            ->addOption('all', null, InputOption::VALUE_NONE, 'Run against ALL datasets')
+            ->addArgument('udi', InputArgument::OPTIONAL, 'Run only against passed UDI')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $all = $input->getOption('all');
         $udi = $input->getArgument('udi');
 
         if ($udi) {
@@ -80,7 +78,8 @@ class PelagosCheckForErrorStatusCommand extends Command
                     }
                     /** @var File $file */
                     foreach ($files as $file) {
-                        $io->writeln($file->getFilePathName());
+                        $io->writeln('filename: ' . $file->getFilePathName());
+                        $io->writeln('on-disk: ' . $file->getPhysicalFilePath());
                     }
                 }
             }
