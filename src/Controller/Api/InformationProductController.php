@@ -109,15 +109,12 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function updateInformationProduct(Request $request, InformationProduct $informationProduct): Response
     {
-        $form = $this->createForm(InformationProductType::class, $informationProduct);
+        $form = $this->createForm(InformationProductType::class, $informationProduct, ['method' => 'PATCH']);
         $form->handleRequest($request);
-
-
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
-            return new JsonResponse([], Response::HTTP_NO_CONTENT);
         }
+        return new JsonResponse([], Response::HTTP_OK);
     }
 
     /**
@@ -130,7 +127,7 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @Route (
      *     "/api/information_product/{id}",
-     *     name="pelagos_api_deletet_information_product",
+     *     name="pelagos_api_delete_information_product",
      *     methods={"DELETE"},
      *     defaults={"_format"="json"},
      *     requirements={"id"="\d+"}
@@ -138,15 +135,16 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function deleteInformationProduct(Request $request, InformationProduct $informationProduct): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$informationProduct->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($informationProduct);
-            $entityManager->flush();
-
-            return new JsonResponse(Response::HTTP_OK);
-        }
+//        if ($this->isCsrfTokenValid('delete'.$informationProduct->getId(), $request->request->get('_token'))) {
+//            $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager->remove($informationProduct);
+//            $entityManager->flush();
+//        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($informationProduct);
+        $entityManager->flush();
+        return new JsonResponse(Response::HTTP_OK);
     }
-
 
     /**
      * Get all Information Products.
@@ -171,7 +169,6 @@ class InformationProductController extends AbstractFOSRestController
         $informationProducts = $informationProductRepository->findAll();
 
         return new Response($serializer->serialize($informationProducts, 'json', $context));
-
     }
 
     /**

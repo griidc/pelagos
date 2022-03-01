@@ -154,8 +154,9 @@
                     type="button"
                     variant="alternate"
                     @click="updateInformationProduct"
-                >Update</b-button>
-                <b-button type="button" variant="dark" @click="deleteInformationProduct">Delete</b-button>
+                >Save Changes</b-button>
+                <b-button type="button" variant="dark" @click="discardChanges">Discard Changes</b-button>
+              <b-button type="button" variant="danger" @click="deleteInformationProduct">Delete</b-button>
             </div>
             <div class="py-2" v-else>
               <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
@@ -202,7 +203,7 @@
 </template>
 
 <script>
-import { postApi, deleteApi } from '@/vue/utils/axiosService';
+import { postApi, deleteApi, patchApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
@@ -254,10 +255,10 @@ export default {
     thisComponent = this;
     // eslint-disable-next-line no-use-before-define
     initDropzone();
-    if (Object.keys(window.informationProduct).length > 0) {
+    if (window.informationProduct && Object.keys(window.informationProduct).length > 0) {
       this.editMode = true;
       this.populateFormInitialValues();
-      console.log('hi');
+      this.informationProductId = window.informationProduct.id;
     }
   },
   methods: {
@@ -369,9 +370,35 @@ export default {
       });
     },
 
-    updateInformationProduct() {},
+    updateInformationProduct() {
+      patchApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_update_information_product')}/${this.informationProductId}`,
+        this.form,
+      ).then((response) => {
+        console.log(response);
+      }).catch(() => {
+        this.errorMessage = 'Unable to update Information Product';
+        this.errorDialog = true;
+      });
+    },
 
-    deleteInformationProduct() {},
+    deleteInformationProduct() {
+      deleteApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_delete_information_product')}/${this.informationProductId}`,
+      ).then(() => {
+        // eslint-disable-next-line no-undef
+        window.open(`${Routing.generate('pelagos_app_ui_information_product')}`,'_self');
+      }).catch(() => {
+        thisComponent.errorMessage = 'Unable to delete Information Product';
+        thisComponent.errorDialog = true;
+      });
+    },
+
+    discardChanges() {
+      this.populateFormInitialValues();
+    },
 
     populateFormInitialValues() {
       this.form.title = window.informationProduct.title;
@@ -477,7 +504,8 @@ const initDropzone = () => {
       addFileToInformationProduct(file, done);
     },
   });
-  if (Object.keys(window.informationProduct).length > 0) {
+
+  if (window.informationProduct && Object.keys(window.informationProduct).length > 0) {
     if (Object.keys(window.informationProduct.file).length > 0) {
       myDropzone.on('addedfile', (file) => {
         if (typeof file.fileId !== 'undefined') {
