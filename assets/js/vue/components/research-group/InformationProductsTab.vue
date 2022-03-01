@@ -13,7 +13,7 @@
       <b-card-text class="text-muted">
         DOI:{{ informationProduct.externalDoi }}
       </b-card-text>
-      <b-card-text v-if="informationProduct.file" class="text-muted">
+      <b-card-text v-if="informationProduct.file && informationProduct.file.status === 'done'" class="text-muted">
         File:
         <a :href="`${downloadUrl}/${informationProduct.id}`">
           {{ informationProduct.file.filePathName }}
