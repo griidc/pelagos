@@ -45,6 +45,7 @@ Encore
   .addEntry('data-land', './assets/js/entry/data-land.js')
   .addEntry('hri-app', './assets/js/main/hri-app.js')
   .addEntry('information-product', './assets/js/entry/information-product.js')
+  .addEntry('information-product-list', './assets/js/entry/information-product-list.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
