@@ -28,3 +28,8 @@ yarn-error.log
 ###< squizlabs/php_codesniffer ###
 php.ini
 .vscode/
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
