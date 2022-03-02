@@ -1,5 +1,5 @@
 <template>
-    <div class="m-2">
+    <div class="m-2" >
         <h4 class="text-center">Information Products</h4>
         <DxDataGrid
             :data-source="data"
@@ -53,7 +53,7 @@
                     icon="link"
                     :visible="true"
                     :disabled="false"
-                    @click="viewClick"
+                    :onClick="viewClick"
                   />
             </DxColumn>
 
@@ -105,8 +105,8 @@ import {
   DxSearchPanel,
   DxPaging,
   DxPager,
-  DxHeaderFilter,
   DxButton,
+  DxHeaderFilter,
   DxLoadPanel,
   DxSorting,
   DxColumnChooser,
