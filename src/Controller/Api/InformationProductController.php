@@ -6,6 +6,7 @@ use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
+use App\Message\InformationProductFiler;
 use App\Message\RenameFile;
 use App\Repository\InformationProductRepository;
 use App\Util\FileUploader;
@@ -65,7 +66,7 @@ class InformationProductController extends AbstractFOSRestController
      *     defaults={"_format"="json"},
      * )
      */
-    public function createInformationProduct(Request $request): Response
+    public function createInformationProduct(Request $request, MessageBusInterface $messageBus): Response
     {
         $response = Response::HTTP_BAD_REQUEST;
         $id = null;
@@ -82,11 +83,18 @@ class InformationProductController extends AbstractFOSRestController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $informationProduct->setCreator($this->getUser()->getPerson());
+            $file = $informationProduct->getFile();
+            if ($file instanceof File) {
+                $file->setStatus(file::FILE_IN_QUEUE);
+            }
             $entityManager->persist($informationProduct);
             $entityManager->flush();
             $id = $informationProduct->getId();
             $response = Response::HTTP_CREATED;
         }
+
+        $messageBus->dispatch(new InformationProductFiler($informationProduct->getId()));
 
         return new JsonResponse(['id' => $id], $response);
     }
@@ -262,6 +270,7 @@ class InformationProductController extends AbstractFOSRestController
         $newFile->setUploadedBy($this->getUser()->getPerson());
         $newFile->setPhysicalFilePath($filePath);
         $newFile->setDescription('Information Product File');
+        $newFile->setCreator($this->getUser()->getPerson());
         $entityManager->persist($newFile);
         $entityManager->flush();
 
