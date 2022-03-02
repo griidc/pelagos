@@ -254,13 +254,20 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function addFileToInformationProduct(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader) : Response
-    {
+    public function addFileToInformationProduct(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        InformationProductRepository $informationProductRepository
+    ) : Response {
         try {
             $fileMetadata = $fileUploader->combineChunks($request);
         } catch (\Exception $exception) {
             return new JsonResponse(['code' => 400, 'message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+
+        $informationProductId = $request->get('informationProductId');
+        $informationProduct = $informationProductRepository->find($informationProductId);
 
         $fileName = $fileMetadata['name'];
         $filePath = $fileMetadata['path'];
@@ -274,6 +281,7 @@ class InformationProductController extends AbstractFOSRestController
         $newFile->setPhysicalFilePath($filePath);
         $newFile->setDescription('Information Product File');
         $entityManager->persist($newFile);
+        $informationProduct->setFile($newFile);
         $entityManager->flush();
 
         $id = $newFile->getId();
@@ -326,9 +334,9 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Delete a file or folder.
      *
-     * @param File                   $file              The file to be deleted.
-     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
-     * @param MessageBusInterface    $messageBus        Message bus interface.
+     * @param InformationProduct     $informationProduct The information product of which file to be deleted.
+     * @param EntityManagerInterface $entityManager      Entity manager interface instance.
+     * @param MessageBusInterface    $messageBus         Message bus interface.
      *
      * @Route(
      *     "/api/information_product_file_delete/{id}",
@@ -343,18 +351,22 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function delete(
-        File $file,
+    public function deleteInformationProductFile(
+        InformationProduct $informationProduct,
         EntityManagerInterface $entityManager,
         MessageBusInterface $messageBus
     ): Response {
-        if (empty($file->getFileset())) {
-            $this->deleteFile($file, $messageBus);
-            $entityManager->remove($file);
-            $entityManager->flush();
-        } else {
-            throw new BadRequestHttpException('Is this an Information Product File?');
+        $file = $informationProduct->getFile();
+
+        if (!$file instanceof File) {
+            throw new BadRequestHttpException('No file attached for this IP!');
         }
+
+        $informationProduct->setFile(null);
+        $this->deleteFile($file, $messageBus);
+        $entityManager->remove($file);
+        $entityManager->flush();
+
 
         return new Response(
             null,

@@ -100,10 +100,10 @@
                     label="File"
                     label-for="published"
                     description="Upload a file.">
-                <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri !== '')?'dropzone-uploader-disabled':''">
+                <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri)?'dropzone-uploader-disabled':''">
                 </div>
                 <p> Filename: {{ fileName }} </p>
-                <b-button :disabled="form.remoteUri !== ''" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
+                <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
             <b-form-group
                     id="input-group-remote-uri"
@@ -111,7 +111,7 @@
                     label-for="remoteUri"
                     description="Enter the remote URI">
                 <b-form-input
-                        :disabled="form.file !== ''"
+                        :disabled="!!form.file"
                         id="remoteUri"
                         type="url"
                         v-model="form.remoteUri"
@@ -233,6 +233,7 @@ import { postApi, deleteApi, patchApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
+import { DxButton } from 'devextreme-vue/button';
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
 
@@ -244,6 +245,7 @@ export default {
   name: 'InformationProductForm',
   components: {
     DxPopup,
+    DxButton,
   },
   data() {
     return {
@@ -476,6 +478,7 @@ const addFileToInformationProduct = (file, done) => {
   chunkData.dztotalchunkcount = file.upload.totalChunkCount;
   chunkData.fileName = fileName;
   chunkData.dztotalfilesize = file.size;
+  chunkData.informationProductId= thisComponent.informationProductId;
   postApi(
     // eslint-disable-next-line no-undef
     `${Routing.generate('pelagos_api_add_file_information_product')}`,
@@ -525,7 +528,7 @@ const initDropzone = () => {
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
           // eslint-disable-next-line no-undef
-          `${Routing.generate('pelagos_api_ip_file_delete')}/${file.fileId}`,
+          `${Routing.generate('pelagos_api_ip_file_delete')}/${thisComponent.informationProductId}`,
         ).then(() => {
           thisComponent.form.file = '';
         }).catch(() => {
@@ -556,7 +559,7 @@ const initDropzone = () => {
       const existingFile = {
         name: window.informationProduct.file.filePathName,
         size: window.informationProduct.file.fileSize,
-        fileId: window.informationProduct.file.fileId,
+        fileId: window.informationProduct.file.id,
       };
 
       myDropzone.emit('addedfile', existingFile);
