@@ -2,7 +2,8 @@
     <div class="m-2">
         <h4 class="text-center">Information Product Form</h4>
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-            <b-form-group
+          <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
+          <b-form-group
                     id="input-group-1"
                     label="Title"
                     label-for="title"
