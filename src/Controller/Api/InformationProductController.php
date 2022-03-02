@@ -97,6 +97,8 @@ class InformationProductController extends AbstractFOSRestController
      * @param Request $request
      * @param InformationProduct $informationProduct
      *
+     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
+     *
      * @return Response
      *
      * * @Route (
@@ -109,7 +111,22 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function updateInformationProduct(Request $request, InformationProduct $informationProduct): Response
     {
+        $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
+        $entityManager = $this->getDoctrine()->getManager();
         $form = $this->createForm(InformationProductType::class, $informationProduct, ['method' => 'PATCH']);
+        $request->request->set($form->getName(), $prefilledRequestDataBag);
+        $researchGroupsIds = $request->get('selectedResearchGroups');
+        $researchGroupsToBeDeleted = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $informationProduct->getResearchGroupList()]);
+        $researchGroupsToBeAdded = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
+        // Remove previously added research groups
+        $researchGroupList = $informationProduct->getResearchGroupList();
+        foreach ($researchGroupsToBeDeleted as $researchGroup) {
+            $informationProduct->removeResearchGroup($researchGroup);
+        }
+        // Add them from the newly updated Information product
+        foreach ($researchGroupsToBeAdded as $researchGroup) {
+            $informationProduct->addResearchGroup($researchGroup);
+        }
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
@@ -135,11 +152,6 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function deleteInformationProduct(Request $request, InformationProduct $informationProduct): Response
     {
-//        if ($this->isCsrfTokenValid('delete'.$informationProduct->getId(), $request->request->get('_token'))) {
-//            $entityManager = $this->getDoctrine()->getManager();
-//            $entityManager->remove($informationProduct);
-//            $entityManager->flush();
-//        }
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($informationProduct);
         $entityManager->flush();
@@ -169,31 +181,6 @@ class InformationProductController extends AbstractFOSRestController
         $informationProducts = $informationProductRepository->findAll();
 
         return new Response($serializer->serialize($informationProducts, 'json', $context));
-    }
-
-    /**
-     * Get all Information Products.
-     *
-     * @param Request $request
-     * @return Response
-     *
-     * @Route (
-     *     "/api/information_products",
-     *     name="pelagos_api_get_all_information_product",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     * )
-     */
-    public function getAllInformationProducts(InformationProductRepository $informationProductRepository, SerializerInterface $serializer)
-    {
-        $context = SerializationContext::create();
-        $context->enableMaxDepthChecks();
-        $context->setSerializeNull(true);
-
-        $informationProducts = $informationProductRepository->findAll();
-
-        return new Response($serializer->serialize($informationProducts, 'json', $context));
-
     }
 
     /**

@@ -148,19 +148,10 @@
                 ></b-form-radio-group>
             </b-form-group>
 
-            <div class="py-2" v-if="editMode">
-                <b-button
-                    :disabled="!formValid"
-                    type="button"
-                    variant="alternate"
-                    @click="updateInformationProduct"
-                >Save Changes</b-button>
-                <b-button type="button" variant="dark" @click="discardChanges">Discard Changes</b-button>
-              <b-button type="button" variant="danger" @click="deleteInformationProduct">Delete</b-button>
-            </div>
-            <div class="py-2" v-else>
-              <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
-              <b-button type="reset" variant="dark">Reset</b-button>
+            <div class="py-2">
+              <b-button :disabled="!formValid" type="submit" variant="alternate">{{ submitBtnText }}</b-button>
+              <b-button v-if="!editMode" type="reset" variant="dark" >Reset</b-button>
+              <b-button v-if="editMode" type="button" variant="danger" @click="showDeleteDialog">Delete</b-button>
             </div>
         </b-form>
         <DxPopup
@@ -175,7 +166,7 @@
             <template>
                 <div>
                     <h6>
-                        Information Product is Created
+                      {{ ipSuccessModalText }}
                     </h6>
                     <p>
                         Information Product ID: {{ informationProductId }}
@@ -198,6 +189,40 @@
                     {{ errorMessage }}
                 </p>
             </template>
+        </DxPopup>
+        <DxPopup
+            :visible.sync="deleteConfirmationDialog"
+            :close-on-outside-click="false"
+            :show-title="false"
+            position="center"
+            :showCloseButton="false"
+            :width="350"
+            height="auto"
+            :drag-enabled="false"
+            :shading="true"
+            shading-color="rgba(0,0,0,0.4)"
+        >
+          <template>
+            <div class="confirmation-dialog">
+              <p>
+                <b>Do you really want to delete this Information Product?</b>
+              </p>
+              <br>
+              <DxButton
+                  text="Yes"
+                  type="danger"
+                  width="50%"
+                  styling-mode="contained"
+                  @click="deleteInformationProduct"
+              />
+              <DxButton
+                  text="No"
+                  width="50%"
+                  styling-mode="contained"
+                  @click="cancelDelete"
+              />
+            </div>
+          </template>
         </DxPopup>
     </div>
 </template>
@@ -235,6 +260,9 @@ export default {
       addedRgShortName: '',
       fileName: 'NO FILE',
       editMode: false,
+      submitBtnText: 'Submit',
+      deleteConfirmationDialog: false,
+      ipSuccessModalText: '',
     };
   },
   computed: {
@@ -255,27 +283,43 @@ export default {
     thisComponent = this;
     // eslint-disable-next-line no-use-before-define
     initDropzone();
-    if (window.informationProduct && Object.keys(window.informationProduct).length > 0) {
+    if ((typeof window.informationProduct === 'object' && window.informationProduct !== null)) {
       this.editMode = true;
       this.populateFormInitialValues();
       this.informationProductId = window.informationProduct.id;
+      this.submitBtnText = 'Save Changes';
     }
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      postApi(
-        // eslint-disable-next-line no-undef
-        `${Routing.generate('pelagos_api_create_information_product')}`,
-        this.form,
-      ).then((response) => {
-        this.ipCreatedSuccessModal = true;
-        this.informationProductId = response.data.id;
-        event.target.reset();
-      }).catch(() => {
-        this.errorMessage = 'Unable to create Information Product';
-        this.errorDialog = true;
-      });
+      if (this.editMode) {
+        patchApi(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_api_update_information_product')}/${this.informationProductId}`,
+          this.form,
+        ).then(() => {
+          this.ipSuccessModalText = 'Information Product is Updated!';
+          this.ipCreatedSuccessModal = true;
+        }).catch(() => {
+          this.errorMessage = 'Unable to update Information Product';
+          this.errorDialog = true;
+        });
+      } else {
+        postApi(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_api_create_information_product')}`,
+          this.form,
+        ).then((response) => {
+          this.ipSuccessModalText = 'Information Product is Created!';
+          this.ipCreatedSuccessModal = true;
+          this.informationProductId = response.data.id;
+          event.target.reset();
+        }).catch(() => {
+          this.errorMessage = 'Unable to create Information Product';
+          this.errorDialog = true;
+        });
+      }
     },
     onReset(event) {
       event.preventDefault();
@@ -370,26 +414,13 @@ export default {
       });
     },
 
-    updateInformationProduct() {
-      patchApi(
-        // eslint-disable-next-line no-undef
-        `${Routing.generate('pelagos_api_update_information_product')}/${this.informationProductId}`,
-        this.form,
-      ).then((response) => {
-        console.log(response);
-      }).catch(() => {
-        this.errorMessage = 'Unable to update Information Product';
-        this.errorDialog = true;
-      });
-    },
-
     deleteInformationProduct() {
       deleteApi(
         // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_api_delete_information_product')}/${this.informationProductId}`,
       ).then(() => {
         // eslint-disable-next-line no-undef
-        window.open(`${Routing.generate('pelagos_app_ui_information_product')}`,'_self');
+        window.open(`${Routing.generate('pelagos_app_ui_information_product')}`, '_self');
       }).catch(() => {
         thisComponent.errorMessage = 'Unable to delete Information Product';
         thisComponent.errorDialog = true;
@@ -408,9 +439,17 @@ export default {
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
-      this.form.file = (Object.keys(window.informationProduct.file).length > 0 ? window.informationProduct.file.id : null);
+      this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
       this.form.remoteUri = window.informationProduct.remoteUri;
-      this.fileName = window.informationProduct.file.filePathName;
+      this.fileName = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.filePathName : null;
+    },
+
+    showDeleteDialog() {
+      this.deleteConfirmationDialog = true;
+    },
+
+    cancelDelete() {
+      this.deleteConfirmationDialog = false;
     },
   },
 
@@ -505,8 +544,8 @@ const initDropzone = () => {
     },
   });
 
-  if (window.informationProduct && Object.keys(window.informationProduct).length > 0) {
-    if (Object.keys(window.informationProduct.file).length > 0) {
+  if (typeof window.informationProduct === 'object' && window.informationProduct !== null) {
+    if (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) {
       myDropzone.on('addedfile', (file) => {
         if (typeof file.fileId !== 'undefined') {
           thisComponent.form.file = file.fileId;
@@ -543,5 +582,9 @@ const initDropzone = () => {
   cursor: default;
   opacity: 50%;
   background-color:lightgray;
+}
+.confirmation-dialog {
+  align-items: center;
+  text-align: center;
 }
 </style>
