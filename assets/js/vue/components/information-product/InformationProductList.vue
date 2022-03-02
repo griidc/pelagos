@@ -5,8 +5,12 @@
             :data-source="data"
             :show-borders="true"
             :allow-column-resizing="true"
+            :allow-column-reordering="true"
+            column-resizing-mode="widget"
             :row-alternation-enabled="true"
             :column-auto-width="true"
+            :focused-row-enabled="true"
+            :auto-navigate-to-focused-row="true"
         >
             <DxLoadPanel :enabled="true"/>
 
@@ -28,6 +32,11 @@
               :visible="true"
               :allow-search="true"
             />
+
+            <DxColumnChooser :enabled="true"/>
+            <DxColumnFixing :enabled="true"/>
+
+            <DxGroupPanel :visible="true"/>
 
             <DxColumn
                 type="buttons"
@@ -74,11 +83,15 @@
                 caption="File Name"
             />
             <DxColumn data-field="remoteUri"/>
+
+            <DxSorting mode="multiple"/>
         </DxDataGrid>
     </div>
 </template>
 
 <script>
+import CustomStore from 'devextreme/data/custom_store';
+
 import {
   DxDataGrid,
   DxColumn,
@@ -89,9 +102,21 @@ import {
   DxHeaderFilter,
   DxButton,
   DxLoadPanel,
+  DxSorting,
+  DxColumnChooser,
+  DxColumnFixing,
+  DxGroupPanel,
 } from 'devextreme-vue/data-grid';
+import { getApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
+
+const store = new CustomStore({
+    key: 'id',
+    load: () => {
+        return getApi(`${Routing.generate('pelagos_api_get_all_information_product')}`);
+    }
+});
 
 export default {
   name: 'InformationProductList',
@@ -105,11 +130,14 @@ export default {
     DxHeaderFilter,
     DxButton,
     DxLoadPanel,
+    DxSorting,
+    DxColumnChooser,
+    DxColumnFixing,
+    DxGroupPanel,
   },
   data() {
     return {
-      // eslint-disable-next-line no-undef
-      data: `${Routing.generate('pelagos_api_get_all_information_product')}`,
+      data: store,
       researchGroups: window.researchGroups,
       calculateFilterExpression(filterValue, selectedFilterOperation, target) {
         if (target === 'search' && typeof (filterValue) === 'string') {
