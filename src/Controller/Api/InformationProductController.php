@@ -9,6 +9,7 @@ use App\Form\InformationProductType;
 use App\Message\InformationProductFiler;
 use App\Message\RenameFile;
 use App\Repository\InformationProductRepository;
+use App\Util\Datastore;
 use App\Util\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -294,25 +295,33 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function downloadFile(InformationProduct $informationProduct): Response
+    public function downloadFile(InformationProduct $informationProduct, Datastore $datastore): Response
     {
         $file = $informationProduct->getFile();
         if (!$file instanceof File) {
             throw new BadRequestHttpException('File not found!');
         }
         $filePhysicalPath = $file->getPhysicalFilePath();
-        @$fileStream = fopen($filePhysicalPath, 'r');
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($fileStream) {
+        $filename = $file->getFilePathName();
+        $response = new StreamedResponse(function () use ($file, $datastore) {
             $outputStream = fopen('php://output', 'wb');
+            if ($file->getStatus() === File::FILE_DONE) {
+                try {
+                    $fileStream = $datastore->getFile($file->getPhysicalFilePath())['fileStream'];
+                } catch (\Exception $exception) {
+                    throw new BadRequestHttpException($exception->getMessage());
+                }
+            } else {
+                $fileStream = fopen($file->getPhysicalFilePath(), 'r');
+            }
             stream_copy_to_stream($fileStream, $outputStream);
         });
-        $filename = $file->getFilePathName();
-        $mimeType = mime_content_type($fileStream) ?: 'application/octet-stream';
+
+        $mimeType = $datastore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';
 
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            $filename
+            basename($filename),
         );
 
         $response->headers->set('Content-Disposition', $disposition);
