@@ -11,6 +11,7 @@
             :column-auto-width="true"
             :focused-row-enabled="true"
             :auto-navigate-to-focused-row="true"
+            @exporting="onExporting"
         >
             <DxLoadPanel :enabled="true"/>
 
@@ -37,6 +38,11 @@
             <DxColumnFixing :enabled="true"/>
 
             <DxGroupPanel :visible="true"/>
+
+            <DxExport
+              :enabled="true"
+              :allow-export-selected-data="true"
+            />
 
             <DxColumn
                 type="buttons"
@@ -106,10 +112,14 @@ import {
   DxColumnChooser,
   DxColumnFixing,
   DxGroupPanel,
+  DxExport,
 } from 'devextreme-vue/data-grid';
 import { getApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
+import { exportDataGrid } from 'devextreme/excel_exporter';
 
 const store = new CustomStore({
     key: 'id',
@@ -134,6 +144,7 @@ export default {
     DxColumnChooser,
     DxColumnFixing,
     DxGroupPanel,
+    DxExport,
   },
   data() {
     return {
@@ -163,6 +174,21 @@ export default {
       const { id } = e.row.data;
       window.open(`/information-product/${id}`, '_blank');
       e.event.preventDefault();
+    },
+    onExporting(e) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('IPs');
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+        });
+      });
+      e.cancel = true;
     },
   },
 };
