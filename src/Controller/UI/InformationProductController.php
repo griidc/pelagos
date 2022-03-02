@@ -70,4 +70,27 @@ class InformationProductController extends AbstractController
             )
         );
     }
+
+    /**
+     * The information product page.
+     *
+     * @Route("/information-products", name="pelagos_app_ui_information_products")
+     *
+     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
+     *
+     * @return Response A Response instance.
+     */
+    public function list(): Response
+    {
+        $researchGroupList = [];
+        $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
+        foreach ($researchGroups as $researchGroup) {
+            $researchGroupList[] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
+            );
+        }
+        return $this->render('InformationProduct/list.html.twig', array('researchGroups' => $researchGroupList));
+    }
 }
