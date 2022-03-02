@@ -114,7 +114,7 @@ class DefaultController extends AbstractController
     /**
      * The admin action.
      *
-     * @Route("/admin", name="pelagos_admin")
+     * @Route("/adminmenu", name="pelagos_admin")
      *
      * @return Response
      */

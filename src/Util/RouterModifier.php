@@ -7,6 +7,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
  * This class is a custom router modifier.
@@ -110,7 +111,7 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface, War
     {
         return $this->innerRouter->match($pathinfo);
     }
-    
+
     /**
      * Return subscribed services.
      *
@@ -122,7 +123,7 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface, War
             'App\Util\RouterModifier' => self::class,
         ];
     }
-    
+
     /**
      * Warms up the cache.
      *
