@@ -35,14 +35,23 @@ class PelagosCheckForErrorStatusCommand extends Command
     protected \Memcached $memcached;
 
     /**
+     * Storage location for submitted+ datasets.
+     *
+     * @var string $dataStoreDirectory
+     */
+    protected $dataStoreDirectory;
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        String $dataStoreDirectory
     ) {
         $this->entityManager = $entityManager;
+        $this->dataStoreDirectory = $dataStoreDirectory;
 
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
@@ -88,11 +97,13 @@ class PelagosCheckForErrorStatusCommand extends Command
                     }
                     /** @var File $file */
                     foreach ($files as $file) {
-                        $twins = $this->twins($dataset, $file, $this->entityManager);
-                        $io->writeln('on-disk: ' . $file->getPhysicalFilePath());
-                        if (count($twins) > 1) {
+                        $id = $file->getId();
+                        $twins = $this->twinFinder($dataset, $file, $this->entityManager, $io);
+                        $io->writeln("found on-disk ($id): " . $file->getPhysicalFilePath());
+                        if (count($twins) > 0) {
                             foreach ($twins as $twin) {
-                                $io->writeln('same hash: ' . $twin->getPhysicalFilePath());
+                                $twinId = $twin->getId();
+                                $io->writeln("same hash ($twinId): " . $twin->getPhysicalFilePath());
                             }
                         }
                     }
@@ -102,47 +113,56 @@ class PelagosCheckForErrorStatusCommand extends Command
         return 0;
     }
 
-    protected function twins(Dataset $dataset, File $file, EntityManager $em): Array
+    protected function twinFinder(Dataset $dataset, File $file, EntityManager $em, SymfonyStyle $io): Array
     {
-        echo('looking at: ' . $file->getId() . "\n");
         $hashMatches = array();
-        $originalFile = $file->getPhysicalFilePath();
-        if (substr($originalFile,0,1) != '/') { $originalFile = "/san/data/store/$originalFile"; }
+        $originalFile = $unalteredOriginalFile = $file->getPhysicalFilePath();
+        $originalFileId = $file->getId();
+        if (substr($originalFile,0,1) != '/') { $originalFile = $this->dataStoreDirectory . '/' . $originalFile; }
+        $io->note("originalFile ($originalFileId): $originalFile");
         if (file_exists($originalFile)) {
-            $hash = hash_file("sha256", $originalFile);
+            $hash = $this->smartSha256Hash($originalFile);
+
             // find other files in fileset to find match, but only matches in in live dataset submission's fileset.
             $dql = "SELECT f FROM \App\Entity\File f
-                where f.fileset = :fileset";
-
+                WHERE f.fileset = :fileset
+                AND f.physicalFilePath <> :orig";
             $query = $em->createQuery($dql);
             $query->setParameter('fileset', $dataset->getDatasetSubmission()->getFileset());
-
+            $query->setParameter('orig', $unalteredOriginalFile);
             $matches = $query->getResult();
-            echo("Looking for matches in " . count($matches) . " total files in fileset.\n");
+
             foreach ($matches as $match) {
                 $matchesPath = $match->getPhysicalFilePath();
-                if (substr($matchesPath,0,1) != '/') { $matchesPath = "/san/data/store/$matchesPath"; }
+                if (substr($matchesPath,0,1) != '/') { $matchesPath = $this->dataStoreDirectory . '/' . $matchesPath; }
                 if (file_exists($matchesPath)) {
-                    $hash2 = $this->smartHash($matchesPath);
+                    $hash2 = $this->smartSha256Hash($matchesPath);
                     if ($hash == $hash2) {
-                        $hashesMatches[] = $match;
+                        $hashMatches[] = $match;
                     }
                 } else {
-                    echo("A file in active fileset not found on disk: " . $matchesPath . "\n");
+                    $io->warning("A file in active fileset not found on disk: " . $matchesPath . "\n");
                 }
             }
         } else {
-            echo("Original file not found on disk! " . $originalFile . "\n");
+            $io->warning("Original file not found on disk! " . $originalFile . "\n");
         }
         return $hashMatches;
     }
 
-    protected function smartHash($filename)
+    /**
+     * Returns sha256sum of file, checking for previous work first.
+     *
+     * @param String $filename The filename of what we want to get a hash of.
+     */
+    protected function smartSha256Hash($filename)
     {
         $hash = $this->memcached->get($filename);
         if ($hash) {
             return $hash;
         } else {
+            // I hardcoded to sha256 otherwise hashtype would have to be part
+            // of what is stored in cache. Named method accordingly.
             $hash = hash_file("sha256", $filename);
             $this->memcached->set($filename, $hash);
         }

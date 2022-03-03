@@ -99,7 +99,7 @@ services:
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
         $doiApiPrefix: "%env(DOI_API_PREFIX)%"
         $doiApiUrl: "%env(DOI_API_URL)%"
-    
+
     App\Util\IngestUtil:
         $ingestApiUrl: "%env(INGEST_API_URL)%"
 
@@ -124,6 +124,10 @@ services:
             string $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
             string $passwordExpiryWarn: "%env(ACCOUNT_PASSWORD_EXPIRATION_WARN)%"
             string $hostName: "%env(HOSTNAME)%"
+
+    App\Command\PelagosCheckForErrorStatusCommand:
+        bind:
+            string $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
 
     App\Command\RebuildElasticsearchIndexCommand:
         bind:
