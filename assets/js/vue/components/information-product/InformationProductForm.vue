@@ -102,7 +102,6 @@
                     description="Upload a file.">
                 <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri)?'dropzone-uploader-disabled':''">
                 </div>
-                <p> Filename: {{ fileName }} </p>
                 <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
             <b-form-group
@@ -261,7 +260,7 @@ export default {
       errorDialog: false,
       errorMessage: '',
       addedRgShortName: '',
-      fileName: 'NO FILE',
+      fileName: '',
       editMode: false,
       submitBtnText: 'Submit',
       deleteConfirmationDialog: false,
@@ -430,10 +429,6 @@ export default {
       });
     },
 
-    discardChanges() {
-      this.populateFormInitialValues();
-    },
-
     populateFormInitialValues() {
       this.form.title = window.informationProduct.title;
       this.form.creators = window.informationProduct.creators;
@@ -478,7 +473,7 @@ const addFileToInformationProduct = (file, done) => {
   chunkData.dztotalchunkcount = file.upload.totalChunkCount;
   chunkData.fileName = fileName;
   chunkData.dztotalfilesize = file.size;
-  chunkData.informationProductId= thisComponent.informationProductId;
+  chunkData.informationProductId = thisComponent.informationProductId;
   postApi(
     // eslint-disable-next-line no-undef
     `${Routing.generate('pelagos_api_add_file_information_product')}`,
