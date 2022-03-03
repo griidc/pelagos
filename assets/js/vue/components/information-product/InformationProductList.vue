@@ -1,5 +1,5 @@
 <template>
-    <div class="m-2" >
+    <div class="m-2">
         <h4 class="text-center">Information Products</h4>
         <DxDataGrid
             :data-source="data"
