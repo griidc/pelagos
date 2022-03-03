@@ -105,6 +105,8 @@ class InformationProductController extends AbstractFOSRestController
      * @param Request $request
      * @param InformationProduct $informationProduct
      *
+     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
+     *
      * @return Response
      *
      * * @Route (
@@ -117,15 +119,27 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function updateInformationProduct(Request $request, InformationProduct $informationProduct): Response
     {
-        $form = $this->createForm(InformationProductType::class, $informationProduct);
+        $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
+        $entityManager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(InformationProductType::class, $informationProduct, ['method' => 'PATCH']);
+        $request->request->set($form->getName(), $prefilledRequestDataBag);
+        $researchGroupsIds = $request->get('selectedResearchGroups');
+        $researchGroupsToBeDeleted = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $informationProduct->getResearchGroupList()]);
+        $researchGroupsToBeAdded = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
+        // Remove previously added research groups
+        $researchGroupList = $informationProduct->getResearchGroupList();
+        foreach ($researchGroupsToBeDeleted as $researchGroup) {
+            $informationProduct->removeResearchGroup($researchGroup);
+        }
+        // Add them from the newly updated Information product
+        foreach ($researchGroupsToBeAdded as $researchGroup) {
+            $informationProduct->addResearchGroup($researchGroup);
+        }
         $form->handleRequest($request);
-
-
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
-            return new JsonResponse([], Response::HTTP_NO_CONTENT);
         }
+        return new JsonResponse([], Response::HTTP_OK);
     }
 
     /**
@@ -138,7 +152,7 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @Route (
      *     "/api/information_product/{id}",
-     *     name="pelagos_api_deletet_information_product",
+     *     name="pelagos_api_delete_information_product",
      *     methods={"DELETE"},
      *     defaults={"_format"="json"},
      *     requirements={"id"="\d+"}
@@ -146,19 +160,17 @@ class InformationProductController extends AbstractFOSRestController
      */
     public function deleteInformationProduct(Request $request, InformationProduct $informationProduct): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$informationProduct->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($informationProduct);
-            $entityManager->flush();
-
-            return new JsonResponse(Response::HTTP_OK);
-        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($informationProduct);
+        $entityManager->flush();
+        return new JsonResponse(Response::HTTP_OK);
     }
 
     /**
      * Get all Information Products.
      *
      * @param Request $request
+
      * @return Response
      *
      * @Route (
@@ -177,7 +189,6 @@ class InformationProductController extends AbstractFOSRestController
         $informationProducts = $informationProductRepository->findAll();
 
         return new Response($serializer->serialize($informationProducts, 'json', $context));
-
     }
 
     /**
@@ -251,13 +262,20 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function addFileToInformationProduct(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader) : Response
-    {
+    public function addFileToInformationProduct(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        InformationProductRepository $informationProductRepository
+    ) : Response {
         try {
             $fileMetadata = $fileUploader->combineChunks($request);
         } catch (\Exception $exception) {
             return new JsonResponse(['code' => 400, 'message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+
+        $informationProductId = $request->get('informationProductId');
+        $informationProduct = $informationProductRepository->find($informationProductId);
 
         $fileName = $fileMetadata['name'];
         $filePath = $fileMetadata['path'];
@@ -272,6 +290,7 @@ class InformationProductController extends AbstractFOSRestController
         $newFile->setDescription('Information Product File');
         $newFile->setCreator($this->getUser()->getPerson());
         $entityManager->persist($newFile);
+        $informationProduct->setFile($newFile);
         $entityManager->flush();
 
         $id = $newFile->getId();
@@ -324,9 +343,9 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Delete a file or folder.
      *
-     * @param File                   $file              The file to be deleted.
-     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
-     * @param MessageBusInterface    $messageBus        Message bus interface.
+     * @param InformationProduct     $informationProduct The information product of which file to be deleted.
+     * @param EntityManagerInterface $entityManager      Entity manager interface instance.
+     * @param MessageBusInterface    $messageBus         Message bus interface.
      *
      * @Route(
      *     "/api/information_product_file_delete/{id}",
@@ -341,18 +360,22 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function delete(
-        File $file,
+    public function deleteInformationProductFile(
+        InformationProduct $informationProduct,
         EntityManagerInterface $entityManager,
         MessageBusInterface $messageBus
     ): Response {
-        if (empty($file->getFileset())) {
-            $this->deleteFile($file, $messageBus);
-            $entityManager->remove($file);
-            $entityManager->flush();
-        } else {
-            throw new BadRequestHttpException('Is this an Information Product File?');
+        $file = $informationProduct->getFile();
+
+        if (!$file instanceof File) {
+            throw new BadRequestHttpException('No file attached for this IP!');
         }
+
+        $informationProduct->setFile(null);
+        $this->deleteFile($file, $messageBus);
+        $entityManager->remove($file);
+        $entityManager->flush();
+
 
         return new Response(
             null,

@@ -2,7 +2,8 @@
     <div class="m-2">
         <h4 class="text-center">Information Product Form</h4>
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-            <b-form-group
+          <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
+          <b-form-group
                     id="input-group-1"
                     label="Title"
                     label-for="title"
@@ -99,19 +100,17 @@
                     label="File"
                     label-for="published"
                     description="Upload a file.">
-                <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri !== '')?'dropzone-uploader-disabled':''">
+                <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri)?'dropzone-uploader-disabled':''">
                 </div>
-                <b-button :disabled="form.remoteUri !== ''" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
+                <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
-            <input type="hidden" v-model="form.file" name="file"/>
-
             <b-form-group
                     id="input-group-remote-uri"
                     label="Remote URI"
                     label-for="remoteUri"
                     description="Enter the remote URI">
                 <b-form-input
-                        :disabled="form.file !== ''"
+                        :disabled="!!form.file"
                         id="remoteUri"
                         type="url"
                         v-model="form.remoteUri"
@@ -150,8 +149,9 @@
             </b-form-group>
 
             <div class="py-2">
-                <b-button :disabled="!formValid" type="submit" variant="alternate">Submit</b-button>
-                <b-button type="reset" variant="dark">Reset</b-button>
+              <b-button :disabled="!formValid" type="submit" variant="alternate">{{ submitBtnText }}</b-button>
+              <b-button v-if="!editMode" type="reset" variant="dark" >Reset</b-button>
+              <b-button v-if="editMode" type="button" variant="danger" @click="showDeleteDialog">Delete</b-button>
             </div>
         </b-form>
         <DxPopup
@@ -166,7 +166,7 @@
             <template>
                 <div>
                     <h6>
-                        Information Product is Created
+                      {{ ipSuccessModalText }}
                     </h6>
                     <p>
                         Information Product ID: {{ informationProductId }}
@@ -190,14 +190,49 @@
                 </p>
             </template>
         </DxPopup>
+        <DxPopup
+            :visible.sync="deleteConfirmationDialog"
+            :close-on-outside-click="false"
+            :show-title="false"
+            position="center"
+            :showCloseButton="false"
+            :width="350"
+            height="auto"
+            :drag-enabled="false"
+            :shading="true"
+            shading-color="rgba(0,0,0,0.4)"
+        >
+          <template>
+            <div class="confirmation-dialog">
+              <p>
+                <b>Do you really want to delete this Information Product?</b>
+              </p>
+              <br>
+              <DxButton
+                  text="Yes"
+                  type="danger"
+                  width="50%"
+                  styling-mode="contained"
+                  @click="deleteInformationProduct"
+              />
+              <DxButton
+                  text="No"
+                  width="50%"
+                  styling-mode="contained"
+                  @click="cancelDelete"
+              />
+            </div>
+          </template>
+        </DxPopup>
     </div>
 </template>
 
 <script>
-import { postApi, deleteApi } from '@/vue/utils/axiosService';
+import { postApi, deleteApi, patchApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
+import { DxButton } from 'devextreme-vue/button';
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
 
@@ -209,6 +244,7 @@ export default {
   name: 'InformationProductForm',
   components: {
     DxPopup,
+    DxButton,
   },
   data() {
     return {
@@ -224,6 +260,11 @@ export default {
       errorDialog: false,
       errorMessage: '',
       addedRgShortName: '',
+      fileName: '',
+      editMode: false,
+      submitBtnText: 'Submit',
+      deleteConfirmationDialog: false,
+      ipSuccessModalText: '',
     };
   },
   computed: {
@@ -241,25 +282,46 @@ export default {
     },
   },
   mounted() {
+    thisComponent = this;
     // eslint-disable-next-line no-use-before-define
     initDropzone();
-    thisComponent = this;
+    if ((typeof window.informationProduct === 'object' && window.informationProduct !== null)) {
+      this.editMode = true;
+      this.populateFormInitialValues();
+      this.informationProductId = window.informationProduct.id;
+      this.submitBtnText = 'Save Changes';
+    }
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      postApi(
-        // eslint-disable-next-line no-undef
-        `${Routing.generate('pelagos_api_create_information_product')}`,
-        this.form,
-      ).then((response) => {
-        this.ipCreatedSuccessModal = true;
-        this.informationProductId = response.data.id;
-        event.target.reset();
-      }).catch(() => {
-        this.errorMessage = 'Unable to create Information Product';
-        this.errorDialog = true;
-      });
+      if (this.editMode) {
+        patchApi(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_api_update_information_product')}/${this.informationProductId}`,
+          this.form,
+        ).then(() => {
+          this.ipSuccessModalText = 'Information Product is Updated!';
+          this.ipCreatedSuccessModal = true;
+        }).catch(() => {
+          this.errorMessage = 'Unable to update Information Product';
+          this.errorDialog = true;
+        });
+      } else {
+        postApi(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_api_create_information_product')}`,
+          this.form,
+        ).then((response) => {
+          this.ipSuccessModalText = 'Information Product is Created!';
+          this.ipCreatedSuccessModal = true;
+          this.informationProductId = response.data.id;
+          event.target.reset();
+        }).catch(() => {
+          this.errorMessage = 'Unable to create Information Product';
+          this.errorDialog = true;
+        });
+      }
     },
     onReset(event) {
       event.preventDefault();
@@ -353,6 +415,40 @@ export default {
         text: this.getResearchGroupShortName(researchGroupId),
       });
     },
+
+    deleteInformationProduct() {
+      deleteApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_delete_information_product')}/${this.informationProductId}`,
+      ).then(() => {
+        // eslint-disable-next-line no-undef
+        window.open(`${Routing.generate('pelagos_app_ui_information_product')}`, '_self');
+      }).catch(() => {
+        thisComponent.errorMessage = 'Unable to delete Information Product';
+        thisComponent.errorDialog = true;
+      });
+    },
+
+    populateFormInitialValues() {
+      this.form.title = window.informationProduct.title;
+      this.form.creators = window.informationProduct.creators;
+      this.form.publisher = window.informationProduct.publisher;
+      this.form.externalDoi = window.informationProduct.externalDoi;
+      this.form.selectedResearchGroups = window.informationProduct.researchGroups;
+      this.form.published = window.informationProduct.published;
+      this.form.remoteResource = window.informationProduct.remoteResource;
+      this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
+      this.form.remoteUri = window.informationProduct.remoteUri;
+      this.fileName = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.filePathName : null;
+    },
+
+    showDeleteDialog() {
+      this.deleteConfirmationDialog = true;
+    },
+
+    cancelDelete() {
+      this.deleteConfirmationDialog = false;
+    },
   },
 
   created() {
@@ -377,6 +473,7 @@ const addFileToInformationProduct = (file, done) => {
   chunkData.dztotalchunkcount = file.upload.totalChunkCount;
   chunkData.fileName = fileName;
   chunkData.dztotalfilesize = file.size;
+  chunkData.informationProductId = thisComponent.informationProductId;
   postApi(
     // eslint-disable-next-line no-undef
     `${Routing.generate('pelagos_api_add_file_information_product')}`,
@@ -386,6 +483,8 @@ const addFileToInformationProduct = (file, done) => {
     // eslint-disable-next-line no-param-reassign
     file.fileId = fileId;
     thisComponent.form.file = fileId;
+    thisComponent.fileName = fileName;
+
     done();
   }).catch((error) => {
     // eslint-disable-next-line no-param-reassign
@@ -424,25 +523,44 @@ const initDropzone = () => {
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
           // eslint-disable-next-line no-undef
-          `${Routing.generate('pelagos_api_ip_file_delete')}/${file.fileId}`,
+          `${Routing.generate('pelagos_api_ip_file_delete')}/${thisComponent.informationProductId}`,
         ).then(() => {
           thisComponent.form.file = '';
         }).catch(() => {
-          this.errorMessage = 'Unable to delete File from Information Product';
-          this.errorDialog = true;
+          thisComponent.errorMessage = 'Unable to delete File from Information Product';
+          thisComponent.errorDialog = true;
         });
       }
       file.previewElement.remove();
     },
     error: function error() {
-      this.errorMessage = 'Unable to save file.';
-      this.errorDialog = true;
+      thisComponent.errorMessage = 'Unable to save file.';
+      thisComponent.errorDialog = true;
     },
     chunksUploaded(file, done) {
       // All chunks have been uploaded. Perform any other actions
       addFileToInformationProduct(file, done);
     },
   });
+
+  if (typeof window.informationProduct === 'object' && window.informationProduct !== null) {
+    if (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) {
+      myDropzone.on('addedfile', (file) => {
+        if (typeof file.fileId !== 'undefined') {
+          thisComponent.form.file = file.fileId;
+        }
+      });
+
+      const existingFile = {
+        name: window.informationProduct.file.filePathName,
+        size: window.informationProduct.file.fileSize,
+        fileId: window.informationProduct.file.id,
+      };
+
+      myDropzone.emit('addedfile', existingFile);
+      myDropzone.emit('complete', existingFile);
+    }
+  }
 };
 </script>
 
@@ -463,5 +581,9 @@ const initDropzone = () => {
   cursor: default;
   opacity: 50%;
   background-color:lightgray;
+}
+.confirmation-dialog {
+  align-items: center;
+  text-align: center;
 }
 </style>
