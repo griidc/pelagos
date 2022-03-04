@@ -99,11 +99,11 @@ class PelagosCheckForErrorStatusCommand extends Command
                     foreach ($files as $file) {
                         $id = $file->getId();
                         $twins = $this->twinFinder($dataset, $file, $this->entityManager, $io);
-                        $io->writeln("found on-disk ($id): " . $file->getPhysicalFilePath());
+                        $io->note("known dataset file: ($id): " . $file->getPhysicalFilePath());
                         if (count($twins) > 0) {
                             foreach ($twins as $twin) {
                                 $twinId = $twin->getId();
-                                $io->writeln("same hash ($twinId): " . $twin->getPhysicalFilePath());
+                                $io->warning("same hash ($twinId): " . $twin->getPhysicalFilePath());
                             }
                         }
                     }
@@ -119,7 +119,6 @@ class PelagosCheckForErrorStatusCommand extends Command
         $originalFile = $unalteredOriginalFile = $file->getPhysicalFilePath();
         $originalFileId = $file->getId();
         if (substr($originalFile,0,1) != '/') { $originalFile = $this->dataStoreDirectory . '/' . $originalFile; }
-        $io->note("originalFile ($originalFileId): $originalFile");
         if (file_exists($originalFile)) {
             $hash = $this->smartSha256Hash($originalFile);
 

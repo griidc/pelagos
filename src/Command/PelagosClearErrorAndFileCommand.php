@@ -62,20 +62,41 @@ class PelagosClearErrorAndFileCommand extends Command
 
         $dql = "SELECT f FROM \App\Entity\File f
             WHERE f.id = :fileId
-            AND f.fileset = :filesetId";
+            AND f.fileset = :filesetId
+            AND f.status = :fileStatus";
 
         $query = $this->entityManager->createQuery($dql);
         $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
         $query->setParameter('fileId', $fileId);
+        // Only identify files in an error state.
+        $query->setParameter('fileStatus', File::FILE_ERROR);
         /**  @var File $fileToDelete */
         $fileToDelete = $query->getResult()[0];
-        try {
-            $this->entityManager->remove($fileToDelete);
-            $this->entityManager->flush();
-            unlink($fileToDelete->getPhysicalFilePath());
-        } catch (\Exception $e) {
-            $io->error("Could not delete file." . $e->getMessage());
+
+        // This section is just added for extra safety. Don't delete
+        // unless the file is represented in the datastore. Don't delete
+        // the only copy of a file.
+        $newUdi = preg_replace('/:/', '.', $udi);
+        $dqlSafe = "SELECT f FROM \App\Entity\File f
+            WHERE f.id <> :fileId
+            AND f.fileset = :filesetId
+            AND f.physicalFilePath like '$newUdi%'
+            AND f.physicalFilePath not like '/san/home/upload/files%'";
+        $query = $this->entityManager->createQuery($dqlSafe);
+        $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
+        $query->setParameter('fileId', $fileId);
+        if (count($query->getResult()) > 0) {
+            try {
+                $this->entityManager->remove($fileToDelete);
+                $this->entityManager->flush();
+                unlink($fileToDelete->getPhysicalFilePath());
+            } catch (\Exception $e) {
+                $io->error("Could not delete file." . $e->getMessage());
+            }
+        } else {
+            $io->warning("Not deleting the only copy of file!");
         }
+
         return 0;
     }
 }

@@ -114,6 +114,7 @@ class Datastore
         if ($deleteDir) {
              $deleteFile = $this->deleteDir($filePath);
         } else {
+            echo("deleting:" . $filePath . "\n");
             $deleteFile = $this->datastoreFlysystem->delete($filePath);
         }
         $path = dirname($filePath);
