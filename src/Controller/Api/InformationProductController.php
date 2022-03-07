@@ -395,14 +395,15 @@ class InformationProductController extends AbstractFOSRestController
         } elseif ($fileId) {
             $informationProduct = null;
             $file = $fileRepository->find($fileId);
+            if ($file instanceof File and $file->getStatus() !== File::FILE_NEW) {
+                throw new BadRequestHttpException('Without the IP, I can only delete new files!');
+            }
         } else {
             throw new BadRequestHttpException('No parameters given, need File or IP!');
         }
 
         if (!$file instanceof File) {
             throw new BadRequestHttpException('No file attached for this IP!');
-        } elseif ($file->getStatus() !== File::FILE_NEW) {
-            throw new BadRequestHttpException('Without the IP, I can only delete new files!');
         }
 
         if ($informationProduct instanceof InformationProduct) {
