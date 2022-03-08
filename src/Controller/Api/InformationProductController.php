@@ -8,7 +8,9 @@ use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
 use App\Message\InformationProductFiler;
 use App\Message\RenameFile;
+use App\Repository\FileRepository;
 use App\Repository\InformationProductRepository;
+use App\Util\Datastore;
 use App\Util\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -248,9 +250,10 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Adds a file to a dataset submission.
      *
-     * @param Request                $request           The request body sent with file metadata.
-     * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
-     * @param FileUploader           $fileUploader      File upload handler service.
+     * @param Request                      $request                      The request body sent with file metadata.
+     * @param EntityManagerInterface       $entityManager                Entity manager interface to doctrine operations.
+     * @param FileUploader                 $fileUploader                 File upload handler service.
+     * @param InformationProductRepository $informationProductRepository The information product repository.
      *
      * @Route(
      *     "/api/add_file_to_information_product",
@@ -275,7 +278,11 @@ class InformationProductController extends AbstractFOSRestController
         }
 
         $informationProductId = $request->get('informationProductId');
-        $informationProduct = $informationProductRepository->find($informationProductId);
+        if ($informationProductId) {
+            $informationProduct = $informationProductRepository->find($informationProductId);
+        } else {
+            $informationProduct = null;
+        }
 
         $fileName = $fileMetadata['name'];
         $filePath = $fileMetadata['path'];
@@ -290,7 +297,10 @@ class InformationProductController extends AbstractFOSRestController
         $newFile->setDescription('Information Product File');
         $newFile->setCreator($this->getUser()->getPerson());
         $entityManager->persist($newFile);
-        $informationProduct->setFile($newFile);
+        if ($informationProduct instanceof InformationProduct) {
+            $informationProduct->setFile($newFile);
+        }
+
         $entityManager->flush();
 
         $id = $newFile->getId();
@@ -313,25 +323,33 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function downloadFile(InformationProduct $informationProduct): Response
+    public function downloadFile(InformationProduct $informationProduct, Datastore $datastore): Response
     {
         $file = $informationProduct->getFile();
         if (!$file instanceof File) {
             throw new BadRequestHttpException('File not found!');
         }
         $filePhysicalPath = $file->getPhysicalFilePath();
-        @$fileStream = fopen($filePhysicalPath, 'r');
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($fileStream) {
+        $filename = $file->getFilePathName();
+        $response = new StreamedResponse(function () use ($file, $datastore) {
             $outputStream = fopen('php://output', 'wb');
+            if ($file->getStatus() === File::FILE_DONE) {
+                try {
+                    $fileStream = $datastore->getFile($file->getPhysicalFilePath())['fileStream'];
+                } catch (\Exception $exception) {
+                    throw new BadRequestHttpException($exception->getMessage());
+                }
+            } else {
+                $fileStream = fopen($file->getPhysicalFilePath(), 'r');
+            }
             stream_copy_to_stream($fileStream, $outputStream);
         });
-        $filename = $file->getFilePathName();
-        $mimeType = mime_content_type($fileStream) ?: 'application/octet-stream';
+
+        $mimeType = $datastore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';
 
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            $filename
+            basename($filename),
         );
 
         $response->headers->set('Content-Disposition', $disposition);
@@ -343,15 +361,16 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Delete a file or folder.
      *
-     * @param InformationProduct     $informationProduct The information product of which file to be deleted.
-     * @param EntityManagerInterface $entityManager      Entity manager interface instance.
-     * @param MessageBusInterface    $messageBus         Message bus interface.
+     * @param Request                      $request                      The request body sent with file metadata.
+     * @param EntityManagerInterface       $entityManager                Entity manager interface instance.
+     * @param MessageBusInterface          $messageBus                   Message bus interface.
+     * @param InformationProductRepository $informationProductRepository The information product repository.
+     * @param FileRepository               $fileRepository               The file repository.
      *
      * @Route(
-     *     "/api/information_product_file_delete/{id}",
+     *     "/api/information_product_file_delete",
      *     name="pelagos_api_ip_file_delete",
      *     methods={"DELETE"},
-     *     requirements={"id"="\d+"}
      *     )
      *
      * @throws BadRequestException When the file doesn't exist, or is not the right kind of file.
@@ -361,17 +380,35 @@ class InformationProductController extends AbstractFOSRestController
      * @return Response
      */
     public function deleteInformationProductFile(
-        InformationProduct $informationProduct,
+        Request $request,
         EntityManagerInterface $entityManager,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
+        InformationProductRepository $informationProductRepository,
+        FileRepository $fileRepository
     ): Response {
-        $file = $informationProduct->getFile();
+        $informationProductId = $request->get('informationProductId');
+        $fileId = $request->get('fileId');
+
+        if ($informationProductId) {
+            $informationProduct = $informationProductRepository->find($informationProductId);
+            $file = $informationProduct->getFile();
+        } elseif ($fileId) {
+            $informationProduct = null;
+            $file = $fileRepository->find($fileId);
+            if ($file instanceof File and $file->getStatus() !== File::FILE_NEW) {
+                throw new BadRequestHttpException('Without the IP, I can only delete new files!');
+            }
+        } else {
+            throw new BadRequestHttpException('No parameters given, need File or IP!');
+        }
 
         if (!$file instanceof File) {
             throw new BadRequestHttpException('No file attached for this IP!');
         }
 
-        $informationProduct->setFile(null);
+        if ($informationProduct instanceof InformationProduct) {
+            $informationProduct->setFile(null);
+        }
         $this->deleteFile($file, $messageBus);
         $entityManager->remove($file);
         $entityManager->flush();

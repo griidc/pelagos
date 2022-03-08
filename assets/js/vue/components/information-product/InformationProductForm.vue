@@ -523,7 +523,7 @@ const initDropzone = () => {
       if (typeof file.fileId !== 'undefined') {
         deleteApi(
           // eslint-disable-next-line no-undef
-          `${Routing.generate('pelagos_api_ip_file_delete')}/${thisComponent.informationProductId}`,
+          `${Routing.generate('pelagos_api_ip_file_delete')}?informationProductId=${thisComponent.informationProductId}&fileId=${thisComponent.form.file}`,
         ).then(() => {
           thisComponent.form.file = '';
         }).catch(() => {
