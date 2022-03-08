@@ -57,8 +57,8 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Creates a new Information Product
      *
-     * @param Request             $request
-     * @param MessageBusInterface $messageBus
+     * @param Request             $request    The Request.
+     * @param MessageBusInterface $messageBus The message bus.
      *
      * @return Response
      *
@@ -105,9 +105,9 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Updates the Information Product
      *
-     * @param Request             $request
-     * @param InformationProduct  $informationProduct
-     * @param MessageBusInterface $messageBus
+     * @param Request             $request            The Request.
+     * @param InformationProduct  $informationProduct The information product to update.
+     * @param MessageBusInterface $messageBus         The message bus.
      *
      * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      *
@@ -152,7 +152,7 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Delete Information Product
      *
-     * @param Request $request
+     * @param Request            $request
      * @param InformationProduct $informationProduct
      *
      * @return Response
@@ -176,7 +176,7 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Get all Information Products.
      *
-     * @param Request $request
+     * @param Request $request The Request.
 
      * @return Response
      *
@@ -394,7 +394,7 @@ class InformationProductController extends AbstractFOSRestController
         $informationProductId = $request->get('informationProductId');
         $fileId = $request->get('fileId');
 
-        if ($informationProductId) {
+        if (is_numeric($informationProductId)) {
             $informationProduct = $informationProductRepository->find($informationProductId);
             $file = $informationProduct->getFile();
         } elseif ($fileId) {
