@@ -87,7 +87,7 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         $systemPerson = $this->entityManager->find(Person::class, 0);
         $file->setModifier($systemPerson);
 
-        $this->logger->info('Dataset submission process started', $loggingContext);
+        $this->logger->info('Information Product process started', $loggingContext);
 
         $destinationPath = 'information_products'
             . DIRECTORY_SEPARATOR .  $informationProductId
