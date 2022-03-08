@@ -6,8 +6,8 @@ use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
+use App\Message\DeleteFile;
 use App\Message\InformationProductFiler;
-use App\Message\RenameFile;
 use App\Repository\FileRepository;
 use App\Repository\InformationProductRepository;
 use App\Util\Datastore;
@@ -444,9 +444,8 @@ class InformationProductController extends AbstractFOSRestController
                 throw new BadRequestHttpException('Unable to delete file');
             }
         } elseif ($file->getStatus() === File::FILE_DONE) {
-            $file->setStatus(File::FILE_DELETED);
-            $renameMessage = new RenameFile($file->getId());
-            $messageBus->dispatch($renameMessage);
+            $deleteMessage = new DeleteFile($file->getPhysicalFilePath());
+            $messageBus->dispatch($deleteMessage);
         }
     }
 }
