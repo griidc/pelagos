@@ -118,7 +118,9 @@ class PelagosCheckForErrorStatusCommand extends Command
         $hashMatches = array();
         $originalFile = $unalteredOriginalFile = $file->getPhysicalFilePath();
         $originalFileId = $file->getId();
-        if (substr($originalFile,0,1) != '/') { $originalFile = $this->dataStoreDirectory . '/' . $originalFile; }
+        if (substr($originalFile, 0, 1) != '/') {
+            $originalFile = $this->dataStoreDirectory . '/' . $originalFile;
+        }
         if (file_exists($originalFile)) {
             $hash = $this->smartSha256Hash($originalFile);
 
@@ -133,7 +135,9 @@ class PelagosCheckForErrorStatusCommand extends Command
 
             foreach ($matches as $match) {
                 $matchesPath = $match->getPhysicalFilePath();
-                if (substr($matchesPath,0,1) != '/') { $matchesPath = $this->dataStoreDirectory . '/' . $matchesPath; }
+                if (substr($matchesPath, 0, 1) != '/') {
+                    $matchesPath = $this->dataStoreDirectory . '/' . $matchesPath;
+                }
                 if (file_exists($matchesPath)) {
                     $hash2 = $this->smartSha256Hash($matchesPath);
                     if ($hash == $hash2) {
