@@ -27,20 +27,32 @@ class PelagosClearErrorAndFileCommand extends Command
     protected $entityManager;
 
     /**
+     * String with .env homedir prefix path.
+     *
+     * @var String $homedirPrefix;
+     */
+    protected $homedirPrefix;
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        string $homedirPrefix
     ) {
         $this->entityManager = $entityManager;
+        $this->homedirPrefix = $homedirPrefix;
 
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
     }
 
+    /**
+     * Configure function to allow for options and parameters.
+     */
     protected function configure(): void
     {
         $this
@@ -50,6 +62,14 @@ class PelagosClearErrorAndFileCommand extends Command
         ;
     }
 
+    /**
+     * Symfony command execute section.
+     *
+     * @param InputInterface  $input  Required by Command.
+     * @param OutputInterface $output Required by Command.
+     *
+     * @return integer Return code.
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -77,11 +97,12 @@ class PelagosClearErrorAndFileCommand extends Command
         // unless the file is represented in the datastore. Don't delete
         // the only copy of a file.
         $newUdi = preg_replace('/:/', '.', $udi);
+        $uploadDir = $this->homedirPrefix . '/upload/files';
         $dqlSafe = "SELECT f FROM \App\Entity\File f
             WHERE f.id <> :fileId
             AND f.fileset = :filesetId
             AND f.physicalFilePath like '$newUdi%'
-            AND f.physicalFilePath not like '/san/home/upload/files%'";
+            AND f.physicalFilePath not like '$uploadDir/%'";
         $query = $this->entityManager->createQuery($dqlSafe);
         $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
         $query->setParameter('fileId', $fileId);

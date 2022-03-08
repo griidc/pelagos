@@ -58,6 +58,9 @@ class PelagosCheckForErrorStatusCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Configure function to allow for options and parameters.
+     */
     protected function configure(): void
     {
         $this
@@ -66,6 +69,14 @@ class PelagosCheckForErrorStatusCommand extends Command
         ;
     }
 
+    /**
+     * Symfony command execute section.
+     *
+     * @param InputInterface  $input  Required by Command.
+     * @param OutputInterface $output Required by Command.
+     *
+     * @return integer Return code.
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->memcached = MemcachedAdapter::createConnection('memcached://localhost');
@@ -113,6 +124,16 @@ class PelagosCheckForErrorStatusCommand extends Command
         return 0;
     }
 
+    /**
+     * Method finds identical files by hash.
+     *
+     * @param Dataset       $dataset Original dataset that owns fileset.
+     * @param File          $file    The file to look for matches against.
+     * @param EntityManager $em      Doctrine entity manager.
+     * @param SymfonyStyle  $io      Symfony IO style used for user-facing messages.
+     *
+     * @return array Matching files.
+     */
     protected function twinFinder(Dataset $dataset, File $file, EntityManager $em, SymfonyStyle $io): Array
     {
         $hashMatches = array();
