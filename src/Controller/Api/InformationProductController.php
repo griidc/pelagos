@@ -57,7 +57,8 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Creates a new Information Product
      *
-     * @param Request $request
+     * @param Request             $request
+     * @param MessageBusInterface $messageBus
      *
      * @return Response
      *
@@ -104,8 +105,9 @@ class InformationProductController extends AbstractFOSRestController
     /**
      * Updates the Information Product
      *
-     * @param Request $request
-     * @param InformationProduct $informationProduct
+     * @param Request             $request
+     * @param InformationProduct  $informationProduct
+     * @param MessageBusInterface $messageBus
      *
      * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      *
@@ -119,7 +121,7 @@ class InformationProductController extends AbstractFOSRestController
      *     requirements={"id"="\d+"}
      * )
      */
-    public function updateInformationProduct(Request $request, InformationProduct $informationProduct): Response
+    public function updateInformationProduct(Request $request, InformationProduct $informationProduct, MessageBusInterface $messageBus): Response
     {
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
         $entityManager = $this->getDoctrine()->getManager();
@@ -141,6 +143,9 @@ class InformationProductController extends AbstractFOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
         }
+
+        $messageBus->dispatch(new InformationProductFiler($informationProduct->getId()));
+
         return new JsonResponse([], Response::HTTP_OK);
     }
 
