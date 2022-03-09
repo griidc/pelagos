@@ -129,14 +129,6 @@ services:
         bind:
             string $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
 
-    App\Command\PelagosCheckForMissingFilesCommand:
-        bind:
-            string $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
-
-    App\Command\PelagosClearErrorAndFileCommand:
-        bind:
-            string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
-
     App\Command\RebuildElasticsearchIndexCommand:
         bind:
             FOS\ElasticaBundle\Persister\ObjectPersister $pelagosDatasetIndexPersister: "@fos_elastica.object_persister.pelagos.dataset"
