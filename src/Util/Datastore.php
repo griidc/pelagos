@@ -62,7 +62,7 @@ class Datastore
 
         return $resource;
     }
-
+    
     /**
      * Queries Flysys for a file's mimetype
      *
