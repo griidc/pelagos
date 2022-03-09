@@ -96,16 +96,16 @@ class PelagosClearErrorAndFileCommand extends Command
         // This section is just added for extra safety. Don't delete
         // unless the file is represented in the datastore. Don't delete
         // the only copy of a file.
-        $newUdi = preg_replace('/:/', '.', $udi);
-        $uploadDir = $this->homedirPrefix . '/upload/files';
         $dqlSafe = "SELECT f FROM \App\Entity\File f
             WHERE f.id <> :fileId
             AND f.fileset = :filesetId
-            AND f.physicalFilePath like '$newUdi%'
-            AND f.physicalFilePath not like '$uploadDir/%'";
+            AND f.physicalFilePath like :newUdi
+            AND f.physicalFilePath not like :uploadDir";
         $query = $this->entityManager->createQuery($dqlSafe);
         $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
         $query->setParameter('fileId', $fileId);
+        $query->setParameter('newUdi', preg_replace('/:/', '.', $udi) . '%');
+        $query->setParameter('uploadDir', $this->homedirPrefix . '/upload/files/%');
         if (count($query->getResult()) > 0) {
             try {
                 $this->entityManager->remove($fileToDelete);
