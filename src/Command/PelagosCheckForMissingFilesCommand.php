@@ -6,7 +6,7 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
-use Doctrine\ORM\EntityManager;
+#use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -100,7 +100,7 @@ class PelagosCheckForMissingFilesCommand extends Command
                 $fileset = $datasetSubmission->getFileset();
                 if ($fileset instanceof Fileset) {
                     $files = $fileset->getAllFiles()->filter(function (File $file) {
-                        return $file->getStatus() !== File::FILE_ERROR;
+                        return $file->getStatus() === File::FILE_DONE;
                     });
                     $fileCount = count($files);
                     $io->writeln('Dataset ' . $dataset->getUdi() . ' has ' . $fileCount . ' files.' . "\n");
