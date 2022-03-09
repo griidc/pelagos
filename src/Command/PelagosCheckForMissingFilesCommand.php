@@ -6,14 +6,14 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
-#use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemInterface;
+use Oneup\FlysystemBundle\OneupFlysystemBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
 
 class PelagosCheckForMissingFilesCommand extends Command
 {
@@ -30,9 +30,9 @@ class PelagosCheckForMissingFilesCommand extends Command
     /**
      * A Symfony filesystem instance for checking file existence.
      *
-     * @var Filesystem $filesystem
+     * @var FilesystemInterface $datastoreFlysystem
      */
-    protected Filesystem $filesystem;
+    protected $datastoreFlysystem;
 
     /**
      * Storage location for submitted+ datasets.
@@ -44,15 +44,18 @@ class PelagosCheckForMissingFilesCommand extends Command
     /**
      * Class constructor for dependency injection.
      *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param EntityManagerInterface $entityManager      A Doctrine EntityManager.
+     * @param FilesystemInterface    $datastoreFlysystem A filesystem interface.
+     * @param String                 $dataStoreDirectory Datastore dir from the .env system.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        String $dataStoreDirectory
+        String $dataStoreDirectory,
+        FilesystemInterface $datastoreFlysystem
     ) {
         $this->entityManager = $entityManager;
         $this->dataStoreDirectory = $dataStoreDirectory;
-        $this->filesystem = new Filesystem;
+        $this->datastoreFlysystem = $datastoreFlysystem;
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
@@ -106,12 +109,10 @@ class PelagosCheckForMissingFilesCommand extends Command
                     $io->writeln('Dataset ' . $dataset->getUdi() . ' has ' . $fileCount . ' files.' . "\n");
                     /** @var File $file */
                     foreach ($files as $file) {
-                        $originalFile = $file->getPhysicalFilePath();
-                        if (substr($originalFile, 0, 1) != '/') {
-                            $originalFile = $this->dataStoreDirectory . "/$originalFile";
-                        }
-                        if (!$this->filesystem->exists($originalFile)) {
-                            $io->error("missing file at: $originalFile.\n");
+                        $filePath = $file->getPhysicalFilePath();
+                        if (!$this->datastoreFlysystem->has($filePath)) {
+                            $formattedPath = $this->dataStoreDirectory . '/' . $filePath;
+                            $io->error("missing file at: " . $formattedPath . "\n");
                         }
                     }
                 }

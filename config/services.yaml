@@ -128,6 +128,7 @@ services:
     App\Command\PelagosCheckForMissingFilesCommand:
         bind:
             string $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
+            $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
 
     App\Command\RebuildElasticsearchIndexCommand:
         bind:
