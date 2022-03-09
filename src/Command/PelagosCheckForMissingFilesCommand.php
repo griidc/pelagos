@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PelagosCheckForMissingFilesCommand extends Command
 {
@@ -25,6 +26,13 @@ class PelagosCheckForMissingFilesCommand extends Command
      * @var EntityManagerInterface $entityManager
      */
     protected $entityManager;
+
+    /**
+     * A Symfony filesystem instance for checking file existence.
+     *
+     * @var Filesystem $filesystem
+     */
+    protected Filesystem $filesystem;
 
     /**
      * Storage location for submitted+ datasets.
@@ -44,6 +52,7 @@ class PelagosCheckForMissingFilesCommand extends Command
     ) {
         $this->entityManager = $entityManager;
         $this->dataStoreDirectory = $dataStoreDirectory;
+        $this->filesystem = new Filesystem;
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
@@ -101,7 +110,7 @@ class PelagosCheckForMissingFilesCommand extends Command
                         if (substr($originalFile, 0, 1) != '/') {
                             $originalFile = $this->dataStoreDirectory . "/$originalFile";
                         }
-                        if (!file_exists($originalFile)) {
+                        if (!$this->filesystem->exists($originalFile)) {
                             $io->error("missing file at: $originalFile.\n");
                         }
                     }
