@@ -2,7 +2,7 @@
     <div class="m-2">
         <h4 class="text-center">Information Products</h4>
         <DxDataGrid
-            :data-source="data"
+            :data-source="dataStore"
             :show-borders="true"
             :allow-column-resizing="true"
             :allow-column-reordering="true"
@@ -122,10 +122,9 @@ import { saveAs } from 'file-saver';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 
 const store = new CustomStore({
-    key: 'id',
-    load: () => {
-        return getApi(`${Routing.generate('pelagos_api_get_all_information_product')}`);
-    }
+  key: 'id',
+  // eslint-disable-next-line no-undef
+  load: () => getApi(`${Routing.generate('pelagos_api_get_all_information_product')}`),
 });
 
 export default {
@@ -148,20 +147,20 @@ export default {
   },
   data() {
     return {
-      data: store,
+      dataStore: store,
       researchGroups: window.researchGroups,
-      calculateFilterExpression(filterValue, selectedFilterOperation, target) {
-        if (target === 'search' && typeof (filterValue) === 'string') {
-          return [this.dataField, 'contains', filterValue];
-        }
-        // eslint-disable-next-line func-names
-        return function (data) {
-          return (data.researchGroups || []).indexOf(filterValue) !== -1;
-        };
-      },
+
     };
   },
   methods: {
+    calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+      if (target === 'search' && typeof (filterValue) === 'string') {
+        return [this.dataField, 'contains', filterValue];
+      }
+      return function filterData(data) {
+        return (data.researchGroups || []).indexOf(filterValue) !== -1;
+      };
+    },
     cellTemplate(container, options) {
       const noBreakSpace = '\u00A0';
       const text = (options.value || []).map((element) => options.column.lookup.calculateCellValue(element)).join(', ');
@@ -172,8 +171,8 @@ export default {
     },
     viewClick(e) {
       const { id } = e.row.data;
-      window.open(`/information-product/${id}`, '_blank');
-      e.event.preventDefault();
+      // eslint-disable-next-line no-undef
+      window.open(`${Routing.generate('pelagos_app_ui_information_product')}/${id}`, '_blank');
     },
     onExporting(e) {
       const workbook = new Workbook();
