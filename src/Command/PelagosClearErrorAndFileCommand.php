@@ -8,6 +8,7 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use FFI;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -75,49 +76,56 @@ class PelagosClearErrorAndFileCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $fileId = $input->getArgument('fileId');
         $udi = $input->getArgument('udi');
+        $newUdi = preg_replace('/:/', '.', $udi);
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(
             array('udi' => $udi)
         );
 
-        $dql = "SELECT f FROM \App\Entity\File f
-            WHERE f.id = :fileId
-            AND f.fileset = :filesetId
-            AND f.status = :fileStatus";
+        if ($dataset instanceof Dataset) {
+            $fileToDelete = $this->entityManager->getRepository(File::class)->findOneBy(
+            // Only identify files in an error state.
+                array(
+                    'id' => $fileId,
+                    'fileset' => $dataset->getDatasetSubmission()->getFileset(),
+                    'status' => File::FILE_ERROR
+                )
+            );
 
-        $query = $this->entityManager->createQuery($dql);
-        $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
-        $query->setParameter('fileId', $fileId);
-        // Only identify files in an error state.
-        $query->setParameter('fileStatus', File::FILE_ERROR);
-        /**  @var File $fileToDelete */
-        $fileToDelete = $query->getResult()[0];
+            if ($fileToDelete instanceof File) {
+                // This section is just added for extra safety. Don't delete
+                // unless the file is represented in the datastore. Don't delete
+                // the only copy of a file.
+                $dqlSafe = "SELECT f FROM \App\Entity\File f
+                    WHERE f.id <> :fileId
+                    AND f.fileset = :filesetId
+                    AND f.physicalFilePath like :newUdi
+                    AND f.physicalFilePath not like :uploadDir";
 
-        // This section is just added for extra safety. Don't delete
-        // unless the file is represented in the datastore. Don't delete
-        // the only copy of a file.
-        $dqlSafe = "SELECT f FROM \App\Entity\File f
-            WHERE f.id <> :fileId
-            AND f.fileset = :filesetId
-            AND f.physicalFilePath like :newUdi
-            AND f.physicalFilePath not like :uploadDir";
-        $query = $this->entityManager->createQuery($dqlSafe);
-        $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
-        $query->setParameter('fileId', $fileId);
-        $query->setParameter('newUdi', preg_replace('/:/', '.', $udi) . '%');
-        $query->setParameter('uploadDir', $this->homedirPrefix . '/upload/files/%');
-        if (count($query->getResult()) > 0) {
-            try {
-                $this->entityManager->remove($fileToDelete);
-                $this->entityManager->flush();
-                unlink($fileToDelete->getPhysicalFilePath());
-            } catch (\Exception $e) {
-                $io->error("Could not delete file." . $e->getMessage());
+                $query = $this->entityManager->createQuery($dqlSafe);
+                $query->setParameter('filesetId', $dataset->getDatasetSubmission()->getFileset());
+                $query->setParameter('fileId', $fileId);
+                $query->setParameter('newUdi', preg_replace('/:/', '.', $udi) . '%');
+                $query->setParameter('uploadDir', $this->homedirPrefix . '/upload/files/%');
+                if (count($query->getResult()) > 0) {
+                    try {
+                        $delId = $fileToDelete->getId();
+                        $this->entityManager->remove($fileToDelete);
+                        $this->entityManager->flush();
+                        #unlink($fileToDelete->getPhysicalFilePath());
+                        $io->note("Removed file id: $delId at: " . $fileToDelete->getPhysicalFilePath());
+                    } catch (\Exception $e) {
+                        $io->error("Could not delete file." . $e->getMessage());
+                    }
+                } else {
+                    $io->warning("Not deleting the only copy of file!");
+                }
+            } else {
+                $io->warning("File specified ($fileId) is not in error or not found in fileset for dataset ($udi).");
             }
         } else {
-            $io->warning("Not deleting the only copy of file!");
+            $io->warning("Could not find dataset: ($udi).");
         }
-
         return 0;
     }
 }
