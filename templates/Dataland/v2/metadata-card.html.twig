@@ -1,5 +1,4 @@
-{% if dataset.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE'),
-    constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED')] %}
+{% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
     <div class="py-2">
         <div class="card text-center text-light">
             <div class="card-header bg-chart-primary">
