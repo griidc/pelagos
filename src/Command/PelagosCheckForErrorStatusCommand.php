@@ -12,6 +12,7 @@ use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -65,7 +66,8 @@ class PelagosCheckForErrorStatusCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addArgument('udi', InputArgument::OPTIONAL, 'Run only against passed UDI')
+            ->addOption('udi', null, InputOption::VALUE_OPTIONAL, 'Run only against passed UDI', null)
+            ->addOption('summary', 's', InputOption::VALUE_NONE, 'Just show number of errored files per dataset.', null)
         ;
     }
 
@@ -82,8 +84,8 @@ class PelagosCheckForErrorStatusCommand extends Command
         $this->memcached = MemcachedAdapter::createConnection('memcached://localhost');
 
         $io = new SymfonyStyle($input, $output);
-        $udi = $input->getArgument('udi');
-
+        $udi = $input->getOption('udi');
+        $short = $input->getOption('summary');
         if ($udi) {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
                 array('udi' => $udi)
@@ -104,17 +106,19 @@ class PelagosCheckForErrorStatusCommand extends Command
                     });
                     $fileCountInError = count($files);
                     if ($fileCountInError > 0) {
-                        $io->warning('Dataset ' . $dataset->getUdi() . ' has the following ' . $fileCountInError . ' files in error.');
+                        $io->warning('Dataset ' . $dataset->getUdi() . ' has ' . $fileCountInError . ' files in error.');
                     }
-                    /** @var File $file */
-                    foreach ($files as $file) {
-                        $id = $file->getId();
-                        $twins = $this->twinFinder($dataset, $file, $this->entityManager, $io);
-                        $io->note("known dataset file: ($id): " . $file->getPhysicalFilePath());
-                        if (count($twins) > 0) {
-                            foreach ($twins as $twin) {
-                                $twinId = $twin->getId();
-                                $io->warning("same hash ($twinId): " . $twin->getPhysicalFilePath());
+                    if (false === $short) {
+                        /** @var File $file */
+                        foreach ($files as $file) {
+                            $id = $file->getId();
+                            $twins = $this->twinFinder($dataset, $file, $this->entityManager, $io);
+                            $io->note("known dataset file: ($id): " . $file->getPhysicalFilePath());
+                            if (count($twins) > 0) {
+                                foreach ($twins as $twin) {
+                                    $twinId = $twin->getId();
+                                    $io->warning("same hash ($twinId): " . $twin->getPhysicalFilePath());
+                                }
                             }
                         }
                     }
