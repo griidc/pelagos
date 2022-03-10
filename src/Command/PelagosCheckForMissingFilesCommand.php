@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemInterface;
 use Oneup\FlysystemBundle\OneupFlysystemBundle;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -68,8 +68,7 @@ class PelagosCheckForMissingFilesCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addArgument('udi', InputArgument::OPTIONAL, 'Run only against passed UDI')
-        ;
+            ->addOption('udi', null, InputOption::VALUE_OPTIONAL, 'Run only against passed UDI', null);
     }
 
     /**
@@ -83,7 +82,7 @@ class PelagosCheckForMissingFilesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $udi = $input->getArgument('udi');
+        $udi = $input->getOption('udi');
 
         if ($udi) {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
