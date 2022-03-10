@@ -177,7 +177,6 @@ class InformationProductController extends AbstractFOSRestController
         $informationProducts = $informationProductRepository->findAll();
 
         return new Response($serializer->serialize($informationProducts, 'json', $context));
-
     }
 
     /**
