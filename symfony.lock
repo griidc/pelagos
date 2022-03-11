@@ -253,7 +253,7 @@
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "master",
             "version": "3.0",
-            "ref": "0eb87bba411c227da027fe5f7c1dc7954b02f242"
+            "ref": "e6c6440b279273a468e1f570b0fc1d4ff54ad69e"
         },
         "files": [
             "config/packages/oneup_flysystem.yaml"
