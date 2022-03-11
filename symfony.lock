@@ -780,7 +780,16 @@
         "version": "2.12.0"
     },
     "willdurand/hateoas-bundle": {
-        "version": "1.4.0"
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "34df072c6edaa61ae19afb2f3a239f272fecab87"
+        },
+        "files": [
+            "config/packages/bazinga_hateoas.yaml"
+        ]
     },
     "willdurand/jsonp-callback-validator": {
         "version": "v1.1.0"
