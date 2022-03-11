@@ -25,9 +25,6 @@ Encore
 /*
      * ENTRY CONFIG
      *
-     * Add 1 entry for each "page" of your app
-     * (including one that's included on every page - e.g. "app")
-     *
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
@@ -46,16 +43,20 @@ Encore
   .addEntry('hri-app', './assets/js/main/hri-app.js')
   .addEntry('information-product', './assets/js/entry/information-product.js')
   .addEntry('information-product-list', './assets/js/entry/information-product-list.js')
+  // .addEntry('app', './assets/app.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
   .enablePostCssLoader()
 
-// will require an extra script tag for runtime.js
-// but, you probably want this, unless you're building a single-page app
+  // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+  // .enableStimulusBridge('./assets/controllers.json')
+
+  // will require an extra script tag for runtime.js
+  // but, you probably want this, unless you're building a single-page app
   .enableSingleRuntimeChunk()
 
-// When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
+  // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
 
   .addAliases({
@@ -74,14 +75,28 @@ Encore
   .cleanupOutputBeforeBuild()
   .enableBuildNotifications()
   .enableSourceMaps(!Encore.isProduction())
-// enables hashed filenames (e.g. app.abc123.css)
+  // enables hashed filenames (e.g. app.abc123.css)
   .enableVersioning(Encore.isProduction())
 
-// enables @babel/preset-env polyfills
+  .configureBabel((config) => {
+    config.plugins.push('@babel/plugin-proposal-class-properties');
+})
+
+  // enables @babel/preset-env polyfills
   .configureBabelPresetEnv((config) => {
     config.useBuiltIns = 'usage';
     config.corejs = 3;
   })
+
+  // uncomment if you use TypeScript
+  //.enableTypeScriptLoader()
+
+  // uncomment if you use React
+  //.enableReactPreset()
+
+  // uncomment to get integrity="..." attributes on your script & link tags
+  // requires WebpackEncoreBundle 1.4 or higher
+  //.enableIntegrityHashes(Encore.isProduction())
 
 // uncomment if you're having problems with a jQuery plugin
   .autoProvidejQuery()
