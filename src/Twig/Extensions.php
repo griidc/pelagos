@@ -2,11 +2,9 @@
 
 namespace App\Twig;
 
-use Doctrine\Common\Collections\Collection;
-
 use App\Entity\DIF;
-
 use App\Util\MaintenanceMode;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
@@ -85,6 +83,10 @@ class Extensions extends AbstractExtension
             new \Twig\TwigFunction(
                 'vanityurl',
                 [$this, 'getVanityUrl']
+            ),
+            new \Twig\TwigFunction(
+                'vanitypath',
+                [$this, 'getVanityPath']
             ),
         );
     }
@@ -332,19 +334,49 @@ class Extensions extends AbstractExtension
         return "$bytes $units[0]";
     }
 
-    /**
-     * Generate the URL, remove base URL if it's on the excluded list.
+     /**
+     * Generate the path, remove Base URL if it's on the excluded list.
      *
      * @param string  $name           The route name.
-     * @param array   $parameters     Any URL parameters.
+     * @param array   $parameters     Any parameters.
+     * @param boolean $relative       Generate relative path.
+     *
+     * @return string The generated Patg.
+     */
+    public function getVanityPath($name, $parameters = [], $relative = false)
+    {
+        $referenceType =  $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH;
+
+        return $this->generate($name, $parameters, $referenceType);
+    }
+
+    /**
+     * Generate the URL, remove Base URL if it's on the excluded list.
+     *
+     * @param string  $name           The route name.
+     * @param array   $parameters     Any parameters.
      * @param boolean $schemeRelative Generate relative URL.
      *
-     * @return string
+     * @return string The generated URL.
      */
     public function getVanityUrl($name, $parameters = [], $schemeRelative = false)
     {
         $referenceType =  $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
 
+        return $this->generate($name, $parameters, $referenceType);
+    }
+
+    /**
+     * Generate the URL, and remote base url if it's excluded.
+     *
+     * @param string  $name           The route name.
+     * @param array   $parameters     Any URL parameters.
+     * @param boolean $schemeRelative Generate relative URL.
+     *
+     * @return string The generated URL/path.
+     */
+    private function generate($name, $parameters, $referenceType)
+    {
         if (in_array($name, $this->excludeRoutes)) {
             $context = $this->router->getContext();
             $oldBaseUrl = (string) $context->getBaseUrl();
