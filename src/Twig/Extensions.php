@@ -7,9 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use App\Entity\DIF;
 
 use App\Util\MaintenanceMode;
-
 use Symfony\Component\HttpKernel\KernelInterface;
-
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Environment;
 
@@ -33,15 +32,24 @@ class Extensions extends AbstractExtension
     private $maintenanceMode;
 
     /**
+     * The Router Interface.
+     *
+     * @var UrlGeneratorInterface
+     */
+    protected $router;
+
+    /**
      *  Constructor.
      *
      * @param KernelInterface $kernel          The Symfony kernel.
      * @param MaintenanceMode $maintenanceMode The maintenance mode utility.
      */
-    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode)
+    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode, UrlGeneratorInterface $router, array $excludeRoutes)
     {
         $this->kernelRootDir = $kernel->getProjectDir();
         $this->maintenanceMode = $maintenanceMode;
+        $this->router = $router;
+        $this->excludeRoutes = $excludeRoutes;
     }
 
     /**
@@ -73,6 +81,10 @@ class Extensions extends AbstractExtension
             new \Twig\TwigFunction(
                 'getMaintenanceModeColor',
                 [$this, 'maintenanceModeColor']
+            ),
+            new \Twig\TwigFunction(
+                'vanityurl',
+                [$this, 'getVanityUrl']
             ),
         );
     }
@@ -318,5 +330,35 @@ class Extensions extends AbstractExtension
             }
         }
         return "$bytes $units[0]";
+    }
+
+    /**
+     * Generate the URL, remove base URL if it's on the excluded list.
+     *
+     * @param string  $name           The route name.
+     * @param array   $parameters     Any URL parameters.
+     * @param boolean $schemeRelative Generate relative URL.
+     *
+     * @return string
+     */
+    public function getVanityUrl($name, $parameters = [], $schemeRelative = false)
+    {
+        $referenceType =  $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
+
+        if (in_array($name, $this->excludeRoutes)) {
+            $context = $this->router->getContext();
+            $oldBaseUrl = (string) $context->getBaseUrl();
+            $context->setBaseUrl('');
+            $context = $this->router->setContext($context);
+            $generate = $this->router->generate($name, $parameters, $referenceType);
+            // Set the baseUrl back in context.
+            $context = $this->router->getContext();
+            $context->setBaseUrl($oldBaseUrl);
+            $context = $this->router->setContext($context);
+        } else {
+            $generate = $this->router->generate($name, $parameters, $referenceType);
+        }
+
+        return $generate;
     }
 }

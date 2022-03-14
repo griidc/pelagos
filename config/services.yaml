@@ -99,7 +99,7 @@ services:
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
         $doiApiPrefix: "%env(DOI_API_PREFIX)%"
         $doiApiUrl: "%env(DOI_API_URL)%"
-    
+
     App\Util\IngestUtil:
         $ingestApiUrl: "%env(INGEST_API_URL)%"
 
@@ -196,3 +196,7 @@ services:
     App\MessageHandler\DatasetSubmissionFilerHandler:
         bind:
             $downloadDirectory: "%env(DOWNLOAD_PATH)%"
+
+    App\Twig\Extensions:
+        bind:
+            array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
