@@ -201,3 +201,7 @@ services:
     App\MessageHandler\DatasetSubmissionFilerHandler:
         bind:
             $downloadDirectory: "%env(DOWNLOAD_PATH)%"
+
+    App\Twig\Extensions:
+        bind:
+            array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
