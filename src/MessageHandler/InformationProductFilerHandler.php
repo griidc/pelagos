@@ -76,7 +76,7 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         );
 
         $file = $informationProduct->getFile();
-        if (!$file instanceof File ) {
+        if (!$file instanceof File) {
             $this->logger->error("No file for this IP, bye!", $loggingContext);
             return;
         }

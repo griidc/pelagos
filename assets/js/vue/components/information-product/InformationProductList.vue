@@ -2,11 +2,16 @@
     <div class="m-2">
         <h4 class="text-center">Information Products</h4>
         <DxDataGrid
-            :data-source="data"
+            :data-source="dataStore"
             :show-borders="true"
             :allow-column-resizing="true"
+            :allow-column-reordering="true"
+            column-resizing-mode="widget"
             :row-alternation-enabled="true"
             :column-auto-width="true"
+            :focused-row-enabled="true"
+            :auto-navigate-to-focused-row="true"
+            @exporting="onExporting"
         >
             <DxLoadPanel :enabled="true"/>
 
@@ -29,6 +34,16 @@
               :allow-search="true"
             />
 
+            <DxColumnChooser :enabled="true"/>
+            <DxColumnFixing :enabled="true"/>
+
+            <DxGroupPanel :visible="true"/>
+
+            <DxExport
+              :enabled="true"
+              :allow-export-selected-data="true"
+            />
+
             <DxColumn
                 type="buttons"
                 :width="60"
@@ -38,7 +53,7 @@
                     icon="link"
                     :visible="true"
                     :disabled="false"
-                    @click="viewClick"
+                    :onClick="viewClick"
                   />
             </DxColumn>
 
@@ -74,11 +89,15 @@
                 caption="File Name"
             />
             <DxColumn data-field="remoteUri"/>
+
+            <DxSorting mode="multiple"/>
         </DxDataGrid>
     </div>
 </template>
 
 <script>
+import CustomStore from 'devextreme/data/custom_store';
+
 import {
   DxDataGrid,
   DxColumn,
@@ -86,12 +105,27 @@ import {
   DxSearchPanel,
   DxPaging,
   DxPager,
-  DxHeaderFilter,
   DxButton,
+  DxHeaderFilter,
   DxLoadPanel,
+  DxSorting,
+  DxColumnChooser,
+  DxColumnFixing,
+  DxGroupPanel,
+  DxExport,
 } from 'devextreme-vue/data-grid';
+import { getApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
+import { exportDataGrid } from 'devextreme/excel_exporter';
+
+const store = new CustomStore({
+  key: 'id',
+  // eslint-disable-next-line no-undef
+  load: () => getApi(`${Routing.generate('pelagos_api_get_all_information_product')}`),
+});
 
 export default {
   name: 'InformationProductList',
@@ -105,24 +139,28 @@ export default {
     DxHeaderFilter,
     DxButton,
     DxLoadPanel,
+    DxSorting,
+    DxColumnChooser,
+    DxColumnFixing,
+    DxGroupPanel,
+    DxExport,
   },
   data() {
     return {
-      // eslint-disable-next-line no-undef
-      data: `${Routing.generate('pelagos_api_get_all_information_product')}`,
+      dataStore: store,
       researchGroups: window.researchGroups,
-      calculateFilterExpression(filterValue, selectedFilterOperation, target) {
-        if (target === 'search' && typeof (filterValue) === 'string') {
-          return [this.dataField, 'contains', filterValue];
-        }
-        // eslint-disable-next-line func-names
-        return function (data) {
-          return (data.researchGroups || []).indexOf(filterValue) !== -1;
-        };
-      },
+
     };
   },
   methods: {
+    calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+      if (target === 'search' && typeof (filterValue) === 'string') {
+        return [this.dataField, 'contains', filterValue];
+      }
+      return function filterData(data) {
+        return (data.researchGroups || []).indexOf(filterValue) !== -1;
+      };
+    },
     cellTemplate(container, options) {
       const noBreakSpace = '\u00A0';
       const text = (options.value || []).map((element) => options.column.lookup.calculateCellValue(element)).join(', ');
@@ -133,8 +171,23 @@ export default {
     },
     viewClick(e) {
       const { id } = e.row.data;
-      window.open(`/information-product/${id}`, '_blank');
-      e.event.preventDefault();
+      // eslint-disable-next-line no-undef
+      window.open(`${Routing.generate('pelagos_app_ui_information_product')}/${id}`, '_blank');
+    },
+    onExporting(e) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('IPs');
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+        });
+      });
+      e.cancel = true;
     },
   },
 };
