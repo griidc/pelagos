@@ -37,6 +37,13 @@ class Extensions extends AbstractExtension
     protected $router;
 
     /**
+     * The list of routes to have their baseUrl removed.
+     *
+     * @var array
+     */
+    protected $excludeRoutes;
+
+    /**
      *  Constructor.
      *
      * @param KernelInterface $kernel          The Symfony kernel.
