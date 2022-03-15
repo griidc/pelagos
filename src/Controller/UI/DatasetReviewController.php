@@ -479,7 +479,6 @@ class DatasetReviewController extends AbstractController
                 foreach ($fileset->getNewFiles() as $file) {
                     $file->setStatus(File::FILE_IN_QUEUE);
                 }
-                $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
             }
 
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
@@ -513,6 +512,8 @@ class DatasetReviewController extends AbstractController
                     $entityManager->persist($newFileset);
                 }
             }
+
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
 
             $entityManager->flush();
 

@@ -116,7 +116,7 @@ class DatasetSubmission extends Entity
     const TRANSFER_STATUS_REMOTELY_HOSTED = 'RemotelyHosted';
 
     /**
-     * Indicates that the dataset is remotely hosted.
+     * Indicates that the dataset submission is set to be processed by the filer.
      */
     const TRANSFER_STATUS_BEING_PROCESSED = 'BeingProcessed';
 

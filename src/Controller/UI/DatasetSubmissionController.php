@@ -253,6 +253,8 @@ class DatasetSubmissionController extends AbstractController
                 }
             }
 
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
+
             $entityManager->flush();
 
             $this->entityEventDispatcher->dispatch(
