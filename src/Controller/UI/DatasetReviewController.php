@@ -513,6 +513,8 @@ class DatasetReviewController extends AbstractController
                 }
             }
 
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
+
             $entityManager->flush();
 
             // update MDAPP logs after action is executed.
@@ -550,7 +552,7 @@ class DatasetReviewController extends AbstractController
 
         if (in_array($datasetSubmission->getStatus(), $statuses)
             and $datasetSubmission->getFileset() instanceof Fileset
-            and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
+            and $datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED
         ) {
                 return true;
         }
