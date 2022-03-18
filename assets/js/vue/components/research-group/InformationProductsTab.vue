@@ -1,32 +1,42 @@
 <template>
-  <b-card-group deck>
-    <b-card class="card-product my-2"
+  <div class="col-12">
+    <b-card class="card-product"
             v-for="informationProduct in informationProductData"
-            :key="informationProduct.id"
-            :title="informationProduct.title">
-      <b-card-text>
-        Creators: {{ informationProduct.creators }}
-      </b-card-text>
-      <b-card-text>
-        Publisher: {{ informationProduct.publisher }}
-      </b-card-text>
-      <b-card-text class="text-muted">
-        DOI:{{ informationProduct.externalDoi }}
-      </b-card-text>
-      <b-card-text v-if="informationProduct.file && informationProduct.file.status === 'done'" class="text-muted">
-        File:
-        <a :href="`${downloadUrl}/${informationProduct.id}`">
-          {{ informationProduct.file.filePathName }}
-        </a> ({{ humanSize(informationProduct.file.fileSize) }})
-      </b-card-text>
-      <b-card-text v-if="informationProduct.remoteUri" class="text-muted">
-        Remote Link:
-        <a :href="informationProduct.remoteUri">
-          {{ informationProduct.remoteUri }}
-        </a>
+            :key="informationProduct.id">
+      <div>
+        <span class="badge badge-available">Product Type</span>
+        <span class="badge badge-submitted">Digital Resource Type</span>
+      </div>
+      <b-card-title style="font-size: 1.3rem !important;">{{ informationProduct.title }}</b-card-title>
+      <b-card-text class="d-flex justify-content-between" >
+        <div v-if="Object.keys(informationProduct).length > 0">
+          <div v-if="informationProduct.creators" style="max-width: 550px">
+            Creators: {{ informationProduct.creators }}
+          </div>
+          <div v-if="informationProduct.publisher">
+            Publisher: {{ informationProduct.publisher }}
+          </div>
+        </div>
+        <div>
+          <div v-if="informationProduct.externalDoi">
+            DOI:{{ informationProduct.externalDoi }}
+          </div>
+          <div v-if="informationProduct.file && informationProduct.file.status === 'done'">
+            File:
+            <a :href="`${downloadUrl}/${informationProduct.id}`">
+              {{ informationProduct.file.filePathName }}
+            </a> ({{ humanSize(informationProduct.file.fileSize) }})
+          </div>
+          <div v-if="informationProduct.remoteUri">
+            Remote Link:
+            <a :href="informationProduct.remoteUri" target="_BLANK">
+              {{ informationProduct.remoteUri }}
+            </a>
+          </div>
+        </div>
       </b-card-text>
     </b-card>
-  </b-card-group>
+  </div>
 </template>
 
 <script>
@@ -66,6 +76,23 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.card-product {
+  margin-bottom: 1rem;
+  transition: .5s;
+
+  &:hover {
+    .btn-overlay {
+      opacity: 1;
+    }
+
+    box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+    transition: .5s;
+    cursor: pointer;
+  }
+}
+.card-body {
+  padding: 0.625rem !important;
+}
 
 </style>
