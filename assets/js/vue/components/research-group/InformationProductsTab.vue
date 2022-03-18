@@ -29,7 +29,7 @@
           </div>
           <div v-if="informationProduct.remoteUri">
             Remote Link:
-            <a :href="informationProduct.remoteUri">
+            <a :href="informationProduct.remoteUri" target="_BLANK">
               {{ informationProduct.remoteUri }}
             </a>
           </div>
