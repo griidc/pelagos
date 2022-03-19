@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Fileset Entity class.
@@ -242,6 +243,9 @@ class Fileset extends Entity
     /**
      * Returns the total filesize for this fileset.
      *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("totalFileSize")
+     *
      * @return integer
      */
     public function getFileSize() :int
@@ -408,6 +412,9 @@ class Fileset extends Entity
 
     /**
      * Returns the number of files in the fileset.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("numberOfFiles")
      *
      * @return integer
      */
