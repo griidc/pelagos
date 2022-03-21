@@ -350,9 +350,8 @@ class DatasetController extends EntityController
                 "totalFileSize" => $dataset->getTotalFileSize(),
             );
             $data[] = $datasetArray;
-            }
+        }
 
         return new JsonResponse($data);
-
     }
 }
