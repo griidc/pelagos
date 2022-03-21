@@ -28,37 +28,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DatasetController extends EntityController
 {
-
-    /**
-     * Undocumented function
-     *
-     * @param string              $udi               The udi for the dataset.
-     * @param DatasetRepository   $datasetRepository The dataset Repository.
-     * @param SerializerInterface $serializer        JMS Serializer.
-     *
-     * @throws NotFoundException When a dataset with the given UDI is not found.
-     *
-     * @Route("/api/dataset/{udi}", name="pelagos_api_dataset", methods={"GET"}, defaults={"_format"="json"})
-     *
-     * @View()
-     *
-     * @return Response
-     */
-    public function getDataset($udi, DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
-    {
-        $dataset = $datasetRepository->findOneBy(array('udi' => $udi));
-
-        if (!$dataset instanceof Dataset) {
-            throw new NotFoundException("Dataset with $udi not found!");
-        }
-
-        $context = SerializationContext::create();
-        $context->enableMaxDepthChecks();
-        $context->setSerializeNull(true);
-
-        return new Response($serializer->serialize($dataset, 'json', $context));
-    }
-
     /**
      * Get a count of Datasets.
      *

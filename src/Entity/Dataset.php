@@ -98,8 +98,6 @@ class Dataset extends Entity
      * @var ResearchGroup
      *
      * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="datasets")
-     *
-     * @Serializer\MaxDepth(0)
      */
     protected $researchGroup;
 
@@ -109,8 +107,6 @@ class Dataset extends Entity
      * @var DIF
      *
      * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
-     *
-     * @Serializer\MaxDepth(0)
      */
     protected $dif;
 
@@ -120,8 +116,6 @@ class Dataset extends Entity
      * @var DatasetSubmission
      *
      * @ORM\OneToOne(targetEntity="DatasetSubmission")
-     *
-     * @Serializer\MaxDepth(3)
      */
     protected $datasetSubmission;
 
@@ -133,8 +127,6 @@ class Dataset extends Entity
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
      *
      * @ORM\OrderBy({"sequence" = "DESC"})
-     *
-     * @Serializer\Exclude
      */
     protected $datasetSubmissionHistory;
 
