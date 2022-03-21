@@ -2,9 +2,10 @@
 
 namespace App\Util;
 
+use Laminas\Diactoros\Stream;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
-
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -50,29 +51,17 @@ class Datastore
      *
      * @throws \Exception Exception thrown when read stream fails.
      *
-     * @return array
+     * @return Stream
      */
-    public function getFile(string $filePath): array
+    public function getFile(string $filePath): Stream
     {
-        $resource['fileStream'] = $this->datastoreFlysystem->readStream($filePath);
+        $resource = $this->datastoreFlysystem->readStream($filePath);
 
-        if ($resource['fileStream'] === false) {
+        if ($resource === false) {
             throw new \Exception(sprintf('Error opening stream for "%s"', $filePath));
         }
 
-        return $resource;
-    }
-
-    /**
-     * Checks whether a file exists or not.
-     *
-     * @param string $filePath The file path.
-     *
-     * @return bool
-     */
-    public function has(string $filePath): bool
-    {
-        return $this->datastoreFlysystem->has($filePath);
+        return new Stream($resource);
     }
 
     /**
@@ -95,18 +84,20 @@ class Datastore
      *
      * @return string
      */
-    public function addFile(array $fileStream, string $filePathName): string
+    public function addFile(StreamInterface $stream, string $filePathName): string
     {
         $newFilePathName = FileNameUtilities::makeFileName($filePathName);
         $newFilePathName = FileNameUtilities::fixFileNameLength($newFilePathName);
+        $resource = $stream->detach();
+
         try {
-            $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
+              $this->datastoreFlysystem->writeStream($newFilePathName, $resource);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
 
-        if (is_resource($fileStream['fileStream'])) {
-            fclose($fileStream['fileStream']);
+        if (is_resource($resource)) {
+            fclose($resource);
         }
         return $newFilePathName;
     }

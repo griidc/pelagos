@@ -13,6 +13,7 @@ use App\Util\Datastore;
 use App\Util\StreamInfo;
 use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
+use Laminas\Diactoros\Stream;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -144,7 +145,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             }
             $this->logger->info('Zipfile opened: ' . $destinationPath);
             $fileStream = fopen($destinationPath, 'w+');
-            $outputStream = array('fileStream' => $fileStream);
+            $outputStream = new Stream($fileStream);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
                 $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName']);

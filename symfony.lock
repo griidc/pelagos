@@ -204,6 +204,15 @@
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
+    "laminas/laminas-diactoros": {
+        "version": "0.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "0.0",
+            "ref": ""
+        }
+    },
     "laminas/laminas-eventmanager": {
         "version": "3.4.0"
     },

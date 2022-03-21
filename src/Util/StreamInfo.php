@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use App\Entity\DatasetSubmission;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * A utility class to get various information from a file stream.
@@ -17,9 +18,9 @@ class StreamInfo
      *
      * @return string The hash calculated from the stream.
      */
-    public static function calculateHash(array $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
+    public static function calculateHash(StreamInterface $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
     {
-        $fileStream = $inputFileStream['fileStream'] ?? null;
+        $fileStream = $inputFileStream->detach() ?? null;
         $context = hash_init($algo);
         hash_update_stream($context, $fileStream);
         return hash_final($context);
@@ -32,9 +33,9 @@ class StreamInfo
      *
      * @return integer The file size of the stream.
      */
-    public static function getFileSize(array $inputFileStream) :int
+    public static function getFileSize(StreamInterface $inputFileStream) :int
     {
-        $fileStream = $inputFileStream['fileStream'] ?? null;
+        $fileStream = $inputFileStream->de ?? null;
         $fstat = fstat($fileStream);
         return (int) $fstat['size'];
     }

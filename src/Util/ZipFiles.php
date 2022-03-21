@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use Psr\Http\Message\StreamInterface;
 use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
@@ -20,10 +21,10 @@ class ZipFiles
      *
      * @return void
      */
-    public function start(array $outputFileStream, string $zipFileName): void
+    public function start(StreamInterface $outputFileStream, string $zipFileName): void
     {
         $options = new Archive();
-        $options->setOutputStream($outputFileStream['fileStream']);
+        $options->setOutputStream($outputFileStream->detach());
         $this->zip = new ZipStream($zipFileName, $options);
     }
 
@@ -35,10 +36,10 @@ class ZipFiles
      *
      * @return void
      */
-    public function addFile(string $fileName, array $fileStream): void
+    public function addFile(string $fileName, StreamInterface $fileStream): void
     {
-        if (!empty($fileStream) and is_resource($fileStream['fileStream'])) {
-            $this->zip->addFileFromStream($fileName, $fileStream['fileStream']);
+        if ($fileStream->isReadable()) {
+            $this->zip->addFileFromStream($fileName, $fileStream->detach());
         }
     }
 
