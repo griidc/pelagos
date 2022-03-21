@@ -116,6 +116,11 @@ class DatasetSubmission extends Entity
     const TRANSFER_STATUS_REMOTELY_HOSTED = 'RemotelyHosted';
 
     /**
+     * Indicates that the dataset submission is set to be processed by the filer.
+     */
+    const TRANSFER_STATUS_BEING_PROCESSED = 'BeingProcessed';
+
+    /**
      * Valid values for $datasetFileTransferStatus.
      */
     const TRANSFER_STATUSES = array(
@@ -124,6 +129,7 @@ class DatasetSubmission extends Entity
         self::TRANSFER_STATUS_ERROR => 'Transfer Error',
         self::TRANSFER_STATUS_NEEDS_REVIEW => 'URL Needs Review',
         self::TRANSFER_STATUS_REMOTELY_HOSTED => 'Remotely Hosted',
+        self::TRANSFER_STATUS_BEING_PROCESSED => 'Submission is being Processed',
     );
 
     /**
