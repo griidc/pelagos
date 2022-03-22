@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
+use App\Util\DatasetCitationUtil;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-
-use App\Util\DatasetCitationUtil;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Dataset Entity class.
@@ -640,7 +639,7 @@ class Dataset extends Entity
         }
         $this->setAvailabilityStatus($availabilityStatus);
     }
-    
+
     /**
      * Whether this Dataset is available.
      *
@@ -656,7 +655,7 @@ class Dataset extends Entity
             )
         );
     }
-    
+
     /**
      * Whether this Dataset is remotely hosted.
      *
@@ -834,5 +833,47 @@ class Dataset extends Entity
         }
 
         return $collection;
+    }
+
+    /**
+     * Return the total file size for this dataset.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("totalFileSize")
+     *
+     * @return integer|null
+     */
+    public function getTotalFileSize(): ?int
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileSet = $datasetSubmission->getFileset();
+            if ($fileSet instanceof Fileset) {
+                return $fileSet->getFileSize();
+            }
+        }
+
+        return null;
+    }
+
+     /**
+     * Return the number of files in this dataset.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("numberOfFiles")
+     *
+     * @return integer|null
+     */
+    public function getNumberOfFiles(): ?int
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileSet = $datasetSubmission->getFileset();
+            if ($fileSet instanceof Fileset) {
+                return $fileSet->getNumberOfFiles();
+            }
+        }
+
+        return null;
     }
 }

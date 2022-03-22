@@ -4,29 +4,24 @@ namespace App\Controller\Api;
 
 use App\Entity\File;
 use App\Entity\Fileset;
-use App\Message\DeleteDir;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
-
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-
-use FOS\RestBundle\Controller\Annotations\View;
-
-use App\Form\DatasetType;
-
-use App\Event\EntityEventDispatcher;
-
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Event\EntityEventDispatcher;
+use App\Form\DatasetType;
 use App\Message\DeleteFile;
+use App\Repository\DatasetRepository;
 use App\Util\MdappLogger;
+use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Swagger\Annotations as SWG;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset api controller.
@@ -329,5 +324,34 @@ class DatasetController extends EntityController
             $deleteFileMessage = new DeleteFile($fileset->getZipFilePath(), false);
             $messageBus->dispatch($deleteFileMessage);
         }
+    }
+
+    /**
+     * File number of files and total size for all datasets by UDI.
+     *
+     * @param DatasetRepository $datasetRepository The Dataset Repository.
+     *
+     * @Route("/api/datasetFileCountSize", name="pelagos_api_datasets_file_count_size", methods={"GET"}, defaults={"_format"="json"})
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getFileCountSize(DatasetRepository $datasetRepository): Response
+    {
+        $datasets = $datasetRepository->findAll();
+
+        $data = [];
+
+        foreach ($datasets as $dataset) {
+            $datasetArray = array (
+                "udi" => $dataset->getUdi(),
+                "numberOfFiles" => $dataset->getNumberOfFiles(),
+                "totalFileSize" => $dataset->getTotalFileSize(),
+            );
+            $data[] = $datasetArray;
+        }
+
+        return new JsonResponse($data);
     }
 }
