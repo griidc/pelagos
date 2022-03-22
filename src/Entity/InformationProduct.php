@@ -120,6 +120,11 @@ class InformationProduct extends Entity
     private $file;
 
     /**
+     * @ORM\OneToMany(targetEntity=ProductType::class, mappedBy="informationProduct", orphanRemoval=true)
+     */
+    private $productType;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -127,6 +132,7 @@ class InformationProduct extends Entity
     public function __construct()
     {
         $this->researchGroups = new ArrayCollection();
+        $this->productType = new ArrayCollection();
     }
 
     /**
@@ -374,6 +380,36 @@ class InformationProduct extends Entity
     public function setFile(?File $file): self
     {
         $this->file = $file;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductType[]
+     */
+    public function getProductType(): Collection
+    {
+        return $this->productType;
+    }
+
+    public function addProductType(ProductType $productType): self
+    {
+        if (!$this->productType->contains($productType)) {
+            $this->productType[] = $productType;
+            $productType->setInformationProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductType(ProductType $productType): self
+    {
+        if ($this->productType->removeElement($productType)) {
+            // set the owning side to null (unless already changed)
+            if ($productType->getInformationProduct() === $this) {
+                $productType->setInformationProduct(null);
+            }
+        }
 
         return $this;
     }
