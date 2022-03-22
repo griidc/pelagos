@@ -91,7 +91,6 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
 
         $destinationPath = 'information_products'
             . DIRECTORY_SEPARATOR .  $informationProductId
-            . '-' . str_replace(' ', '_', substr($informationProduct->getTitle(), 0, 20))
             . DIRECTORY_SEPARATOR . $file->getFilePathName();
 
         if ($fileStream === false) {
