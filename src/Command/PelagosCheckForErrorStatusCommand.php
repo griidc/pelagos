@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -142,8 +141,7 @@ class PelagosCheckForErrorStatusCommand extends Command
     {
         $hashMatches = array();
         $originalFile = $unalteredOriginalFile = $file->getPhysicalFilePath();
-        $originalFileId = $file->getId();
-        if (substr($originalFile, 0, 1) != '/') {
+        if (substr($originalFile, 0, 1) !== '/') {
             $originalFile = $this->dataStoreDirectory . '/' . $originalFile;
         }
         if (file_exists($originalFile)) {
@@ -160,7 +158,7 @@ class PelagosCheckForErrorStatusCommand extends Command
 
             foreach ($matches as $match) {
                 $matchesPath = $match->getPhysicalFilePath();
-                if (substr($matchesPath, 0, 1) != '/') {
+                if (substr($matchesPath, 0, 1) !== '/') {
                     $matchesPath = $this->dataStoreDirectory . '/' . $matchesPath;
                 }
                 if (file_exists($matchesPath)) {
@@ -182,17 +180,16 @@ class PelagosCheckForErrorStatusCommand extends Command
      * Returns sha256sum of file, checking for previous work first.
      *
      * @param String $filename The filename of what we want to get a hash of.
+     *
+     * @return String $hash The sha256 of the file, either from cache or generated.
      */
-    protected function smartSha256Hash($filename)
+    protected function smartSha256Hash($filename): string
     {
         $hash = $this->memcached->get($filename);
-        if ($hash) {
-            return $hash;
-        } else {
-            // I hardcoded to sha256 otherwise hashtype would have to be part
-            // of what is stored in cache. Named method accordingly.
+        if (false === $hash) {
             $hash = hash_file("sha256", $filename);
             $this->memcached->set($filename, $hash);
         }
+        return $hash;
     }
 }
