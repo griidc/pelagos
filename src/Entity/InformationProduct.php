@@ -120,6 +120,17 @@ class InformationProduct extends Entity
     private $file;
 
     /**
+     * The collection of types for this Information Product.
+     *
+     * @var Collection
+     *
+     * @Serializer\MaxDepth(1)
+     *
+     * @ORM\OneToMany(targetEntity="InformationProductType", mappedBy="InformationProduct")
+     */
+    private $informationProductTypes;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -376,5 +387,29 @@ class InformationProduct extends Entity
         $this->file = $file;
 
         return $this;
+    }
+
+    /**
+     * Adder for Information Product type.
+     *
+     * @param InformationProductType $informationProductType Single information product type to be added.
+     *
+     * @return void
+     */
+    public function addInformationProductType(InformationProductType $informationProductType): void
+    {
+        $this->informationProductTypes->add($informationProductType);
+    }
+
+    /**
+     * Remover for Information Product type.
+     *
+     * @param InformationProductType $informationProductType Single information product type to be removed.
+     *
+     * @return void
+     */
+    public function removeFile(InformationProductType $informationProductType): void
+    {
+        $this->informationProductTypes->removeElement($informationProductType);
     }
 }
