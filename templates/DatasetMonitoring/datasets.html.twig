@@ -138,13 +138,13 @@
 
             <tr udi="{{dataset.udi}}">
                 {% if not dataland | default %}
-                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details"><a href="{{ vanitypath('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
                 {% if dataset.doi and (dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') or dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_IN_REVIEW')) %}
                 <td class="details"><a href="https://doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a></td>
                 {% else %}
                 <td></td>
                 {% endif %}
-                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
+                <td class="details"><a href="{{ vanitypath('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
                 {% endif %}
                 <td class="status" title="{{ identified_title | default }}">
                     <span style="display:none;">
