@@ -6,9 +6,8 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
+use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\FilesystemInterface;
-use Oneup\FlysystemBundle\OneupFlysystemBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,11 +27,11 @@ class PelagosCheckForMissingFilesCommand extends Command
     protected $entityManager;
 
     /**
-     * A Symfony filesystem instance for checking file existence.
+     * A Pelagos Datastore instance for checking file existence.
      *
-     * @var FilesystemInterface $datastoreFlysystem
+     * @var Datastore $datastore
      */
-    protected $datastoreFlysystem;
+    protected $datastore;
 
     /**
      * Storage location for submitted+ datasets.
@@ -51,11 +50,11 @@ class PelagosCheckForMissingFilesCommand extends Command
     public function __construct(
         EntityManagerInterface $entityManager,
         String $dataStoreDirectory,
-        FilesystemInterface $datastoreFlysystem
+        Datastore $datastore
     ) {
         $this->entityManager = $entityManager;
         $this->dataStoreDirectory = $dataStoreDirectory;
-        $this->datastoreFlysystem = $datastoreFlysystem;
+        $this->datastore = $datastore;
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
@@ -109,7 +108,7 @@ class PelagosCheckForMissingFilesCommand extends Command
                     /** @var File $file */
                     foreach ($files as $file) {
                         $filePath = $file->getPhysicalFilePath();
-                        if (!$this->datastoreFlysystem->has($filePath)) {
+                        if (!$this->datastore->has($filePath)) {
                             $formattedPath = $this->dataStoreDirectory . '/' . $filePath;
                             $io->error("missing file at: " . $formattedPath . "\n");
                         }
