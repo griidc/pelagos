@@ -4,33 +4,36 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Trait for description type.
+ */
 trait DescriptorTypeTrait
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\Column(type="text")
      */
-    private $Description;
+    private $description;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
+    /**
+     * Getter for description.
+     *
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): self
+    /**
+     * Setter for description.
+     *
+     * @param string $description Description type string.
+     *
+     * @return $this
+     */
+    public function setDescription(string $description): self
     {
-        $this->Description = $Description;
+        $this->description = $description;
 
         return $this;
     }

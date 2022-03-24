@@ -120,9 +120,15 @@ class InformationProduct extends Entity
     private $file;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductType::class, mappedBy="informationProduct", orphanRemoval=true)
+     * The collection of types for this Information Product.
+     *
+     * @var Collection
+     *
+     * @Serializer\MaxDepth(1)
+     *
+     * @ORM\OneToMany(targetEntity="InformationProductType", mappedBy="InformationProduct")
      */
-    private $productType;
+    private $informationProductTypes;
 
     /**
      * Constructor.
@@ -132,7 +138,6 @@ class InformationProduct extends Entity
     public function __construct()
     {
         $this->researchGroups = new ArrayCollection();
-        $this->productType = new ArrayCollection();
     }
 
     /**
@@ -385,32 +390,26 @@ class InformationProduct extends Entity
     }
 
     /**
-     * @return Collection|ProductType[]
+     * Adder for Information Product type.
+     *
+     * @param InformationProductType $informationProductType Single information product type to be added.
+     *
+     * @return void
      */
-    public function getProductType(): Collection
+    public function addInformationProductType(InformationProductType $informationProductType): void
     {
-        return $this->productType;
+        $this->informationProductTypes->add($informationProductType);
     }
 
-    public function addProductType(ProductType $productType): self
+    /**
+     * Remover for Information Product type.
+     *
+     * @param InformationProductType $informationProductType Single information product type to be removed.
+     *
+     * @return void
+     */
+    public function removeFile(InformationProductType $informationProductType): void
     {
-        if (!$this->productType->contains($productType)) {
-            $this->productType[] = $productType;
-            $productType->setInformationProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProductType(ProductType $productType): self
-    {
-        if ($this->productType->removeElement($productType)) {
-            // set the owning side to null (unless already changed)
-            if ($productType->getInformationProduct() === $this) {
-                $productType->setInformationProduct(null);
-            }
-        }
-
-        return $this;
+        $this->informationProductTypes->removeElement($informationProductType);
     }
 }
