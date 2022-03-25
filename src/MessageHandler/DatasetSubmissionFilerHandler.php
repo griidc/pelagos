@@ -232,6 +232,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         // File virus Scan
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
+        $this->logger->info('Dispatched ScanFileForVirus message for async processing.', $loggingContext);
 
         $file->setDescription('');
         $file->setStatus(File::FILE_DONE);
