@@ -408,7 +408,7 @@ class InformationProduct extends Entity
      *
      * @return void
      */
-    public function removeFile(InformationProductType $informationProductType): void
+    public function removeInformationProductType(InformationProductType $informationProductType): void
     {
         $this->informationProductTypes->removeElement($informationProductType);
     }
