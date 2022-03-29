@@ -101,6 +101,7 @@ class FundingOrganizationType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\FundingOrganization',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 }

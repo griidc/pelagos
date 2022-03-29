@@ -76,6 +76,7 @@ class PersonResearchGroupType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\PersonResearchGroup',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 
