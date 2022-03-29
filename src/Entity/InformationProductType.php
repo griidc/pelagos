@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\InformationProductTypeRepository;
+use App\Repository\InformationProductTypeDescriptorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InformationProductTypeRepository::class)
+ * @ORM\Entity(repositoryClass=InformationProductTypeDescriptorRepository::class)
  */
-class InformationProductType extends Entity
+class InformationProductTypeDescriptor extends Entity
 {
     use DescriptorTypeTrait;
 }

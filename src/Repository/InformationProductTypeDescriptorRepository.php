@@ -2,21 +2,21 @@
 
 namespace App\Repository;
 
-use App\Entity\InformationProductType;
+use App\Entity\InformationProductTypeDescriptor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InformationProductType|null find($id, $lockMode = null, $lockVersion = null)
- * @method InformationProductType|null findOneBy(array $criteria, array $orderBy = null)
- * @method InformationProductType[]    findAll()
- * @method InformationProductType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method InformationProductTypeDescriptor|null find($id, $lockMode = null, $lockVersion = null)
+ * @method InformationProductTypeDescriptor|null findOneBy(array $criteria, array $orderBy = null)
+ * @method InformationProductTypeDescriptor[]    findAll()
+ * @method InformationProductTypeDescriptor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InformationProductTypeRepository extends ServiceEntityRepository
+class InformationProductTypeDescriptorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InformationProductType::class);
+        parent::__construct($registry, InformationProductTypeDescriptor::class);
     }
 
     // /**

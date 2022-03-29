@@ -126,9 +126,9 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      *
-     * @ORM\OneToMany(targetEntity="InformationProductType", mappedBy="InformationProduct")
+     * @ORM\OneToMany(targetEntity="InformationProductTypeDescriptor", mappedBy="InformationProduct")
      */
-    private $informationProductTypes;
+    private $informationProductTypeDescriptors;
 
     /**
      * Constructor.
@@ -392,24 +392,24 @@ class InformationProduct extends Entity
     /**
      * Adder for Information Product type.
      *
-     * @param InformationProductType $informationProductType Single information product type to be added.
+     * @param InformationProductTypeDescriptor $informationProductTypeDescriptor Single information product type to be added.
      *
      * @return void
      */
-    public function addInformationProductType(InformationProductType $informationProductType): void
+    public function addInformationProductType(InformationProductTypeDescriptor $informationProductTypeDescriptor): void
     {
-        $this->informationProductTypes->add($informationProductType);
+        $this->informationProductTypeDescriptors->add($informationProductTypeDescriptor);
     }
 
     /**
      * Remover for Information Product type.
      *
-     * @param InformationProductType $informationProductType Single information product type to be removed.
+     * @param InformationProductTypeDescriptor $informationProductTypeDescriptor Single information product type to be removed.
      *
      * @return void
      */
-    public function removeInformationProductType(InformationProductType $informationProductType): void
+    public function removeInformationProductType(InformationProductTypeDescriptor $informationProductTypeDescriptor): void
     {
-        $this->informationProductTypes->removeElement($informationProductType);
+        $this->informationProductTypeDescriptors->removeElement($informationProductTypeDescriptor);
     }
 }
