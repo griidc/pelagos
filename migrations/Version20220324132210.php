@@ -14,7 +14,7 @@ final class Version20220324132210 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Add information product type entity';
     }
 
     public function up(Schema $schema) : void
