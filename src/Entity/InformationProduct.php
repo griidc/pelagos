@@ -126,7 +126,7 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      *
-     * @ORM\OneToMany(targetEntity="InformationProductTypeDescriptor", mappedBy="InformationProduct")
+     * @ORM\ManyToMany(targetEntity=InformationProductTypeDescriptor::class)
      */
     private $informationProductTypeDescriptors;
 
@@ -138,6 +138,7 @@ class InformationProduct extends Entity
     public function __construct()
     {
         $this->researchGroups = new ArrayCollection();
+        $this->informationProductTypeDescriptors = new ArrayCollection();
     }
 
     /**
