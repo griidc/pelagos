@@ -41,7 +41,6 @@ Encore
   .addEntry('how-to-submit-data', './assets/js/entry/how-to-submit-data.js')
   .addEntry('data-land', './assets/js/entry/data-land.js')
   .addEntry('hri-app', './assets/js/main/hri-app.js')
-  // .addEntry('app', './assets/app.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
