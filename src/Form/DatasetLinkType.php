@@ -64,6 +64,7 @@ class DatasetLinkType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DatasetLink::class,
+            'csrf_protection' => false,
         ]);
     }
 }
