@@ -12,6 +12,7 @@ use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Event\EntityEventDispatcher;
 use App\Form\DatasetType;
 use App\Message\DeleteFile;
+use App\Message\DeleteDir;
 use App\Repository\DatasetRepository;
 use App\Util\MdappLogger;
 use FOS\RestBundle\Controller\Annotations\View;
