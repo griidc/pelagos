@@ -109,6 +109,7 @@ class ResearchGroupType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\ResearchGroup',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 }

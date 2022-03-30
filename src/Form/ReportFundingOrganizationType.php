@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ReportFundingOrganizationType extends AbstractType
 {
@@ -25,5 +26,19 @@ class ReportFundingOrganizationType extends AbstractType
                 'choices' => $options['data'],
                 'placeholder' => '[Select a Funding Organization]'))
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'));
+    }
+
+    /**
+     * Configures the options for this type.
+     *
+     * @param OptionsResolver $resolver The resolver for the options.
+     *
+     * @return void
+     */
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'csrf_protection' => false,
+        ]);
     }
 }
