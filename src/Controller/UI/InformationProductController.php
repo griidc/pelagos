@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Entity\InformationProduct;
+use App\Entity\InformationProductTypeDescriptor;
 use App\Entity\ResearchGroup;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -25,10 +26,14 @@ class InformationProductController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function index(): Response
+    public function index(SerializerInterface $serializer): Response
     {
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
+        $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
@@ -36,7 +41,10 @@ class InformationProductController extends AbstractController
                 'shortName' => $researchGroup->getShortName(),
             );
         }
-        return $this->render('InformationProduct/index.html.twig', array('researchGroups' => $researchGroupList));
+        return $this->render(
+            'InformationProduct/index.html.twig',
+            array('researchGroups' => $researchGroupList, 'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json', $context))
+        );
     }
 
     /**
@@ -55,6 +63,10 @@ class InformationProductController extends AbstractController
         $context->setSerializeNull(true);
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
+        $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
@@ -67,6 +79,7 @@ class InformationProductController extends AbstractController
             array(
                 'researchGroups' => $researchGroupList,
                 'informationProduct' => $serializer->serialize($informationProduct, 'json', $context),
+                'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json', $context)
             )
         );
     }
@@ -84,6 +97,7 @@ class InformationProductController extends AbstractController
     {
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
+        $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
@@ -91,6 +105,9 @@ class InformationProductController extends AbstractController
                 'shortName' => $researchGroup->getShortName(),
             );
         }
-        return $this->render('InformationProduct/list.html.twig', array('researchGroups' => $researchGroupList));
+        return $this->render(
+            'InformationProduct/list.html.twig',
+            array('researchGroups' => $researchGroupList, 'productTypeDescriptors' => $productTypeDescriptors)
+        );
     }
 }

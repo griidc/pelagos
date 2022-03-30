@@ -148,6 +148,18 @@
                 ></b-form-radio-group>
             </b-form-group>
 
+            <b-form-group
+                id="input-group-7"
+                label="Product Type Descriptor"
+                label-for="product-type"
+                description="Can add multiple types">
+              <DxTagBox
+                  :items="productTypeOptions"
+                  :search-enabled="true"
+                  @selectionChanged="onSelectionChanged"
+              />
+            </b-form-group>
+
             <div class="py-2">
               <b-button :disabled="!formValid" type="submit" variant="alternate">{{ submitBtnText }}</b-button>
               <b-button v-if="!editMode" type="reset" variant="dark" >Reset</b-button>
@@ -235,6 +247,7 @@ import { DxPopup } from 'devextreme-vue/popup';
 import { DxButton } from 'devextreme-vue/button';
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
+import DxTagBox from 'devextreme-vue/tag-box';
 
 Dropzone.autoDiscover = false;
 
@@ -245,6 +258,7 @@ export default {
   components: {
     DxPopup,
     DxButton,
+    DxTagBox,
   },
   data() {
     return {
@@ -265,6 +279,7 @@ export default {
       submitBtnText: 'Submit',
       deleteConfirmationDialog: false,
       ipSuccessModalText: '',
+      productTypeOptions: null,
     };
   },
   computed: {
@@ -334,7 +349,6 @@ export default {
     },
     populateResearchGroups() {
       this.researchGroupOptions = [];
-      this.researchGroups = null;
       window.researchGroups.forEach((researchGroup) => {
         this.addToResearchGroupOptions(researchGroup.id);
       });
@@ -351,6 +365,7 @@ export default {
         remoteResource: false,
         file: '',
         remoteUri: '',
+        selectedProductTypes: [],
       };
     },
 
@@ -449,10 +464,46 @@ export default {
     cancelDelete() {
       this.deleteConfirmationDialog = false;
     },
+
+    addToProductTypeDescriptorOptions(description) {
+      this.productTypeOptions.push(description);
+    },
+
+    populateProductTypeDescriptors() {
+      this.productTypeOptions = [];
+      window.productTypeDescriptors.forEach((productTypeDescriptor) => {
+        this.addToProductTypeDescriptorOptions(productTypeDescriptor.description);
+      });
+    },
+
+    onSelectionChanged(event) {
+      event.addedItems.forEach((value) => {
+        const productTypeDescriptorId = this.getProductTypeFromDescription(value);
+        this.form.selectedProductTypes.push(productTypeDescriptorId);
+      });
+
+      // event.removedItems.forEach((value) => {
+      //   const index = this.form.selectedProductTypes.indexOf(this.getProductTypeFromDescription(value));
+      //   if (index > -1) {
+      //     this.form.selectedProductTypes.splice(index, 1);
+      //   }
+      // });
+    },
+
+    getProductTypeFromDescription(description) {
+      let productTypeId;
+      window.productTypeDescriptors.forEach((productTypeDescriptor) => {
+        if (description === productTypeDescriptor.description) {
+          productTypeId = productTypeDescriptor.id;
+        }
+      });
+      return productTypeId;
+    },
   },
 
   created() {
     this.populateResearchGroups();
+    this.populateProductTypeDescriptors();
   },
 };
 
