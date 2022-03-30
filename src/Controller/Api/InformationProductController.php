@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\File;
 use App\Entity\InformationProduct;
+use App\Entity\InformationProductTypeDescriptor;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
 use App\Message\DeleteFile;
@@ -83,6 +84,12 @@ class InformationProductController extends AbstractFOSRestController
         foreach ($researchGroups as $researchGroup) {
             $informationProduct->addResearchGroup($researchGroup);
         }
+        $productTypeDescriptorIds = $request->get('selectedProductTypes');
+        $productTypeDescriptors = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        foreach ($productTypeDescriptors as $productTypeDescriptor) {
+            $informationProduct->addInformationProductType($productTypeDescriptor);
+        }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

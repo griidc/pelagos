@@ -148,6 +148,10 @@
                 ></b-form-radio-group>
             </b-form-group>
 
+          <input type="hidden" v-model="form.selectedProductTypes" id="product-types"/>
+          <p class="alert alert-warning" v-if="!researchGroupsSelected">
+            Please select at least one product type!
+          </p>
             <b-form-group
                 id="input-group-7"
                 label="Product Type Descriptor"
@@ -287,13 +291,17 @@ export default {
       return this.form.selectedResearchGroups.length > 0;
     },
     formValid() {
-      return this.researchGroupsSelected
-        && this.form.title !== ''
-        && this.form.creators !== ''
-        && this.form.publisher !== '';
+      return this.productTypesSelected
+          && this.researchGroupsSelected
+          && this.form.title !== ''
+          && this.form.creators !== ''
+          && this.form.publisher !== '';
     },
     selectedResearchGroup() {
       return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
+    },
+    productTypesSelected() {
+      return this.form.selectedProductTypes.length > 0;
     },
   },
   mounted() {
@@ -450,6 +458,7 @@ export default {
       this.form.publisher = window.informationProduct.publisher;
       this.form.externalDoi = window.informationProduct.externalDoi;
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
+      this.form.selectedProductTypes = window.informationProduct.productTypes;
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
       this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
@@ -482,12 +491,12 @@ export default {
         this.form.selectedProductTypes.push(productTypeDescriptorId);
       });
 
-      // event.removedItems.forEach((value) => {
-      //   const index = this.form.selectedProductTypes.indexOf(this.getProductTypeFromDescription(value));
-      //   if (index > -1) {
-      //     this.form.selectedProductTypes.splice(index, 1);
-      //   }
-      // });
+      event.removedItems.forEach((value) => {
+        const index = this.form.selectedProductTypes.indexOf(this.getProductTypeFromDescription(value));
+        if (index > -1) {
+          this.form.selectedProductTypes.splice(index, 1);
+        }
+      });
     },
 
     getProductTypeFromDescription(description) {
