@@ -149,7 +149,7 @@
             </b-form-group>
 
           <input type="hidden" v-model="form.selectedProductTypes" id="product-types"/>
-          <p class="alert alert-warning" v-if="!researchGroupsSelected">
+          <p class="alert alert-warning" v-if="!productTypesSelected">
             Please select at least one product type!
           </p>
             <b-form-group
@@ -458,7 +458,7 @@ export default {
       this.form.publisher = window.informationProduct.publisher;
       this.form.externalDoi = window.informationProduct.externalDoi;
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
-      this.form.selectedProductTypes = window.informationProduct.productTypes;
+      this.form.selectedProductTypes = this.getProductTypeDescriptorIds();
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
       this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
@@ -507,6 +507,14 @@ export default {
         }
       });
       return productTypeId;
+    },
+
+    getProductTypeDescriptorIds() {
+      const productTypeDescriptorIds = [];
+      window.informationProduct.informationProductTypeDescriptors.forEach((productTypeDescriptor) => {
+        productTypeDescriptorIds.push(productTypeDescriptor.id);
+      });
+      return productTypeDescriptorIds;
     },
   },
 

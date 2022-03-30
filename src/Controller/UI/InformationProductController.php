@@ -64,9 +64,6 @@ class InformationProductController extends AbstractController
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
         $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
-        $context = SerializationContext::create();
-        $context->enableMaxDepthChecks();
-        $context->setSerializeNull(true);
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
@@ -79,7 +76,7 @@ class InformationProductController extends AbstractController
             array(
                 'researchGroups' => $researchGroupList,
                 'informationProduct' => $serializer->serialize($informationProduct, 'json', $context),
-                'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json', $context)
+                'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json')
             )
         );
     }
