@@ -8,9 +8,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * Information Product Type Descriptor controller.
+ */
 class InformationProductTypeDescriptorCrudController extends AbstractCrudController
 {
 
+    /**
+     * CRUD configuration function.
+     *
+     * @param Crud $crud
+     *
+     * @return Crud
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -21,11 +31,23 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
             ;
     }
 
+    /**
+     * Returns Fully Qualified Class Name.
+     *
+     * @return string
+     */
     public static function getEntityFqcn(): string
     {
         return InformationProductTypeDescriptor::class;
     }
 
+    /**
+     * Configure fields for CRUD.
+     *
+     * @param string $pageName
+     *
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -35,6 +57,13 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
         ];
     }
 
+    /**
+     * Overwrite for when entity is created.
+     *
+     * @param string $entityFqcn
+     *
+     * @return void
+     */
     public function createEntity(string $entityFqcn)
     {
         $informationProductTypeDescriptor = new InformationProductTypeDescriptor();
