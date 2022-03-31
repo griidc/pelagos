@@ -14,7 +14,11 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, 'Information Product Descriptor');
+            ->setPageTitle(Crud::PAGE_INDEX, 'Information Product Descriptor')
+            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Information Product Descriptor')
+            ->setPageTitle(Crud::PAGE_NEW, 'Create Information Product Descriptor')
+            ->showEntityActionsInlined()
+            ;
     }
 
     public static function getEntityFqcn(): string
