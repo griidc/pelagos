@@ -161,6 +161,7 @@
                   :items="productTypeOptions"
                   :search-enabled="true"
                   @selectionChanged="onSelectionChanged"
+                  :value="selectedProductTypeDescriptions"
               />
             </b-form-group>
 
@@ -284,6 +285,7 @@ export default {
       deleteConfirmationDialog: false,
       ipSuccessModalText: '',
       productTypeOptions: null,
+      selectedProductTypeDescriptions: [],
     };
   },
   computed: {
@@ -313,6 +315,7 @@ export default {
       this.populateFormInitialValues();
       this.informationProductId = window.informationProduct.id;
       this.submitBtnText = 'Save Changes';
+      this.selectedProductTypeDescriptions = this.getSelectedProductTypeDescriptions();
     }
   },
   methods: {
@@ -515,6 +518,14 @@ export default {
         productTypeDescriptorIds.push(productTypeDescriptor.id);
       });
       return productTypeDescriptorIds;
+    },
+
+    getSelectedProductTypeDescriptions() {
+      const productTypeDescriptions = [];
+      window.informationProduct.informationProductTypeDescriptors.forEach((productTypeDescriptor) => {
+        productTypeDescriptions.push(productTypeDescriptor.description);
+      });
+      return productTypeDescriptions;
     },
   },
 
