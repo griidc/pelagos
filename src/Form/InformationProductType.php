@@ -32,7 +32,8 @@ class InformationProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => InformationProduct::class,
-            'allow_extra_fields' => true
+            'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ]);
     }
 }
