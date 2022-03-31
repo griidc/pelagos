@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class InformationProductTypeDescriptorCrudController extends AbstractCrudController
 {
-
     /**
      * CRUD configuration function.
      *
