@@ -71,6 +71,7 @@ class PersonDataRepositoryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\PersonDataRepository',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 

@@ -2,14 +2,11 @@
 
 namespace App\Twig;
 
-use Doctrine\Common\Collections\Collection;
-
 use App\Entity\DIF;
-
 use App\Util\MaintenanceMode;
-
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpKernel\KernelInterface;
-
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Environment;
 
@@ -33,15 +30,31 @@ class Extensions extends AbstractExtension
     private $maintenanceMode;
 
     /**
+     * The Router Interface.
+     *
+     * @var UrlGeneratorInterface
+     */
+    protected $router;
+
+    /**
+     * The list of routes to have their baseUrl removed.
+     *
+     * @var array
+     */
+    protected $excludeRoutes;
+
+    /**
      *  Constructor.
      *
      * @param KernelInterface $kernel          The Symfony kernel.
      * @param MaintenanceMode $maintenanceMode The maintenance mode utility.
      */
-    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode)
+    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode, UrlGeneratorInterface $router, array $excludeRoutes)
     {
         $this->kernelRootDir = $kernel->getProjectDir();
         $this->maintenanceMode = $maintenanceMode;
+        $this->router = $router;
+        $this->excludeRoutes = $excludeRoutes;
     }
 
     /**
@@ -73,6 +86,14 @@ class Extensions extends AbstractExtension
             new \Twig\TwigFunction(
                 'getMaintenanceModeColor',
                 [$this, 'maintenanceModeColor']
+            ),
+            new \Twig\TwigFunction(
+                'vanityurl',
+                [$this, 'getVanityUrl']
+            ),
+            new \Twig\TwigFunction(
+                'vanitypath',
+                [$this, 'getVanityPath']
             ),
         );
     }
@@ -318,5 +339,65 @@ class Extensions extends AbstractExtension
             }
         }
         return "$bytes $units[0]";
+    }
+
+     /**
+     * Generate the path, remove Base URL if it's on the excluded list.
+     *
+     * @param string  $name           The route name.
+     * @param array   $parameters     Any parameters.
+     * @param boolean $relative       Generate relative path.
+     *
+     * @return string The generated Patg.
+     */
+    public function getVanityPath($name, $parameters = [], $relative = false)
+    {
+        $referenceType =  $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH;
+
+        return $this->generate($name, $parameters, $referenceType);
+    }
+
+    /**
+     * Generate the URL, remove Base URL if it's on the excluded list.
+     *
+     * @param string  $name           The route name.
+     * @param array   $parameters     Any parameters.
+     * @param boolean $schemeRelative Generate relative URL.
+     *
+     * @return string The generated URL.
+     */
+    public function getVanityUrl($name, $parameters = [], $schemeRelative = false)
+    {
+        $referenceType =  $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
+
+        return $this->generate($name, $parameters, $referenceType);
+    }
+
+    /**
+     * Generate the URL, and remote base url if it's excluded.
+     *
+     * @param string  $name           The route name.
+     * @param array   $parameters     Any URL parameters.
+     * @param boolean $schemeRelative Generate relative URL.
+     *
+     * @return string The generated URL/path.
+     */
+    private function generate($name, $parameters, $referenceType)
+    {
+        if (in_array($name, $this->excludeRoutes)) {
+            $context = $this->router->getContext();
+            $oldBaseUrl = (string) $context->getBaseUrl();
+            $context->setBaseUrl('');
+            $context = $this->router->setContext($context);
+            $generate = $this->router->generate($name, $parameters, $referenceType);
+            // Set the baseUrl back in context.
+            $context = $this->router->getContext();
+            $context->setBaseUrl($oldBaseUrl);
+            $context = $this->router->setContext($context);
+        } else {
+            $generate = $this->router->generate($name, $parameters, $referenceType);
+        }
+
+        return $generate;
     }
 }
