@@ -4,7 +4,7 @@
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
           <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
           <b-form-group
-                    id="input-group-1"
+                    id="input-group-title"
                     label="Title"
                     label-for="title"
                     description="Brief description about the Information Product">
@@ -17,7 +17,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-2"
+                    id="input-group-creators"
                     label="Creators"
                     label-for="creators"
                     description="e.g. John Doe, Jan Doe, etc">
@@ -30,7 +30,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-3"
+                    id="input-group-publisher"
                     label="Publisher"
                     label-for="publisher"
                     description="e.g. John Doe, Jan Doe, etc">
@@ -43,7 +43,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-4"
+                    id="input-group-doi"
                     label="External DOI"
                     label-for="externalDoi"
                     description="e.g. 10.1234/xyz">
@@ -77,7 +77,7 @@
             </p>
 
             <b-form-group
-                    id="input-group-4"
+                    id="input-group-researchgroup"
                     label="Add Research Groups"
                     label-for="add-research-groups"
                     description="Please click the link button to link it to this Information Product">
@@ -104,6 +104,7 @@
                 </div>
                 <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
+
             <b-form-group
                     id="input-group-remote-uri"
                     label="Remote URI"
@@ -119,7 +120,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-5"
+                    id="input-group-published"
                     label="Published"
                     label-for="published"
                     v-slot="{ ariaDescribedby }"
@@ -134,7 +135,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-6"
+                    id="input-group-remoteresource"
                     label="Remote Resource"
                     label-for="remote-resource"
                     v-slot="{ ariaDescribedby }"
@@ -153,7 +154,7 @@
             Please select at least one product type!
           </p>
             <b-form-group
-                id="input-group-7"
+                id="input-group-producttype"
                 label="Product Type Descriptor"
                 label-for="product-type"
                 description="Can add multiple types">
