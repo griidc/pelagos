@@ -4,6 +4,7 @@ import FileManager from '../vue/FileManager.vue';
 import '../../css/file-manager.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
+import '../../scss/data-land.scss';
 
 // Mount File Manager vue component
 const fileManagerElement = document.getElementById('file-manager-app');

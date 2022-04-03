@@ -341,6 +341,7 @@ class DIFType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\DIF',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 

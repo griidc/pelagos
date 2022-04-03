@@ -188,7 +188,7 @@ class GomriReportController extends ReportController
             '   WHERE subdatasetsubmission.datasetFileUri is not null ' .
             '   AND subdatasetsubmission.datasetStatus = :datasetStatus ' .
             '   AND subdatasetsubmission.restrictions = :restrictions ' .
-            '   AND (subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
+            '   AND subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
             '   GROUP BY subdatasetsubmission.dataset)' .
             'AND fundingOrganization.name = :gomri';
         $query = $entityManager->createQuery($queryString);

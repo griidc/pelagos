@@ -111,6 +111,9 @@ class DownloadController extends AbstractController
         if ($dataset->isRestricted()) {
             throw new BadRequestHttpException('Unable to download restricted dataset');
         }
+        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
+            throw new BadRequestHttpException('Unable to download non-accepted dataset');
+        }
         if ($datasetSubmission instanceof DatasetSubmission) {
             $fileset = $datasetSubmission->getFileset();
 
@@ -144,7 +147,7 @@ class DownloadController extends AbstractController
                     HeaderUtils::DISPOSITION_ATTACHMENT,
                     $filename
                 );
-                
+
                 $response->headers->set('Content-Disposition', $disposition);
                 $response->headers->set('Content-type', $mimeType);
 

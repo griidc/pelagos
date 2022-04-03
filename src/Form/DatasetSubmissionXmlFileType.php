@@ -43,6 +43,7 @@ class DatasetSubmissionXmlFileType extends AbstractType
     {
         $resolver->setDefaults(array(
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 }

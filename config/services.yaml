@@ -20,13 +20,18 @@ services:
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Migrations/'
+            - '../src/Tests/'
+            - '../src/Kernel.php'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
-        resource: '../src/Controller'
+        resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
@@ -99,7 +104,7 @@ services:
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
         $doiApiPrefix: "%env(DOI_API_PREFIX)%"
         $doiApiUrl: "%env(DOI_API_URL)%"
-    
+
     App\Util\IngestUtil:
         $ingestApiUrl: "%env(INGEST_API_URL)%"
 
@@ -124,6 +129,10 @@ services:
             string $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
             string $passwordExpiryWarn: "%env(ACCOUNT_PASSWORD_EXPIRATION_WARN)%"
             string $hostName: "%env(HOSTNAME)%"
+
+    App\Command\PelagosCheckForErrorStatusCommand:
+        bind:
+            string $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
 
     App\Command\RebuildElasticsearchIndexCommand:
         bind:
@@ -167,12 +176,6 @@ services:
         bind:
             FOS\ElasticaBundle\Persister\ObjectPersister $objectPersister: "@fos_elastica.object_persister.pelagos.dataset"
 
-    App\Util\RouterModifier:
-        bind:
-            array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
-        decorates: 'router.default'
-        arguments: ['@App\Util\RouterModifier.inner']
-
     App\Util\MailerLoggerUtil:
         tags:
             - { name: "swiftmailer.default.plugin" }
@@ -196,3 +199,7 @@ services:
     App\MessageHandler\DatasetSubmissionFilerHandler:
         bind:
             $downloadDirectory: "%env(DOWNLOAD_PATH)%"
+
+    App\Twig\Extensions:
+        bind:
+            array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
