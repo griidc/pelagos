@@ -1,5 +1,5 @@
 <template>
-    <div class="m-2">
+    <div class="m-2 pb-5">
         <h4 class="text-center">Information Product Form</h4>
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
           <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
@@ -159,10 +159,12 @@
                 label-for="product-type"
                 description="Can add multiple types">
               <DxTagBox
-                  :items="productTypeOptions"
+                  :data-source="productTypeOptions"
+                  display-expr="description"
+                  value-expr="id"
+                  :value="selectedProductTypeDescriptions"
                   :search-enabled="true"
                   @selectionChanged="onSelectionChanged"
-                  :value="selectedProductTypeDescriptions"
               />
             </b-form-group>
 
@@ -285,8 +287,8 @@ export default {
       submitBtnText: 'Submit',
       deleteConfirmationDialog: false,
       ipSuccessModalText: '',
-      productTypeOptions: null,
       selectedProductTypeDescriptions: [],
+      productTypeOptions: window.productTypeDescriptors,
     };
   },
   computed: {
@@ -478,39 +480,17 @@ export default {
       this.deleteConfirmationDialog = false;
     },
 
-    addToProductTypeDescriptorOptions(description) {
-      this.productTypeOptions.push(description);
-    },
-
-    populateProductTypeDescriptors() {
-      this.productTypeOptions = [];
-      window.productTypeDescriptors.forEach((productTypeDescriptor) => {
-        this.addToProductTypeDescriptorOptions(productTypeDescriptor.description);
-      });
-    },
-
     onSelectionChanged(event) {
       event.addedItems.forEach((value) => {
-        const productTypeDescriptorId = this.getProductTypeFromDescription(value);
-        this.form.selectedProductTypes.push(productTypeDescriptorId);
+        this.form.selectedProductTypes.push(value.id);
       });
 
       event.removedItems.forEach((value) => {
-        const index = this.form.selectedProductTypes.indexOf(this.getProductTypeFromDescription(value));
+        const index = this.form.selectedProductTypes.indexOf(value.id);
         if (index > -1) {
           this.form.selectedProductTypes.splice(index, 1);
         }
       });
-    },
-
-    getProductTypeFromDescription(description) {
-      let productTypeId;
-      window.productTypeDescriptors.forEach((productTypeDescriptor) => {
-        if (description === productTypeDescriptor.description) {
-          productTypeId = productTypeDescriptor.id;
-        }
-      });
-      return productTypeId;
     },
 
     getProductTypeDescriptorIds() {
@@ -524,7 +504,12 @@ export default {
     getSelectedProductTypeDescriptions() {
       const productTypeDescriptions = [];
       window.informationProduct.informationProductTypeDescriptors.forEach((productTypeDescriptor) => {
-        productTypeDescriptions.push(productTypeDescriptor.description);
+        this.form.selectedProductTypes.push(productTypeDescriptor.id);
+        this.productTypeOptions.forEach((productTypeOption) => {
+          if (productTypeDescriptor.id === productTypeOption.id) {
+            productTypeDescriptions.push(productTypeOption);
+          }
+        });
       });
       return productTypeDescriptions;
     },
@@ -532,7 +517,6 @@ export default {
 
   created() {
     this.populateResearchGroups();
-    this.populateProductTypeDescriptors();
   },
 };
 
