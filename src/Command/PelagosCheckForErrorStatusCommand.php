@@ -47,11 +47,10 @@ class PelagosCheckForErrorStatusCommand extends Command
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        String $dataStoreDirectory
+        EntityManagerInterface $entityManager
     ) {
         $this->entityManager = $entityManager;
-        $this->dataStoreDirectory = $dataStoreDirectory;
+        $this->dataStoreDirectory = $_ENV['DATA_STORE_DIRECTORY'];
 
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.

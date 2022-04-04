@@ -45,16 +45,14 @@ class PelagosCheckForMissingFilesCommand extends Command
      *
      * @param EntityManagerInterface $entityManager      A Doctrine EntityManager.
      * @param FilesystemInterface    $datastoreFlysystem A filesystem interface.
-     * @param String                 $dataStoreDirectory Datastore dir from the .env system.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        String $dataStoreDirectory,
         Datastore $datastore
     ) {
         $this->entityManager = $entityManager;
-        $this->dataStoreDirectory = $dataStoreDirectory;
         $this->datastore = $datastore;
+        $this->dataStoreDirectory = $_ENV['DATA_STORE_DIRECTORY'];
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
