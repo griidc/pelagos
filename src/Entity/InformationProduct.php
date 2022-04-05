@@ -120,7 +120,7 @@ class InformationProduct extends Entity
     private $file;
 
     /**
-     * The collection of types for this Information Product.
+     * The collection of Product Types for this Information Product.
      *
      * @var Collection
      *
@@ -131,6 +131,17 @@ class InformationProduct extends Entity
     private $informationProductTypeDescriptors;
 
     /**
+     * The collection of Digital Resource Types for this Information Product.
+     *
+     * @var Collection
+     *
+     * @Serializer\MaxDepth(1)
+     *
+     * @ORM\ManyToMany(targetEntity=DigitalResourceTypeDescriptor::class)
+     */
+    private $digitalResourceTypeDescriptors;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -139,6 +150,7 @@ class InformationProduct extends Entity
     {
         $this->researchGroups = new ArrayCollection();
         $this->informationProductTypeDescriptors = new ArrayCollection();
+        $this->digitalResourceTypeDescriptors = new ArrayCollection();
     }
 
     /**
@@ -412,5 +424,29 @@ class InformationProduct extends Entity
     public function removeInformationProductType(InformationProductTypeDescriptor $informationProductTypeDescriptor): void
     {
         $this->informationProductTypeDescriptors->removeElement($informationProductTypeDescriptor);
+    }
+
+    /**
+     * @return Collection|DigitalResourceTypeDescriptor[]
+     */
+    public function getDigitalResourceTypeDescriptors(): Collection
+    {
+        return $this->digitalResourceTypeDescriptors;
+    }
+
+    public function addDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): self
+    {
+        if (!$this->digitalResourceTypeDescriptors->contains($digitalResourceTypeDescriptor)) {
+            $this->digitalResourceTypeDescriptors[] = $digitalResourceTypeDescriptor;
+        }
+
+        return $this;
+    }
+
+    public function removeDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): self
+    {
+        $this->digitalResourceTypeDescriptors->removeElement($digitalResourceTypeDescriptor);
+
+        return $this;
     }
 }

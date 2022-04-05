@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\InformationProductTypeDescriptor;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -13,6 +15,27 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class InformationProductTypeDescriptorCrudController extends AbstractCrudController
 {
+    /**
+     * Returns Fully Qualified Class Name.
+     *
+     * @return string
+     */
+    public static function getEntityFqcn(): string
+    {
+        return InformationProductTypeDescriptor::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-plus-circle')
+                    ->setLabel('Create New Information Product Type Descriptor')
+                    ;
+            });
+    }
+
     /**
      * CRUD configuration function.
      *
@@ -30,15 +53,7 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
             ;
     }
 
-    /**
-     * Returns Fully Qualified Class Name.
-     *
-     * @return string
-     */
-    public static function getEntityFqcn(): string
-    {
-        return InformationProductTypeDescriptor::class;
-    }
+
 
     /**
      * Configure fields for CRUD.
