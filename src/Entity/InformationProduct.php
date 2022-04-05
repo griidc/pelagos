@@ -495,4 +495,23 @@ class InformationProduct extends Entity
     {
         return $this->informationProductTypeDescriptors;
     }
+
+
+    /**
+     * Get the List of Digital Resource type descriptors for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("digitalResourceTypeDescriptors")
+     *
+     * @return array
+     */
+    public function getDigitalResourceTypeDescriptorList(): array
+    {
+        $digitalResourceTypeDescriptorList = [];
+
+        foreach ($this->getDigitalResourceTypeDescriptors() as $digitalResourceTypeDescriptor) {
+            $digitalResourceTypeDescriptorList[] = $digitalResourceTypeDescriptor->getId();
+        }
+        return $digitalResourceTypeDescriptorList;
+    }
 }

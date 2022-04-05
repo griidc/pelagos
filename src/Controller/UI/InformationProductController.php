@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Entity\InformationProductTypeDescriptor;
 use App\Entity\ResearchGroup;
@@ -31,6 +32,7 @@ class InformationProductController extends AbstractController
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
         $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $digitalResourceTypeDescriptors = $this->getDoctrine()->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
         $context->setSerializeNull(true);
@@ -43,7 +45,11 @@ class InformationProductController extends AbstractController
         }
         return $this->render(
             'InformationProduct/index.html.twig',
-            array('researchGroups' => $researchGroupList, 'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json', $context))
+            array(
+                'researchGroups' => $researchGroupList,
+                'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json', $context),
+                'digitalResourceTypeDescriptors' => $serializer->serialize($digitalResourceTypeDescriptors, 'json'),
+            )
         );
     }
 
@@ -64,6 +70,7 @@ class InformationProductController extends AbstractController
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
         $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $digitalResourceTypeDescriptors = $this->getDoctrine()->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
@@ -76,7 +83,8 @@ class InformationProductController extends AbstractController
             array(
                 'researchGroups' => $researchGroupList,
                 'informationProduct' => $serializer->serialize($informationProduct, 'json', $context),
-                'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json')
+                'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json'),
+                'digitalResourceTypeDescriptors' => $serializer->serialize($digitalResourceTypeDescriptors, 'json'),
             )
         );
     }
