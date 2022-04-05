@@ -411,7 +411,9 @@ class InformationProduct extends Entity
      */
     public function addInformationProductType(InformationProductTypeDescriptor $informationProductTypeDescriptor): void
     {
-        $this->informationProductTypeDescriptors->add($informationProductTypeDescriptor);
+        if (!$this->informationProductTypeDescriptors->contains($informationProductTypeDescriptor)) {
+            $this->informationProductTypeDescriptors->add($informationProductTypeDescriptor);
+        }
     }
 
     /**
@@ -427,6 +429,8 @@ class InformationProduct extends Entity
     }
 
     /**
+     * Get all Digitial Resource Type Descriptors.
+     *
      * @return Collection|DigitalResourceTypeDescriptor[]
      */
     public function getDigitalResourceTypeDescriptors(): Collection
@@ -434,6 +438,13 @@ class InformationProduct extends Entity
         return $this->digitalResourceTypeDescriptors;
     }
 
+    /**
+     * Add Digital Resource Type Descriptor to Information Product.
+     *
+     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     *
+     * @return self
+     */
     public function addDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): self
     {
         if (!$this->digitalResourceTypeDescriptors->contains($digitalResourceTypeDescriptor)) {
@@ -443,13 +454,20 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Remove Digital Resource Type Descriptor to Information Product.
+     *
+     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     *
+     * @return self
+     */
     public function removeDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): self
     {
         $this->digitalResourceTypeDescriptors->removeElement($digitalResourceTypeDescriptor);
 
         return $this;
     }
-  
+
     /**
      * Get the List of Product type descriptors for this Information Product.
      *
