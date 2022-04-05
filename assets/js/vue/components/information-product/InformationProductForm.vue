@@ -160,9 +160,9 @@
                 description="Can add multiple types">
               <DxTagBox
                   :data-source="productTypeOptions"
+                  :value="productValue"
                   display-expr="description"
                   value-expr="id"
-                  :value="selectedProductTypeDescriptions"
                   :search-enabled="true"
                   @selectionChanged="onSelectionChanged"
               />
@@ -256,6 +256,7 @@ import { DxButton } from 'devextreme-vue/button';
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
 import DxTagBox from 'devextreme-vue/tag-box';
+import DataSource from 'devextreme/data/data_source';
 
 Dropzone.autoDiscover = false;
 
@@ -288,7 +289,11 @@ export default {
       deleteConfirmationDialog: false,
       ipSuccessModalText: '',
       selectedProductTypeDescriptions: [],
-      productTypeOptions: window.productTypeDescriptors,
+      productTypeOptions: new DataSource({
+        store: window.productTypeDescriptors,
+        key: 'id',
+      }),
+      productValue: [],
     };
   },
   computed: {
@@ -318,12 +323,13 @@ export default {
       this.populateFormInitialValues();
       this.informationProductId = window.informationProduct.id;
       this.submitBtnText = 'Save Changes';
-      this.selectedProductTypeDescriptions = this.getSelectedProductTypeDescriptions();
+      this.productValue = this.getProductTypeDescriptorIds();
     }
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
+      this.form.selectedProductTypes = this.productValue;
       if (this.editMode) {
         patchApi(
           // eslint-disable-next-line no-undef
@@ -482,13 +488,15 @@ export default {
 
     onSelectionChanged(event) {
       event.addedItems.forEach((value) => {
-        this.form.selectedProductTypes.push(value.id);
+        if (!this.productValue.includes((value.id))) {
+          this.productValue.push(value.id);
+        }
       });
 
       event.removedItems.forEach((value) => {
-        const index = this.form.selectedProductTypes.indexOf(value.id);
+        const index = this.productValue.indexOf(value.id);
         if (index > -1) {
-          this.form.selectedProductTypes.splice(index, 1);
+          this.productValue.splice(index, 1);
         }
       });
     },
@@ -499,19 +507,6 @@ export default {
         productTypeDescriptorIds.push(productTypeDescriptor.id);
       });
       return productTypeDescriptorIds;
-    },
-
-    getSelectedProductTypeDescriptions() {
-      const productTypeDescriptions = [];
-      window.informationProduct.informationProductTypeDescriptors.forEach((productTypeDescriptor) => {
-        this.form.selectedProductTypes.push(productTypeDescriptor.id);
-        this.productTypeOptions.forEach((productTypeOption) => {
-          if (productTypeDescriptor.id === productTypeOption.id) {
-            productTypeDescriptions.push(productTypeOption);
-          }
-        });
-      });
-      return productTypeDescriptions;
     },
   },
 
