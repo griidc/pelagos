@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\InformationProductTypeDescriptor;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -25,6 +26,13 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
         return InformationProductTypeDescriptor::class;
     }
 
+    /**
+     * Configure Crud Actions.
+     *
+     * @param Actions $actions
+     *
+     * @return Actions
+     */
     public function configureActions(Actions $actions): Actions
     {
         return $actions
@@ -52,8 +60,6 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
             ->showEntityActionsInlined()
             ;
     }
-
-
 
     /**
      * Configure fields for CRUD.
@@ -84,5 +90,21 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
         $informationProductTypeDescriptor->setCreator($this->getUser()->getPerson());
 
         return $informationProductTypeDescriptor;
+    }
+
+    /**
+     * Update the Crud entity.
+     *
+     * @param EntityManagerInterface $entityManager  The Entity Manager.
+     * @param mixed                  $entityInstance The entity to update.
+     *
+     * @return void
+     */
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var InformationProductTypeDescriptor $entityInstance */
+        $entityInstance->setModifier($this->getUser()->getPerson());
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
     }
 }

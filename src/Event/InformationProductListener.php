@@ -6,7 +6,6 @@ use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Repository\InformationProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
@@ -15,9 +14,9 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 class InformationProductListener
 {
     /**
-     * Listenerer on Pre-Remove event.
+     * Listener on Pre-Remove event.
      *
-     * @param LifecycleEventArgs $args
+     * @param LifecycleEventArgs $args The Lifecycle event arguments.
      *
      * @return void
      */
@@ -35,11 +34,8 @@ class InformationProductListener
             $informationProducts = $repository->findByDigitalResourceTypeDescriptor($entity);
 
             if (count($informationProducts) > 0) {
-                throw new ORMException('This Digitial Resource Type Descriptor is associated with an Information Product');
+                throw new \Exception('This Digitial Resource Type Descriptor is associated with an Information Product');
             }
         }
     }
-
-
-
 }

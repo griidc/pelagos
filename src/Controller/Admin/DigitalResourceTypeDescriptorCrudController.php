@@ -15,7 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Undocumented class
+ * Digital Resource Type Crud Controller.
  */
 class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 {
@@ -30,7 +30,7 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
     }
 
     /**
-     * Undocumented function
+     * Configure the Crud actions.
      *
      * @param Actions $actions
      *
@@ -49,7 +49,7 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-trash')
                     ->setLabel('Delete')
-                    ->displayIf(function (DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor){
+                    ->displayIf(function (DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor) {
                         return !$this->isDigitalResourceTypeInUse($digitalResourceTypeDescriptor);
                     })
                     ;
@@ -104,6 +104,14 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
         return $digitalResourceTypeDescriptor;
     }
 
+    /**
+     * Update the Crud entity.
+     *
+     * @param EntityManagerInterface $entityManager  The Entity Manager.
+     * @param mixed                  $entityInstance The entity to update.
+     *
+     * @return void
+     */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var DigitalResourceTypeDescriptor $entityInstance */
@@ -112,9 +120,16 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
         $entityManager->flush();
     }
 
+    /**
+     * Crud delete an entity.
+     *
+     * @param EntityManagerInterface $entityManager  The Entity Manager.
+     * @param mixed                  $entityInstance The entity to delete.
+     *
+     * @return void
+     */
     public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        // Check first if this is not being used!
         try {
             $entityManager->remove($entityInstance);
         } catch (\Exception $e) {
@@ -124,6 +139,13 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
         $entityManager->flush();
     }
 
+    /**
+     * Is this digital resource in use on an Information Product.
+     *
+     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     *
+     * @return boolean
+     */
     private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): bool
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -133,5 +155,4 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 
         return count($informationProductRepository->findByDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor)) > 0;
     }
-
 }

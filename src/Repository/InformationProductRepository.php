@@ -38,6 +38,13 @@ class InformationProductRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * Get Information Products by Digital Resource Type.
+     *
+     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     *
+     * @return array An array of Information Products.
+     */
     public function findByDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): array
     {
         $qb = $this->createQueryBuilder('ip');
@@ -45,9 +52,7 @@ class InformationProductRepository extends ServiceEntityRepository
         $qb->where($qb->expr()->isMemberOf(':digitalResourceTypeDescriptor', 'ip.digitalResourceTypeDescriptors'));
 
         return $qb->getQuery()->getResult();
-
     }
-
 
     /*
     public function findOneBySomeField($value): ?InformationProduct
