@@ -1,250 +1,252 @@
 <template>
-    <div class="m-2 pb-5">
-        <h4 class="text-center">Information Product Form</h4>
-        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-          <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
-          <b-form-group
-                    id="input-group-title"
-                    label="Title"
-                    label-for="title"
-                    description="Brief description about the Information Product">
-                <b-form-input
-                        id="title"
-                        v-model="form.title"
-                        placeholder="Enter Title"
-                        required
-                ></b-form-input>
-            </b-form-group>
+  <div class="m-2 pb-5">
+    <h4 class="text-center">Information Product Form</h4>
+    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+      <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
+      <b-form-group
+          id="input-group-title"
+          label="Title"
+          label-for="title"
+          description="Brief description about the Information Product">
+        <b-form-input
+            id="title"
+            v-model="form.title"
+            placeholder="Enter Title"
+            required
+        ></b-form-input>
+      </b-form-group>
 
-            <b-form-group
-                    id="input-group-creators"
-                    label="Creators"
-                    label-for="creators"
-                    description="e.g. John Doe, Jan Doe, etc">
-                <b-form-input
-                        id="creators"
-                        v-model="form.creators"
-                        placeholder="Enter Creators"
-                        required
-                ></b-form-input>
-            </b-form-group>
+      <b-form-group
+          id="input-group-creators"
+          label="Creators"
+          label-for="creators"
+          description="e.g. John Doe, Jan Doe, etc">
+        <b-form-input
+            id="creators"
+            v-model="form.creators"
+            placeholder="Enter Creators"
+            required
+        ></b-form-input>
+      </b-form-group>
 
-            <b-form-group
-                    id="input-group-publisher"
-                    label="Publisher"
-                    label-for="publisher"
-                    description="e.g. John Doe, Jan Doe, etc">
-                <b-form-input
-                        id="publisher"
-                        v-model="form.publisher"
-                        placeholder="Enter Publisher"
-                        required
-                ></b-form-input>
-            </b-form-group>
+      <b-form-group
+          id="input-group-publisher"
+          label="Publisher"
+          label-for="publisher"
+          description="e.g. John Doe, Jan Doe, etc">
+        <b-form-input
+            id="publisher"
+            v-model="form.publisher"
+            placeholder="Enter Publisher"
+            required
+        ></b-form-input>
+      </b-form-group>
 
-            <b-form-group
-                    id="input-group-doi"
-                    label="External DOI"
-                    label-for="externalDoi"
-                    description="e.g. 10.1234/xyz">
-                <b-form-input
-                        id="externalDoi"
-                        v-model="form.externalDoi"
-                        placeholder="Enter DOI"
-                ></b-form-input>
-            </b-form-group>
+      <b-form-group
+          id="input-group-doi"
+          label="External DOI"
+          label-for="externalDoi"
+          description="e.g. 10.1234/xyz">
+        <b-form-input
+            id="externalDoi"
+            v-model="form.externalDoi"
+            placeholder="Enter DOI"
+        ></b-form-input>
+      </b-form-group>
 
-            <h5>
-                <b-badge
-                        variant="secondary"
-                        v-for="selectedResearchGroup in form.selectedResearchGroups"
-                        v-bind:key="selectedResearchGroup"
-                        class="mr-2">
-                    {{ getResearchGroupShortName(selectedResearchGroup) }}
-                    <button
-                            type="button"
-                            class="close"
-                            aria-label="Dismiss"
-                            v-on:click="removeResearchGroup(selectedResearchGroup)">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </b-badge>
-            </h5>
+      <h5>
+        <b-badge
+            variant="secondary"
+            v-for="selectedResearchGroup in form.selectedResearchGroups"
+            v-bind:key="selectedResearchGroup"
+            class="mr-2">
+          {{ getResearchGroupShortName(selectedResearchGroup) }}
+          <button
+              type="button"
+              class="close"
+              aria-label="Dismiss"
+              v-on:click="removeResearchGroup(selectedResearchGroup)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </b-badge>
+      </h5>
 
-            <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
-            <p class="alert alert-warning" v-if="!researchGroupsSelected">
-              Please select at least one research group!
-            </p>
+      <input type="hidden" v-model="form.selectedResearchGroups" id="research-groups"/>
+      <p class="alert alert-warning" v-if="!researchGroupsSelected">
+        Please select at least one research group!
+      </p>
 
-            <b-form-group
-                    id="input-group-researchgroup"
-                    label="Add Research Groups"
-                    label-for="add-research-groups"
-                    description="Please click the link button to link it to this Information Product">
-                <b-form inline>
-                    <b-form-input
-                            v-model="addedRgShortName"
-                            list="researchGroupList"
-                            id="add-research-groups"
-                            placeholder="Type to search...">
-                    </b-form-input>
-                    <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
-                    <b-button :disabled="isNaN(this.selectedResearchGroup)" type="button" class="ml-2" v-on:click="linkResearchGroup()" >
-                      Link Research Group
-                    </b-button>
-                </b-form>
-            </b-form-group>
-
-            <b-form-group
-                    id="input-group-file"
-                    label="File"
-                    label-for="published"
-                    description="Upload a file.">
-                <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri)?'dropzone-uploader-disabled':''">
-                </div>
-                <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
-            </b-form-group>
-
-            <b-form-group
-                    id="input-group-remote-uri"
-                    label="Remote URI"
-                    label-for="remoteUri"
-                    description="Enter the remote URI">
-                <b-form-input
-                        :disabled="!!form.file"
-                        id="remoteUri"
-                        type="url"
-                        v-model="form.remoteUri"
-                        placeholder="Enter Remote URI"
-                ></b-form-input>
-            </b-form-group>
-
-            <b-form-group
-                    id="input-group-published"
-                    label="Published"
-                    label-for="published"
-                    v-slot="{ ariaDescribedby }"
-                    description="Do you want to publish it?">
-                <b-form-radio-group
-                        id="radio-group-1"
-                        v-model="form.published"
-                        :options="booleanOptions"
-                        :aria-describedby="ariaDescribedby"
-                        name="published-options"
-                ></b-form-radio-group>
-            </b-form-group>
-
-            <b-form-group
-                    id="input-group-remoteresource"
-                    label="Remote Resource"
-                    label-for="remote-resource"
-                    v-slot="{ ariaDescribedby }"
-                    description="Is it a Remote Resource?">
-                <b-form-radio-group
-                        id="radio-group-2"
-                        v-model="form.remoteResource"
-                        :options="booleanOptions"
-                        :aria-describedby="ariaDescribedby"
-                        name="remote-resource-options"
-                ></b-form-radio-group>
-            </b-form-group>
-
-          <input type="hidden" v-model="form.selectedProductTypes" id="product-types"/>
-          <p class="alert alert-warning" v-if="!productTypesSelected">
-            Please select at least one product type!
-          </p>
-            <b-form-group
-                id="input-group-producttype"
-                label="Product Type Descriptor"
-                label-for="product-type"
-                description="Can add multiple types">
-              <DxTagBox
-                  :data-source="productTypeOptions"
-                  :value="productValue"
-                  display-expr="description"
-                  value-expr="id"
-                  :search-enabled="true"
-                  @selectionChanged="onSelectionChanged"
-              />
-            </b-form-group>
-
-            <div class="py-2">
-              <b-button :disabled="!formValid" type="submit" variant="alternate">{{ submitBtnText }}</b-button>
-              <b-button v-if="!editMode" type="reset" variant="dark" >Reset</b-button>
-              <b-button v-if="editMode" type="button" variant="danger" @click="showDeleteDialog">Delete</b-button>
-            </div>
+      <b-form-group
+          id="input-group-researchgroup"
+          label="Add Research Groups"
+          label-for="add-research-groups"
+          description="Please click the link button to link it to this Information Product">
+        <b-form inline>
+          <b-form-input
+              v-model="addedRgShortName"
+              list="researchGroupList"
+              id="add-research-groups"
+              placeholder="Type to search...">
+          </b-form-input>
+          <b-form-datalist id="researchGroupList" :options="researchGroupOptions"></b-form-datalist>
+          <b-button :disabled="isNaN(this.selectedResearchGroup)" type="button" class="ml-2"
+                    v-on:click="linkResearchGroup()">
+            Link Research Group
+          </b-button>
         </b-form>
-        <DxPopup
-                :visible.sync="ipCreatedSuccessModal"
-                :drag-enabled="false"
-                :close-on-outside-click="true"
-                :show-title="true"
-                :width="400"
-                :height="200"
-                title="Success!"
-                container=".dx-viewport">
-            <template>
-                <div>
-                    <h6>
-                      {{ ipSuccessModalText }}
-                    </h6>
-                    <p>
-                        Information Product ID: {{ informationProductId }}
-                    </p>
-                </div>
-            </template>
-        </DxPopup>
-        <DxPopup
-                :visible.sync="errorDialog"
-                :drag-enabled="false"
-                :close-on-outside-click="true"
-                :show-title="true"
-                :width="400"
-                :height="200"
-                title="Error!"
-                container=".dx-viewport">
-            <template>
-                <p>
-                    <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
-                    {{ errorMessage }}
-                </p>
-            </template>
-        </DxPopup>
-        <DxPopup
-            :visible.sync="deleteConfirmationDialog"
-            :close-on-outside-click="false"
-            :show-title="false"
-            position="center"
-            :showCloseButton="false"
-            :width="350"
-            height="auto"
-            :drag-enabled="false"
-            :shading="true"
-            shading-color="rgba(0,0,0,0.4)"
-        >
-          <template>
-            <div class="confirmation-dialog">
-              <p>
-                <b>Do you really want to delete this Information Product?</b>
-              </p>
-              <br>
-              <DxButton
-                  text="Yes"
-                  type="danger"
-                  width="50%"
-                  styling-mode="contained"
-                  @click="deleteInformationProduct"
-              />
-              <DxButton
-                  text="No"
-                  width="50%"
-                  styling-mode="contained"
-                  @click="cancelDelete"
-              />
-            </div>
-          </template>
-        </DxPopup>
-    </div>
+      </b-form-group>
+
+      <b-form-group
+          id="input-group-file"
+          label="File"
+          label-for="published"
+          description="Upload a file.">
+        <div id="dropzone-uploader" class="dropzone" v-bind:class="(form.remoteUri)?'dropzone-uploader-disabled':''">
+        </div>
+        <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File
+        </b-button>
+      </b-form-group>
+
+      <b-form-group
+          id="input-group-remote-uri"
+          label="Remote URI"
+          label-for="remoteUri"
+          description="Enter the remote URI">
+        <b-form-input
+            :disabled="!!form.file"
+            id="remoteUri"
+            type="url"
+            v-model="form.remoteUri"
+            placeholder="Enter Remote URI"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+          id="input-group-published"
+          label="Published"
+          label-for="published"
+          v-slot="{ ariaDescribedby }"
+          description="Do you want to publish it?">
+        <b-form-radio-group
+            id="radio-group-1"
+            v-model="form.published"
+            :options="booleanOptions"
+            :aria-describedby="ariaDescribedby"
+            name="published-options"
+        ></b-form-radio-group>
+      </b-form-group>
+
+      <b-form-group
+          id="input-group-remoteresource"
+          label="Remote Resource"
+          label-for="remote-resource"
+          v-slot="{ ariaDescribedby }"
+          description="Is it a Remote Resource?">
+        <b-form-radio-group
+            id="radio-group-2"
+            v-model="form.remoteResource"
+            :options="booleanOptions"
+            :aria-describedby="ariaDescribedby"
+            name="remote-resource-options"
+        ></b-form-radio-group>
+      </b-form-group>
+
+      <input type="hidden" v-model="form.selectedProductTypes" id="product-types"/>
+      <p class="alert alert-warning" v-if="!productTypesSelected">
+        Please select at least one product type!
+      </p>
+      <b-form-group
+          id="input-group-producttype"
+          label="Product Type Descriptor"
+          label-for="product-type"
+          description="Can add multiple types">
+        <DxTagBox
+            :data-source="productTypeOptions"
+            :value="productValue"
+            display-expr="description"
+            value-expr="id"
+            :search-enabled="true"
+            @selectionChanged="onSelectionChanged"
+        />
+      </b-form-group>
+
+      <div class="py-2">
+        <b-button :disabled="!formValid" type="submit" variant="alternate">{{ submitBtnText }}</b-button>
+        <b-button v-if="!editMode" type="reset" variant="dark">Reset</b-button>
+        <b-button v-if="editMode" type="button" variant="danger" @click="showDeleteDialog">Delete</b-button>
+      </div>
+    </b-form>
+    <DxPopup
+        :visible.sync="ipCreatedSuccessModal"
+        :drag-enabled="false"
+        :close-on-outside-click="true"
+        :show-title="true"
+        :width="400"
+        :height="200"
+        title="Success!"
+        container=".dx-viewport">
+      <template>
+        <div>
+          <h6>
+            {{ ipSuccessModalText }}
+          </h6>
+          <p>
+            Information Product ID: {{ informationProductId }}
+          </p>
+        </div>
+      </template>
+    </DxPopup>
+    <DxPopup
+        :visible.sync="errorDialog"
+        :drag-enabled="false"
+        :close-on-outside-click="true"
+        :show-title="true"
+        :width="400"
+        :height="200"
+        title="Error!"
+        container=".dx-viewport">
+      <template>
+        <p>
+          <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
+          {{ errorMessage }}
+        </p>
+      </template>
+    </DxPopup>
+    <DxPopup
+        :visible.sync="deleteConfirmationDialog"
+        :close-on-outside-click="false"
+        :show-title="false"
+        position="center"
+        :showCloseButton="false"
+        :width="350"
+        height="auto"
+        :drag-enabled="false"
+        :shading="true"
+        shading-color="rgba(0,0,0,0.4)"
+    >
+      <template>
+        <div class="confirmation-dialog">
+          <p>
+            <b>Do you really want to delete this Information Product?</b>
+          </p>
+          <br>
+          <DxButton
+              text="Yes"
+              type="danger"
+              width="50%"
+              styling-mode="contained"
+              @click="deleteInformationProduct"
+          />
+          <DxButton
+              text="No"
+              width="50%"
+              styling-mode="contained"
+              @click="cancelDelete"
+          />
+        </div>
+      </template>
+    </DxPopup>
+  </div>
 </template>
 
 <script>
