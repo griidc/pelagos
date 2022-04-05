@@ -449,4 +449,32 @@ class InformationProduct extends Entity
 
         return $this;
     }
+  
+    /**
+     * Get the List of Product type descriptors for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("productTypeDescriptors")
+     *
+     * @return array
+     */
+    public function getProductTypeDescriptorList(): array
+    {
+        $productTypeDescriptorList = [];
+
+        foreach ($this->getInformationProductTypeDescriptors() as $informationProductTypeDescriptor) {
+            $productTypeDescriptorList[] = $informationProductTypeDescriptor->getId();
+        }
+        return $productTypeDescriptorList;
+    }
+
+    /**
+     * Get the Product type descriptors for this Information Product.
+     *
+     * @return Collection|ResearchGroup[]
+     */
+    public function getInformationProductTypeDescriptors(): Collection
+    {
+        return $this->informationProductTypeDescriptors;
+    }
 }

@@ -15,6 +15,7 @@
     <script>
         window.researchGroups = {{ researchGroups | json_encode | raw }}
         window.informationProduct = {{ informationProduct | raw }}
+        window.productTypeDescriptors = {{ productTypeDescriptors | raw }}
     </script>
     {{ encore_entry_script_tags('information-product') }}
 {% endblock %}
