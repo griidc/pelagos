@@ -311,7 +311,7 @@ export default {
       return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
     },
     productTypesSelected() {
-      return this.form.selectedProductTypes.length > 0;
+      return this.productValue.length > 0;
     },
   },
   mounted() {
