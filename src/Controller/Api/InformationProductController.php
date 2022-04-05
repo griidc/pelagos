@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\File;
 use App\Entity\InformationProduct;
+use App\Entity\InformationProductTypeDescriptor;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
 use App\Message\DeleteFile;
@@ -83,6 +84,12 @@ class InformationProductController extends AbstractFOSRestController
         foreach ($researchGroups as $researchGroup) {
             $informationProduct->addResearchGroup($researchGroup);
         }
+        $productTypeDescriptorIds = $request->get('selectedProductTypes');
+        $productTypeDescriptors = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        foreach ($productTypeDescriptors as $productTypeDescriptor) {
+            $informationProduct->addInformationProductType($productTypeDescriptor);
+        }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -131,13 +138,23 @@ class InformationProductController extends AbstractFOSRestController
         $researchGroupsToBeDeleted = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $informationProduct->getResearchGroupList()]);
         $researchGroupsToBeAdded = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
         // Remove previously added research groups
-        $researchGroupList = $informationProduct->getResearchGroupList();
         foreach ($researchGroupsToBeDeleted as $researchGroup) {
             $informationProduct->removeResearchGroup($researchGroup);
         }
         // Add them from the newly updated Information product
         foreach ($researchGroupsToBeAdded as $researchGroup) {
             $informationProduct->addResearchGroup($researchGroup);
+        }
+        $productTypeDescriptorIds = $request->get('selectedProductTypes');
+        $productTypeDescriptorsToBeDeleted = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $informationProduct->getProductTypeDescriptorList()]);
+        $productTypeDescriptorsToBeAdded = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        // Remove previously added product type descriptors
+        foreach ($productTypeDescriptorsToBeDeleted as $productTypeDescriptor) {
+            $informationProduct->removeInformationProductType($productTypeDescriptor);
+        }
+        // Add them from the newly updated product type descriptor
+        foreach ($productTypeDescriptorsToBeAdded as $productTypeDescriptor) {
+            $informationProduct->addInformationProductType($productTypeDescriptor);
         }
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

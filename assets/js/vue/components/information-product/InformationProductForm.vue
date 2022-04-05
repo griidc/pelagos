@@ -1,10 +1,10 @@
 <template>
-    <div class="m-2">
+    <div class="m-2 pb-5">
         <h4 class="text-center">Information Product Form</h4>
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
           <p v-if="editMode"> Information Product ID: {{ informationProductId }} </p>
           <b-form-group
-                    id="input-group-1"
+                    id="input-group-title"
                     label="Title"
                     label-for="title"
                     description="Brief description about the Information Product">
@@ -17,7 +17,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-2"
+                    id="input-group-creators"
                     label="Creators"
                     label-for="creators"
                     description="e.g. John Doe, Jan Doe, etc">
@@ -30,7 +30,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-3"
+                    id="input-group-publisher"
                     label="Publisher"
                     label-for="publisher"
                     description="e.g. John Doe, Jan Doe, etc">
@@ -43,7 +43,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-4"
+                    id="input-group-doi"
                     label="External DOI"
                     label-for="externalDoi"
                     description="e.g. 10.1234/xyz">
@@ -77,7 +77,7 @@
             </p>
 
             <b-form-group
-                    id="input-group-4"
+                    id="input-group-researchgroup"
                     label="Add Research Groups"
                     label-for="add-research-groups"
                     description="Please click the link button to link it to this Information Product">
@@ -104,6 +104,7 @@
                 </div>
                 <b-button :disabled="!!form.remoteUri" id="upload-file-button" type="button" variant="primary">Upload File</b-button>
             </b-form-group>
+
             <b-form-group
                     id="input-group-remote-uri"
                     label="Remote URI"
@@ -119,7 +120,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-5"
+                    id="input-group-published"
                     label="Published"
                     label-for="published"
                     v-slot="{ ariaDescribedby }"
@@ -134,7 +135,7 @@
             </b-form-group>
 
             <b-form-group
-                    id="input-group-6"
+                    id="input-group-remoteresource"
                     label="Remote Resource"
                     label-for="remote-resource"
                     v-slot="{ ariaDescribedby }"
@@ -146,6 +147,25 @@
                         :aria-describedby="ariaDescribedby"
                         name="remote-resource-options"
                 ></b-form-radio-group>
+            </b-form-group>
+
+          <input type="hidden" v-model="form.selectedProductTypes" id="product-types"/>
+          <p class="alert alert-warning" v-if="!productTypesSelected">
+            Please select at least one product type!
+          </p>
+            <b-form-group
+                id="input-group-producttype"
+                label="Product Type Descriptor"
+                label-for="product-type"
+                description="Can add multiple types">
+              <DxTagBox
+                  :data-source="productTypeOptions"
+                  :value="productValue"
+                  display-expr="description"
+                  value-expr="id"
+                  :search-enabled="true"
+                  @selectionChanged="onSelectionChanged"
+              />
             </b-form-group>
 
             <div class="py-2">
@@ -235,6 +255,8 @@ import { DxPopup } from 'devextreme-vue/popup';
 import { DxButton } from 'devextreme-vue/button';
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
+import DxTagBox from 'devextreme-vue/tag-box';
+import DataSource from 'devextreme/data/data_source';
 
 Dropzone.autoDiscover = false;
 
@@ -245,6 +267,7 @@ export default {
   components: {
     DxPopup,
     DxButton,
+    DxTagBox,
   },
   data() {
     return {
@@ -265,6 +288,12 @@ export default {
       submitBtnText: 'Submit',
       deleteConfirmationDialog: false,
       ipSuccessModalText: '',
+      selectedProductTypeDescriptions: [],
+      productTypeOptions: new DataSource({
+        store: window.productTypeDescriptors,
+        key: 'id',
+      }),
+      productValue: [],
     };
   },
   computed: {
@@ -272,13 +301,17 @@ export default {
       return this.form.selectedResearchGroups.length > 0;
     },
     formValid() {
-      return this.researchGroupsSelected
-        && this.form.title !== ''
-        && this.form.creators !== ''
-        && this.form.publisher !== '';
+      return this.productTypesSelected
+          && this.researchGroupsSelected
+          && this.form.title !== ''
+          && this.form.creators !== ''
+          && this.form.publisher !== '';
     },
     selectedResearchGroup() {
       return Number(this.getResearchGroupIdFromShortName(this.addedRgShortName));
+    },
+    productTypesSelected() {
+      return this.productValue.length > 0;
     },
   },
   mounted() {
@@ -290,11 +323,13 @@ export default {
       this.populateFormInitialValues();
       this.informationProductId = window.informationProduct.id;
       this.submitBtnText = 'Save Changes';
+      this.productValue = this.getProductTypeDescriptorIds();
     }
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
+      this.form.selectedProductTypes = this.productValue;
       if (this.editMode) {
         patchApi(
           // eslint-disable-next-line no-undef
@@ -334,7 +369,6 @@ export default {
     },
     populateResearchGroups() {
       this.researchGroupOptions = [];
-      this.researchGroups = null;
       window.researchGroups.forEach((researchGroup) => {
         this.addToResearchGroupOptions(researchGroup.id);
       });
@@ -351,6 +385,7 @@ export default {
         remoteResource: false,
         file: '',
         remoteUri: '',
+        selectedProductTypes: [],
       };
     },
 
@@ -435,6 +470,7 @@ export default {
       this.form.publisher = window.informationProduct.publisher;
       this.form.externalDoi = window.informationProduct.externalDoi;
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
+      this.form.selectedProductTypes = this.getProductTypeDescriptorIds();
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
       this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
@@ -448,6 +484,29 @@ export default {
 
     cancelDelete() {
       this.deleteConfirmationDialog = false;
+    },
+
+    onSelectionChanged(event) {
+      event.addedItems.forEach((value) => {
+        if (!this.productValue.includes((value.id))) {
+          this.productValue.push(value.id);
+        }
+      });
+
+      event.removedItems.forEach((value) => {
+        const index = this.productValue.indexOf(value.id);
+        if (index > -1) {
+          this.productValue.splice(index, 1);
+        }
+      });
+    },
+
+    getProductTypeDescriptorIds() {
+      const productTypeDescriptorIds = [];
+      window.informationProduct.informationProductTypeDescriptors.forEach((productTypeDescriptor) => {
+        productTypeDescriptorIds.push(productTypeDescriptor.id);
+      });
+      return productTypeDescriptorIds;
     },
   },
 
