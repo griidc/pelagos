@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProductTypeDescriptor;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -47,7 +48,11 @@ class DashboardController extends AbstractDashboardController
      */
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linktoDashboard('Admin Links', 'fa fa-home');
-        yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list', InformationProductTypeDescriptor::class);
+        yield MenuItem::linktoDashboard('Admin Links', 'fa fa-link');
+        yield MenuItem::section('Editors');
+        yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', InformationProductTypeDescriptor::class);
+        yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
+        yield MenuItem::section('');
+        yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('pelagos_homepage'));
     }
 }

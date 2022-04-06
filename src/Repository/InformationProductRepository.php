@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,21 @@ class InformationProductRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * Get Information Products by Digital Resource Type.
+     *
+     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     *
+     * @return array An array of Information Products.
+     */
+    public function findByDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): array
+    {
+        $qb = $this->createQueryBuilder('ip');
+        $qb->setParameter('digitalResourceTypeDescriptor', $digitalResourceTypeDescriptor);
+        $qb->where($qb->expr()->isMemberOf(':digitalResourceTypeDescriptor', 'ip.digitalResourceTypeDescriptors'));
+
+        return $qb->getQuery()->getResult();
+    }
 
     /*
     public function findOneBySomeField($value): ?InformationProduct

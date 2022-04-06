@@ -99,6 +99,10 @@ services:
             - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.remotelyhosted_update_log, method: onNewLogCreated }
 
+    App\Event\InformationProductListener:
+        tags:
+            - { name: doctrine.event_listener, event: preRemove, entity: 'App\Entity\DigitalResourceTypeDescriptor' }
+
     App\Util\DOIutil:
         $doiApiUserName: "%env(DOI_API_USER_NAME)%"
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
