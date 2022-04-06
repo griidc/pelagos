@@ -40,7 +40,6 @@ final class Version20220401162219 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE information_product_digital_resource_type_descriptor DROP CONSTRAINT FK_BC3A0130ACA631F9');
         $this->addSql('DROP SEQUENCE digital_resource_type_descriptor_id_seq CASCADE');
         $this->addSql('DROP TABLE digital_resource_type_descriptor');

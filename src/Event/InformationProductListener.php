@@ -18,6 +18,8 @@ class InformationProductListener
      *
      * @param LifecycleEventArgs $args The Lifecycle event arguments.
      *
+     * @throws Exception When the entity can/should not be deleted.
+     *
      * @return void
      */
     public function preRemove(LifecycleEventArgs $args): void
