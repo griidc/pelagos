@@ -53,7 +53,8 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
                         return !$this->isDigitalResourceTypeInUse($digitalResourceTypeDescriptor);
                     })
                     ;
-            });
+            })
+            ;
     }
 
     /**
