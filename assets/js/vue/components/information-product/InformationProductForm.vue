@@ -166,7 +166,26 @@
             display-expr="description"
             value-expr="id"
             :search-enabled="true"
-            @selectionChanged="onSelectionChanged"
+            @selectionChanged="onProductTypeSelection"
+        />
+      </b-form-group>
+
+      <input type="hidden" v-model="form.selectedDigitalResourceTypes" id="digital-resource-types"/>
+      <p class="alert alert-warning" v-if="!productTypesSelected">
+        Please select at least one digital resource type!
+      </p>
+      <b-form-group
+          id="input-group-digitalresourcetype"
+          label="Digital Resource Type Descriptor"
+          label-for="digital-resource-type"
+          description="Can add multiple types">
+        <DxTagBox
+            :data-source="digitalResourceTypeOptions"
+            :value="digitalResourceValue"
+            display-expr="description"
+            value-expr="id"
+            :search-enabled="true"
+            @selectionChanged="onDigitalResourceTypeSelection"
         />
       </b-form-group>
 
@@ -296,6 +315,11 @@ export default {
         key: 'id',
       }),
       productValue: [],
+      digitalResourceTypeOptions: new DataSource({
+        store: window.digitalResourceTypeDescriptors,
+        key: 'id',
+      }),
+      digitalResourceValue: [],
     };
   },
   computed: {
@@ -388,6 +412,7 @@ export default {
         file: '',
         remoteUri: '',
         selectedProductTypes: [],
+        selectedDigitalResourceTypes: [],
       };
     },
 
@@ -473,6 +498,7 @@ export default {
       this.form.externalDoi = window.informationProduct.externalDoi;
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
       this.form.selectedProductTypes = this.getProductTypeDescriptorIds();
+      this.form.selectedDigitalResourceTypes = this.getDigitalResourceTypeDescriptorIds();
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
       this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
@@ -488,7 +514,7 @@ export default {
       this.deleteConfirmationDialog = false;
     },
 
-    onSelectionChanged(event) {
+    onProductTypeSelection(event) {
       event.addedItems.forEach((value) => {
         if (!this.productValue.includes((value.id))) {
           this.productValue.push(value.id);
@@ -509,6 +535,29 @@ export default {
         productTypeDescriptorIds.push(productTypeDescriptor.id);
       });
       return productTypeDescriptorIds;
+    },
+
+    onDigitalResourceTypeSelection(event) {
+      event.addedItems.forEach((value) => {
+        if (!this.digitalResourceValue.includes((value.id))) {
+          this.digitalResourceValue.push(value.id);
+        }
+      });
+
+      event.removedItems.forEach((value) => {
+        const index = this.digitalResourceValue.indexOf(value.id);
+        if (index > -1) {
+          this.digitalResourceValue.splice(index, 1);
+        }
+      });
+    },
+
+    getDigitalResourceTypeDescriptorIds() {
+      const digitalResourceTypeDescriptorIds = [];
+      window.informationProduct.digitalResourceTypeDescriptors.forEach((digitalResourceTypeDescriptor) => {
+        digitalResourceTypeDescriptorIds.push(digitalResourceTypeDescriptor.id);
+      });
+      return digitalResourceTypeDescriptorIds;
     },
   },
 
