@@ -20,7 +20,7 @@ jobs:
           php-version: '7.4'
 
       - name: Install dependencies
-        run: composer install --no-progress -q
+        run: composer install --no-progress
 
       - name: Install node modules
         run: yarn install --silent

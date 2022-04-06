@@ -9,7 +9,7 @@
 
     {% for error in errors %}
 
-    <li><a href={{ url('pelagos_app_ui_dataland_default', { 'udi': error.udi }) }}>{{ error.udi }}</a> - {{ error.link }}</li>
+    <li><a href={{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': error.udi }) }}>{{ error.udi }}</a> - {{ error.link }}</li>
     {% endfor %}
 {% endblock %}
 
@@ -18,7 +18,7 @@
 Below are the list of Dataset UDIs and remote links which have failed.
 
 {% for error in errors %}
-{{ url('pelagos_app_ui_dataland_default', {'udi': error.udi }) }} - {{ error.link }}
+{{ vanityurl('pelagos_app_ui_dataland_default', {'udi': error.udi }) }} - {{ error.link }}
 {% endfor %}
 
 {% endblock %}

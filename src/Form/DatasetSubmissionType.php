@@ -353,6 +353,7 @@ class DatasetSubmissionType extends AbstractType
             'empty_data' => function (FormInterface $form) use ($entity, $poc) {
                 return new DatasetSubmission($entity, $poc);
             },
+            'csrf_protection' => false,
         ));
     }
 }

@@ -75,6 +75,7 @@ class DataRepositoryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\DataRepository',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 }
