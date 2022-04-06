@@ -6,7 +6,7 @@
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
     The GRIIDC has received your dataset submission {{ datasetSubmission.dataset.udi }}.
-    The dataset landing page is <a href="{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi})}}</a>.<br>
+    The dataset landing page is <a href="{{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi})}}</a>.<br>
     This dataset has been assigned the doi: {{datasetSubmission.dataset.doi.doi|default}} .<br><br>
     The dataset package will be reviewed by GRIIDC.<br><br>
     If you have any questions regarding this dataset submission please email griidc@gomri.org.<br>
@@ -18,7 +18,7 @@
 {% block body_text %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-    The GRIIDC has received your dataset submission {{ datasetSubmission.dataset.udi }}. The dataset landing page is The dataset landing page is {{  url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}.
+    The GRIIDC has received your dataset submission {{ datasetSubmission.dataset.udi }}. The dataset landing page is The dataset landing page is {{  vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}.
     This dataset has been assigned the doi: {{datasetSubmission.dataset.doi.doi|default}}.
 
     The dataset package will be reviewed by GRIIDC.

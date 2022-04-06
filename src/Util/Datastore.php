@@ -62,7 +62,19 @@ class Datastore
 
         return $resource;
     }
-    
+
+    /**
+     * Checks whether a file exists or not.
+     *
+     * @param string $filePath The file path.
+     *
+     * @return bool
+     */
+    public function has(string $filePath): bool
+    {
+        return $this->datastoreFlysystem->has($filePath);
+    }
+
     /**
      * Queries Flysys for a file's mimetype
      *

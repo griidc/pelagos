@@ -124,6 +124,7 @@ class PersonType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\Person',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 }

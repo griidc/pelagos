@@ -15,7 +15,7 @@
                 <hr>
                 <p class="card-text text-dark">
                     <strong>No. of Files: </strong><br>
-                    {{ dataset.datasetSubmission.fileset.numberOfFiles }}
+                    {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
                 </p>
                 <hr>
                 <p class="card-text text-dark">
