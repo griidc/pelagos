@@ -56,9 +56,9 @@ class InformationProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * Get Information Products by Digital Resource Type.
+     * Get Information Products by Product Type Descriptor.
      *
-     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     * @param InformationProductTypeDescriptor $productTypeDescriptor
      *
      * @return array An array of Information Products.
      */
