@@ -14,7 +14,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
             </td>
             <td>
                 <h2>
-                    <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
+                    <a href="{{ vanitypath('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
                         {{ DatasetSubmission.dataset.udi }}
                     </a>
                 </h2>
@@ -87,7 +87,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
     </table>
     <p/>
     <br>
-    <button type="button" onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}';">
+    <button type="button" onclick="window.location.href='{{ vanitypath('pelagos_app_ui_datasetsubmission_default') }}';">
         Fill out another Submission Form
     </button>
 </fieldset>

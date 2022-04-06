@@ -69,6 +69,7 @@ class DistributionPointType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'App\Entity\DistributionPoint',
             'allow_extra_fields' => true,
+            'csrf_protection' => false,
         ));
     }
 
