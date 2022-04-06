@@ -472,7 +472,7 @@ class InformationProduct extends Entity
      * Get the List of Product type descriptors for this Information Product.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("productTypeDescriptors")
+     * @Serializer\SerializedName("productTypeDescriptorsList")
      *
      * @return array
      */
@@ -501,7 +501,7 @@ class InformationProduct extends Entity
      * Get the List of Digital Resource type descriptors for this Information Product.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("digitalResourceTypeDescriptors")
+     * @Serializer\SerializedName("digitalResourceTypeDescriptorsList")
      *
      * @return array
      */

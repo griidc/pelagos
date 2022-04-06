@@ -171,7 +171,7 @@
       </b-form-group>
 
       <input type="hidden" v-model="form.selectedDigitalResourceTypes" id="digital-resource-types"/>
-      <p class="alert alert-warning" v-if="!productTypesSelected">
+      <p class="alert alert-warning" v-if="!digitalResourceTypesSelected">
         Please select at least one digital resource type!
       </p>
       <b-form-group
@@ -327,7 +327,8 @@ export default {
       return this.form.selectedResearchGroups.length > 0;
     },
     formValid() {
-      return this.productTypesSelected
+      return this.digitalResourceTypesSelected
+          && this.productTypesSelected
           && this.researchGroupsSelected
           && this.form.title !== ''
           && this.form.creators !== ''
@@ -338,6 +339,9 @@ export default {
     },
     productTypesSelected() {
       return this.productValue.length > 0;
+    },
+    digitalResourceTypesSelected() {
+      return this.digitalResourceValue.length > 0;
     },
   },
   mounted() {
@@ -350,12 +354,14 @@ export default {
       this.informationProductId = window.informationProduct.id;
       this.submitBtnText = 'Save Changes';
       this.productValue = this.getProductTypeDescriptorIds();
+      this.digitalResourceValue = this.getDigitalResourceTypeDescriptorIds();
     }
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
       this.form.selectedProductTypes = this.productValue;
+      this.form.selectedDigitalResourceTypes = this.digitalResourceValue;
       if (this.editMode) {
         patchApi(
           // eslint-disable-next-line no-undef
