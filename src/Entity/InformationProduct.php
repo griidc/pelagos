@@ -448,7 +448,7 @@ class InformationProduct extends Entity
     public function addDigitalResourceTypeDescriptor(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): self
     {
         if (!$this->digitalResourceTypeDescriptors->contains($digitalResourceTypeDescriptor)) {
-            $this->digitalResourceTypeDescriptors[] = $digitalResourceTypeDescriptor;
+            $this->digitalResourceTypeDescriptors->add($digitalResourceTypeDescriptor);
         }
 
         return $this;
