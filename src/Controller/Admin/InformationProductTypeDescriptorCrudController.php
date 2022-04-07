@@ -52,8 +52,7 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
                         return !$this->isProductTypeInUse($informationProductTypeDescriptor);
                     })
                     ;
-            })
-            ;
+            });
     }
 
     /**
