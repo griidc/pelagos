@@ -41,8 +41,7 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-plus-circle')
-                    ->setLabel('Create New Information Product Type Descriptor')
-                    ;
+                    ->setLabel('Create New Information Product Type Descriptor');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
@@ -50,8 +49,7 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
                     ->setLabel('Delete')
                     ->displayIf(function (InformationProductTypeDescriptor $informationProductTypeDescriptor) {
                         return !$this->isProductTypeInUse($informationProductTypeDescriptor);
-                    })
-                    ;
+                    });
             });
     }
 
