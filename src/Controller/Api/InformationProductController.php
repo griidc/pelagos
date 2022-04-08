@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Entity\InformationProductTypeDescriptor;
@@ -89,6 +90,11 @@ class InformationProductController extends AbstractFOSRestController
         foreach ($productTypeDescriptors as $productTypeDescriptor) {
             $informationProduct->addInformationProductType($productTypeDescriptor);
         }
+        $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
+        $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $digitalResourceTypeDescriptorIds]);
+        foreach ($digitalResourceTypeDescriptors as $digitalResourceTypeDescriptor) {
+            $informationProduct->addDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor);
+        }
 
         $form->handleRequest($request);
 
@@ -155,6 +161,17 @@ class InformationProductController extends AbstractFOSRestController
         // Add them from the newly updated product type descriptor
         foreach ($productTypeDescriptorsToBeAdded as $productTypeDescriptor) {
             $informationProduct->addInformationProductType($productTypeDescriptor);
+        }
+        $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
+        $digitalResourceTypeDescriptorsToBeDeleted = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $informationProduct->getDigitalResourceTypeDescriptorList()]);
+        $digitalResourceTypeDescriptorsToBeAdded = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $digitalResourceTypeDescriptorIds]);
+        // Remove previously added digital resource type descriptors
+        foreach ($digitalResourceTypeDescriptorsToBeDeleted as $digitalResourceTypeDescriptor) {
+            $informationProduct->removeDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor);
+        }
+        // Add them from the newly updated digital resource type descriptor
+        foreach ($digitalResourceTypeDescriptorsToBeAdded as $digitalResourceTypeDescriptor) {
+            $informationProduct->addDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor);
         }
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
