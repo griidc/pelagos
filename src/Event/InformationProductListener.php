@@ -4,6 +4,7 @@ namespace App\Event;
 
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
+use App\Entity\InformationProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -26,17 +27,21 @@ class InformationProductListener
     {
         $entity = $args->getObject();
 
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $args->getObjectManager();
+
+        /** @var InformationProductRepository $repository */
+        $repository = $entityManager->getRepository(InformationProduct::class);
+
         if ($entity instanceof DigitalResourceTypeDescriptor) {
-            /** @var EntityManagerInterface $entityManager */
-            $entityManager = $args->getObjectManager();
-
-            /** @var InformationProductRepository $repository */
-            $repository = $entityManager->getRepository(InformationProduct::class);
-
-            $informationProducts = $repository->findByDigitalResourceTypeDescriptor($entity);
-
-            if (count($informationProducts) > 0) {
+            if (count($repository->findByDigitalResourceTypeDescriptor($entity)) > 0) {
                 throw new \Exception('This Digitial Resource Type Descriptor is associated with an Information Product');
+            }
+        }
+
+        if ($entity instanceof InformationProductTypeDescriptor) {
+            if (count($repository->findByProductTypeDescriptor($entity)) > 0) {
+                throw new \Exception('This Product Type Descriptor is associated with an Information Product');
             }
         }
     }

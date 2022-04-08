@@ -42,8 +42,7 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-plus-circle')
-                    ->setLabel('Create New Digital Resource Type Descriptor')
-                    ;
+                    ->setLabel('Create New Digital Resource Type Descriptor');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
@@ -51,8 +50,7 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
                     ->setLabel('Delete')
                     ->displayIf(function (DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor) {
                         return !$this->isDigitalResourceTypeInUse($digitalResourceTypeDescriptor);
-                    })
-                    ;
+                    });
             });
     }
 
@@ -69,8 +67,7 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'Digital Resource Type Descriptors')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Digital Resource Type Descriptor')
             ->setPageTitle(Crud::PAGE_NEW, 'Create Digital Resource Type Descriptor')
-            ->showEntityActionsInlined()
-            ;
+            ->showEntityActionsInlined();
     }
 
     /**
