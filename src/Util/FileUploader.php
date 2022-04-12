@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use Laminas\Diactoros\Stream;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -98,7 +99,7 @@ class FileUploader
             unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
         @rmdir($chunksFolder);
-        $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
+        $targetFileSize = StreamInfo::getFileSize(new Stream($targetFile));
         fclose($targetFile);
         if ($targetFileSize !== $fileSize) {
             unlink($targetFileName);

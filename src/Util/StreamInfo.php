@@ -35,8 +35,6 @@ class StreamInfo
      */
     public static function getFileSize(StreamInterface $inputFileStream) :int
     {
-        $fileStream = $inputFileStream->de ?? null;
-        $fstat = fstat($fileStream);
-        return (int) $fstat['size'];
+        return $inputFileStream->getSize();
     }
 }
