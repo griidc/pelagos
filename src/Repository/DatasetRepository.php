@@ -55,8 +55,7 @@ class DatasetRepository extends ServiceEntityRepository
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
-                )
-            );
+            ));
         }
 
         if (is_numeric($fundingOrganizationId)) {
@@ -100,8 +99,7 @@ class DatasetRepository extends ServiceEntityRepository
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
-                )
-            );
+            ));
         }
 
         if (is_numeric($fundingOrganizationId)) {
