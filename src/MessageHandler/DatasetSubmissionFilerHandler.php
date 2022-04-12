@@ -191,22 +191,23 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $fileId = $file->getId();
         $fileset = $file->getFileset();
         $filePath = $file->getPhysicalFilePath();
-        @$fileStream = fopen($filePath, 'r');
+        @$fileHandle = fopen($filePath, 'r');
 
-        if ($fileStream === false) {
+        if ($fileHandle === false) {
             $lastErrorMessage = error_get_last()['message'];
             $this->logger->error(sprintf('Unreadable Queued File: "%s"', $lastErrorMessage, $loggingContext));
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
             return;
-        } else {
-            $fileHash = StreamInfo::calculateHash(array('fileStream' => $fileStream));
-            $file->setFileSha256Hash($fileHash);
         }
+
+        $fileStream = new Stream($fileHandle);
+        $fileHash = StreamInfo::calculateHash($fileStream);
+        $file->setFileSha256Hash($fileHash);
 
         try {
             $newFileDestination = $this->datastore->addFile(
-                ['fileStream' => $fileStream],
+                $fileStream,
                 $fileset->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
