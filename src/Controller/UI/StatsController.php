@@ -17,7 +17,6 @@ use App\Entity\DIF;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
-use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
