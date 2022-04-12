@@ -21,6 +21,7 @@
         "guzzlehttp/guzzle": "~6.0",
         "hylianshield/base32-crockford": "^1.0",
         "jms/serializer-bundle": "^3.0",
+        "laminas/laminas-diactoros": "^2.9",
         "maennchen/zipstream-php": "^2.1",
         "nelmio/api-doc-bundle": "^3.0",
         "oneup/flysystem-bundle": "^3.5",

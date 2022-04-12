@@ -291,7 +291,7 @@ class FileManager extends AbstractFOSRestController
             $outputStream = fopen('php://output', 'wb');
             if ($file->getStatus() === File::FILE_DONE) {
                 try {
-                    $fileStream = $datastore->getFile($file->getPhysicalFilePath()->detach();
+                    $fileStream = $datastore->getFile($file->getPhysicalFilePath())->detach();
                 } catch (\Exception $exception) {
                     throw new BadRequestHttpException($exception->getMessage());
                 }
