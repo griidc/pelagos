@@ -40,14 +40,32 @@ class DatasetRepository extends ServiceEntityRepository
      *
      * @return integer
      */
-    public function countRegistered()
+    public function countRegistered(int $fundingOrganizationId = null, bool $accepted = false)
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('COUNT(dataset)')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
 
-        if ($this->fundingOrgFilter->isActive()) {
+        if ($accepted === true) {
+            $qb
+            ->andWhere('dataset.availabilityStatus IN (:available)')
+            ->setParameter('available', array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                )
+            );
+        }
+
+        if (is_numeric($fundingOrganizationId)) {
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->innerJoin('rg.fundingCycle', 'fc')
+            ->andWhere('fc.fundingOrganization = (:foid)')
+            ->setParameter('foid', $fundingOrganizationId);
+        } elseif ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
 
             $qb
@@ -66,7 +84,7 @@ class DatasetRepository extends ServiceEntityRepository
      *
      * @return integer Size of data in bytes.
      */
-    public function totalDatasetSize() : int
+    public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = false) : int
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
@@ -74,7 +92,25 @@ class DatasetRepository extends ServiceEntityRepository
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
 
-        if ($this->fundingOrgFilter->isActive()) {
+        if ($accepted === true) {
+            $qb
+            ->andWhere('dataset.availabilityStatus IN (:available)')
+            ->setParameter('available', array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                )
+            );
+        }
+
+        if (is_numeric($fundingOrganizationId)) {
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->innerJoin('rg.fundingCycle', 'fc')
+            ->andWhere('fc.fundingOrganization = (:foid)')
+            ->setParameter('foid', $fundingOrganizationId);
+        } elseif ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
 
             $qb
