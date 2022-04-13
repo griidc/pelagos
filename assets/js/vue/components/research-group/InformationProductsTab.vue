@@ -2,7 +2,7 @@
   <div class="col-12">
     <b-card class="card-product"
             v-for="informationProduct in informationProductData"
-            :key="informationProduct.id">
+            :key="informationProduct.id" v-show="informationProduct.published">
       <div>
         <span class="badge badge-available">Product Type</span>
         <span class="badge badge-submitted">Digital Resource Type</span>
