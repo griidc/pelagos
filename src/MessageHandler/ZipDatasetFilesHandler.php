@@ -93,7 +93,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
      */
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
-        $this->logger->info('Zip worker starting');
+        $this->logger->info('Zip worker starting (ZipDatasetFilesHandler)');
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
