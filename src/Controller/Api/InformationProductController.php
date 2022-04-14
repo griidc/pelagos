@@ -7,7 +7,7 @@ use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
-use App\Form\ProductType;
+use App\Form\InformationProductType;
 use App\Message\DeleteFile;
 use App\Message\InformationProductFiler;
 use App\Repository\FileRepository;
@@ -78,7 +78,7 @@ class InformationProductController extends AbstractFOSRestController
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
         $entityManager = $this->getDoctrine()->getManager();
         $informationProduct = new InformationProduct();
-        $form = $this->createForm(ProductType::class, $informationProduct);
+        $form = $this->createForm(InformationProductType::class, $informationProduct);
         $request->request->set($form->getName(), $prefilledRequestDataBag);
         $researchGroupsIds = $request->get('selectedResearchGroups');
         $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
@@ -88,7 +88,7 @@ class InformationProductController extends AbstractFOSRestController
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
         $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
         foreach ($productTypeDescriptors as $productTypeDescriptor) {
-            $informationProduct->addProductType($productTypeDescriptor);
+            $informationProduct->addProductTypeDescriptor($productTypeDescriptor);
         }
         $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
         $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $digitalResourceTypeDescriptorIds]);
@@ -138,7 +138,7 @@ class InformationProductController extends AbstractFOSRestController
     {
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
         $entityManager = $this->getDoctrine()->getManager();
-        $form = $this->createForm(ProductType::class, $informationProduct, ['method' => 'PATCH']);
+        $form = $this->createForm(InformationProductType::class, $informationProduct, ['method' => 'PATCH']);
         $request->request->set($form->getName(), $prefilledRequestDataBag);
         $researchGroupsIds = $request->get('selectedResearchGroups');
         $researchGroupsToBeDeleted = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $informationProduct->getResearchGroupList()]);
@@ -156,11 +156,11 @@ class InformationProductController extends AbstractFOSRestController
         $productTypeDescriptorsToBeAdded = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
         // Remove previously added product type descriptors
         foreach ($productTypeDescriptorsToBeDeleted as $productTypeDescriptor) {
-            $informationProduct->removeProductType($productTypeDescriptor);
+            $informationProduct->removeProductTypeDescriptor($productTypeDescriptor);
         }
         // Add them from the newly updated product type descriptor
         foreach ($productTypeDescriptorsToBeAdded as $productTypeDescriptor) {
-            $informationProduct->addProductType($productTypeDescriptor);
+            $informationProduct->addProductTypeDescriptor($productTypeDescriptor);
         }
         $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
         $digitalResourceTypeDescriptorsToBeDeleted = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $informationProduct->getDigitalResourceTypeDescriptorList()]);
