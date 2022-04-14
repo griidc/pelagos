@@ -149,7 +149,7 @@ class InformationProduct extends Entity
     public function __construct()
     {
         $this->researchGroups = new ArrayCollection();
-        $this->ProductTypeDescriptors = new ArrayCollection();
+        $this->productTypeDescriptors = new ArrayCollection();
         $this->digitalResourceTypeDescriptors = new ArrayCollection();
     }
 

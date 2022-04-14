@@ -20,7 +20,7 @@ class ProductTypeDescriptorRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return ProductType[] Returns an array of ProductType objects
+    //  * @return ProductTypeDescriptor[] Returns an array of ProductTypeDescriptor objects
     //  */
     /*
     public function findByExampleField($value)
