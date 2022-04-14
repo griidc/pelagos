@@ -537,7 +537,7 @@ export default {
 
     getProductTypeDescriptorIds() {
       const productTypeDescriptorIds = [];
-      window.informationProduct.informationProductTypeDescriptors.forEach((productTypeDescriptor) => {
+      window.informationProduct.productTypeDescriptors.forEach((productTypeDescriptor) => {
         productTypeDescriptorIds.push(productTypeDescriptor.id);
       });
       return productTypeDescriptorIds;

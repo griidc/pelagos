@@ -126,9 +126,9 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      *
-     * @ORM\ManyToMany(targetEntity=InformationProductTypeDescriptor::class)
+     * @ORM\ManyToMany(targetEntity=ProductTypeDescriptor::class)
      */
-    private $informationProductTypeDescriptors;
+    private $productTypeDescriptors;
 
     /**
      * The collection of Digital Resource Types for this Information Product.
@@ -149,7 +149,7 @@ class InformationProduct extends Entity
     public function __construct()
     {
         $this->researchGroups = new ArrayCollection();
-        $this->informationProductTypeDescriptors = new ArrayCollection();
+        $this->ProductTypeDescriptors = new ArrayCollection();
         $this->digitalResourceTypeDescriptors = new ArrayCollection();
     }
 
@@ -405,27 +405,27 @@ class InformationProduct extends Entity
     /**
      * Adder for Information Product type.
      *
-     * @param InformationProductTypeDescriptor $informationProductTypeDescriptor Single information product type to be added.
+     * @param ProductTypeDescriptor $productTypeDescriptor Single information product type to be added.
      *
      * @return void
      */
-    public function addInformationProductType(InformationProductTypeDescriptor $informationProductTypeDescriptor): void
+    public function addProductTypeDescriptor(ProductTypeDescriptor $productTypeDescriptor): void
     {
-        if (!$this->informationProductTypeDescriptors->contains($informationProductTypeDescriptor)) {
-            $this->informationProductTypeDescriptors->add($informationProductTypeDescriptor);
+        if (!$this->ProductTypeDescriptors->contains($productTypeDescriptor)) {
+            $this->ProductTypeDescriptors->add($productTypeDescriptor);
         }
     }
 
     /**
      * Remover for Information Product type.
      *
-     * @param InformationProductTypeDescriptor $informationProductTypeDescriptor Single information product type to be removed.
+     * @param ProductTypeDescriptor $productTypeDescriptor Single information product type to be removed.
      *
      * @return void
      */
-    public function removeInformationProductType(InformationProductTypeDescriptor $informationProductTypeDescriptor): void
+    public function removeProductTypeDescriptor(ProductTypeDescriptor $productTypeDescriptor): void
     {
-        $this->informationProductTypeDescriptors->removeElement($informationProductTypeDescriptor);
+        $this->ProductTypeDescriptors->removeElement($productTypeDescriptor);
     }
 
     /**
@@ -480,8 +480,8 @@ class InformationProduct extends Entity
     {
         $productTypeDescriptorList = [];
 
-        foreach ($this->getInformationProductTypeDescriptors() as $informationProductTypeDescriptor) {
-            $productTypeDescriptorList[] = $informationProductTypeDescriptor->getId();
+        foreach ($this->getProductTypeDescriptors() as $productTypeDescriptor) {
+            $productTypeDescriptorList[] = $productTypeDescriptor->getId();
         }
         return $productTypeDescriptorList;
     }
@@ -491,9 +491,9 @@ class InformationProduct extends Entity
      *
      * @return Collection|ResearchGroup[]
      */
-    public function getInformationProductTypeDescriptors(): Collection
+    public function getProductTypeDescriptors(): Collection
     {
-        return $this->informationProductTypeDescriptors;
+        return $this->productTypeDescriptors;
     }
 
 

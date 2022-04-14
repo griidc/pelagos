@@ -4,7 +4,7 @@ namespace App\Controller\UI;
 
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -31,7 +31,7 @@ class InformationProductController extends AbstractController
     {
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
-        $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $productTypeDescriptors = $this->getDoctrine()->getRepository(ProductTypeDescriptor::class)->findAll();
         $digitalResourceTypeDescriptors = $this->getDoctrine()->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
@@ -69,7 +69,7 @@ class InformationProductController extends AbstractController
         $context->setSerializeNull(true);
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
-        $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $productTypeDescriptors = $this->getDoctrine()->getRepository(ProductTypeDescriptor::class)->findAll();
         $digitalResourceTypeDescriptors = $this->getDoctrine()->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
@@ -102,7 +102,7 @@ class InformationProductController extends AbstractController
     {
         $researchGroupList = [];
         $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
-        $productTypeDescriptors = $this->getDoctrine()->getRepository(InformationProductTypeDescriptor::class)->findAll();
+        $productTypeDescriptors = $this->getDoctrine()->getRepository(ProductTypeDescriptor::class)->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),

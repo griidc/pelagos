@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -58,15 +58,15 @@ class InformationProductRepository extends ServiceEntityRepository
     /**
      * Get Information Products by Product Type Descriptor.
      *
-     * @param InformationProductTypeDescriptor $productTypeDescriptor
+     * @param ProductTypeDescriptor $productTypeDescriptor
      *
      * @return array An array of Information Products.
      */
-    public function findByProductTypeDescriptor(InformationProductTypeDescriptor $productTypeDescriptor): array
+    public function findByProductTypeDescriptor(ProductTypeDescriptor $productTypeDescriptor): array
     {
         $qb = $this->createQueryBuilder('ip');
         $qb->setParameter('productTypeDescriptor', $productTypeDescriptor);
-        $qb->where($qb->expr()->isMemberOf(':productTypeDescriptor', 'ip.informationProductTypeDescriptors'));
+        $qb->where($qb->expr()->isMemberOf(':productTypeDescriptor', 'ip.productTypeDescriptors'));
 
         return $qb->getQuery()->getResult();
     }

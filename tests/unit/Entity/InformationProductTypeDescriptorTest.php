@@ -2,22 +2,22 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit tests for App\Entity\InformationProductTypeDescriptor.
+ * Unit tests for App\Entity\ProductTypeDescriptor.
  */
-class InformationProductTypeDescriptorTest extends TestCase
+class ProductTypeDescriptorTest extends TestCase
 {
     /**
     * Holds an instance of the Product Type Descriptor class for testing.
     */
-    private $informationProductTypeDescriptor;
+    private $productTypeDescriptor;
 
     public function setUp()
     {
-        $this->informationProductTypeDescriptor = new InformationProductTypeDescriptor;
+        $this->productTypeDescriptor = new ProductTypeDescriptor;
     }
 
     /**
@@ -28,7 +28,7 @@ class InformationProductTypeDescriptorTest extends TestCase
     public function testDescription()
     {
         $testDescription = 'Hello Description!';
-        $this->informationProductTypeDescriptor->setDescription($testDescription);
-        $this->assertSame($testDescription, $this->informationProductTypeDescriptor->getDescription());
+        $this->productTypeDescriptor->setDescription($testDescription);
+        $this->assertSame($testDescription, $this->productTypeDescriptor->getDescription());
     }
 }
