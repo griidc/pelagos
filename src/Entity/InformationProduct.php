@@ -411,8 +411,8 @@ class InformationProduct extends Entity
      */
     public function addProductTypeDescriptor(ProductTypeDescriptor $productTypeDescriptor): void
     {
-        if (!$this->ProductTypeDescriptors->contains($productTypeDescriptor)) {
-            $this->ProductTypeDescriptors->add($productTypeDescriptor);
+        if (!$this->productTypeDescriptors->contains($productTypeDescriptor)) {
+            $this->productTypeDescriptors->add($productTypeDescriptor);
         }
     }
 
@@ -425,7 +425,7 @@ class InformationProduct extends Entity
      */
     public function removeProductTypeDescriptor(ProductTypeDescriptor $productTypeDescriptor): void
     {
-        $this->ProductTypeDescriptors->removeElement($productTypeDescriptor);
+        $this->productTypeDescriptors->removeElement($productTypeDescriptor);
     }
 
     /**
