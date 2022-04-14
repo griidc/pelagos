@@ -63,9 +63,9 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, 'Information Product Type Descriptor')
-            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Information Product Type Descriptor')
-            ->setPageTitle(Crud::PAGE_NEW, 'Create Information Product Type Descriptor')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Product Type Descriptors')
+            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Product Type Descriptor')
+            ->setPageTitle(Crud::PAGE_NEW, 'Create Product Type Descriptor')
             ->showEntityActionsInlined()
             ;
     }
