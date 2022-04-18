@@ -13,16 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 /**
  * Unit tests for App\Util\ZipFiles.php
  */
-class ZipFilesTest extends KernelTestCase
+class ZipFilesTest extends TestCase
 {
     /**
      * Test adding large file.
      */
     public function testAddFileToZip()
     {
-        self::bootKernel();
-        /** @var ZipFiles $zipFiles */
-        $zipFiles = static::$container->get(ZipFiles::class);
+        $zipFiles = new ZipFiles();
+
         $root = vfsStream::setup();
         $zipFile = vfsStream::newFile('test.zip')
             ->at($root);
