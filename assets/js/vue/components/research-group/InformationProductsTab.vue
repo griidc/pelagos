@@ -5,7 +5,7 @@
             :key="informationProduct.id" v-show="informationProduct.published">
       <div>
         <span class="badge badge-available mr-1"
-              v-for="productType in informationProduct.informationProductTypeDescriptors"
+              v-for="productType in informationProduct.productTypeDescriptors"
               :key="productType.id">
           {{ productType.description }}
         </span>
