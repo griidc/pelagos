@@ -955,6 +955,20 @@ class DatasetSubmission extends Entity
     private $datasetLinks;
 
     /**
+     * For cold-stored, the total unpacked bytecount.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $coldStorageTotalUnpackedSize;
+
+    /**
+     * For cold-stored, the total unpacked filecount (not dirs).
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $coldStorageTotalUnpackedCount;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -1043,6 +1057,8 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
+            $this->setColdStorageTotalUnpackedCount($entity->getColdStorageTotalUnpackedCount());
+            $this->setColdStorageTotalUnpackedSize($entity->getColdStorageTotalUnpackedSize());
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -1842,17 +1858,21 @@ class DatasetSubmission extends Entity
     /**
      * Set the cold storage attributes, as one action, no nulls allowed.
      *
-     * @param integer $filesize The original file size, in bytes, to be preserved.
-     * @param string  $hash     The original file sha256 hash to be preserved.
-     * @param string  $filename The original file name to be preserved.
+     * @param integer      $filesize   The original file size, in bytes, to be preserved.
+     * @param string       $hash       The original file sha256 hash to be preserved.
+     * @param string       $filename   The original file name to be preserved.
+     * @param integer|null $totalCount The total count of files as unpacked.
+     * @param integer|null $totalSize  The total count of files as unpacked.
      *
      * @return void
      */
-    public function setDatasetFileColdStorageAttributes(int $filesize, string $hash, string $filename)
+    public function setDatasetFileColdStorageAttributes(int $filesize, string $hash, string $filename, ?int $totalCount, ?int $totalSize)
     {
         $this->setDatasetFileColdStorageOriginalFilename($filename);
         $this->setDatasetFileColdStorageArchiveSha256Hash($hash);
         $this->setDatasetFileColdStorageArchiveSize($filesize);
+        $this->setColdStorageTotalUnpackedCount($totalCount);
+        $this->setColdStorageTotalUnpackedSize($totalSize);
     }
 
     /**
@@ -1865,6 +1885,8 @@ class DatasetSubmission extends Entity
         $this->setDatasetFileColdStorageOriginalFilename(null);
         $this->setDatasetFileColdStorageArchiveSha256Hash(null);
         $this->setDatasetFileColdStorageArchiveSize(null);
+        $this->setColdStorageTotalUnpackedCount(null);
+        $this->setColdStorageTotalUnpackedSize(null);
     }
 
     /**
@@ -2782,5 +2804,27 @@ class DatasetSubmission extends Entity
             $isMarked = true;
         }
         return $isMarked;
+    }
+
+    public function getColdStorageTotalUnpackedSize(): ?int
+    {
+        return $this->coldStorageTotalUnpackedSize;
+    }
+
+    public function setColdStorageTotalUnpackedSize(?int $coldStorageTotalUnpackedSize): self
+    {
+        $this->coldStorageTotalUnpackedSize = $coldStorageTotalUnpackedSize;
+        return $this;
+    }
+
+    public function getColdStorageTotalUnpackedCount(): ?int
+    {
+        return $this->coldStorageTotalUnpackedCount;
+    }
+
+    public function setColdStorageTotalUnpackedCount(?int $coldStorageTotalUnpackedCount): self
+    {
+        $this->coldStorageTotalUnpackedCount = $coldStorageTotalUnpackedCount;
+        return $this;
     }
 }
