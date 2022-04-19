@@ -102,20 +102,21 @@ class StatsController extends AbstractController
      *
      * @Route("/stats/json", name="pelagos_app_ui_stats_getstatisticsjson")
      *
+     * @param Request $request The Request.
+     *
      * @return Response
      */
-    public function getStatisticsJson(Request $request)
+    public function getStatisticsJson(Request $request): Response
     {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
         $accepted = filter_var($request->query->get('accepted'), FILTER_VALIDATE_BOOLEAN);
-        $totalOnly = filter_var($request->query->get('totalOnly'), FILTER_VALIDATE_BOOLEAN);
 
         $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount, $fundingOrganizationId, $accepted);
 
         $result = array();
         $result['totalDatasets'] = $totalDatasets;
         $result['totalSize'] = TwigExtentions::formatBytes($totalSize, 1);
-        if ($totalOnly === false) {
+        if (empty($fundingOrganizationId)) {
             $result['peopleCount'] = $peopleCount;
             $result['researchGroupCount'] = $researchGroupCount;
             $result['totalDownloadCount'] = $totalDownloadCount;
