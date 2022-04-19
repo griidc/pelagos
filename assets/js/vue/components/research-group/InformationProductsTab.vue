@@ -4,12 +4,12 @@
             v-for="informationProduct in informationProductData"
             :key="informationProduct.id">
       <div>
-        <span class="badge badge-available"
+        <span class="badge badge-available mr-1"
               v-for="productType in informationProduct.informationProductTypeDescriptors"
               :key="productType.id">
           {{ productType.description }}
         </span>
-        <span class="badge badge-submitted"
+        <span class="badge badge-submitted mr-1"
               v-for="digitalResourceType in informationProduct.digitalResourceTypeDescriptors"
               :key="digitalResourceType.id">
           {{ digitalResourceType.description }}
