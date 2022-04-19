@@ -4,8 +4,16 @@
             v-for="informationProduct in informationProductData"
             :key="informationProduct.id" v-show="informationProduct.published">
       <div>
-        <span class="badge badge-available">Product Type</span>
-        <span class="badge badge-submitted">Digital Resource Type</span>
+        <span class="badge badge-available"
+              v-for="productType in informationProduct.informationProductTypeDescriptors"
+              :key="productType.id">
+          {{ productType.description }}
+        </span>
+        <span class="badge badge-submitted"
+              v-for="digitalResourceType in informationProduct.digitalResourceTypeDescriptors"
+              :key="digitalResourceType.id">
+          {{ digitalResourceType.description }}
+        </span>
       </div>
       <b-card-title style="font-size: 1.3rem !important;">{{ informationProduct.title }}</b-card-title>
       <b-card-text class="d-flex justify-content-between" >
