@@ -24,7 +24,8 @@ class ZipFiles
     public function start(StreamInterface $outputFileStream, string $zipFileName): void
     {
         $options = new Archive();
-        $options->setOutputStream($outputFileStream->detach());
+        $options->setOutputStream($outputFileStream);
+        // $options->setDeflateLevel(9);
         $this->zip = new ZipStream($zipFileName, $options);
     }
 
@@ -39,7 +40,11 @@ class ZipFiles
     public function addFile(string $fileName, StreamInterface $fileStream): void
     {
         if ($fileStream->isReadable()) {
-            $this->zip->addFileFromStream($fileName, $fileStream->detach());
+            $options = new \ZipStream\Option\File();
+            // Turned off deflate
+            // $options->setMethod(\ZipStream\Option\Method::STORE());
+            $this->zip->addFileFromPsr7Stream($fileName, $fileStream, $options);
+            // $this->zip->addFileFromStream($fileName, $fileStream->detach());
         }
     }
 

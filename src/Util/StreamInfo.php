@@ -33,7 +33,7 @@ class StreamInfo
      *
      * @return integer The file size of the stream.
      */
-    public static function getFileSize(StreamInterface $inputFileStream) :int
+    public static function getFileSize(StreamInterface $inputFileStream): ?int
     {
         return $inputFileStream->getSize();
     }

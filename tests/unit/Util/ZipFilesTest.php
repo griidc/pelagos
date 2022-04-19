@@ -31,7 +31,7 @@ class ZipFilesTest extends TestCase
         $zipFiles->start($outputStream, 'test.zip');
 
         $largeFile = vfsStream::newFile('large.txt')
-            ->withContent(LargeFileContent::withMegaBytes(100))
+            ->withContent(LargeFileContent::withMegaBytes(10))
             ->at($root);
 
         $largeFileResource = fopen($largeFile->url(), 'r');
@@ -44,15 +44,10 @@ class ZipFilesTest extends TestCase
 
         $testFileResource = fopen($testFile->url(), 'r');
         $testFileStream = new Stream($testFileResource);
-        $zipFiles->addFile('large.txt', $testFileStream);
+        $zipFiles->addFile('test.txt', $testFileStream);
 
         $zipFiles->finish();
 
-        $outputStream->close();
-
-        $resource = fopen($zipFile->url(), 'r');
-        $stream = new Stream($resource);
-
-        $this->assertEquals(102140, $stream->getSize());
+        $this->assertEquals(10418, $outputStream->getSize());
     }
 }
