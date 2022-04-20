@@ -2807,6 +2807,8 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Getter for total cold-stored unpacked size, in bytes.
+     *
      * @return integer|null
      */
     public function getColdStorageTotalUnpackedSize(): ?int
@@ -2815,6 +2817,8 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Setter for total cold-stored unpacked size, in bytes.
+     *
      * @param integer|null $coldStorageTotalUnpackedSize Aggregate bytecount of all cold-stored files in a dataset, as unpacked.
      *
      * @return integer|null
@@ -2826,6 +2830,8 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Getter for total cold-storded unpacked file count.
+     *
      * @return integer|null
      */
     public function getColdStorageTotalUnpackedCount(): ?int
@@ -2834,6 +2840,8 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Setter for total cold-storded unpacked file count.
+     *
      * @param integer|null
      *
      * @return integer|null $coldStorageTotalUnpackedSize Aggregate filecount of all cold-stored files in a dataset, as unpacked.
