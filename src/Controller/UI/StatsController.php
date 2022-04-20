@@ -17,6 +17,7 @@ use App\Entity\DIF;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The Dataset Monitoring controller.
@@ -74,7 +75,7 @@ class StatsController extends AbstractController
      *
      * @return void
      */
-    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads) : void
+    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads, $fundingOrganizationId = null, $accepted = null) : void
     {
         // Get the people count.
         $peopleCount = $this->entityManager
@@ -88,8 +89,8 @@ class StatsController extends AbstractController
 
         $datasetRespository = $this->entityManager->getRepository(Dataset::class);
 
-        $totalDatasets = $datasetRespository->countRegistered();
-        $totalSize = $datasetRespository->totalDatasetSize();
+        $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $accepted);
+        $totalSize = $datasetRespository->totalDatasetSize($fundingOrganizationId, $accepted);
 
         $logActionItemRepository = $this->entityManager->getRepository(LogActionItem::class);
 
@@ -101,18 +102,25 @@ class StatsController extends AbstractController
      *
      * @Route("/stats/json", name="pelagos_app_ui_stats_getstatisticsjson")
      *
+     * @param Request $request The Request.
+     *
      * @return Response
      */
-    public function getStatisticsJson()
+    public function getStatisticsJson(Request $request): Response
     {
-        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount);
+        $fundingOrganizationId = $request->query->get('fundingOrganization');
+        $accepted = filter_var($request->query->get('accepted'), FILTER_VALIDATE_BOOLEAN);
+
+        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount, $fundingOrganizationId, $accepted);
 
         $result = array();
         $result['totalDatasets'] = $totalDatasets;
         $result['totalSize'] = TwigExtentions::formatBytes($totalSize, 1);
-        $result['peopleCount'] = $peopleCount;
-        $result['researchGroupCount'] = $researchGroupCount;
-        $result['totalDownloadCount'] = $totalDownloadCount;
+        if (empty($fundingOrganizationId)) {
+            $result['peopleCount'] = $peopleCount;
+            $result['researchGroupCount'] = $researchGroupCount;
+            $result['totalDownloadCount'] = $totalDownloadCount;
+        }
 
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
@@ -132,7 +140,7 @@ class StatsController extends AbstractController
         $registeredDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getRegisteredDatasets();
-        
+
         $availableDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getAvailableDatasets();
