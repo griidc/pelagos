@@ -1,40 +1,63 @@
 {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
-    <div class="py-2">
-        <div class="card text-center text-light">
-            <div class="card-header bg-chart-primary">
-                Files
-            </div>
-            <div class="card-body">
-                <div id="download-zip" data-id="{{ dataset.id }}"></div>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>No. of Downloads: </strong><br>
-                    {{ downloads }}
-                </p>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>No. of Files: </strong><br>
-                    {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
-                </p>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>File Size: </strong><br>
-                    {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
-                </p>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>File Format: </strong><br>
-                    {{ dataset.datasetSubmission.distributionFormatName }}
-                </p>
-                {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+    {% if dataset.datasetSubmission.isDatasetFileInColdStorage == true %}
+        <div class="py-2">
+            <div class="card text-center text-light">
+                <div class="card-header bg-chart-primary">
+                    Cold Storage Files
+                </div>
+                <div class="card-body">
+                    <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     <hr>
                     <p class="card-text text-dark">
-                        <a href="#individual-files">Individual Files
-                            <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
-                        </a>
+                        <strong>Number of Cold Storage Files: </strong><br>
+                        {{ dataset.datasetSubmission.coldStorageTotalUnpackedCount|default(0) }}
                     </p>
-                {% endif %}
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>Cold Storage File Size: </strong><br>
+                        {{ dataset.datasetSubmission.coldStorageTotalUnpackedSize|default(0)|formatBytes }}
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
+    {% else %}
+        <div class="py-2">
+            <div class="card text-center text-light">
+                <div class="card-header bg-chart-primary">
+                    Files
+                </div>
+                <div class="card-body">
+                    <div id="download-zip" data-id="{{ dataset.id }}"></div>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>No. of Downloads: </strong><br>
+                        {{ downloads }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>No. of Files: </strong><br>
+                        {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Size: </strong><br>
+                        {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Format: </strong><br>
+                        {{ dataset.datasetSubmission.distributionFormatName }}
+                    </p>
+                    {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+                        <hr>
+                        <p class="card-text text-dark">
+                            <a href="#individual-files">Individual Files
+                                <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
 {% endif %}
