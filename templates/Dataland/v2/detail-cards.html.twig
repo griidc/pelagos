@@ -31,7 +31,7 @@
         <div class="card-body">
             <p class="card-text text-dark">
                 {% set keywords = [] %}
-                {% for keyword in dataset.datasetSubmission.themeKeywords %}
+                {% for keyword in dataset.datasetSubmission.themeKeywords|default %}
                     {% set keywords = keywords|merge([keyword|trim('"')]) %}
                 {% endfor %}
                 {{ keywords|join(', ') }}

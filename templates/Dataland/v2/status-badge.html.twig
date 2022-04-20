@@ -14,7 +14,7 @@
     {% if dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED") %}
         <span class="badge badge-remotlyhosted">Remotely Hosted</span>
     {% endif %}
-    {% if dataset.datasetSubmission.isDatasetFileInColdStorage %}
+    {% if dataset.datasetSubmission and dataset.datasetSubmission.isDatasetFileInColdStorage %}
         <span class="badge badge-coldstorage">Cold Storage</span>
     {% endif %}
 </div>
