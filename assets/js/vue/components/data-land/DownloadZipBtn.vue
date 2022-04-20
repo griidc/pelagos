@@ -147,7 +147,7 @@ export default {
                     GRIIDC is not responsible for the information or links you may find there.`;
         }
       } else {
-        this.buttonTitle = 'Download Zip';
+        this.buttonTitle = this.datasetInfo.dataset.coldStorage ? 'Download File Manifest Zip' : 'Download Zip';
       }
     });
   },
