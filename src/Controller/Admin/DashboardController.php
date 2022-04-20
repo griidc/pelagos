@@ -55,7 +55,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
         yield MenuItem::section('Create New');
-        yield MenuItem::linkToUrl('Information Product', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_product'));
+        yield MenuItem::linkToUrl('Information Product', 'fas fa-plus', $this->generateUrl('pelagos_app_ui_information_product'));
         yield MenuItem::section('');
         yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('pelagos_homepage'));
     }
