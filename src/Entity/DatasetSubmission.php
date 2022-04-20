@@ -969,6 +969,11 @@ class DatasetSubmission extends Entity
     private $coldStorageTotalUnpackedCount;
 
     /**
+     * @ORM\Column(type="bigint", nullable=true)
+     */
+    private $ColdStorageTotalUnpackedSize;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
