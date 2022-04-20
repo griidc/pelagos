@@ -955,13 +955,6 @@ class DatasetSubmission extends Entity
     private $datasetLinks;
 
     /**
-     * For cold-stored, the total unpacked bytecount.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $coldStorageTotalUnpackedSize;
-
-    /**
      * For cold-stored, the total unpacked filecount (not dirs).
      *
      * @ORM\Column(type="integer", nullable=true)
@@ -969,9 +962,11 @@ class DatasetSubmission extends Entity
     private $coldStorageTotalUnpackedCount;
 
     /**
-     * @ORM\Column(type="bigint", nullable=true)
+     * For cold-stored, the total unpacked bytecount.
+     *
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $ColdStorageTotalUnpackedSize;
+    private $coldStorageTotalUnpackedSize;
 
     /**
      * Constructor.
@@ -2811,22 +2806,38 @@ class DatasetSubmission extends Entity
         return $isMarked;
     }
 
+    /**
+     * @return integer|null
+     */
     public function getColdStorageTotalUnpackedSize(): ?int
     {
         return $this->coldStorageTotalUnpackedSize;
     }
 
+    /**
+     * @param integer|null $coldStorageTotalUnpackedSize Aggregate bytecount of all cold-stored files in a dataset, as unpacked.
+     *
+     * @return integer|null
+     */
     public function setColdStorageTotalUnpackedSize(?int $coldStorageTotalUnpackedSize): self
     {
         $this->coldStorageTotalUnpackedSize = $coldStorageTotalUnpackedSize;
         return $this;
     }
 
+    /**
+     * @return integer|null
+     */
     public function getColdStorageTotalUnpackedCount(): ?int
     {
         return $this->coldStorageTotalUnpackedCount;
     }
 
+    /**
+     * @param integer|null
+     *
+     * @return integer|null $coldStorageTotalUnpackedSize Aggregate filecount of all cold-stored files in a dataset, as unpacked.
+     */
     public function setColdStorageTotalUnpackedCount(?int $coldStorageTotalUnpackedCount): self
     {
         $this->coldStorageTotalUnpackedCount = $coldStorageTotalUnpackedCount;
