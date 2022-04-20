@@ -92,7 +92,7 @@ class DatasetRepository extends ServiceEntityRepository
     public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = false) : int
     {
         $qb = $this->createQueryBuilder('dataset')
-            ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
+            ->select('SUM(COALESCE(datasetSubmission.coldStorageTotalUnpackedSize, datasetSubmission.datasetFileColdStorageArchiveSize, datasetSubmission.datasetFileSize))')
             ->join('dataset.datasetSubmission', 'datasetSubmission')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
@@ -262,11 +262,11 @@ class DatasetRepository extends ServiceEntityRepository
         $qb->join('dataset.datasetSubmission', 'ds');
 
         if (!empty($lower)) {
-            $qb->andWhere('COALESCE(ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) > :lower');
+            $qb->andWhere('COALESCE(ds.coldStorageTotalUnpackedSize, ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) > :lower');
             $qb->setParameter('lower', $lower);
         }
         if (!empty($upper)) {
-            $qb->andWhere('COALESCE(ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) <= :upper');
+            $qb->andWhere('COALESCE(ds.coldStorageTotalUnpackedSize, ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) <= :upper');
             $qb->setParameter('upper', $upper);
         }
 
