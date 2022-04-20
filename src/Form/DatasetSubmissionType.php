@@ -344,7 +344,7 @@ class DatasetSubmissionType extends AbstractType
                 $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
                 if (null !== $size and null !== $hash and null !== $name) {
-                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalBytes, $totalCount);
+                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
