@@ -503,3 +503,11 @@ div#header #griidc-logo-wrapper {
 table.datasets td {
     padding: 10px !important;
 }
+
+.dx-header-filter {
+    color: rgba(255, 0, 0, 1)!important;
+}
+
+.dx-header-filter-empty{
+    color: rgba(149,149,149,.5)!important;
+}
