@@ -93,7 +93,8 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
      */
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
-        $this->logger->info('Zip worker starting (ZipDatasetFilesHandler)');
+        $pid = getmypid();
+        $this->logger->info("ZipDatasetFilesHandler worker starting (pid: $pid).");
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
@@ -108,16 +109,16 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
         try {
-            $this->logger->info('Zipfile opened: ' . $destinationPath);
+            $this->logger->info('Zipfile opened: ' . $destinationPath . " (pid: $pid).");
             $fileStream = fopen($destinationPath, 'w+');
             $outputStream = array('fileStream' => $fileStream);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
-                $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName']);
+                $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName'] . " (pid: $pid).");
                 $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
             $this->zipFiles->finish();
-            $this->logger->info('Zipfile closed: ' . $destinationPath);
+            $this->logger->info('Zipfile closed: ' . $destinationPath . " (pid: $pid).");
             rewind($fileStream);
             $fileset = $datasetSubmission->getFileset();
             $fileset->setZipFilePath($destinationPath);
@@ -126,9 +127,9 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             fclose($fileStream);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
+            $this->logger->error(sprintf('Unable to zip file. Message: %s (pid: %s)', $exception->getMessage(), $pid));
             return;
         }
-        $this->logger->info('Zip worker finished');
+        $this->logger->info("ZipDatasetFilesHandler worker finished (pid: $pid).");
     }
 }
