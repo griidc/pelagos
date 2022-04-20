@@ -32,8 +32,8 @@ class ZipFiles
     /**
      * Add file to the zip.
      *
-     * @param string $fileName   File name of the file that needs to be zipped.
-     * @param array  $fileStream File stream of the file that needs to be zipped.
+     * @param string           $fileName   File name of the file that needs to be zipped.
+     * @param StreamInterface  $fileStream File stream of the file that needs to be zipped.
      *
      * @return void
      */
