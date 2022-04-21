@@ -9,7 +9,6 @@ use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\FundingOrgFilter;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Dataset Entity Repository class.
@@ -39,12 +38,12 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Count the number of registered Datasets.
      *
-     * @param boolean $accepted              Only return accepted datasets.
      * @param integer $fundingOrganizationId The ID of the FundingOrganization.
+     * @param boolean $accepted              Only return accepted datasets.
      *
      * @return integer
      */
-    public function countRegistered(bool $accepted, int $fundingOrganizationId = null)
+    public function countRegistered(int $fundingOrganizationId = null, bool $accepted = false)
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('COUNT(dataset)')
@@ -85,12 +84,12 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Sum of all dataset file sizes.
      *
-     * @param boolean $accepted              Only return accepted datasets.
      * @param integer $fundingOrganizationId The ID of the FundingOrganization.
+     * @param boolean $accepted              Only return accepted datasets.
      *
      * @return integer Size of data in bytes.
      */
-    public function totalDatasetSize(bool $accepted, int $fundingOrganizationId = null) : int
+    public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = false) : int
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')

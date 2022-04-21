@@ -88,9 +88,9 @@ class StatsController extends AbstractController
             ->countResearchGroups();
 
         $datasetRespository = $this->entityManager->getRepository(Dataset::class);
-        $acceptedBool = (!empty($accepted) && (true === $accepted));
-        $totalDatasets = $datasetRespository->countRegistered($acceptedBool, $fundingOrganizationId);
-        $totalSize = $datasetRespository->totalDatasetSize($acceptedBool, $fundingOrganizationId);
+
+        $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $accepted);
+        $totalSize = $datasetRespository->totalDatasetSize($fundingOrganizationId, $accepted);
 
         $logActionItemRepository = $this->entityManager->getRepository(LogActionItem::class);
 
@@ -109,7 +109,7 @@ class StatsController extends AbstractController
     public function getStatisticsJson(Request $request): Response
     {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
-        $accepted = filter_var($request->query->get('accepted'), FILTER_VALIDATE_BOOLEAN);
+        $accepted = !empty($fundingOrganizationId) ? filter_var($request->query->get('accepted'), FILTER_VALIDATE_BOOLEAN) : null;
 
         $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount, $fundingOrganizationId, $accepted);
 
