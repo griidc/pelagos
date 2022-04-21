@@ -52,6 +52,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Editors');
         yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', InformationProductTypeDescriptor::class);
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
+        yield MenuItem::section('Lists');
+        yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
+        yield MenuItem::section('Create New');
+        yield MenuItem::linkToUrl('Information Product', 'fas fa-plus', $this->generateUrl('pelagos_app_ui_information_product'));
         yield MenuItem::section('');
         yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('pelagos_homepage'));
     }
