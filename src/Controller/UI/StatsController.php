@@ -89,8 +89,9 @@ class StatsController extends AbstractController
 
         $datasetRespository = $this->entityManager->getRepository(Dataset::class);
 
-        $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $accepted);
-        $totalSize = $datasetRespository->totalDatasetSize($fundingOrganizationId, $accepted);
+        $acceptedBool = !empty($fundingOrganizationId) ? filter_var($accepted, FILTER_VALIDATE_BOOLEAN) : false;
+        $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $acceptedBool);
+        $totalSize = $datasetRespository->totalDatasetSize($fundingOrganizationId, $acceptedBool);
 
         $logActionItemRepository = $this->entityManager->getRepository(LogActionItem::class);
 
