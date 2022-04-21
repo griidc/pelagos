@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InformationProductTypeDescriptor|null find($id, $lockMode = null, $lockVersion = null)
- * @method InformationProductTypeDescriptor|null findOneBy(array $criteria, array $orderBy = null)
- * @method InformationProductTypeDescriptor[]    findAll()
- * @method InformationProductTypeDescriptor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ProductTypeDescriptor|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ProductTypeDescriptor|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ProductTypeDescriptor[]    findAll()
+ * @method ProductTypeDescriptor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InformationProductTypeDescriptorRepository extends ServiceEntityRepository
+class ProductTypeDescriptorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InformationProductTypeDescriptor::class);
+        parent::__construct($registry, ProductTypeDescriptor::class);
     }
 
     // /**
-    //  * @return InformationProductType[] Returns an array of InformationProductType objects
+    //  * @return ProductTypeDescriptor[] Returns an array of ProductTypeDescriptor objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class InformationProductTypeDescriptorRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?InformationProductType
+    public function findOneBySomeField($value): ?ProductType
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.exampleField = :val')

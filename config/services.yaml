@@ -102,7 +102,7 @@ services:
     App\Event\InformationProductListener:
         tags:
             - { name: doctrine.event_listener, event: preRemove, entity: 'App\Entity\DigitalResourceTypeDescriptor' }
-            - { name: doctrine.event_listener, event: preRemove, entity: 'App\Entity\InformationProductTypeDescriptor' }
+            - { name: doctrine.event_listener, event: preRemove, entity: 'App\Entity\ProductTypeDescriptor' }
 
     App\Util\DOIutil:
         $doiApiUserName: "%env(DOI_API_USER_NAME)%"

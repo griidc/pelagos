@@ -4,7 +4,7 @@ namespace App\Event;
 
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -39,7 +39,7 @@ class InformationProductListener
             }
         }
 
-        if ($entity instanceof InformationProductTypeDescriptor) {
+        if ($entity instanceof ProductTypeDescriptor) {
             if (count($repository->findByProductTypeDescriptor($entity)) > 0) {
                 throw new \Exception('This Product Type Descriptor is associated with an Information Product');
             }

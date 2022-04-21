@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\InformationProduct;
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Information Product Type Descriptor controller.
  */
-class InformationProductTypeDescriptorCrudController extends AbstractCrudController
+class ProductTypeDescriptorCrudController extends AbstractCrudController
 {
     /**
      * Returns Fully Qualified Class Name.
@@ -25,7 +25,7 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
      */
     public static function getEntityFqcn(): string
     {
-        return InformationProductTypeDescriptor::class;
+        return ProductTypeDescriptor::class;
     }
 
     /**
@@ -41,14 +41,14 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-plus-circle')
-                    ->setLabel('Create New Information Product Type Descriptor');
+                    ->setLabel('Create New Product Type Descriptor');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
                     ->setLabel('Delete')
-                    ->displayIf(function (InformationProductTypeDescriptor $informationProductTypeDescriptor) {
-                        return !$this->isProductTypeInUse($informationProductTypeDescriptor);
+                    ->displayIf(function (ProductTypeDescriptor $productTypeDescriptor) {
+                        return !$this->isProductTypeInUse($productTypeDescriptor);
                     });
             });
     }
@@ -63,9 +63,9 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, 'Information Product Descriptor')
-            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Information Product Descriptor')
-            ->setPageTitle(Crud::PAGE_NEW, 'Create Information Product Descriptor')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Product Type Descriptors')
+            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Product Type Descriptor')
+            ->setPageTitle(Crud::PAGE_NEW, 'Create Product Type Descriptor')
             ->showEntityActionsInlined()
             ;
     }
@@ -95,10 +95,10 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
      */
     public function createEntity(string $entityFqcn)
     {
-        $informationProductTypeDescriptor = new InformationProductTypeDescriptor();
-        $informationProductTypeDescriptor->setCreator($this->getUser()->getPerson());
+        $productTypeDescriptor = new ProductTypeDescriptor();
+        $productTypeDescriptor->setCreator($this->getUser()->getPerson());
 
-        return $informationProductTypeDescriptor;
+        return $productTypeDescriptor;
     }
 
     /**
@@ -111,7 +111,7 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        /** @var InformationProductTypeDescriptor $entityInstance */
+        /** @var ProductTypeDescriptor $entityInstance */
         $entityInstance->setModifier($this->getUser()->getPerson());
         $entityManager->persist($entityInstance);
         $entityManager->flush();
@@ -137,19 +137,19 @@ class InformationProductTypeDescriptorCrudController extends AbstractCrudControl
     }
 
     /**
-     * Is this digital resource in use on an Information Product.
+     * Is this Product Type Descriptor in use on an Information Product.
      *
-     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
+     * @param ProductTypeDescriptor $productTypeDescriptor
      *
      * @return boolean
      */
-    private function isProductTypeInUse(InformationProductTypeDescriptor $informationProductTypeDescriptor): bool
+    private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor): bool
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         /** @var InformationProductRepository $informationProductRepository */
         $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
 
-        return count($informationProductRepository->findByProductTypeDescriptor($informationProductTypeDescriptor)) > 0;
+        return count($informationProductRepository->findByProductTypeDescriptor($productTypeDescriptor)) > 0;
     }
 }

@@ -5,7 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\File;
 use App\Entity\InformationProduct;
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
 use App\Form\InformationProductType;
 use App\Message\DeleteFile;
@@ -86,9 +86,9 @@ class InformationProductController extends AbstractFOSRestController
             $informationProduct->addResearchGroup($researchGroup);
         }
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
-        $productTypeDescriptors = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
         foreach ($productTypeDescriptors as $productTypeDescriptor) {
-            $informationProduct->addInformationProductType($productTypeDescriptor);
+            $informationProduct->addProductTypeDescriptor($productTypeDescriptor);
         }
         $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
         $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $digitalResourceTypeDescriptorIds]);
@@ -152,15 +152,15 @@ class InformationProductController extends AbstractFOSRestController
             $informationProduct->addResearchGroup($researchGroup);
         }
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
-        $productTypeDescriptorsToBeDeleted = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $informationProduct->getProductTypeDescriptorList()]);
-        $productTypeDescriptorsToBeAdded = $entityManager->getRepository(InformationProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        $productTypeDescriptorsToBeDeleted = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $informationProduct->getProductTypeDescriptorList()]);
+        $productTypeDescriptorsToBeAdded = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
         // Remove previously added product type descriptors
         foreach ($productTypeDescriptorsToBeDeleted as $productTypeDescriptor) {
-            $informationProduct->removeInformationProductType($productTypeDescriptor);
+            $informationProduct->removeProductTypeDescriptor($productTypeDescriptor);
         }
         // Add them from the newly updated product type descriptor
         foreach ($productTypeDescriptorsToBeAdded as $productTypeDescriptor) {
-            $informationProduct->addInformationProductType($productTypeDescriptor);
+            $informationProduct->addProductTypeDescriptor($productTypeDescriptor);
         }
         $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
         $digitalResourceTypeDescriptorsToBeDeleted = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $informationProduct->getDigitalResourceTypeDescriptorList()]);

@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\DigitalResourceTypeDescriptor;
-use App\Entity\InformationProductTypeDescriptor;
+use App\Entity\ProductTypeDescriptor;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -50,7 +50,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linktoDashboard('Admin Links', 'fa fa-link');
         yield MenuItem::section('Editors');
-        yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', InformationProductTypeDescriptor::class);
+        yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', ProductTypeDescriptor::class);
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
