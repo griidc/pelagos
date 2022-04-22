@@ -1,0 +1,18 @@
+{% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+    <div class="py-2">
+        <div class="card text-center text-light">
+            <div class="card-header bg-chart-primary">
+                JIRA Issue
+            </div>
+            <div class="card-body">
+                <p class="card-text text-dark">
+                    <img src="{{ asset('build/images/up-right-arrow-icon.svg') }}">&nbsp;
+                    <a href="{{ issuetracker }}/{{ dataset.issueTrackingTicket }}" target="_blank">
+                        {{ dataset.issueTrackingTicket }}
+                </a>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
