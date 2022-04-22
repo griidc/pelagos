@@ -17,6 +17,7 @@ use App\Entity\DIF;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use App\Repository\DatasetRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -87,11 +88,11 @@ class StatsController extends AbstractController
             ->getRepository(ResearchGroup::class)
             ->countResearchGroups();
 
+        /** @var DatasetRepository $datasetRespository */
         $datasetRespository = $this->entityManager->getRepository(Dataset::class);
 
-        $acceptedBool = !empty($fundingOrganizationId) ? filter_var($accepted, FILTER_VALIDATE_BOOLEAN) : false;
-        $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $acceptedBool);
-        $totalSize = $datasetRespository->totalDatasetSize($fundingOrganizationId, $acceptedBool);
+        $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $accepted);
+        $totalSize = $datasetRespository->totalDatasetSize($fundingOrganizationId, $accepted);
 
         $logActionItemRepository = $this->entityManager->getRepository(LogActionItem::class);
 
