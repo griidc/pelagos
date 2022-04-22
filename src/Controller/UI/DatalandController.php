@@ -50,17 +50,25 @@ class DatalandController extends AbstractController
     protected $entityHandler;
 
     /**
+     * Base URL of Issue Tracker (Currenty JIRA)
+     *
+     * @var string
+     */
+    protected $issueTrackingBaseUrl;
+
+    /**
      * Dataland Controller constructor.
      *
      * @param EntityHandler $entityHandler The Entity Handler.
      * @param Geometry      $geoUtil       The Geomtery Util.
      * @param Metadata      $metadataUtil  The Metadata Util.
      */
-    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil)
+    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
     {
         $this->entityHandler = $entityHandler;
         $this->geoUtil = $geoUtil;
         $this->metadataUtil = $metadataUtil;
+        $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
     }
 
     /**
@@ -250,7 +258,8 @@ class DatalandController extends AbstractController
                 'downloads' => $downloadCount,
                 'rawxml' => $rawXml,
                 'wkt' => $wkt,
-                'datasetSubmissionLockStatus' => true
+                'datasetSubmissionLockStatus' => true,
+                'issuetracker' => $this->issueTrackingBaseUrl,
             )
         );
     }

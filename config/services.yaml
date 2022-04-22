@@ -164,6 +164,10 @@ services:
             string $downloadBaseDir: '%env(DOWNLOAD_BASE_DIRECTORY)%'
             string $downloadBaseUrl: '%env(DOWNLOAD_BASE_URL)%'
 
+    App\Controller\UI\DatalandController:
+        bind:
+            string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
+
     App\Controller\UI\MdAppController:
         bind:
             string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
