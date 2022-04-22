@@ -46,11 +46,13 @@
 
             <DxColumn
                 type="buttons"
-                :width="60"
+                :width="65"
+                fixed-position="left"
+                caption="Edit Link"
             >
                 <DxButton
-                    hint="View/Edit"
-                    icon="link"
+                    hint="Edit Link"
+                    icon="edit"
                     :visible="true"
                     :disabled="false"
                     :onClick="viewClick"
@@ -60,7 +62,6 @@
             <DxColumn
                 data-field="id"
                 data-type="number"
-                :visible="false"
             />
             <DxColumn data-field="title"/>
             <DxColumn
@@ -78,10 +79,24 @@
             <DxColumn data-field="creators"/>
             <DxColumn data-field="publisher"/>
             <DxColumn data-field="externalDoi"/>
-            <DxColumn data-field="published" :width="60">
+            <DxColumn
+                data-field="published"
+                :width="60"
+                data-type="boolean"
+                :show-editor-always="false"
+                false-text="N"
+                true-text="Y"
+            >
                 <DxHeaderFilter :allow-search="false"/>
             </DxColumn>
-            <DxColumn data-field="remoteResource" :width="60">
+            <DxColumn
+                data-field="remoteResource"
+                :width="60"
+                data-type="boolean"
+                :show-editor-always="false"
+                false-text="N"
+                true-text="Y"
+            >
                 <DxHeaderFilter :allow-search="false"/>
             </DxColumn>
             <DxColumn
