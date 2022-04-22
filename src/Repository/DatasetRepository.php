@@ -43,7 +43,7 @@ class DatasetRepository extends ServiceEntityRepository
      *
      * @return integer
      */
-    public function countRegistered(int $fundingOrganizationId = null, bool $accepted = false)
+    public function countRegistered(int $fundingOrganizationId = null, bool $accepted = null)
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('COUNT(dataset)')
@@ -89,7 +89,7 @@ class DatasetRepository extends ServiceEntityRepository
      *
      * @return integer Size of data in bytes.
      */
-    public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = false) : int
+    public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = null) : int
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.coldStorageTotalUnpackedSize, datasetSubmission.datasetFileColdStorageArchiveSize, datasetSubmission.datasetFileSize))')
