@@ -2821,7 +2821,7 @@ class DatasetSubmission extends Entity
      *
      * @param integer|null $coldStorageTotalUnpackedSize Aggregate bytecount of all cold-stored files in a dataset, as unpacked.
      *
-     * @return integer|null
+     * @return DatasetSubmission
      */
     public function setColdStorageTotalUnpackedSize(?int $coldStorageTotalUnpackedSize): self
     {
@@ -2842,9 +2842,9 @@ class DatasetSubmission extends Entity
     /**
      * Setter for total cold-storded unpacked file count.
      *
-     * @param integer|null
+     * @param integer|null $coldStorageTotalUnpackedSize Aggregate filecount of all cold-stored files in a dataset, as unpacked.
      *
-     * @return integer|null $coldStorageTotalUnpackedSize Aggregate filecount of all cold-stored files in a dataset, as unpacked.
+     * @return DatasetSubmission
      */
     public function setColdStorageTotalUnpackedCount(?int $coldStorageTotalUnpackedCount): self
     {

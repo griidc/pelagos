@@ -14,7 +14,7 @@ final class Version20220419142744 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'This migration adds 2 attributes for representing unpacked cold-stored datasets, total size and count.';
     }
 
     public function up(Schema $schema) : void
