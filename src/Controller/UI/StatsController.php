@@ -17,6 +17,7 @@ use App\Entity\DIF;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use App\Repository\DatasetRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -87,6 +88,7 @@ class StatsController extends AbstractController
             ->getRepository(ResearchGroup::class)
             ->countResearchGroups();
 
+        /** @var DatasetRepository $datasetRespository */
         $datasetRespository = $this->entityManager->getRepository(Dataset::class);
 
         $totalDatasets = $datasetRespository->countRegistered($fundingOrganizationId, $accepted);
@@ -109,7 +111,7 @@ class StatsController extends AbstractController
     public function getStatisticsJson(Request $request): Response
     {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
-        $accepted = filter_var($request->query->get('accepted'), FILTER_VALIDATE_BOOLEAN);
+        $accepted = !empty($fundingOrganizationId) ? filter_var($request->query->get('accepted'), FILTER_VALIDATE_BOOLEAN) : null;
 
         $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount, $fundingOrganizationId, $accepted);
 
