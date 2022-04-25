@@ -3,7 +3,7 @@
 namespace App\Util;
 
 use App\Entity\DatasetSubmission;
-use GuzzleHttp\Psr7\Utils as guzzlePsr7Utils;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -21,7 +21,7 @@ class StreamInfo
      */
     public static function calculateHash(StreamInterface $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
     {
-        return guzzlePsr7Utils::hash($inputFileStream, $algo);
+        return GuzzlePsr7Utils::hash($inputFileStream, $algo);
     }
 
     /**

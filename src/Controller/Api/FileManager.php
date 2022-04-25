@@ -13,7 +13,7 @@ use App\Util\FolderStructureGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use GuzzleHttp\Psr7\Stream;
-use GuzzleHttp\Psr7\Utils as guzzlePsr7Utils;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use PHPUnit\Util\Json;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
@@ -301,7 +301,7 @@ class FileManager extends AbstractFOSRestController
                 $fileStream = fopen($file->getPhysicalFilePath(), 'r');
             }
 
-            guzzlePsr7Utils::copyToStream($fileStream, $outputStream);
+            GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
         });
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
