@@ -55,7 +55,7 @@ class VirusScanUtil
             try {
                 $socket = (new SocketFactory())->createClient($this->clamdSock);
                 $quahog = new QuahogClient($socket);
-                $result = $quahog->scanResourceStream($stream->detach(), 1024000);
+                $result = $quahog->scanStream($stream, 1024000);
             } catch (\Exception $e) {
                 $result['status'] = self::RESULT_STATUS_FAILED;
                 $result['reason'] = $e->getMessage();

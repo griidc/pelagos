@@ -3,7 +3,7 @@
 namespace App\Tests\Util;
 
 use App\Util\StreamInfo;
-use Laminas\Diactoros\Stream;
+use GuzzleHttp\Psr7\Stream;
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 

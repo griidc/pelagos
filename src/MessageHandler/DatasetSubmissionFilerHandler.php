@@ -13,7 +13,7 @@ use App\Util\Datastore;
 use App\Util\StreamInfo;
 use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
-use Laminas\Diactoros\Stream;
+use GuzzleHttp\Psr7\Stream;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;

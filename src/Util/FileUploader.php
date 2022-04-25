@@ -2,7 +2,7 @@
 
 namespace App\Util;
 
-use Laminas\Diactoros\Stream;
+use GuzzleHttp\Psr7\Stream;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;

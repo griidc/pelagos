@@ -3,12 +3,10 @@
 namespace App\Tests\Util;
 
 use App\Util\ZipFiles;
-use Laminas\Diactoros\Stream;
+use GuzzleHttp\Psr7\Stream;
 use org\bovigo\vfs\content\LargeFileContent;
-use org\bovigo\vfs\vfsStream,
-    org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * Unit tests for App\Util\ZipFiles.php
@@ -48,6 +46,6 @@ class ZipFilesTest extends TestCase
 
         $zipFiles->finish();
 
-        $this->assertEquals(10418, $outputStream->getSize());
+        $this->assertEquals(10485972, $outputStream->getSize());
     }
 }

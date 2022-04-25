@@ -2,7 +2,7 @@
 
 namespace App\Util;
 
-use Laminas\Diactoros\Stream;
+use GuzzleHttp\Psr7\Stream;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\StreamInterface;
@@ -62,6 +62,18 @@ class Datastore
         }
 
         return new Stream($resource);
+    }
+
+    /**
+     * Checks whether a file exists or not.
+     *
+     * @param string $filePath The file path.
+     *
+     * @return bool
+     */
+    public function has(string $filePath): bool
+    {
+        return $this->datastoreFlysystem->has($filePath);
     }
 
     /**

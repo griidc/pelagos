@@ -4,6 +4,8 @@ namespace App\Util;
 
 use Psr\Http\Message\StreamInterface;
 use ZipStream\Option\Archive;
+use ZipStream\Option\File;
+use ZipStream\Option\Method;
 use ZipStream\ZipStream;
 
 class ZipFiles
@@ -25,7 +27,6 @@ class ZipFiles
     {
         $options = new Archive();
         $options->setOutputStream($outputFileStream);
-        // $options->setDeflateLevel(9);
         $this->zip = new ZipStream($zipFileName, $options);
     }
 
@@ -40,11 +41,9 @@ class ZipFiles
     public function addFile(string $fileName, StreamInterface $fileStream): void
     {
         if ($fileStream->isReadable()) {
-            $options = new \ZipStream\Option\File();
-            // Turned off deflate
-            // $options->setMethod(\ZipStream\Option\Method::STORE());
+            $options = new File();
+            $options->setMethod(Method::STORE());
             $this->zip->addFileFromPsr7Stream($fileName, $fileStream, $options);
-            // $this->zip->addFileFromStream($fileName, $fileStream->detach());
         }
     }
 
