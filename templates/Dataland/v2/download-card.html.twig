@@ -1,4 +1,5 @@
-{% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+{% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE')
+    or dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
     {% if dataset.datasetSubmission.isDatasetFileInColdStorage == true %}
         <div class="py-2">
             <div class="card text-center text-light">
@@ -11,6 +12,27 @@
                     <p class="card-text text-dark">
                         <strong>Number of Cold Storage Files: </strong><br>
                         {{ dataset.datasetSubmission.coldStorageTotalUnpackedCount|default(0) }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>No. of Files: </strong><br>
+                        {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Size: </strong><br>
+                        {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Format: </strong><br>
+                        {{ dataset.datasetSubmission.distributionFormatName }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <a href="#individual-files">Individual Files
+                            <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
+                        </a>
                     </p>
                     <hr>
                     <p class="card-text text-dark">
@@ -59,5 +81,5 @@
                 </div>
             </div>
         </div>
-        {% endif %}
+    {% endif %}
 {% endif %}
