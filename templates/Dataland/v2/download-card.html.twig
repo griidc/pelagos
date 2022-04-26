@@ -15,27 +15,6 @@
                     </p>
                     <hr>
                     <p class="card-text text-dark">
-                        <strong>No. of Files: </strong><br>
-                        {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
-                    </p>
-                    <hr>
-                    <p class="card-text text-dark">
-                        <strong>File Size: </strong><br>
-                        {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
-                    </p>
-                    <hr>
-                    <p class="card-text text-dark">
-                        <strong>File Format: </strong><br>
-                        {{ dataset.datasetSubmission.distributionFormatName }}
-                    </p>
-                    <hr>
-                    <p class="card-text text-dark">
-                        <a href="#individual-files">Individual Files
-                            <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
-                        </a>
-                    </p>
-                    <hr>
-                    <p class="card-text text-dark">
                         <strong>Cold Storage File Size: </strong><br>
                         {{ dataset.datasetSubmission.coldStorageTotalUnpackedSize|default(0)|formatBytes }}
                     </p>
