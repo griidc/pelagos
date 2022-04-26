@@ -42,7 +42,7 @@ class File extends Entity
      * @var Fileset
      *
      * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="files")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $fileset;
 
@@ -123,9 +123,9 @@ class File extends Entity
     /**
      * Getter for Fileset.
      *
-     * @return Fileset
+     * @return Fileset|null
      */
-    public function getFileset(): Fileset
+    public function getFileset(): ?Fileset
     {
         return $this->fileset;
     }
