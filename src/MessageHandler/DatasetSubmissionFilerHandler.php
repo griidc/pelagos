@@ -122,7 +122,8 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $loggingContext = array(
             'dataset_id' => $dataset->getId(),
             'udi' => $udi,
-            'dataset_submission_id' => $datasetSubmissionId
+            'dataset_submission_id' => $datasetSubmissionId,
+            'process_id' => getmypid()
         );
         // Log processing start.
         $this->logger->info('Dataset submission process started', $loggingContext);
@@ -142,16 +143,17 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                 $filesInfo[$file->getId()]['filePathName'] = $file->getFilePathName();
                 $filesInfo[$file->getId()]['physicalFilePath'] = $file->getPhysicalFilePath();
             }
-            $this->logger->info('Zipfile opened: ' . $destinationPath);
+            $this->logger->info('Zipfile opened: ' . $destinationPath, array_merge($loggingContext, array('PHP_memory_usage' => memory_get_usage())));
             $fileStream = fopen($destinationPath, 'w+');
             $outputStream = array('fileStream' => $fileStream);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
-                $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName']);
+                $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName'], $loggingContext);
                 $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
+            $this->logger->info('Zipfile to be closed: ' . $destinationPath, array_merge($loggingContext, array('PHP_memory_usage' => memory_get_usage())));
             $this->zipFiles->finish();
-            $this->logger->info('Zipfile closed: ' . $destinationPath);
+            $this->logger->info('Zipfile closed: ' . $destinationPath, array_merge($loggingContext, array('PHP_memory_usage' => memory_get_usage())));
             rewind($fileStream);
             $fileset->setZipFilePath($destinationPath);
             $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
@@ -230,8 +232,9 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         }
 
         // File virus Scan
-        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
+        $localLogContext=array_merge($loggingContext, array('fileId' => $fileId, 'filePathName' => $file->getFilePathName()));
         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
+        $this->logger->info('Dispatched ScanFileForVirus message for async processing.', $localLogContext);
 
         $file->setDescription('');
         $file->setStatus(File::FILE_DONE);
