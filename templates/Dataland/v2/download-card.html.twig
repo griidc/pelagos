@@ -18,6 +18,11 @@
                         <strong>Cold Storage File Size: </strong><br>
                         {{ dataset.datasetSubmission.coldStorageTotalUnpackedSize|default(0)|formatBytes }}
                     </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Format: </strong><br>
+                        {{ dataset.datasetSubmission.distributionFormatName }}
+                    </p>
                 </div>
             </div>
         </div>
