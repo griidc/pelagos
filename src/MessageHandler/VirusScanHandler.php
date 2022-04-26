@@ -71,6 +71,7 @@ class VirusScanHandler implements MessageHandlerInterface
         $udi = $scanFileForVirusMessage->getUdi();
         $file = $this->fileRepository->find($fileId);
         try {
+            $loggingContext['process_id'] = getmypid();
             $fileStream = $this->datastore->getFile($file->getPhysicalFilePath());
             $result = $this->scanner->scanResourceStream($fileStream);
             if ($result['status'] === QuahogClient::RESULT_FOUND) {
@@ -78,16 +79,16 @@ class VirusScanHandler implements MessageHandlerInterface
                 $loggingContext['reason'] = $result['reason'];
                 $this->logger->alert('Virus found in file ID: {fileId}, VIRUS ID: {reason}.', $loggingContext);
             } elseif ($result['status'] !== VirusScanUtil::RESULT_STATUS_FAILED) {
-                $this->logger->info(sprintf('Virus scanned file ID: %s for UDI: %s. Status: %s.', $fileId, $udi, $result['status']));
+                $this->logger->info(sprintf('Virus scanned file ID: %s for UDI: %s. Status: %s.', $fileId, $udi, $result['status']), $loggingContext);
             } else {
                 if ($result['reason'] === VirusScanUtil::RESULT_REASON_OVERSIZE) {
-                    $this->logger->warning(sprintf('Filesize limit exceeded. Unable to scan file ID: %s for UDI: %s. Message: %s', $fileId, $udi, $result['reason']));
+                    $this->logger->warning(sprintf('Filesize limit exceeded. Unable to scan file ID: %s for UDI: %s. Message: %s', $fileId, $udi, $result['reason']), $loggingContext);
                 } else {
-                    $this->logger->warning(sprintf('Unable to scan file ID: %s for UDI: %s. Message: %s', $fileId, $udi, $result['reason']));
+                    $this->logger->warning(sprintf('Unable to scan file ID: %s for UDI: %s. Message: %s', $fileId, $udi, $result['reason']), $loggingContext);
                 }
             }
         } catch (\Exception $e) {
-            $this->logger->error("File stream not found for fileId: {$fileId}");
+            $this->logger->error("File stream not found for fileId: {$fileId}", $loggingContext);
         }
     }
 }
