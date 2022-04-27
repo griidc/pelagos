@@ -1,4 +1,5 @@
-{% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+{% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE')
+    or dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
     <div class="py-2">
         <div class="card text-center text-light">
             <div class="card-header bg-chart-primary">
@@ -6,27 +7,27 @@
             </div>
             <div class="card-body">
                 <div id="download-zip" data-id="{{ dataset.id }}"></div>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>No. of Downloads: </strong><br>
-                    {{ downloads }}
-                </p>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>No. of Files: </strong><br>
-                    {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
-                </p>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>File Size: </strong><br>
-                    {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
-                </p>
-                <hr>
-                <p class="card-text text-dark">
-                    <strong>File Format: </strong><br>
-                    {{ dataset.datasetSubmission.distributionFormatName }}
-                </p>
                 {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>No. of Downloads: </strong><br>
+                        {{ downloads }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>No. of Files: </strong><br>
+                        {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Size: </strong><br>
+                        {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Format: </strong><br>
+                        {{ dataset.datasetSubmission.distributionFormatName }}
+                    </p>
                     <hr>
                     <p class="card-text text-dark">
                         <a href="#individual-files">Individual Files
