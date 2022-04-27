@@ -59,9 +59,10 @@ class DatalandController extends AbstractController
     /**
      * Dataland Controller constructor.
      *
-     * @param EntityHandler $entityHandler The Entity Handler.
-     * @param Geometry      $geoUtil       The Geomtery Util.
-     * @param Metadata      $metadataUtil  The Metadata Util.
+     * @param EntityHandler $entityHandler        The Entity Handler.
+     * @param Geometry      $geoUtil              The Geomtery Util.
+     * @param Metadata      $metadataUtil         The Metadata Util.
+     * @param string        $issueTrackingBaseUrl The base URL for the GRIIDC issuetracker (Jira).
      */
     public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
     {
