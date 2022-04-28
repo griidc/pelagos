@@ -7,8 +7,8 @@
             <div class="card-body">
                 <p class="card-text text-dark">
                     {% if dataset.issueTrackingTicket %}
-                        <img src="{{ asset('build/images/up-right-arrow-icon.svg') }}">&nbsp;
                         <a href="{{ issuetracker }}/{{ dataset.issueTrackingTicket }}" target="_blank">
+                            <i class="fab fa-jira"></i>
                             {{ dataset.issueTrackingTicket }}
                     {% endif %}
                 </a>
