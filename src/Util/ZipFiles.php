@@ -3,6 +3,8 @@
 namespace App\Util;
 
 use ZipStream\Option\Archive;
+use ZipStream\Option\File;
+use ZipStream\Option\Method;
 use ZipStream\ZipStream;
 
 class ZipFiles
@@ -38,7 +40,9 @@ class ZipFiles
     public function addFile(string $fileName, array $fileStream): void
     {
         if (!empty($fileStream) and is_resource($fileStream['fileStream'])) {
-            $this->zip->addFileFromStream($fileName, $fileStream['fileStream']);
+            $options = new File();
+            $options->setMethod(Method::STORE());
+            $this->zip->addFileFromStream($fileName, $fileStream['fileStream'], $options);
         }
     }
 
