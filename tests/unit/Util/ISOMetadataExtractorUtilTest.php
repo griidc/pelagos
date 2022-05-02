@@ -358,6 +358,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileUrlLastCheckedDate' => new \DateTime('now', new \DateTimeZone('UTC')),
                 'getDatasetFileUrlStatusCode' => '200',
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
+                'getColdStorageTotalUnpackedCount' => '10',
+                'getColdStorageTotalUnpackedSize' => '9999',
                 'getDatasetLinks' => new ArrayCollection(),
                 'getFileset' => $this->mockFileset,
                 'getRemotelyHostedUrl' => '/path/to',

@@ -201,6 +201,7 @@ class DownloadController extends AbstractController
             $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);
             $datasetInfo['fileSizeRaw'] = $datasetSubmission->getDatasetFileSize();
             $datasetInfo['checksum'] = $datasetSubmission->getDatasetFileSha256Hash();
+            $datasetInfo['coldStorage'] = $datasetSubmission->isDatasetFileInColdStorage();
         }
         return $datasetInfo;
     }

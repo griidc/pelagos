@@ -273,6 +273,16 @@ class DatasetSubmissionType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ))
+            ->add('coldStorageTotalUnpackedCount', Type\IntegerType::class, array(
+                'label' => 'Cold Storage Total Unpacked File Count',
+                'mapped' => false,
+                'required' => false,
+            ))
+            ->add('coldStorageTotalUnpackedSize', Type\IntegerType::class, array(
+                'label' => 'Cold Storage Total Unpacked Bytes',
+                'mapped' => false,
+                'required' => false,
+            ))
             ->add('largeFileUri', Type\HiddenType::class, array(
                 'label' => 'Large File Path',
                 'required' => false,
@@ -310,6 +320,12 @@ class DatasetSubmissionType extends AbstractType
                     $form->get('datasetFileColdStorageOriginalFilename')->setData(
                         $data->getDatasetFileColdStorageOriginalFilename()
                     );
+                    $form->get('coldStorageTotalUnpackedCount')->setData(
+                        $data->getColdStorageTotalUnpackedCount()
+                    );
+                    $form->get('coldStorageTotalUnpackedSize')->setData(
+                        $data->getColdStorageTotalUnpackedSize()
+                    );
                 }
                 if ($data->isRemotelyHosted()) {
                     $form->get('isRemotelyHosted')->setData(true);
@@ -323,10 +339,12 @@ class DatasetSubmissionType extends AbstractType
                 $size = $event->getForm()->get('datasetFileColdStorageArchiveSize')->getData();
                 $hash = $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData();
                 $name = $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData();
+                $totalCount = $event->getForm()->get('coldStorageTotalUnpackedCount')->getData();
+                $totalBytes = $event->getForm()->get('coldStorageTotalUnpackedSize')->getData();
                 $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
                 if (null !== $size and null !== $hash and null !== $name) {
-                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
+                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
