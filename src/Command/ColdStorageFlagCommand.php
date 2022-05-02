@@ -62,6 +62,8 @@ class ColdStorageFlagCommand extends Command
             ->addOption('originalfilesize', null, InputOption::VALUE_REQUIRED, 'Original file size')
             ->addOption('originalfilehash', null, InputOption::VALUE_REQUIRED, 'Original sha256 hash')
             ->addOption('originalfilename', null, InputOption::VALUE_REQUIRED, 'Original file name')
+            ->addOption('unpackedfilecount', null, InputOption::VALUE_REQUIRED, 'Unpacked file count')
+            ->addOption('unpackedbytecount', null, InputOption::VALUE_REQUIRED, 'Unpacked byte count')
             ;
     }
 
@@ -82,11 +84,15 @@ class ColdStorageFlagCommand extends Command
         $originalFileSize = $input->getOption('originalfilesize');
         $originalFileHash = $input->getOption('originalfilehash');
         $originalFileName = $input->getOption('originalfilename');
+        $unpackedFileCount = $input->getOption('unpackedfilecount');
+        $unpackedByteCount = $input->getOption('unpackedbytecount');
 
         $io->note("UDI: ($udi)");
         $io->note("Original Size: ($originalFileSize)");
         $io->note("Original Hash: ($originalFileHash)");
         $io->note("Original File Name: ($originalFileName)");
+        $io->note("Unpacked File Count: ($unpackedFileCount)");
+        $io->note("Unpacked Byte Count: ($unpackedByteCount)");
         $io->note("Attempting to flag $udi as Cold Stored.");
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
@@ -105,13 +111,13 @@ class ColdStorageFlagCommand extends Command
             $io->note('Submission Found.');
 
             $datasetSubmission->setModifier($systemPerson);
-            $datasetSubmission->setDatasetFileColdStorageAttributes($originalFileSize, $originalFileHash, $originalFileName);
+            $datasetSubmission->setDatasetFileColdStorageAttributes($originalFileSize, $originalFileHash, $originalFileName, $unpackedFileCount, $unpackedByteCount);
 
             $this->entityManager->flush();
         }
 
         $io->success('Done!');
-        
+
         return 0;
     }
 }

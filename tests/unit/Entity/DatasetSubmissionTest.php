@@ -359,9 +359,11 @@ class DatasetSubmissionTest extends TestCase
         $testHash = '66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18';
         $testSize = 42;
         $testName = 'test.dat';
+        $testUnpackedFileCount = '1234';
+        $testUnpackedFileSize = '5678';
 
         // This public setting internally calls protected individual setters in the entity, for coverage.
-        $this->datasetSubmission->setDatasetFileColdStorageAttributes($testSize, $testHash, $testName);
+        $this->datasetSubmission->setDatasetFileColdStorageAttributes($testSize, $testHash, $testName, $testUnpackedFileCount, $testUnpackedFileSize);
 
         $this->assertEquals(
             $testHash,
@@ -375,11 +377,21 @@ class DatasetSubmissionTest extends TestCase
             $testName,
             $this->datasetSubmission->getDatasetFileColdStorageOriginalFilename()
         );
+        $this->assertEquals(
+            $testUnpackedFileCount,
+            $this->datasetSubmission->getColdStorageTotalUnpackedCount()
+        );
+        $this->assertEquals(
+            $testUnpackedFileSize,
+            $this->datasetSubmission->getColdStorageTotalUnpackedSize()
+        );
 
         $this->datasetSubmission->clearDatasetFileColdStorageAttributes();
         $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash());
         $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageArchiveSize());
         $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageOriginalFilename());
+        $this->assertNull($this->datasetSubmission->getColdStorageTotalUnpackedCount());
+        $this->assertNull($this->datasetSubmission->getColdStorageTotalUnpackedSize());
     }
 
     /**
@@ -631,10 +643,10 @@ class DatasetSubmissionTest extends TestCase
     public function testGetTopicKeywordsChoices()
     {
         $topicKeywordsChoices = DatasetSubmission::getTopicKeywordsChoices();
-        $this->assertInternalType('array', $topicKeywordsChoices);
+        $this->assertIsArray($topicKeywordsChoices);
         foreach ($topicKeywordsChoices as $index => $value) {
-            $this->assertInternalType('string', $index);
-            $this->assertInternalType('string', $value);
+            $this->assertIsString($index);
+            $this->assertIsString($value);
         }
     }
 
@@ -646,10 +658,10 @@ class DatasetSubmissionTest extends TestCase
     public function testGetTemporalExtentDescChoices()
     {
         $temporalExtentDescChoices = DatasetSubmission::getTemporalExtentDescChoices();
-        $this->assertInternalType('array', $temporalExtentDescChoices);
+        $this->assertIsArray($temporalExtentDescChoices);
         foreach ($temporalExtentDescChoices as $index => $value) {
-            $this->assertInternalType('string', $index);
-            $this->assertInternalType('string', $value);
+            $this->assertIsString($index);
+            $this->assertIsString($value);
         }
     }
 
@@ -661,10 +673,10 @@ class DatasetSubmissionTest extends TestCase
     public function testGetRestrictionsChoices()
     {
         $restrictionsChoices = DatasetSubmission::getRestrictionsChoices();
-        $this->assertInternalType('array', $restrictionsChoices);
+        $this->assertIsArray($restrictionsChoices);
         foreach ($restrictionsChoices as $index => $value) {
-            $this->assertInternalType('string', $index);
-            $this->assertInternalType('string', $value);
+            $this->assertIsString($index);
+            $this->assertIsString($value);
         }
     }
 
