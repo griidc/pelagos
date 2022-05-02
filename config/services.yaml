@@ -123,7 +123,7 @@ services:
 
     App\Util\DatasetIndex:
         autowire: false
-        arguments: ["@fos_elastica.index.pelagos.dataset"]
+        arguments: ["@fos_elastica.index.pelagos"]
 
     App\Handler\UploadHandler:
         bind:
@@ -135,13 +135,9 @@ services:
             string $passwordExpiryWarn: "%env(ACCOUNT_PASSWORD_EXPIRATION_WARN)%"
             string $hostName: "%env(HOSTNAME)%"
 
-    App\Command\RebuildElasticsearchIndexCommand:
-        bind:
-            FOS\ElasticaBundle\Persister\ObjectPersister $pelagosDatasetIndexPersister: "@fos_elastica.object_persister.pelagos.dataset"
-
     App\Util\Search:
         bind:
-            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos.dataset"
+            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos"
 
     App\Event\MaintenanceModeListener:
         bind:
@@ -175,7 +171,7 @@ services:
 
     App\Controller\Api\DatasetPublicationController:
         bind:
-            FOS\ElasticaBundle\Persister\ObjectPersister $objectPersister: "@fos_elastica.object_persister.pelagos.dataset"
+            FOS\ElasticaBundle\Persister\ObjectPersister $objectPersister: "@fos_elastica.object_persister.pelagos"
 
     App\Util\MailerLoggerUtil:
         tags:

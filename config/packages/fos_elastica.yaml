@@ -6,149 +6,145 @@ fos_elastica:
         pelagos:
             client: default
             index_name: "%env(DISCOVERY_INDEX)%"
-            types:
-                dataset:
-                    indexable_callback: [ '\App\Util\FundingOrgFilter', 'canIndex']
+            indexable_callback: ['\App\Util\FundingOrgFilter', 'canIndex']
+            persistence:
+                driver: orm
+                model: App\Entity\Dataset
+                provider:
+                    query_builder_method: createSortedQueryBuilder
+                listener:
+                    logger: true
+                finder: ~
+            properties:
+                udi: ~
+                title: { boost: 3 }
+                abstract: ~
+                availabilityStatus: ~
+                identifiedStatus: ~
+                researchGroup:
+                    type: 'nested'
                     properties:
-                        udi: ~
-                        title: { boost: 3 }
-                        abstract: ~
-                        availabilityStatus: ~
-                        identifiedStatus: ~
-                        researchGroup:
+                        id: ~
+                        name: ~
+                        fundingCycle:
                             type: 'nested'
                             properties:
                                 id: ~
-                                name: ~
-                                fundingCycle:
+                                fundingOrganization:
                                     type: 'nested'
                                     properties:
                                         id: ~
-                                        fundingOrganization:
-                                            type: 'nested'
-                                            properties:
-                                                id: ~
-                                                name: ~
-                        datasetSubmission:
-                            type: 'nested'
-                            properties:
-                                authors: ~
-                                datasetFileTransferStatus: ~
-                                datasetFileSize: ~
-                                restrictions: ~
-                                placeKeywords: { boost: 3 }
-                                themeKeywords: { boost: 3 }
-                        doi:
-                            type: 'nested'
-                            properties:
-                                doi: { boost: 3 }
-                        publications:
-                            type: 'nested'
-                            properties:
-                                doi: { boost: 3 }
-                        geometry:
-                            type: 'text'
-                            property_path: false
-                        simpleGeometry:
-                            type: 'geo_shape'
-                            ignore_malformed: true
-                            property_path: false
-                        year:
-                            property_path: false
-                        estimatedStartDate:
-                            property_path: false
-                        estimatedEndDate:
-                            property_path: false
-                        updatedDateTime:
-                            type: 'date'
-                            format: 'basic_date_time_no_millis'
-                            property_path: false
-                    persistence:
-                        driver: orm
-                        model: App\Entity\Dataset
-                        provider:
-                            query_builder_method: createSortedQueryBuilder
-                        listener:
-                            logger: true
-                        finder: ~
+                                        name: ~
+                datasetSubmission:
+                    type: 'nested'
+                    properties:
+                        authors: ~
+                        datasetFileTransferStatus: ~
+                        datasetFileSize: ~
+                        restrictions: ~
+                        placeKeywords: { boost: 3 }
+                        themeKeywords: { boost: 3 }
+                doi:
+                    type: 'nested'
+                    properties:
+                        doi: { boost: 3 }
+                publications:
+                    type: 'nested'
+                    properties:
+                        doi: { boost: 3 }
+                geometry:
+                    type: 'text'
+                    property_path: false
+                simpleGeometry:
+                    type: 'geo_shape'
+                    ignore_malformed: true
+                    property_path: false
+                year:
+                    property_path: false
+                estimatedStartDate:
+                    property_path: false
+                estimatedEndDate:
+                    property_path: false
+                updatedDateTime:
+                    type: 'date'
+                    format: 'basic_date_time_no_millis'
+                    property_path: false
 
         search_pelagos:
             client: default
             index_name: "%env(SEARCH_TOOL_INDEX)%"
-            types:
-                dataset:
-                    indexable_callback: [ '\App\Util\FundingOrgFilter', 'canIndex']
+            indexable_callback: ['\App\Util\FundingOrgFilter', 'canIndex']
+            persistence:
+                driver: orm
+                model: App\Entity\Dataset
+                provider:
+                    query_builder_method: createSortedQueryBuilder
+                listener:
+                    logger: true
+                finder: ~
+            properties:
+                udi:
+                    type: 'text'
+                title:
+                    type: 'text'
+                abstract:
+                    type: 'text'
+                researchGroup:
+                    type: 'nested'
                     properties:
-                        udi:
+                        id:
+                            type: 'keyword'
+                        name:
                             type: 'text'
-                        title:
-                            type: 'text'
-                        abstract:
-                            type: 'text'
-                        researchGroup:
+                        fundingCycle:
                             type: 'nested'
                             properties:
                                 id:
                                     type: 'keyword'
-                                name:
-                                    type: 'text'
-                                fundingCycle:
+                                fundingOrganization:
                                     type: 'nested'
                                     properties:
                                         id:
                                             type: 'keyword'
-                                        fundingOrganization:
-                                            type: 'nested'
-                                            properties:
-                                                id:
-                                                    type: 'keyword'
-                        datasetSubmission:
-                            type: 'nested'
-                            include_in_parent: true
-                            properties:
-                                authors:
-                                    type: 'text'
-                                themeKeywords:
-                                    type: 'text'
-                        availabilityStatus:
-                            type: 'integer'
-                        collectionStartDate:
-                            property_path: false
-                            type: 'date'
-                            format: 'yyyy-MM-dd HH:mm:ss'
-                        collectionEndDate:
-                            property_path: false
-                            type: 'date'
-                            format: 'yyyy-MM-dd HH:mm:ss'
+                datasetSubmission:
+                    type: 'nested'
+                    include_in_parent: true
+                    properties:
+                        authors:
+                            type: 'text'
+                        themeKeywords:
+                            type: 'text'
+                availabilityStatus:
+                    type: 'integer'
+                collectionStartDate:
+                    property_path: false
+                    type: 'date'
+                    format: 'yyyy-MM-dd HH:mm:ss'
+                collectionEndDate:
+                    property_path: false
+                    type: 'date'
+                    format: 'yyyy-MM-dd HH:mm:ss'
+                doi:
+                    type: 'nested'
+                    properties:
                         doi:
-                            type: 'nested'
-                            properties:
-                                doi:
-                                    type: 'text'
-                        identifiedStatus:
-                            type: 'integer'
-                        coldStorage:
-                            property_path: false
-                            type: 'boolean'
-                        publications:
-                            type: 'nested'
-                            properties:
-                                doi:
-                                    type: 'text'
-                        projectDirectors:
-                            type: 'nested'
-                            properties:
-                                id:
-                                    type: 'keyword'
-                        sortingDateForDisplay:
-                            property_path: false
-                            type: 'date'
-                            format: 'yyyy-MM-dd'
-                    persistence:
-                        driver: orm
-                        model: App\Entity\Dataset
-                        provider:
-                            query_builder_method: createSortedQueryBuilder
-                        listener:
-                            logger: true
-                        finder: ~
+                            type: 'text'
+                identifiedStatus:
+                    type: 'integer'
+                coldStorage:
+                    property_path: false
+                    type: 'boolean'
+                publications:
+                    type: 'nested'
+                    properties:
+                        doi:
+                            type: 'text'
+                projectDirectors:
+                    type: 'nested'
+                    properties:
+                        id:
+                            type: 'keyword'
+                sortingDateForDisplay:
+                    property_path: false
+                    type: 'date'
+                    format: 'yyyy-MM-dd'
