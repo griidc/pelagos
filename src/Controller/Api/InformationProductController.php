@@ -499,9 +499,9 @@ class InformationProductController extends AbstractFOSRestController
     {
         if (count($descriptorsToBeAdded) !== count($idsSelected)) {
             foreach ($descriptorsToBeAdded as $descriptor) {
-                if (in_array($descriptor->getId(), $idsSelected)) {
+                if (!in_array($descriptor->getId(), $idsSelected)) {
                     throw new BadRequestHttpException(
-                        'Selected Entity does not exist ' . get_class($descriptor) . ' id:'. $descriptor->getId()
+                        'Selected Entity does not exist ' . $descriptor::FRIENDLY_NAME . ' id:'. $descriptor->getId()
                     );
                 }
             }
