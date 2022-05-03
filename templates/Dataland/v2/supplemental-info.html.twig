@@ -2,56 +2,56 @@
 <div class="py-2">
     <h6><strong>Data Parameters and Units:</strong></h6>
     <p>
-        {{ dataset.datasetSubmission.suppParams | raw}}
+        {{ dataset.datasetSubmission.suppParams|default | raw}}
     </p>
 </div>
 
-{% if dataset.datasetSubmission.suppMethods %}
+{% if dataset.datasetSubmission.suppMethods|default %}
 <hr>
 <div class="py-2">
     <h6><strong>Methods:</strong></h6>
     <p>
-        {{ dataset.datasetSubmission.suppMethods | raw}}
+        {{ dataset.datasetSubmission.suppMethods|default | raw}}
     </p>
 </div>
 {% endif %}
 
-{% if dataset.datasetSubmission.suppInstruments %}
+{% if dataset.datasetSubmission.suppInstruments|default %}
 <hr>
 <div class="py-2">
     <h6><strong>Instruments:</strong></h6>
     <p>
-        {{ dataset.datasetSubmission.suppInstruments | raw}}
+        {{ dataset.datasetSubmission.suppInstruments|default | raw}}
     </p>
 </div>
 {% endif %}
 
-{% if dataset.datasetSubmission.suppSampScalesRates %}
+{% if dataset.datasetSubmission.suppSampScalesRate|default %}
 <hr>
 <div class="py-2">
     <h6><strong>Sampling Scales and Rates:</strong></h6>
     <p>
-        {{ dataset.datasetSubmission.suppSampScalesRates | raw}}
+        {{ dataset.datasetSubmission.suppSampScalesRates|default | raw}}
     </p>
 </div>
 {% endif %}
 
-{% if dataset.datasetSubmission.suppErrorAnalysis %}
+{% if dataset.datasetSubmission.suppErrorAnalysis|default %}
 <hr>
 <div class="py-2">
     <h6><strong>Error Analysis:</strong></h6>
     <p>
-        {{ dataset.datasetSubmission.suppErrorAnalysis  | raw}}
+        {{ dataset.datasetSubmission.suppErrorAnalysis|default  | raw}}
     </p>
 </div>
 {% endif %}
 
-{% if dataset.datasetSubmission.suppProvenance %}
+{% if dataset.datasetSubmission.suppProvenance|default %}
 <hr>
 <div class="py-2">
     <h6><strong>Provenance and Historical References:</strong></h6>
     <p>
-        {{ dataset.datasetSubmission.suppProvenance | raw}}
+        {{ dataset.datasetSubmission.suppProvenance|default | raw}}
     </p>
 </div>
 {% endif %}

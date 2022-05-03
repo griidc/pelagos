@@ -28,7 +28,7 @@
                     <div class="d-flex justify-content-between py-2">
                         <div>
                             <div>
-                                <strong>Authors:</strong> {{ dataset.datasetSubmission.authors }}
+                                <strong>Authors:</strong> {{ dataset.datasetSubmission.authors|default }}
                             </div>
                             <div>
                                 <strong>Published on </strong> {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
@@ -58,7 +58,7 @@
                         </p>
                     </div>
                     <hr>
-                    {% if dataset.datasetSubmission.spatialExtent %}
+                    {% if dataset.datasetSubmission.spatialExtent|default %}
                         <div class="py-2">
                             <div id="dlolmap" style="width: 100%;height:480px;"
                                  wkt="{{wkt|default}}"
@@ -79,7 +79,7 @@
                     <div class="py-2">
                         <h6><strong>Purpose:</strong></h6>
                         <p>
-                            {{ dataset.datasetSubmission.purpose }}
+                            {{ dataset.datasetSubmission.purpose|default }}
                         </p>
                     </div>
                     {% include 'Dataland/v2/supplemental-info.html.twig' %}
