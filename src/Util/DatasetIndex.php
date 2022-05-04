@@ -3,7 +3,7 @@
 namespace App\Util;
 
 use Elastica\Query;
-use Elastica\Type;
+use Elastica\Index;
 
 /**
  * A utility class for searching the Dataset index.
@@ -22,7 +22,7 @@ class DatasetIndex
      *
      * @param Type $datasetType The Datatset elastic type.
      */
-    public function __construct(Type $datasetType)
+    public function __construct(Index $datasetType)
     {
         $this->datasetType = $datasetType;
     }
