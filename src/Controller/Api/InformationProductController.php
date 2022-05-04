@@ -497,13 +497,23 @@ class InformationProductController extends AbstractFOSRestController
      */
     private function checkIfDescriptorExists(array $idsSelected, array $descriptorsToBeAdded)
     {
+        $descriptorsToBeAddedList = [];
+        $missingIds = [];
+        $friendlyName = '';
         if (count($descriptorsToBeAdded) !== count($idsSelected)) {
             foreach ($descriptorsToBeAdded as $descriptor) {
-                if (!in_array($descriptor->getId(), $idsSelected)) {
-                    throw new BadRequestHttpException(
-                        'Selected Entity does not exist ' . $descriptor::FRIENDLY_NAME . ' id:'. $descriptor->getId()
-                    );
+                $descriptorsToBeAddedList[] = $descriptor->getId();
+                $friendlyName = $descriptor::FRIENDLY_NAME;
+            }
+
+            $idDifference = array_diff($idsSelected, $descriptorsToBeAddedList);
+            if (!empty($idDifference)) {
+                foreach ($idDifference as $id) {
+                    $missingIds[] = $id;
                 }
+                throw new BadRequestHttpException(
+                    'Selected Entity does not exist ' . $friendlyName . ' ids:'. implode(" ", $missingIds)
+                );
             }
         }
     }
