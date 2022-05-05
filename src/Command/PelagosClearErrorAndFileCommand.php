@@ -73,7 +73,8 @@ class PelagosClearErrorAndFileCommand extends Command
             try {
                 $delId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
-                @unlink($fileToDelete->getPhysicalFilePath());
+                $physicalFileToDelete = preg_match("/\/san\/home\/upload\//", $fileToDelete->getPhysicalFilePath()) ? $fileToDelete->getPhysicalFilePath() : '/san/data/store/' . $fileToDelete->getPhysicalFilePath();
+                @unlink($physicalFileToDelete);
                 $this->entityManager->flush();
                 $io->note("Removed file id: $delId at: " . $fileToDelete->getPhysicalFilePath());
             } catch (\Exception $e) {
