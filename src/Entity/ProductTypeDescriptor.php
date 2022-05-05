@@ -11,4 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
 class ProductTypeDescriptor extends Entity
 {
     use DescriptorTypeTrait;
+
+    /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Product Type';
 }
