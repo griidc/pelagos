@@ -10,7 +10,7 @@
             </div>
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
-                <div v-if="Object.keys(datasetRowData.datasetSubmission).length > 0">
+                <div v-if="datasetRowData.datasetSubmission && Object.keys(datasetRowData.datasetSubmission).length > 0">
                     <div v-if="datasetRowData.datasetSubmission.authors" style="max-width: 550px">
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div>
-                    <div v-if="datasetRowData.availabilityStatus !== 0 && datasetRowData.doi.doi">
+                    <div v-if="datasetRowData.availabilityStatus !== 0 && datasetRowData.doi && Object.keys(datasetRowData.doi).length > 0 && datasetRowData.doi.doi">
                         DOI: {{ datasetRowData.doi.doi }}
                     </div>
                     <div>
