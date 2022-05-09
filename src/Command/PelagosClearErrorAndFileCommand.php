@@ -41,7 +41,8 @@ class PelagosClearErrorAndFileCommand extends Command
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(EntityManagerInterface $entityManager, string $homedirPrefix, string $dataStoreDirectory) {
+    public function __construct(EntityManagerInterface $entityManager, string $homedirPrefix, string $dataStoreDirectory)
+    {
         $this->entityManager = $entityManager;
         $this->homedirPrefix = $homedirPrefix;
         $this->dataStoreDirectory = $dataStoreDirectory;
