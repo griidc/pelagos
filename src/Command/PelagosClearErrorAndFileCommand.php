@@ -23,17 +23,28 @@ class PelagosClearErrorAndFileCommand extends Command
     protected $entityManager;
 
     /**
+     * Used to inject homedirPrefix from .env parameters.
+     *
+     * @var string $homedirPrefix
+     */
+    protected $homedirPrefix;
+
+    /**
+     * Used to inject datastore directory from .env parameters.
+     *
+     * @var string $dataStoreDirectory
+     */
+    protected $dataStoreDirectory;
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(
-        EntityManagerInterface $entityManager
-    ) {
+    public function __construct(EntityManagerInterface $entityManager, string $homedirPrefix, string $dataStoreDirectory) {
         $this->entityManager = $entityManager;
-
-        // It is required to call parent constructor if
-        // using a constructon in a Symfony command.
+        $this->homedirPrefix = $homedirPrefix;
+        $this->dataStoreDirectory = $dataStoreDirectory;
         parent::__construct();
     }
 
@@ -73,10 +84,15 @@ class PelagosClearErrorAndFileCommand extends Command
             try {
                 $delId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
-                $physicalFileToDelete = preg_match("/\/san\/home\/upload\//", $fileToDelete->getPhysicalFilePath()) ? $fileToDelete->getPhysicalFilePath() : '/san/data/store/' . $fileToDelete->getPhysicalFilePath();
+                $uploadDir = preg_quote($this->homedirPrefix . '/upload/', '/');
+                if (preg_match("/$uploadDir/", $fileToDelete->getPhysicalFilePath())) {
+                    $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
+                } else {
+                    $physicalFileToDelete = $this->dataStoreDirectory . '/' . $fileToDelete->getPhysicalFilePath();
+                }
                 @unlink($physicalFileToDelete);
                 $this->entityManager->flush();
-                $io->note("Removed file id: $delId at: " . $fileToDelete->getPhysicalFilePath());
+                $io->note("Removed file id: $delId at: $physicalFileToDelete");
             } catch (\Exception $e) {
                 $io->error("Could not delete file." . $e->getMessage());
             }
