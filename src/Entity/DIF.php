@@ -110,6 +110,8 @@ class DIF extends Entity
      *
      * @var Dataset
      *
+     * @Serializer\MaxDepth(2)
+     *
      * @ORM\OneToOne(targetEntity="Dataset", mappedBy="dif", cascade={"persist"})
      */
     protected $dataset;
@@ -148,6 +150,8 @@ class DIF extends Entity
      * @Assert\NotBlank(
      *     message="Primary Point of Contact is required"
      * )
+     *
+     * @Serializer\MaxDepth(1)
      */
     protected $primaryPointOfContact;
 
@@ -157,6 +161,8 @@ class DIF extends Entity
      * @var Person
      *
      * @ORM\ManyToOne(targetEntity="Person")
+     *
+     * @Serializer\MaxDepth(1)
      */
     protected $secondaryPointOfContact;
 
@@ -1483,5 +1489,38 @@ class DIF extends Entity
     public function setApprovedDate(\DateTime $approvedDate)
     {
         $this->approvedDate = $approvedDate;
+    }
+
+    /**
+     * Sets the issue tracking ticket for this Dataset.
+     *
+     * @param string|null $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
+     *
+     * @return void
+     */
+    public function setIssueTrackingTicket(?string $issueTrackingTicket)
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            $dataset->setIssueTrackingTicket($issueTrackingTicket);
+        }
+    }
+
+    /**
+     * Gets the issue tracking ticket for this Dataset.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("issueTrackingTicket")
+     *
+     * @return string
+     */
+    public function getIssueTrackingTicket(): string
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            return $dataset->getIssueTrackingTicket() ?? '';
+        }
+
+        return '';
     }
 }

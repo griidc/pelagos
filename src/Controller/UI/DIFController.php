@@ -67,6 +67,7 @@ class DIFController extends AbstractController
             array(
                 'form' => $form->createView(),
                 'research_groups' => implode(',', $researchGroupIds),
+                'issueTrackingBaseUrl' => $_ENV['ISSUE_TRACKING_BASE_URL'],
             )
         );
     }

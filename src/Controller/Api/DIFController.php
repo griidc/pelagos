@@ -2,29 +2,23 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Routing\Annotation\Route;
-
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-
-use FOS\RestBundle\Controller\Annotations\View;
-
 use App\Entity\Dataset;
 use App\Entity\DIF;
-
 use App\Event\EntityEventDispatcher;
-
 use App\Form\DIFType;
 use App\Security\Voter\DIFVoter;
 use App\Util\Udi;
+use FOS\RestBundle\Controller\Annotations\View;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Operation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Swagger\Annotations as SWG;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The DIF api controller.
@@ -127,9 +121,13 @@ class DIFController extends EntityController
      *
      * @return DIF
      */
-    public function getAction(int $id)
+    public function getAction(DIF $dif, SerializerInterface $serializer)
     {
-        return $this->handleGetOne(DIF::class, $id);
+        $context = SerializationContext::create();
+        $context->enableMaxDepthChecks();
+        $context->setSerializeNull(true);
+
+        return new Response($serializer->serialize($dif, 'json', $context));
     }
 
     /**
@@ -467,7 +465,11 @@ class DIFController extends EntityController
      */
     public function putAction(int $id, Request $request)
     {
-        $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PUT');
+        /** @var DIF $dif */
+        $dif = $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PUT');
+        // Update the Dataset too because Issue Tracker Ticket.
+        $this->entityHandler->update($dif->getDataset());
+
         return $this->makeNoContentResponse();
     }
 
@@ -510,7 +512,11 @@ class DIFController extends EntityController
      */
     public function patchAction(int $id, Request $request)
     {
-        $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PATCH');
+        /** @var DIF $dif */
+        $dif = $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PATCH');
+        // Update the Dataset too because Issue Tracker Ticket.
+        $this->entityHandler->update($dif->getDataset());
+
         return $this->makeNoContentResponse();
     }
 
