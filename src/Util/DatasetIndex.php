@@ -11,20 +11,20 @@ use Elastica\Index;
 class DatasetIndex
 {
     /**
-     * The Dataset elastic type.
+     * The Dataset elastic index.
      *
-     * @var Type
+     * @var Index
      */
-    protected $datasetType;
+    protected $datasetIndex;
 
     /**
      * Constructor.
      *
-     * @param Type $datasetType The Datatset elastic type.
+     * @param Type $datasetIndex The Datatset elastic index.
      */
-    public function __construct(Index $datasetType)
+    public function __construct(Index $datasetIndex)
     {
-        $this->datasetType = $datasetType;
+        $this->datasetIndex = $datasetIndex;
     }
 
     /**
@@ -42,7 +42,7 @@ class DatasetIndex
         if (empty(trim($text))) {
             $query->addSort(array('updatedDateTime' => array('order' => 'desc')));
         }
-        return $this->datasetType->search($query);
+        return $this->datasetIndex->search($query);
     }
 
     /**
@@ -57,7 +57,7 @@ class DatasetIndex
     public function count(array $termsFilters = array(), string $text = null, string $geoFilter = null)
     {
         $query = $this->buildQuery($termsFilters, $text, $geoFilter);
-        return $this->datasetType->count($query);
+        return $this->datasetIndex->count($query);
     }
 
     /**
