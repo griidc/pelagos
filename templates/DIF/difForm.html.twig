@@ -353,11 +353,13 @@
         </fieldset>
     </div>
 
+    {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
     <div class="frmSection">
         <fieldset>
             {{ form_row(form.issueTrackingTicket) }}
         </fieldset>
     </div>
+    {% endif %}
 
     <div id="diftoolbar" class="ui-widget-header ui-corner-all">
         <center>
