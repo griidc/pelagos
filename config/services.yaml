@@ -138,7 +138,6 @@ services:
     App\Command\PelagosClearErrorAndFileCommand:
         bind:
             string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
-            string $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
 
     App\Command\RebuildElasticsearchIndexCommand:
         bind:

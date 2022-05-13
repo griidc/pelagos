@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\File;
+use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,29 +24,29 @@ class PelagosClearErrorAndFileCommand extends Command
     protected $entityManager;
 
     /**
-     * Used to inject homedirPrefix from .env parameters.
+     * Datastore util instance
      *
-     * @var string $homedirPrefix
+     * @var Datastore
      */
-    protected $homedirPrefix;
+    protected $datastore;
 
     /**
-     * Used to inject datastore directory from .env parameters.
+     * Used to inject homedir
      *
-     * @var string $dataStoreDirectory
+     * @var string
      */
-    protected $dataStoreDirectory;
+    protected $homedirPrefix;
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(EntityManagerInterface $entityManager, string $homedirPrefix, string $dataStoreDirectory)
+    public function __construct(EntityManagerInterface $entityManager, Datastore $datastore, string $homedirPrefix)
     {
         $this->entityManager = $entityManager;
+        $this->datastore = $datastore;
         $this->homedirPrefix = $homedirPrefix;
-        $this->dataStoreDirectory = $dataStoreDirectory;
         parent::__construct();
     }
 
@@ -83,17 +84,16 @@ class PelagosClearErrorAndFileCommand extends Command
 
         if ($fileToDelete instanceof File) {
             try {
-                $delId = $fileToDelete->getId();
+                $fileId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
-                $uploadDir = preg_quote($this->homedirPrefix . '/upload/', '/');
-                if (preg_match("/$uploadDir/", $fileToDelete->getPhysicalFilePath())) {
-                    $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
+                $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
+                if ($this->getStorageLocation($fileToDelete) === 'datastore') {
+                    $this->datastore->deleteFile($physicalFileToDelete);
                 } else {
-                    $physicalFileToDelete = $this->dataStoreDirectory . '/' . $fileToDelete->getPhysicalFilePath();
+                    @unlink($physicalFileToDelete);
                 }
-                @unlink($physicalFileToDelete);
                 $this->entityManager->flush();
-                $io->note("Removed file id: $delId at: $physicalFileToDelete");
+                $io->note("Removed file id: $fileId at: $physicalFileToDelete");
             } catch (\Exception $e) {
                 $io->error("Could not delete file." . $e->getMessage());
             }
@@ -101,5 +101,23 @@ class PelagosClearErrorAndFileCommand extends Command
             $io->warning("File specified ($fileId) is not in error or not found.");
         }
         return 0;
+    }
+
+    /**
+     * Method to determine where a file is stored.
+     *
+     * @param Datafile $file
+     * @param string   $uploadDir injected
+     *
+     * @return string
+     */
+    protected function getStorageLocation($file)
+    {
+        $uploadDir = preg_quote($this->homedirPrefix . '/upload/', '/');
+        if (preg_match("/$uploadDir/", $file->getPhysicalFilePath())) {
+            return 'uploaddir';
+        } else {
+            return 'datastore';
+        }
     }
 }
