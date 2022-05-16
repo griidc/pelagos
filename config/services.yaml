@@ -135,10 +135,6 @@ services:
             string $passwordExpiryWarn: "%env(ACCOUNT_PASSWORD_EXPIRATION_WARN)%"
             string $hostName: "%env(HOSTNAME)%"
 
-    App\Command\PelagosClearErrorAndFileCommand:
-        bind:
-            string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
-
     App\Command\RebuildElasticsearchIndexCommand:
         bind:
             FOS\ElasticaBundle\Persister\ObjectPersister $pelagosDatasetIndexPersister: "@fos_elastica.object_persister.pelagos.dataset"
@@ -200,6 +196,7 @@ services:
     App\Util\Datastore:
         bind:
             $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
+            string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
 
     App\MessageHandler\ZipDatasetFilesHandler:
         bind:
