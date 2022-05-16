@@ -214,5 +214,4 @@ class Datastore
             return $this::STORED_IN_DATASTORE;
         }
     }
-
 }
