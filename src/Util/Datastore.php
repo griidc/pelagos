@@ -32,15 +32,34 @@ class Datastore
     const MARK_FILE_AS_DELETED = '_DELETED';
 
     /**
+     * Used to inject homedir
+     *
+     * @var string
+     */
+    protected $homedirPrefix;
+
+    /**
+     * String to designate 'uploads' storage location.
+     */
+    const STORED_IN_UPLOADS = 'IN-UPLOADS';
+
+    /**
+     * String to designate 'datastore' storage location.
+     */
+    const STORED_IN_DATASTORE = 'IN-DATASTORE';
+
+    /**
      * Datastore constructor.
      *
      * @param FilesystemInterface $datastoreFlysystem Datastore flystystem instance.
      * @param LoggerInterface     $logger             Monolog logger interface instance.
+     * @param string              $homedirPrefix      To inject homedir prefix.
      */
-    public function __construct(FilesystemInterface $datastoreFlysystem, LoggerInterface $logger)
+    public function __construct(FilesystemInterface $datastoreFlysystem, LoggerInterface $logger, string $homedirPrefix)
     {
         $this->datastoreFlysystem = $datastoreFlysystem;
         $this->logger = $logger;
+        $this->homedirPrefix = $homedirPrefix;
     }
 
     /**
@@ -178,4 +197,22 @@ class Datastore
         }
         return false;
     }
+
+    /**
+     * Method to determine where a file is stored.
+     *
+     * @param Datafile $file
+     *
+     * @return string
+     */
+    public function getStorageLocation($file)
+    {
+        $uploadDir = preg_quote($this->homedirPrefix . '/upload/', '/');
+        if (preg_match("/$uploadDir/", $file->getPhysicalFilePath())) {
+            return $this::STORED_IN_UPLOADS;
+        } else {
+            return $this::STORED_IN_DATASTORE;
+        }
+    }
+
 }

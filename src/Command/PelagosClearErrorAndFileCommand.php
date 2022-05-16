@@ -41,12 +41,12 @@ class PelagosClearErrorAndFileCommand extends Command
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param Datastore              $datastore     The Pelagos datastore object.
      */
-    public function __construct(EntityManagerInterface $entityManager, Datastore $datastore, string $homedirPrefix)
+    public function __construct(EntityManagerInterface $entityManager, Datastore $datastore)
     {
         $this->entityManager = $entityManager;
         $this->datastore = $datastore;
-        $this->homedirPrefix = $homedirPrefix;
         parent::__construct();
     }
 
@@ -87,7 +87,7 @@ class PelagosClearErrorAndFileCommand extends Command
                 $fileId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
                 $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
-                if ($this->getStorageLocation($fileToDelete) === 'datastore') {
+                if ($this->datastore->getStorageLocation($fileToDelete) === $this->datastore::STORED_IN_DATASTORE) {
                     $this->datastore->deleteFile($physicalFileToDelete);
                 } else {
                     @unlink($physicalFileToDelete);
@@ -101,23 +101,5 @@ class PelagosClearErrorAndFileCommand extends Command
             $io->warning("File specified ($fileId) is not in error or not found.");
         }
         return 0;
-    }
-
-    /**
-     * Method to determine where a file is stored.
-     *
-     * @param Datafile $file
-     * @param string   $uploadDir injected
-     *
-     * @return string
-     */
-    protected function getStorageLocation($file)
-    {
-        $uploadDir = preg_quote($this->homedirPrefix . '/upload/', '/');
-        if (preg_match("/$uploadDir/", $file->getPhysicalFilePath())) {
-            return 'uploaddir';
-        } else {
-            return 'datastore';
-        }
     }
 }
