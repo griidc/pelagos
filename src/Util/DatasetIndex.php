@@ -2,8 +2,9 @@
 
 namespace App\Util;
 
-use Elastica\Query;
 use Elastica\Index;
+use Elastica\ResultSet;
+use Elastica\Query;
 
 /**
  * A utility class for searching the Dataset index.
@@ -34,7 +35,7 @@ class DatasetIndex
      * @param string $text         Textual searh string.
      * @param string $geoFilter    WKT string representing polygon to filter with.
      *
-     * @return array
+     * @return ResultSet
      */
     public function search(array $termsFilters = array(), string $text = null, string $geoFilter = null)
     {
