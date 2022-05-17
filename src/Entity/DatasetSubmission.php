@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -2850,5 +2851,40 @@ class DatasetSubmission extends Entity
     {
         $this->coldStorageTotalUnpackedCount = $coldStorageTotalUnpackedCount;
         return $this;
+    }
+
+    /**
+     * Sets the issue tracking ticket for this Dataset.
+     *
+     * @param string|null $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
+     *
+     * @return DatasetSubmission
+     */
+    public function setIssueTrackingTicket(?string $issueTrackingTicket): self
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            $dataset->setIssueTrackingTicket($issueTrackingTicket);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the issue tracking ticket for this Dataset.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("issueTrackingTicket")
+     *
+     * @return string
+     */
+    public function getIssueTrackingTicket(): string
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            return $dataset->getIssueTrackingTicket() ?? '';
+        }
+
+        return '';
     }
 }

@@ -288,6 +288,10 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'mapped' => true,
             ))
+            ->add('issueTrackingTicket', Type\TextType::class, array(
+                'label' => 'Issue Tracking Ticket',
+                'required' => false,
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),
