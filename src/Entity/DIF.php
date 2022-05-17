@@ -1496,14 +1496,16 @@ class DIF extends Entity
      *
      * @param string|null $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
      *
-     * @return void
+     * @return DIF
      */
-    public function setIssueTrackingTicket(?string $issueTrackingTicket)
+    public function setIssueTrackingTicket(?string $issueTrackingTicket): self
     {
         $dataset = $this->getDataset();
         if ($dataset instanceof Dataset) {
             $dataset->setIssueTrackingTicket($issueTrackingTicket);
         }
+
+        return $this;
     }
 
     /**
