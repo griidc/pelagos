@@ -370,8 +370,8 @@ export default {
         ).then(() => {
           this.ipSuccessModalText = 'Information Product is Updated!';
           this.ipCreatedSuccessModal = true;
-        }).catch(() => {
-          this.errorMessage = 'Unable to update Information Product';
+        }).catch((error) => {
+          this.errorMessage = `Unable to update Information Product as ${error.response.data.message}`;
           this.errorDialog = true;
         });
       } else {
@@ -384,8 +384,8 @@ export default {
           this.ipCreatedSuccessModal = true;
           this.informationProductId = response.data.id;
           event.target.reset();
-        }).catch(() => {
-          this.errorMessage = 'Unable to create Information Product';
+        }).catch((error) => {
+          this.errorMessage = `Unable to create Information Product as ${error.response.data.message}`;
           this.errorDialog = true;
         });
       }

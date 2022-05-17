@@ -1,0 +1,20 @@
+{% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+    <div class="py-2">
+        <div class="card text-center text-light">
+            <div class="card-header bg-chart-primary">
+                JIRA Issue
+            </div>
+            <div class="card-body">
+                <p class="card-text text-dark">
+                    {% if dataset.issueTrackingTicket %}
+                        <a href="{{ issuetracker }}/{{ dataset.issueTrackingTicket }}" target="_blank">
+                            <i class="fab fa-jira"></i>
+                            {{ dataset.issueTrackingTicket }}
+                    {% endif %}
+                </a>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
