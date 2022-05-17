@@ -1041,16 +1041,12 @@ function fillForm(Form, UDI, ID)
 
         $.ajax({
             context: document.body,
-            url: url,
+            url: url + "/" + ID,
             type: "GET",
             datatype: "JSON",
-            data: {"id":ID, "_properties": "dataset.researchGroup.id,primaryPointOfContact,secondaryPointOfContact"}
         }).done(function(json) {
             difValidator.resetForm();
-            if (json.length == 1) {
-                json = json[0];
-                $.extend(json, {researchGroup: json.dataset.researchGroup.id});
-            }
+            $.extend(json, {researchGroup: json.dataset.researchGroup.id});
 
             $("[name='udi']").val(UDI).change();
             var primaryPointOfContact = null;
@@ -1062,14 +1058,6 @@ function fillForm(Form, UDI, ID)
 
             if (json.secondaryPointOfContact != null) {
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
-            }
-
-            if (json.estimatedStartDate != null) {
-                json.estimatedStartDate = json.estimatedStartDate.date.match(/[^\s]*/)[0];
-            }
-
-            if (json.estimatedEndDate != null) {
-                json.estimatedEndDate = json.estimatedEndDate.date.match(/[^\s]*/)[0];
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
