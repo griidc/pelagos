@@ -87,7 +87,7 @@ class PelagosClearErrorAndFileCommand extends Command
                 $fileId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
                 $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
-                if ($this->datastore->getStorageLocation($fileToDelete) === $this->datastore::STORED_IN_DATASTORE) {
+                if ($this->datastore->has($fileToDelete)) {
                     $this->datastore->deleteFile($physicalFileToDelete);
                 } else {
                     @unlink($physicalFileToDelete);
