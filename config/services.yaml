@@ -196,7 +196,6 @@ services:
     App\Util\Datastore:
         bind:
             $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
-            string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
 
     App\MessageHandler\ZipDatasetFilesHandler:
         bind:

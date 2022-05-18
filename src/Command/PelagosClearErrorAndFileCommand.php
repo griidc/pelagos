@@ -31,13 +31,6 @@ class PelagosClearErrorAndFileCommand extends Command
     protected $datastore;
 
     /**
-     * Used to inject homedir
-     *
-     * @var string
-     */
-    protected $homedirPrefix;
-
-    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
@@ -87,7 +80,7 @@ class PelagosClearErrorAndFileCommand extends Command
                 $fileId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
                 $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
-                if ($this->datastore->has($fileToDelete)) {
+                if ($this->datastore->has($physicalFileToDelete)) {
                     $this->datastore->deleteFile($physicalFileToDelete);
                 } else {
                     @unlink($physicalFileToDelete);
