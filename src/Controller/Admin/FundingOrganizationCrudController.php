@@ -41,11 +41,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
     {
         $fields = array();
         if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT])) {
-            $fields[] = AssociationField::new('dataRepository')
-                ->setFormTypeOptions([
-                    'by_reference' => false,
-                ])
-                ->autocomplete();
+            $fields[] = AssociationField::new('dataRepository');
         }
 
         return array_merge($fields, [
@@ -60,10 +56,10 @@ class FundingOrganizationCrudController extends AbstractCrudController
             TextField::new('administrativeArea'),
             TextField::new('postalCode'),
             TextField::new('country'),
-            DateTimeField::new('creationTimeStamp'),
-            TextField::new('creatorName'),
-            DateTimeField::new('modificationTimeStamp'),
-            TextField::new('modifierName'),
+            DateTimeField::new('creationTimeStamp')->onlyOnIndex(),
+            TextField::new('creatorName')->onlyOnIndex(),
+            DateTimeField::new('modificationTimeStamp')->onlyOnIndex(),
+            TextField::new('modifierName')->onlyOnIndex(),
             NumberField::new('sortOrder'),
         ]);
     }
