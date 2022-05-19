@@ -9,12 +9,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class DataRepositoryCrudController extends AbstractCrudController
 {
+    /**
+     * Returns Fully Qualified Class Name.
+     *
+     * @return string
+     */
     public static function getEntityFqcn(): string
     {
         return DataRepository::class;
     }
 
-
+    /**
+     * Configure Crud Actions.
+     *
+     * @param string $pageName
+     *
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -22,5 +33,4 @@ class DataRepositoryCrudController extends AbstractCrudController
             TextField::new('name'),
         ];
     }
-
 }
