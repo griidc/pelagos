@@ -5,3 +5,5 @@
     <input type="hidden" id="dataLinkFunctionCode" name="{{link.functionCode.vars.full_name}}" value="{{link.vars.data.functionCode|default}}">
     <input type="hidden" id="dataLinkProtocol" name="{{link.protocol.vars.full_name}}" value="{{link.vars.data.protocol|default}}">
 {% endfor %}
+
+<input type="hidden" name="{{ form.issueTrackingTicket.vars.full_name }}" value="{{ form.vars.data.issueTrackingTicket }}">
