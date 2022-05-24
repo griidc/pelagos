@@ -1,13 +1,39 @@
 {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE')
     or dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
-    <div class="py-2">
-        <div class="card text-center text-light">
-            <div class="card-header bg-chart-primary">
-                Files
+    {% if dataset.datasetSubmission.isDatasetFileInColdStorage == true %}
+        <div class="py-2">
+            <div class="card text-center text-light">
+                <div class="card-header bg-chart-primary">
+                    Cold Storage Files
+                </div>
+                <div class="card-body">
+                    <div id="download-zip" data-id="{{ dataset.id }}"></div>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>Number of Cold Storage Files: </strong><br>
+                        {{ dataset.datasetSubmission.coldStorageTotalUnpackedCount|default(0) }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>Cold Storage File Size: </strong><br>
+                        {{ dataset.datasetSubmission.coldStorageTotalUnpackedSize|default(0)|formatBytes }}
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File Format: </strong><br>
+                        {{ dataset.datasetSubmission.distributionFormatName }}
+                    </p>
+                </div>
             </div>
-            <div class="card-body">
-                <div id="download-zip" data-id="{{ dataset.id }}"></div>
-                {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+        </div>
+    {% else %}
+        <div class="py-2">
+            <div class="card text-center text-light">
+                <div class="card-header bg-chart-primary">
+                    Files
+                </div>
+                <div class="card-body">
+                    <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     <hr>
                     <p class="card-text text-dark">
                         <strong>No. of Downloads: </strong><br>
@@ -28,14 +54,16 @@
                         <strong>File Format: </strong><br>
                         {{ dataset.datasetSubmission.distributionFormatName }}
                     </p>
-                    <hr>
-                    <p class="card-text text-dark">
-                        <a href="#individual-files">Individual Files
-                            <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
-                        </a>
-                    </p>
-                {% endif %}
+                    {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+                        <hr>
+                        <p class="card-text text-dark">
+                            <a href="#individual-files">Individual Files
+                                <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endif %}

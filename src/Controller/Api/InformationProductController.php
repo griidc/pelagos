@@ -87,11 +87,13 @@ class InformationProductController extends AbstractFOSRestController
         }
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
         $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        $this->checkIfDescriptorExists($productTypeDescriptorIds, $productTypeDescriptors, ProductTypeDescriptor::FRIENDLY_NAME);
         foreach ($productTypeDescriptors as $productTypeDescriptor) {
             $informationProduct->addProductTypeDescriptor($productTypeDescriptor);
         }
         $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
         $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $digitalResourceTypeDescriptorIds]);
+        $this->checkIfDescriptorExists($digitalResourceTypeDescriptorIds, $digitalResourceTypeDescriptors, DigitalResourceTypeDescriptor::FRIENDLY_NAME);
         foreach ($digitalResourceTypeDescriptors as $digitalResourceTypeDescriptor) {
             $informationProduct->addDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor);
         }
@@ -154,6 +156,7 @@ class InformationProductController extends AbstractFOSRestController
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
         $productTypeDescriptorsToBeDeleted = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $informationProduct->getProductTypeDescriptorList()]);
         $productTypeDescriptorsToBeAdded = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
+        $this->checkIfDescriptorExists($productTypeDescriptorIds, $productTypeDescriptorsToBeAdded, ProductTypeDescriptor::FRIENDLY_NAME);
         // Remove previously added product type descriptors
         foreach ($productTypeDescriptorsToBeDeleted as $productTypeDescriptor) {
             $informationProduct->removeProductTypeDescriptor($productTypeDescriptor);
@@ -165,6 +168,7 @@ class InformationProductController extends AbstractFOSRestController
         $digitalResourceTypeDescriptorIds = $request->get('selectedDigitalResourceTypes');
         $digitalResourceTypeDescriptorsToBeDeleted = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $informationProduct->getDigitalResourceTypeDescriptorList()]);
         $digitalResourceTypeDescriptorsToBeAdded = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findBy(['id' => $digitalResourceTypeDescriptorIds]);
+        $this->checkIfDescriptorExists($digitalResourceTypeDescriptorIds, $digitalResourceTypeDescriptorsToBeAdded, DigitalResourceTypeDescriptor::FRIENDLY_NAME);
         // Remove previously added digital resource type descriptors
         foreach ($digitalResourceTypeDescriptorsToBeDeleted as $digitalResourceTypeDescriptor) {
             $informationProduct->removeDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor);
@@ -480,6 +484,33 @@ class InformationProductController extends AbstractFOSRestController
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $deleteMessage = new DeleteFile($file->getPhysicalFilePath());
             $messageBus->dispatch($deleteMessage);
+        }
+    }
+
+
+    /**
+     * Check if descriptor type or product type exists.
+     *
+     * @param array  $idsSelected          List of descriptor ids that need to be selected.
+     * @param array  $descriptorsToBeAdded List of descriptor that needs to be added.
+     * @param string $friendlyName         Friendly name for entity.
+     *
+     * @return void
+     */
+    private function checkIfDescriptorExists(array $idsSelected, array $descriptorsToBeAdded, string $friendlyName): void
+    {
+        $descriptorsToBeAddedList = [];
+        if (count($descriptorsToBeAdded) !== count($idsSelected)) {
+            foreach ($descriptorsToBeAdded as $descriptor) {
+                $descriptorsToBeAddedList[] = $descriptor->getId();
+            }
+
+            $idDifference = array_diff($idsSelected, $descriptorsToBeAddedList);
+            if (!empty($idDifference)) {
+                throw new BadRequestHttpException(
+                    'Selected Entity ' . $friendlyName . 'with ids:'. implode(" ", $idDifference)  . ', does not exist!'
+                );
+            }
         }
     }
 }
