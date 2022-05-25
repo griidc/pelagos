@@ -45,8 +45,8 @@ class FundingOrganizationCrudController extends AbstractCrudController
         }
 
         return array_merge($fields, [
-            IdField::new('id')->onlyOnIndex(),
             TextField::new('name'),
+            TextField::new('description')->onlyOnForms(),
             TextField::new('shortName'),
             EmailField::new('emailAddress'),
             TextField::new('url'),
@@ -56,10 +56,6 @@ class FundingOrganizationCrudController extends AbstractCrudController
             TextField::new('administrativeArea'),
             TextField::new('postalCode'),
             TextField::new('country'),
-            DateTimeField::new('creationTimeStamp')->onlyOnIndex(),
-            TextField::new('creatorName')->onlyOnIndex(),
-            DateTimeField::new('modificationTimeStamp')->onlyOnIndex(),
-            TextField::new('modifierName')->onlyOnIndex(),
             NumberField::new('sortOrder'),
         ]);
     }
@@ -86,7 +82,8 @@ class FundingOrganizationCrudController extends AbstractCrudController
                     ->displayIf(function (FundingOrganization $fundingOrganization) {
                         return !$this->isFundingOrgInUse($fundingOrganization);
                     });
-            });
+            })
+            ->disable(Action::DELETE);
     }
 
     /**

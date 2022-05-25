@@ -158,22 +158,6 @@ abstract class Entity
     }
 
     /**
-     * Getter for creator full name.
-     *
-     * @access public
-     *
-     * @return string.
-     */
-    public function getCreatorName(): string
-    {
-        $creatorName = '';
-        if ($this->getCreator()) {
-            $creatorName = $this->getCreator()->getFirstName() . ' ' . $this->getCreator()->getLastName();
-        }
-        return $creatorName;
-    }
-
-    /**
      * Setter for modifier property.
      *
      * @param Person $modifier The Person who last modified this Entity.
@@ -194,23 +178,6 @@ abstract class Entity
     {
         return $this->modifier;
     }
-
-    /**
-     * Getter for modifier full name.
-     *
-     * @access public
-     *
-     * @return string.
-     */
-    public function getModifierName(): ?string
-    {
-        $modifierName = '';
-        if ($this->getCreator()) {
-            $modifierName = $this->getModifier()->getFirstName() . ' ' . $this->getModifier()->getLastName();
-        }
-        return $modifierName;
-    }
-
 
     /**
      * Setter for creationTimeStamp property.
