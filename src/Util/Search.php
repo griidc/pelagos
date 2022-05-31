@@ -371,7 +371,7 @@ class Search
 
         // Remove any element with a count of 0.
         foreach ($statusInfo as $key => $value) {
-            if (0 === $statusInfo[$key]['count']) {
+            if (0 === $value['count']) {
                 unset($statusInfo[$key]);
             }
         }
@@ -583,9 +583,8 @@ class Search
             $fundOrgFilter = new Aggregation\Filter('fundOrgFilter');
             $fundOrgNestedQuery = new Query\Nested();
             $fundOrgNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
-            $fundOrgTerm = new Query\Terms();
+            $fundOrgTerm = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
             $fundOrgTerm->setTerms(
-                'researchGroup.fundingCycle.fundingOrganization.id',
                 explode(',', $requestTerms['options']['funOrgId'])
             );
             $fundOrgNestedQuery->setQuery($fundOrgTerm);
@@ -598,9 +597,8 @@ class Search
             $fundingCycleFilter = new Aggregation\Filter('fundingCycleFilter');
             $fundingCycleNestedQuery = new Query\Nested();
             $fundingCycleNestedQuery->setPath('researchGroup.fundingCycle');
-            $fundingCycleTerms = new Query\Terms();
+            $fundingCycleTerms = new Query\Terms('researchGroup.fundingCycle.id');
             $fundingCycleTerms->setTerms(
-                'researchGroup.fundingCycle.id',
                 explode(',', $requestTerms['options']['fundingCycleId'])
             );
             $fundingCycleNestedQuery->setQuery($fundingCycleTerms);
@@ -689,8 +687,8 @@ class Search
             $researchGroupNameQuery = new Query\Nested();
             $researchGroupNameQuery->setPath('researchGroup');
 
-            $rgNameQuery = new Query\Terms();
-            $rgNameQuery->setTerms('researchGroup.id', explode(',', $requestTerms['options']['rgId']));
+            $rgNameQuery = new Query\Terms('researchGroup.id');
+            $rgNameQuery->setTerms(explode(',', $requestTerms['options']['rgId']));
             $researchGroupNameQuery->setQuery($rgNameQuery);
 
             $postFilterBoolQuery->addMust($researchGroupNameQuery);
@@ -702,9 +700,8 @@ class Search
             $nestedFoQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
 
             // Add funding Org id field to the aggregation
-            $fundingOrgIdQuery = new Query\Terms();
+            $fundingOrgIdQuery = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
             $fundingOrgIdQuery->setTerms(
-                'researchGroup.fundingCycle.fundingOrganization.id',
                 explode(',', $requestTerms['options']['funOrgId'])
             );
 
@@ -718,9 +715,8 @@ class Search
                 $statuses[$key] = self::AVAILABILITY_STATUSES[$value];
             }
 
-            $availabilityStatusQuery = new Query\Terms();
+            $availabilityStatusQuery = new Query\Terms('availabilityStatus');
             $availabilityStatusQuery->setTerms(
-                'availabilityStatus',
                 array_reduce($statuses, 'array_merge', array())
             );
             $postFilterBoolQuery->addMust($availabilityStatusQuery);
@@ -732,9 +728,8 @@ class Search
             $fundingCycNestedQuery->setPath('researchGroup.fundingCycle');
 
             // Add funding cycle id field to the aggregation
-            $fundingCycleTerms = new Query\Terms();
+            $fundingCycleTerms = new Query\Terms('researchGroup.fundingCycle.id');
             $fundingCycleTerms->setTerms(
-                'researchGroup.fundingCycle.id',
                 explode(',', $requestTerms['options']['fundingCycleId'])
             );
 
@@ -748,9 +743,8 @@ class Search
             $projectDirectorNestedQuery->setPath('projectDirectors');
 
             // Add project director id field to the aggregation
-            $projectDirectorTermsQuery = new Query\Terms();
+            $projectDirectorTermsQuery = new Query\Terms('projectDirectors.id');
             $projectDirectorTermsQuery->setTerms(
-                'projectDirectors.id',
                 explode(',', $requestTerms['options']['projectDirectorId'])
             );
 
