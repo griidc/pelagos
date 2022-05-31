@@ -2,15 +2,12 @@
 
 namespace App\Event;
 
-use App\Twig\Extensions as TwigExtentions;
-use FOS\ElasticaBundle\Event\TransformEvent;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
 use App\Entity\Dataset;
-use App\Util\Geometry;
-
 use App\Exception\InvalidGmlException;
+use App\Twig\Extensions as TwigExtentions;
+use App\Util\Geometry;
+use FOS\ElasticaBundle\Event\PostTransformEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * An event subscriber for events related to the dataset index.
@@ -41,7 +38,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
      *
      * @return void
      */
-    public function populateCalculatedFields(TransformEvent $event)
+    public function populateCalculatedFields(PostTransformEvent $event)
     {
         $dataset = $event->getObject();
 
@@ -137,7 +134,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            TransformEvent::POST_TRANSFORM => 'populateCalculatedFields',
+            PostTransformEvent::class => 'populateCalculatedFields',
         );
     }
 }

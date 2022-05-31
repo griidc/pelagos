@@ -7,7 +7,7 @@ use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * Listener class for Information Product and Types related events.
