@@ -28,8 +28,13 @@
                     <div>
                         UDI: {{ datasetRowData.udi }}
                     </div>
-                    <div v-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileSize">
-                        File Size: {{ datasetRowData.fileSize }}
+                  <div v-if="datasetRowData.coldStorage && datasetRowData.availabilityStatus !== 7
+                       && datasetRowData.datasetSubmission
+                       && datasetRowData.datasetSubmission.coldStorageTotalUnpackedSize">
+                    File Size: {{ datasetRowData.datasetSubmission.coldStorageTotalUnpackedSize }}
+                  </div>
+                    <div v-else-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileSize">
+                      File Size: {{ datasetRowData.fileSize }}
                     </div>
                 </div>
             </b-card-text>
