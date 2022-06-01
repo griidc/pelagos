@@ -42,7 +42,6 @@ class FundingOrganizationCrudController extends AbstractCrudController
         $fields = array();
         if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT])) {
             $fields[] = AssociationField::new('dataRepository');
-            $fields[] = AssociationField::new('fundingCycles');
         }
 
         return array_merge($fields, [
