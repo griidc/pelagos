@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\File;
+use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,17 +24,22 @@ class PelagosClearErrorAndFileCommand extends Command
     protected $entityManager;
 
     /**
+     * Datastore util instance
+     *
+     * @var Datastore
+     */
+    protected $datastore;
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param Datastore              $datastore     The Pelagos datastore object.
      */
-    public function __construct(
-        EntityManagerInterface $entityManager
-    ) {
+    public function __construct(EntityManagerInterface $entityManager, Datastore $datastore)
+    {
         $this->entityManager = $entityManager;
-
-        // It is required to call parent constructor if
-        // using a constructon in a Symfony command.
+        $this->datastore = $datastore;
         parent::__construct();
     }
 
@@ -71,11 +77,16 @@ class PelagosClearErrorAndFileCommand extends Command
 
         if ($fileToDelete instanceof File) {
             try {
-                $delId = $fileToDelete->getId();
+                $fileId = $fileToDelete->getId();
                 $this->entityManager->remove($fileToDelete);
-                @unlink($fileToDelete->getPhysicalFilePath());
+                $physicalFileToDelete = $fileToDelete->getPhysicalFilePath();
+                if ($this->datastore->has($physicalFileToDelete)) {
+                    $this->datastore->deleteFile($physicalFileToDelete);
+                } else {
+                    @unlink($physicalFileToDelete);
+                }
                 $this->entityManager->flush();
-                $io->note("Removed file id: $delId at: " . $fileToDelete->getPhysicalFilePath());
+                $io->note("Removed file id: $fileId at: $physicalFileToDelete");
             } catch (\Exception $e) {
                 $io->error("Could not delete file." . $e->getMessage());
             }
