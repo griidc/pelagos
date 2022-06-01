@@ -42,21 +42,23 @@ class FundingOrganizationCrudController extends AbstractCrudController
         $fields = array();
         if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT])) {
             $fields[] = AssociationField::new('dataRepository');
+            $fields[] = AssociationField::new('fundingCycles');
         }
 
         return array_merge($fields, [
+            IdField::new('id')->onlyOnIndex(),
             TextField::new('name'),
             TextField::new('description')->onlyOnForms(),
             TextField::new('shortName'),
-            EmailField::new('emailAddress'),
-            TextField::new('url'),
-            TextField::new('phoneNumber'),
-            TextField::new('deliveryPoint'),
-            TextField::new('city'),
-            TextField::new('administrativeArea'),
-            TextField::new('postalCode'),
-            TextField::new('country'),
-            NumberField::new('sortOrder'),
+            EmailField::new('emailAddress')->onlyOnForms(),
+            TextField::new('url')->onlyOnForms(),
+            TextField::new('phoneNumber')->onlyOnForms(),
+            TextField::new('deliveryPoint')->onlyOnForms(),
+            TextField::new('city')->onlyOnForms(),
+            TextField::new('administrativeArea')->onlyOnForms(),
+            TextField::new('postalCode')->onlyOnForms(),
+            TextField::new('country')->onlyOnForms(),
+            NumberField::new('sortOrder')->onlyOnForms(),
         ]);
     }
     
@@ -82,8 +84,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
                     ->displayIf(function (FundingOrganization $fundingOrganization) {
                         return !$this->isFundingOrgInUse($fundingOrganization);
                     });
-            })
-            ->disable(Action::DELETE);
+            });
     }
 
     /**

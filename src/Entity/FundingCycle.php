@@ -456,4 +456,14 @@ class FundingCycle extends Entity
             throw $notDeletableException;
         }
     }
+
+    /**
+     * Gets the name of the Funding Cycle.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
 }
