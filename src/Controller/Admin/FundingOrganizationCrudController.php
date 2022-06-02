@@ -60,6 +60,22 @@ class FundingOrganizationCrudController extends AbstractCrudController
             NumberField::new('sortOrder')->onlyOnForms(),
         ]);
     }
+
+    /**
+     * CRUD configuration function.
+     *
+     * @param Crud $crud
+     *
+     * @return Crud
+     */
+    public function configureCrud(Crud $crud): Crud
+    {
+        return parent::configureCrud($crud)
+            ->setPageTitle(Crud::PAGE_INDEX, 'FO Editor List Page')
+            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Funding Organization')
+            ->setPageTitle(Crud::PAGE_NEW, 'Create Funding Organization')
+            ->showEntityActionsInlined();
+    }
     
     /**
      * Configure Crud Actions.
