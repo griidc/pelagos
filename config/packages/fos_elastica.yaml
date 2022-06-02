@@ -114,8 +114,6 @@ fos_elastica:
                             type: 'text'
                         themeKeywords:
                             type: 'text'
-                        coldStorageTotalUnpackedSize:
-                            type: 'text'
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:
