@@ -267,7 +267,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $response = new RedirectResponse($targetPath);
 
-        $cookie = Cookie::create('GRIIDC_USERNAME', $token->getUser()->getUserId());
+        $cookie = Cookie::create('GRIIDC_USERNAME', $request->getSession()->get(Security::LAST_USERNAME));
         $response->headers->setCookie($cookie);
 
         return $response;
