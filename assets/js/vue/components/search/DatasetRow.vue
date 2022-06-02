@@ -29,7 +29,7 @@
                         UDI: {{ datasetRowData.udi }}
                     </div>
                     <div v-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileSize">
-                      File Size: {{ datasetRowData.fileSize }}
+                        File Size: {{ datasetRowData.fileSize }}
                     </div>
                 </div>
             </b-card-text>
@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import xbytes from 'xbytes';
-
 export default {
   name: 'DatasetRow',
   props: {
@@ -56,9 +54,6 @@ export default {
       if (window.getSelection().toString() === '') {
         window.open(`/data/${this.datasetRowData.udi}`, '_blank');
       }
-    },
-    humanSize(fileSize) {
-      return xbytes(fileSize);
     },
   },
 };
