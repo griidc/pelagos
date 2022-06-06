@@ -536,9 +536,6 @@
             "config/packages/messenger.yaml"
         ]
     },
-    "symfony/mime": {
-        "version": "v4.4.4"
-    },
     "symfony/monolog-bridge": {
         "version": "v4.4.4"
     },
