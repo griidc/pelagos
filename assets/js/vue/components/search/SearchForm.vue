@@ -155,7 +155,7 @@ export default {
       if (event.value instanceof  Date) {
         this.form.collectionStartDate = event.value.toLocaleDateString();
       } else {
-        this.form.collectionStartDate= '';
+        this.form.collectionStartDate = '';
       }
 
     },
@@ -163,7 +163,7 @@ export default {
       if (event.value instanceof Date) {
         this.form.collectionEndDate = event.value.toLocaleDateString();
       } else {
-        this.form.collectionEndDate= '';
+        this.form.collectionEndDate = '';
       }
     },
     onSubmit() {
