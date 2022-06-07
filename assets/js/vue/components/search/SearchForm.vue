@@ -131,7 +131,6 @@ export default {
   components: { ResultSet, DxDateBox },
   data() {
     return {
-      now: new Date(),
       // eslint-disable-next-line no-undef
       searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
       form: initialFormValues(),
