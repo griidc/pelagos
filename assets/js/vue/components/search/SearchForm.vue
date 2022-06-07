@@ -33,26 +33,31 @@
                                     <div class="col-lg collection-start-date">
                                     <span class="input-group">
                                         <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                        <b-form-datepicker type="text"
-                                                           class="pr-2 form-control"
-                                                           id="collectionStartDate"
-                                                           name="collectionStartDate"
-                                                           placeholder="yyyy-mm-dd"
-                                                           v-model="form.collectionStartDate">
-                                        </b-form-datepicker>
+                                        <DxDateBox
+                                          :show-clear-button="true"
+                                          :use-mask-behavior="true"
+                                          :value="startDate"
+                                          placeholder="yyyy-mm-dd"
+                                          display-format="yyyy-MM-dd"
+                                          width="80%"
+                                          type="date"
+                                          @value-changed="onStartDateChanged"
+                                        />
                                     </span>
                                     </div>
                                     <div class="col-lg collection-end-date">
                                     <span class="input-group">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                        <b-form-datepicker
-                                            type="text"
-                                            id="collectionEndDate"
-                                            class="form-control date-input"
-                                            name="collectionEndDate"
-                                            placeholder="yyyy-mm-dd"
-                                            v-model="form.collectionEndDate">
-                                        </b-form-datepicker>
+                                        <DxDateBox
+                                          :show-clear-button="true"
+                                          :use-mask-behavior="true"
+                                          :value="endDate"
+                                          placeholder="yyyy-mm-dd"
+                                          display-format="yyyy-MM-dd"
+                                          width="80%"
+                                          type="date"
+                                          @value-changed="onEndDateChanged"
+                                        />
                                     </span>
                                     </div>
                                 </div>
@@ -98,9 +103,12 @@
 </template>
 
 <script>
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/search/ResultSet';
 import templateSwitch from '@/vue/utils/template-switch';
+import DxDateBox from 'devextreme-vue/date-box';
 
 function initialFormValues() {
   return {
@@ -120,12 +128,15 @@ function initialFormValues() {
 
 export default {
   name: 'SearchForm',
-  components: { ResultSet },
+  components: { ResultSet, DxDateBox },
   data() {
     return {
+      now: new Date(),
       // eslint-disable-next-line no-undef
       searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
       form: initialFormValues(),
+      startDate: '',
+      endDate: '',
       fields: [
         { text: '-- All --', value: '' },
         { text: 'Title', value: 'title' },
@@ -141,6 +152,17 @@ export default {
     };
   },
   methods: {
+    onStartDateChanged(event) {
+      if (event.value instanceof  Date) {
+        this.form.collectionStartDate = event.value.toLocaleDateString();
+      }
+
+    },
+    onEndDateChanged(event) {
+      if (event.value instanceof Date) {
+        this.form.collectionEndDate = event.value.toLocaleDateString();
+      }
+    },
     onSubmit() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
@@ -189,6 +211,8 @@ export default {
       const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
       this.form = Object.fromEntries(urlHashSplit);
       this.onSubmit();
+      this.startDate = this.form.collectionStartDate;
+      this.endDate = this.form.collectionEndDate
     }
     window.addEventListener('hashchange', this.detectHashChange);
   },
