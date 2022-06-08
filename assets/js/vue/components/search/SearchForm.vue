@@ -34,6 +34,7 @@
                                     <span class="input-group">
                                         <label for="collectionStartDate" class="pr-2">From</label>
                                         <DxDateBox
+                                          :element-attr="dateBoxAttributes"
                                           id="collectionStartDate"
                                           :show-clear-button="true"
                                           :use-mask-behavior="true"
@@ -50,6 +51,7 @@
                                     <span class="input-group">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
                                         <DxDateBox
+                                          :element-attr="dateBoxAttributes"
                                           id="collectionEndDate"
                                           :show-clear-button="true"
                                           :use-mask-behavior="true"
@@ -150,6 +152,9 @@ export default {
       route: window.location.hash,
       submitted: false,
       displayTextBlock: templateSwitch.getProperty('displayTextBlock'),
+      dateBoxAttributes: {
+        class: 'datebox-font-family',
+      },
     };
   },
   methods: {
@@ -185,6 +190,8 @@ export default {
       this.form = initialFormValues();
       this.showResults = false;
       this.noResults = false;
+      this.startDate = '';
+      this.endDate = '';
       window.location.hash = '';
     },
     facetCheckBoxValues(value) {
@@ -306,5 +313,10 @@ export default {
             }
         }
     }
+}
+
+.datebox-font-family {
+  font-family: var(--main-fonts);
+  font-size: 16px;
 }
 </style>
