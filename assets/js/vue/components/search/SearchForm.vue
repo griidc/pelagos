@@ -34,6 +34,7 @@
                                     <span class="input-group">
                                         <label for="collectionStartDate" class="pl-2 pr-2">From</label>
                                         <DxDateBox
+                                          id="collectionStartDate"
                                           :show-clear-button="true"
                                           :use-mask-behavior="true"
                                           :value="startDate"
@@ -49,6 +50,7 @@
                                     <span class="input-group">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
                                         <DxDateBox
+                                          id="collectionEndDate"
                                           :show-clear-button="true"
                                           :use-mask-behavior="true"
                                           :value="endDate"
@@ -152,12 +154,11 @@ export default {
   },
   methods: {
     onStartDateChanged(event) {
-      if (event.value instanceof  Date) {
+      if (event.value instanceof Date) {
         this.form.collectionStartDate = event.value.toLocaleDateString();
       } else {
         this.form.collectionStartDate = '';
       }
-
     },
     onEndDateChanged(event) {
       if (event.value instanceof Date) {
@@ -215,7 +216,7 @@ export default {
       this.form = Object.fromEntries(urlHashSplit);
       this.onSubmit();
       this.startDate = this.form.collectionStartDate;
-      this.endDate = this.form.collectionEndDate
+      this.endDate = this.form.collectionEndDate;
     }
     window.addEventListener('hashchange', this.detectHashChange);
   },
