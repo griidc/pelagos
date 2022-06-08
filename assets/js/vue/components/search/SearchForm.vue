@@ -34,6 +34,7 @@
                                     <span class="input-group">
                                         <label for="collectionStartDate" class="pr-2">From</label>
                                         <DxDateBox
+                                          :ref="collectionStartDateRef"
                                           :element-attr="dateBoxAttributes"
                                           id="collectionStartDate"
                                           :show-clear-button="true"
@@ -51,6 +52,7 @@
                                     <span class="input-group">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
                                         <DxDateBox
+                                          :ref="collectionEndDateRef"
                                           :element-attr="dateBoxAttributes"
                                           id="collectionEndDate"
                                           :show-clear-button="true"
@@ -130,6 +132,9 @@ function initialFormValues() {
   };
 }
 
+const collectionStartDateRef = "collection-start-date";
+const collectionEndDateRef = "collection-end-date";
+
 export default {
   name: 'SearchForm',
   components: { ResultSet, DxDateBox },
@@ -140,6 +145,8 @@ export default {
       form: initialFormValues(),
       startDate: '',
       endDate: '',
+      collectionStartDateRef,
+      collectionEndDateRef,
       fields: [
         { text: '-- All --', value: '' },
         { text: 'Title', value: 'title' },
@@ -193,6 +200,8 @@ export default {
       this.startDate = '';
       this.endDate = '';
       window.location.hash = '';
+      this.$refs[collectionStartDateRef].instance.reset();
+      this.$refs[collectionEndDateRef].instance.reset();
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
