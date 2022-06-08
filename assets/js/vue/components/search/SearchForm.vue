@@ -132,8 +132,8 @@ function initialFormValues() {
   };
 }
 
-const collectionStartDateRef = "collection-start-date";
-const collectionEndDateRef = "collection-end-date";
+const collectionStartDateRef = 'collection-start-date';
+const collectionEndDateRef = 'collection-end-date';
 
 export default {
   name: 'SearchForm',
