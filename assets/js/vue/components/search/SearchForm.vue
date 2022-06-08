@@ -32,7 +32,7 @@
                                     </div>
                                     <div class="col-lg collection-start-date">
                                     <span class="input-group">
-                                        <label for="collectionStartDate" class="pl-2 pr-2">From</label>
+                                        <label for="collectionStartDate" class="pr-2">From</label>
                                         <DxDateBox
                                           id="collectionStartDate"
                                           :show-clear-button="true"
