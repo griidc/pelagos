@@ -305,6 +305,16 @@ class Account extends Entity implements UserInterface, EquatableInterface
     }
 
     /**
+     * Get User Indentifier.
+     *
+     * @return string
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->userId;
+    }
+
+    /**
      * Returns the passwordHash contained in the account's Password attribute.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
