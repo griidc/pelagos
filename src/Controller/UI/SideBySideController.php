@@ -176,7 +176,7 @@ class SideBySideController extends AbstractController
             );
         }
 
-        $form = $formFactory->create(DatasetSubmissionType::class, $datasetSubmission);
+        $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
 
         //Overwrite the spatial extent field which is normally a hidden type.
         $form->add('spatialExtent', TextareaType::class, array(

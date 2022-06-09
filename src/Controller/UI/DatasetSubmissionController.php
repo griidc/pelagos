@@ -135,7 +135,7 @@ class DatasetSubmissionController extends AbstractController
 
                 $datasetSubmission = $this->getDatasetSubmission($dataset);
 
-                $xmlForm = $formFactory->create(DatasetSubmissionXmlFileType::class);
+                $xmlForm = $formFactory->createNamed('', DatasetSubmissionXmlFileType::class);
 
                 $xmlForm->handleRequest($request);
 
@@ -223,7 +223,8 @@ class DatasetSubmissionController extends AbstractController
             throw new BadRequestHttpException('The DIF has not yet been approved for this dataset.');
         }
 
-        $form = $formFactory->create(
+        $form = $formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission
         );
@@ -300,7 +301,8 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
-        $form = $formFactory->create(
+        $form = $formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
@@ -314,7 +316,8 @@ class DatasetSubmissionController extends AbstractController
             )
         );
 
-        $xmlFormView = $formFactory->create(
+        $xmlFormView = $formFactory->createNamed(
+            '',
             DatasetSubmissionXmlFileType::class,
             null,
             array(

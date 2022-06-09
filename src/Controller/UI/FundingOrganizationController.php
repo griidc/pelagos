@@ -69,7 +69,7 @@ class FundingOrganizationController extends AbstractController
             $fundingOrganization = new \App\Entity\FundingOrganization;
         }
 
-        $form = $formFactory->create(FundingOrganizationType::class, $fundingOrganization);
+        $form = $formFactory->createNamed('', FundingOrganizationType::class, $fundingOrganization);
 
         $ui['FundingOrganization'] = $fundingOrganization;
         $ui['form'] = $form->createView();

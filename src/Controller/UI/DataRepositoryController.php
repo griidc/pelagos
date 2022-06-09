@@ -58,7 +58,7 @@ class DataRepositoryController extends AbstractController
             $dataRepository = new DataRepository;
         }
 
-        $form = $formFactory->create(DataRepositoryType::class, $dataRepository);
+        $form = $formFactory->createNamed('', DataRepositoryType::class, $dataRepository);
 
         $ui['DataRepository'] = $dataRepository;
         $ui['form'] = $form->createView();

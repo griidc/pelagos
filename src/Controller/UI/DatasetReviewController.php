@@ -307,7 +307,8 @@ class DatasetReviewController extends AbstractController
             $datasetSubmission->setSpatialExtent($gml);
         }
 
-        $form = $formFactory->create(
+        $form = $formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
@@ -450,7 +451,8 @@ class DatasetReviewController extends AbstractController
         }
         // set to default event
         $eventName = 'end_review';
-        $form = $formFactory->create(
+        $form = $formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission
         );

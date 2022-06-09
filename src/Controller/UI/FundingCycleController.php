@@ -49,7 +49,7 @@ class FundingCycleController extends AbstractController
             $fundingCycle = new \App\Entity\FundingCycle;
         }
 
-        $form = $formFactory->create(FundingCycleType::class, $fundingCycle);
+        $form = $formFactory->createNamed('', FundingCycleType::class, $fundingCycle);
 
         $ui['FundingCycle'] = $fundingCycle;
         $ui['form'] = $form->createView();

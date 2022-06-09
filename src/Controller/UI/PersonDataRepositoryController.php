@@ -42,7 +42,7 @@ class PersonDataRepositoryController extends AbstractController
             $personDataRepository = new \App\Entity\PersonDataRepository;
         }
 
-        $form = $formFactory->create(PersonDataRepositoryType::class, $personDataRepository);
+        $form = $formFactory->createNamed('', PersonDataRepositoryType::class, $personDataRepository);
 
         $ui['PersonDataRepository'] = $personDataRepository;
         $ui['form'] = $form->createView();

@@ -51,7 +51,7 @@ class PersonResearchGroupController extends AbstractController
             $personResearchGroup->setResearchGroup($entityHandler->get(ResearchGroup::class, $researchGroupId));
         }
 
-        $form = $formFactory->create(PersonResearchGroupType::class, $personResearchGroup);
+        $form = $formFactory->createNamed('', PersonResearchGroupType::class, $personResearchGroup);
 
         $ui['PersonResearchGroup'] = $personResearchGroup;
         $ui['form'] = $form->createView();

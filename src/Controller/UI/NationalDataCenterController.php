@@ -49,7 +49,7 @@ class NationalDataCenterController extends AbstractController
             $nationalDataCenter = new NationalDataCenter();
         }
 
-        $form = $formFactory->create(NationalDataCenterType::class, $nationalDataCenter);
+        $form = $formFactory->createNamed('', NationalDataCenterType::class, $nationalDataCenter);
 
         return $this->render('template/NationalDataCenter.html.twig', array(
             'NationalDataCenter' => $nationalDataCenter,

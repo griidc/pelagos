@@ -72,7 +72,7 @@ class PersonController extends AbstractController
             $person = new \App\Entity\Person;
         }
 
-        $form = $formFactory->create(PersonType::class, $person);
+        $form = $formFactory->createNamed('', PersonType::class, $person);
 
         $ui['Person'] = $person;
         $ui['form'] = $form->createView();

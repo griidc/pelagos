@@ -72,7 +72,7 @@ class ResearchGroupController extends AbstractController
             $researchGroup = new \App\Entity\ResearchGroup;
         }
 
-        $form = $formFactory->create(ResearchGroupType::class, $researchGroup);
+        $form = $formFactory->createNamed('', ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
         $ui['FundingOrganizations'] = $this->getDoctrine()->getRepository(FundingOrganization::class)->findAll();
