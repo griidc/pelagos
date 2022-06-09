@@ -50,7 +50,7 @@ class DatasetDownloadReportController extends ReportController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
-        $form = $formFactory->create(ReportDatasetDownloadType::class);
+        $form = $formFactory->createNamed('', ReportDatasetDownloadType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
