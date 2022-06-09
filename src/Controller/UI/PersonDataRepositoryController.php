@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -26,7 +27,7 @@ class PersonDataRepositoryController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -41,7 +42,7 @@ class PersonDataRepositoryController extends AbstractController
             $personDataRepository = new \App\Entity\PersonDataRepository;
         }
 
-        $form = $this->get('form.factory')->createNamed(null, PersonDataRepositoryType::class, $personDataRepository);
+        $form = $formFactory->create(PersonDataRepositoryType::class, $personDataRepository);
 
         $ui['PersonDataRepository'] = $personDataRepository;
         $ui['form'] = $form->createView();

@@ -19,6 +19,7 @@ use App\Entity\Person;
 use App\Entity\DatasetSubmission;
 use App\Entity\Account;
 use App\Entity\PersonDataRepository;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The dataset download report generator.
@@ -43,17 +44,13 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return Response|StreamedResponse A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
-            ReportDatasetDownloadType::class,
-            null
-        );
+        $form = $formFactory->create(ReportDatasetDownloadType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {

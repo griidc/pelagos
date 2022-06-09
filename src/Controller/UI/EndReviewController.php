@@ -14,6 +14,7 @@ use App\Handler\EntityHandler;
 
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,13 +58,13 @@ class EndReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
 
-        $form = $this->get('form.factory')->createNamed(
+        $form = $formFactory->createNamed(
             'endReview',
             EndReviewType::class
         );

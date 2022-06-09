@@ -226,7 +226,7 @@ abstract class EntityController extends AbstractFOSRestController
      */
     private function processForm(string $formType, Entity $entity, Request $request, string $method = 'PUT')
     {
-        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
+        $form = $this->formFactory->create($formType, $entity, array('method' => $method));
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
             throw new BadRequestHttpException(
@@ -290,7 +290,7 @@ abstract class EntityController extends AbstractFOSRestController
             $entity = $this->handleGetOne($entityClass, $id);
         }
         // Create a form with this entity.
-        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => 'GET'));
+        $form = $this->formFactory->create($formType, $entity, array('method' => 'GET'));
         try {
             // Process the request against the form.
             $form->submit($params, false);

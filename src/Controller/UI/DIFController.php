@@ -37,7 +37,7 @@ class DIFController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $dif = new DIF;
-        $form = $formFactory->createNamed(null, DIFType::class, $dif);
+        $form = $formFactory->create(DIFType::class, $dif);
 
         $researchGroupIds = array();
         if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

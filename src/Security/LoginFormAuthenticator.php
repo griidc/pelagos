@@ -117,7 +117,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        $form = $this->formFactory->createNamed(null, LoginForm::class);
+        $form = $this->formFactory->create(LoginForm::class);
         $form->handleRequest($request);
 
         $data = $form->getData();

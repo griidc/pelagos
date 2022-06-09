@@ -10,6 +10,7 @@ use App\Handler\EntityHandler;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,7 +34,7 @@ class PersonResearchGroupController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
@@ -50,7 +51,7 @@ class PersonResearchGroupController extends AbstractController
             $personResearchGroup->setResearchGroup($entityHandler->get(ResearchGroup::class, $researchGroupId));
         }
 
-        $form = $this->get('form.factory')->createNamed(null, PersonResearchGroupType::class, $personResearchGroup);
+        $form = $formFactory->create(PersonResearchGroupType::class, $personResearchGroup);
 
         $ui['PersonResearchGroup'] = $personResearchGroup;
         $ui['form'] = $form->createView();

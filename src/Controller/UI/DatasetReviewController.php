@@ -32,6 +32,8 @@ use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
 use App\Message\DatasetSubmissionFiler;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -271,7 +273,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
+    protected function makeSubmissionForm(string $udi, FormFactoryInterface $formFactory, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -305,8 +307,7 @@ class DatasetReviewController extends AbstractController
             $datasetSubmission->setSpatialExtent($gml);
         }
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->create(
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
@@ -436,9 +437,8 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
+    public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus, FormFactoryInterface $formFactory)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -450,8 +450,7 @@ class DatasetReviewController extends AbstractController
         }
         // set to default event
         $eventName = 'end_review';
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->create(
             DatasetSubmissionType::class,
             $datasetSubmission
         );

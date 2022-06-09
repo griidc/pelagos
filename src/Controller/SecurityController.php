@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 use App\Form\LoginForm;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * This is the controller for the login form.
@@ -22,14 +23,14 @@ class SecurityController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function loginAction(AuthenticationUtils $authenticationUtils)
+    public function loginAction(AuthenticationUtils $authenticationUtils, FormFactoryInterface $formFactory)
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        $form = $this->get('form.factory')->createNamed(null, LoginForm::class, [
+        $form = $formFactory->create(LoginForm::class, [
             '_username' => $lastUsername,
         ]);
 

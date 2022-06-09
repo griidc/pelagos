@@ -43,6 +43,7 @@ use App\Exception\InvalidMetadataException;
 use App\Message\DatasetSubmissionFiler;
 
 use App\Util\ISOMetadataExtractorUtil;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -104,7 +105,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, EntityManagerInterface $entityManager)
+    public function defaultAction(Request $request, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
@@ -134,11 +135,7 @@ class DatasetSubmissionController extends AbstractController
 
                 $datasetSubmission = $this->getDatasetSubmission($dataset);
 
-                $xmlForm = $this->get('form.factory')->createNamed(
-                    null,
-                    DatasetSubmissionXmlFileType::class,
-                    null
-                );
+                $xmlForm = $formFactory->create(DatasetSubmissionXmlFileType::class);
 
                 $xmlForm->handleRequest($request);
 
@@ -204,11 +201,10 @@ class DatasetSubmissionController extends AbstractController
      *
      * @Route("/dataset-submission/{id}", name="pelagos_app_ui_datasetsubmission_post", methods={"POST"})
      *
-     * @return Response A Response instance.
+     * @return Response A Response instance
      */
-    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
+    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -227,8 +223,7 @@ class DatasetSubmissionController extends AbstractController
             throw new BadRequestHttpException('The DIF has not yet been approved for this dataset.');
         }
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->create(
             DatasetSubmissionType::class,
             $datasetSubmission
         );
@@ -284,7 +279,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response
      */
-    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null, FormFactoryInterface $formFactory)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -305,8 +300,7 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->create(
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
@@ -320,8 +314,7 @@ class DatasetSubmissionController extends AbstractController
             )
         );
 
-        $xmlFormView = $this->get('form.factory')->createNamed(
-            null,
+        $xmlFormView = $formFactory->create(
             DatasetSubmissionXmlFileType::class,
             null,
             array(

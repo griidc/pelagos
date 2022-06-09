@@ -21,6 +21,7 @@ use App\Form\DatasetSubmissionType;
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 use App\Entity\DatasetLink;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -139,7 +140,7 @@ class SideBySideController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function getSubmissionFormAction(Request $request, $udi = null, $revision = null)
+    public function getSubmissionFormAction(Request $request, FormFactoryInterface $formFactory, $udi = null, $revision = null)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect('/user/login?destination=' . $request->getPathInfo());
@@ -175,7 +176,7 @@ class SideBySideController extends AbstractController
             );
         }
 
-        $form = $this->get('form.factory')->createNamed(null, DatasetSubmissionType::class, $datasetSubmission);
+        $form = $formFactory->create(DatasetSubmissionType::class, $datasetSubmission);
 
         //Overwrite the spatial extent field which is normally a hidden type.
         $form->add('spatialExtent', TextareaType::class, array(

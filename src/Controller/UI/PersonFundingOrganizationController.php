@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -30,7 +31,7 @@ class PersonFundingOrganizationController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -49,7 +50,7 @@ class PersonFundingOrganizationController extends AbstractController
             $personFundingOrganization = new \App\Entity\PersonFundingOrganization;
         }
 
-        $form = $this->get('form.factory')->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization);
+        $form = $formFactory->create(PersonFundingOrganizationType::class, $personFundingOrganization);
 
         $ui['PersonFundingOrganization'] = $personFundingOrganization;
         $ui['form'] = $form->createView();
