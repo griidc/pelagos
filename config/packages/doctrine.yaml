@@ -7,7 +7,6 @@ doctrine:
         types:
             citext:
                 class: App\DoctrineExtensions\DBAL\Types\CITextType
-                commented: false
         schema_filter: ~^(?!messenger_)~
 
         # IMPORTANT: You MUST configure your server version,
