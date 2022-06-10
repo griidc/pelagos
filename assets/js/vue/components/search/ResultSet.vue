@@ -3,7 +3,7 @@
         <section class="section-content pt-3">
             <div class="row d-flex flex-row justify-content-center">
                 <h5>
-                    Found #{{ results.count }} results
+                    Found {{ results.count }} results
                 </h5>
             </div>
         </section>
