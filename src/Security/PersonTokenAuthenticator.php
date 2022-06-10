@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * An authenticator for PersonTokens.
@@ -24,16 +25,16 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * An instance of Twig.
      *
-     * @var \Twig_Environment
+     * @var TwigEnvironment
      */
     private $twig;
 
     /**
      * Constructor.
      *
-     * @param \Twig_Environment $twig An instance of Twig.
+     * @param TwigEnvironment $twig An instance of Twig.
      */
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(TwigEnvironment $twig)
     {
         $this->twig = $twig;
     }

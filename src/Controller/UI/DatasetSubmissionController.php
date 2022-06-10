@@ -82,15 +82,23 @@ class DatasetSubmissionController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * The Form Factory.
+     *
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, FormFactoryInterface $formFactory)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -105,7 +113,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
+    public function defaultAction(Request $request, EntityManagerInterface $entityManager)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
@@ -135,7 +143,7 @@ class DatasetSubmissionController extends AbstractController
 
                 $datasetSubmission = $this->getDatasetSubmission($dataset);
 
-                $xmlForm = $formFactory->createNamed('', DatasetSubmissionXmlFileType::class);
+                $xmlForm = $this->formFactory->createNamed('', DatasetSubmissionXmlFileType::class);
 
                 $xmlForm->handleRequest($request);
 
@@ -203,7 +211,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance
      */
-    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
+    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus, EntityManagerInterface $entityManager)
     {
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
@@ -223,7 +231,7 @@ class DatasetSubmissionController extends AbstractController
             throw new BadRequestHttpException('The DIF has not yet been approved for this dataset.');
         }
 
-        $form = $formFactory->createNamed(
+        $form = $this->formFactory->createNamed(
             '',
             DatasetSubmissionType::class,
             $datasetSubmission
@@ -280,7 +288,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response
      */
-    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null, FormFactoryInterface $formFactory)
+    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -301,7 +309,7 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
-        $form = $formFactory->createNamed(
+        $form = $this->formFactory->createNamed(
             '',
             DatasetSubmissionType::class,
             $datasetSubmission,
@@ -316,7 +324,7 @@ class DatasetSubmissionController extends AbstractController
             )
         );
 
-        $xmlFormView = $formFactory->createNamed(
+        $xmlFormView = $this->formFactory->createNamed(
             '',
             DatasetSubmissionXmlFileType::class,
             null,

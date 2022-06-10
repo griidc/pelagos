@@ -4,6 +4,7 @@ namespace App\Util;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * This is a Metadata utility class.
@@ -13,16 +14,16 @@ class Metadata
     /**
      * The twig *ml render.
      *
-     * @var \Twig_Environment
+     * @var TwigEnvironment
      */
     protected $twig;
 
     /**
      * Class constructor for dependency injection.
      *
-     * @param \Twig_Environment $twig The twig rendering engine.
+     * @param TwigEnvironment $twig The twig rendering engine.
      */
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(TwigEnvironment $twig)
     {
         $this->twig = $twig;
     }

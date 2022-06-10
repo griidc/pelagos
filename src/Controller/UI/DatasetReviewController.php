@@ -69,15 +69,23 @@ class DatasetReviewController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * The Form Factory.
+     *
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, FormFactoryInterface $formFactory)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -273,7 +281,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    protected function makeSubmissionForm(string $udi, FormFactoryInterface $formFactory, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
+    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -307,7 +315,7 @@ class DatasetReviewController extends AbstractController
             $datasetSubmission->setSpatialExtent($gml);
         }
 
-        $form = $formFactory->createNamed(
+        $form = $this->formFactory->createNamed(
             '',
             DatasetSubmissionType::class,
             $datasetSubmission,
@@ -438,7 +446,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus, FormFactoryInterface $formFactory)
+    public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
@@ -451,7 +459,7 @@ class DatasetReviewController extends AbstractController
         }
         // set to default event
         $eventName = 'end_review';
-        $form = $formFactory->createNamed(
+        $form = $this->formFactory->createNamed(
             '',
             DatasetSubmissionType::class,
             $datasetSubmission
