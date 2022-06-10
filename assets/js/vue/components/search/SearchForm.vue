@@ -77,22 +77,6 @@
                 @pagination="changePageNo"
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
-            <section class="section-content pt-3" v-else>
-                <div v-show="!displayTextBlock">
-                    <article class="card">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">
-                                GRIIDC Datasets
-                            </h5>
-                            <p class="card-text">
-                                Choose from thousands of scientific datasets from various fields
-                                including oceanography, biology, ecology, chemistry, social science,
-                                and others.
-                            </p>
-                        </div>
-                    </article>
-                </div>
-            </section>
         </div>
     </div>
 </template>
@@ -100,7 +84,6 @@
 <script>
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/search/ResultSet';
-import templateSwitch from '@/vue/utils/template-switch';
 
 function initialFormValues() {
   return {
@@ -137,7 +120,6 @@ export default {
       resultSet: Object,
       route: window.location.hash,
       submitted: false,
-      displayTextBlock: templateSwitch.getProperty('displayTextBlock'),
     };
   },
   methods: {
@@ -188,8 +170,8 @@ export default {
     if (this.route) {
       const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
       this.form = Object.fromEntries(urlHashSplit);
-      this.onSubmit();
     }
+    this.onSubmit();
     window.addEventListener('hashchange', this.detectHashChange);
   },
   watch: {

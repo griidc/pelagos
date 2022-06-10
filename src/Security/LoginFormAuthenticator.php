@@ -146,8 +146,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $username = $credentials['_username'];
 
-        $theUser = $this->entityManager->getRepository(Account::class)
-            ->findOneBy(['userId' => $username]);
+        // Try to find the user by e-mail.
+        $thePerson = $this->entityManager->getRepository(Person::class)
+            ->findOneBy(['emailAddress' => $username]);
+
+        if ($thePerson instanceof Person) {
+            $theUser = $thePerson->getAccount();
+        } else {
+            $theUser = $this->entityManager->getRepository(Account::class)
+                ->findOneBy(['userId' => $username]);
+        }
 
         if (null == $theUser) {
             throw new AuthenticationException('Invalid Credentials');
@@ -259,7 +267,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $response = new RedirectResponse($targetPath);
 
-        $cookie = Cookie::create('GRIIDC_USERNAME', $token->getUser()->getUserId());
+        $cookie = Cookie::create('GRIIDC_USERNAME', $request->getSession()->get(Security::LAST_USERNAME));
         $response->headers->setCookie($cookie);
 
         return $response;

@@ -624,4 +624,14 @@ class DataRepository extends Entity
     {
         return $this->fundingOrganizations;
     }
+
+    /**
+     * Gets the name of the Data Repository.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
 }
