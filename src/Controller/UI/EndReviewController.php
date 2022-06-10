@@ -59,6 +59,8 @@ class EndReviewController extends AbstractController
      */
     public function defaultAction(Request $request)
     {
+        return $this->render('readonly.html.twig');
+
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }

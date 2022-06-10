@@ -89,6 +89,8 @@ class DatasetReviewController extends AbstractController
      */
     public function defaultAction(Request $request)
     {
+        return $this->render('readonly.html.twig');
+
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
                 $this->generateUrl('security_login') .'?destination='

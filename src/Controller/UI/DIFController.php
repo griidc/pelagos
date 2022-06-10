@@ -34,6 +34,8 @@ class DIFController extends AbstractController
      */
     public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter, $id = null)
     {
+        return $this->render('readonly.html.twig');
+
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $dif = new DIF;
