@@ -90,7 +90,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             // Populate file size and format values
             $document->set('fileSize', $dataset->getDatasetSubmission()->getDatasetFileSize());
             if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
-                $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2));
+                $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getColdStorageTotalUnpackedSize(), 2));
             } else {
                 $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2));
             }
