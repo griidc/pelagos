@@ -818,8 +818,11 @@ class Search
         if (preg_match_all($doiRegEx, $queryTerm, $matches)) {
             trim(preg_replace($doiRegEx, '', $queryTerm));
             $queryTerm = $matches[1][0];
-            $fieldsBoolQuery->addShould($this->getDoiQuery($queryTerm));
-            $fieldsBoolQuery->addShould($this->getPubDoiQuery($queryTerm));
+            foreach ($matches[1] as $doi) {
+                $queryTerm = $queryTerm . ' ' . $doi;
+                $fieldsBoolQuery->addShould($this->getDoiQuery($doi));
+                $fieldsBoolQuery->addShould($this->getPubDoiQuery($doi));
+            }
         }
         return $queryTerm;
     }
@@ -890,9 +893,12 @@ class Search
         if (preg_match_all($udiRegEx, $queryTerm, $matches)) {
             trim(preg_replace($udiRegEx, '', $queryTerm));
             $queryTerm = $matches[1][0];
-            // Replacing the 11th position to ":"
-            $queryTerm = substr_replace($queryTerm, ':', 11, 1);
-            $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
+            foreach ($matches[1] as $udi) {
+                $queryTerm = $queryTerm . ' ' . $udi;
+                // Replacing the 11th position to ":"
+                $udiQuery = substr_replace($udi, ':', 11, 1);
+                $fieldsBoolQuery->addShould($this->getUdiQuery($udiQuery));
+            }
         }
         return $queryTerm;
     }
