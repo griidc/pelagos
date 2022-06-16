@@ -537,26 +537,28 @@ class Search
         $fieldsBoolQuery = new Query\BoolQuery();
 
         if ($specificField) {
-            $specificFieldMatchQuery = new Query\Match();
+            $specificFieldMatchQuery = new Query\MatchQuery();
             $specificFieldMatchQuery->setFieldQuery($specificField, $queryTerm);
             $specificFieldMatchQuery->setFieldOperator($specificField, 'and');
             $fieldsBoolQuery->addShould($specificFieldMatchQuery);
         } else {
-            $queryTerm = $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
-            $queryTerm = $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
-            $fieldsMultiMatchQuery = new Query\MultiMatch();
-            $fieldsMultiMatchQuery->setQuery($queryTerm);
-            $fieldsMultiMatchQuery->setOperator('and');
-            $fieldsMultiMatchQuery->setType('cross_fields');
-            $fieldsMultiMatchQuery->setFields(
-                [
-                    self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
-                    self::ELASTIC_INDEX_MAPPING_ABSTRACT,
-                    self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
-                    self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
-                ]
-            );
-            $fieldsBoolQuery->addShould($fieldsMultiMatchQuery);
+            $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
+            $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
+            foreach (explode(',', $queryTerm) as $querySingleTerm) {
+                $fieldsMultiMatchQuery = new Query\MultiMatch();
+                $fieldsMultiMatchQuery->setQuery($querySingleTerm);
+                $fieldsMultiMatchQuery->setOperator('and');
+                $fieldsMultiMatchQuery->setType('cross_fields');
+                $fieldsMultiMatchQuery->setFields(
+                    [
+                        self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
+                        self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                        self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
+                        self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
+                    ]
+                );
+                $fieldsBoolQuery->addShould($fieldsMultiMatchQuery);
+            }
         }
 
         return $fieldsBoolQuery;
@@ -810,21 +812,17 @@ class Search
      * @param string          $queryTerm       Query term that needs to be checked if DOI exists.
      * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that DOI query is added to.
      *
-     * @return string
+     * @return void
      */
-    private function doesDoiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): string
+    private function doesDoiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): void
     {
         $doiRegEx = '!\b(?:[Dd][Oo][Ii]\s*:\s*)?(10.\d{4,9}/[-._;()/:A-Z0-9a-z]+)\b!';
         if (preg_match_all($doiRegEx, $queryTerm, $matches)) {
-            trim(preg_replace($doiRegEx, '', $queryTerm));
-            $queryTerm = $matches[1][0];
             foreach ($matches[1] as $doi) {
-                $queryTerm = $queryTerm . ' ' . $doi;
                 $fieldsBoolQuery->addShould($this->getDoiQuery($doi));
                 $fieldsBoolQuery->addShould($this->getPubDoiQuery($doi));
             }
         }
-        return $queryTerm;
     }
 
     /**
@@ -885,22 +883,18 @@ class Search
      * @param string          $queryTerm       Query term that needs to be checked if udi exists.
      * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that udi query is added to.
      *
-     * @return string
+     * @return void
      */
-    private function doesUdiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): string
+    private function doesUdiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): void
     {
         $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d[:.]\d\d\d\d)\b/i';
         if (preg_match_all($udiRegEx, $queryTerm, $matches)) {
-            trim(preg_replace($udiRegEx, '', $queryTerm));
-            $queryTerm = $matches[1][0];
             foreach ($matches[1] as $udi) {
-                $queryTerm = $queryTerm . ' ' . $udi;
                 // Replacing the 11th position to ":"
                 $udiQuery = substr_replace($udi, ':', 11, 1);
                 $fieldsBoolQuery->addShould($this->getUdiQuery($udiQuery));
             }
         }
-        return $queryTerm;
     }
 
     /**
