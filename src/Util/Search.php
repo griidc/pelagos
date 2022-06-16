@@ -550,11 +550,13 @@ class Search
         $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
         $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
 
-        $simpleQuery = new Query\SimpleQueryString($queryTerm, $specificField);
-        $simpleQuery->setParam('flags', 'PHRASE|PREFIX|WHITESPACE');
-        $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
+        foreach (explode(',', $queryTerm) as $singleQueryTerm) {
+            $simpleQuery = new Query\SimpleQueryString($singleQueryTerm, $specificField);
+            $simpleQuery->setParam('flags', 'PHRASE|PREFIX|WHITESPACE');
+            $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
 
-        $fieldsBoolQuery->addShould($simpleQuery);
+            $fieldsBoolQuery->addShould($simpleQuery);
+        }
 
         return $fieldsBoolQuery;
     }
