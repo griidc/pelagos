@@ -544,8 +544,6 @@ class Search
             $specificField= [$specificField];
         }
 
-        dump($specificField);
-
         // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
 
