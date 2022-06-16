@@ -533,33 +533,28 @@ class Search
      */
     private function getFieldsQuery(string $queryTerm, string $specificField = null, array $collectionDateRange = null): Query\BoolQuery
     {
+        if (empty($specificField)) {
+            $specificField = [
+                self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
+            ];
+        } else {
+            $specificField= [$specificField];
+        }
+
         // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
 
-        if ($specificField) {
-            $specificFieldMatchQuery = new Query\MatchQuery();
-            $specificFieldMatchQuery->setFieldQuery($specificField, $queryTerm);
-            $specificFieldMatchQuery->setFieldOperator($specificField, 'and');
-            $fieldsBoolQuery->addShould($specificFieldMatchQuery);
-        } else {
-            $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
-            $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
-            foreach (explode(',', $queryTerm) as $querySingleTerm) {
-                $fieldsMultiMatchQuery = new Query\MultiMatch();
-                $fieldsMultiMatchQuery->setQuery($querySingleTerm);
-                $fieldsMultiMatchQuery->setOperator('and');
-                $fieldsMultiMatchQuery->setType('cross_fields');
-                $fieldsMultiMatchQuery->setFields(
-                    [
-                        self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
-                        self::ELASTIC_INDEX_MAPPING_ABSTRACT,
-                        self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
-                        self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
-                    ]
-                );
-                $fieldsBoolQuery->addShould($fieldsMultiMatchQuery);
-            }
-        }
+        $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
+        $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
+
+        $simpleQuery = new Query\SimpleQueryString($queryTerm, $specificField);
+        $simpleQuery->setParam('flags', 'PHRASE|PREFIX|WHITESPACE');
+        $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
+
+        $fieldsBoolQuery->addShould($simpleQuery);
 
         return $fieldsBoolQuery;
     }
@@ -756,22 +751,6 @@ class Search
         $filterBoolQuery->addMust($postFilterBoolQuery);
 
         return $filterBoolQuery;
-    }
-
-    /**
-     * Get query for exact match.
-     *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\QueryString
-     */
-    private function getExactMatchQuery(string $queryTerm): Query\QueryString
-    {
-        $exactMatchQuery = new Query\QueryString();
-        $exactMatchQuery->setQuery($queryTerm);
-        $exactMatchQuery->setDefaultOperator('and');
-
-        return $exactMatchQuery;
     }
 
     /**
@@ -976,12 +955,7 @@ class Search
                 }
             }
 
-            // Search exact phrase if query string has double quotes
-            if (preg_match('/"/', $queryTerm)) {
-                $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
-            } else {
-                $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
-            }
+            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
         } else {
             $allDatasetsQuery = new Query\Term();
             $allDatasetsQuery->setTerm('identifiedStatus', 2);
