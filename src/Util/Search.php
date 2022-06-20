@@ -556,8 +556,6 @@ class Search
 
         $fieldsBoolQuery->addShould($simpleQuery);
 
-        dump($fieldsBoolQuery);
-
         return $fieldsBoolQuery;
     }
 
