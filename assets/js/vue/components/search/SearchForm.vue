@@ -32,27 +32,38 @@
                                     </div>
                                     <div class="col-lg collection-start-date">
                                     <span class="input-group">
-                                        <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                        <b-form-datepicker type="text"
-                                                           class="pr-2 form-control"
-                                                           id="collectionStartDate"
-                                                           name="collectionStartDate"
-                                                           placeholder="yyyy-mm-dd"
-                                                           v-model="form.collectionStartDate">
-                                        </b-form-datepicker>
+                                        <label for="collectionStartDate" class="pr-2">From</label>
+                                        <DxDateBox
+                                          :ref="collectionStartDateRef"
+                                          :element-attr="dateBoxAttributes"
+                                          id="collectionStartDate"
+                                          :show-clear-button="true"
+                                          :use-mask-behavior="true"
+                                          :value="startDate"
+                                          placeholder="yyyy-mm-dd"
+                                          display-format="yyyy-MM-dd"
+                                          width="80%"
+                                          type="date"
+                                          @value-changed="onStartDateChanged"
+                                        />
                                     </span>
                                     </div>
                                     <div class="col-lg collection-end-date">
                                     <span class="input-group">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                        <b-form-datepicker
-                                            type="text"
-                                            id="collectionEndDate"
-                                            class="form-control date-input"
-                                            name="collectionEndDate"
-                                            placeholder="yyyy-mm-dd"
-                                            v-model="form.collectionEndDate">
-                                        </b-form-datepicker>
+                                        <DxDateBox
+                                          :ref="collectionEndDateRef"
+                                          :element-attr="dateBoxAttributes"
+                                          id="collectionEndDate"
+                                          :show-clear-button="true"
+                                          :use-mask-behavior="true"
+                                          :value="endDate"
+                                          placeholder="yyyy-mm-dd"
+                                          display-format="yyyy-MM-dd"
+                                          width="80%"
+                                          type="date"
+                                          @value-changed="onEndDateChanged"
+                                        />
                                     </span>
                                     </div>
                                 </div>
@@ -77,30 +88,16 @@
                 @pagination="changePageNo"
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
-            <section class="section-content pt-3" v-else>
-                <div v-show="!displayTextBlock">
-                    <article class="card">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">
-                                GRIIDC Datasets
-                            </h5>
-                            <p class="card-text">
-                                Choose from thousands of scientific datasets from various fields
-                                including oceanography, biology, ecology, chemistry, social science,
-                                and others.
-                            </p>
-                        </div>
-                    </article>
-                </div>
-            </section>
         </div>
     </div>
 </template>
 
 <script>
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/search/ResultSet';
-import templateSwitch from '@/vue/utils/template-switch';
+import DxDateBox from 'devextreme-vue/date-box';
 
 function initialFormValues() {
   return {
@@ -118,14 +115,21 @@ function initialFormValues() {
   };
 }
 
+const collectionStartDateRef = 'collection-start-date';
+const collectionEndDateRef = 'collection-end-date';
+
 export default {
   name: 'SearchForm',
-  components: { ResultSet },
+  components: { ResultSet, DxDateBox },
   data() {
     return {
       // eslint-disable-next-line no-undef
       searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
       form: initialFormValues(),
+      startDate: '',
+      endDate: '',
+      collectionStartDateRef,
+      collectionEndDateRef,
       fields: [
         { text: '-- All --', value: '' },
         { text: 'Title', value: 'title' },
@@ -137,10 +141,26 @@ export default {
       resultSet: Object,
       route: window.location.hash,
       submitted: false,
-      displayTextBlock: templateSwitch.getProperty('displayTextBlock'),
+      dateBoxAttributes: {
+        class: 'datebox-font-family',
+      },
     };
   },
   methods: {
+    onStartDateChanged(event) {
+      if (event.value instanceof Date) {
+        this.form.collectionStartDate = event.value.toLocaleDateString();
+      } else {
+        this.form.collectionStartDate = '';
+      }
+    },
+    onEndDateChanged(event) {
+      if (event.value instanceof Date) {
+        this.form.collectionEndDate = event.value.toLocaleDateString();
+      } else {
+        this.form.collectionEndDate = '';
+      }
+    },
     onSubmit() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
@@ -159,7 +179,11 @@ export default {
       this.form = initialFormValues();
       this.showResults = false;
       this.noResults = false;
+      this.startDate = '';
+      this.endDate = '';
       window.location.hash = '';
+      this.$refs[collectionStartDateRef].instance.reset();
+      this.$refs[collectionEndDateRef].instance.reset();
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
@@ -188,8 +212,10 @@ export default {
     if (this.route) {
       const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
       this.form = Object.fromEntries(urlHashSplit);
-      this.onSubmit();
+      this.startDate = this.form.collectionStartDate;
+      this.endDate = this.form.collectionEndDate;
     }
+    this.onSubmit();
     window.addEventListener('hashchange', this.detectHashChange);
   },
   watch: {
@@ -278,5 +304,10 @@ export default {
             }
         }
     }
+}
+
+.datebox-font-family {
+  font-family: var(--main-fonts);
+  font-size: 16px;
 }
 </style>
