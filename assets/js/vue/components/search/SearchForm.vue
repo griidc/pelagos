@@ -150,6 +150,8 @@ export default {
     onStartDateChanged(event) {
       if (event.value instanceof Date) {
         this.form.collectionStartDate = event.value.toLocaleDateString();
+      } else if (event.value) {
+        this.form.collectionStartDate = event.value;
       } else {
         this.form.collectionStartDate = '';
       }
@@ -157,6 +159,8 @@ export default {
     onEndDateChanged(event) {
       if (event.value instanceof Date) {
         this.form.collectionEndDate = event.value.toLocaleDateString();
+      } else if (event.value) {
+        this.form.collectionEndDate = event.value;
       } else {
         this.form.collectionEndDate = '';
       }
