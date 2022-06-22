@@ -3,13 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
-
 use Hateoas\Configuration\Annotation as Hateoas;
-
 use App\Exception\NotDeletableException;
 
 /**
@@ -783,7 +780,7 @@ class FundingOrganization extends Entity
      *
      * @return string|null
      */
-    public function getShortName() : ? string
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
@@ -795,7 +792,7 @@ class FundingOrganization extends Entity
      *
      * @return void
      */
-    public function setShortName(?string $shortName) : void
+    public function setShortName(?string $shortName): void
     {
         $this->shortName = $shortName;
     }

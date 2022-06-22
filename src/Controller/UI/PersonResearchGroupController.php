@@ -5,15 +5,12 @@ namespace App\Controller\UI;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Form\PersonResearchGroupType;
-
 use App\Handler\EntityHandler;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
@@ -47,7 +44,7 @@ class PersonResearchGroupController extends AbstractController
         if (isset($id)) {
             $personResearchGroup = $entityHandler->get(PersonResearchGroup::class, $id);
         } else {
-            $personResearchGroup = new \App\Entity\PersonResearchGroup;
+            $personResearchGroup = new \App\Entity\PersonResearchGroup();
             $personResearchGroup->setResearchGroup($entityHandler->get(ResearchGroup::class, $researchGroupId));
         }
 

@@ -5,7 +5,6 @@ namespace App\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\FundingOrgFilter;
@@ -89,7 +88,7 @@ class DatasetRepository extends ServiceEntityRepository
      *
      * @return integer Size of data in bytes.
      */
-    public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = null) : int
+    public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = null): int
     {
         $qb = $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.coldStorageTotalUnpackedSize, datasetSubmission.datasetFileColdStorageArchiveSize, datasetSubmission.datasetFileSize))')

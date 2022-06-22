@@ -5,7 +5,6 @@ namespace App\Controller\UI;
 use App\Entity\PersonDataRepository;
 use App\Form\PersonDataRepositoryType;
 use App\Handler\EntityHandler;
-
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +38,7 @@ class PersonDataRepositoryController extends AbstractController
         if (isset($id)) {
             $personDataRepository = $entityHandler->get(PersonDataRepository::class, $id);
         } else {
-            $personDataRepository = new \App\Entity\PersonDataRepository;
+            $personDataRepository = new \App\Entity\PersonDataRepository();
         }
 
         $form = $formFactory->createNamed('', PersonDataRepositoryType::class, $personDataRepository);

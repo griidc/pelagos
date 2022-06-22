@@ -7,9 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use App\Entity\Account;
 use App\Entity\PersonToken;
 
@@ -58,7 +56,7 @@ class PersonTokenUserProvider implements UserProviderInterface
             array('tokenText' => $tokenString)
         );
         if (count($personTokens) === 0) {
-            throw new AuthenticationCredentialsNotFoundException;
+            throw new AuthenticationCredentialsNotFoundException();
         }
         if (count($personTokens) > 1) {
             throw new \Exception(
@@ -67,7 +65,7 @@ class PersonTokenUserProvider implements UserProviderInterface
         }
         $personToken = $personTokens[0];
         if (!$personToken->isValid()) {
-            throw new AuthenticationExpiredException;
+            throw new AuthenticationExpiredException();
         }
         $person = $personToken->getPerson();
         $account = $person->getAccount();

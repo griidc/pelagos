@@ -8,9 +8,7 @@ use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
 use App\Form\ResearchGroupType;
 use App\Form\PersonResearchGroupType;
-
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,14 +60,14 @@ class ResearchGroupController extends AbstractController
                     = new EntityProperty($personResearchGroup, 'label');
             }
 
-            $newResearchGroupPerson = new \App\Entity\PersonResearchGroup;
+            $newResearchGroupPerson = new \App\Entity\PersonResearchGroup();
             $newResearchGroupPerson->setResearchGroup($researchGroup);
             $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
             $ui['newResearchGroupPersonForm'] = $formFactory
                 ->create(PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
                 ->createView();
         } else {
-            $researchGroup = new \App\Entity\ResearchGroup;
+            $researchGroup = new \App\Entity\ResearchGroup();
         }
 
         $form = $formFactory->createNamed('', ResearchGroupType::class, $researchGroup);

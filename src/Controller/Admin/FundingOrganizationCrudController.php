@@ -76,7 +76,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Create Funding Organization')
             ->showEntityActionsInlined();
     }
-    
+
     /**
      * Configure Crud Actions.
      *
@@ -113,7 +113,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $fundingCycles = $entityManager->getRepository(FundingCycle::class)->findBy(['fundingOrganization'=> $fundingOrganization]);
+        $fundingCycles = $entityManager->getRepository(FundingCycle::class)->findBy(['fundingOrganization' => $fundingOrganization]);
 
         return count($fundingCycles) > 0;
     }

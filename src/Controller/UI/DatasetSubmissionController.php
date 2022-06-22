@@ -4,29 +4,21 @@ namespace App\Controller\UI;
 
 use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\Form\Form;
-
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
-
 use App\Event\EntityEventDispatcher;
-
 use App\Entity\DataCenter;
 use App\Entity\DIF;
 use App\Entity\Dataset;
@@ -35,13 +27,9 @@ use App\Entity\DistributionPoint;
 use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
-
 use App\Handler\EntityHandler;
-
 use App\Exception\InvalidMetadataException;
-
 use App\Message\DatasetSubmissionFiler;
-
 use App\Util\ISOMetadataExtractorUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -117,7 +105,7 @@ class DatasetSubmissionController extends AbstractController
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login') .'?destination='
+                $this->generateUrl('security_login') . '?destination='
                 . $this->generateUrl('pelagos_app_ui_datasetsubmission_default')
             );
         }
@@ -168,13 +156,14 @@ class DatasetSubmissionController extends AbstractController
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
                         $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         $createFlag = true;
                     }
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                } elseif (
+                    $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
@@ -217,7 +206,7 @@ class DatasetSubmissionController extends AbstractController
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login') .'?destination='
+                $this->generateUrl('security_login') . '?destination='
                 . $this->generateUrl('pelagos_app_ui_datasetsubmission_default') . '?regid='
                 . $datasetSubmission->getDataset()->getUdi()
             );
@@ -462,7 +451,8 @@ class DatasetSubmissionController extends AbstractController
      */
     private function isSubmissionLocked(Dataset $dataset)
     {
-        if (in_array($dataset->getDatasetStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])
+        if (
+            in_array($dataset->getDatasetStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])
             and !$dataset->getResearchGroup()->isLocked()
         ) {
             return false;

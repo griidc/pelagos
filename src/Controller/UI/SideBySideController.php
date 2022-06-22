@@ -4,20 +4,15 @@ namespace App\Controller\UI;
 
 use App\Handler\EntityHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpKernel\Exception\HttpException;
-
 use App\Form\DatasetSubmissionType;
-
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 use App\Entity\DatasetLink;
@@ -28,7 +23,6 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 class SideBySideController extends AbstractController
 {
-
     /**
      * Valid values for $datasetFileTransferType and $metadataFileTransferType.
      */

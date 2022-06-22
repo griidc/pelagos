@@ -7,7 +7,6 @@ use App\Form\DataRepositoryType;
 use App\Form\PersonDataRepositoryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +29,7 @@ class DataRepositoryController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(int $id, EntityManagerInterface $entityManager , FormFactoryInterface $formFactory)
+    public function defaultAction(int $id, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -55,7 +54,7 @@ class DataRepositoryController extends AbstractController
                 $ui['PersonDataRepositoryForms'][$personDataRepository->getId()] = $formView;
             }
         } else {
-            $dataRepository = new DataRepository;
+            $dataRepository = new DataRepository();
         }
 
         $form = $formFactory->createNamed('', DataRepositoryType::class, $dataRepository);

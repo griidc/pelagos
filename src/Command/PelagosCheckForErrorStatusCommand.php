@@ -136,7 +136,7 @@ class PelagosCheckForErrorStatusCommand extends Command
      *
      * @return array Matching files.
      */
-    protected function twinFinder(Dataset $dataset, File $file, EntityManager $em, SymfonyStyle $io): Array
+    protected function twinFinder(Dataset $dataset, File $file, EntityManager $em, SymfonyStyle $io): array
     {
         $hashMatches = array();
         $originalFile = $unalteredOriginalFile = $file->getPhysicalFilePath();
