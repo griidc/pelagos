@@ -536,7 +536,7 @@ class Search
                 self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
             ];
         } else {
-            $specificField= [$specificField];
+            $specificField = [$specificField];
         }
 
         // Bool query to add all fields
