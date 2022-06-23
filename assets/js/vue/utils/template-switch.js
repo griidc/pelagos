@@ -9,7 +9,6 @@ const templateVariables = {
     showFundingCycles: false,
     showProjectDirector: false,
     showFundingOrgFacet: true,
-    displayTextBlock: false,
     researchAwardOption: 'Research Award',
   },
   GRP: {
@@ -21,7 +20,6 @@ const templateVariables = {
     showFundingCycles: true,
     showProjectDirector: true,
     showFundingOrgFacet: false,
-    displayTextBlock: true,
     researchAwardOption: 'Grant Award',
     cardHeadingText: 'View Project Overview By',
   },
@@ -34,7 +32,6 @@ const templateVariables = {
     showFundingCycles: false,
     showProjectDirector: false,
     showFundingOrgFacet: false,
-    displayTextBlock: false,
     researchAwardOption: 'Research Award',
   },
 };
