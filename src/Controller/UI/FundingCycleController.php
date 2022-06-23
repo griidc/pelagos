@@ -4,7 +4,6 @@ namespace App\Controller\UI;
 
 use App\Entity\FundingCycle;
 use App\Form\FundingCycleType;
-
 use App\Handler\EntityHandler;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,7 +45,7 @@ class FundingCycleController extends AbstractController
                 throw new NotFoundHttpException('The Funding Cycle was not found');
             }
         } else {
-            $fundingCycle = new \App\Entity\FundingCycle;
+            $fundingCycle = new \App\Entity\FundingCycle();
         }
 
         $form = $formFactory->createNamed('', FundingCycleType::class, $fundingCycle);

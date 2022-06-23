@@ -14,11 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 use Symfony\Component\Routing\Annotation\Route;
-
 use App\Exception\InvalidGmlException;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\GmlUtil;

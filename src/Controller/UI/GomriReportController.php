@@ -3,16 +3,13 @@
 namespace App\Controller\UI;
 
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-
-use \DateTime;
-use \DateInterval;
+use DateTime;
+use DateInterval;
 
 const MONTH_DAY_FORMAT = 'M Y';
 const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';

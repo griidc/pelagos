@@ -150,21 +150,26 @@ class ReportFundingOrganizationController extends ReportController
                 if ($identifiedStatus === DIF::STATUS_APPROVED) {
                     $identified++;
                 }
-            } elseif (in_array($availabilityStatus, [
+            } elseif (
+                in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL
                 ])
             ) {
                 $submitted++;
-            } elseif (in_array($availabilityStatus, [
+            } elseif (
+                in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED
-            ])) {
+                ])
+            ) {
                 $restricted++;
-            } elseif (in_array($availabilityStatus, [
+            } elseif (
+                in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
-            ])) {
+                ])
+            ) {
                 $available++;
             }
         }

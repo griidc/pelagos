@@ -5,29 +5,21 @@ namespace App\Controller\Api;
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
 use App\Util\IngestUtil;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
-
 use Swagger\Annotations as SWG;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 use App\Entity\Account;
 use App\Entity\File;
 use App\Entity\DatasetSubmission;
 use App\Entity\Fileset;
-
 use App\Util\UrlValidation;
-
 use App\Form\DatasetSubmissionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 

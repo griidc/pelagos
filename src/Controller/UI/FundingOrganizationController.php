@@ -7,7 +7,6 @@ use App\Form\FundingOrganizationType;
 use App\Form\FundingCycleType;
 use App\Form\PersonFundingOrganizationType;
 use App\Handler\EntityHandler;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,7 +65,7 @@ class FundingOrganizationController extends AbstractController
                 $ui['FundingCycleForms'][$fundingCycle->getId()] = $formView;
             }
         } else {
-            $fundingOrganization = new \App\Entity\FundingOrganization;
+            $fundingOrganization = new \App\Entity\FundingOrganization();
         }
 
         $form = $formFactory->createNamed('', FundingOrganizationType::class, $fundingOrganization);

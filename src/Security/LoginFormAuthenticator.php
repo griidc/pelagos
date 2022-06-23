@@ -3,9 +3,7 @@
 namespace App\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Psr\Log\LoggerInterface;
-
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,9 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-
 use App\Form\LoginForm;
-
 use App\Entity\Account;
 use App\Entity\LoginAttempts;
 use App\Entity\Password;
@@ -87,7 +83,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         EntityManagerInterface $entityManager,
         RouterInterface $router,
         LoggerInterface $logger,
-        ? string $maximumPasswordAge
+        ?string $maximumPasswordAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
@@ -205,7 +201,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return boolean True if expired, false otherwise.
      */
-    protected function checkIfPasswordExpired(password $password) : bool
+    protected function checkIfPasswordExpired(password $password): bool
     {
         $passwordIsExpired = true;
         // If parameter is missing or set to 0, passwords do not expire.

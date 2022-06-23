@@ -3,15 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
-
 use Hateoas\Configuration\Annotation as Hateoas;
-
 use Doctrine\Common\Collections\ArrayCollection;
-
 use App\Exception\NotDeletableException;
 
 /**

@@ -4,9 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-
 use JMS\Serializer\Annotation as Serializer;
-
 use Pelagos\HTTPStatus;
 
 /**

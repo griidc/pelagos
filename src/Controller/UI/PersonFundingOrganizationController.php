@@ -4,10 +4,8 @@ namespace App\Controller\UI;
 
 use App\Entity\PersonFundingOrganization;
 use App\Form\PersonFundingOrganizationType;
-
 use App\Handler\EntityHandler;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,7 +45,7 @@ class PersonFundingOrganizationController extends AbstractController
                 throw new NotFoundHttpException('The Person Funding Organization was not found');
             }
         } else {
-            $personFundingOrganization = new \App\Entity\PersonFundingOrganization;
+            $personFundingOrganization = new \App\Entity\PersonFundingOrganization();
         }
 
         $form = $formFactory->createNamed('', PersonFundingOrganizationType::class, $personFundingOrganization);

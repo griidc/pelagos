@@ -3,16 +3,11 @@
 namespace App\Controller\UI;
 
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Doctrine\ORM\Query;
-
 use App\Form\ReportDatasetDownloadType;
-
 use App\Exception\InvalidDateSelectedException;
-
 use App\Entity\Dataset;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
@@ -221,13 +216,17 @@ class DatasetDownloadReportController extends ReportController
         $currentIndex = 0;
         foreach ($results as $result) {
             //skip the row if the search is done by a Griidc Staff
-            if (isset($result['payLoad']['userId']) &&
-                in_array($result['payLoad']['userId'], $griidcArray)) {
+            if (
+                isset($result['payLoad']['userId']) &&
+                in_array($result['payLoad']['userId'], $griidcArray)
+            ) {
                 continue;
             }
             //initialize array with key  = dateTimeStamp, set title and primary POC
-            if (isset($dataArray[$currentIndex]['dateTimeStamp'])
-                and $result['creationTimeStamp'] !== $dataArray[$currentIndex]['dateTimeStamp']) {
+            if (
+                isset($dataArray[$currentIndex]['dateTimeStamp'])
+                and $result['creationTimeStamp'] !== $dataArray[$currentIndex]['dateTimeStamp']
+            ) {
                 $currentIndex++;
             }
             if (!isset($dataArray[$currentIndex])) {

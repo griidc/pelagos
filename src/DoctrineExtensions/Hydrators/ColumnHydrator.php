@@ -1,4 +1,5 @@
 <?php
+
 namespace App\DoctrineExtensions\Hydrators;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
