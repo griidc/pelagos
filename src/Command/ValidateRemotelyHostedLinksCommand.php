@@ -6,13 +6,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
-
 use App\Util\UrlValidation;
 use App\Util\MailSender;
-
 use Twig\Environment;
 
 /**
@@ -119,9 +116,9 @@ class ValidateRemotelyHostedLinksCommand extends Command
                     $httpCode = 200;
                 } else {
                     $httpCode = (trim(str_replace('Could not get URL, returned HTTP code', '', $httpResponse)));
-                    $error['udi']=$dataset->getUdi();
-                    $error['link']=$link;
-                    $errors[]=$error;
+                    $error['udi'] = $dataset->getUdi();
+                    $error['link'] = $link;
+                    $errors[] = $error;
                 }
                 $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
                 $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));

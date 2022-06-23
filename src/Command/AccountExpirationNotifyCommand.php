@@ -3,13 +3,10 @@
 namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Twig\Environment;
-
 use App\Util\MailSender;
 use App\Entity\Account;
 

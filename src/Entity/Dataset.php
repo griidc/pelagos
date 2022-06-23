@@ -287,8 +287,10 @@ class Dataset extends Entity
      */
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
-        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
+        if (
+            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_IN_REVIEW
+        ) {
             $this->datasetSubmission = $datasetSubmission;
         } else {
             $this->datasetSubmission = null;
@@ -514,7 +516,7 @@ class Dataset extends Entity
      */
     public function getPublications()
     {
-        $collection = new ArrayCollection;
+        $collection = new ArrayCollection();
         $datasetPublications = $this->getDatasetPublications();
 
         if (null != $datasetPublications) {
@@ -602,8 +604,10 @@ class Dataset extends Entity
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                         break;
                 }
-            } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
+            } elseif (
+                $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW
+            ) {
                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
             } else {
                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
@@ -622,8 +626,10 @@ class Dataset extends Entity
                                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
                                 break;
                         }
-                    } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                        $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
+                    } elseif (
+                        $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                        $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW
+                    ) {
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                     } else {
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
@@ -645,7 +651,7 @@ class Dataset extends Entity
      *
      * @return boolean
      */
-    public function isAvailable() : bool
+    public function isAvailable(): bool
     {
         return in_array(
             $this->availabilityStatus,
@@ -661,7 +667,7 @@ class Dataset extends Entity
      *
      * @return boolean
      */
-    public function isRemotelyHosted() : bool
+    public function isRemotelyHosted(): bool
     {
         return in_array(
             $this->availabilityStatus,
@@ -677,11 +683,13 @@ class Dataset extends Entity
      *
      * @return boolean
      */
-    public function isRestricted() : bool
+    public function isRestricted(): bool
     {
         $isRestricted = false;
-        if ($this->getDatasetSubmission() instanceof DatasetSubmission and
-            $this->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_RESTRICTED) {
+        if (
+            $this->getDatasetSubmission() instanceof DatasetSubmission and
+            $this->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_RESTRICTED
+        ) {
             $isRestricted = true;
         }
         return $isRestricted;
@@ -706,11 +714,15 @@ class Dataset extends Entity
             } elseif ($datasetStatus == self::DATASET_STATUS_BACK_TO_SUBMITTER) {
                 $statusResult = 'Back to Submitter';
             } elseif ($datasetStatus == self::DATASET_STATUS_ACCEPTED) {
-                if ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
-                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
+                if (
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED
+                ) {
                     $statusResult = 'Completed, Restricted';
-                } elseif ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
-                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+                } elseif (
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+                ) {
                     $statusResult = 'Completed';
                 } else {
                     $statusResult = 'DIF';
@@ -740,8 +752,10 @@ class Dataset extends Entity
         $dif = $this->getDif();
 
         // If we have a submission, use its POC.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE) {
+        if (
+            $datasetSubmission instanceof DatasetSubmission
+            and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE
+        ) {
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
@@ -808,9 +822,11 @@ class Dataset extends Entity
     {
         $datasetSubmission = ($this->getDatasetSubmissionHistory()->first() ? $this->getDatasetSubmissionHistory()->first() : null);
 
-        if ($this->getDatasetStatus() === self::DATASET_STATUS_IN_REVIEW
+        if (
+            $this->getDatasetStatus() === self::DATASET_STATUS_IN_REVIEW
             and $this->getDatasetStatus() !== $datasetSubmission->getDatasetStatus()
-            and $datasetSubmission->getDatasetStatus() === self::DATASET_STATUS_BACK_TO_SUBMITTER) {
+            and $datasetSubmission->getDatasetStatus() === self::DATASET_STATUS_BACK_TO_SUBMITTER
+        ) {
             $datasetSubmission = $this->getDatasetSubmission();
         }
 
@@ -824,10 +840,12 @@ class Dataset extends Entity
      */
     public function getProjectDirectors(): ArrayCollection
     {
-        $collection = new ArrayCollection;
+        $collection = new ArrayCollection();
         foreach ($this->getResearchGroup()->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup instanceof PersonResearchGroup
-                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+            if (
+                $personResearchGroup instanceof PersonResearchGroup
+                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP
+            ) {
                 $collection->add($personResearchGroup->getPerson());
             }
         }

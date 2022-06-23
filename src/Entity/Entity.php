@@ -3,14 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-
 use JMS\Serializer\Annotation as Serializer;
-
 use App\Exception\NotDeletableException;
-
 use App\Entity\Person;
 
 /**
@@ -375,8 +371,10 @@ abstract class Entity
      */
     public function isSameTypeAndId(Entity $other)
     {
-        if (get_class($this) == get_class($other) &&
-            $this->getId() == $other->getId()) {
+        if (
+            get_class($this) == get_class($other) &&
+            $this->getId() == $other->getId()
+        ) {
             return true;
         }
         return false;

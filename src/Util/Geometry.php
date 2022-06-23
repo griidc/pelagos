@@ -4,7 +4,6 @@ namespace App\Util;
 
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-
 use App\Exception\InvalidGmlException;
 
 /**

@@ -7,14 +7,13 @@ namespace App\Util;
  */
 class GmlUtil
 {
-    
     const GML_NAMESPACES = array(
                     'xmlns:gml' => 'http://www.opengis.net/gml/3.2',
                     'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
                     'xsi:schemaLocation' => 'http://www.opengis.net/gml/3.2 ' .
                     'http://schemas.opengis.net/gml/3.2.1/gml.xsd'
                 );
-                
+
     /**
      * This function add namespace for validation to the given gml.
      *

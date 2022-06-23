@@ -3,10 +3,8 @@
 namespace App\Util;
 
 use Symfony\Bridge\Monolog\Logger;
-
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-
 use Swift_Events_SendEvent;
 use Swift_Events_SendListener;
 
@@ -39,7 +37,7 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @return void
      */
-    public function beforeSendPerformed(Swift_Events_SendEvent $event) : void
+    public function beforeSendPerformed(Swift_Events_SendEvent $event): void
     {
         $this->logMailMessage($event);
     }
@@ -51,7 +49,7 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @return void
      */
-    public function sendPerformed(Swift_Events_SendEvent $event) : void
+    public function sendPerformed(Swift_Events_SendEvent $event): void
     {
         $this->logMailMessage($event);
     }
@@ -63,7 +61,7 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @return void
      */
-    private function logMailMessage(Swift_Events_SendEvent $event) : void
+    private function logMailMessage(Swift_Events_SendEvent $event): void
     {
         $level   = $this->getLogLevel($event);
         $message = $event->getMessage();
@@ -86,7 +84,7 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @return string
      */
-    private function getLogLevel(Swift_Events_SendEvent $event) : string
+    private function getLogLevel(Swift_Events_SendEvent $event): string
     {
         switch ($event->getResult()) {
             // Sending has yet to occur

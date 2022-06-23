@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Util;
 
 use Doctrine\ORM\EntityManager;
