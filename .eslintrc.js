@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'max-len': ['warn', { code: 120 }],
+    'import/extensions': 'warn',
   },
   settings: {
     'import/resolver': {
