@@ -7,12 +7,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use App\Entity\DOI;
-
 use App\Util\DOIutil;
 use App\Util\MailSender;
 use Twig\Environment;
@@ -265,7 +263,7 @@ class DoiComparisonCommand extends Command
      *
      * @return Dataset|null
      */
-    private function getDataset(string $udi): ? Dataset
+    private function getDataset(string $udi): ?Dataset
     {
         $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array(
             'udi' => array('udi' => substr($udi, 0, 16))
@@ -289,7 +287,7 @@ class DoiComparisonCommand extends Command
      *
      * @return void
      */
-    private function compareFields(array $doiElements, Dataset $dataset = null) : void
+    private function compareFields(array $doiElements, Dataset $dataset = null): void
     {
         if ($dataset) {
             // Check title
@@ -381,8 +379,10 @@ class DoiComparisonCommand extends Command
     {
         $doiStatus = $this->getDoiStatus($doiElements['state']);
 
-        if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_NONE and
-            $dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
+        if (
+            $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_NONE and
+            $dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED
+        ) {
             if ($doiStatus === DOI::STATE_DRAFT || $doiStatus === DOI::STATE_REGISTERED) {
                 if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
                     // Error message
@@ -470,9 +470,11 @@ class DoiComparisonCommand extends Command
     private function doesStringExist(array $metadataElement, string $comparisonElement, Dataset $dataset = null): void
     {
         if (empty($metadataElement[$metadataElement['field']])) {
-            if (!empty($dataset)
+            if (
+                !empty($dataset)
                 and $dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE
-                and $metadataElement['field'] === 'author') {
+                and $metadataElement['field'] === 'author'
+            ) {
                 return;
             }
             //Error message

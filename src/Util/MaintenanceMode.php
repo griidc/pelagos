@@ -31,7 +31,7 @@ class MaintenanceMode
      *
      * @return boolean If in maintenance mode.
      */
-    public function isMaintenanceMode() : bool
+    public function isMaintenanceMode(): bool
     {
         return file_exists($this->fileName);
     }
@@ -41,7 +41,7 @@ class MaintenanceMode
      *
      * @return string|null Returns maintenance mode banner text.
      */
-    public function getMaintenanceModeText() : ? string
+    public function getMaintenanceModeText(): ?string
     {
         if (!file_exists($this->fileName)) {
             return null;
@@ -61,7 +61,7 @@ class MaintenanceMode
      *
      * @return string|null Returns maintenance mode banner color.
      */
-    public function getMaintenanceModeColor() : ? string
+    public function getMaintenanceModeColor(): ?string
     {
         if (!file_exists($this->fileName)) {
             return null;
@@ -84,7 +84,7 @@ class MaintenanceMode
      *
      * @return void
      */
-    public function activateMaintenanceMode(string $text, string $color) : void
+    public function activateMaintenanceMode(string $text, string $color): void
     {
         $contents = 'maintenance_text = "' . $text . '"' . PHP_EOL .
             'maintenance_color = "' . $color . '"' . PHP_EOL;
@@ -96,7 +96,7 @@ class MaintenanceMode
      *
      * @return void
      */
-    public function deactivateMaintenanceMode() : void
+    public function deactivateMaintenanceMode(): void
     {
         if (file_exists($this->fileName)) {
             unlink($this->fileName);

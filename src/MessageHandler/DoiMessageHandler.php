@@ -104,7 +104,7 @@ class DoiMessageHandler implements MessageHandlerInterface
      *
      * @return void
      */
-    protected function issueDoi(Dataset $dataset, array $loggingContext) : void
+    protected function issueDoi(Dataset $dataset, array $loggingContext): void
     {
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
@@ -145,7 +145,7 @@ class DoiMessageHandler implements MessageHandlerInterface
      *
      * @return void
      */
-    protected function updateDoi(Dataset $dataset, array $loggingContext) : void
+    protected function updateDoi(Dataset $dataset, array $loggingContext): void
     {
         // Log processing start.
         $this->logger->info('Attempting to update DOI', $loggingContext);
@@ -153,10 +153,12 @@ class DoiMessageHandler implements MessageHandlerInterface
 
         try {
             // Set dataland pages for available datasets and tombstone pages for unavailable datasets.
-            if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
-                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
+            if (
+                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
+                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+            ) {
                 $doiUrl = 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi();
-                $doi->setPublicDate(new \DateTime);
+                $doi->setPublicDate(new \DateTime());
             } else {
                 $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
             }
@@ -220,7 +222,7 @@ class DoiMessageHandler implements MessageHandlerInterface
      *
      * @return void
      */
-    protected function deleteDoi(string $doi, array $loggingContext) : void
+    protected function deleteDoi(string $doi, array $loggingContext): void
     {
         // Log processing start.
         $this->logger->info('Attempting to delete DOI', $loggingContext);

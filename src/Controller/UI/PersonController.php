@@ -4,15 +4,13 @@ namespace App\Controller\UI;
 
 use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
-
 use App\Form\PersonType;
 use App\Form\PersonResearchGroupType;
 use App\Form\PersonFundingOrganizationType;
 use App\Entity\Person;
-
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -34,7 +32,7 @@ class PersonController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -47,9 +45,8 @@ class PersonController extends AbstractController
             $person = $entityHandler->get(Person::class, $id);
             if ($person instanceof Person) {
                 foreach ($person->getPersonResearchGroups() as $personResearchGroup) {
-                    $formView = $this
-                    ->get('form.factory')
-                    ->createNamed(null, PersonResearchGroupType::class, $personResearchGroup)
+                    $formView = $formFactory
+                    ->create(PersonResearchGroupType::class, $personResearchGroup)
                     ->createView();
 
                     $ui['PersonResearchGroups'][] = $personResearchGroup;
@@ -58,9 +55,8 @@ class PersonController extends AbstractController
                         = new EntityProperty($personResearchGroup, 'label');
                 }
                 foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
-                    $formView = $this
-                    ->get('form.factory')
-                    ->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization)
+                    $formView = $formFactory
+                    ->create(PersonFundingOrganizationType::class, $personFundingOrganization)
                     ->createView();
 
                     $ui['PersonFundingOrganizations'][] = $personFundingOrganization;
@@ -70,10 +66,10 @@ class PersonController extends AbstractController
                 throw new NotFoundHttpException('The person with id of ' . $id . ' could not be found.');
             }
         } else {
-            $person = new \App\Entity\Person;
+            $person = new \App\Entity\Person();
         }
 
-        $form = $this->get('form.factory')->createNamed(null, PersonType::class, $person);
+        $form = $formFactory->createNamed('', PersonType::class, $person);
 
         $ui['Person'] = $person;
         $ui['form'] = $form->createView();

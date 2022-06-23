@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\DataRepositoryRole;
-
 use App\Security\EntityProperty;
 
 /**
@@ -53,9 +52,10 @@ class DIFVoter extends PelagosEntityVoter
         }
 
         // Supports create, edit, submit, approve, reject, unlock, and request unlock.
-        if (in_array(
-            $attribute,
-            array(
+        if (
+            in_array(
+                $attribute,
+                array(
                 self::CAN_CREATE,
                 self::CAN_EDIT,
                 self::CAN_SUBMIT,
@@ -63,8 +63,9 @@ class DIFVoter extends PelagosEntityVoter
                 self::CAN_REJECT,
                 self::CAN_UNLOCK,
                 self::CAN_REQUEST_UNLOCK,
+                )
             )
-        )) {
+        ) {
             return true;
         }
 
@@ -99,8 +100,10 @@ class DIFVoter extends PelagosEntityVoter
         // If the object is an EntityProperty
         if ($object instanceof EntityProperty) {
             // If attribute is CAN_EDIT and the property is 'status'
-            if (in_array($attribute, array(self::CAN_EDIT)) and
-                $object->getProperty() == 'status') {
+            if (
+                in_array($attribute, array(self::CAN_EDIT)) and
+                $object->getProperty() == 'status'
+            ) {
                 return true;
             }
             return false;
@@ -112,19 +115,21 @@ class DIFVoter extends PelagosEntityVoter
             }
         );
         // Data Repository Managers can submit, approve, reject, and unlock
-        if ($this->doesUserHaveRole(
-            $userPerson,
-            $personDataRepositories,
-            array(DataRepositoryRole::MANAGER)
-        ) and in_array(
-            $attribute,
-            array(
+        if (
+            $this->doesUserHaveRole(
+                $userPerson,
+                $personDataRepositories,
+                array(DataRepositoryRole::MANAGER)
+            ) and in_array(
+                $attribute,
+                array(
                 self::CAN_SUBMIT,
                 self::CAN_APPROVE,
                 self::CAN_REJECT,
                 self::CAN_UNLOCK,
+                )
             )
-        )) {
+        ) {
             return true;
         }
 

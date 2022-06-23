@@ -7,7 +7,6 @@ namespace App\Entity;
  */
 interface PersonAssociationInterface
 {
-
     /**
      * Require that implementing classes provide a getRole() function that returns the RoleInterface object.
      *

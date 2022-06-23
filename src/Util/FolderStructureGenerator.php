@@ -6,7 +6,6 @@ use App\Repository\FilesetRepository;
 
 class FolderStructureGenerator
 {
-
     /**
      * An instance of a Fileset Repository.
      *
@@ -32,7 +31,7 @@ class FolderStructureGenerator
      *
      * @return array
      */
-    public function getFolderJson(int $filesetId, string $path = '') : array
+    public function getFolderJson(int $filesetId, string $path = ''): array
     {
         $fileset = $this->filesetRepository->find($filesetId);
         $folderJson = array();
