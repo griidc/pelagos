@@ -16,7 +16,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class InformationProductFilerHandler implements MessageHandlerInterface
 {
-
     /**
      * The information product repository.
      *

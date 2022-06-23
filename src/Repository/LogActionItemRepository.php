@@ -5,7 +5,6 @@ namespace App\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
-
 use App\Entity\Dataset;
 use App\Entity\LogActionItem;
 use App\Util\FundingOrgFilter;
@@ -21,7 +20,7 @@ class LogActionItemRepository extends ServiceEntityRepository
      * @var FundingOrgFilter
      */
     private $fundingOrgFilter;
-    
+
     /**
      * Constructor.
      *
@@ -31,16 +30,16 @@ class LogActionItemRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry, FundingOrgFilter $fundingOrgFilter)
     {
         parent::__construct($registry, LogActionItem::class);
-        
+
         $this->fundingOrgFilter = $fundingOrgFilter;
     }
-    
+
     /**
      * Sum of all dataset file sizes.
      *
      * @return integer Size of data in bytes.
      */
-    public function countDownloads() : int
+    public function countDownloads(): int
     {
         $qb = $this->createQueryBuilder('log')
             ->select('COUNT(log.id)')

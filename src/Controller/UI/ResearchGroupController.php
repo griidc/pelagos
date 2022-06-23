@@ -8,10 +8,9 @@ use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
 use App\Form\ResearchGroupType;
 use App\Form\PersonResearchGroupType;
-
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,7 +32,7 @@ class ResearchGroupController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -51,9 +50,8 @@ class ResearchGroupController extends AbstractController
             }
 
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
-                $form = $this
-                    ->get('form.factory')
-                    ->createNamed(null, PersonResearchGroupType::class, $personResearchGroup);
+                $form = $formFactory
+                    ->create(PersonResearchGroupType::class, $personResearchGroup);
                 $formView = $form->createView();
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
@@ -62,18 +60,17 @@ class ResearchGroupController extends AbstractController
                     = new EntityProperty($personResearchGroup, 'label');
             }
 
-            $newResearchGroupPerson = new \App\Entity\PersonResearchGroup;
+            $newResearchGroupPerson = new \App\Entity\PersonResearchGroup();
             $newResearchGroupPerson->setResearchGroup($researchGroup);
             $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
-            $ui['newResearchGroupPersonForm'] = $this
-                ->get('form.factory')
-                ->createNamed(null, PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
+            $ui['newResearchGroupPersonForm'] = $formFactory
+                ->create(PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
                 ->createView();
         } else {
-            $researchGroup = new \App\Entity\ResearchGroup;
+            $researchGroup = new \App\Entity\ResearchGroup();
         }
 
-        $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $researchGroup);
+        $form = $formFactory->createNamed('', ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
         $ui['FundingOrganizations'] = $this->getDoctrine()->getRepository(FundingOrganization::class)->findAll();

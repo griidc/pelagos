@@ -7,7 +7,6 @@ namespace App\Util;
  */
 class UrlValidation
 {
-
     /**
      * The URL validation method.
      *

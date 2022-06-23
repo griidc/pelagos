@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\Account;
 
 /**
@@ -68,14 +67,18 @@ class AccountVoter extends PelagosEntityVoter
         }
 
         // A Person can create and edit their own account and browse their own incoming directory.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_BROWSE_INCOMING_DIRECTORY)) and
-            $subject->getPerson()->isSameTypeAndId($user->getPerson())) {
+        if (
+            in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_BROWSE_INCOMING_DIRECTORY)) and
+            $subject->getPerson()->isSameTypeAndId($user->getPerson())
+        ) {
             return true;
         }
 
         // A DRPM can browse other people's incoming directories.
-        if (in_array($attribute, array(self::CAN_BROWSE_INCOMING_DIRECTORY)) and
-            in_array(Account::ROLE_DATA_REPOSITORY_MANAGER, $user->getRoles())) {
+        if (
+            in_array($attribute, array(self::CAN_BROWSE_INCOMING_DIRECTORY)) and
+            in_array(Account::ROLE_DATA_REPOSITORY_MANAGER, $user->getRoles())
+        ) {
             return true;
         }
 

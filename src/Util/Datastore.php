@@ -4,7 +4,6 @@ namespace App\Util;
 
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
-
 use Psr\Log\LoggerInterface;
 
 /**

@@ -19,9 +19,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Doctrine\ORM\EntityManager;
-
 use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\Person;

@@ -22,7 +22,7 @@ security:
             pattern: ^/account
             stateless: true
             # allow anonymous access
-            anonymous: lazy
+            lazy: true
             # use a Person Token, if present
             guard:
                authenticators:
@@ -33,7 +33,7 @@ security:
 
         main:
             # allow anonymous access
-            anonymous: lazy
+            lazy: true
             #guard authentication
             guard:
                authenticators:

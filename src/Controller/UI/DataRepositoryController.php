@@ -5,10 +5,10 @@ namespace App\Controller\UI;
 use App\Entity\DataRepository;
 use App\Form\DataRepositoryType;
 use App\Form\PersonDataRepositoryType;
-
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -29,7 +29,7 @@ class DataRepositoryController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(int $id)
+    public function defaultAction(int $id, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -39,26 +39,25 @@ class DataRepositoryController extends AbstractController
         $ui = array();
 
         if ($id !== null) {
-            $dataRepository = $this->getDoctrine()->getRepository(DataRepository::class)->find($id);
+            $dataRepository = $entityManager->getRepository(DataRepository::class)->find($id);
 
             if (!$dataRepository instanceof DataRepository) {
                 throw new NotFoundHttpException('The Data Repository was not found');
             }
 
             foreach ($dataRepository->getPersonDataRepositories() as $personDataRepository) {
-                $formView = $this
-                    ->get('form.factory')
-                    ->createNamed(null, PersonDataRepositoryType::class, $personDataRepository)
+                $formView = $formFactory
+                    ->create(PersonDataRepositoryType::class, $personDataRepository)
                     ->createView();
 
                 $ui['PersonDataRepositories'][] = $personDataRepository;
                 $ui['PersonDataRepositoryForms'][$personDataRepository->getId()] = $formView;
             }
         } else {
-            $dataRepository = new DataRepository;
+            $dataRepository = new DataRepository();
         }
 
-        $form = $this->get('form.factory')->createNamed(null, DataRepositoryType::class, $dataRepository);
+        $form = $formFactory->createNamed('', DataRepositoryType::class, $dataRepository);
 
         $ui['DataRepository'] = $dataRepository;
         $ui['form'] = $form->createView();

@@ -4,19 +4,15 @@ namespace App\Controller\UI;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\Form\Form;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use App\Form\ExternalDownloadLogType;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
-
 use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The end review tool helps to end the review of a dataset submission review.
@@ -61,13 +57,13 @@ class ExternalDownloadLogController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
 
-        $form = $this->get('form.factory')->createNamed(
+        $form = $formFactory->createNamed(
             'externalDownloadLog',
             ExternalDownloadLogType::class
         );

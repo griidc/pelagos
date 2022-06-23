@@ -3,11 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Component\Validator\Constraints as Assert;
-
 use Hateoas\Configuration\Annotation as Hateoas;
-
 use JMS\Serializer\Annotation as Serializer;
 
 /**
@@ -1325,7 +1322,7 @@ class DIF extends Entity
      *
      * @return boolean True if this DIF can be submitted, False otherwise.
      */
-    public function isSubmittable() : bool
+    public function isSubmittable(): bool
     {
         return self::STATUS_UNSUBMITTED === $this->status;
     }

@@ -17,7 +17,7 @@ class StreamInfo
      *
      * @return string The hash calculated from the stream.
      */
-    public static function calculateHash(array $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
+    public static function calculateHash(array $inputFileStream, string $algo = DatasetSubmission::SHA256): string
     {
         $fileStream = $inputFileStream['fileStream'] ?? null;
         $context = hash_init($algo);
@@ -32,7 +32,7 @@ class StreamInfo
      *
      * @return integer The file size of the stream.
      */
-    public static function getFileSize(array $inputFileStream) :int
+    public static function getFileSize(array $inputFileStream): int
     {
         $fileStream = $inputFileStream['fileStream'] ?? null;
         $fstat = fstat($fileStream);
