@@ -15,17 +15,17 @@ use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 
 /**
- * This command sets the jira issue on a datset (submisison).
+ * This command sets the issue ticket on a datset (submisison).
  *
  */
-class SetJiraIssueCommand extends Command
+class SetIssueTrackerTicketCommand extends Command
 {
     /**
      * The Command name.
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'pelagos:dataset-set-jira';
+    protected static $defaultName = 'pelagos:dataset-set-issue-ticket';
 
     /**
      * A Doctrine ORM EntityManager instance.
@@ -53,8 +53,8 @@ class SetJiraIssueCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Sets the Jira issue tracking ticket on a dataset.')
-            ->addOption('csvfile', null, InputOption::VALUE_REQUIRED, 'Filename of csv containing UDI,ticket')
+            ->setDescription('Sets the issue tracker ticket on a dataset.')
+            ->addOption('csvfile', null, InputOption::VALUE_REQUIRED, 'Filename of csv containing UDI, ticket')
             ;
     }
 
