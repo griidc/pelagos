@@ -16,7 +16,6 @@ use App\Entity\Dataset;
 
 /**
  * This command sets the issue ticket on a datset (submisison).
- *
  */
 class SetIssueTrackerTicketCommand extends Command
 {
@@ -60,7 +59,7 @@ class SetIssueTrackerTicketCommand extends Command
 
     /**
      * Symfony command execution section.
-
+     *
      * @param InputInterface  $input  Command args.
      * @param OutputInterface $output Output txt.
      *
@@ -80,27 +79,21 @@ class SetIssueTrackerTicketCommand extends Command
             while (($data = fgetcsv($fileHandle, 100, ",")) !== false) {
                 $udi = trim($data[0]);
                 $issueTrackingTicket = trim($data[1]);
-
                 $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
                 if (!($dataset instanceof Dataset)) {
-                    $io->error("Could not find a dataset with UDI ($udi)");
-                    continue;
-                }
-
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if (!($datasetSubmission instanceof DatasetSubmission)) {
-                    $io->error('Could not find Dataset Submission in dataset ' . $udi);
+                    $io->warning("Could not find a dataset with UDI ($udi)");
                     continue;
                 } else {
-                    $io->note("Setting Issue Tracking Ticket $issueTrackingTicket for Dataset $udi.");
                     if ($issueTrackingTicket === '') {
-                        $datasetSubmission->setIssueTrackingTicket(null);
+                        $io->note("Removing Issue Tracking Ticket for Dataset $udi.");
+                        $dataset->setIssueTrackingTicket(null);
                     } else {
-                        $datasetSubmission->setIssueTrackingTicket($issueTrackingTicket);
+                        $io->note("Setting Issue Tracking Ticket: $issueTrackingTicket for Dataset $udi.");
+                        $dataset->setIssueTrackingTicket($issueTrackingTicket);
                     }
-                    $this->entityManager->flush();
                 }
             }
+            $this->entityManager->flush();
             fclose($fileHandle);
         }
         $io->success('Done!');
