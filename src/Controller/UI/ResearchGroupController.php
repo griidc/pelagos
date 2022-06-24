@@ -51,7 +51,7 @@ class ResearchGroupController extends AbstractController
 
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
                 $form = $formFactory
-                    ->create(PersonResearchGroupType::class, $personResearchGroup);
+                    ->createNamed('', PersonResearchGroupType::class, $personResearchGroup);
                 $formView = $form->createView();
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
@@ -64,7 +64,7 @@ class ResearchGroupController extends AbstractController
             $newResearchGroupPerson->setResearchGroup($researchGroup);
             $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
             $ui['newResearchGroupPersonForm'] = $formFactory
-                ->create(PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
+                ->createNamed('', PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
                 ->createView();
         } else {
             $researchGroup = new \App\Entity\ResearchGroup();

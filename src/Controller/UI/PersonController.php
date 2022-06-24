@@ -46,7 +46,7 @@ class PersonController extends AbstractController
             if ($person instanceof Person) {
                 foreach ($person->getPersonResearchGroups() as $personResearchGroup) {
                     $formView = $formFactory
-                    ->create(PersonResearchGroupType::class, $personResearchGroup)
+                    ->createNamed('', PersonResearchGroupType::class, $personResearchGroup)
                     ->createView();
 
                     $ui['PersonResearchGroups'][] = $personResearchGroup;
@@ -56,7 +56,7 @@ class PersonController extends AbstractController
                 }
                 foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
                     $formView = $formFactory
-                    ->create(PersonFundingOrganizationType::class, $personFundingOrganization)
+                    ->createNamed('', PersonFundingOrganizationType::class, $personFundingOrganization)
                     ->createView();
 
                     $ui['PersonFundingOrganizations'][] = $personFundingOrganization;

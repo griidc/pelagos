@@ -47,7 +47,7 @@ class DataRepositoryController extends AbstractController
 
             foreach ($dataRepository->getPersonDataRepositories() as $personDataRepository) {
                 $formView = $formFactory
-                    ->create(PersonDataRepositoryType::class, $personDataRepository)
+                    ->createNamed('', PersonDataRepositoryType::class, $personDataRepository)
                     ->createView();
 
                 $ui['PersonDataRepositories'][] = $personDataRepository;
