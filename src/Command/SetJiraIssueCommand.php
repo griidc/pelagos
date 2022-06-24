@@ -54,8 +54,7 @@ class SetJiraIssueCommand extends Command
     {
         $this
             ->setDescription('Sets the Jira issue tracking ticket on a dataset.')
-            ->addOption('udi', null, InputOption::VALUE_REQUIRED, 'UDI of dataset to flag as cold stored')
-            ->addOption('issueTrackingTicket', null, InputOption::VALUE_REQUIRED, 'The Jira issue-tracking ticket')
+            ->addOption('csvfile', null, InputOption::VALUE_REQUIRED, 'Filename of csv containing UDI,ticket')
             ;
     }
 
@@ -70,33 +69,39 @@ class SetJiraIssueCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $udi = $input->getOption('udi');
-        $issueTrackingTicket= $input->getOption('issueTrackingTicket');
+        $filename = $input->getOption('csvfile');
 
-        $io->note("UDI: ($udi)");
-        $io->note("Issue tracking ticket: ($issueTrackingTicket)");
-
-        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
-        if ($dataset instanceof Dataset) {
-            $io->note('Dataset Found.');
-        } else {
-            $io->error('Could not find a dataset with UDI ' . $udi);
+        if (!file_exists($filename)) {
+            $io->error('File not found: ' . $filename);
             return 1;
         }
 
-        $datasetSubmission = $dataset->getDatasetSubmission();
-        if (!($datasetSubmission instanceof DatasetSubmission)) {
-            $io->error('Could not find Dataset Submission in dataset ' . $udi);
-            return 1;
-        } else {
-            $io->note('Submission Found.');
+        if (($fileHandle = fopen($filename, "r")) !== false) {
+            while (($data = fgetcsv($fileHandle, 100, ",")) !== false) {
+                $udi = trim($data[0]);
+                $issueTrackingTicket = trim($data[1]);
 
-            if ($issueTrackingTicket === '') {
-                $datasetSubmission->setIssueTrackingTicket(null);
-            } else {
-                $datasetSubmission->setIssueTrackingTicket($issueTrackingTicket);
+                $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+                if (!($dataset instanceof Dataset)) {
+                    $io->error("Could not find a dataset with UDI ($udi)");
+                    continue;
+                }
+
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                if (!($datasetSubmission instanceof DatasetSubmission)) {
+                    $io->error('Could not find Dataset Submission in dataset ' . $udi);
+                    continue;
+                } else {
+                    $io->note("Setting Issue Tracking Ticket $issueTrackingTicket for Dataset $udi.");
+                    if ($issueTrackingTicket === '') {
+                        $datasetSubmission->setIssueTrackingTicket(null);
+                    } else {
+                        $datasetSubmission->setIssueTrackingTicket($issueTrackingTicket);
+                    }
+                    $this->entityManager->flush();
+                }
             }
-            $this->entityManager->flush();
+            fclose($fileHandle);
         }
         $io->success('Done!');
         return 0;
