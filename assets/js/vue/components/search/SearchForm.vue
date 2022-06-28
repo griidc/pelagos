@@ -31,7 +31,9 @@
 
                                     </div>
                                     <div class="col-lg collection-start-date">
-                                    <span class="input-group">
+                                    <span class="input-group" v-tooltip="{
+                                            content: 'Search by Data Acquisition Date',
+                                            placement:'top'}">
                                         <label for="collectionStartDate" class="pr-2">From</label>
                                         <DxDateBox
                                           :ref="collectionStartDateRef"
@@ -49,7 +51,9 @@
                                     </span>
                                     </div>
                                     <div class="col-lg collection-end-date">
-                                    <span class="input-group">
+                                    <span class="input-group" v-tooltip="{
+                                            content: 'Search by Data Acquisition Date',
+                                            placement:'top'}">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
                                         <DxDateBox
                                           :ref="collectionEndDateRef"
