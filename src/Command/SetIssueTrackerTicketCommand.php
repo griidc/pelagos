@@ -85,8 +85,7 @@ class SetIssueTrackerTicketCommand extends Command
                     continue;
                 } else {
                     if ($issueTrackingTicket === '') {
-                        $io->note("Removing Issue Tracking Ticket for Dataset $udi.");
-                        $dataset->setIssueTrackingTicket(null);
+                        $io->warning("No Issue Tracking Ticket in CSV for Dataset $udi, skipping.");
                     } else {
                         $io->note("Setting Issue Tracking Ticket: $issueTrackingTicket for Dataset $udi.");
                         $dataset->setIssueTrackingTicket($issueTrackingTicket);
