@@ -84,7 +84,7 @@ class SetIssueTrackerTicketCommand extends Command
                     $io->warning("Could not find a dataset with UDI ($udi)");
                     continue;
                 } else {
-                    if ($issueTrackingTicket === '') {
+                    if (empty($issueTrackingTicket)) {
                         $io->warning("No Issue Tracking Ticket in CSV for Dataset $udi, skipping.");
                     } else {
                         $io->note("Setting Issue Tracking Ticket: $issueTrackingTicket for Dataset $udi.");

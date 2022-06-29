@@ -75,7 +75,8 @@
             "php": "7.4.29"
         },
         "allow-plugins": {
-            "symfony/flex": true
+            "symfony/flex": true,
+            "symfony/runtime": true
         }
     },
     "autoload": {
