@@ -77,7 +77,7 @@ class SetIssueTrackerTicketCommand extends Command
 
         if (($fileHandle = fopen($filename, "r")) !== false) {
             while (($data = fgetcsv($fileHandle, 100, ",")) !== false) {
-                if(!array_key_exists(1, $data)) {
+                if (!array_key_exists(1, $data)) {
                     $io->warning("Bad input, skipping entry");
                     continue;
                 }
