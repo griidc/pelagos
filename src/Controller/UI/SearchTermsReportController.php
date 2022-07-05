@@ -209,8 +209,10 @@ class SearchTermsReportController extends ReportController
         //process result query into an array with organized data
         foreach ($results as $result) {
             //skip the row if the search is done by a Griidc Staff
-            if (isset($result['payLoad']['clientInfo']['userId']) &&
-                in_array($result['payLoad']['clientInfo']['userId'], $griidcArray)) {
+            if (
+                isset($result['payLoad']['clientInfo']['userId']) &&
+                in_array($result['payLoad']['clientInfo']['userId'], $griidcArray)
+            ) {
                 continue;
             }
 
