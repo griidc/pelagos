@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class LogActionItem extends Entity
 {
-
     /**
      * A friendly name for this type of entity.
     */

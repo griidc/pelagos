@@ -3,22 +3,18 @@
 namespace App\Controller\UI;
 
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Doctrine\ORM\Query;
-
 use App\Form\ReportDatasetDownloadType;
-
 use App\Exception\InvalidDateSelectedException;
-
 use App\Entity\Dataset;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\DatasetSubmission;
 use App\Entity\Account;
 use App\Entity\PersonDataRepository;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The dataset download report generator.
@@ -43,17 +39,13 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return Response|StreamedResponse A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
-            ReportDatasetDownloadType::class,
-            null
-        );
+        $form = $formFactory->createNamed('', ReportDatasetDownloadType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -224,13 +216,17 @@ class DatasetDownloadReportController extends ReportController
         $currentIndex = 0;
         foreach ($results as $result) {
             //skip the row if the search is done by a Griidc Staff
-            if (isset($result['payLoad']['userId']) &&
-                in_array($result['payLoad']['userId'], $griidcArray)) {
+            if (
+                isset($result['payLoad']['userId']) &&
+                in_array($result['payLoad']['userId'], $griidcArray)
+            ) {
                 continue;
             }
             //initialize array with key  = dateTimeStamp, set title and primary POC
-            if (isset($dataArray[$currentIndex]['dateTimeStamp'])
-                and $result['creationTimeStamp'] !== $dataArray[$currentIndex]['dateTimeStamp']) {
+            if (
+                isset($dataArray[$currentIndex]['dateTimeStamp'])
+                and $result['creationTimeStamp'] !== $dataArray[$currentIndex]['dateTimeStamp']
+            ) {
                 $currentIndex++;
             }
             if (!isset($dataArray[$currentIndex])) {

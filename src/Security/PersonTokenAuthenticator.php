@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * An authenticator for PersonTokens.
@@ -24,16 +25,16 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * An instance of Twig.
      *
-     * @var \Twig_Environment
+     * @var TwigEnvironment
      */
     private $twig;
 
     /**
      * Constructor.
      *
-     * @param \Twig_Environment $twig An instance of Twig.
+     * @param TwigEnvironment $twig An instance of Twig.
      */
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(TwigEnvironment $twig)
     {
         $this->twig = $twig;
     }
@@ -45,7 +46,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return boolean True if person_token exists.
      */
-    public function supports(Request $request) :bool
+    public function supports(Request $request): bool
     {
         return $request->query->has('person_token');
     }
@@ -72,7 +73,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return UserInterface Return the user.
      */
-    public function getUser($credentials, UserProviderInterface $userProvider) :UserInterface
+    public function getUser($credentials, UserProviderInterface $userProvider): UserInterface
     {
         return $userProvider->loadUserByUsername($credentials);
     }
@@ -85,7 +86,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return boolean True if the credentials are valid.
      */
-    public function checkCredentials($credentials, UserInterface $user) :bool
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
         // No additional checking is needed.
         return true;
@@ -155,7 +156,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return bool
      */
-    public function supportsRememberMe() :bool
+    public function supportsRememberMe(): bool
     {
         return false;
     }

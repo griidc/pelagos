@@ -406,7 +406,7 @@ class DIFController extends EntityController
     public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
     {
         // Create a new Dataset.
-        $dataset = new Dataset;
+        $dataset = new Dataset();
         // Set the creator for the Dataset.
         $dataset->setCreator($this->getUser()->getPerson());
         // Create a new DIF for the Dataset.

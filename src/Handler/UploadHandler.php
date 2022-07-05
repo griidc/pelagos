@@ -168,16 +168,20 @@ class UploadHandler
             return $this->combineChunks($request);
         }
 
-        if (is_writable($this->chunksDirectory) and
-            1 == mt_rand(1, (1 / $this->chunksCleanupProbability))) {
+        if (
+            is_writable($this->chunksDirectory) and
+            1 == mt_rand(1, (1 / $this->chunksCleanupProbability))
+        ) {
             // Run garbage collection
             $this->cleanupChunks();
         }
 
         // Check that the max upload size specified in class configuration does not
         // exceed size allowed by server config
-        if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit ||
-            $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
+        if (
+            $this->toBytes(ini_get('post_max_size')) < $this->sizeLimit ||
+            $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit
+        ) {
             $neededRequestSize = max(1, ($this->sizeLimit / 1024 / 1024)) . 'M';
             return array(
                 'error' => 'Server error. Increase post_max_size and upload_max_filesize to ' .
@@ -235,8 +239,10 @@ class UploadHandler
         $pathinfo = pathinfo($name);
         $ext = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
 
-        if ($this->allowedExtensions and
-            !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))) {
+        if (
+            $this->allowedExtensions and
+            !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))
+        ) {
             $these = implode(', ', $this->allowedExtensions);
             return array('error' => 'File has an invalid extension, it should be one of ' . $these . '.');
         }

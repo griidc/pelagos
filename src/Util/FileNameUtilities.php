@@ -21,7 +21,7 @@ class FileNameUtilities
      *
      * @return string
      */
-    public static function fixFileNameLength(string $fileNamePath, $maxFileNameLength = self::MAX_FILE_NAME_LENGTH) : string
+    public static function fixFileNameLength(string $fileNamePath, $maxFileNameLength = self::MAX_FILE_NAME_LENGTH): string
     {
         $pathinfo = pathinfo($fileNamePath);
         $filename = $pathinfo['filename'];
@@ -50,7 +50,7 @@ class FileNameUtilities
      *
      * @return string
      */
-    public static function makeFileName(string $fileName) : string
+    public static function makeFileName(string $fileName): string
     {
         $uuid = Uuid::uuid4()->toString();
         // add only last 5 bytes of uuid to the destination path
@@ -68,7 +68,7 @@ class FileNameUtilities
      *
      * @return string The renamed filename string.
      */
-    public static function renameFile(string $filePathName) :string
+    public static function renameFile(string $filePathName): string
     {
         $pathParts = pathinfo($filePathName);
         if ($pathParts['dirname'] === '.') {
@@ -93,7 +93,7 @@ class FileNameUtilities
                 if ((int)$matches[2] >= 999) {
                     throw new \Exception('Can only rename up to 999 times!');
                 }
-                return $matches[1].'('.((int)$matches[2]+1).')';
+                return $matches[1] . '(' . ((int)$matches[2] + 1) . ')';
             },
             $fileName
         );

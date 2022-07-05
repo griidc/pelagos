@@ -5,11 +5,11 @@ namespace App\Controller\UI;
 use App\Entity\PersonDataRepository;
 use App\Form\PersonDataRepositoryType;
 use App\Handler\EntityHandler;
-
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -26,7 +26,7 @@ class PersonDataRepositoryController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -38,10 +38,10 @@ class PersonDataRepositoryController extends AbstractController
         if (isset($id)) {
             $personDataRepository = $entityHandler->get(PersonDataRepository::class, $id);
         } else {
-            $personDataRepository = new \App\Entity\PersonDataRepository;
+            $personDataRepository = new \App\Entity\PersonDataRepository();
         }
 
-        $form = $this->get('form.factory')->createNamed(null, PersonDataRepositoryType::class, $personDataRepository);
+        $form = $formFactory->createNamed('', PersonDataRepositoryType::class, $personDataRepository);
 
         $ui['PersonDataRepository'] = $personDataRepository;
         $ui['form'] = $form->createView();

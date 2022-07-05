@@ -17,7 +17,7 @@ class DatasetCitationUtil
      *
      * @return string The Dataset Citation string.
      */
-    public static function getCitation(Dataset $dataset) :string
+    public static function getCitation(Dataset $dataset): string
     {
         $title = $dataset->getTitle();
         $udi = $dataset->getUdi();

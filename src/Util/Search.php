@@ -3,20 +3,15 @@
 namespace App\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Elastica\Aggregation;
 use Elastica\Query;
-
 use FOS\ElasticaBundle\Finder\TransformedFinder;
-
 use Pagerfanta\Pagerfanta;
-
 use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
-
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -25,7 +20,6 @@ use RecursiveIteratorIterator;
  */
 class Search
 {
-
     /**
      * FOS Elastica Object to find elastica documents.
      *
@@ -159,7 +153,8 @@ class Search
         $subMainQuery = $this->getSubMainQuery($queryTerm, $specificField, $collectionDateRange);
 
         // Add facet filters
-        if (!empty($requestTerms['options']['funOrgId'])
+        if (
+            !empty($requestTerms['options']['funOrgId'])
             || !empty($requestTerms['options']['rgId'])
             || !empty($requestTerms['options']['status']
             || !empty($requestTerms['options']['fundingCycleId'])
@@ -541,7 +536,7 @@ class Search
                 self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
             ];
         } else {
-            $specificField= [$specificField];
+            $specificField = [$specificField];
         }
 
         // Bool query to add all fields

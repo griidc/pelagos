@@ -7,13 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use App\Form\MdappType;
-
 use Doctrine\ORM\Query;
-
 use Symfony\Component\Routing\Annotation\Route;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Handler\EntityHandler;
