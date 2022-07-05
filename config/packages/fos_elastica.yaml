@@ -154,6 +154,8 @@ fos_elastica:
             persistence:
                 driver: orm
                 model: App\Entity\InformationProduct
+                provider:
+                    query_builder_method: createSortedQueryBuilder
                 listener:
                     logger: true
                 finder: ~
