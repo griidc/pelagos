@@ -3,8 +3,8 @@
 namespace App\Twig;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
  * Custom Twig extensions.
@@ -29,7 +29,7 @@ class TwigEntityExtensions extends AbstractExtension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'sortBy',
                 array(self::class, 'sortBy')
             ),

@@ -4,7 +4,6 @@ namespace App\Controller\UI;
 
 use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -14,13 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use App\Form\DatasetSubmissionType;
-
 use App\Handler\EntityHandler;
-
 use App\Event\EntityEventDispatcher;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetLink;
@@ -30,8 +25,9 @@ use App\Entity\Entity;
 use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
-
 use App\Message\DatasetSubmissionFiler;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -67,15 +63,23 @@ class DatasetReviewController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * The Form Factory.
+     *
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, FormFactoryInterface $formFactory)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -91,7 +95,7 @@ class DatasetReviewController extends AbstractController
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login') .'?destination='
+                $this->generateUrl('security_login') . '?destination='
                 . $this->generateUrl('pelagos_app_ui_datasetreview_default')
             );
         }
@@ -305,8 +309,8 @@ class DatasetReviewController extends AbstractController
             $datasetSubmission->setSpatialExtent($gml);
         }
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $this->formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
@@ -436,22 +440,21 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
+    public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login') .'?destination='
+                $this->generateUrl('security_login') . '?destination='
                 . $this->generateUrl('pelagos_app_ui_datasetreview_default') . '?udiReview='
                 . $datasetSubmission->getDataset()->getUdi()
             );
         }
         // set to default event
         $eventName = 'end_review';
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $this->formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission
         );
@@ -550,7 +553,8 @@ class DatasetReviewController extends AbstractController
         // List of dataset submission statuses to check.
         $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
 
-        if (in_array($datasetSubmission->getStatus(), $statuses)
+        if (
+            in_array($datasetSubmission->getStatus(), $statuses)
             and $datasetSubmission->getFileset() instanceof Fileset
             and $datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED
         ) {

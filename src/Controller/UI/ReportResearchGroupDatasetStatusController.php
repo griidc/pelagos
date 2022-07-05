@@ -424,8 +424,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 //  exclude datasets that don't have an approved DIF
                 if ($datasetStatus != 'NoDif') {
                     $datasetTimeStampString = 'N/A';
-                    if ($dataset->getDatasetSubmission() != null &&
-                        $dataset->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
+                    if (
+                        $dataset->getDatasetSubmission() != null &&
+                        $dataset->getDatasetSubmission()->getSubmissionTimeStamp() != null
+                    ) {
                         $datasetTimeStampString = $dataset->getDatasetSubmission()->getSubmissionTimeStamp()
                             ->format(self::REPORTDATETIMEFORMAT);
                     }
@@ -515,7 +517,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
-                    'doi'=> $dataset->getDoi(),
+                    'doi' => $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
                     'datasetStatus' => $this->getDatasetStatus($dataset),
@@ -627,7 +629,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
-                    'doi'=> $dataset->getDoi(),
+                    'doi' => $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
                     'submitter' => $this->getSubmitter($dataset),

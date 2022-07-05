@@ -4,29 +4,21 @@ namespace App\Controller\UI;
 
 use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\Form\Form;
-
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
-
 use App\Event\EntityEventDispatcher;
-
 use App\Entity\DataCenter;
 use App\Entity\DIF;
 use App\Entity\Dataset;
@@ -35,14 +27,11 @@ use App\Entity\DistributionPoint;
 use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
-
 use App\Handler\EntityHandler;
-
 use App\Exception\InvalidMetadataException;
-
 use App\Message\DatasetSubmissionFiler;
-
 use App\Util\ISOMetadataExtractorUtil;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -81,15 +70,23 @@ class DatasetSubmissionController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * The Form Factory.
+     *
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, FormFactoryInterface $formFactory)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -108,7 +105,7 @@ class DatasetSubmissionController extends AbstractController
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login') .'?destination='
+                $this->generateUrl('security_login') . '?destination='
                 . $this->generateUrl('pelagos_app_ui_datasetsubmission_default')
             );
         }
@@ -134,11 +131,7 @@ class DatasetSubmissionController extends AbstractController
 
                 $datasetSubmission = $this->getDatasetSubmission($dataset);
 
-                $xmlForm = $this->get('form.factory')->createNamed(
-                    null,
-                    DatasetSubmissionXmlFileType::class,
-                    null
-                );
+                $xmlForm = $this->formFactory->createNamed('', DatasetSubmissionXmlFileType::class);
 
                 $xmlForm->handleRequest($request);
 
@@ -163,13 +156,14 @@ class DatasetSubmissionController extends AbstractController
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
                         $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         $createFlag = true;
                     }
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                } elseif (
+                    $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
@@ -204,16 +198,15 @@ class DatasetSubmissionController extends AbstractController
      *
      * @Route("/dataset-submission/{id}", name="pelagos_app_ui_datasetsubmission_post", methods={"POST"})
      *
-     * @return Response A Response instance.
+     * @return Response A Response instance
      */
-    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
+    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus, EntityManagerInterface $entityManager)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login') .'?destination='
+                $this->generateUrl('security_login') . '?destination='
                 . $this->generateUrl('pelagos_app_ui_datasetsubmission_default') . '?regid='
                 . $datasetSubmission->getDataset()->getUdi()
             );
@@ -227,8 +220,8 @@ class DatasetSubmissionController extends AbstractController
             throw new BadRequestHttpException('The DIF has not yet been approved for this dataset.');
         }
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $this->formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission
         );
@@ -305,8 +298,8 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $this->formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
@@ -320,8 +313,8 @@ class DatasetSubmissionController extends AbstractController
             )
         );
 
-        $xmlFormView = $this->get('form.factory')->createNamed(
-            null,
+        $xmlFormView = $this->formFactory->createNamed(
+            '',
             DatasetSubmissionXmlFileType::class,
             null,
             array(
@@ -458,7 +451,8 @@ class DatasetSubmissionController extends AbstractController
      */
     private function isSubmissionLocked(Dataset $dataset)
     {
-        if (in_array($dataset->getDatasetStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])
+        if (
+            in_array($dataset->getDatasetStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])
             and !$dataset->getResearchGroup()->isLocked()
         ) {
             return false;

@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Entity\FundingCycle;
@@ -11,7 +10,6 @@ use App\Entity\FundingOrganization;
 use App\Entity\DataRepository;
 use App\Entity\Account;
 use App\Entity\ResearchGroupRole;
-
 use App\Security\EntityProperty;
 
 /**
@@ -50,7 +48,8 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
         // Only if the tree is as expected, vote.
-        if (($object
+        if (
+            ($object
                     ->getResearchGroup()
                 instanceof ResearchGroup) and
             ($object
@@ -104,9 +103,11 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             // If attribute is CAN_EDIT and the property is 'label' and
             // the Person associated with the Entity is the same as the authenticated user,
             // the user is authorized for the action.
-            if (in_array($attribute, array(self::CAN_EDIT)) and
+            if (
+                in_array($attribute, array(self::CAN_EDIT)) and
                 $object->getProperty() == 'label' and
-                $userPerson->isSameTypeAndId($object->getEntity()->getPerson())) {
+                $userPerson->isSameTypeAndId($object->getEntity()->getPerson())
+            ) {
                 return true;
             }
             return false;

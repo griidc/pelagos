@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Exception;
 
 /**
@@ -12,5 +11,4 @@ namespace App\Exception;
  */
 class InvalidDateSelectedException extends \Exception
 {
-
 }

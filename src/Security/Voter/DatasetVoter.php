@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
 
