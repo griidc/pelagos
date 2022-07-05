@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetLink;
 use App\Entity\DistributionPoint;

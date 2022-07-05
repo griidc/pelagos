@@ -4,10 +4,10 @@ namespace App\Controller\UI;
 
 use App\Entity\FundingCycle;
 use App\Form\FundingCycleType;
-
 use App\Handler\EntityHandler;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -29,7 +29,7 @@ class FundingCycleController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -45,10 +45,10 @@ class FundingCycleController extends AbstractController
                 throw new NotFoundHttpException('The Funding Cycle was not found');
             }
         } else {
-            $fundingCycle = new \App\Entity\FundingCycle;
+            $fundingCycle = new \App\Entity\FundingCycle();
         }
 
-        $form = $this->get('form.factory')->createNamed(null, FundingCycleType::class, $fundingCycle);
+        $form = $formFactory->createNamed('', FundingCycleType::class, $fundingCycle);
 
         $ui['FundingCycle'] = $fundingCycle;
         $ui['form'] = $form->createView();

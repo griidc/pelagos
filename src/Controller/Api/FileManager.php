@@ -161,7 +161,7 @@ class FileManager extends AbstractFOSRestController
      *
      * @return void
      */
-    private function deleteFile(File $file, MessageBusInterface $messageBus) : void
+    private function deleteFile(File $file, MessageBusInterface $messageBus): void
     {
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFile = unlink($file->getPhysicalFilePath());
@@ -202,7 +202,7 @@ class FileManager extends AbstractFOSRestController
         EntityManagerInterface $entityManager,
         FolderStructureGenerator $folderStructureGenerator,
         MessageBusInterface $messageBus
-    ) : Response {
+    ): Response {
         $newFileName = $request->get('newFileFolderPathDir');
         $existingFilePath = $request->get('path');
         $isDir = $request->get('isDir');
@@ -251,7 +251,7 @@ class FileManager extends AbstractFOSRestController
      *
      * @return void
      */
-    private function updateFileName(File $file, string $newFileName, MessageBusInterface $messageBus) : void
+    private function updateFileName(File $file, string $newFileName, MessageBusInterface $messageBus): void
     {
         if (!$file->getFileset()->doesFileExist($newFileName)) {
             $file->setFilePathName($newFileName);
@@ -280,7 +280,8 @@ class FileManager extends AbstractFOSRestController
      */
     public function downloadFile(File $file, Datastore $datastore): Response
     {
-        if ($file->getFileset()->getDatasetSubmission()->getDataset()->getAvailabilityStatus() !==
+        if (
+            $file->getFileset()->getDatasetSubmission()->getDataset()->getAvailabilityStatus() !==
             DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
             and
             !$this->isGranted('CAN_EDIT', $file)
@@ -323,7 +324,8 @@ class FileManager extends AbstractFOSRestController
      */
     public function downloadZipAllFiles(DatasetSubmission $datasetSubmission): Response
     {
-        if ($datasetSubmission->getDataset()->getAvailabilityStatus() !==
+        if (
+            $datasetSubmission->getDataset()->getAvailabilityStatus() !==
             DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
             and
             !$this->isGranted('CAN_EDIT', $datasetSubmission)

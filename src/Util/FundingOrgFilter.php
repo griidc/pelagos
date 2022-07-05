@@ -3,7 +3,6 @@
 namespace App\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use App\Entity\FundingOrganization;
 use App\Entity\Dataset;
 
@@ -48,7 +47,7 @@ class FundingOrgFilter
      *
      * @return bool Is the filter active?
      */
-    public function isActive() :bool
+    public function isActive(): bool
     {
         return !empty($this->fundingOrganizations);
     }
@@ -58,7 +57,7 @@ class FundingOrgFilter
      *
      * @return array List of ID's to filter on.
      */
-    public function getFilterIdArray() :array
+    public function getFilterIdArray(): array
     {
         $ids = array();
         foreach ($this->fundingOrganizations as $fundingOrganization) {
@@ -67,13 +66,13 @@ class FundingOrgFilter
 
         return $ids;
     }
-    
+
     /**
      * Returns true is you need to filter by Funding Organization.
      *
      * @return array List of ID's to filter on.
      */
-    public function getResearchGroupsIdArray() :array
+    public function getResearchGroupsIdArray(): array
     {
         $ids = array();
         foreach ($this->fundingOrganizations as $fundingOrganization) {
@@ -94,7 +93,7 @@ class FundingOrgFilter
      *
      * @return boolean If the dataset is in the filter array.
      */
-    public static function canIndex(Dataset $dataset) : bool
+    public static function canIndex(Dataset $dataset): bool
     {
         $filterEnv = $_ENV['FILTER_BY_FUNDING_ORG'];
         $shortNameArray = JSON_DECODE($filterEnv);

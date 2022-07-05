@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
@@ -28,8 +27,10 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject) //phpcs:ignore
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
-            and !$subject instanceof DistributionPoint and !$subject instanceof File) {
+        if (
+            !$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
+            and !$subject instanceof DistributionPoint and !$subject instanceof File
+        ) {
             return false;
         }
 

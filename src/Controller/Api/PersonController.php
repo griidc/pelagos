@@ -7,13 +7,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-
 use App\Entity\Account;
 use App\Entity\Person;
 use App\Form\PersonType;
