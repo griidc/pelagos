@@ -186,12 +186,12 @@ class SearchTermsReportController extends ReportController
     {
         //prepare labels
         $labels = array('labels' => array(
-            'SESSION ID','TIMESTAMP', 'SEARCH TERMS', 'SPECIFIC FIELD TYPE', 'NUMBER OF RESULTS',
+            'SESSION ID', 'TIMESTAMP', 'SEARCH TERMS', 'SPECIFIC FIELD TYPE', 'NUMBER OF RESULTS',
             'AGGREGATIONS',
             'START DATE',
             'END DATE',
             '1ST SCORE',
-        )
+            )
         );
 
         //prepare body's data
