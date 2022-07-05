@@ -18,7 +18,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InformationProductRepository extends ServiceEntityRepository
 {
-
     /**
      * Utility to filter by funding organization.
      *
