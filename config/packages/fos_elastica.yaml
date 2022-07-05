@@ -148,3 +148,45 @@ fos_elastica:
                     property_path: false
                     type: 'date'
                     format: 'yyyy-MM-dd'
+        info_products:
+            client: default
+            index_name: "%env(INFO_PRODUCT_INDEX)%"
+            persistence:
+                driver: orm
+                model: App\Entity\InformationProduct
+                listener:
+                    logger: true
+                finder: ~
+            properties:
+                title:
+                    type: 'text'
+                creators:
+                    type: 'text'
+                publisher:
+                    type: 'text'
+                remoteUri:
+                    type: 'text'
+                researchGroups:
+                    type: 'nested'
+                    properties:
+                        id:
+                            type: 'keyword'
+                        name:
+                            type: 'text'
+                        fundingCycle:
+                            type: 'nested'
+                            properties:
+                                id:
+                                    type: 'keyword'
+                                fundingOrganization:
+                                    type: 'nested'
+                                    properties:
+                                        id:
+                                            type: 'keyword'
+                file:
+                    type: 'nested'
+                    properties:
+                        id:
+                            type: 'keyword'
+                        filePathName:
+                            type: 'text'
