@@ -11,6 +11,7 @@ use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +59,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -71,8 +72,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         foreach ($allResearchGroups as $rg) {
             $researchGroupNames[$rg->getName()] = $rg->getId();
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->createNamed(
+            '',
             ReportResearchGroupDatasetStatusType::class,
             $researchGroupNames
         );
@@ -109,7 +110,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler, int $id = null)
+    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         if ($id) {
             return $this->getReport($id, self::REPORT_VERSION_TWO);
@@ -127,8 +128,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         foreach ($allResearchGroups as $rg) {
             $researchGroupNames[$rg->getName()] = $rg->getId();
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->createNamed(
+            '',
             ReportResearchGroupDatasetStatusType::class,
             $researchGroupNames
         );
@@ -162,7 +163,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function getGrpResearchGroupReport(Request $request, EntityHandler $entityHandler, string $id = null)
+    public function getGrpResearchGroupReport(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, string $id = null)
     {
         if (isset($id) and is_int($id)) {
             return $this->getReport($id, self::REPORT_VERSION_THREE);
@@ -180,8 +181,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         foreach ($allResearchGroups as $rg) {
             $researchGroupNames[$rg->getName()] = $rg->getId();
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->createNamed(
+            '',
             ReportResearchGroupDatasetStatusType::class,
             $researchGroupNames
         );
@@ -215,7 +216,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return Response|JsonResponse A Symfony Response instance.
      */
-    public function getResearchDetailReport(Request $request, EntityHandler $entityHandler, string $id = null): Response
+    public function getResearchDetailReport(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, string $id = null): Response
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -233,8 +234,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         foreach ($allResearchGroups as $rg) {
             $researchGroupNames[$rg->getName()] = $rg->getId();
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->createNamed(
+            '',
             ReportResearchGroupDatasetStatusType::class,
             $researchGroupNames
         );
