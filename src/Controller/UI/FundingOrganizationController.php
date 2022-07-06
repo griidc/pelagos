@@ -58,7 +58,7 @@ class FundingOrganizationController extends AbstractController
 
             foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
                 $formView = $formFactory
-                ->createNamed(FundingCycleType::class, $fundingCycle)
+                ->createNamed('', FundingCycleType::class, $fundingCycle)
                 ->createView();
 
                 $ui['FundingCycles'][] = $fundingCycle;

@@ -7,6 +7,7 @@ use App\Entity\PersonDatasetSubmission;
 use App\Form\DatasetSubmissionType;
 use App\Form\PersonDatasetSubmissionType;
 use App\Repository\DatasetRepository;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,7 +28,7 @@ class ReportDatasetSubmission extends ReportController
      *
      * @return Response A Response instance.
      */
-    public function makeCSVAction(string $udi, DatasetRepository $datasetRepository)
+    public function makeCSVAction(string $udi, DatasetRepository $datasetRepository, FormFactoryInterface $formFactory)
     {
         $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
 
@@ -72,8 +73,8 @@ class ReportDatasetSubmission extends ReportController
             'restrictions',
         );
 
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->createNamed(
+            '',
             DatasetSubmissionType::class,
             $datasetSubmission
         );
@@ -102,8 +103,8 @@ class ReportDatasetSubmission extends ReportController
                     if ($item instanceof PersonDatasetSubmission) {
                         $prefix = "Contact[$sequence]-";
 
-                        $contact = $this->get('form.factory')->createNamed(
-                            null,
+                        $contact = $formFactory->createNamed(
+                            '',
                             PersonDatasetSubmissionType::class,
                             $item
                         );
