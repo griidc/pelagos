@@ -21,9 +21,9 @@ class SearchTermsReportController extends ReportController
     const FILENAME_TIMESTAMPFORMAT = 'Y-m-d_Hi';
 
   /**
-   * This is a parameterless report, so all is in the default action.
+   * Report for search terms from the data discovery app.
    *
-   * @Route("/search-terms-report", name="pelagos_app_ui_searchtermsreport_default")
+   * @Route("/datadisc-search-terms-report", name="pelagos_app_ui_datadisc_searchtermsreport_default")
    *
    * @return Response A Response instance.
    */
@@ -36,7 +36,7 @@ class SearchTermsReportController extends ReportController
         // Add header to CSV.
         return $this->writeCsvResponse(
             $this->getData(),
-            'SearchTermsReport-' . (
+            'DataDiscSearchTermsReport-' . (
                 new DateTime('now', new \DateTimeZone('UTC'))
             )
                 ->format(self::FILENAME_TIMESTAMPFORMAT) . '.csv'
@@ -69,15 +69,7 @@ class SearchTermsReportController extends ReportController
         $query = $entityManager->createQuery($queryString);
         $query->setParameters(['actionName' => 'Search']);
         $results = $query->getResult();
-
-        //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
-        //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
-        $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
-            ' personDataRepository JOIN ' . Person::class .
-            ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
-            ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
-        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
-        $griidcArray = array_column($griidcUserResult, 'userId');
+        $griidcArray = $this->getGriidcStaff();
 
         //process result query into an array with organized data
         foreach ($results as $result) {
@@ -142,5 +134,131 @@ class SearchTermsReportController extends ReportController
             );
         }
         return array_merge($labels, $dataArray);
+    }
+
+    /**
+     * Report for search terms from the search app.
+     *
+     * @Route("/search-terms-report", name="pelagos_app_ui_searchtermsreport")
+     *
+     * @return Response A Response instance.
+     */
+    public function searchReport()
+    {
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('template/AdminOnly.html.twig');
+        }
+
+        // Add header to CSV.
+        return $this->writeCsvResponse(
+            $this->getDatav2(),
+            'SearchTermsReport-' . (
+            new DateTime('now', new \DateTimeZone('UTC'))
+            )
+                ->format(self::FILENAME_TIMESTAMPFORMAT) . '.csv'
+        );
+    }
+
+    /**
+     * Gets griidc staff userIds.
+     *
+     * @return array
+     */
+    private function getGriidcStaff(): array
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
+        //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
+        $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
+            ' personDataRepository JOIN ' . Person::class .
+            ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
+            ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
+        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        return array_column($griidcUserResult, 'userId');
+    }
+
+    /**
+     * This method gets data for the report.
+     *
+     * @return array  Return the data array
+     */
+    protected function getDatav2(): array
+    {
+        //prepare labels
+        $labels = array('labels' => array(
+            'SESSION ID', 'TIMESTAMP', 'SEARCH TERMS', 'SPECIFIC FIELD TYPE', 'NUMBER OF RESULTS',
+            'AGGREGATIONS',
+            'START DATE',
+            'END DATE',
+            '1ST SCORE',
+            )
+        );
+
+        //prepare body's data
+        $dataArray = array();
+        $entityManager = $this->getDoctrine()->getManager();
+        //Query
+        $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
+            LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
+        $query = $entityManager->createQuery($queryString);
+        $query->setParameters(['actionName' => 'New Search']);
+        $results = $query->getResult();
+
+        $griidcArray = $this->getGriidcStaff();
+
+        //process result query into an array with organized data
+        foreach ($results as $result) {
+            //skip the row if the search is done by a Griidc Staff
+            if (
+                isset($result['payLoad']['clientInfo']['userId']) &&
+                in_array($result['payLoad']['clientInfo']['userId'], $griidcArray)
+            ) {
+                continue;
+            }
+
+            $searchResults = array
+            (
+                '1stScore' => '',
+            );
+
+            $numResults = $result['payLoad']['numResults'];
+            if ($numResults > 0) {
+                $searchResults['1stScore'] = $result['payLoad']['elasticScoreFirstResult'] ?? '';
+            }
+
+            $dataArray[] = array_merge(
+                array
+                (
+                    'sessionID' => $result['payLoad']['clientInfo']['sessionId'],
+                    'timeStamp' => $result['creationTimeStamp']->format(parent::INREPORT_TIMESTAMPFORMAT),
+                    'searchTerms' => $result['payLoad']['searchQueryParams']['inputFormTerms']['searchTerms'],
+                    'specificFieldType' => $result['payLoad']['searchQueryParams']['inputFormTerms']['specificFieldType'],
+                    'numResults' => $numResults,
+                    'aggregations' => $this->getAggregations($result['payLoad']['searchQueryParams']['aggregations']),
+                    'startDate' => $result['payLoad']['searchQueryParams']['inputFormTerms']['dataCollectionStartDate'],
+                    'endDate' => $result['payLoad']['searchQueryParams']['inputFormTerms']['dataCollectionEndDate']
+                ),
+                $searchResults,
+            );
+        }
+        return array_merge($labels, $dataArray);
+    }
+
+    /**
+     * Concatenate the aggregation filter used.
+     *
+     * @param array $aggregations
+     *
+     * @return string
+     */
+    private function getAggregations(array $aggregations): string
+    {
+        $aggregationConcatenated = '';
+        foreach ($aggregations as $key => $value) {
+            if ($value) {
+                $aggregationConcatenated .= "$key=$value";
+            }
+        }
+        return $aggregationConcatenated;
     }
 }
