@@ -133,6 +133,10 @@ services:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos"
 
+    App\Util\InformationProductSearch:
+        bind:
+            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.info_products"
+
     App\Event\MaintenanceModeListener:
         bind:
             bool $maintenanceMode: "%env(bool:MAINTENANCE_MODE)%"
