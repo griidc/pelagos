@@ -5,9 +5,7 @@ namespace App\Repository;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
-use App\Util\FundingOrgFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,23 +16,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InformationProductRepository extends ServiceEntityRepository
 {
-    /**
-     * Utility to filter by funding organization.
-     *
-     * @var FundingOrgFilter
-     */
-    private $fundingOrgFilter;
-
-    /**
-     * Constructor.
-     *
-     * @param ManagerRegistry  $registry         The Registry Manager.
-     * @param FundingOrgFilter $fundingOrgFilter Utility to filter by funding organization.
-     */
-    public function __construct(ManagerRegistry $registry, FundingOrgFilter $fundingOrgFilter)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, InformationProduct::class);
-        $this->fundingOrgFilter = $fundingOrgFilter;
     }
 
     /**
@@ -85,34 +69,6 @@ class InformationProductRepository extends ServiceEntityRepository
         $qb->where($qb->expr()->isMemberOf(':productTypeDescriptor', 'ip.productTypeDescriptors'));
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * Creates a new QueryBuilder instance that is prepopulated for this entity and provides a sorted result.
-     *
-     * @param string $alias   The Entity alias.
-     * @param string $indexBy The index for the from.
-     *
-     * @return QueryBuilder
-     */
-    public function createSortedQueryBuilder(string $alias, string $indexBy = null)
-    {
-        $qb = $this->_em->createQueryBuilder()
-            ->select($alias)
-            ->from($this->_entityName, $alias, $indexBy);
-
-        if ($this->fundingOrgFilter->isActive()) {
-            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
-
-            $qb
-                ->innerJoin($alias . '.researchGroups', 'rg')
-                ->andWhere('rg.id IN (:rgs)')
-                ->setParameter('rgs', $researchGroupIds);
-        }
-
-        $qb->orderBy($alias . '.id');
-
-        return $qb;
     }
 
     /*
