@@ -31,7 +31,9 @@
 
                                     </div>
                                     <div class="col-lg collection-start-date">
-                                    <span class="input-group">
+                                    <span class="input-group" v-tooltip="{
+                                            content: 'Search by Data Acquisition Date',
+                                            placement:'top'}">
                                         <label for="collectionStartDate" class="pr-2">From</label>
                                         <DxDateBox
                                           :ref="collectionStartDateRef"
@@ -49,7 +51,9 @@
                                     </span>
                                     </div>
                                     <div class="col-lg collection-end-date">
-                                    <span class="input-group">
+                                    <span class="input-group" v-tooltip="{
+                                            content: 'Search by Data Acquisition Date',
+                                            placement:'top'}">
                                         <label for="collectionEndDate" class="pr-2 pl-3">To</label>
                                         <DxDateBox
                                           :ref="collectionEndDateRef"
@@ -147,6 +151,16 @@ export default {
     };
   },
   methods: {
+    init() {
+      if (this.route) {
+        const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+        this.form = Object.fromEntries(urlHashSplit);
+        this.startDate = this.form.collectionStartDate;
+        this.endDate = this.form.collectionEndDate;
+      }
+      this.onSubmit();
+      window.addEventListener('hashchange', this.detectHashChange);
+    },
     onStartDateChanged(event) {
       if (event.value instanceof Date) {
         this.form.collectionStartDate = event.value.toLocaleDateString();
@@ -188,6 +202,7 @@ export default {
       window.location.hash = '';
       this.$refs[collectionStartDateRef].instance.reset();
       this.$refs[collectionEndDateRef].instance.reset();
+      this.init();
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
@@ -213,14 +228,7 @@ export default {
     },
   },
   mounted() {
-    if (this.route) {
-      const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
-      this.form = Object.fromEntries(urlHashSplit);
-      this.startDate = this.form.collectionStartDate;
-      this.endDate = this.form.collectionEndDate;
-    }
-    this.onSubmit();
-    window.addEventListener('hashchange', this.detectHashChange);
+    this.init();
   },
   watch: {
     route() {
