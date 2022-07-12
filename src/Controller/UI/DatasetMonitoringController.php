@@ -4,14 +4,10 @@ namespace App\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Routing\Annotation\Route;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 use App\Handler\EntityHandler;
-
 use App\Entity\Dataset;
 use App\Entity\FundingCycle;
 use App\Entity\Person;

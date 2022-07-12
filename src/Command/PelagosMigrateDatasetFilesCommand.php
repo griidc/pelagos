@@ -7,9 +7,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\FileSet;
 use App\Message\DatasetSubmissionFiler;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -164,7 +162,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
      * @return void
      */
     protected function setFile(
-        String $dataStore,
+        string $dataStore,
         bool $queueFiler,
         bool $ignoreFileExistCheck,
         DatasetSubmission $datasetSubmission = null

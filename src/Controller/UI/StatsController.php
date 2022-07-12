@@ -4,13 +4,10 @@ namespace App\Controller\UI;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
-
 use App\Twig\Extensions as TwigExtentions;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
@@ -76,7 +73,7 @@ class StatsController extends AbstractController
      *
      * @return void
      */
-    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads, $fundingOrganizationId = null, $accepted = null) : void
+    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads, $fundingOrganizationId = null, $accepted = null): void
     {
         // Get the people count.
         $peopleCount = $this->entityManager

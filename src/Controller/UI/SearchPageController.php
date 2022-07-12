@@ -7,10 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use App\Entity\Account;
 use App\Event\LogActionItemEventDispatcher;
-
 use App\Util\Search;
 
 /**
@@ -18,7 +16,6 @@ use App\Util\Search;
  */
 class SearchPageController extends AbstractController
 {
-
     /**
      * The log action item entity event dispatcher.
      *

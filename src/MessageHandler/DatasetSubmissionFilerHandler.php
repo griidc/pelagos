@@ -187,7 +187,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      *
      * @return void
      */
-    private function processFile(File $file, array $loggingContext) :void
+    private function processFile(File $file, array $loggingContext): void
     {
         $fileId = $file->getId();
         $fileset = $file->getFileset();
@@ -232,7 +232,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         }
 
         // File virus Scan
-        $localLogContext=array_merge($loggingContext, array('fileId' => $fileId, 'filePathName' => $file->getFilePathName()));
+        $localLogContext = array_merge($loggingContext, array('fileId' => $fileId, 'filePathName' => $file->getFilePathName()));
         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
         $this->logger->info('Dispatched ScanFileForVirus message for async processing.', $localLogContext);
 

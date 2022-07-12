@@ -4,22 +4,17 @@ namespace App\Controller\Api;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-
 use App\Handler\EntityHandler;
 use App\Entity\FundingOrganization;
 use App\Entity\ResearchGroup;
 use App\Entity\Person;
-
 use App\Util\DatasetIndex;
 use App\Util\FundingOrgFilter;
 

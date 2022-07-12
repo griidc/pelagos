@@ -188,7 +188,7 @@ class DataCenter extends Entity
      *
      * @Assert\Email(
      *     message="Email address is invalid",
-     *     strict=true
+     *     mode="strict"
      * )
      */
     protected $emailAddress;

@@ -30,7 +30,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InformationProductController extends AbstractFOSRestController
 {
-
     /**
      * Get Information Product.
      *
@@ -313,7 +312,7 @@ class InformationProductController extends AbstractFOSRestController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         InformationProductRepository $informationProductRepository
-    ) : Response {
+    ): Response {
         try {
             $fileMetadata = $fileUploader->combineChunks($request);
         } catch (\Exception $exception) {
@@ -473,7 +472,7 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @return void
      */
-    private function deleteFile(File $file, MessageBusInterface $messageBus) : void
+    private function deleteFile(File $file, MessageBusInterface $messageBus): void
     {
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFile = unlink($file->getPhysicalFilePath());
@@ -508,7 +507,7 @@ class InformationProductController extends AbstractFOSRestController
             $idDifference = array_diff($idsSelected, $descriptorsToBeAddedList);
             if (!empty($idDifference)) {
                 throw new BadRequestHttpException(
-                    'Selected Entity ' . $friendlyName . 'with ids:'. implode(" ", $idDifference)  . ', does not exist!'
+                    'Selected Entity ' . $friendlyName . 'with ids:' . implode(" ", $idDifference)  . ', does not exist!'
                 );
             }
         }

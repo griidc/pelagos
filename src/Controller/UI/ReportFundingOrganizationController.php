@@ -7,6 +7,7 @@ use App\Entity\DIF;
 use App\Entity\FundingOrganization;
 use App\Form\ReportFundingOrganizationType;
 use App\Repository\FundingOrganizationRepository;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,7 @@ class ReportFundingOrganizationController extends ReportController
      *
      * @return Response A Symfony Response instance.
      */
-    public function defaultAction(Request $request, FundingOrganizationRepository $fundingOrganizationRepository): Response
+    public function defaultAction(Request $request, FundingOrganizationRepository $fundingOrganizationRepository, FormFactoryInterface $formFactory): Response
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -41,8 +42,8 @@ class ReportFundingOrganizationController extends ReportController
         foreach ($fundingOrgs as $fundingOrg) {
             $fundingOrgNames[$fundingOrg->getName()] = $fundingOrg->getId();
         }
-        $form = $this->get('form.factory')->createNamed(
-            null,
+        $form = $formFactory->createNamed(
+            '',
             ReportFundingOrganizationType::class,
             $fundingOrgNames
         );
@@ -150,21 +151,26 @@ class ReportFundingOrganizationController extends ReportController
                 if ($identifiedStatus === DIF::STATUS_APPROVED) {
                     $identified++;
                 }
-            } elseif (in_array($availabilityStatus, [
+            } elseif (
+                in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
                 DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL
                 ])
             ) {
                 $submitted++;
-            } elseif (in_array($availabilityStatus, [
+            } elseif (
+                in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED
-            ])) {
+                ])
+            ) {
                 $restricted++;
-            } elseif (in_array($availabilityStatus, [
+            } elseif (
+                in_array($availabilityStatus, [
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
-            ])) {
+                ])
+            ) {
                 $available++;
             }
         }

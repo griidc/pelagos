@@ -7,8 +7,8 @@ use App\Form\FundingOrganizationType;
 use App\Form\FundingCycleType;
 use App\Form\PersonFundingOrganizationType;
 use App\Handler\EntityHandler;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +31,7 @@ class FundingOrganizationController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -48,9 +48,8 @@ class FundingOrganizationController extends AbstractController
             }
 
             foreach ($fundingOrganization->getPersonFundingOrganizations() as $personFundingOrganization) {
-                $formView = $this
-                ->get('form.factory')
-                ->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization)
+                $formView = $formFactory
+                ->createNamed('', PersonFundingOrganizationType::class, $personFundingOrganization)
                 ->createView();
 
                 $ui['PersonFundingOrganizations'][] = $personFundingOrganization;
@@ -58,19 +57,18 @@ class FundingOrganizationController extends AbstractController
             }
 
             foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-                $formView = $this
-                ->get('form.factory')
-                ->createNamed(null, FundingCycleType::class, $fundingCycle)
+                $formView = $formFactory
+                ->createNamed('', FundingCycleType::class, $fundingCycle)
                 ->createView();
 
                 $ui['FundingCycles'][] = $fundingCycle;
                 $ui['FundingCycleForms'][$fundingCycle->getId()] = $formView;
             }
         } else {
-            $fundingOrganization = new \App\Entity\FundingOrganization;
+            $fundingOrganization = new \App\Entity\FundingOrganization();
         }
 
-        $form = $this->get('form.factory')->createNamed(null, FundingOrganizationType::class, $fundingOrganization);
+        $form = $formFactory->createNamed('', FundingOrganizationType::class, $fundingOrganization);
 
         $ui['FundingOrganization'] = $fundingOrganization;
         $ui['form'] = $form->createView();
