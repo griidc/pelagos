@@ -87,7 +87,8 @@ export default {
       });
     },
     onReset() {
-      console.log('reset');
+      this.form.queryString = '';
+      this.onSubmit();
     },
   },
 };
