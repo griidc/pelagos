@@ -151,6 +151,16 @@ export default {
     };
   },
   methods: {
+    init() {
+      if (this.route) {
+        const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+        this.form = Object.fromEntries(urlHashSplit);
+        this.startDate = this.form.collectionStartDate;
+        this.endDate = this.form.collectionEndDate;
+      }
+      this.onSubmit();
+      window.addEventListener('hashchange', this.detectHashChange);
+    },
     onStartDateChanged(event) {
       if (event.value instanceof Date) {
         this.form.collectionStartDate = event.value.toLocaleDateString();
@@ -192,6 +202,7 @@ export default {
       window.location.hash = '';
       this.$refs[collectionStartDateRef].instance.reset();
       this.$refs[collectionEndDateRef].instance.reset();
+      this.init();
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
@@ -217,14 +228,7 @@ export default {
     },
   },
   mounted() {
-    if (this.route) {
-      const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
-      this.form = Object.fromEntries(urlHashSplit);
-      this.startDate = this.form.collectionStartDate;
-      this.endDate = this.form.collectionEndDate;
-    }
-    this.onSubmit();
-    window.addEventListener('hashchange', this.detectHashChange);
+    this.init();
   },
   watch: {
     route() {
