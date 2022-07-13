@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\FundingOrganization;
 use App\Entity\FundingOrganizationRole;
+use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -35,7 +36,7 @@ class PersonFundingOrganizationType extends AbstractType
         $builder
             ->add('person', EntityType::class, array(
                 'label' => 'Person:',
-                'class' => 'App:Person',
+                'class' => Person::class,
                 'choice_label' => function ($value, $key, $index) {
                     return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                 },
