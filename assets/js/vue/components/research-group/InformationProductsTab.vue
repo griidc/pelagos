@@ -38,22 +38,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.card-product {
-  margin-bottom: 1rem;
-  transition: .5s;
-
-  &:hover {
-    .btn-overlay {
-      opacity: 1;
-    }
-
-    box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
-    transition: .5s;
-    cursor: pointer;
-  }
-}
-.card-body {
-  padding: 0.625rem !important;
-}
 
 </style>

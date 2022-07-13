@@ -32,7 +32,7 @@
         <section class="section-content pt-3">
           <div class="row d-flex flex-row justify-content-center">
             <h5>
-              Found {{ results.length }} results
+              Found {{ resultCount }} results
             </h5>
           </div>
         </section>
@@ -76,6 +76,10 @@ export default {
     };
   },
   methods: {
+    init() {
+      this.form.queryString = '';
+      this.onSubmit();
+    },
     onSubmit() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
@@ -87,9 +91,22 @@ export default {
       });
     },
     onReset() {
-      this.form.queryString = '';
-      this.onSubmit();
+      this.init();
     },
+  },
+  computed: {
+    resultCount() {
+      let resultCount = 0;
+      this.results.forEach((informationProduct) => {
+        if (informationProduct.published) {
+          resultCount += 1;
+        }
+      });
+      return resultCount;
+    },
+  },
+  mounted() {
+    this.init();
   },
 };
 </script>
