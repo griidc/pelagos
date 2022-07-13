@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
   Vue.use(VTooltip);
   // eslint-disable-next-line no-new
   new Vue({
-    el: '#search-app',
+    el: '#ip-search-app',
     components: { InformationProductSearchApp },
     template: `<div class="bootstrap">
                     <InformationProductSearchApp/>

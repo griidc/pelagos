@@ -1,58 +1,18 @@
 <template>
   <div class="col-12">
-    <b-card class="card-product"
-            v-for="informationProduct in informationProductData"
-            :key="informationProduct.id" v-show="informationProduct.published">
-      <div>
-        <span class="badge badge-available mr-1"
-              v-for="productType in informationProduct.productTypeDescriptors"
-              :key="productType.id">
-          {{ productType.description }}
-        </span>
-        <span class="badge badge-submitted mr-1"
-              v-for="digitalResourceType in informationProduct.digitalResourceTypeDescriptors"
-              :key="digitalResourceType.id">
-          {{ digitalResourceType.description }}
-        </span>
-      </div>
-      <b-card-title style="font-size: 1.3rem !important;">{{ informationProduct.title }}</b-card-title>
-      <b-card-text class="d-flex justify-content-between" >
-        <div v-if="Object.keys(informationProduct).length > 0">
-          <div v-if="informationProduct.creators" style="max-width: 550px">
-            Creators: {{ informationProduct.creators }}
-          </div>
-          <div v-if="informationProduct.publisher">
-            Publisher: {{ informationProduct.publisher }}
-          </div>
-        </div>
-        <div>
-          <div v-if="informationProduct.externalDoi">
-            DOI:{{ informationProduct.externalDoi }}
-          </div>
-          <div v-if="informationProduct.file && informationProduct.file.status === 'done'">
-            File:
-            <a :href="`${downloadUrl}/${informationProduct.id}`">
-              {{ informationProduct.file.filePathName }}
-            </a> ({{ humanSize(informationProduct.file.fileSize) }})
-          </div>
-          <div v-if="informationProduct.remoteUri">
-            Remote Link:
-            <a :href="informationProduct.remoteUri" target="_BLANK">
-              {{ informationProduct.remoteUri }}
-            </a>
-          </div>
-        </div>
-      </b-card-text>
-    </b-card>
+    <InformationProductCard v-for="informationProduct in informationProductData"
+                            :key="informationProduct.id" v-show="informationProduct.published"
+                            :informationProduct="informationProduct"/>
   </div>
 </template>
 
 <script>
 import { getApi } from '@/vue/utils/axiosService';
-import xbytes from 'xbytes';
+import InformationProductCard from '@/vue/components/information-product/InformationProductCard';
 
 export default {
   name: 'InformationProductsTab',
+  components: { InformationProductCard },
   props: {
     rgId: Number,
   },
@@ -60,8 +20,6 @@ export default {
     return {
       informationProductData: [],
       showData: false,
-      // eslint-disable-next-line no-undef
-      downloadUrl: `${Routing.generate('pelagos_api_ip_file_download')}`,
     };
   },
   created() {
@@ -75,11 +33,6 @@ export default {
     }).catch(() => {
       this.showData = false;
     });
-  },
-  methods: {
-    humanSize(fileSize) {
-      return xbytes(fileSize);
-    },
   },
 };
 </script>
