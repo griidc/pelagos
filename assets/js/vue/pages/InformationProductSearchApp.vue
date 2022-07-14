@@ -28,7 +28,7 @@
           </b-form>
         </div>
       </section>
-      <div v-if="resultCount > 0">
+      <div v-if="results.length > 0">
         <section class="section-content pt-3">
           <div class="row d-flex flex-row justify-content-center">
             <h5>
@@ -71,7 +71,11 @@ export default {
     };
   },
   methods: {
-    getInfoProductData() {
+    init() {
+      this.form.queryString = '';
+      this.onSubmit();
+    },
+    onSubmit() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
         // eslint-disable-next-line no-undef
@@ -81,11 +85,8 @@ export default {
         this.results = response.data.informationProducts;
       });
     },
-    onSubmit() {
-      this.getInfoProductData();
-    },
     onReset() {
-      this.getInfoProductData();
+      this.init();
     },
   },
   computed: {
@@ -100,7 +101,7 @@ export default {
     },
   },
   mounted() {
-    this.getInfoProductData();
+    this.init();
   },
 };
 </script>
