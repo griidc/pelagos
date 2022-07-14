@@ -28,7 +28,7 @@
           </b-form>
         </div>
       </section>
-      <div v-if="results.length > 0">
+      <div v-if="resultCount > 0">
         <section class="section-content pt-3">
           <div class="row d-flex flex-row justify-content-center">
             <h5>
@@ -47,13 +47,7 @@
         </section>
       </div>
       <div v-else>
-        <section class="section-content pt-5">
-          <div class="row d-flex flex-row justify-content-center">
-            <h3>
-              No results found!
-            </h3>
-          </div>
-        </section>
+        <NoResults/>
       </div>
     </div>
   </div>
@@ -63,10 +57,11 @@
 
 import { getApi } from '@/vue/utils/axiosService';
 import InformationProductCard from '@/vue/components/information-product/InformationProductCard';
+import NoResults from '@/vue/components/info-search/NoResults';
 
 export default {
   name: 'InformationProductSearchApp',
-  components: { InformationProductCard },
+  components: { NoResults, InformationProductCard },
   data() {
     return {
       form: {
@@ -76,11 +71,7 @@ export default {
     };
   },
   methods: {
-    init() {
-      this.form.queryString = '';
-      this.onSubmit();
-    },
-    onSubmit() {
+    getInfoProductData() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
         // eslint-disable-next-line no-undef
@@ -90,8 +81,11 @@ export default {
         this.results = response.data.informationProducts;
       });
     },
+    onSubmit() {
+      this.getInfoProductData();
+    },
     onReset() {
-      this.init();
+      this.getInfoProductData();
     },
   },
   computed: {
@@ -106,7 +100,7 @@ export default {
     },
   },
   mounted() {
-    this.init();
+    this.getInfoProductData();
   },
 };
 </script>
