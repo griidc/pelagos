@@ -2,17 +2,6 @@
 
 namespace App\Handler;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Id\AssignedGenerator;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\Common\Collections\Collection;
 use App\Entity\Entity;
 use App\Entity\Account;
 use App\Entity\Dataset;
@@ -24,6 +13,15 @@ use App\Exception\UnmappedPropertyException;
 use App\Security\Voter\PelagosEntityVoter;
 use App\Security\EntityProperty;
 use App\Util\FundingOrgFilter;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Id\AssignedGenerator;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * A handler for entities.
@@ -38,11 +36,11 @@ class EntityHandler
     private $entityManager;
 
     /**
-     * The token storage to use in this entity handler.
+     * The Symfony Security component.
      *
-     * @var TokenStorageInterface
+     * @var Security
      */
-    private $tokenStorage;
+    private $security;
 
     /**
      * The authorization checker to use in this entity handler.
@@ -79,20 +77,20 @@ class EntityHandler
      * Constructor for EntityHandler.
      *
      * @param EntityManagerInterface        $entityManager         The entity manager to use.
-     * @param TokenStorageInterface         $tokenStorage          The token storage to use.
+     * @param Security                      $security              The Symfony Security component.
      * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
      * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
      * @param FundingOrgFilter              $fundingOrgFilter      Utility to filter by funding organization.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        TokenStorageInterface $tokenStorage,
+        Security $security,
         AuthorizationCheckerInterface $authorizationChecker,
         EntityEventDispatcher $entityEventDispatcher,
         FundingOrgFilter $fundingOrgFilter
     ) {
         $this->entityManager = $entityManager;
-        $this->tokenStorage = $tokenStorage;
+        $this->security = $security;
         $this->authorizationChecker = $authorizationChecker;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->fundingOrgFilter = $fundingOrgFilter;
@@ -391,7 +389,7 @@ class EntityHandler
      */
     protected function getAuthenticatedPerson()
     {
-        $user = $this->tokenStorage->getToken()->getUser();
+        $user = $this->security->getUser();
         // If user is authenticated.
         if ($user instanceof Account) {
             // Return the authenticated person.
