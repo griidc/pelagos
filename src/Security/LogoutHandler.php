@@ -21,7 +21,7 @@ class LogoutHandler implements LogoutHandlerInterface
      *
      * @return void
      */
-    public function logout(Request $request, Response $response, TokenInterface $token)
+    public function logout(Request $request, Response $response, ?TokenInterface $token)
     {
         $response->headers->clearCookie('GRIIDC_USERNAME');
     }
