@@ -45,6 +45,7 @@ class InformationProductSearch
         $queryString = empty($queryString) ? '*' : $queryString;
 
         $simpleQuery = new SimpleQueryString($queryString);
+        $simpleQuery->setDefaultOperator(SimpleQueryString::OPERATOR_AND);
 
         $query = new BoolQuery();
         $query->addMust($simpleQuery);
