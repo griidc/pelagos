@@ -36,6 +36,7 @@ class InformationProductSearchController extends AbstractController
 
         $userPaginator = $informationProductSearch->findInformationProduct($queryString);
         $userPaginator->setCurrentPage($page);
+        $userPaginator->setMaxPerPage(1000); //Remove when pagination is working.
         $informationProducts = $userPaginator->getCurrentPageResults();
 
         $context = SerializationContext::create();
@@ -54,6 +55,5 @@ class InformationProductSearchController extends AbstractController
         $header = array('Content-Type', 'application/json');
 
         return new Response($json, Response::HTTP_OK, $header);
-
     }
 }
