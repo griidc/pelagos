@@ -55,6 +55,5 @@ class InformationProductSearchController extends AbstractController
         $header = array('Content-Type', 'application/json');
 
         return new Response($json, Response::HTTP_OK, $header);
-
     }
 }

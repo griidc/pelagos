@@ -52,5 +52,4 @@ class InformationProductSearch
 
         return $this->finder->findPaginated($query);
     }
-
 }
