@@ -140,6 +140,7 @@ class Search
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
         $perPage = $requestTerms['perPage'];
+        $sortOrder = $requestTerms['sortOrder'];
         $collectionDateRange = array();
         if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
             $collectionDateRange = array(
@@ -173,10 +174,9 @@ class Search
         $mainQuery->addAggregation($this->getProjectDirectorAggregationQuery());
         $mainQuery->setQuery($subMainQuery);
 
-        // Add sort when search terms are not present
-        if (empty($queryTerm)) {
-            $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => 'desc')));
-        }
+        // Add sort order
+        $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => $sortOrder)));
+
         $mainQuery->setFrom(($page - 1) * 10);
         $mainQuery->setSize($perPage);
 

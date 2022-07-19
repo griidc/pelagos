@@ -8,21 +8,29 @@
             </div>
         </section>
         <section class="section-content pb-2">
-            <div class="row d-flex flex-row justify-content-between">
-                <div class="empty-div"></div>
+            <div class="row d-flex flex-row justify-content-end page-controls">
                 <b-pagination
                         v-model="currentPage"
                         :total-rows="rows"
                         :per-page="formValues.perPage"
-                        class="justify-content-center pl-5 ml-5">
+                        class="justify-content-center pr-3 mr-3">
                 </b-pagination>
-                <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+                <div class="form-inline">
+                  <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+                    <label for="sortBy" class="pr-2">Sort By: </label>
+                    <b-form-select
+                        name="sortBy"
+                        v-model="sortBy"
+                        :options="sortByOptions"></b-form-select>
+                  </div>
+                  <div class="form-inline mx-2 mb-2 pr-2 pb-2">
                     <label for="perPageResults" class="pr-2">Per Page: </label>
                     <b-form-select
-                            name="perPageResults"
-                            v-model="perPage"
-                            :options="perPageOptions"></b-form-select>
-                </div>
+                        name="perPageResults"
+                        v-model="perPage"
+                        :options="perPageOptions"></b-form-select>
+                  </div>
+              </div>
             </div>
 
             <div class="row">
@@ -110,11 +118,16 @@ export default {
       },
       currentPage: 1,
       perPage: this.formValues.perPage,
+      sortBy: this.formValues.sortOrder,
       perPageOptions: [
         { value: 10, text: '10' },
         { value: 25, text: '25' },
         { value: 50, text: '50' },
         { value: 100, text: '100' },
+      ],
+      sortByOptions: [
+        { value: 'desc', text: 'Published Date (Desc)' },
+        { value: 'asc', text: 'Published Date (Asc)' },
       ],
       showFundingCycleFacet: templateSwitch.getProperty('showFundingCycles'),
       showProjectDirectorFacet: templateSwitch.getProperty('showProjectDirector'),
@@ -132,6 +145,9 @@ export default {
     },
     perPage(value) {
       this.$emit('noOfResults', value);
+    },
+    sortBy(value) {
+      this.$emit('sortOrder', value);
     },
   },
 };
@@ -154,6 +170,10 @@ export default {
     .col-lg-9 {
       padding-left: 15px !important;
       margin-top: 10px;
+    }
+
+    .page-controls.d-flex.flex-row {
+      flex-direction: column !important;
     }
   }
 </style>
