@@ -40,11 +40,14 @@ class InformationProductSearch
      * @param Query $query The query built based on the search terms and parameters.
      *
      */
-    public function findInformationProduct(string $queryString, bool $isPublished = true)
+    public function findInformationProduct(string $queryString = '*', bool $isPublished = true)
     {
+        $queryString = empty($queryString) ? '*' : $queryString;
+
         $simpleQuery = new SimpleQueryString($queryString);
 
-        $query = new BoolQuery($simpleQuery);
+        $query = new BoolQuery();
+        $query->addMust($simpleQuery);
 
         $termQuery = new Term();
         $termQuery->setTerm('published', $isPublished);
