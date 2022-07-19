@@ -168,6 +168,8 @@ fos_elastica:
                     type: 'text'
                 remoteUri:
                     type: 'text'
+                published:
+                    type: 'boolean'
                 researchGroups:
                     type: 'nested'
                     properties:
