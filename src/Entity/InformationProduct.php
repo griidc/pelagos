@@ -95,7 +95,8 @@ class InformationProduct extends Entity
      *
      * @ORM\ManyToMany(targetEntity=ResearchGroup::class)
      *
-     * @Serializer\Exclude
+     * @Serializer\MaxDepth(1)
+     * @Serializer\SerializedName("researchGroup")
      */
     private $researchGroups;
 
