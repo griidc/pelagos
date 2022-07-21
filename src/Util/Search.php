@@ -175,7 +175,7 @@ class Search
         $mainQuery->setQuery($subMainQuery);
 
         // Add sort order
-        if ($sortOrder !== "default") {
+        if ($sortOrder !== 'default') {
             $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => $sortOrder)));
         }
 
