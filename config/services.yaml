@@ -137,6 +137,25 @@ services:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.info_products"
 
+    App\Search\MultiIndex:
+        arguments:
+            $name: 'multi'
+        calls:
+            - [ addIndices, [['@fos_elastica.index.search_pelagos', '@fos_elastica.index.info_products']]]
+
+    Elastica\SearchableInterface: '@App\Search\MultiIndex'
+
+    App\Search\ElasticaToModelTransformerCollection:
+        arguments:
+            - {
+                search_pelagos: '@fos_elastica.elastica_to_model_transformer.search_pelagos',
+                info_products: '@fos_elastica.elastica_to_model_transformer.info_products'
+              }
+
+    FOS\ElasticaBundle\Finder\TransformedFinder: ~
+
+    FOS\ElasticaBundle\Finder\PaginatedFinderInterface: '@FOS\ElasticaBundle\Finder\TransformedFinder'
+
     App\Event\MaintenanceModeListener:
         bind:
             bool $maintenanceMode: "%env(bool:MAINTENANCE_MODE)%"
