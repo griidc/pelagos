@@ -175,7 +175,9 @@ class Search
         $mainQuery->setQuery($subMainQuery);
 
         // Add sort order
-        $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => $sortOrder)));
+        if ($sortOrder !== "default") {
+            $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => $sortOrder)));
+        }
 
         $mainQuery->setFrom(($page - 1) * 10);
         $mainQuery->setSize($perPage);

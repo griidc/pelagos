@@ -117,7 +117,7 @@ function initialFormValues() {
     fundingCycle: '',
     perPage: 10,
     projectDirector: '',
-    sortOrder: 'desc',
+    sortOrder: 'default',
   };
 }
 
