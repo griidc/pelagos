@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Util;
+namespace App\Search;
 
-use App\Entity\InformationProduct;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
 use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
-use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 
 /**
  * Util class for FOS Elastic Search.
@@ -39,10 +36,12 @@ class InformationProductSearch
      *
      * @param Query $query The query built based on the search terms and parameters.
      *
+     * @return SearchResults
      */
-    public function findInformationProduct(string $queryString = '*', bool $isPublished = true)
+    public function search(SearchOptions $searchOptions): SearchResults
     {
-        $queryString = empty($queryString) ? '*' : $queryString;
+        $queryString = $searchOptions->getQueryString();
+        $isPublished = $searchOptions->shouldFilterOnlyPublishedInformationProducts();
 
         $simpleQuery = new SimpleQueryString($queryString);
         $simpleQuery->setDefaultOperator(SimpleQueryString::OPERATOR_AND);
@@ -54,6 +53,8 @@ class InformationProductSearch
         $termQuery->setTerm('published', $isPublished);
         $query->addFilter($termQuery);
 
-        return $this->finder->findPaginated($query);
+        $resultsPaginator = $this->finder->findPaginated($query);
+
+        return new SearchResults($resultsPaginator, $searchOptions);
     }
 }

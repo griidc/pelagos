@@ -133,7 +133,7 @@ services:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos"
 
-    App\Util\InformationProductSearch:
+    App\Search\InformationProductSearch:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.info_products"
 

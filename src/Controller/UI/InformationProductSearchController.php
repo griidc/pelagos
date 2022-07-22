@@ -2,7 +2,9 @@
 
 namespace App\Controller\UI;
 
-use App\Util\InformationProductSearch;
+use App\Search\InformationProductSearch;
+use App\Search\SearchOptions;
+use App\Util\JsonSerializer;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,33 +29,16 @@ class InformationProductSearchController extends AbstractController
      *
      * @return Response
      */
-    public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, SerializerInterface $serializer): Response
+    public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, SerializerInterface $serializer, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
 
-        $page = $page ?? 1;
+        $searchOptions = new SearchOptions($queryString);
+        $searchOptions->setCurrentPage($page);
 
-        $userPaginator = $informationProductSearch->findInformationProduct($queryString);
-        $userPaginator->setCurrentPage($page);
-        $userPaginator->setMaxPerPage(1000); //Remove when pagination is working.
-        $informationProducts = $userPaginator->getCurrentPageResults();
+        $searchResults = $informationProductSearch->search($searchOptions);
 
-        $context = SerializationContext::create();
-        $context->enableMaxDepthChecks();
-        $context->setSerializeNull(true);
-
-        $result = array();
-
-        $result["result"] = $userPaginator->getNbResults();
-        $result["pages"] = $userPaginator->getNbPages();
-        $result["resultPerPage"] = $userPaginator->getMaxPerPage();
-        $result["informationProducts"] = $informationProducts;
-
-        $json = $serializer->serialize($result, 'json', $context);
-
-        $header = array('Content-Type', 'application/json');
-
-        return new Response($json, Response::HTTP_OK, $header);
+        return $jsonSerializer->serialize($searchResults)->createJsonResponse();
     }
 }
