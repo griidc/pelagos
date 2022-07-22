@@ -12,7 +12,7 @@ class SearchOptions
      *
      * @var string $queryString
      */
-    private $queryString ='*';
+    private $queryString = '*';
 
     /**
      * Only search for published Information Products.
@@ -34,6 +34,13 @@ class SearchOptions
      * @var integer $maxPerPage
      */
     private $maxPerPage = 1000;
+
+    /**
+     * Research Group Filter.
+     *
+     * @var array
+     */
+    private $researchGroupFilter;
 
     /**
      * Class Contructor.
@@ -78,7 +85,7 @@ class SearchOptions
      *
      * @return self
      */
-    public function OnlyPublishedInformationProducts(): self
+    public function onlyPublishedInformationProducts(): self
     {
         $this->onlyPublishedInformationProducts = true;
 
@@ -151,4 +158,20 @@ class SearchOptions
         return $this->maxPerPage;
     }
 
+    public function setResearchGroupFilter(?string $researchGroups)
+    {
+        if (!empty($researchGroups)) {
+            $this->researchGroupFilter = explode(',', $researchGroups);
+        }
+    }
+
+    public function getResearchGroupFilter(): array
+    {
+        return $this->researchGroupFilter;
+    }
+
+    public function isResearchGroupFilterSet(): bool
+    {
+        return isset($this->researchGroupFilter);
+    }
 }

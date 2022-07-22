@@ -5,8 +5,6 @@ namespace App\Controller\UI;
 use App\Search\InformationProductSearch;
 use App\Search\SearchOptions;
 use App\Util\JsonSerializer;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,13 +27,15 @@ class InformationProductSearchController extends AbstractController
      *
      * @return Response
      */
-    public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, SerializerInterface $serializer, JsonSerializer $jsonSerializer): Response
+    public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
+        $researchGroupFilter = $request->query->get('researchGroups');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
+        $searchOptions->setResearchGroupFilter($researchGroupFilter);
 
         $searchResults = $informationProductSearch->search($searchOptions);
 

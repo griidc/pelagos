@@ -2,6 +2,8 @@
 
 namespace App\Search;
 
+use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\InformationProduct;
 use JMS\Serializer\Annotation as Serializer;
 use Pagerfanta\PagerfantaInterface;
 
@@ -13,7 +15,7 @@ class SearchResults
     /**
      * Pager Fanta Search Results.
      *
-     * @var PagerfantaInterface $pagerFantaResults
+     * @var Pagerfanta $pagerFantaResults
      *
      * @Serializer\Exclude
      */
@@ -56,9 +58,24 @@ class SearchResults
     private $resultsPerPage;
 
     /**
+     * TODO: remove this probably.
+     *
+     * @Serializer\Exclude
+     *
+     * @var [type]
+     */
+    private $aggregations;
+
+    private $researchGroupBucket;
+
+    private $productTypeDescriptorBucket;
+
+    private $digitalResourceTypeDescriptorBucket;
+
+    /**
      * The results.
      *
-     * @var iterable
+     * @var object|iterable
      *
      * @Serializer\SerializedName("informationProducts")
      */
@@ -93,5 +110,61 @@ class SearchResults
         $this->resultsPerPage = $this->pagerFantaResults->getMaxPerPage();
 
         $this->result = $this->pagerFantaResults->getCurrentPageResults();
+
+        $this->aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
+
+        $this->researchGroupBucket = array_column(
+            $this->findKey($this->aggregations, 'research_group_aggregation')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        $this->productTypeDescriptorBucket = array_column(
+            $this->findKey($this->aggregations, 'product_type_aggregation')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        $this->digitalResourceTypeDescriptorBucket = array_column(
+            $this->findKey($this->aggregations, 'digital_resource_aggregation')['buckets'],
+            'doc_count',
+            'key'
+        );
+    }
+
+    /**
+     * Find the bucket name of the aggregation.
+     *
+     * @param array  $aggregations Array of aggregations.
+     * @param string $bucketKey    The name of the bucket to be found.
+     *
+     * @return array
+     */
+    private function findKey(array $aggregations, string $bucketKey): array
+    {
+        $bucket = array();
+
+        //create a recursive iterator to loop over the array recursively
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($aggregations),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        //loop over the iterator
+        foreach ($iterator as $key => $value) {
+            //if the key matches our search
+            if ($key === $bucketKey) {
+                //add the current key
+                $keys = array($key);
+                //loop up the recursive chain
+                for ($i = ($iterator->getDepth() - 1); $i >= 0; $i--) {
+                    //add each parent key
+                    array_unshift($keys, $iterator->getSubIterator($i)->key());
+                }
+                //return our output array
+                $bucket = $value;
+            }
+        }
+        return $bucket;
     }
 }

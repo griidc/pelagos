@@ -2,6 +2,8 @@
 
 namespace App\Search;
 
+use Elastica\Aggregation\Nested as AggregationNested;
+use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
@@ -13,6 +15,11 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
  */
 class InformationProductSearch
 {
+    /**
+     * Default value for aggregation size to get all aggregation terms.
+     */
+    const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
+
     /**
      * FOS Elastica Object to find elastica documents.
      *
@@ -46,12 +53,47 @@ class InformationProductSearch
         $simpleQuery = new SimpleQueryString($queryString);
         $simpleQuery->setDefaultOperator(SimpleQueryString::OPERATOR_AND);
 
-        $query = new BoolQuery();
-        $query->addMust($simpleQuery);
+        $boolQuery = new BoolQuery();
+        $boolQuery->addMust($simpleQuery);
 
-        $termQuery = new Term();
-        $termQuery->setTerm('published', $isPublished);
-        $query->addFilter($termQuery);
+        $publishedQueryTerm = new Term();
+        $publishedQueryTerm->setTerm('published', $isPublished);
+        $boolQuery->addFilter($publishedQueryTerm);
+
+        $researchGroupNameQuery = new Query\Nested();
+        $researchGroupNameQuery->setPath('researchGroups');
+
+        if ($searchOptions->isResearchGroupFilterSet()) {
+            $researchGroupQueryTerm = new Query\Terms('researchGroups.id');
+            $researchGroupQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
+            $researchGroupNameQuery->setQuery($researchGroupQueryTerm);
+            $boolQuery->addFilter($researchGroupNameQuery);
+        }
+
+        $query = new Query();
+
+        $query->setQuery($boolQuery);
+
+        $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'researchGroups');
+        $researchGroupAggregation = new AggregationTerms('research_group_aggregation');
+        $researchGroupAggregation->setField('researchGroups.id');
+        $researchGroupAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $researchGroupNestedAggregation->addAggregation($researchGroupAggregation);
+        $query->addAggregation($researchGroupNestedAggregation);
+
+        $productTypeNestedAggregation = new AggregationNested('productTypeDescriptorsAgg', 'productTypeDescriptors');
+        $productTypeDescriptorAggregation = new AggregationTerms('product_type_aggregation');
+        $productTypeDescriptorAggregation->setField('productTypeDescriptors.id');
+        $productTypeDescriptorAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $productTypeNestedAggregation->addAggregation($productTypeDescriptorAggregation);
+        $query->addAggregation($productTypeNestedAggregation);
+
+        $digitalResourceTypeNestedAggregation = new AggregationNested('digitalResourceTypeDescriptorsAgg', 'digitalResourceTypeDescriptors');
+        $digitalResourceTypeDescriptorAggregation = new AggregationTerms('digital_resource_aggregation');
+        $digitalResourceTypeDescriptorAggregation->setField('digitalResourceTypeDescriptors.id');
+        $digitalResourceTypeDescriptorAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $digitalResourceTypeNestedAggregation->addAggregation($digitalResourceTypeDescriptorAggregation);
+        $query->addAggregation($digitalResourceTypeNestedAggregation);
 
         $resultsPaginator = $this->finder->findPaginated($query);
 
