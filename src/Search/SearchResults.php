@@ -4,6 +4,8 @@ namespace App\Search;
 
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
+use App\Entity\ResearchGroup;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Annotation as Serializer;
 use Pagerfanta\PagerfantaInterface;
 
@@ -58,19 +60,11 @@ class SearchResults
     private $resultsPerPage;
 
     /**
-     * TODO: remove this probably.
+     * Facet Information for aggregations.
      *
-     * @Serializer\Exclude
-     *
-     * @var [type]
+     * @var array
      */
-    private $aggregations;
-
-    private $researchGroupBucket;
-
-    private $productTypeDescriptorBucket;
-
-    private $digitalResourceTypeDescriptorBucket;
+    private $facetInfo;
 
     /**
      * The results.
@@ -82,15 +76,25 @@ class SearchResults
     private $result;
 
     /**
+     * Instance of the EntityManager.
+     *
+     * @var EntityManagerInterface
+     *
+     * @Serializer\Exclude
+     */
+    private $entityManager;
+
+    /**
      * Class Contructor.
      *
      * @param PagerfantaInterface $pagerFantaResults The Pager Fanta results.
      * @param SearchOptions       $searchOptions     An instance of the SearchOptions.
      */
-    public function __construct(PagerfantaInterface $pagerFantaResults, SearchOptions $searchOptions)
+    public function __construct(PagerfantaInterface $pagerFantaResults, SearchOptions $searchOptions, EntityManagerInterface $entityManager)
     {
         $this->pagerFantaResults = $pagerFantaResults;
         $this->searchOptions = $searchOptions;
+        $this->entityManager = $entityManager;
 
         $this->processResults();
     }
@@ -111,25 +115,27 @@ class SearchResults
 
         $this->result = $this->pagerFantaResults->getCurrentPageResults();
 
-        $this->aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
+        $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
-        $this->researchGroupBucket = array_column(
-            $this->findKey($this->aggregations, 'research_group_aggregation')['buckets'],
+        $researchGroupBucket = array_column(
+            $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
             'doc_count',
             'key'
         );
 
-        $this->productTypeDescriptorBucket = array_column(
-            $this->findKey($this->aggregations, 'product_type_aggregation')['buckets'],
+        $productTypeDescriptorBucket = array_column(
+            $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
             'doc_count',
             'key'
         );
 
-        $this->digitalResourceTypeDescriptorBucket = array_column(
-            $this->findKey($this->aggregations, 'digital_resource_aggregation')['buckets'],
+        $digitalResourceTypeDescriptorBucket = array_column(
+            $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
             'doc_count',
             'key'
         );
+
+        $this->facetInfo['researchGroupInfo'] = $this->getResearchGroupsInfo($researchGroupBucket);
     }
 
     /**
@@ -166,5 +172,36 @@ class SearchResults
             }
         }
         return $bucket;
+    }
+
+    /**
+     * Get research group information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each research id.
+     *
+     * @return array
+     */
+    private function getResearchGroupsInfo(array $aggregations): array
+    {
+        $researchGroupsInfo = array();
+
+        $researchGroups = $this->entityManager
+            ->getRepository(ResearchGroup::class)
+            ->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($researchGroups as $researchGroup) {
+            $researchGroupsInfo[$researchGroup->getId()] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
+                'count' => $aggregations[$researchGroup->getId()]
+            );
+        }
+
+        //Sorting based on highest count
+        $array_column = array_column($researchGroupsInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
+
+        return $researchGroupsInfo;
     }
 }

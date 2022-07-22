@@ -14,7 +14,7 @@
             <!-- Need response data to get facet data -->
 <!--            <Facet :facet-info="results.facetInfo.productTypeDesc" :facet-name="facetLabels.productTypeDesc" v-on="$listeners" :formValues="formValues"/>-->
 <!--            <Facet :facet-info="results.facetInfo.digitalTypeDesc" :facet-name="facetLabels.digitalTypeDesc" v-on="$listeners" :formValues="formValues"/>-->
-<!--            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>-->
+           <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">

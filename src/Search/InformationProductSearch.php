@@ -2,6 +2,7 @@
 
 namespace App\Search;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
@@ -28,14 +29,22 @@ class InformationProductSearch
     protected $finder;
 
     /**
+     * Instance of the EntityManager.
+     *
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * Constructor.
      *
      * @param TransformedFinder      $finder        The finder interface object.
      * @param EntityManagerInterface $entityManager An entity manager.
      */
-    public function __construct(TransformedFinder $finder)
+    public function __construct(TransformedFinder $finder, EntityManagerInterface $entityManager)
     {
         $this->finder = $finder;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -97,6 +106,6 @@ class InformationProductSearch
 
         $resultsPaginator = $this->finder->findPaginated($query);
 
-        return new SearchResults($resultsPaginator, $searchOptions);
+        return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
     }
 }
