@@ -2,6 +2,9 @@
 
 namespace App\Search;
 
+/**
+ * Search Options Class.
+ */
 class SearchOptions
 {
     /**

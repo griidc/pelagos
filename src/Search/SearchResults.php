@@ -5,6 +5,9 @@ namespace App\Search;
 use JMS\Serializer\Annotation as Serializer;
 use Pagerfanta\PagerfantaInterface;
 
+/**
+ * Search Results Class.
+ */
 class SearchResults
 {
     /**
