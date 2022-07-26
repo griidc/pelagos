@@ -126,7 +126,7 @@ export default {
         { value: 100, text: '100' },
       ],
       sortByOptions: [
-        { value: 'default', text: 'Relevance - Default' },
+        { value: 'default', text: 'Relevance' },
         { value: 'desc', text: 'Published Date (Desc)' },
         { value: 'asc', text: 'Published Date (Asc)' },
       ],
