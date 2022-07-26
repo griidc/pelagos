@@ -70,6 +70,28 @@ class InformationProductSearch
         $publishedQueryTerm->setTerm('published', $isPublished);
         $boolQuery->addFilter($publishedQueryTerm);
 
+        $this->addFilters($boolQuery, $searchOptions);
+
+        $query = new Query();
+        $query->setQuery($boolQuery);
+
+        $this->addAggregators($query);
+
+        $resultsPaginator = $this->finder->findPaginated($query);
+
+        return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
+    }
+
+    /**
+     * Add facet filters to search query.
+     *
+     * @param BoolQuery     $boolQuery     Bool query for search.
+     * @param SearchOptions $searchOptions Options containing facet filters.
+     *
+     * @return void
+     */
+    private function addFilters(BoolQuery $boolQuery, SearchOptions $searchOptions): void
+    {
         $researchGroupNameQuery = new Query\Nested();
         $researchGroupNameQuery->setPath('researchGroups');
 
@@ -89,14 +111,16 @@ class InformationProductSearch
             $productTypeDescNameQuery->setQuery($productTypeDescQueryTerm);
             $boolQuery->addFilter($productTypeDescNameQuery);
         }
-        $query = new Query();
-        $query->setQuery($boolQuery);
 
-        $this->addAggregators($query);
+        $digitalTypeDescNameQuery = new Query\Nested();
+        $digitalTypeDescNameQuery->setPath('digitalResourceTypeDescriptors');
 
-        $resultsPaginator = $this->finder->findPaginated($query);
-
-        return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
+        if ($searchOptions->isDigitalTypeDescFilterSet()) {
+            $digitalTypeDescQueryTerm = new Query\Terms('digitalResourceTypeDescriptors.id');
+            $digitalTypeDescQueryTerm->setTerms($searchOptions->getDigitalTypeDescFilter());
+            $digitalTypeDescNameQuery->setQuery($digitalTypeDescQueryTerm);
+            $boolQuery->addFilter($digitalTypeDescNameQuery);
+        }
     }
 
     /**

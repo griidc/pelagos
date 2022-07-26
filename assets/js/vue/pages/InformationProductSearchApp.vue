@@ -51,7 +51,7 @@ export default {
         queryString: '',
         researchGroup: '',
         productTypeDesc: '',
-        digitalResourceTypeDesc: '',
+        digitalTypeDesc: '',
       },
       results: Object,
       showResults: false,

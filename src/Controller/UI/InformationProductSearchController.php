@@ -33,11 +33,13 @@ class InformationProductSearchController extends AbstractController
         $page = $request->query->get('page');
         $researchGroupFilter = $request->query->get('researchGroup');
         $productTypeDescFilter = $request->query->get('productTypeDesc');
+        $digitalTypeDescFilter = $request->query->get('digitalTypeDesc');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
         $searchOptions->setProductTypeDescFilter($productTypeDescFilter);
+        $searchOptions->setDigitalTypeDescFilter($digitalTypeDescFilter);
 
         $searchResults = $informationProductSearch->search($searchOptions);
         return $jsonSerializer->serialize($searchResults)->createJsonResponse();

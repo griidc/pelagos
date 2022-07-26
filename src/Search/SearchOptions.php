@@ -50,6 +50,13 @@ class SearchOptions
     private $productTypeDescFilter;
 
     /**
+     * Digital resource type descriptor Filter.
+     *
+     * @var array
+     */
+    private $digitalTypeDescFilter;
+
+    /**
      * Class Contructor.
      *
      * @param string|null $queryString
@@ -165,6 +172,11 @@ class SearchOptions
         return $this->maxPerPage;
     }
 
+    /**
+     * @param string|null $researchGroups
+     *
+     * @return void
+     */
     public function setResearchGroupFilter(?string $researchGroups)
     {
         if (!empty($researchGroups)) {
@@ -197,6 +209,7 @@ class SearchOptions
      */
     public function setProductTypeDescFilter(?string $productTypeDescriptors): void
     {
+        dump($productTypeDescriptors);
         if (!empty($productTypeDescriptors)) {
             $this->productTypeDescFilter = explode(',', $productTypeDescriptors);
         }
@@ -208,5 +221,33 @@ class SearchOptions
     public function isProductTypeDescFilterSet(): bool
     {
         return isset($this->productTypeDescFilter);
+    }
+
+    /**
+     * @return array
+     */
+    public function getDigitalTypeDescFilter(): array
+    {
+        return $this->digitalTypeDescFilter;
+    }
+
+    /**
+     * @param string|null $digitalResourceTypes
+     *
+     * @return void
+     */
+    public function setDigitalTypeDescFilter(?string $digitalResourceTypes): void
+    {
+        if (!empty($digitalResourceTypes)) {
+            $this->digitalTypeDescFilter = explode(',', $digitalResourceTypes);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDigitalTypeDescFilterSet(): bool
+    {
+        return isset($this->digitalTypeDescFilter);
     }
 }
