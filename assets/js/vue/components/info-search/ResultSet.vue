@@ -12,9 +12,9 @@
         <aside class="col-lg-3">
           <div class="card card-filter">
             <!-- Need response data to get facet data -->
-           <Facet :facet-info="results.facetInfo.productTypeDescriptorInfo" :facet-name="facetLabels.productTypeDesc" v-on="$listeners" :formValues="formValues"/>
-           <Facet :facet-info="results.facetInfo.digitalResourceTypeDescriptorsInfo" :facet-name="facetLabels.digitalTypeDesc" v-on="$listeners" :formValues="formValues"/>
-          <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
+            <Facet :facet-info="results.facetInfo.productTypeDescriptorInfo" :facet-name="facetLabels.productTypeDesc" v-on="$listeners" :formValues="formValues"/>
+            <Facet :facet-info="results.facetInfo.digitalResourceTypeDescriptorsInfo" :facet-name="facetLabels.digitalTypeDesc" v-on="$listeners" :formValues="formValues"/>
+            <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
