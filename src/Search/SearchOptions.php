@@ -43,6 +43,13 @@ class SearchOptions
     private $researchGroupFilter;
 
     /**
+     * Product type descriptor Filter.
+     *
+     * @var array
+     */
+    private $productTypeDescFilter;
+
+    /**
      * Class Contructor.
      *
      * @param string|null $queryString
@@ -173,5 +180,33 @@ class SearchOptions
     public function isResearchGroupFilterSet(): bool
     {
         return isset($this->researchGroupFilter);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductTypeDescFilter(): array
+    {
+        return $this->productTypeDescFilter;
+    }
+
+    /**
+     * @param string|null $productTypeDescriptors
+     *
+     * @return void
+     */
+    public function setProductTypeDescFilter(?string $productTypeDescriptors): void
+    {
+        if (!empty($productTypeDescriptors)) {
+            $this->productTypeDescFilter = explode(',', $productTypeDescriptors);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProductTypeDescFilterSet(): bool
+    {
+        return isset($this->productTypeDescFilter);
     }
 }

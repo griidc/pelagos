@@ -31,14 +31,15 @@ class InformationProductSearchController extends AbstractController
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
-        $researchGroupFilter = $request->query->get('researchGroups');
+        $researchGroupFilter = $request->query->get('researchGroup');
+        $productTypeDescFilter = $request->query->get('productTypeDesc');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
+        $searchOptions->setProductTypeDescFilter($productTypeDescFilter);
 
         $searchResults = $informationProductSearch->search($searchOptions);
-
         return $jsonSerializer->serialize($searchResults)->createJsonResponse();
     }
 }

@@ -49,6 +49,9 @@ export default {
     return {
       form: {
         queryString: '',
+        researchGroup: '',
+        productTypeDesc: '',
+        digitalResourceTypeDesc: '',
       },
       results: Object,
       showResults: false,
@@ -76,7 +79,7 @@ export default {
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
       // eslint-disable-next-line prefer-destructuring
-      this.form.facetArray[0] = facetArray[1];
+      this.form[facetArray[0]] = facetArray[1];
       this.onSubmit();
     },
   },

@@ -80,6 +80,15 @@ class InformationProductSearch
             $boolQuery->addFilter($researchGroupNameQuery);
         }
 
+        $productTypeDescNameQuery = new Query\Nested();
+        $productTypeDescNameQuery->setPath('productTypeDescriptors');
+
+        if ($searchOptions->isProductTypeDescFilterSet()) {
+            $productTypeDescQueryTerm = new Query\Terms('productTypeDescriptors.id');
+            $productTypeDescQueryTerm->setTerms($searchOptions->getProductTypeDescFilter());
+            $productTypeDescNameQuery->setQuery($productTypeDescQueryTerm);
+            $boolQuery->addFilter($productTypeDescNameQuery);
+        }
         $query = new Query();
         $query->setQuery($boolQuery);
 
@@ -119,6 +128,5 @@ class InformationProductSearch
         $digitalResourceTypeDescriptorAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $digitalResourceTypeNestedAggregation->addAggregation($digitalResourceTypeDescriptorAggregation);
         $query->addAggregation($digitalResourceTypeNestedAggregation);
-
     }
 }
