@@ -29,6 +29,7 @@
         </div>
       </section>
       <ResultSet
+          v-if="showResults"
           :results="results"
           @facetClicked="facetCheckBoxValues"
           :formValues="form"/>
@@ -49,7 +50,8 @@ export default {
       form: {
         queryString: '',
       },
-      results: {},
+      results: Object,
+      showResults: false,
     };
   },
   methods: {
@@ -64,7 +66,8 @@ export default {
         `${Routing.generate('app_information_product_search_api')}?${searchQuery}`,
         { thisComponent: this, addLoading: true },
       ).then((response) => {
-        this.results = response.data.informationProducts;
+        this.results = response.data;
+        this.showResults = true;
       });
     },
     onReset() {
