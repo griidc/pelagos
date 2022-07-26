@@ -24,7 +24,7 @@
             <span class="attr">Leadership:</span>
             {% set leadership = ResearchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
             {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
-                {{ prg.person.firstName }} {{ prg.person.lastName }} - {{ prg.label }}
+                {{ prg.person.firstName }} {{ prg.person.lastName }}
                 {% if not loop.last %}, {% endif %}
             {% endfor %}
         </div>
