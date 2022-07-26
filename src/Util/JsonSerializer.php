@@ -4,7 +4,7 @@ namespace App\Util;
 
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Serializes entities into Json.
@@ -66,11 +66,10 @@ class JsonSerializer
     /**
      * Creates a response from JSON.
      *
-     * @return Response
+     * @return JsonResponse
      */
-    public function createJsonResponse(): Response
+    public function createJsonResponse(): JsonResponse
     {
-        $header = array('Content-Type', 'application/json');
-        return new Response($this->json, Response::HTTP_OK, $header);
+        return new JsonResponse($this->json);
     }
 }

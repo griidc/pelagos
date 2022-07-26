@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
+use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
 use Elastica\Query\Term;
@@ -80,9 +81,24 @@ class InformationProductSearch
         }
 
         $query = new Query();
-
         $query->setQuery($boolQuery);
 
+        $this->addAggregators($query);
+
+        $resultsPaginator = $this->finder->findPaginated($query);
+
+        return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
+    }
+
+    /**
+     * Add specific aggregators to the query.
+     *
+     * @param Query $query The query to have aggregators added to.
+     *
+     * @return void
+     */
+    private function addAggregators(Query $query): void
+    {
         $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'researchGroups');
         $researchGroupAggregation = new AggregationTerms('research_group_aggregation');
         $researchGroupAggregation->setField('researchGroups.id');
@@ -104,8 +120,5 @@ class InformationProductSearch
         $digitalResourceTypeNestedAggregation->addAggregation($digitalResourceTypeDescriptorAggregation);
         $query->addAggregation($digitalResourceTypeNestedAggregation);
 
-        $resultsPaginator = $this->finder->findPaginated($query);
-
-        return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
     }
 }
