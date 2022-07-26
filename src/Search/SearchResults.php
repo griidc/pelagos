@@ -3,7 +3,10 @@
 namespace App\Search;
 
 use App\Entity\DigitalResourceTypeDescriptor;
-use App\Entity\InformationProduct;
+use App\Entity\ProductTypeDescriptor;
+use App\Repository\DigitalResourceTypeDescriptorRepository;
+use App\Repository\ProductTypeDescriptorRepository;
+use App\Repository\ResearchGroupRepository;
 use App\Entity\ResearchGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Annotation as Serializer;
@@ -66,6 +69,8 @@ class SearchResults
      */
     private $facetInfo;
 
+    private $aggregations;
+
     /**
      * The results.
      *
@@ -85,6 +90,33 @@ class SearchResults
     private $entityManager;
 
     /**
+     * Instance of the ResearchGroupRepository.
+     *
+     * @var ResearchGroupRepository
+     *
+     * @Serializer\Exclude
+     */
+    private $researchGroupRepository;
+
+    /**
+     * Instance of the ResearchGroupRepository.
+     *
+     * @var DigitalResourceTypeDescriptorRepository
+     *
+     * @Serializer\Exclude
+     */
+    private $digitalResourceTypeDescriptorRepository;
+
+    /**
+     * Instance of the ResearchGroupRepository.
+     *
+     * @var ProductTypeDescriptorRepository
+     *
+     * @Serializer\Exclude
+     */
+    private $productTypeDescriptorRepository;
+
+    /**
      * Class Contructor.
      *
      * @param PagerfantaInterface $pagerFantaResults The Pager Fanta results.
@@ -95,6 +127,10 @@ class SearchResults
         $this->pagerFantaResults = $pagerFantaResults;
         $this->searchOptions = $searchOptions;
         $this->entityManager = $entityManager;
+
+        $this->researchGroupRepository = $this->entityManager->getRepository(ResearchGroup::class);
+        $this->digitalResourceTypeDescriptorRepository = $this->entityManager->getRepository(DigitalResourceTypeDescriptor::class);
+        $this->productTypeDescriptorRepository = $this->entityManager->getRepository(ProductTypeDescriptor::class);
 
         $this->processResults();
     }
@@ -117,6 +153,8 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
+
+
         $researchGroupBucket = array_column(
             $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
             'doc_count',
@@ -135,7 +173,9 @@ class SearchResults
             'key'
         );
 
-        $this->facetInfo['researchGroupInfo'] = $this->getResearchGroupsInfo($researchGroupBucket);
+        $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
+        $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
+        $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
     }
 
     /**
@@ -172,36 +212,5 @@ class SearchResults
             }
         }
         return $bucket;
-    }
-
-    /**
-     * Get research group information for the aggregations.
-     *
-     * @param array $aggregations Aggregations for each research id.
-     *
-     * @return array
-     */
-    private function getResearchGroupsInfo(array $aggregations): array
-    {
-        $researchGroupsInfo = array();
-
-        $researchGroups = $this->entityManager
-            ->getRepository(ResearchGroup::class)
-            ->findBy(array('id' => array_keys($aggregations)));
-
-        foreach ($researchGroups as $researchGroup) {
-            $researchGroupsInfo[$researchGroup->getId()] = array(
-                'id' => $researchGroup->getId(),
-                'name' => $researchGroup->getName(),
-                'shortName' => $researchGroup->getShortName(),
-                'count' => $aggregations[$researchGroup->getId()]
-            );
-        }
-
-        //Sorting based on highest count
-        $array_column = array_column($researchGroupsInfo, 'count');
-        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
-
-        return $researchGroupsInfo;
     }
 }
