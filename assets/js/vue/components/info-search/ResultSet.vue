@@ -1,5 +1,5 @@
 <template>
-  <div v-if="results.length > 0">
+  <div v-if="results.informationProducts.length > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
@@ -14,11 +14,11 @@
             <!-- Need response data to get facet data -->
 <!--            <Facet :facet-info="results.facetInfo.productTypeDesc" :facet-name="facetLabels.productTypeDesc" v-on="$listeners" :formValues="formValues"/>-->
 <!--            <Facet :facet-info="results.facetInfo.digitalTypeDesc" :facet-name="facetLabels.digitalTypeDesc" v-on="$listeners" :formValues="formValues"/>-->
-<!--            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>-->
+<!--           <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>-->
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
-          <InformationProductCard v-for="informationProduct in results"
+          <InformationProductCard v-for="informationProduct in results.informationProducts"
                                   :key="informationProduct.id" v-show="informationProduct.published"
                                   :informationProduct="informationProduct"/>
         </main>
@@ -50,7 +50,8 @@ export default {
   computed: {
     resultCount() {
       let resultCount = 0;
-      this.results.forEach((informationProduct) => {
+      const informationProducts = this.results.informationProducts ?? [];
+      informationProducts.forEach((informationProduct) => {
         if (informationProduct.published) {
           resultCount += 1;
         }
@@ -58,21 +59,29 @@ export default {
       return resultCount;
     },
   },
-  methods: {
-    facetLabels: {
-      productTypeDesc: {
-        label: templateSwitch.getProperty('productTypeDesc'),
-        queryParam: 'productTypeDesc',
+  data() {
+    return {
+      facetLabels: {
+        productTypeDesc: {
+          label: templateSwitch.getProperty('productTypeDesc'),
+          queryParam: 'productTypeDesc',
+        },
+        digitalTypeDesc: {
+          label: templateSwitch.getProperty('digitalTypeDesc'),
+          queryParam: 'digitalTypeDesc',
+        },
+        researchGroup: {
+          label: templateSwitch.getProperty('researchGroup'),
+          queryParam: 'researchGroup',
+        },
       },
-      digitalTypeDesc: {
-        label: templateSwitch.getProperty('digitalTypeDesc'),
-        queryParam: 'digitalTypeDesc',
-      },
-      researchGroup: {
-        label: templateSwitch.getProperty('researchGroup'),
-        queryParam: 'researchGroup',
-      },
-    },
+      showResults: false,
+    };
+  },
+  mounted() {
+    if (this.results.informationProducts) {
+      this.showResults = true;
+    }
   },
 };
 </script>
