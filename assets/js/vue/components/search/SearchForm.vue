@@ -91,6 +91,7 @@
                 @facetClicked="facetCheckBoxValues"
                 @pagination="changePageNo"
                 @noOfResults="changeNoOfResults"
+                @sortOrder="changeSortOrder"
                 :formValues="form"/>
         </div>
     </div>
@@ -116,6 +117,7 @@ function initialFormValues() {
     fundingCycle: '',
     perPage: 10,
     projectDirector: '',
+    sortOrder: 'default',
   };
 }
 
@@ -216,6 +218,10 @@ export default {
     },
     changeNoOfResults(noOfResults) {
       this.form.perPage = noOfResults;
+      this.onSubmit();
+    },
+    changeSortOrder(sortOrder) {
+      this.form.sortOrder = sortOrder;
       this.onSubmit();
     },
     detectHashChange() {
