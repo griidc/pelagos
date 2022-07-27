@@ -133,9 +133,34 @@ services:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos"
 
-    App\Search\InformationProductSearch:
-        bind:
-            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.info_products"
+    # App\Search\InformationProductSearch:
+    #     bind:
+    #         FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.info_products"
+
+    App\Search\MultiIndex:
+        arguments:
+            $name: 'multi'
+        calls:
+            - [ addIndices, [['@fos_elastica.index.search_pelagos', '@fos_elastica.index.info_products']]]
+
+    Elastica\SearchableInterface: '@App\Search\MultiIndex'
+
+    #FOS\ElasticaBundle\Transformer\ElasticaToModelTransformerCollection:
+    App\Search\ElasticaToModelTransformerCollection:
+        arguments:
+            - {
+                "%env(SEARCH_TOOL_INDEX)%": '@fos_elastica.elastica_to_model_transformer.search_pelagos',
+                "%env(INFO_PRODUCT_INDEX)%": '@fos_elastica.elastica_to_model_transformer.info_products'
+              }
+
+    #FOS\ElasticaBundle\ElasticaToModelTransformerInterface: '@FOS\ElasticaBundle\Transformer\ElasticaToModelTransformerCollection'
+
+    FOS\ElasticaBundle\Finder\TransformedFinder:
+        arguments:
+            - '@App\Search\MultiIndex'
+            - '@App\Search\ElasticaToModelTransformerCollection'
+
+    FOS\ElasticaBundle\Finder\PaginatedFinderInterface: '@FOS\ElasticaBundle\Finder\TransformedFinder'
 
     App\Event\MaintenanceModeListener:
         bind:
