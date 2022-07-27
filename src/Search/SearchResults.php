@@ -69,8 +69,6 @@ class SearchResults
      */
     private $facetInfo;
 
-    private $aggregations;
-
     /**
      * The results.
      *
@@ -119,8 +117,9 @@ class SearchResults
     /**
      * Class Contructor.
      *
-     * @param PagerfantaInterface $pagerFantaResults The Pager Fanta results.
-     * @param SearchOptions       $searchOptions     An instance of the SearchOptions.
+     * @param PagerfantaInterface    $pagerFantaResults The Pager Fanta results.
+     * @param SearchOptions          $searchOptions     An instance of the SearchOptions.
+     * @param EntityManagerInterface $entityManager     An instance of the Entity Manager.
      */
     public function __construct(PagerfantaInterface $pagerFantaResults, SearchOptions $searchOptions, EntityManagerInterface $entityManager)
     {
@@ -152,8 +151,6 @@ class SearchResults
         $this->result = $this->pagerFantaResults->getCurrentPageResults();
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
-
-
 
         $researchGroupBucket = array_column(
             $this->findKey($aggregations, 'research_group_aggregation')['buckets'],

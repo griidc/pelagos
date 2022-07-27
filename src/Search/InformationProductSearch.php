@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
-use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
 use Elastica\Query\Term;
@@ -58,17 +57,12 @@ class InformationProductSearch
     public function search(SearchOptions $searchOptions): SearchResults
     {
         $queryString = $searchOptions->getQueryString();
-        $isPublished = $searchOptions->shouldFilterOnlyPublishedInformationProducts();
 
         $simpleQuery = new SimpleQueryString($queryString);
         $simpleQuery->setDefaultOperator(SimpleQueryString::OPERATOR_AND);
 
         $boolQuery = new BoolQuery();
         $boolQuery->addMust($simpleQuery);
-
-        $publishedQueryTerm = new Term();
-        $publishedQueryTerm->setTerm('published', $isPublished);
-        $boolQuery->addFilter($publishedQueryTerm);
 
         $this->addFilters($boolQuery, $searchOptions);
 
@@ -92,6 +86,10 @@ class InformationProductSearch
      */
     private function addFilters(BoolQuery $boolQuery, SearchOptions $searchOptions): void
     {
+        $publishedQueryTerm = new Term();
+        $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
+        $boolQuery->addFilter($publishedQueryTerm);
+
         $researchGroupNameQuery = new Query\Nested();
         $researchGroupNameQuery->setPath('researchGroups');
 

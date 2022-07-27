@@ -173,28 +173,44 @@ class SearchOptions
     }
 
     /**
-     * @param string|null $researchGroups
+     * Sets the research groups to be filtered.
      *
-     * @return void
+     * @param string|null $researchGroups The comma delimited list of Research Groups.
+     *
+     * @return self
      */
-    public function setResearchGroupFilter(?string $researchGroups)
+    public function setResearchGroupFilter(?string $researchGroups): self
     {
         if (!empty($researchGroups)) {
             $this->researchGroupFilter = explode(',', $researchGroups);
         }
+
+        return $this;
     }
 
+    /**
+     * Return the list of research groups to be filtered on.
+     *
+     * @return array
+     */
     public function getResearchGroupFilter(): array
     {
         return $this->researchGroupFilter;
     }
 
+    /**
+     * Is the Research Group filter set.
+     *
+     * @return boolean
+     */
     public function isResearchGroupFilterSet(): bool
     {
         return isset($this->researchGroupFilter);
     }
 
     /**
+     * Get the product type descriptor filter.
+     *
      * @return array
      */
     public function getProductTypeDescFilter(): array
@@ -203,19 +219,24 @@ class SearchOptions
     }
 
     /**
-     * @param string|null $productTypeDescriptors
+     * Set the product type descriptor filter.
      *
-     * @return void
+     * @param string|null $productTypeDescriptors A list of comma delimited product type descriptors.
+     *
+     * @return self
      */
-    public function setProductTypeDescFilter(?string $productTypeDescriptors): void
+    public function setProductTypeDescFilter(?string $productTypeDescriptors): self
     {
-        dump($productTypeDescriptors);
         if (!empty($productTypeDescriptors)) {
             $this->productTypeDescFilter = explode(',', $productTypeDescriptors);
         }
+
+        return $this;
     }
 
     /**
+     * Is the Product Type Filter set.
+     *
      * @return bool
      */
     public function isProductTypeDescFilterSet(): bool
@@ -224,6 +245,8 @@ class SearchOptions
     }
 
     /**
+     * Gets the digital resource type filter.
+     *
      * @return array
      */
     public function getDigitalTypeDescFilter(): array
@@ -232,7 +255,9 @@ class SearchOptions
     }
 
     /**
-     * @param string|null $digitalResourceTypes
+     * Sets the digital resource type filter.
+     *
+     * @param string|null $digitalResourceTypes A comma delimited list of Digital Resource Type Descriptors.
      *
      * @return void
      */
@@ -244,6 +269,8 @@ class SearchOptions
     }
 
     /**
+     * If the digital resource type filter is set.
+     *
      * @return bool
      */
     public function isDigitalTypeDescFilterSet(): bool
