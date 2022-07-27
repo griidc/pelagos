@@ -2,9 +2,9 @@
 
 namespace App\Controller\UI;
 
-use App\Util\InformationProductSearch;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\SerializerInterface;
+use App\Search\InformationProductSearch;
+use App\Search\SearchOptions;
+use App\Util\JsonSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,33 +27,21 @@ class InformationProductSearchController extends AbstractController
      *
      * @return Response
      */
-    public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, SerializerInterface $serializer): Response
+    public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
+        $researchGroupFilter = $request->query->get('researchGroup');
+        $productTypeDescFilter = $request->query->get('productTypeDesc');
+        $digitalTypeDescFilter = $request->query->get('digitalTypeDesc');
 
-        $page = $page ?? 1;
+        $searchOptions = new SearchOptions($queryString);
+        $searchOptions->setCurrentPage($page);
+        $searchOptions->setResearchGroupFilter($researchGroupFilter);
+        $searchOptions->setProductTypeDescFilter($productTypeDescFilter);
+        $searchOptions->setDigitalTypeDescFilter($digitalTypeDescFilter);
 
-        $userPaginator = $informationProductSearch->findInformationProduct($queryString);
-        $userPaginator->setCurrentPage($page);
-        $userPaginator->setMaxPerPage(1000); //Remove when pagination is working.
-        $informationProducts = $userPaginator->getCurrentPageResults();
-
-        $context = SerializationContext::create();
-        $context->enableMaxDepthChecks();
-        $context->setSerializeNull(true);
-
-        $result = array();
-
-        $result["result"] = $userPaginator->getNbResults();
-        $result["pages"] = $userPaginator->getNbPages();
-        $result["resultPerPage"] = $userPaginator->getMaxPerPage();
-        $result["informationProducts"] = $informationProducts;
-
-        $json = $serializer->serialize($result, 'json', $context);
-
-        $header = array('Content-Type', 'application/json');
-
-        return new Response($json, Response::HTTP_OK, $header);
+        $searchResults = $informationProductSearch->search($searchOptions);
+        return $jsonSerializer->serialize($searchResults)->createJsonResponse();
     }
 }
