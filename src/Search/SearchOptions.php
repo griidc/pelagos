@@ -57,6 +57,13 @@ class SearchOptions
     private $digitalTypeDescFilter;
 
     /**
+     * List of facets.
+     *
+     * @var array
+     */
+    private $facets;
+
+    /**
      * Class Contructor.
      *
      * @param string|null $queryString
@@ -276,5 +283,29 @@ class SearchOptions
     public function isDigitalTypeDescFilterSet(): bool
     {
         return isset($this->digitalTypeDescFilter);
+    }
+
+    /**
+     * Set a list of facets to use.
+     *
+     * @param array $facets
+     *
+     * @return self
+     */
+    public function setFacets(array $facets): self
+    {
+        $this->facets = $facets;
+
+        return $this;
+    }
+
+    /**
+     * Get the list of facets.
+     *
+     * @return array
+     */
+    public function getFacets(): array
+    {
+        return $this->facets;
     }
 }

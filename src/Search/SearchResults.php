@@ -152,6 +152,14 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
+        // foreach ($this->searchOptions->getFacets() as $facet) {
+        //     $this->facetInfo[$facet] = $this->getFacetInfo($facet, array_column(
+        //         $this->findKey($aggregations, $facet)['buckets'],
+        //         'doc_count',
+        //         'key'
+        //     ));
+        // }
+
         $researchGroupBucket = array_column(
             $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
             'doc_count',
@@ -173,6 +181,23 @@ class SearchResults
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
         $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
         $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+    }
+
+    private function getFacetInfo(string $facet, array $facetAgregation): ?array
+    {
+        switch ($facet) {
+            case 'researchGroup':
+                return $this->researchGroupRepository->getResearchGroupsInfo($facetAgregation);
+                break;
+            case 'digitalResourceTypeDescriptors':
+                return $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($facetAgregation);
+                break;
+            case 'productTypeDescriptors':
+                return $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($facetAgregation);
+                break;
+            default:
+                return null;
+        }
     }
 
     /**

@@ -38,10 +38,10 @@ class InformationProductSearch
     /**
      * Constructor.
      *
-     * @param TransformedFinder      $finder        The finder interface object.
+     * @param SearchRepository       $finder        The finder interface object.
      * @param EntityManagerInterface $entityManager An entity manager.
      */
-    public function __construct(TransformedFinder $finder, EntityManagerInterface $entityManager)
+    public function __construct(SearchRepository $finder, EntityManagerInterface $entityManager)
     {
         $this->finder = $finder;
         $this->entityManager = $entityManager;
@@ -64,12 +64,12 @@ class InformationProductSearch
         $boolQuery = new BoolQuery();
         $boolQuery->addMust($simpleQuery);
 
-        $this->addFilters($boolQuery, $searchOptions);
+        // $this->addFilters($boolQuery, $searchOptions);
 
         $query = new Query();
         $query->setQuery($boolQuery);
 
-        $this->addAggregators($query);
+        $this->addAggregators($query, $searchOptions);
 
         $resultsPaginator = $this->finder->findPaginated($query);
 
@@ -128,8 +128,17 @@ class InformationProductSearch
      *
      * @return void
      */
-    private function addAggregators(Query $query): void
+    private function addAggregators(Query $query, SearchOptions $searchOptions): void
     {
+        // foreach ($searchOptions->getFacets() as $facet) {
+        //     $nestedAggregation = new AggregationNested("$facet.Agg", $facet);
+        //     $aggregation = new AggregationTerms($facet);
+        //     $aggregation->setField("$facet.id");
+        //     $aggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        //     $nestedAggregation->addAggregation($aggregation);
+        //     $query->addAggregation($nestedAggregation);
+        // }
+
         $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'researchGroups');
         $researchGroupAggregation = new AggregationTerms('research_group_aggregation');
         $researchGroupAggregation->setField('researchGroups.id');
