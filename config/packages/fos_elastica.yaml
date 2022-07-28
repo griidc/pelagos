@@ -194,3 +194,13 @@ fos_elastica:
                             type: 'keyword'
                         filePathName:
                             type: 'text'
+                productTypeDescriptors:
+                    type: 'nested'
+                    properties:
+                        id:
+                            type: 'keyword'
+                digitalResourceTypeDescriptors:
+                    type: 'nested'
+                    properties:
+                        id:
+                            type: 'keyword'

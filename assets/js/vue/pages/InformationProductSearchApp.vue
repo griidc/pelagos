@@ -28,27 +28,11 @@
           </b-form>
         </div>
       </section>
-      <div v-if="results.length > 0">
-        <section class="section-content pt-3">
-          <div class="row d-flex flex-row justify-content-center">
-            <h5>
-              Found {{ resultCount }} results
-            </h5>
-          </div>
-        </section>
-        <section class="section-content pb-2">
-          <div class="row">
-            <main class="col-lg-9 overflow-auto">
-              <InformationProductCard v-for="informationProduct in results"
-                                      :key="informationProduct.id" v-show="informationProduct.published"
-                                      :informationProduct="informationProduct"/>
-            </main>
-          </div>
-        </section>
-      </div>
-      <div v-else>
-        <NoResults/>
-      </div>
+      <ResultSet
+          v-if="showResults"
+          :results="results"
+          @facetClicked="facetCheckBoxValues"
+          :formValues="form"/>
     </div>
   </div>
 </template>
@@ -56,18 +40,21 @@
 <script>
 
 import { getApi } from '@/vue/utils/axiosService';
-import InformationProductCard from '@/vue/components/information-product/InformationProductCard';
-import NoResults from '@/vue/components/info-search/NoResults';
+import ResultSet from '@/vue/components/info-search/ResultSet';
 
 export default {
   name: 'InformationProductSearchApp',
-  components: { NoResults, InformationProductCard },
+  components: { ResultSet },
   data() {
     return {
       form: {
         queryString: '',
+        researchGroup: '',
+        productTypeDesc: '',
+        digitalTypeDesc: '',
       },
-      results: {},
+      results: Object,
+      showResults: false,
     };
   },
   methods: {
@@ -82,11 +69,18 @@ export default {
         `${Routing.generate('app_information_product_search_api')}?${searchQuery}`,
         { thisComponent: this, addLoading: true },
       ).then((response) => {
-        this.results = response.data.informationProducts;
+        this.results = response.data;
+        this.showResults = true;
       });
     },
     onReset() {
       this.init();
+    },
+    facetCheckBoxValues(value) {
+      const facetArray = value.split('=');
+      // eslint-disable-next-line prefer-destructuring
+      this.form[facetArray[0]] = facetArray[1];
+      this.onSubmit();
     },
   },
   computed: {
