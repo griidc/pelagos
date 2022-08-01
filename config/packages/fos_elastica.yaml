@@ -107,7 +107,7 @@ fos_elastica:
                                         id:
                                             type: 'keyword'
                 hasErddap:
-                    type: 'text'
+                    type: 'boolean'
                 datasetSubmission:
                     type: 'nested'
                     include_in_parent: true
