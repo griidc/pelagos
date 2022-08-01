@@ -901,12 +901,12 @@ class Dataset extends Entity
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("hasErddap")
      *
-     * @return integer|null
+     * @return bool
      */
     public function hasErddap(): bool
     {
         $datasetSubmission = $this->getDatasetSubmission();
-        if ($this->getDatasetStatus() instanceof DatasetSubmission) {
+        if ($this->getDatasetSubmission() instanceof DatasetSubmission) {
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink ) {
                 if ($datasetLink->getName() === 'ERDDAP') {
                     return true;
