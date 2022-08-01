@@ -144,10 +144,10 @@ class Search
         $collectionDateRange = array();
         if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
             $collectionDateRange = array();
-            if (isset($requestTerms['collectionStartDate'])) {
+            if (!empty($requestTerms['collectionStartDate'])) {
                 $collectionDateRange['startDate'] = $requestTerms['collectionStartDate'];
             }
-            if (isset($requestTerms['collectionEndDate'])) {
+            if (!empty($requestTerms['collectionEndDate'])) {
                 $collectionDateRange['endDate'] = $requestTerms['collectionEndDate'];
             }
         }
@@ -964,10 +964,10 @@ class Search
         }
 
         if (!empty($collectionDateRange)) {
-            if (isset($collectionDateRange['startDate']) and !empty($collectionDateRange['startDate'])) {
+            if (!empty($collectionDateRange['startDate'])) {
                 $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
             }
-            if (isset($collectionDateRange['endDate']) and !empty($collectionDateRange['endDate'])) {
+            if (!empty($collectionDateRange['endDate'])) {
                 $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
             }
             $subMainQuery->addFilter($collectionDateBoolQuery);
