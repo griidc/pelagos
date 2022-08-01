@@ -32,6 +32,13 @@
                 <div class="card-header bg-chart-primary">
                     Files
                 </div>
+                <div>
+                    {% for link in dataset.datasetSubmission.datasetLinks|default %}
+                        {% if(link.name == 'ERDDAP') %}
+                            <a href="{{ link.url }}" target="_blank">ERDDAP BUTTON</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 <div class="card-body">
                     <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     <hr>
