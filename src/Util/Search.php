@@ -964,10 +964,10 @@ class Search
         }
 
         if (!empty($collectionDateRange)) {
-            if (isset($collectionDateRange['collectionStartDate'])) {
+            if (isset($collectionDateRange['startDate']) and !empty($collectionDateRange['startDate'])) {
                 $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
             }
-            if (isset($collectionDateRange['collectionEndDate'])) {
+            if (isset($collectionDateRange['endDate']) and !empty($collectionDateRange['endDate'])) {
                 $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
             }
             $subMainQuery->addFilter($collectionDateBoolQuery);
