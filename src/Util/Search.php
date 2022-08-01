@@ -144,10 +144,10 @@ class Search
         $collectionDateRange = array();
         if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
             $collectionDateRange = array();
-            if(isset($requestTerms['collectionStartDate'])) {
+            if (isset($requestTerms['collectionStartDate'])) {
                 $collectionDateRange['startDate'] = $requestTerms['collectionStartDate'];
             }
-            if(isset($requestTerms['collectionEndDate'])) {
+            if (isset($requestTerms['collectionEndDate'])) {
                 $collectionDateRange['endDate'] = $requestTerms['collectionEndDate'];
             }
         }
