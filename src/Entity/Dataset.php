@@ -907,7 +907,7 @@ class Dataset extends Entity
     {
         $datasetSubmission = $this->getDatasetSubmission();
         if ($this->getDatasetSubmission() instanceof DatasetSubmission) {
-            foreach ($datasetSubmission->getDatasetLinks() as $datasetLink ) {
+            foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 if ($datasetLink->getName() === 'ERDDAP') {
                     return true;
                 }
