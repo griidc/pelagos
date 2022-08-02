@@ -36,13 +36,11 @@
                     <div>
                         {% for link in dataset.datasetSubmission.datasetLinks|default %}
                             {% if(link.name == 'ERDDAP') %}
-                                <a href="{{ link.url }}" target="_blank">
-                                    <button type="button" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary btn-sm">
                                         <img src="{{ asset('build/images/download-icon.svg') }}">
                                         &nbsp;
                                     ERDDAP
                                     </button>
-                                </a>
                             {% endif %}
                         {% endfor %}
                     </div>
