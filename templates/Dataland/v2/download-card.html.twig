@@ -33,18 +33,18 @@
                     Files
                 </div>
                 <div class="card-body">
-                    <div>
                         {% for link in dataset.datasetSubmission.datasetLinks|default %}
                             {% if(link.name == 'ERDDAP') %}
+                                <div>
                                     <button type="button" class="btn btn-primary btn-sm">
                                         <img src="{{ asset('build/images/download-icon.svg') }}">
                                         &nbsp;
                                     ERDDAP
                                     </button>
+                                </div>
+                                <hr>
                             {% endif %}
                         {% endfor %}
-                    </div>
-                    <hr>
                     <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     <hr>
                     <p class="card-text text-dark">
