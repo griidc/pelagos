@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Search;
+namespace App\Search\Transformer;
 
 use FOS\ElasticaBundle\HybridResult;
 use FOS\ElasticaBundle\Transformer\ElasticaToModelTransformerInterface;

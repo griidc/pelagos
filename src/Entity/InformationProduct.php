@@ -28,6 +28,8 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="text")
      *
+     * @Serializer\Groups({"search"})
+     *
      * @Assert\NotBlank(
      *     message="A title is required."
      * )
@@ -40,6 +42,8 @@ class InformationProduct extends Entity
      * @var string
      *
      * @ORM\Column(type="text")
+     *
+     * @Serializer\Groups({"search"})
      *
      * @Assert\NotBlank(
      *     message="A creator is required."
@@ -54,6 +58,8 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="text")
      *
+     * @Serializer\Groups({"search"})
+     *
      * @Assert\NotBlank(
      *     message="A publisher is required."
      * )
@@ -67,6 +73,8 @@ class InformationProduct extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Groups({"search"})
      */
     private $externalDoi;
 
@@ -76,6 +84,8 @@ class InformationProduct extends Entity
      * @var boolean
      *
      * @ORM\Column(type="boolean")
+     *
+     * @Serializer\Groups({"search"})
      */
     private $published = false;
 
@@ -85,6 +95,8 @@ class InformationProduct extends Entity
      * @var boolean
      *
      * @ORM\Column(type="boolean")
+     *
+     * @Serializer\Groups({"search"})
      */
     private $remoteResource = false;
 
@@ -97,6 +109,7 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\SerializedName("researchGroup")
+     * @Serializer\Groups({"search"})
      */
     private $researchGroups;
 
@@ -514,5 +527,33 @@ class InformationProduct extends Entity
             $digitalResourceTypeDescriptorList[] = $digitalResourceTypeDescriptor->getId();
         }
         return $digitalResourceTypeDescriptorList;
+    }
+
+    /**
+     * Show friendly name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("friendlyName")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getFriendlyName(): string
+    {
+        return $this::FRIENDLY_NAME;
+    }
+
+    /**
+     * Show class name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("className")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return get_class($this);
     }
 }

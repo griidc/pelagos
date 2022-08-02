@@ -38,6 +38,8 @@ abstract class Entity
      * @ORM\Id
      * @ORM\GeneratedValue
      *
+     * @Serializer\Groups({"search"})
+     *
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,

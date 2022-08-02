@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Created by Exploit.cz <insekticid AT exploit.cz>
  */
 
-namespace App\Search;
+namespace App\Search\Elastica;
 
 use Elastica\Exception\InvalidException;
 use Elastica\Index;

@@ -74,7 +74,8 @@ class SearchResults
      *
      * @var object|iterable
      *
-     * @Serializer\SerializedName("informationProducts")
+     * @Serializer\SerializedName("results")
+     * @Serializer\Groups({"search"})
      */
     private $result;
 
@@ -152,6 +153,8 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
+        // dd($aggregations);
+
         // foreach ($this->searchOptions->getFacets() as $facet) {
         //     $this->facetInfo[$facet] = $this->getFacetInfo($facet, array_column(
         //         $this->findKey($aggregations, $facet)['buckets'],
@@ -166,21 +169,21 @@ class SearchResults
             'key'
         );
 
-        $productTypeDescriptorBucket = array_column(
-            $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        // $productTypeDescriptorBucket = array_column(
+        //     $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
+        //     'doc_count',
+        //     'key'
+        // );
 
-        $digitalResourceTypeDescriptorBucket = array_column(
-            $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        // $digitalResourceTypeDescriptorBucket = array_column(
+        //     $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
+        //     'doc_count',
+        //     'key'
+        // );
 
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
-        $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
-        $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+        // $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
+        // $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
     }
 
     private function getFacetInfo(string $facet, array $facetAgregation): ?array
