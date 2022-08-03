@@ -106,8 +106,6 @@ fos_elastica:
                                     properties:
                                         id:
                                             type: 'keyword'
-                hasErddap:
-                    type: 'boolean'
                 datasetSubmission:
                     type: 'nested'
                     include_in_parent: true
@@ -115,6 +113,8 @@ fos_elastica:
                         authors:
                             type: 'text'
                         themeKeywords:
+                            type: 'text'
+                        erddapUrl:
                             type: 'text'
                 availabilityStatus:
                     type: 'integer'

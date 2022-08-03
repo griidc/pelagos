@@ -894,25 +894,4 @@ class Dataset extends Entity
 
         return null;
     }
-
-     /**
-     * Return whether or not this dataset has at least one ERDDAP link.
-     *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("hasErddap")
-     *
-     * @return bool
-     */
-    public function hasErddap(): bool
-    {
-        $datasetSubmission = $this->getDatasetSubmission();
-        if ($this->getDatasetSubmission() instanceof DatasetSubmission) {
-            foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
-                if ($datasetLink->getName() === 'ERDDAP') {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
