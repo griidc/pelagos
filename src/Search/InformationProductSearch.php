@@ -64,16 +64,50 @@ class InformationProductSearch
         $boolQuery = new BoolQuery();
         $boolQuery->addMust($simpleQuery);
 
-        $this->addFilters($boolQuery, $searchOptions);
+//        $this->addFilters($boolQuery, $searchOptions);
 
         $query = new Query();
         $query->setQuery($boolQuery);
+
+        $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
 
         $this->addAggregators($query, $searchOptions);
 
         $resultsPaginator = $this->finder->findPaginated($query);
 
         return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
+    }
+
+    /**
+     * Added research group filter.
+     *
+     * @param SearchOptions $searchOptions
+     *
+     * @return BoolQuery
+     */
+    private function addResearchGroupFilter(SearchOptions $searchOptions): BoolQuery
+    {
+        $researchFilterBoolQuery = new Query\BoolQuery();
+
+        // Dataset Research Group Filter
+        $datasetResearchGrpNameQuery = new Query\Nested();
+        $datasetResearchGrpNameQuery->setPath('researchGroups');
+        $datasetResearchGrpQueryTerm = new Query\Terms('researchGroups.id');
+        $datasetResearchGrpQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
+        $datasetResearchGrpNameQuery->setQuery($datasetResearchGrpQueryTerm);
+        $datasetResearchGrpNameQuery->setParam('ignore_unmapped', true);
+        $researchFilterBoolQuery->addShould($datasetResearchGrpNameQuery);
+
+        // Information Product Research Group Filter
+        $researchGroupsNameQuery = new Query\Nested();
+        $researchGroupsNameQuery->setPath('researchGroup');
+        $researchGroupsQueryTerm = new Query\Terms('researchGroup.id');
+        $researchGroupsQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
+        $researchGroupsNameQuery->setQuery($researchGroupsQueryTerm);
+        $researchGroupsNameQuery->setParam('ignore_unmapped', true);
+        $researchFilterBoolQuery->addShould($researchGroupsNameQuery);
+
+        return $researchFilterBoolQuery;
     }
 
     /**
@@ -86,9 +120,9 @@ class InformationProductSearch
      */
     private function addFilters(BoolQuery $boolQuery, SearchOptions $searchOptions): void
     {
-        // $publishedQueryTerm = new Term();
-        // $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
-        // $boolQuery->addFilter($publishedQueryTerm);
+//         $publishedQueryTerm = new Term();
+//         $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
+//         $boolQuery->addFilter($publishedQueryTerm);
 
         $researchGroupNameQuery = new Query\Nested();
         $researchGroupNameQuery->setPath('researchGroup');
@@ -139,7 +173,7 @@ class InformationProductSearch
         //     $query->addAggregation($nestedAggregation);
         // }
 
-        $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'researchGroups');
+        $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'info_blah.researchGroups');
         $researchGroupAggregation = new AggregationTerms('research_group_aggregation');
         $researchGroupAggregation->setField('researchGroups.id');
         $researchGroupAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
@@ -152,7 +186,7 @@ class InformationProductSearch
 
         $query->addAggregation($researchGroupNestedAggregation);
 
-        $researchGroupNestedAggregationa = new AggregationNested('researchGroupAgg', 'researchGroup');
+        $researchGroupNestedAggregationa = new AggregationNested('researchGroupAgg', 'search_blah.researchGroup');
         $researchGroupsAggregation = new AggregationTerms('research_group_aggregation');
         $researchGroupsAggregation->setField('researchGroup.id');
         $researchGroupsAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
