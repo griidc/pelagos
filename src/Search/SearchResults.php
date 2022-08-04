@@ -162,12 +162,7 @@ class SearchResults
         //         'key'
         //     ));
         // }
-
-        $researchGroupBucket = array_column(
-            $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        $researchGroupBucket = $this->getResearchGroupBucket($aggregations);
 
         // $productTypeDescriptorBucket = array_column(
         //     $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
@@ -204,6 +199,32 @@ class SearchResults
     }
 
     /**
+     * Get combined research group aggregation values.
+     *
+     * @param $aggregations
+     *
+     * @return array
+     */
+    private function getResearchGroupBucket($aggregations): array
+    {
+        $datasetResearchGroupBucket = array_column(
+            $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
+            'doc_count',
+            'key'
+        );
+        $infoProductsResearchGroupBucket = array_column(
+            $this->findKey($aggregations, 'research_groups_aggregation')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        $researchGroupBucketKeys = array_merge(array_keys($datasetResearchGroupBucket), array_keys($infoProductsResearchGroupBucket));
+        $researchGroupBucketValues = array_merge(array_values($datasetResearchGroupBucket), array_values($infoProductsResearchGroupBucket));
+
+        return array_combine($researchGroupBucketKeys, $researchGroupBucketValues);
+    }
+
+    /**
      * Find the bucket name of the aggregation.
      *
      * @param array  $aggregations Array of aggregations.
@@ -220,7 +241,6 @@ class SearchResults
             new \RecursiveArrayIterator($aggregations),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-
         //loop over the iterator
         foreach ($iterator as $key => $value) {
             //if the key matches our search

@@ -69,8 +69,9 @@ class InformationProductSearch
         $query = new Query();
         $query->setQuery($boolQuery);
 
-        $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
-
+        if ($searchOptions->isResearchGroupFilterSet()) {
+            $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
+        }
         $this->addAggregators($query, $searchOptions);
 
         $resultsPaginator = $this->finder->findPaginated($query);
@@ -173,8 +174,8 @@ class InformationProductSearch
         //     $query->addAggregation($nestedAggregation);
         // }
 
-        $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'info_blah.researchGroups');
-        $researchGroupAggregation = new AggregationTerms('research_group_aggregation');
+        $researchGroupNestedAggregation = new AggregationNested('researchGroupsAgg', 'researchGroups');
+        $researchGroupAggregation = new AggregationTerms('research_groups_aggregation');
         $researchGroupAggregation->setField('researchGroups.id');
         $researchGroupAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregation->addAggregation($researchGroupAggregation);
@@ -186,7 +187,7 @@ class InformationProductSearch
 
         $query->addAggregation($researchGroupNestedAggregation);
 
-        $researchGroupNestedAggregationa = new AggregationNested('researchGroupAgg', 'search_blah.researchGroup');
+        $researchGroupNestedAggregationa = new AggregationNested('researchGroupAgg', 'researchGroup');
         $researchGroupsAggregation = new AggregationTerms('research_group_aggregation');
         $researchGroupsAggregation->setField('researchGroup.id');
         $researchGroupsAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
