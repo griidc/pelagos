@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b855061c8c9e32666935716f7481ece6",
+    "content-hash": "b2521d1b1f86bab3c135e5f43440cd03",
     "packages": [
         {
             "name": "brick/math",
@@ -2777,93 +2777,61 @@
             "time": "2022-06-20T21:43:11+00:00"
         },
         {
-            "name": "hylianshield/alphabet",
-            "version": "1.0.0",
+            "name": "hidehalo/nanoid-php",
+            "version": "1.1.12",
             "source": {
                 "type": "git",
-                "url": "https://github.com/HylianShield/alphabet.git",
-                "reference": "c7e9af6d67229236469ef1e5f1ff7b6849f98a35"
+                "url": "https://github.com/hidehalo/nanoid-php.git",
+                "reference": "3229400d7e69b127a9e4f8fdad2e498e64cdaae4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/HylianShield/alphabet/zipball/c7e9af6d67229236469ef1e5f1ff7b6849f98a35",
-                "reference": "c7e9af6d67229236469ef1e5f1ff7b6849f98a35",
+                "url": "https://api.github.com/repos/hidehalo/nanoid-php/zipball/3229400d7e69b127a9e4f8fdad2e498e64cdaae4",
+                "reference": "3229400d7e69b127a9e4f8fdad2e498e64cdaae4",
                 "shasum": ""
             },
             "require": {
-                "ext-spl": "^7.0",
-                "php": "^7.0"
+                "paragonie/random_compat": ">=2.0",
+                "php": "~5.6|~7.0|~8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7.5"
+                "phpunit/phpunit": ">=5.6",
+                "squizlabs/php_codesniffer": "^2.3"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "HylianShield\\Alphabet\\": "src"
+                    "Hidehalo\\Nanoid\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "Apache-2.0"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Jan-Marten de Boer",
-                    "email": "johmanx@hylianshield.org"
+                    "name": "hidehalo",
+                    "email": "tianchen_cc@yeah.net",
+                    "homepage": "https://github.com/hidehalo",
+                    "role": "Owner"
                 }
             ],
-            "description": "Library to support operations on a given alphabet",
+            "description": "A copy of nanoid in PHP",
+            "homepage": "https://github.com/hidehalo/nanoid-php",
+            "keywords": [
+                "hidehalo",
+                "nanoid-php"
+            ],
             "support": {
-                "issues": "https://github.com/HylianShield/alphabet/issues",
-                "source": "https://github.com/HylianShield/alphabet/tree/1.0.0"
+                "issues": "https://github.com/hidehalo/nanoid-php/issues",
+                "source": "https://github.com/hidehalo/nanoid-php/tree/1.1.12"
             },
-            "time": "2017-01-01T12:39:10+00:00"
-        },
-        {
-            "name": "hylianshield/base32-crockford",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/HylianShield/base32-crockford.git",
-                "reference": "d921520c23e9fc29452ddc6914201e5c89c543e9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/HylianShield/base32-crockford/zipball/d921520c23e9fc29452ddc6914201e5c89c543e9",
-                "reference": "d921520c23e9fc29452ddc6914201e5c89c543e9",
-                "shasum": ""
-            },
-            "require": {
-                "hylianshield/alphabet": "^1.0",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "hylianshield/validator-base-encoding": "^2.0.3",
-                "phpunit/phpunit": "^5.7.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "HylianShield\\Encoding\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Jan-Marten de Boer",
-                    "email": "johmanx@hylianshield.org"
-                }
-            ],
-            "description": "Implementation of Crockford's Base 32 encoder and decoder",
-            "support": {
-                "issues": "https://github.com/HylianShield/base32-crockford/issues",
-                "source": "https://github.com/HylianShield/base32-crockford/tree/1.0.1"
-            },
-            "time": "2017-01-28T21:12:24+00:00"
+            "time": "2021-12-30T07:27:43+00:00"
         },
         {
             "name": "jms/metadata",
