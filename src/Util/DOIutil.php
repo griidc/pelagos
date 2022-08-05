@@ -10,6 +10,7 @@ use HylianShield\Encoding\Base32CrockfordEncoder;
 use App\Entity\DOI;
 use App\Exception\HttpClientErrorException;
 use App\Exception\HttpServerErrorException;
+use App\Util\Base32Generator;
 
 /**
  * A utility to create and issue DOI from Datacite REST API.
@@ -45,6 +46,13 @@ class DOIutil
     private $url;
 
     /**
+     * Utility class that generates ID sequences.
+     *
+     * @var Base32Generator
+     */
+    private $base32GeneratorUtil;
+
+    /**
      * Datacite metadata attribute for relatedIdentifiers type of identifier.
      */
     const RELATED_IDENTIFIER_TYPE = 'DOI';
@@ -59,21 +67,24 @@ class DOIutil
      *
      * Sets the REST API username, password, and prefix.
      *
-     * @param string $doiApiUserName The API username.
-     * @param string $doiApiPassword The API password.
-     * @param string $doiApiPrefix   The API DOI prefix.
-     * @param string $doiApiUrl      The API URL.
+     * @param string          $doiApiUserName The API username.
+     * @param string          $doiApiPassword The API password.
+     * @param string          $doiApiPrefix   The API DOI prefix.
+     * @param string          $doiApiUrl      The API URL.
+     * @param Base32Generator $idGen          A Base32Generator instance to generate IDs with.
      */
     public function __construct(
         string $doiApiUserName,
         string $doiApiPassword,
         string $doiApiPrefix,
-        string $doiApiUrl
+        string $doiApiUrl,
+        Base32Generator $idGen,
     ) {
         $this->doiprefix = $doiApiPrefix;
         $this->doiusername = $doiApiUserName;
         $this->doipassword = $doiApiPassword;
         $this->url = $doiApiUrl;
+        $this->base32GeneratorUtil = $idGen;
     }
 
     /**
@@ -83,13 +94,8 @@ class DOIutil
      */
     public function generateDoi(): string
     {
-        $encoder = new Base32CrockfordEncoder();
-        // 1099511627775 encodes to the longest 8 character Crockford 32 string.
-        $max = 1099511627775;
-        // Start at 1 (0 is problematic as library does not produce checksum for 0.)
-        $random = random_int(1, $max);
-        // Add prefix and remove the checksum character.
-        return $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
+        $idString = $this->base32GeneratorUtil->generateId();
+        return $this->doiprefix . '/' . $idString;
     }
 
     /**
