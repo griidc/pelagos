@@ -142,11 +142,14 @@ class Search
         $perPage = $requestTerms['perPage'];
         $sortOrder = $requestTerms['sortOrder'];
         $collectionDateRange = array();
-        if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
-            $collectionDateRange = array(
-                'startDate' => $requestTerms['collectionStartDate'],
-                'endDate' => $requestTerms['collectionEndDate']
-            );
+        if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
+            $collectionDateRange = array();
+            if (!empty($requestTerms['collectionStartDate'])) {
+                $collectionDateRange['startDate'] = $requestTerms['collectionStartDate'];
+            }
+            if (!empty($requestTerms['collectionEndDate'])) {
+                $collectionDateRange['endDate'] = $requestTerms['collectionEndDate'];
+            }
         }
 
         $mainQuery = new Query();
@@ -961,8 +964,12 @@ class Search
         }
 
         if (!empty($collectionDateRange)) {
-            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
-            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            if (!empty($collectionDateRange['startDate'])) {
+                $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
+            }
+            if (!empty($collectionDateRange['endDate'])) {
+                $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            }
             $subMainQuery->addFilter($collectionDateBoolQuery);
         }
 
