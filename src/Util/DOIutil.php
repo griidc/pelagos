@@ -78,7 +78,7 @@ class DOIutil
         string $doiApiPassword,
         string $doiApiPrefix,
         string $doiApiUrl,
-        Base32Generator $idGen,
+        Base32Generator $idGen
     ) {
         $this->doiprefix = $doiApiPrefix;
         $this->doiusername = $doiApiUserName;
