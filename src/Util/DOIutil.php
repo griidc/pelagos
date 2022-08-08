@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
-use HylianShield\Encoding\Base32CrockfordEncoder;
 use App\Entity\DOI;
 use App\Exception\HttpClientErrorException;
 use App\Exception\HttpServerErrorException;
@@ -46,13 +45,6 @@ class DOIutil
     private $url;
 
     /**
-     * Utility class that generates ID sequences.
-     *
-     * @var Base32Generator
-     */
-    private $base32GeneratorUtil;
-
-    /**
      * Datacite metadata attribute for relatedIdentifiers type of identifier.
      */
     const RELATED_IDENTIFIER_TYPE = 'DOI';
@@ -67,24 +59,21 @@ class DOIutil
      *
      * Sets the REST API username, password, and prefix.
      *
-     * @param string          $doiApiUserName The API username.
-     * @param string          $doiApiPassword The API password.
-     * @param string          $doiApiPrefix   The API DOI prefix.
-     * @param string          $doiApiUrl      The API URL.
-     * @param Base32Generator $idGen          A Base32Generator instance to generate IDs with.
+     * @param string $doiApiUserName The API username.
+     * @param string $doiApiPassword The API password.
+     * @param string $doiApiPrefix   The API DOI prefix.
+     * @param string $doiApiUrl      The API URL.
      */
     public function __construct(
         string $doiApiUserName,
         string $doiApiPassword,
         string $doiApiPrefix,
-        string $doiApiUrl,
-        Base32Generator $idGen
+        string $doiApiUrl
     ) {
         $this->doiprefix = $doiApiPrefix;
         $this->doiusername = $doiApiUserName;
         $this->doipassword = $doiApiPassword;
         $this->url = $doiApiUrl;
-        $this->base32GeneratorUtil = $idGen;
     }
 
     /**
@@ -94,7 +83,7 @@ class DOIutil
      */
     public function generateDoi(): string
     {
-        $idString = $this->base32GeneratorUtil->generateId();
+        $idString = Base32Generator::generateId();
         return $this->doiprefix . '/' . $idString;
     }
 
