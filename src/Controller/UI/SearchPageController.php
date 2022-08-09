@@ -112,6 +112,7 @@ class SearchPageController extends AbstractController
             'page' => $request->get('page'),
             'field' => $request->get('field'),
             'perPage' => $request->get('perPage'),
+            'sortOrder' => $request->get('sortOrder'),
             'collectionStartDate' => $request->get('collectionStartDate'),
             'collectionEndDate' => $request->get('collectionEndDate'),
             'options' => array(

@@ -37,7 +37,7 @@ $yellow:  #ffc107;
 $green:   #28a745;
 $cyan:    #17a2b8;
 $iceBlue: #dcf3ff;
-    
+
 $white:    #fff;
 $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
@@ -64,10 +64,11 @@ $theme-colors: (
     "restricted":    $red,
     "remotlyhosted": $yellow,
     "coldstorage":   $iceBlue,
+    "erddap":        $orange,
     "chart-primary":   $teal,
     "chart-secondary":   $light-cyan,
     "chart-alternate":   $dark-green,
-    
+
 );
 
 $colors: (
