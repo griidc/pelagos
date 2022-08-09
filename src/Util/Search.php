@@ -140,12 +140,16 @@ class Search
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
         $perPage = $requestTerms['perPage'];
+        $sortOrder = $requestTerms['sortOrder'];
         $collectionDateRange = array();
-        if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
-            $collectionDateRange = array(
-                'startDate' => $requestTerms['collectionStartDate'],
-                'endDate' => $requestTerms['collectionEndDate']
-            );
+        if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
+            $collectionDateRange = array();
+            if (!empty($requestTerms['collectionStartDate'])) {
+                $collectionDateRange['startDate'] = $requestTerms['collectionStartDate'];
+            }
+            if (!empty($requestTerms['collectionEndDate'])) {
+                $collectionDateRange['endDate'] = $requestTerms['collectionEndDate'];
+            }
         }
 
         $mainQuery = new Query();
@@ -173,10 +177,11 @@ class Search
         $mainQuery->addAggregation($this->getProjectDirectorAggregationQuery());
         $mainQuery->setQuery($subMainQuery);
 
-        // Add sort when search terms are not present
-        if (empty($queryTerm)) {
-            $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => 'desc')));
+        // Add sort order
+        if ($sortOrder !== 'default') {
+            $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => $sortOrder)));
         }
+
         $mainQuery->setFrom(($page - 1) * 10);
         $mainQuery->setSize($perPage);
 
@@ -959,8 +964,12 @@ class Search
         }
 
         if (!empty($collectionDateRange)) {
-            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
-            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            if (!empty($collectionDateRange['startDate'])) {
+                $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
+            }
+            if (!empty($collectionDateRange['endDate'])) {
+                $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            }
             $subMainQuery->addFilter($collectionDateBoolQuery);
         }
 

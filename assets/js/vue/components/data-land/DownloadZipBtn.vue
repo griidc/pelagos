@@ -1,10 +1,9 @@
 <template>
     <div>
         <b-button size="sm" class="mb-2" @click="downloadBtn" variant="primary">
-            <b-icon icon="arrow-up-right" aria-hidden="true" v-if="datasetInfo.remotelyHosted">
-            </b-icon>
-            <b-icon icon="download" aria-hidden="true" v-else></b-icon>
-            {{ buttonTitle }}
+          <i class="fas fa-external-link-alt" v-if="datasetInfo.remotelyHosted"></i>
+          <i class="fas fa-download" v-else></i>
+          {{ buttonTitle }}
         </b-button>
         <DxPopup
             :title="buttonTitle"

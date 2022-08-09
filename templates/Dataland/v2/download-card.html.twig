@@ -33,6 +33,17 @@
                     Files
                 </div>
                 <div class="card-body">
+                        {% if dataset.datasetSubmission.erddapurl|default %}
+                            <div>
+                                <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
+                                <button type="button" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                ERDDAP
+                                </button>
+                                </a>
+                            </div>
+                            <hr>
+                        {% endif %}
                     <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     <hr>
                     <p class="card-text text-dark">
