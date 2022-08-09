@@ -1,5 +1,8 @@
 @import '~bootstrap/scss/functions';
 
+// Default Colors:
+$orange:  #fd7e14;
+
 // Brand Colors;
 $paleBlue:      #537abd;
 $ncis:          #2e384b;
@@ -36,6 +39,7 @@ $theme-colors: (
         "restricted":    $red,
         "remotlyhosted": $yellow,
         "coldstorage":   $iceBlue,
+        "erddap":        $orange,
         "chart-primary":   $ncis,
         "chart-secondary":   $brightYellow,
         "chart-alternate":   $ncis,
