@@ -16,7 +16,7 @@ class Base32GeneratorTest extends TestCase
     public function testGenerateId()
     {
         $this->assertMatchesRegularExpression(
-            '/[0123456789abcdefghijklmnopqrstuvwxyz]{' . Base32Generator::DEFAULTLENGTH . '}/',
+            '/['. Base32Generator::CROCKFORDALPHABET .']{' . Base32Generator::DEFAULTLENGTH . '}/',
             Base32Generator::generateId()
         );
     }
