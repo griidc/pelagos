@@ -6,10 +6,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
-use HylianShield\Encoding\Base32CrockfordEncoder;
 use App\Entity\DOI;
 use App\Exception\HttpClientErrorException;
 use App\Exception\HttpServerErrorException;
+use App\Util\Base32Generator;
 
 /**
  * A utility to create and issue DOI from Datacite REST API.
@@ -83,13 +83,8 @@ class DOIutil
      */
     public function generateDoi(): string
     {
-        $encoder = new Base32CrockfordEncoder();
-        // 1099511627775 encodes to the longest 8 character Crockford 32 string.
-        $max = 1099511627775;
-        // Start at 1 (0 is problematic as library does not produce checksum for 0.)
-        $random = random_int(1, $max);
-        // Add prefix and remove the checksum character.
-        return $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
+        $idString = Base32Generator::generateId();
+        return $this->doiprefix . '/' . $idString;
     }
 
     /**
