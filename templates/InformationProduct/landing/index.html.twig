@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block title %} Information Product {{ informationProduct.id }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="bootstrap">
+        <div class="container">
+            <div class="main pb-5">
+                <div class="title w-75 float-left px-3">
+                    <div class="pt-3">
+                        {% include 'InformationProduct/landing/descriptor-badge.html.twig' %}
+                        <h2> {{ informationProduct.title }} </h2>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between py-2">
+                        <div>
+                            <div>
+                                <strong>Creators:</strong> {{ informationProduct.creators|default }}
+                            </div>
+                            <div>
+                                <strong>Publisher: </strong> {{ informationProduct.publisher|default }}
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                {% if informationProduct.externalDoi %}
+                                <div>
+                                    <strong>DOI:</strong> {{ informationProduct.externalDoi|default }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="sidebar w-25 float-right px-3">
+                    {% include 'InformationProduct/landing/detail-cards.html.twig' %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

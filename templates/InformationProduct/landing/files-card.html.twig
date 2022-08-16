@@ -1,0 +1,20 @@
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+            Files
+        </div>
+        <div class="card-body">
+            {% if informationProduct.remoteUri|default %}
+                <div>
+                    <a href="{{ informationProduct.remoteUri }}" target="_blank">
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="fas fa-external-link-alt"></i>
+                            Remote Link:
+                        </button>
+                    </a>
+                </div>
+                <hr>
+            {% endif %}
+        </div>
+    </div>
+</div>
