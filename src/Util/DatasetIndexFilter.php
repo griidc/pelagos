@@ -20,6 +20,6 @@ class DatasetIndexFilter
      */
     public static function indexable(Dataset $dataset): bool
     {
-        return (FundingOrgFilter::canIndex($dataset) and (true === $dataset->hasDatasetSubmission() or (true === $dataset->hasDif() and $dataset->getDif()->getStatus() === DIF::STATUS_APPROVED)));
+        return (FundingOrgFilter::canIndex($dataset) and ($dataset->hasDatasetSubmission() === true or ($dataset->hasDif() === true and $dataset->getDif()->getStatus() === DIF::STATUS_APPROVED)));
     }
 }
