@@ -19,7 +19,7 @@ class SearchOptions
      *
      * @var boolean
      */
-    private $onlyPublishedInformationProducts = true;
+    private $onlyPublishedInformationProducts = false;
 
     /**
      * The current page of results.
@@ -33,7 +33,7 @@ class SearchOptions
      *
      * @var integer $maxPerPage
      */
-    private $maxPerPage = 1000;
+    private $maxPerPage = 10;
 
     /**
      * Research Group Filter.
@@ -55,6 +55,13 @@ class SearchOptions
      * @var array
      */
     private $digitalTypeDescFilter;
+
+    /**
+     * List of facets.
+     *
+     * @var array
+     */
+    private $facets;
 
     /**
      * Class Contructor.
@@ -276,5 +283,29 @@ class SearchOptions
     public function isDigitalTypeDescFilterSet(): bool
     {
         return isset($this->digitalTypeDescFilter);
+    }
+
+    /**
+     * Set a list of facets to use.
+     *
+     * @param array $facets
+     *
+     * @return self
+     */
+    public function setFacets(array $facets): self
+    {
+        $this->facets = $facets;
+
+        return $this;
+    }
+
+    /**
+     * Get the list of facets.
+     *
+     * @return array
+     */
+    public function getFacets(): array
+    {
+        return $this->facets;
     }
 }

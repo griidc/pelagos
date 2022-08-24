@@ -74,7 +74,8 @@ class SearchResults
      *
      * @var object|iterable
      *
-     * @Serializer\SerializedName("informationProducts")
+     * @Serializer\SerializedName("results")
+     * @Serializer\Groups({"search"})
      */
     private $result;
 
@@ -152,27 +153,75 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
-        $researchGroupBucket = array_column(
+        // dd($aggregations);
+
+        // foreach ($this->searchOptions->getFacets() as $facet) {
+        //     $this->facetInfo[$facet] = $this->getFacetInfo($facet, array_column(
+        //         $this->findKey($aggregations, $facet)['buckets'],
+        //         'doc_count',
+        //         'key'
+        //     ));
+        // }
+        $researchGroupBucket = $this->getResearchGroupBucket($aggregations);
+
+        // $productTypeDescriptorBucket = array_column(
+        //     $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
+        //     'doc_count',
+        //     'key'
+        // );
+
+        // $digitalResourceTypeDescriptorBucket = array_column(
+        //     $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
+        //     'doc_count',
+        //     'key'
+        // );
+
+        $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
+        // $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
+        // $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+    }
+
+    private function getFacetInfo(string $facet, array $facetAgregation): ?array
+    {
+        switch ($facet) {
+            case 'researchGroup':
+                return $this->researchGroupRepository->getResearchGroupsInfo($facetAgregation);
+                break;
+            case 'digitalResourceTypeDescriptors':
+                return $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($facetAgregation);
+                break;
+            case 'productTypeDescriptors':
+                return $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($facetAgregation);
+                break;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Get combined research group aggregation values.
+     *
+     * @param $aggregations
+     *
+     * @return array
+     */
+    private function getResearchGroupBucket($aggregations): array
+    {
+        $datasetResearchGroupBucket = array_column(
             $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
             'doc_count',
             'key'
         );
-
-        $productTypeDescriptorBucket = array_column(
-            $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
+        $infoProductsResearchGroupBucket = array_column(
+            $this->findKey($aggregations, 'research_groups_aggregation')['buckets'],
             'doc_count',
             'key'
         );
 
-        $digitalResourceTypeDescriptorBucket = array_column(
-            $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        $researchGroupBucketKeys = array_merge(array_keys($datasetResearchGroupBucket), array_keys($infoProductsResearchGroupBucket));
+        $researchGroupBucketValues = array_merge(array_values($datasetResearchGroupBucket), array_values($infoProductsResearchGroupBucket));
 
-        $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
-        $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
-        $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+        return array_combine($researchGroupBucketKeys, $researchGroupBucketValues);
     }
 
     /**
@@ -192,7 +241,6 @@ class SearchResults
             new \RecursiveArrayIterator($aggregations),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-
         //loop over the iterator
         foreach ($iterator as $key => $value) {
             //if the key matches our search

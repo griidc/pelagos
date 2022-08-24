@@ -39,14 +39,16 @@ class JsonSerializer
      * Serialize an Object into JSON.
      *
      * @param object $object An object to be serialized.
+     * @param array  $groups The serializer groups to use.
      *
      * @return self
      */
-    public function serialize(object $object): self
+    public function serialize(object $object, array $groups = null): self
     {
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
         $context->setSerializeNull(true);
+        $context->setGroups($groups);
 
         $this->json = $this->serializer->serialize($object, 'json', $context);
 
