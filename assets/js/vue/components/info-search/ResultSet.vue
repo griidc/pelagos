@@ -1,5 +1,5 @@
 <template>
-  <div v-if="results.informationProducts.length > 0">
+  <div v-if="results.results.length > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
@@ -18,8 +18,8 @@
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
-          <InformationProductCard v-for="informationProduct in results.informationProducts"
-                                  :key="informationProduct.id" v-show="informationProduct.published"
+          <InformationProductCard v-for="informationProduct in results.results"
+                                  :key="informationProduct.id"
                                   :informationProduct="informationProduct"/>
         </main>
       </div>
@@ -49,14 +49,7 @@ export default {
   },
   computed: {
     resultCount() {
-      let resultCount = 0;
-      const informationProducts = this.results.informationProducts ?? [];
-      informationProducts.forEach((informationProduct) => {
-        if (informationProduct.published) {
-          resultCount += 1;
-        }
-      });
-      return resultCount;
+      return this.results.count;
     },
   },
   data() {
