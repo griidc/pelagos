@@ -53,6 +53,9 @@ class InformationProductSearchController extends AbstractController
                 'researchGroup' => array(
                     'search',
                 ),
+                'researchGroups' => array(
+                    'search',
+                ),
             ),
         );
 
