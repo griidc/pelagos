@@ -1,0 +1,8 @@
+<div>
+    {% for productTypeDescriptor in informationProduct.productTypeDescriptors %}
+        <span class="badge badge-available mr-1">{{ productTypeDescriptor.description }}</span>
+    {% endfor %}
+    {% for digitalResourceTypeDescriptor in informationProduct.digitalResourceTypeDescriptors %}
+        <span class="badge badge-submitted mr-1">{{ digitalResourceTypeDescriptor.description }}</span>
+    {% endfor %}
+</div>
