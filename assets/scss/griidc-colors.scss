@@ -37,7 +37,7 @@ $yellow:  #ffc107;
 $green:   #28a745;
 $cyan:    #17a2b8;
 $iceBlue: #dcf3ff;
-    
+
 $white:    #fff;
 $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
@@ -64,22 +64,23 @@ $theme-colors: (
     "restricted":    $red,
     "remotlyhosted": $yellow,
     "coldstorage":   $iceBlue,
+    "erddap":        $orange,
     "chart-primary":   $teal,
     "chart-secondary":   $light-cyan,
     "chart-alternate":   $dark-green,
-    
+
 );
 
 $colors: (
-    blue:      $blue,
-    indigo:    $indigo,
-    red:       $red,
-    yellow:    $yellow,
-    green:     $green,
-    black:     $black,
-    white:     $white,
-    gray:      $gray-600,
-    gray-dark: $gray-800
+    "blue":      $blue,
+    "indigo":    $indigo,
+    "red":       $red,
+    "yellow":    $yellow,
+    "green":     $green,
+    "black":     $black,
+    "white":     $white,
+    "gray":      $gray-600,
+    "gray-dark": $gray-800
 );
 
 $grays: (

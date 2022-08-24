@@ -1,5 +1,8 @@
 @import '~bootstrap/scss/functions';
 
+// Default Colors:
+$orange:  #fd7e14;
+
 // Brand Colors;
 $boston:   #3a85b3;
 $blueBird: #043751;
@@ -41,22 +44,23 @@ $theme-colors: (
     "restricted":    $red,
     "remotlyhosted": $yellow,
     "coldstorage":   $iceBlue,
+    "erddap":        $orange,
     "chart-primary":   $blueBird,
     "chart-secondary":   $boston,
     "chart-alternate":   $blueBird,
 );
 
 $colors: (
-    blue:      $boston,
-    indigo:    $blueBird,
-    red:       $garnet,
-    tan:       $tan,
-    yellow:    $gold,
-    green:     $forest,
-    black:     $black,
-    white:     $white,
-    gray:      $gray-600,
-    gray-dark: $gray-800
+    "blue":      $boston,
+    "indigo":    $blueBird,
+    "red":       $garnet,
+    "tan":       $tan,
+    "yellow":    $gold,
+    "green":     $forest,
+    "black":     $black,
+    "white":     $white,
+    "gray":      $gray-600,
+    "gray-dark": $gray-800
 );
 
 $grays: (
