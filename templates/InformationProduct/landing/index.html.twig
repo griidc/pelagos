@@ -3,6 +3,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('info-prod-landing') }}
 {% endblock stylesheets %}
 
 {% block body %}
@@ -20,6 +21,7 @@
                             <div>
                                 <strong>Creators:</strong> {{ informationProduct.creators|default }}
                             </div>
+                            <hr>
                             <div>
                                 <strong>Publisher: </strong> {{ informationProduct.publisher|default }}
                             </div>
@@ -41,7 +43,7 @@
                 </div>
                 <div class="other-metadata w-75 float-left px-3">
                     <div class="py-2">
-                        <h6><strong>Project Information:</strong></h6>
+                        <h6><strong>Related Projects:</strong></h6>
                         {% for researchGroup in informationProduct.researchGroups %}
                             <p class="pre-line-white-space">
                                 <a href="{{ path('pelagos_app_ui_researchgroup_about', {id: researchGroup.id}) }}" target="_blank">{{ researchGroup.name }}</a>
@@ -57,4 +59,5 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('info-prod-landing') }}
 {% endblock %}
