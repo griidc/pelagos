@@ -6,8 +6,8 @@ use App\Repository\InformationProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Information Product Entity class.
@@ -118,6 +118,8 @@ class InformationProduct extends Entity
      *
      * @var string
      *
+     * @Serializer\Groups({"search"})
+     *
      * @ORM\Column(type="text", nullable=true)
      */
     private $remoteUri;
@@ -128,6 +130,7 @@ class InformationProduct extends Entity
      * @var File
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
      */
@@ -139,6 +142,7 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\ManyToMany(targetEntity=ProductTypeDescriptor::class)
      */
@@ -150,6 +154,7 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\ManyToMany(targetEntity=DigitalResourceTypeDescriptor::class)
      */

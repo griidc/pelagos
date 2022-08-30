@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * File Entity class.
@@ -51,6 +52,8 @@ class File extends Entity
      *
      * @var string
      *
+     * @Serializer\Groups({"search"})
+     *
      * @ORM\Column(type="text", nullable=true)
      */
     protected $filePathName;
@@ -59,6 +62,8 @@ class File extends Entity
      * File size(bytes).
      *
      * @var integer
+     *
+     * @Serializer\Groups({"search"})
      *
      * @ORM\Column(type="bigint", nullable=true)
      */
@@ -115,6 +120,8 @@ class File extends Entity
      * @var string
      *
      * @see FILE_* constants.
+     *
+     * @Serializer\Groups({"search"})
      *
      * @ORM\Column(type="text")
      */

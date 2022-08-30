@@ -18,8 +18,8 @@ class MultiSearchController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('information_product_search/index.html.twig', [
-            'controller_name' => 'InformationProductSearchController',
+        return $this->render('MultiSearch/index.html.twig', [
+            'controller_name' => 'MultiSearchController',
         ]);
     }
 
@@ -28,19 +28,15 @@ class MultiSearchController extends AbstractController
      *
      * @return Response
      */
-    public function searchForInformationProduct(Request $request, MultiSearch $multiSearch, JsonSerializer $jsonSerializer): Response
+    public function search(Request $request, MultiSearch $multiSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
-        $researchGroupFilter = $request->query->get('researchGroups');
-        $productTypeDescFilter = $request->query->get('productTypeDesc');
-        $digitalTypeDescFilter = $request->query->get('digitalTypeDesc');
+        $researchGroupFilter = $request->query->get('researchGroup');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
-        $searchOptions->setProductTypeDescFilter($productTypeDescFilter);
-        $searchOptions->setDigitalTypeDescFilter($digitalTypeDescFilter);
 
         $searchOptions->setFacets(array('researchGroup'));
 
@@ -55,6 +51,15 @@ class MultiSearchController extends AbstractController
                     'search',
                 ),
                 'researchGroups' => array(
+                    'search',
+                ),
+                'digitalResourceTypeDescriptors' => array(
+                    'search',
+                ),
+                'productTypeDescriptors' => array(
+                    'search',
+                ),
+                'file' => array(
                     'search',
                 ),
             ),
