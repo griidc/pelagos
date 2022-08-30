@@ -42,7 +42,12 @@ import templateSwitch from '@/vue/utils/template-switch';
 
 export default {
   name: 'ResultSet',
-  components: { NoResults, InformationProductCard, Facet, DatasetRow },
+  components: {
+    NoResults,
+    InformationProductCard,
+    Facet,
+    DatasetRow,
+  },
   props: {
     results: {
       type: Object,
