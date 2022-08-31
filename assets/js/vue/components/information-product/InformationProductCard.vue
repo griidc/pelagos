@@ -33,10 +33,10 @@
           </a> ({{ humanSize(informationProduct.file.fileSize) }})
         </div>
         <div v-if="informationProduct.remoteUri">
-          Remote Link:
-          <a :href="informationProduct.remoteUri" target="_BLANK">
-            {{ informationProduct.remoteUri }}
-          </a>
+          <b-button size="sm" class="mb-2" @click="openRemoteUrl()" variant="primary">
+            <i class="fas fa-external-link-alt"></i>
+             External Link
+          </b-button>
         </div>
       </div>
     </b-card-text>
@@ -61,6 +61,14 @@ export default {
           // eslint-disable-next-line no-undef
           `${Routing.generate('pelagos_app_ui_info_product_landing',
             { id: this.informationProduct.id })}`, '_blank',
+        );
+      }
+    },
+    openRemoteUrl() {
+      if (window.getSelection().toString() === '') {
+        window.open(
+          // eslint-disable-next-line no-undef
+          `${this.informationProduct.remoteUri}`, '_blank',
         );
       }
     },
