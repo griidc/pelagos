@@ -1,5 +1,5 @@
 <template>
-  <b-card class="card-product">
+  <b-card class="card-product" @click="infoProdUrl()">
     <div>
         <span class="badge badge-available mr-1"
               v-for="productType in informationProduct.productTypeDescriptors"
@@ -16,10 +16,10 @@
     <b-card-text class="d-flex justify-content-between" >
       <div v-if="Object.keys(informationProduct).length > 0">
         <div v-if="informationProduct.creators" style="max-width: 550px">
-          Creators: {{ informationProduct.creators }}
+          Creators: {{ informationProduct.creators | truncate(100) }}
         </div>
         <div v-if="informationProduct.publisher">
-          Publisher: {{ informationProduct.publisher }}
+          Publisher: {{ informationProduct.publisher | truncate(100) }}
         </div>
       </div>
       <div>
@@ -54,6 +54,15 @@ export default {
   methods: {
     humanSize(fileSize) {
       return xbytes(fileSize);
+    },
+    infoProdUrl() {
+      if (window.getSelection().toString() === '') {
+        window.open(
+          // eslint-disable-next-line no-undef
+          `${Routing.generate('pelagos_app_ui_info_product_landing',
+            { id: this.informationProduct.id })}`, '_blank',
+        );
+      }
     },
   },
   data() {
