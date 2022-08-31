@@ -10,8 +10,8 @@ const templateVariables = {
     showProjectDirector: false,
     showFundingOrgFacet: true,
     researchAwardOption: 'Research Award',
-    digitalTypeDesc: 'Digital Resource Type Descriptor',
-    productTypeDesc: 'Product Type Descriptor',
+    digitalTypeDesc: 'Resource Type',
+    productTypeDesc: 'Product Type',
   },
   GRP: {
     name: 'GRP',
@@ -24,8 +24,8 @@ const templateVariables = {
     showFundingOrgFacet: false,
     researchAwardOption: 'Grant Award',
     cardHeadingText: 'View Project Overview By',
-    digitalTypeDesc: 'Digital Resource Type Descriptor',
-    productTypeDesc: 'Product Type Descriptor',
+    digitalTypeDesc: 'Resource Type',
+    productTypeDesc: 'Product Type',
   },
   HRI: {
     name: 'HRI',
@@ -37,8 +37,8 @@ const templateVariables = {
     showProjectDirector: false,
     showFundingOrgFacet: false,
     researchAwardOption: 'Research Award',
-    digitalTypeDesc: 'Digital Resource Type Descriptor',
-    productTypeDesc: 'Product Type Descriptor',
+    digitalTypeDesc: 'Resource Type',
+    productTypeDesc: 'Product Type',
   },
 };
 

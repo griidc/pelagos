@@ -1,6 +1,7 @@
 <template>
   <div ref="formContainer" class="bg">
     <div class="container">
+      <h2 class="text-center">Information Product Search</h2>
       <section class="section-content pt-2">
         <div class="search-form">
           <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit"
@@ -42,24 +43,28 @@
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/info-search/ResultSet';
 
+function initialFormValues() {
+  return {
+    queryString: '',
+    researchGroup: '',
+    productTypeDesc: '',
+    digitalTypeDesc: '',
+  };
+}
+
 export default {
   name: 'InformationProductSearchApp',
   components: { ResultSet },
   data() {
     return {
-      form: {
-        queryString: '',
-        researchGroup: '',
-        productTypeDesc: '',
-        digitalTypeDesc: '',
-      },
+      form: initialFormValues(),
       results: Object,
       showResults: false,
     };
   },
   methods: {
     init() {
-      this.form.queryString = '';
+      this.form = initialFormValues();
       this.onSubmit();
     },
     onSubmit() {
