@@ -96,7 +96,7 @@ function createNodesXML($xml, $doc, $validated)
             if ($elements->length > 0) {
                 $node = $elements->item(0);
                 $parent = $node->parentNode;
-                $val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+                $val = htmlspecialchars($val, ENT_QUOTES | ENT_XML1, 'UTF-8');
 
                 #here then!
                 if ($parent->nodeName == 'gmd:deliveryPoint') {
@@ -108,7 +108,7 @@ function createNodesXML($xml, $doc, $validated)
                     $cdata = $doc->createCDATASection($val);
                     $node = $node->appendChild($cdata);
                 } else {
-                    //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+                    //$val = htmlspecialchars($val, ENT_QUOTES | ENT_XML1, 'UTF-8');
                     $node->nodeValue = $val;
                 }
 
@@ -138,7 +138,7 @@ function createNodesXML($xml, $doc, $validated)
                             $xpathdocsub = new DOMXpath($doc);
                             $subelements = $xpathdocsub->query($xpath);
                             $node = $subelements->item(0);
-                            //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+                            //$val = htmlspecialchars($val, ENT_QUOTES | ENT_XML1, 'UTF-8');
                             //$node->nodeValue = $val;
                             $parent = $node->parentNode;
                             $parentname = $parent->nodeName;
@@ -231,7 +231,7 @@ function createNodesXML($xml, $doc, $validated)
                             $cdata = $doc->createCDATASection($val);
                             $node = $node->appendChild($cdata);
                         } else {
-                            //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+                            //$val = htmlspecialchars($val, ENT_QUOTES | ENT_XML1, 'UTF-8');
                             $node->nodeValue = $val;
                         }
                     }
@@ -310,7 +310,7 @@ function createNodesXML($xml, $doc, $validated)
 function addXMLChildValue($doc, $parent, $fieldname, $fieldvalue)
 {
     echo "Doing $fieldname";
-    $escfieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+    $escfieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | ENT_XML1, 'UTF-8');
     $child = $doc->createElement($fieldname);
     $child = $parent->appendChild($child);
     $value = $doc->createTextNode($escfieldvalue);
@@ -456,7 +456,7 @@ function addNodeAttributes($doc, $parent, $node, $fieldname, $fieldvalue = null)
             $node = $doc->createElement('gmd:polygon');
             $node = $parent->appendChild($node);
 
-            $fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | 'ENT_XML1');
+            $fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | ENT_XML1);
 
             #Don't do this is there is no GML, or it will fail.
             if ($fieldvalue != '') {
