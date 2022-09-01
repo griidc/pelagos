@@ -1,11 +1,10 @@
 {% extends "base.html.twig" %}
 {% block title %}MULTI-Search{% endblock %}
 
-{%block stylesheets %}
+{% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('multi-search-app') }}
-
-{%endblock stylesheets  %}
+{% endblock stylesheets %}
 
 {% block body %}
     <div id="multi-search-app"></div>

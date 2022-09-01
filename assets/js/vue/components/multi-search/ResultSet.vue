@@ -3,7 +3,7 @@
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
-          Found {{ resultCount }} results
+          Found {{ results.count }} results
         </h5>
       </div>
     </section>
@@ -15,14 +15,14 @@
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
-          <div v-for="thing in results.results" :key="thing.id">
-            <InformationProductCard v-if="thing.friendlyName == 'Information Product'"
-                                   :key="thing.id"
-                                   :informationProduct="thing"/>
+          <div v-for="resultItem in results.results" :key="resultItem.id">
+            <InformationProductCard v-if="resultItem.friendlyName == 'Information Product'"
+                                   :key="resultItem.id"
+                                   :informationProduct="resultItem"/>
 
-            <DatasetRow v-if="thing.friendlyName == 'Dataset'"
-                      :key="thing.udi"
-                      :datasetRowData="thing"/>
+            <DatasetRow v-if="resultItem.friendlyName == 'Dataset'"
+                      :key="resultItem.udi"
+                      :datasetRowData="resultItem"/>
           </div>
         </main>
       </div>
@@ -54,11 +54,6 @@ export default {
     },
     formValues: {
       type: Object,
-    },
-  },
-  computed: {
-    resultCount() {
-      return this.results.count;
     },
   },
   data() {

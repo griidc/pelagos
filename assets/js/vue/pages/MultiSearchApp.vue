@@ -81,11 +81,6 @@ export default {
       this.onSubmit();
     },
   },
-  computed: {
-    resultCount() {
-      return this.results.count;
-    },
-  },
   mounted() {
     this.init();
   },
