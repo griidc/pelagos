@@ -5,6 +5,8 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import VTooltip from 'v-tooltip';
 import ResearchGroupApp from './vue/ResearchGroupApp.vue';
 import filters from './vue/utils/filters';
+import '../css/search-ui.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 window.addEventListener('load', () => {
   Vue.use(BootstrapVue);
