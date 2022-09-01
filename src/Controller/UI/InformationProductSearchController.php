@@ -40,6 +40,8 @@ class InformationProductSearchController extends AbstractController
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
         $searchOptions->setProductTypeDescFilter($productTypeDescFilter);
         $searchOptions->setDigitalTypeDescFilter($digitalTypeDescFilter);
+        $searchOptions->onlyPublishedInformationProducts(true);
+        $searchOptions->setMaxPerPage(1000);
 
         $searchResults = $informationProductSearch->search($searchOptions);
         return $jsonSerializer->serialize($searchResults)->createJsonResponse();

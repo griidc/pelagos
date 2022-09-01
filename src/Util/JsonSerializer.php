@@ -48,7 +48,9 @@ class JsonSerializer
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
         $context->setSerializeNull(true);
-        $context->setGroups($groups);
+        if (!empty($groups)) {
+            $context->setGroups($groups);
+        }
 
         $this->json = $this->serializer->serialize($object, 'json', $context);
 

@@ -40,7 +40,7 @@ class SearchResults
      *
      * @var integer
      *
-     * @Serializer\SerializedName("result")
+     * @Serializer\SerializedName("count")
      */
     private $numberOfResults;
 
@@ -153,32 +153,29 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
-        // dd($aggregations);
+        $productTypeDescriptorAggregations = $this->findKey($aggregations, 'product_type_aggregation');
+        if (array_key_exists('buckets', $productTypeDescriptorAggregations)) {
+            $productTypeDescriptorBucket = array_column(
+                $productTypeDescriptorAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+        }
 
-        // foreach ($this->searchOptions->getFacets() as $facet) {
-        //     $this->facetInfo[$facet] = $this->getFacetInfo($facet, array_column(
-        //         $this->findKey($aggregations, $facet)['buckets'],
-        //         'doc_count',
-        //         'key'
-        //     ));
-        // }
+        $digitalResourceTypeDescriptorAggregations = $this->findKey($aggregations, 'digital_resource_aggregation');
+        if (array_key_exists('buckets', $digitalResourceTypeDescriptorAggregations)) {
+            $digitalResourceTypeDescriptorBucket = array_column(
+                $digitalResourceTypeDescriptorAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
+        }
+
         $researchGroupBucket = $this->getResearchGroupBucket($aggregations);
 
-        // $productTypeDescriptorBucket = array_column(
-        //     $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
-        //     'doc_count',
-        //     'key'
-        // );
-
-        // $digitalResourceTypeDescriptorBucket = array_column(
-        //     $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
-        //     'doc_count',
-        //     'key'
-        // );
-
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
-        // $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
-        // $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
     }
 
     private function getFacetInfo(string $facet, array $facetAgregation): ?array
@@ -207,16 +204,25 @@ class SearchResults
      */
     private function getResearchGroupBucket($aggregations): array
     {
-        $datasetResearchGroupBucket = array_column(
-            $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
-        $infoProductsResearchGroupBucket = array_column(
-            $this->findKey($aggregations, 'research_groups_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        $datasetResearchGroupBucket = [];
+        $datasetResearchGroupAggregations = $this->findKey($aggregations, 'research_group_aggregation');
+        if (array_key_exists('buckets', $datasetResearchGroupAggregations)) {
+            $datasetResearchGroupBucket = array_column(
+                $datasetResearchGroupAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+        }
+
+        $infoProductsResearchGroupBucket = [];
+        $infoProductsResearchGroupAggregations = $this->findKey($aggregations, 'research_groups_aggregation');
+        if (array_key_exists('buckets', $infoProductsResearchGroupAggregations)) {
+            $infoProductsResearchGroupBucket = array_column(
+                $infoProductsResearchGroupAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+        }
 
         $researchGroupBucketKeys = array_merge(array_keys($datasetResearchGroupBucket), array_keys($infoProductsResearchGroupBucket));
         $researchGroupBucketValues = array_merge(array_values($datasetResearchGroupBucket), array_values($infoProductsResearchGroupBucket));
