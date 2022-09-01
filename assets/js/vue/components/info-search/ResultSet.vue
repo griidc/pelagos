@@ -1,9 +1,9 @@
 <template>
-  <div v-if="results.results.length > 0">
+  <div v-if="results.count > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
-          Found {{ resultCount }} results
+          Found {{ results.count }} results
         </h5>
       </div>
     </section>
@@ -45,11 +45,6 @@ export default {
     },
     formValues: {
       type: Object,
-    },
-  },
-  computed: {
-    resultCount() {
-      return this.results.count;
     },
   },
   data() {
