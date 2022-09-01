@@ -1,0 +1,34 @@
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+
+        </div>
+        <div class="card-body">
+            {% if informationProduct.remoteUri|default %}
+                <div>
+                    <a href="{{ informationProduct.remoteUri }}" target="_blank">
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="fas fa-external-link-alt"></i>
+                            Remote Link
+                        </button>
+                    </a>
+                </div>
+            {% endif %}
+            {% if informationProduct.file %}
+                <div>
+                    <p class="card-text text-dark">
+                        <strong>File name: </strong><br>
+                        <a href="{{ path('pelagos_api_ip_file_download', {id: informationProduct.id}) }}">
+                            {{ informationProduct.file.filePathName|default }}
+                        </a>
+                    </p>
+                    <hr>
+                    <p class="card-text text-dark">
+                        <strong>File size: </strong><br>
+                        {{ informationProduct.file.fileSize|default(0)|formatBytes }}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
