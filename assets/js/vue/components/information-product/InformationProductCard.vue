@@ -32,7 +32,7 @@
             {{ informationProduct.file.filePathName }}
           </a> ({{ humanSize(informationProduct.file.fileSize) }})
         </div>
-        <div v-if="informationProduct.remoteUri">
+        <div v-if="informationProduct.remoteUri" class="float-right">
           <b-button size="sm" class="mb-2" @click="openRemoteUrl()" variant="primary">
             <i class="fas fa-external-link-alt"></i>
              External Link
