@@ -3,6 +3,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('info-prod-landing') }}
 {% endblock stylesheets %}
 
 {% block body %}
@@ -20,9 +21,6 @@
                             <div>
                                 <strong>Creators:</strong> {{ informationProduct.creators|default }}
                             </div>
-                            <div>
-                                <strong>Publisher: </strong> {{ informationProduct.publisher|default }}
-                            </div>
                         </div>
                         <div>
                             <div>
@@ -35,13 +33,21 @@
                         </div>
                     </div>
                     <hr>
+                    <div class="d-flex justify-content-between py-2">
+                        <div>
+                            <div>
+                                <strong>Publisher: </strong> {{ informationProduct.publisher|default }}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
                 </div>
                 <div class="sidebar w-25 float-right px-3">
                     {% include 'InformationProduct/landing/detail-cards.html.twig' %}
                 </div>
                 <div class="other-metadata w-75 float-left px-3">
                     <div class="py-2">
-                        <h6><strong>Project Information:</strong></h6>
+                        <h6><strong>Related Projects:</strong></h6>
                         {% for researchGroup in informationProduct.researchGroups %}
                             <p class="pre-line-white-space">
                                 <a href="{{ path('pelagos_app_ui_researchgroup_about', {id: researchGroup.id}) }}" target="_blank">{{ researchGroup.name }}</a>
@@ -57,4 +63,5 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('info-prod-landing') }}
 {% endblock %}
