@@ -1893,6 +1893,9 @@ class DatasetSubmission extends Entity
     /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
      *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("coldStorage")
+     *
      * @return boolean
      */
     public function isDatasetFileInColdStorage()

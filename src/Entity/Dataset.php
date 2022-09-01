@@ -93,6 +93,7 @@ class Dataset extends Entity
      * @var DOI
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
@@ -126,7 +127,8 @@ class Dataset extends Entity
      *
      * @var DatasetSubmission
      *
-     * @Serializer\MaxDepth(0)
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\OneToOne(targetEntity="DatasetSubmission")
      */
@@ -149,6 +151,8 @@ class Dataset extends Entity
      * Accepted Date Timestamp for Dataset.
      *
      * @var \DateTime $acceptedDate;
+     *
+     * @Serializer\Groups({"search"})
      *
      * @ORM\Column(type="datetimetz", nullable=true)
      */
@@ -193,6 +197,8 @@ class Dataset extends Entity
      * @var integer
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
+     *
+     * @Serializer\Groups({"search"})
      *
      * @ORM\Column(type="smallint")
      */

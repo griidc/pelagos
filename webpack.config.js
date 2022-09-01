@@ -45,6 +45,7 @@ Encore
   .addEntry('information-product-list', './assets/js/entry/information-product-list.js')
   .addEntry('ip-search-app', './assets/js/entry/ip-search.js')
   .addEntry('info-prod-landing', './assets/js/entry/info-prod-landing.js')
+  .addEntry('multi-search-app', './assets/js/entry/multi-search.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()

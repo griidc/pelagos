@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+{% block title %}MULTI-Search{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('multi-search-app') }}
+{% endblock stylesheets %}
+
+{% block body %}
+    <div id="multi-search-app"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('multi-search-app') }}
+{% endblock %}
