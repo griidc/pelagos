@@ -5,18 +5,10 @@ export default {
     return (split ? `${split[0]}...` : text);
   },
   sort(valuePath, array) {
-    const path = valuePath.split('.');
-
-    const getValue = (obj) => {
-      path.forEach(() => {
-        // eslint-disable-next-line no-param-reassign
-        obj = obj[path];
-      });
-      return obj;
-    };
+    const getValue = (obj) => obj.valuePath;
     return array.sort((a, b) => {
-      const nameA = getValue(a).toUpperCase();
-      const nameB = getValue(b).toUpperCase();
+      const nameA = getValue(a)?.toUpperCase();
+      const nameB = getValue(b)?.toUpperCase();
       if (nameA < nameB) {
         return -1;
       }

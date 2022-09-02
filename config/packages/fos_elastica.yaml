@@ -73,7 +73,7 @@ fos_elastica:
         search_pelagos:
             client: default
             index_name: "%env(SEARCH_TOOL_INDEX)%"
-            indexable_callback: ['\App\Util\FundingOrgFilter', 'canIndex']
+            indexable_callback: ['\App\Util\DatasetIndexFilter', 'indexable']
             persistence:
                 driver: orm
                 model: App\Entity\Dataset
