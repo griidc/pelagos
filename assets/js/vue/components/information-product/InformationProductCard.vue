@@ -27,12 +27,10 @@
           DOI:{{ informationProduct.externalDoi }}
         </div>
         <div v-if="informationProduct.file && informationProduct.file.status === 'done'">
-          File:
           {{ informationProduct.file.fileExtension }}
           ({{ humanSize(informationProduct.file.fileSize) }})
         </div>
         <div v-if="informationProduct.remoteUri" class="float-right">
-          External Link:
           {{ informationProduct.remoteUriHostName }}
         </div>
       </div>

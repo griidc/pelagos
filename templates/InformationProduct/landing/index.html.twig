@@ -4,12 +4,6 @@
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('info-prod-landing') }}
-
-    <style>
-        .tooltip-inner {
-            max-width: 100% !important;
-        }
-    </style>
 {% endblock stylesheets %}
 
 {% block body %}
@@ -70,10 +64,4 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('info-prod-landing') }}
-
-    <script>
-      $(function () {
-          $('[data-toggle="tooltip"]').tooltip();
-      })
-    </script>
 {% endblock %}
