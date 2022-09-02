@@ -28,15 +28,12 @@
         </div>
         <div v-if="informationProduct.file && informationProduct.file.status === 'done'">
           File:
-          <a :href="`${downloadUrl}/${informationProduct.id}`">
-            {{ informationProduct.file.filePathName }}
-          </a> ({{ humanSize(informationProduct.file.fileSize) }})
+          {{ informationProduct.file.fileExtension }}
+          ({{ humanSize(informationProduct.file.fileSize) }})
         </div>
         <div v-if="informationProduct.remoteUri" class="float-right">
-          <b-button size="sm" class="mb-2" @click="openRemoteUrl()" variant="primary">
-            <i class="fas fa-external-link-alt"></i>
-             External Link
-          </b-button>
+          External Link:
+          {{ informationProduct.remoteUriHostName }}
         </div>
       </div>
     </b-card-text>

@@ -7,9 +7,14 @@
             {% if informationProduct.remoteUri|default %}
                 <div>
                     <a href="{{ informationProduct.remoteUri }}" target="_blank">
-                        <button type="button" class="btn btn-primary btn-sm">
+                        <button
+                            type="button"
+                            class="btn btn-primary btn-sm"
+                            data-toggle="tooltip"
+                            data-placement="left"
+                            title="{{ informationProduct.remoteUri }}">
                             <i class="fas fa-external-link-alt"></i>
-                            Remote Link
+                            External Link
                         </button>
                     </a>
                 </div>

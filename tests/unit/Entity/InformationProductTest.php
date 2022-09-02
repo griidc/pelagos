@@ -139,4 +139,17 @@ class InformationProductTest extends TestCase
         $this->assertSame($testFile, $this->infoProduct->getFile());
 
     }
+
+    /**
+     * Tests the remoteUri field.
+     *
+     * @return void
+     */
+    public function testGetRemoteUriHostName()
+    {
+        $testUri = 'https://test.blah/stuff';
+        $this->infoProduct->setRemoteUri($testUri);
+        $remoteUriHost = $this->infoProduct->getRemoteUriHostName();
+        $this->assertSame($remoteUriHost, 'test.blah');
+    }
 }
