@@ -168,4 +168,21 @@ class FileTest extends TestCase
             $this->file->getUploadedBy()
         );
     }
+
+    /**
+     * Test the file extension getter.
+     *
+     * This method should return the Extension of the file.
+     *
+     * @return void
+     */
+    public function testCanGetFileExtension()
+    {
+        $mockFileName = 'testfile.ext';
+        $this->file->setFilePathName($mockFileName);
+        $this->assertEquals(
+            'ext',
+            $this->file->getFileExtension()
+        );
+    }
 }
