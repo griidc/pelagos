@@ -115,4 +115,24 @@ class InformationProductController extends AbstractController
             array('researchGroups' => $researchGroupList, 'productTypeDescriptors' => $productTypeDescriptors)
         );
     }
+
+
+    /**
+     * Landing page for information product.
+     *
+     * @Route("/infoprod/{id}", name="pelagos_app_ui_info_product_landing", requirements={"id"="\d+"})
+     *
+     * @param InformationProduct $informationProduct
+     *
+     * @return Response
+     */
+    public function infoProductLanding(InformationProduct $informationProduct): Response
+    {
+        return $this->render(
+            'InformationProduct/landing/index.html.twig',
+            array(
+                'informationProduct' => $informationProduct,
+            )
+        );
+    }
 }
