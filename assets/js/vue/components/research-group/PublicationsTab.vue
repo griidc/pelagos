@@ -19,9 +19,9 @@ export default {
       const publicationId = [];
       this.datasets.forEach((dataset) => {
         dataset.datasetPublications.forEach((publication) => {
-          if (!publicationId.includes(publication.id)) {
-            publications.push(publication);
-            publicationId.push(publication.id);
+          if (!publicationId.includes(publication.publication.id)) {
+            publications.push(publication.publication);
+            publicationId.push(publication.publication.id);
           }
         });
       });
