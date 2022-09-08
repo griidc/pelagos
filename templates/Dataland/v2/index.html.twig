@@ -69,12 +69,14 @@
                         </div>
                         <hr>
                     {% endif %}
+                    {% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
                     <div class="py-2">
                         <h6><strong>Suggested Citation:</strong></h6>
                         <p>
                             {{ dataset.citation }}
                         </p>
                     </div>
+                    {% endif %}
                     <hr>
                     <div class="py-2">
                         <h6><strong>Purpose:</strong></h6>
