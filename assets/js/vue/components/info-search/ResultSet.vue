@@ -8,6 +8,15 @@
       </div>
     </section>
     <section class="section-content pb-2">
+      <div class="row d-flex flex-row justify-content-center page-controls">
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="resultCount"
+            :per-page="formValues.perPage"
+            class="justify-content-center pr-3 mr-3">
+        </b-pagination>
+      </div>
+
       <div class="row">
         <aside class="col-lg-3">
           <div class="card card-filter">
@@ -22,6 +31,14 @@
                                   :key="informationProduct.id" v-show="informationProduct.published"
                                   :informationProduct="informationProduct"/>
         </main>
+      </div>
+      <div class="row d-flex flex-row justify-content-center page-controls">
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="resultCount"
+            :per-page="formValues.perPage"
+            class="justify-content-center pr-3 mr-3">
+        </b-pagination>
       </div>
     </section>
   </div>
@@ -76,6 +93,7 @@ export default {
         },
       },
       showResults: false,
+      currentPage: 1,
     };
   },
   mounted() {
@@ -83,9 +101,35 @@ export default {
       this.showResults = true;
     }
   },
+  watch: {
+    currentPage(value) {
+      this.$emit('pagination', value);
+    },
+  }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.col-lg-3 {
+  padding-right: 7px !important;
+}
 
+.col-lg-9 {
+  padding-left: 7px !important;
+}
+
+@media (max-width: 1092px) {
+  .col-lg-3 {
+    padding-right: 15px !important;
+  }
+
+  .col-lg-9 {
+    padding-left: 15px !important;
+    margin-top: 10px;
+  }
+
+  .page-controls.d-flex.flex-row {
+    flex-direction: column !important;
+  }
+}
 </style>
