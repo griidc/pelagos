@@ -24,13 +24,25 @@ class SearchPageController extends AbstractController
     protected $logActionItemEventDispatcher;
 
     /**
+     * Subsite name, based on custom template.
+     *
+     * @var string
+     */
+    protected $subSite;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action item event dispatcher.
      */
-    public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher, ?string $customTemplate)
     {
         $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
+        if (empty($customTemplate)) {
+            $this->subSite = 'GRIIDC';
+        } else {
+            $this->subSite = $customTemplate;
+        }
     }
 
     /**
@@ -176,7 +188,8 @@ class SearchPageController extends AbstractController
                     'clientInfo' => $clientInfo,
                     'searchQueryParams' => $searchQueryParams,
                     'numResults' => $numOfResults,
-                    'elasticScoreFirstResult' => $elasticScoreFirstResult
+                    'elasticScoreFirstResult' => $elasticScoreFirstResult,
+                    'site' => $this->subSite
                 )
             ),
             'search_terms_log'
