@@ -8,13 +8,21 @@
       </div>
     </section>
     <section class="section-content pb-2">
-      <div class="row d-flex flex-row justify-content-center page-controls">
+      <div class="row d-flex flex-row justify-content-between mb-2">
+        <div class="empty-div"></div>
         <b-pagination
             v-model="currentPage"
             :total-rows="results.result"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
+        <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+            <label for="perPageResults" class="pr-2">Per Page: </label>
+            <b-form-select
+                    name="perPageResults"
+                    v-model="perPage"
+                    :options="perPageOptions"></b-form-select>
+        </div>
       </div>
 
       <div class="row">
@@ -32,13 +40,21 @@
                                   :informationProduct="informationProduct"/>
         </main>
       </div>
-      <div class="row d-flex flex-row justify-content-center page-controls">
+      <div class="row d-flex flex-row justify-content-between mb-2">
+        <div class="empty-div"></div>
         <b-pagination
             v-model="currentPage"
             :total-rows="results.result"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
+        <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+            <label for="perPageResults" class="pr-2">Per Page: </label>
+            <b-form-select
+                    name="perPageResults"
+                    v-model="perPage"
+                    :options="perPageOptions"></b-form-select>
+        </div>
       </div>
     </section>
   </div>
@@ -82,6 +98,13 @@ export default {
       },
       showResults: false,
       currentPage: 1,
+      perPage: this.formValues.perPage,
+      perPageOptions: [
+        { value: 10, text: '10' },
+        { value: 25, text: '25' },
+        { value: 50, text: '50' },
+        { value: 100, text: '100' },
+      ],
     };
   },
   mounted() {
@@ -93,7 +116,10 @@ export default {
     currentPage(value) {
       this.$emit('pagination', value);
     },
-  }
+    perPage(value) {
+      this.$emit('noOfResults', value);
+    },
+  },
 };
 </script>
 
