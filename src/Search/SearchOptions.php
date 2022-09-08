@@ -33,7 +33,7 @@ class SearchOptions
      *
      * @var integer $maxPerPage
      */
-    private $maxPerPage = 1000;
+    private $maxPerPage = 10;
 
     /**
      * Research Group Filter.

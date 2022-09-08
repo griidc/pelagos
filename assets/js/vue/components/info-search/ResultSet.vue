@@ -1,9 +1,9 @@
 <template>
-  <div v-if="results.informationProducts.length > 0">
+  <div v-if="results.result > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
-          Found {{ resultCount }} results
+          Found {{ results.result }} results
         </h5>
       </div>
     </section>
@@ -11,7 +11,7 @@
       <div class="row d-flex flex-row justify-content-center page-controls">
         <b-pagination
             v-model="currentPage"
-            :total-rows="resultCount"
+            :total-rows="results.result"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
@@ -35,7 +35,7 @@
       <div class="row d-flex flex-row justify-content-center page-controls">
         <b-pagination
             v-model="currentPage"
-            :total-rows="resultCount"
+            :total-rows="results.result"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
@@ -62,18 +62,6 @@ export default {
     },
     formValues: {
       type: Object,
-    },
-  },
-  computed: {
-    resultCount() {
-      let resultCount = 0;
-      const informationProducts = this.results.informationProducts ?? [];
-      informationProducts.forEach((informationProduct) => {
-        if (informationProduct.published) {
-          resultCount += 1;
-        }
-      });
-      return resultCount;
     },
   },
   data() {
