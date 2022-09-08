@@ -488,12 +488,12 @@ class ResearchGroupController extends EntityController
     }
 
     /**
-     * Undocumented function
+     * Gets the research group data as JSON for the Research Group Landing Page.
      *
      * @Route("/api/research-group/{id}", name="pelagos_api_research_group")
      *
-     * @param ResearchGroup $researchGroup
-     * @param SerializerInterface $serializer
+     * @param ResearchGroup  $researchGroup  The research group for this request.
+     * @param JsonSerializer $jsonSerializer The Pelagos JSON serializer.
      *
      * @return Response
      */
