@@ -189,7 +189,7 @@ class SearchPageController extends AbstractController
                     'searchQueryParams' => $searchQueryParams,
                     'numResults' => $numOfResults,
                     'elasticScoreFirstResult' => $elasticScoreFirstResult,
-                    'site' => $this->subSite
+                    'subSite' => $this->subSite
                 )
             ),
             'search_terms_log'
