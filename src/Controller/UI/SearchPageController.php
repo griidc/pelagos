@@ -39,9 +39,14 @@ class SearchPageController extends AbstractController
     {
         $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
         if (empty($customTemplate)) {
+            // If custom template is not set, subSite is 'GRIIDC'.
             $this->subSite = 'GRIIDC';
+        } elseif ($customTemplate == 'nas-grp-base.html.twig') {
+            $this->subSite = 'GRP';
+        } elseif ($customTemplate == 'hri-base.html.twig') {
+            $this->subSite = 'HRI';
         } else {
-            $this->subSite = $customTemplate;
+            $this->subSite = 'UNKNOWN';
         }
     }
 
