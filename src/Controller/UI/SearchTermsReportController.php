@@ -227,7 +227,7 @@ class SearchTermsReportController extends ReportController
             }
 
             if (empty($result['payLoad']['subSite'])) {
-                $result['payLoad']['subSite'] = 'HISTORICAL AGGREGATE';
+                $result['payLoad']['subSite'] = 'GRIIDC*';
             }
 
             $dataArray[] = array_merge(
