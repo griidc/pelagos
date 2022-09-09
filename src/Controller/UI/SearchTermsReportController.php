@@ -186,7 +186,7 @@ class SearchTermsReportController extends ReportController
     {
         //prepare labels
         $labels = array('labels' => array(
-            'SESSION ID', 'TIMESTAMP', 'SEARCH TERMS', 'SPECIFIC FIELD TYPE', 'NUMBER OF RESULTS',
+            'SESSION ID', 'SEARCH APPLICATION', 'TIMESTAMP', 'SEARCH TERMS', 'SPECIFIC FIELD TYPE', 'NUMBER OF RESULTS',
             'AGGREGATIONS',
             'START DATE',
             'END DATE',
@@ -226,10 +226,15 @@ class SearchTermsReportController extends ReportController
                 $searchResults['1stScore'] = $result['payLoad']['elasticScoreFirstResult'] ?? '';
             }
 
+            if (empty($result['payLoad']['subSite'])) {
+                $result['payLoad']['subSite'] = 'HISTORICAL AGGREGATE';
+            }
+
             $dataArray[] = array_merge(
                 array
                 (
                     'sessionID' => $result['payLoad']['clientInfo']['sessionId'],
+                    'subSite' => $result['payLoad']['subSite'],
                     'timeStamp' => $result['creationTimeStamp']->format(parent::INREPORT_TIMESTAMPFORMAT),
                     'searchTerms' => $result['payLoad']['searchQueryParams']['inputFormTerms']['searchTerms'],
                     'specificFieldType' => $result['payLoad']['searchQueryParams']['inputFormTerms']['specificFieldType'],
