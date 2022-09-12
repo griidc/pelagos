@@ -33,7 +33,7 @@ class SearchOptions
      *
      * @var integer $maxPerPage
      */
-    private $maxPerPage = 1000;
+    private $maxPerPage = 10;
 
     /**
      * Research Group Filter.
@@ -151,10 +151,10 @@ class SearchOptions
      *
      * @return self
      */
-    public function setMaxPerPage(int $maxPerPage): self
+    public function setMaxPerPage(?int $maxPerPage): self
     {
-        if ($maxPerPage <= 0) {
-            throw new \OutOfRangeException("Max per Page has to be a number greater than 0");
+        if (empty($maxPerPage) or $maxPerPage <= 0) {
+            return $this;
         }
 
         $this->maxPerPage = $maxPerPage;

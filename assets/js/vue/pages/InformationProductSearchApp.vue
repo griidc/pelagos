@@ -33,6 +33,8 @@
           v-if="showResults"
           :results="results"
           @facetClicked="facetCheckBoxValues"
+          @pagination="changePageNo"
+          @noOfResults="changeNoOfResults"
           :formValues="form"/>
     </div>
   </div>
@@ -49,6 +51,8 @@ function initialFormValues() {
     researchGroup: '',
     productTypeDesc: '',
     digitalTypeDesc: '',
+    page: 1,
+    perPage: 10,
   };
 }
 
@@ -85,6 +89,14 @@ export default {
       const facetArray = value.split('=');
       // eslint-disable-next-line prefer-destructuring
       this.form[facetArray[0]] = facetArray[1];
+      this.onSubmit();
+    },
+    changePageNo(newPageNo) {
+      this.form.page = newPageNo;
+      this.onSubmit();
+    },
+    changeNoOfResults(noOfResults) {
+      this.form.perPage = noOfResults;
       this.onSubmit();
     },
   },

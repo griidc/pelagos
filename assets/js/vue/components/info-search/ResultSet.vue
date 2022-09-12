@@ -1,13 +1,30 @@
 <template>
-  <div v-if="results.informationProducts.length > 0">
+  <div v-if="results.result > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
-          Found {{ resultCount }} results
+          Found {{ results.result }} results
         </h5>
       </div>
     </section>
     <section class="section-content pb-2">
+      <div class="row d-flex flex-row justify-content-between mb-2">
+        <div class="empty-div"></div>
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="results.result"
+            :per-page="formValues.perPage"
+            class="justify-content-center pr-3 mr-3">
+        </b-pagination>
+        <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+            <label for="perPageResults" class="pr-2">Per Page: </label>
+            <b-form-select
+                    name="perPageResults"
+                    v-model="perPage"
+                    :options="perPageOptions"></b-form-select>
+        </div>
+      </div>
+
       <div class="row">
         <aside class="col-lg-3">
           <div class="card card-filter">
@@ -22,6 +39,22 @@
                                   :key="informationProduct.id" v-show="informationProduct.published"
                                   :informationProduct="informationProduct"/>
         </main>
+      </div>
+      <div class="row d-flex flex-row justify-content-between mb-2">
+        <div class="empty-div"></div>
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="results.result"
+            :per-page="formValues.perPage"
+            class="justify-content-center pr-3 mr-3">
+        </b-pagination>
+        <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+            <label for="perPageResults" class="pr-2">Per Page: </label>
+            <b-form-select
+                    name="perPageResults"
+                    v-model="perPage"
+                    :options="perPageOptions"></b-form-select>
+        </div>
       </div>
     </section>
   </div>
@@ -47,18 +80,6 @@ export default {
       type: Object,
     },
   },
-  computed: {
-    resultCount() {
-      let resultCount = 0;
-      const informationProducts = this.results.informationProducts ?? [];
-      informationProducts.forEach((informationProduct) => {
-        if (informationProduct.published) {
-          resultCount += 1;
-        }
-      });
-      return resultCount;
-    },
-  },
   data() {
     return {
       facetLabels: {
@@ -76,6 +97,14 @@ export default {
         },
       },
       showResults: false,
+      currentPage: 1,
+      perPage: this.formValues.perPage,
+      perPageOptions: [
+        { value: 10, text: '10' },
+        { value: 25, text: '25' },
+        { value: 50, text: '50' },
+        { value: 100, text: '100' },
+      ],
     };
   },
   mounted() {
@@ -83,9 +112,38 @@ export default {
       this.showResults = true;
     }
   },
+  watch: {
+    currentPage(value) {
+      this.$emit('pagination', value);
+    },
+    perPage(value) {
+      this.$emit('noOfResults', value);
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.col-lg-3 {
+  padding-right: 7px !important;
+}
 
+.col-lg-9 {
+  padding-left: 7px !important;
+}
+
+@media (max-width: 1092px) {
+  .col-lg-3 {
+    padding-right: 15px !important;
+  }
+
+  .col-lg-9 {
+    padding-left: 15px !important;
+    margin-top: 10px;
+  }
+
+  .page-controls.d-flex.flex-row {
+    flex-direction: column !important;
+  }
+}
 </style>
