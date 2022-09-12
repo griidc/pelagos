@@ -69,7 +69,7 @@
                         </div>
                         <hr>
                     {% endif %}
-                    {% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_SUBMITTED') %}
+                    {% if dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
                     <div class="py-2">
                         <h6><strong>Suggested Citation:</strong></h6>
                         <p>
