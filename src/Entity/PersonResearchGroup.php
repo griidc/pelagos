@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Entity class to represent a Person to Research Group Association.
@@ -60,6 +61,9 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
+     * @Serializer\Groups({"person"})
+     * @Serializer\MaxDepth(2)
+     *
      * @ORM\ManyToOne(targetEntity="Person", inversedBy="personResearchGroups")
      *
      * @Assert\NotBlank(
@@ -98,6 +102,8 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      * Label for this association.
      *
      * @var string
+     *
+     * @Serializer\Groups({"person"})
      *
      * @ORM\Column(type="text")
      *

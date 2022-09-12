@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * This Entity contains a link between Publications and Datasets.
@@ -17,6 +18,8 @@ class DatasetPublication extends Entity
      * A Pelagos Publication entity.
      *
      * @var Publication
+     *
+     * @Serializer\Groups({"publications"})
      *
      * @ORM\ManyToOne(targetEntity="Publication", inversedBy="datasetPublications")
      */
