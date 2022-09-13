@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+{% block title %}Information Product Search{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('ip-search-app') }}
+
+{%endblock stylesheets  %}
+
+{% block body %}
+    <div id="ip-search-app"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ip-search-app') }}
+{% endblock %}

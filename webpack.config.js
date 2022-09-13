@@ -43,14 +43,15 @@ Encore
   .addEntry('hri-app', './assets/js/main/hri-app.js')
   .addEntry('information-product', './assets/js/entry/information-product.js')
   .addEntry('information-product-list', './assets/js/entry/information-product-list.js')
+  .addEntry('ip-search-app', './assets/js/entry/ip-search.js')
   .addEntry('info-prod-landing', './assets/js/entry/info-prod-landing.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
   .enablePostCssLoader()
 
-  // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-  // .enableStimulusBridge('./assets/controllers.json')
+// enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+// .enableStimulusBridge('./assets/controllers.json')
 
   // will require an extra script tag for runtime.js
   // but, you probably want this, unless you're building a single-page app
@@ -80,7 +81,7 @@ Encore
 
   .configureBabel((config) => {
     config.plugins.push('@babel/plugin-proposal-class-properties');
-})
+  })
 
   // enables @babel/preset-env polyfills
   .configureBabelPresetEnv((config) => {
@@ -88,15 +89,15 @@ Encore
     config.corejs = 3;
   })
 
-  // uncomment if you use TypeScript
-  //.enableTypeScriptLoader()
+// uncomment if you use TypeScript
+// .enableTypeScriptLoader()
 
-  // uncomment if you use React
-  //.enableReactPreset()
+// uncomment if you use React
+// .enableReactPreset()
 
-  // uncomment to get integrity="..." attributes on your script & link tags
-  // requires WebpackEncoreBundle 1.4 or higher
-  //.enableIntegrityHashes(Encore.isProduction())
+// uncomment to get integrity="..." attributes on your script & link tags
+// requires WebpackEncoreBundle 1.4 or higher
+// .enableIntegrityHashes(Encore.isProduction())
 
 // uncomment if you're having problems with a jQuery plugin
   .autoProvidejQuery()
