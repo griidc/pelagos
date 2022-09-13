@@ -34,6 +34,8 @@ abstract class Entity
      *
      * @var integer $id
      *
+     * @Serializer\Groups({"id"})
+     *
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * DOI Entity class.
@@ -35,6 +36,8 @@ class DOI extends Entity
      * The DOI identifier.
      *
      * @var string
+     *
+     * @Serializer\Groups({"doi"})
      *
      * @ORM\Column(type="text", nullable=false)
      */

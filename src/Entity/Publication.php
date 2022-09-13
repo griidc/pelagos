@@ -34,6 +34,8 @@ class Publication extends Entity
      *
      * @var $citationText string
      *
+     * @Serializer\Groups({"citation"})
+     *
      * @ORM\Column(type="citext")
      */
     private $citationText;

@@ -460,6 +460,8 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
+     * @Serializer\Groups({"authors"})
+     *
      * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
@@ -616,6 +618,8 @@ class DatasetSubmission extends Entity
      * Legacy DB column: dataset_download_size
      *
      * @var integer
+     *
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="bigint", nullable=true)
      */
@@ -858,6 +862,8 @@ class DatasetSubmission extends Entity
      * The name of the format the data is distributed in.
      *
      * @var string
+     *
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -1892,6 +1898,10 @@ class DatasetSubmission extends Entity
 
     /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
+     *
+     * @Serializer\Groups({"coldStorage"})
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("coldStorage")
      *
      * @return boolean
      */

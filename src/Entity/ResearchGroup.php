@@ -77,6 +77,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @Serializer\Groups({"overview"})
+     *
      * @ORM\Column(type="citext", options={"collation":"POSIX"})
      *
      * @Assert\NotBlank(
@@ -119,6 +121,7 @@ class ResearchGroup extends Entity
      * )
      *
      * @Serializer\MaxDepth(2)
+     * @Serializer\Groups({"overview"})
      */
     protected $fundingCycle;
 
@@ -234,6 +237,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @Serializer\Groups({"overview"})
+     *
      * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
@@ -260,6 +265,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     *
      * @ORM\Column(type="citext", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
@@ -280,7 +286,7 @@ class ResearchGroup extends Entity
      *
      * @ORM\OneToMany(targetEntity="PersonResearchGroup", mappedBy="researchGroup")
      *
-     * @Serializer\MaxDepth(2)
+     * @Serializer\Groups({"overview"})
      */
     protected $personResearchGroups;
 
@@ -293,7 +299,7 @@ class ResearchGroup extends Entity
      *
      * @ORM\OrderBy({"udi" = "ASC"})
      *
-     * @Serializer\Exclude
+     * @Serializer\Groups({"overview"})
      */
     protected $datasets;
 
@@ -303,6 +309,8 @@ class ResearchGroup extends Entity
      * @var boolean $locked
      *
      * @access public
+     *
+     * @Serializer\Groups({"data"})
      *
      * @Assert\NotNull(
      *     message="Please select Yes or No"
@@ -835,6 +843,9 @@ class ResearchGroup extends Entity
 
     /**
      * Returns a collection of project directors (Person entity).
+     *
+     * @Serializer\Groups({"overview"})
+     * @Serializer\VirtualProperty
      *
      * @return Collection
      */
