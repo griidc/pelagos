@@ -6,7 +6,7 @@
                 <span class="badge badge-restricted" v-else-if="datasetRowData.availabilityStatus === 5 || datasetRowData.availabilityStatus === 8">Restricted</span>
                 <span class="badge badge-available" v-else-if="datasetRowData.availabilityStatus === 7 || datasetRowData.availabilityStatus === 10">Available</span>
                 <span class="badge badge-remotlyhosted" v-if="datasetRowData.availabilityStatus === 7">Remotely Hosted</span>
-                <span class="badge badge-coldstorage" v-if="datasetRowData.coldStorage">Cold Storage</span>
+                <span class="badge badge-coldstorage" v-if="coldStorage()">Cold Storage</span>
                 <span class="badge badge-erddap" v-if="datasetRowData.datasetSubmission && datasetRowData.datasetSubmission.erddapUrl">ERDDAP</span>
             </div>
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
@@ -18,8 +18,8 @@
                     <div v-if="datasetRowData.acceptedDate">
                         Published on {{ datasetRowData.acceptedDate }}
                     </div>
-                    <div v-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileFormat">
-                        File Format: {{ datasetRowData.fileFormat }}
+                    <div v-if="datasetRowData.availabilityStatus !== 7 && fileFormat()">
+                        File Format: {{ fileFormat() }}
                     </div>
                 </div>
                 <div>
@@ -29,8 +29,8 @@
                     <div>
                         UDI: {{ datasetRowData.udi }}
                     </div>
-                    <div v-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileSize">
-                        File Size: {{ datasetRowData.fileSize }}
+                    <div v-if="datasetRowData.availabilityStatus !== 7 && fileSize()">
+                        File Size: {{ fileSize() }}
                     </div>
                 </div>
             </b-card-text>
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import xbytes from 'xbytes';
+
 export default {
   name: 'DatasetRow',
   props: {
@@ -55,6 +57,24 @@ export default {
       if (window.getSelection().toString() === '') {
         window.open(`/data/${this.datasetRowData.udi}`, '_blank');
       }
+    },
+    fileFormat() {
+      if (this.datasetRowData.datasetSubmission) {
+        return this.datasetRowData.fileFormat ?? this.datasetRowData.datasetSubmission.distributionFormatName;
+      }
+      return this.datasetRowData.fileFormat ?? null;
+    },
+    fileSize() {
+      if (this.datasetRowData.datasetSubmission) {
+        return this.datasetRowData.fileSize ?? xbytes(this.datasetRowData.datasetSubmission.datasetFileSize);
+      }
+      return this.datasetRowData.fileSize ?? null;
+    },
+    coldStorage() {
+      if (this.datasetRowData.datasetSubmission) {
+        return this.datasetRowData.coldStorage ?? this.datasetRowData.datasetSubmission.coldStorage;
+      }
+      return this.datasetRowData.coldStorage ?? false;
     },
   },
 };

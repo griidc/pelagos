@@ -70,6 +70,8 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
+     * @Serializer\Groups({"organization"})
+     *
      * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
@@ -144,6 +146,8 @@ class FundingCycle extends Entity
      * @var FundingOrganization
      *
      * @access protected
+     *
+     * @Serializer\Groups({"organization"})
      *
      * @ORM\ManyToOne(targetEntity="FundingOrganization", inversedBy="fundingCycles")
      *

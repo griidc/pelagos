@@ -61,6 +61,8 @@ class Dataset extends Entity
      *
      * @var string
      *
+     * @Serializer\Groups({"card"})
+     *
      * @ORM\Column(type="text", nullable=true)
      */
     protected $udi;
@@ -69,6 +71,8 @@ class Dataset extends Entity
      * The title for this Dataset.
      *
      * @var string
+     *
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -87,6 +91,8 @@ class Dataset extends Entity
      * The DOI for this Dataset.
      *
      * @var DOI
+     *
+     * @Serializer\Groups({"card"})
      *
      * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
@@ -115,6 +121,8 @@ class Dataset extends Entity
      *
      * @var DatasetSubmission
      *
+     * @Serializer\Groups({"card"})
+     *
      * @ORM\OneToOne(targetEntity="DatasetSubmission")
      */
     protected $datasetSubmission;
@@ -134,6 +142,8 @@ class Dataset extends Entity
      * Accepted Date Timestamp for Dataset.
      *
      * @var \DateTime $acceptedDate;
+     *
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="datetimetz", nullable=true)
      */
@@ -179,6 +189,8 @@ class Dataset extends Entity
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
      *
+     * @Serializer\Groups({"card"})
+     *
      * @ORM\Column(type="smallint")
      */
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
@@ -187,6 +199,8 @@ class Dataset extends Entity
      * Collection of DatasetPublication.
      *
      * @var Collection
+     *
+     * @Serializer\Groups({"publications"})
      *
      * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset", orphanRemoval=true)
      */
