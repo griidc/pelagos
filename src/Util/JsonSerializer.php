@@ -39,14 +39,18 @@ class JsonSerializer
      * Serialize an Object into JSON.
      *
      * @param object $object An object to be serialized.
+     * @param array  $groups The serializer groups to use.
      *
      * @return self
      */
-    public function serialize(object $object): self
+    public function serialize(object $object, array $groups = null): self
     {
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
         $context->setSerializeNull(true);
+        if (!empty($groups)) {
+            $context->setGroups($groups);
+        }
 
         $this->json = $this->serializer->serialize($object, 'json', $context);
 
@@ -70,7 +74,6 @@ class JsonSerializer
      */
     public function createJsonResponse(): Response
     {
-        $header = array('Content-Type', 'application/json');
-        return new Response($this->json, Response::HTTP_OK, $header);
+        return new Response($this->json, Response::HTTP_OK, array('Content-Type', 'application/json'));
     }
 }

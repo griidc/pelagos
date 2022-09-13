@@ -3,9 +3,9 @@
         <h4>{{ overview.name }}</h4>
         <hr>
         <h6 class="font-weight-bold">Project Director: </h6>
-        <p v-for="director in getDirectors()" v-bind:key="director.person.id">
-            {{ director.person.firstName + " " + director.person.lastName }}
-            ({{ director.person.organization }})
+        <p v-for="director in overview.projectDirectors" v-bind:key="director.id">
+            {{ director.firstName + " " + director.lastName }}
+            ({{ director.organization }})
         </p>
         <h6 class="font-weight-bold">Funding Organization</h6>
         <p>
@@ -35,14 +35,6 @@ export default {
     },
   },
   methods: {
-    getDirectors() {
-      return this.overview.personResearchGroups.filter((person) => {
-        if (person.role.name === 'Leadership') {
-          return person;
-        }
-        return null;
-      });
-    },
     getFCLabel() { return templateSwitch.getProperty('fundingCycle'); },
   },
 };
