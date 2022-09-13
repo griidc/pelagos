@@ -28,6 +28,7 @@
 </div>
 {% include 'Dataland/v2/point-of-contact.html.twig' %}
 {% include 'Dataland/v2/collection-period-card.html.twig' %}
+{% if dataset.datasetSubmission and  dataset.datasetSubmission.themeKeywords %}
 <div class="py-2">
     <div class="card text-center text-light">
         <div class="card-header bg-chart-primary">
@@ -44,4 +45,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% include 'Dataland/v2/metadata-card.html.twig' %}
