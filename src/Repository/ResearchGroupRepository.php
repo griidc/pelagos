@@ -52,4 +52,33 @@ class ResearchGroupRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * Get research group information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each research id.
+     *
+     * @return array
+     */
+    public function getResearchGroupsInfo(array $aggregations): array
+    {
+        $researchGroupsInfo = array();
+
+        $researchGroups = $this->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($researchGroups as $researchGroup) {
+            $researchGroupsInfo[$researchGroup->getId()] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
+                'count' => $aggregations[$researchGroup->getId()]
+            );
+        }
+
+        //Sorting based on highest count
+        $array_column = array_column($researchGroupsInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
+
+        return $researchGroupsInfo;
+    }
 }

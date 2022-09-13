@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * File Entity class.
@@ -162,6 +163,26 @@ class File extends Entity
     public function setFilePathName(?string $filePathName): void
     {
         $this->filePathName = $filePathName;
+    }
+
+    /**
+     * Getter for Filepath Extension.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("fileExtension")
+     *
+     * @return string|null
+     */
+    public function getFileExtension(): ?string
+    {
+        $filePathName = $this->getFilePathName();
+        if (!empty($filePathName)) {
+            $pathParts = pathinfo($filePathName);
+            if (key_exists('extension', $pathParts)) {
+                return $pathParts['extension'];
+            }
+        }
+        return null;
     }
 
     /**

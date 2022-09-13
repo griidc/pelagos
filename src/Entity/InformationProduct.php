@@ -95,7 +95,8 @@ class InformationProduct extends Entity
      *
      * @ORM\ManyToMany(targetEntity=ResearchGroup::class)
      *
-     * @Serializer\Exclude
+     * @Serializer\MaxDepth(1)
+     * @Serializer\SerializedName("researchGroup")
      */
     private $researchGroups;
 
@@ -377,6 +378,23 @@ class InformationProduct extends Entity
         $this->remoteUri = $remoteUri;
 
         return $this;
+    }
+
+    /**
+     * Getter for Remote URI host name.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("remoteUriHostName")
+     *
+     * @return string|null
+     */
+    public function getRemoteUriHostName(): ?string
+    {
+        $remoteUri = $this->getRemoteUri();
+        if (!empty($remoteUri)) {
+            return parse_url($remoteUri, PHP_URL_HOST);
+        }
+        return null;
     }
 
     /**

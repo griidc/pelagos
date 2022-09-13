@@ -19,6 +19,34 @@ class DigitalResourceTypeDescriptorRepository extends ServiceEntityRepository
         parent::__construct($registry, DigitalResourceTypeDescriptor::class);
     }
 
+    /**
+     * Get Digital Resource Type Descriptors information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each id.
+     *
+     * @return array
+     */
+    public function getDigitalResourceTypeDescriptorsInfo(array $aggregations): array
+    {
+        $digitalResourceTypeDescriptorsInfo = array();
+
+        $digitalResourceTypeDescriptors = $this->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($digitalResourceTypeDescriptors as $digitalResourceTypeDescriptor) {
+            $digitalResourceTypeDescriptorsInfo[$digitalResourceTypeDescriptor->getId()] = array(
+                'id' => $digitalResourceTypeDescriptor->getId(),
+                'name' => $digitalResourceTypeDescriptor->getDescription(),
+                'count' => $aggregations[$digitalResourceTypeDescriptor->getId()]
+            );
+        }
+
+        //Sorting based on highest count
+        $array_column = array_column($digitalResourceTypeDescriptorsInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $digitalResourceTypeDescriptorsInfo);
+
+        return $digitalResourceTypeDescriptorsInfo;
+    }
+
     // /**
     //  * @return DigitalResourceTypeDescriptor[] Returns an array of DigitalResourceTypeDescriptor objects
     //  */
