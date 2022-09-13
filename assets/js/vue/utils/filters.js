@@ -1,8 +1,11 @@
 export default {
   truncate(text, length) {
-    const regex = new RegExp(`^.{${length}}\\S*`);
-    const split = text.match(regex);
-    return (split ? `${split[0]}...` : text);
+    if (text) {
+      const regex = new RegExp(`^.{${length}}\\S*`);
+      const split = text.match(regex);
+      return (split ? `${split[0]}...` : text);
+    }
+    return text;
   },
   sort(valuePath, array) {
     const getValue = (obj) => obj.valuePath;

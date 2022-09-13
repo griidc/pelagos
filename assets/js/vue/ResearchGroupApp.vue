@@ -50,7 +50,7 @@ export default {
   created() {
     getApi(
       // eslint-disable-next-line no-undef
-      `${Routing.generate('pelagos_api_research_groups_get')}/${this.id}`,
+      `${Routing.generate('pelagos_api_research_group')}/${this.id}`,
       { thisComponent: this, addLoading: true },
     ).then((response) => {
       this.researchGroupData = response.data;

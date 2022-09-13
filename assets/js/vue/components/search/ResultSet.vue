@@ -66,13 +66,7 @@
         </section>
     </div>
     <div v-else>
-        <section class="section-content pt-5">
-            <div class="row d-flex flex-row justify-content-center">
-                <h3>
-                    No results found!
-                </h3>
-            </div>
-        </section>
+      <NoResults/>
     </div>
 </template>
 
@@ -80,10 +74,11 @@
 import Facet from '@/vue/components/search/Facet';
 import DatasetRow from '@/vue/components/search/DatasetRow';
 import templateSwitch from '@/vue/utils/template-switch';
+import NoResults from '@/vue/components/info-search/NoResults';
 
 export default {
   name: 'ResultSet',
-  components: { DatasetRow, Facet },
+  components: { DatasetRow, Facet, NoResults },
   props: {
     results: {
       type: Object,

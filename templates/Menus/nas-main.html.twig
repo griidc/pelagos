@@ -3,8 +3,15 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ path('pelagos_homepage')}}" >Home</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ vanitypath('pelagos_app_ui_searchpage_default') }}">Search Data</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Search
+            </a>
+            <div class="dropdown-menu p-0 overflow-hidden" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="{{ vanitypath('pelagos_app_ui_searchpage_default') }}">Search Data</a>
+                <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="{{ vanitypath('app_information_product_search') }}">Search Info Products<a>
+            </div>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
