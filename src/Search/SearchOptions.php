@@ -64,6 +64,13 @@ class SearchOptions
     private $facets;
 
     /**
+     * The datatype.
+     *
+     * @var string
+     */
+    private $dataType;
+
+    /**
      * Class Contructor.
      *
      * @param string|null $queryString
@@ -177,6 +184,17 @@ class SearchOptions
     public function getMaxPerPage(): int
     {
         return $this->maxPerPage;
+    }
+
+    public function setDataType(?string $dataType): self
+    {
+        $this->dataType = $dataType;
+        return $this;
+    }
+
+    public function getDataType()
+    {
+        return $this->dataType;
     }
 
     /**

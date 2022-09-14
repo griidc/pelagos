@@ -163,6 +163,17 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
+        $dataTypeAggregations = $this->findKey($aggregations, 'friendly_name_agregation');
+        if (array_key_exists('buckets', $dataTypeAggregations)) {
+            $dataTypeBucket = array_column(
+                $dataTypeAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            // dd($dataTypeBucket);
+            $this->facetInfo['dataTypeInfo'] = $this->getDatasetTypeInfo($dataTypeBucket);
+        }
+
         $productTypeDescriptorAggregations = $this->findKey($aggregations, 'product_type_aggregation');
         if (array_key_exists('buckets', $productTypeDescriptorAggregations)) {
             $productTypeDescriptorBucket = array_column(
@@ -186,6 +197,19 @@ class SearchResults
         $researchGroupBucket = $this->getResearchGroupBucket($aggregations);
 
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
+
+    }
+
+    private function getDatasetTypeInfo($dataTypeBucket): array
+    {
+        $dataTypeInfo = [];
+        foreach ($dataTypeBucket as $type => $count) {
+            $typeInfo['id'] = $type;
+            $typeInfo['name'] = $type;
+            $typeInfo['count'] = $count;
+            $dataTypeInfo[] = $typeInfo;
+        }
+        return $dataTypeInfo;
     }
 
     private function getFacetInfo(string $facet, array $facetAgregation): ?array

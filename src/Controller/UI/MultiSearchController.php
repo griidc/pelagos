@@ -33,10 +33,12 @@ class MultiSearchController extends AbstractController
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
         $researchGroupFilter = $request->query->get('researchGroup');
+        $dataTypeFilter = $request->query->get('dataType');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
+        $searchOptions->setDataType($dataTypeFilter);
 
         $searchOptions->setFacets(array('researchGroup'));
 

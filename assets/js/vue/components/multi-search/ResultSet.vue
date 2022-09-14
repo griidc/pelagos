@@ -11,6 +11,7 @@
       <div class="row">
         <aside class="col-lg-3">
           <div class="card card-filter">
+            <Facet :facet-info="results.facetInfo.dataTypeInfo" :facet-name="facetLabels.dataType" v-on="$listeners" :formValues="formValues"/>
             <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
           </div>
         </aside>
@@ -62,6 +63,10 @@ export default {
         researchGroup: {
           label: templateSwitch.getProperty('researchGroup'),
           queryParam: 'researchGroup',
+        },
+        dataType: {
+          label: 'Data Type',
+          queryParam: 'dataType',
         },
       },
       showResults: false,

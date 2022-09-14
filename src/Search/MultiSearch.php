@@ -8,6 +8,7 @@ use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
+use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 /**
@@ -65,6 +66,12 @@ class MultiSearch
 
         $query = new Query();
         $query->setQuery($boolQuery);
+
+        if (!empty($searchOptions->getDataType())) {
+            $publishedQueryTerm = new Term();
+            $publishedQueryTerm->setTerm('friendlyName', $searchOptions->getDataType());
+            $boolQuery->addMust($publishedQueryTerm);
+        }
 
         if ($searchOptions->isResearchGroupFilterSet()) {
             $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
@@ -152,6 +159,9 @@ class MultiSearch
         $researchGroupsAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregationa->addAggregation($researchGroupsAggregation);
 
-        $query->addAggregation($researchGroupNestedAggregationa);
+        $friendlyNameAggregation = new AggregationTerms('friendly_name_agregation');
+        $friendlyNameAggregation->setField('friendlyName');
+        $friendlyNameAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $query->addAggregation($friendlyNameAggregation);
     }
 }
