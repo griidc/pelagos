@@ -172,6 +172,26 @@ class File extends Entity
     }
 
     /**
+     * Getter for Filepath Extension.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("fileExtension")
+     *
+     * @return string|null
+     */
+    public function getFileExtension(): ?string
+    {
+        $filePathName = $this->getFilePathName();
+        if (!empty($filePathName)) {
+            $pathParts = pathinfo($filePathName);
+            if (key_exists('extension', $pathParts)) {
+                return $pathParts['extension'];
+            }
+        }
+        return null;
+    }
+
+    /**
      * Getter for File Size.
      *
      * @return integer|null

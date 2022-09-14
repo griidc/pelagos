@@ -63,6 +63,15 @@ class SearchResults
     private $resultsPerPage;
 
     /**
+     * The current page of results.
+     *
+     * @var integer
+     *
+     * @Serializer\SerializedName("currentPage")
+     */
+    private $currentPage;
+
+    /**
      * Facet Information for aggregations.
      *
      * @var array
@@ -142,7 +151,8 @@ class SearchResults
      */
     private function processResults(): void
     {
-        $this->pagerFantaResults->setCurrentPage($this->searchOptions->getCurrentPage());
+        $this->currentPage = $this->searchOptions->getCurrentPage();
+        $this->pagerFantaResults->setCurrentPage($this->currentPage);
         $this->pagerFantaResults->setMaxPerPage($this->searchOptions->getMaxPerPage());
 
         $this->numberOfResults = $this->pagerFantaResults->getNbResults();

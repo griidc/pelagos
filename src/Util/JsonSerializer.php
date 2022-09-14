@@ -74,7 +74,6 @@ class JsonSerializer
      */
     public function createJsonResponse(): Response
     {
-        $header = array('Content-Type', 'application/json');
-        return new Response($this->json, Response::HTTP_OK, $header);
+        return new Response($this->json, Response::HTTP_OK, array('Content-Type', 'application/json'));
     }
 }

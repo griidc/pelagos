@@ -399,6 +399,23 @@ class InformationProduct extends Entity
     }
 
     /**
+     * Getter for Remote URI host name.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("remoteUriHostName")
+     *
+     * @return string|null
+     */
+    public function getRemoteUriHostName(): ?string
+    {
+        $remoteUri = $this->getRemoteUri();
+        if (!empty($remoteUri)) {
+            return parse_url($remoteUri, PHP_URL_HOST);
+        }
+        return null;
+    }
+
+    /**
      * Get the file for this Information Product.
      *
      * @return File|null

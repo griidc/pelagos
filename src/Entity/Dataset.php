@@ -61,7 +61,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card", "search"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -71,6 +71,8 @@ class Dataset extends Entity
      * The title for this Dataset.
      *
      * @var string
+     *
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -92,8 +94,12 @@ class Dataset extends Entity
      *
      * @var DOI
      *
+<<<<<<< HEAD
      * @Serializer\MaxDepth(1)
      * @Serializer\Groups({"search"})
+=======
+     * @Serializer\Groups({"card"})
+>>>>>>> develop
      *
      * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
@@ -127,8 +133,12 @@ class Dataset extends Entity
      *
      * @var DatasetSubmission
      *
+<<<<<<< HEAD
      * @Serializer\MaxDepth(1)
      * @Serializer\Groups({"search"})
+=======
+     * @Serializer\Groups({"card"})
+>>>>>>> develop
      *
      * @ORM\OneToOne(targetEntity="DatasetSubmission")
      */
@@ -152,7 +162,11 @@ class Dataset extends Entity
      *
      * @var \DateTime $acceptedDate;
      *
+<<<<<<< HEAD
      * @Serializer\Groups({"search"})
+=======
+     * @Serializer\Groups({"card"})
+>>>>>>> develop
      *
      * @ORM\Column(type="datetimetz", nullable=true)
      */
@@ -198,7 +212,11 @@ class Dataset extends Entity
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
      *
+<<<<<<< HEAD
      * @Serializer\Groups({"search"})
+=======
+     * @Serializer\Groups({"card"})
+>>>>>>> develop
      *
      * @ORM\Column(type="smallint")
      */
@@ -208,6 +226,8 @@ class Dataset extends Entity
      * Collection of DatasetPublication.
      *
      * @var Collection
+     *
+     * @Serializer\Groups({"publications"})
      *
      * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset", orphanRemoval=true)
      */

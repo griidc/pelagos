@@ -72,6 +72,8 @@ class Person extends Entity
      *
      * @var string $firstName
      *
+     * @Serializer\Groups({"director", "person"})
+     *
      * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
@@ -88,6 +90,8 @@ class Person extends Entity
      *
      * @var string $lastName
      *
+     * @Serializer\Groups({"director", "person"})
+     *
      * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
@@ -103,6 +107,8 @@ class Person extends Entity
      * Person's email address.
      *
      * @var string $emailAddress
+     *
+     * @Serializer\Groups({"person"})
      *
      * @ORM\Column(type="citext", unique=true)
      *
@@ -230,6 +236,8 @@ class Person extends Entity
      * @var string
      *
      * @access protected
+     *
+     * @Serializer\Groups({"director", "person"})
      *
      * @ORM\Column(type="text", nullable=true)
      *

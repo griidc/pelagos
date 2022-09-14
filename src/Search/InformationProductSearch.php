@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
+use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
 use Elastica\Query\Term;
@@ -64,10 +65,13 @@ class InformationProductSearch
         $boolQuery = new BoolQuery();
         $boolQuery->addMust($simpleQuery);
 
-        $this->addFilters($boolQuery, $searchOptions);
+        $publishedQueryTerm = new Term();
+        $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
+        $boolQuery->addFilter($publishedQueryTerm);
 
         $query = new Query();
         $query->setQuery($boolQuery);
+        $query->setPostFilter($this->getPostFilters($searchOptions));
 
         $this->addAggregators($query);
 
@@ -82,13 +86,15 @@ class InformationProductSearch
      * @param BoolQuery     $boolQuery     Bool query for search.
      * @param SearchOptions $searchOptions Options containing facet filters.
      *
-     * @return void
+     * @return AbstractQuery
      */
-    private function addFilters(BoolQuery $boolQuery, SearchOptions $searchOptions): void
+    private function getPostFilters(SearchOptions $searchOptions): AbstractQuery
     {
+        $boolQuery = new BoolQuery();
+
         $publishedQueryTerm = new Term();
         $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
-        $boolQuery->addFilter($publishedQueryTerm);
+        $boolQuery->addMust($publishedQueryTerm);
 
         $researchGroupNameQuery = new Query\Nested();
         $researchGroupNameQuery->setPath('researchGroups');
@@ -97,7 +103,7 @@ class InformationProductSearch
             $researchGroupQueryTerm = new Query\Terms('researchGroups.id');
             $researchGroupQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
             $researchGroupNameQuery->setQuery($researchGroupQueryTerm);
-            $boolQuery->addFilter($researchGroupNameQuery);
+            $boolQuery->addMust($researchGroupNameQuery);
         }
 
         $productTypeDescNameQuery = new Query\Nested();
@@ -107,7 +113,7 @@ class InformationProductSearch
             $productTypeDescQueryTerm = new Query\Terms('productTypeDescriptors.id');
             $productTypeDescQueryTerm->setTerms($searchOptions->getProductTypeDescFilter());
             $productTypeDescNameQuery->setQuery($productTypeDescQueryTerm);
-            $boolQuery->addFilter($productTypeDescNameQuery);
+            $boolQuery->addMust($productTypeDescNameQuery);
         }
 
         $digitalTypeDescNameQuery = new Query\Nested();
@@ -117,8 +123,11 @@ class InformationProductSearch
             $digitalTypeDescQueryTerm = new Query\Terms('digitalResourceTypeDescriptors.id');
             $digitalTypeDescQueryTerm->setTerms($searchOptions->getDigitalTypeDescFilter());
             $digitalTypeDescNameQuery->setQuery($digitalTypeDescQueryTerm);
-            $boolQuery->addFilter($digitalTypeDescNameQuery);
+            $boolQuery->addMust($digitalTypeDescNameQuery);
         }
+
+
+        return $boolQuery;
     }
 
     /**

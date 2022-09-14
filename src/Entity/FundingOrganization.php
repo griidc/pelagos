@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use Hateoas\Configuration\Annotation as Hateoas;
 use App\Exception\NotDeletableException;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Entity class to represent a Funding Organization.
@@ -63,6 +64,8 @@ class FundingOrganization extends Entity
      * @var string $name
      *
      * @access protected
+     *
+     * @Serializer\Groups({"organization"})
      *
      * @ORM\Column(type="citext", unique=true)
      *
@@ -138,6 +141,8 @@ class FundingOrganization extends Entity
      * @var string $url
      *
      * @access protected
+     *
+     * @Serializer\Groups({"organization"})
      *
      * @ORM\Column(type="text", nullable=true)
      *

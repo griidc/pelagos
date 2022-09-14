@@ -13,6 +13,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use App\Entity\ResearchGroup;
 use App\Form\ResearchGroupType;
+use App\Util\JsonSerializer;
 
 /**
  * The ResearchGroup api controller.
@@ -484,5 +485,59 @@ class ResearchGroupController extends EntityController
     public function putLogoAction(int $id, Request $request)
     {
         return $this->putProperty(ResearchGroup::class, $id, 'logo', $request);
+    }
+
+    /**
+     * Gets the research group data as JSON for the Research Group Landing Page.
+     *
+     * @Route("/api/research-group/{id}", name="pelagos_api_research_group")
+     *
+     * @param ResearchGroup  $researchGroup  The research group for this request.
+     * @param JsonSerializer $jsonSerializer The Pelagos JSON serializer.
+     *
+     * @return Response
+     */
+    public function getResearchGroupData(ResearchGroup $researchGroup, JsonSerializer $jsonSerializer): Response
+    {
+        $groups = array(
+            'overview',
+            'id',
+            'projectDirectors' => array(
+                'director', 'id'
+            ),
+            'fundingCycle' => array(
+                'organization', 'id',
+                'fundingOrganization' => array(
+                    'organization', 'id',
+                )
+            ),
+            'datasets' => array(
+                'card', 'id',
+                'doi' => array(
+                    'doi',
+                ),
+                'publications',
+                'datasetPublications' => array(
+                    'publications',
+                    'publication' => array(
+                        'citation', 'id'
+                    )
+                ),
+                'datasetSubmission' => array(
+                    'authors',
+                    'coldStorage',
+                    'card',
+                )
+            ),
+            'personResearchGroups' => array(
+                'person',
+                'person' => array (
+                    'person',
+                    'id',
+                )
+            )
+        );
+
+        return $jsonSerializer->serialize($researchGroup, $groups)->createJsonResponse();
     }
 }

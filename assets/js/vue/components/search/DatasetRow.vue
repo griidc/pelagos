@@ -59,13 +59,22 @@ export default {
       }
     },
     fileFormat() {
-      return this.datasetRowData.fileFormat ?? this.datasetRowData.datasetSubmission.distributionFormatName;
+      if (this.datasetRowData.datasetSubmission) {
+        return this.datasetRowData.fileFormat ?? this.datasetRowData.datasetSubmission.distributionFormatName;
+      }
+      return this.datasetRowData.fileFormat ?? null;
     },
     fileSize() {
-      return this.datasetRowData.fileSize ?? xbytes(this.datasetRowData.datasetSubmission.datasetFileSize);
+      if (this.datasetRowData.datasetSubmission) {
+        return this.datasetRowData.fileSize ?? xbytes(this.datasetRowData.datasetSubmission.datasetFileSize);
+      }
+      return this.datasetRowData.fileSize ?? null;
     },
     coldStorage() {
-      return this.datasetRowData.coldStorage ?? this.datasetRowData.datasetSubmission.coldStorage;
+      if (this.datasetRowData.datasetSubmission) {
+        return this.datasetRowData.coldStorage ?? this.datasetRowData.datasetSubmission.coldStorage;
+      }
+      return this.datasetRowData.coldStorage ?? false;
     },
   },
 };
