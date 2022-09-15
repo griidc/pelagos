@@ -116,6 +116,8 @@ fos_elastica:
                             type: 'text'
                         erddapUrl:
                             type: 'text'
+                        nceiUrl:
+                            type: 'text'
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:
