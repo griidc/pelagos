@@ -16,7 +16,7 @@
                     <PublicationsTab :datasets="researchGroupData.datasets"/>
                 </b-tab>
                 <b-tab title="Information Products">
-                  <InformationProductsTab :rgId="researchGroupData.id"/>
+                  <InformationProductsTab :informationProductData="informationProductData"/>
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -45,6 +45,7 @@ export default {
     return {
       researchGroupData: {},
       showData: false,
+      informationProductData: {},
     };
   },
   created() {
@@ -55,6 +56,14 @@ export default {
     ).then((response) => {
       this.researchGroupData = response.data;
       this.showData = true;
+    }).then(() => {
+      getApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_api_get_information_product_by_research_group_id')}/${this.researchGroupData.id}`,
+        { thisComponent: this, addLoading: true },
+      ).then((response) => {
+        this.informationProductData = response.data;
+      });
     }).catch(() => {
       this.showData = false;
     });
