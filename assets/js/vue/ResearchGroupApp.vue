@@ -56,13 +56,12 @@ export default {
     ).then((response) => {
       this.researchGroupData = response.data;
       this.showData = true;
-    }).then(() => {
       getApi(
         // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_api_get_information_product_by_research_group_id')}/${this.researchGroupData.id}`,
         { thisComponent: this, addLoading: true },
-      ).then((response) => {
-        this.informationProductData = response.data;
+      ).then((infoProdResponse) => {
+        this.informationProductData = infoProdResponse.data;
       });
     }).catch(() => {
       this.showData = false;
