@@ -32,6 +32,7 @@ class MultiSearchController extends AbstractController
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
+        $numberOfResultsPerPage = $request->query->get('perPage');
         $researchGroupFilter = $request->query->get('researchGroup');
         $dataTypeFilter = $request->query->get('dataType');
 
@@ -39,6 +40,7 @@ class MultiSearchController extends AbstractController
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
         $searchOptions->setDataType($dataTypeFilter);
+        $searchOptions->setMaxPerPage($numberOfResultsPerPage);
 
         $searchOptions->setFacets(array('researchGroup'));
 

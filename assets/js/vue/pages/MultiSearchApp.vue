@@ -32,6 +32,8 @@
           v-if="showResults"
           :results="results"
           @facetClicked="facetCheckBoxValues"
+          @pagination="changePageNo"
+          @noOfResults="changeNoOfResults"
           :formValues="form"/>
     </div>
   </div>
@@ -42,22 +44,28 @@
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/multi-search/ResultSet';
 
+function initialFormValues() {
+  return {
+    queryString: '',
+    researchGroup: '',
+    page: 1,
+    perPage: 10,
+  };
+}
+
 export default {
   name: 'MultiSearchApp',
   components: { ResultSet },
   data() {
     return {
-      form: {
-        queryString: '',
-        researchGroup: '',
-      },
+      form: initialFormValues(),
       results: Object,
       showResults: false,
     };
   },
   methods: {
     init() {
-      this.form.queryString = '';
+      this.form = initialFormValues();
       this.onSubmit();
     },
     onSubmit() {
@@ -78,6 +86,14 @@ export default {
       const facetArray = value.split('=');
       // eslint-disable-next-line prefer-destructuring
       this.form[facetArray[0]] = facetArray[1];
+      this.onSubmit();
+    },
+    changePageNo(newPageNo) {
+      this.form.page = newPageNo;
+      this.onSubmit();
+    },
+    changeNoOfResults(noOfResults) {
+      this.form.perPage = noOfResults;
       this.onSubmit();
     },
   },
