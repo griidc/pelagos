@@ -287,6 +287,7 @@ class ResearchGroup extends Entity
      * @ORM\OneToMany(targetEntity="PersonResearchGroup", mappedBy="researchGroup")
      *
      * @Serializer\Groups({"overview"})
+     * @Serializer\MaxDepth(2)
      */
     protected $personResearchGroups;
 
@@ -300,6 +301,7 @@ class ResearchGroup extends Entity
      * @ORM\OrderBy({"udi" = "ASC"})
      *
      * @Serializer\Groups({"overview"})
+     * @Serializer\Exclude(if="hasNoGroups()")
      */
     protected $datasets;
 

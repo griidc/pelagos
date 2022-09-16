@@ -206,3 +206,8 @@ services:
     App\Twig\Extensions:
         bind:
             array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
+
+    jms_serializer_function_provider:
+        class: App\ExpressionLanguage\FunctionProvider
+        tags:
+            - jms.expression.function_provider
