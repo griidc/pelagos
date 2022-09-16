@@ -3,10 +3,12 @@
 namespace App\Search;
 
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\FundingOrganization;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\DigitalResourceTypeDescriptorRepository;
 use App\Repository\ProductTypeDescriptorRepository;
 use App\Repository\ResearchGroupRepository;
+use App\Repository\FundingOrganizationRepository;
 use App\Entity\ResearchGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Annotation as Serializer;
@@ -107,7 +109,16 @@ class SearchResults
     private $researchGroupRepository;
 
     /**
-     * Instance of the ResearchGroupRepository.
+     * Instance of the FundingOrganizationRepository.
+     *
+     * @var FundingOrganizationRepository
+     *
+     * @Serializer\Exclude
+     */
+    private $fundingOrganizationRepository;
+
+    /**
+     * Instance of the DigitalResourceTypeDescriptorRepository.
      *
      * @var DigitalResourceTypeDescriptorRepository
      *
@@ -116,7 +127,7 @@ class SearchResults
     private $digitalResourceTypeDescriptorRepository;
 
     /**
-     * Instance of the ResearchGroupRepository.
+     * Instance of the ProductTypeDescriptorRepository.
      *
      * @var ProductTypeDescriptorRepository
      *
@@ -140,6 +151,7 @@ class SearchResults
         $this->researchGroupRepository = $this->entityManager->getRepository(ResearchGroup::class);
         $this->digitalResourceTypeDescriptorRepository = $this->entityManager->getRepository(DigitalResourceTypeDescriptor::class);
         $this->productTypeDescriptorRepository = $this->entityManager->getRepository(ProductTypeDescriptor::class);
+        $this->fundingOrganizationRepository = $this->entityManager->getRepository(FundingOrganization::class);
 
         $this->processResults();
     }
@@ -194,9 +206,12 @@ class SearchResults
             $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
         }
 
-        $researchGroupBucket = $this->getResearchGroupBucket($aggregations);
+        // $researchGroupBucket = $this->getResearchGroupBucket($aggregations);
+        $researchGroupBucket = $this->combineBuckets($aggregations, 'research_group_aggregation', 'research_groups_aggregation');
+        $fundingOrgBucket = $this->combineBuckets($aggregations, 'funding_organization_aggregation', 'funding_organizations_aggregation');
 
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
+        $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
 
     }
 
@@ -236,30 +251,65 @@ class SearchResults
      *
      * @return array
      */
+    private function combineBuckets($aggregations, string $datasetBucketName, string $infoProductBucketName): array
+    {
+        $datasetBucket = [];
+        $datasetAggregations = $this->findKey($aggregations, $datasetBucketName);
+        if (array_key_exists('buckets', $datasetAggregations)) {
+            $datasetBucket = array_column(
+                $datasetAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+        }
+
+        $infoProductBucket = [];
+        $infoProductAggregations = $this->findKey($aggregations, $infoProductBucketName);
+        if (array_key_exists('buckets', $infoProductAggregations)) {
+            $infoProductBucket = array_column(
+                $infoProductAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+        }
+
+        $bucketKeys = array_merge(array_keys($datasetBucket), array_keys($infoProductBucket));
+        $bucketValues = array_merge(array_values($datasetBucket), array_values($infoProductBucket));
+
+        return array_combine($bucketKeys, $bucketValues);
+    }
+
+    /**
+     * Get combined research group aggregation values.
+     *
+     * @param $aggregations
+     *
+     * @return array
+     */
     private function getResearchGroupBucket($aggregations): array
     {
-        $datasetResearchGroupBucket = [];
-        $datasetResearchGroupAggregations = $this->findKey($aggregations, 'research_group_aggregation');
-        if (array_key_exists('buckets', $datasetResearchGroupAggregations)) {
-            $datasetResearchGroupBucket = array_column(
-                $datasetResearchGroupAggregations['buckets'],
+        $datasetBucket = [];
+        $datasetAggregations = $this->findKey($aggregations, 'research_group_aggregation');
+        if (array_key_exists('buckets', $datasetAggregations)) {
+            $datasetBucket = array_column(
+                $datasetAggregations['buckets'],
                 'doc_count',
                 'key'
             );
         }
 
-        $infoProductsResearchGroupBucket = [];
-        $infoProductsResearchGroupAggregations = $this->findKey($aggregations, 'research_groups_aggregation');
-        if (array_key_exists('buckets', $infoProductsResearchGroupAggregations)) {
-            $infoProductsResearchGroupBucket = array_column(
-                $infoProductsResearchGroupAggregations['buckets'],
+        $infoProductBucket = [];
+        $infoProductAggregations = $this->findKey($aggregations, 'research_groups_aggregation');
+        if (array_key_exists('buckets', $infoProductAggregations)) {
+            $infoProductBucket = array_column(
+                $infoProductAggregations['buckets'],
                 'doc_count',
                 'key'
             );
         }
 
-        $researchGroupBucketKeys = array_merge(array_keys($datasetResearchGroupBucket), array_keys($infoProductsResearchGroupBucket));
-        $researchGroupBucketValues = array_merge(array_values($datasetResearchGroupBucket), array_values($infoProductsResearchGroupBucket));
+        $researchGroupBucketKeys = array_merge(array_keys($datasetBucket), array_keys($infoProductBucket));
+        $researchGroupBucketValues = array_merge(array_values($datasetBucket), array_values($infoProductBucket));
 
         return array_combine($researchGroupBucketKeys, $researchGroupBucketValues);
     }

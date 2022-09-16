@@ -76,6 +76,7 @@ class MultiSearch
         if ($searchOptions->isResearchGroupFilterSet()) {
             $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
         }
+
         $this->addAggregators($query, $searchOptions);
 
         $resultsPaginator = $this->finder->findPaginated($query);
@@ -150,7 +151,6 @@ class MultiSearch
         $researchGroupAggregation->setField('researchGroups.id');
         $researchGroupAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregation->addAggregation($researchGroupAggregation);
-
         $query->addAggregation($researchGroupNestedAggregation);
 
         $researchGroupNestedAggregationa = new AggregationNested('researchGroupAgg', 'researchGroup');
@@ -158,6 +158,21 @@ class MultiSearch
         $researchGroupsAggregation->setField('researchGroup.id');
         $researchGroupsAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregationa->addAggregation($researchGroupsAggregation);
+        $query->addAggregation($researchGroupNestedAggregationa);
+
+        $nestedFoAgg = new AggregationNested('fundingOrgAgg', 'researchGroup.fundingCycle.fundingOrganization');
+        $fundingOrgAgg = new AggregationTerms('funding_organization_aggregation');
+        $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
+        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $nestedFoAgg->addAggregation($fundingOrgAgg);
+        $query->addAggregation($nestedFoAgg);
+
+        $nestedFoAgg = new AggregationNested('fundingOrgsAgg', 'researchGroups.fundingCycle.fundingOrganization');
+        $fundingOrgAgg = new AggregationTerms('funding_organization_aggregation');
+        $fundingOrgAgg->setField('researchGroups.fundingCycle.fundingOrganization.id');
+        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $nestedFoAgg->addAggregation($fundingOrgAgg);
+        $query->addAggregation($nestedFoAgg);
 
         $friendlyNameAggregation = new AggregationTerms('friendly_name_agregation');
         $friendlyNameAggregation->setField('friendlyName');

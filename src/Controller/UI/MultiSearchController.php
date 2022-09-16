@@ -34,11 +34,13 @@ class MultiSearchController extends AbstractController
         $page = $request->query->get('page');
         $numberOfResultsPerPage = $request->query->get('perPage');
         $researchGroupFilter = $request->query->get('researchGroup');
+        $fundingOrganizationFilter = $request->query->get('fundingOrg');
         $dataTypeFilter = $request->query->get('dataType');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
+        $searchOptions->setFundingOrgFilter($fundingOrganizationFilter);
         $searchOptions->setDataType($dataTypeFilter);
         $searchOptions->setMaxPerPage($numberOfResultsPerPage);
 

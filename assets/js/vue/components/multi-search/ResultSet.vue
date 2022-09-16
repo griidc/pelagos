@@ -29,6 +29,7 @@
           <div class="card card-filter">
             <Facet :facet-info="results.facetInfo.dataTypeInfo" :facet-name="facetLabels.dataType" v-on="$listeners" :formValues="formValues"/>
             <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
+            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues"/>
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
@@ -95,6 +96,10 @@ export default {
         researchGroup: {
           label: templateSwitch.getProperty('researchGroup'),
           queryParam: 'researchGroup',
+        },
+        fundingOrg: {
+          label: templateSwitch.getProperty('fundingOrg'),
+          queryParam: 'fundingOrg',
         },
         dataType: {
           label: 'Data Type',
