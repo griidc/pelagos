@@ -28,7 +28,7 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="text")
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A title is required."
@@ -43,7 +43,7 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="text")
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A creator is required."
@@ -58,7 +58,7 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="text")
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A publisher is required."
@@ -74,7 +74,7 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      */
     private $externalDoi;
 
@@ -96,7 +96,7 @@ class InformationProduct extends Entity
      *
      * @ORM\Column(type="boolean")
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"search", "card"})
      */
     private $remoteResource = false;
 
@@ -118,7 +118,7 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"search", "card"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -130,7 +130,7 @@ class InformationProduct extends Entity
      * @var File
      *
      * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"search", "card"})
      *
      * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
      */
@@ -403,6 +403,7 @@ class InformationProduct extends Entity
      *
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("remoteUriHostName")
+     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */

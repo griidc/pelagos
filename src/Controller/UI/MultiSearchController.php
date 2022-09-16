@@ -49,6 +49,7 @@ class MultiSearchController extends AbstractController
             'search',
             'result' => array(
                 'search',
+                'card',
                 'researchGroup' => array(
                     'search',
                 ),
@@ -62,7 +63,15 @@ class MultiSearchController extends AbstractController
                     'search',
                 ),
                 'file' => array(
-                    'search',
+                    'card',
+                ),
+                'doi' => array(
+                    'doi',
+                ),
+                'datasetSubmission' => array(
+                    'authors',
+                    'coldStorage',
+                    'card',
                 ),
             ),
         );
