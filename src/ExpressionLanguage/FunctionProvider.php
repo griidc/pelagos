@@ -20,7 +20,7 @@ class FunctionProvider implements ExpressionFunctionProviderInterface
         return [
             new ExpressionFunction('hasNoGroups', function () {
                 return;
-           }, function ($arguments) {
+            }, function ($arguments) {
                 /** @var \JMS\Serializer\SerializationContext $context */
                 $context = $arguments['context'];
                 $groups = $context->getAttribute('groups');
