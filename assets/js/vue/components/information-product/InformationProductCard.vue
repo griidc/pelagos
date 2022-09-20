@@ -1,6 +1,7 @@
 <template>
   <b-card class="card-product" @click="infoProdUrl()">
     <div>
+        <span class="badge badge-itemtype">Information Product</span>
         <span class="badge badge-available mr-1"
               v-for="productType in informationProduct.productTypeDescriptors"
               :key="productType.id">
