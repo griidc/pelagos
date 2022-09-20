@@ -301,7 +301,7 @@ class ResearchGroup extends Entity
      * @ORM\OrderBy({"udi" = "ASC"})
      *
      * @Serializer\Groups({"overview"})
-     * @Serializer\Exclude(if="hasNoGroups()")
+     * @Serializer\Exclude(if="hasNoGroups(object, context)")
      */
     protected $datasets;
 
