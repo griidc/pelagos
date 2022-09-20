@@ -49,6 +49,7 @@ $gray-700: #495057;
 $gray-800: #343a40;
 $gray-900: #212529;
 $black:    #000;
+$noaa1:    #0085CA;
 
 $gradientStart: #022f3a;
 $gradientEnd:   #4f6e74;
@@ -60,11 +61,12 @@ $theme-colors: (
     "alternate":     $boston,
     "available":     $green,
     "submitted":     $blue,
-    "identified":    $gray-600,
+    "identified":    $yellow,
     "restricted":    $red,
     "remotlyhosted": $yellow,
     "coldstorage":   $iceBlue,
     "erddap":        $orange,
+    "ncei":          $noaa1,
     "chart-primary":   $teal,
     "chart-secondary":   $light-cyan,
     "chart-alternate":   $dark-green,

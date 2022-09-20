@@ -2603,6 +2603,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the NCEI url.
      *
+     * @Serializer\VirtualProperty
+     * @Serializer\Groups({"card"})
+     *
      * @return string|null
      */
     public function getNceiUrl(): ?string
@@ -2613,10 +2616,9 @@ class DatasetSubmission extends Entity
 
         if ($datasetLinks->count() > 0) {
             $nceiLink = $datasetLinks->first();
-        }
-
-        if ($nceiLink instanceof DatasetLink) {
-            return $nceiLink->getUrl();
+            if ($nceiLink instanceof DatasetLink) {
+                return $nceiLink->getUrl();
+            }
         }
         return null;
     }
