@@ -2601,6 +2601,27 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Getter for the NCEI url.
+     *
+     * @return string|null
+     */
+    public function getNceiUrl(): ?string
+    {
+        $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
+            return $datasetLink->getName() === DatasetLink::LINK_NAME_CODES["ncei"]["name"];
+        });
+
+        if ($datasetLinks->count() > 0) {
+            $nceiLink = $datasetLinks->first();
+        }
+
+        if ($nceiLink instanceof DatasetLink) {
+            return $nceiLink->getUrl();
+        }
+        return null;
+    }
+
+    /**
      * Getter for the erddap url.
      *
      * @return string|null
