@@ -2614,7 +2614,6 @@ class DatasetSubmission extends Entity
             return $datasetLink->getName() === DatasetLink::LINK_NAME_CODES["ncei"]["name"];
         });
 
-        $nceiLink = '';
         if ($datasetLinks->count() > 0) {
             $nceiLink = $datasetLinks->first();
             if ($nceiLink instanceof DatasetLink) {
