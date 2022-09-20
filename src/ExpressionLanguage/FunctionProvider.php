@@ -22,8 +22,14 @@ class FunctionProvider implements ExpressionFunctionProviderInterface
                 return "true";
             }, function ($arguments, $object, $context) {
                 /** @var \JMS\Serializer\SerializationContext $context */
+                // dump(get_class($object));
+                if(empty($context)) {
+                    $context = $arguments['context'];
+                }
                 $groups = $context->hasAttribute('groups') ? $context->getAttribute('groups') : null;
-                return !is_array($groups);
+                // dump($groups);
+                // dd(!is_array($groups));
+                return !$context->hasAttribute('groups');
             }),
         ];
     }
