@@ -33,6 +33,17 @@
                     Files
                 </div>
                 <div class="card-body">
+                        {% if dataset.datasetSubmission.nceiurl|default %}
+                            <div>
+                                <a href="{{ dataset.datasetSubmission.nceiurl }}" target="_blank">
+                                <button type="button" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                NCEI
+                                </button>
+                                </a>
+                            </div>
+                            <hr>
+                        {% endif %}
                         {% if dataset.datasetSubmission.erddapurl|default %}
                             <div>
                                 <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
