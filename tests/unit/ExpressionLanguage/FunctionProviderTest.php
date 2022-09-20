@@ -16,7 +16,7 @@ class FunctionProviderTest extends TestCase
     /**
      * Test Expressions Language Functions.
      */
-    public function testElFunctions()
+    public function testElFunctionsWithGroups()
     {
         $expressionLanguage = new ExpressionLanguage();
         $expressionLanguage->registerProvider(new FunctionProvider());
@@ -27,7 +27,43 @@ class FunctionProviderTest extends TestCase
         $groups = array('test');
         $context->setGroups($groups);
 
-        var_dump($expressionLanguage->compile("hasNoGroups($object, $context)"));
+        $variables = array(
+            'object' => $object,
+            'context' => $context,
+        );
+
+        $names = array('object', 'context');
+        $result = $expressionLanguage->compile('hasNoGroups(object, context)', $names);
+        $this->assertSame("true", $result);
+
+
+        $result = $expressionLanguage->evaluate('hasNoGroups(object, context)', $variables);
+        $this->assertSame(false, $result);
+    }
+
+    /**
+     * Test Expressions Language Functions.
+     */
+    public function testElFunctionsNoGroups()
+    {
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(new FunctionProvider());
+
+        $object = $this->createMock(ResearchGroup::class);
+        $context = SerializationContext::create();
+
+        $variables = array(
+            'object' => $object,
+            'context' => $context,
+        );
+
+        $names = array('object', 'context');
+        $result = $expressionLanguage->compile('hasNoGroups(object, context)', $names);
+        $this->assertSame("true", $result);
+
+
+        $result = $expressionLanguage->evaluate('hasNoGroups(object, context)', $variables);
+        $this->assertSame(true, $result);
 
     }
 
