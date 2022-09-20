@@ -8,12 +8,12 @@
             :show-title="true"
             :width="400"
             :height="350"
-            title="New Uploader!">
+            title="File Uploader Help">
             <template>
                 <div id="textBlock">
                     <h3 style="margin-top: 0">
-                        You can now upload multiple files/folders, add files to an existing dataset, or replace/delete
-                        files already uploaded. New features include:
+                        You can upload multiple files/folders, add files to an existing dataset, or replace/delete
+                        files already uploaded.
                     </h3>
                     <ul>
                         <li>
@@ -474,10 +474,6 @@ const initDropzone = () => {
 $('#ds-submit').on('active', () => {
   myFileManager.instance.refresh();
   myFileManager.instance.repaint();
-  if (localStorage.getItem('showHelpPopupFileManager') !== 'false') {
-    myFileManager.$parent.showHelpPopup = true;
-    localStorage.setItem('showHelpPopupFileManager', 'false');
-  }
 });
 
 const getFileNameFromHeader = (headers) => {
