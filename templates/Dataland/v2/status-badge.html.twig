@@ -17,7 +17,7 @@
     {% if dataset.datasetSubmission and dataset.datasetSubmission.isDatasetFileInColdStorage %}
         <span class="badge badge-coldstorage">Cold Storage</span>
     {% endif %}
-    {% if dataset.datasetSubmission.erddapUrl %}
+    {% if dataset.datasetSubmission and dataset.datasetSubmission.erddapUrl %}
         <span class="badge badge-erddap">ERDDAP</span>
     {% endif %}
     {% if dataset.datasetSubmission.nceiUrl|default %}
