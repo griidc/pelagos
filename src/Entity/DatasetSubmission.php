@@ -2603,6 +2603,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the NCEI url.
      *
+     * @Serializer\VirtualProperty
+     * @Serializer\Groups({"card"})
+     *
      * @return string|null
      */
     public function getNceiUrl(): ?string
