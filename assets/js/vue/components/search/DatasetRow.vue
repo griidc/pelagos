@@ -1,6 +1,7 @@
 <template>
     <b-card class="card-product" @click="openUrl(url)">
             <div>
+                <span class="badge badge-itemtype">Dataset</span>
                 <span class="badge badge-secondary" v-if="datasetRowData.availabilityStatus === 0">Identified</span>
                 <span class="badge badge-submitted" v-else-if="datasetRowData.availabilityStatus === 2 || datasetRowData.availabilityStatus === 4">Submitted</span>
                 <span class="badge badge-restricted" v-else-if="datasetRowData.availabilityStatus === 5 || datasetRowData.availabilityStatus === 8">Restricted</span>
