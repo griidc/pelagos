@@ -210,6 +210,8 @@ class SearchResults
         $researchGroupBucket = $this->combineBuckets($aggregations, 'research_group_aggregation', 'research_groups_aggregation');
         $fundingOrgBucket = $this->combineBuckets($aggregations, 'funding_organization_aggregation', 'funding_organizations_aggregation');
 
+        // dd($fundingOrgBucket);
+
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
         $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
 
@@ -273,8 +275,14 @@ class SearchResults
             );
         }
 
+        // dump($infoProductBucket);
+        // dump($datasetBucket);
+
         $bucketKeys = array_merge(array_keys($datasetBucket), array_keys($infoProductBucket));
         $bucketValues = array_merge(array_values($datasetBucket), array_values($infoProductBucket));
+
+        // dump($bucketKeys);
+        // dump($bucketValues);
 
         return array_combine($bucketKeys, $bucketValues);
     }

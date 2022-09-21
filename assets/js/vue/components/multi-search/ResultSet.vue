@@ -102,7 +102,7 @@ export default {
           queryParam: 'fundingOrg',
         },
         dataType: {
-          label: 'Data Type',
+          label: 'Type',
           queryParam: 'dataType',
         },
       },

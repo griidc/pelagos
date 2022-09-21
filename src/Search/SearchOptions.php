@@ -73,7 +73,7 @@ class SearchOptions
     /**
      * The datatype.
      *
-     * @var string
+     * @var array
      */
     private $dataType;
 
@@ -193,12 +193,27 @@ class SearchOptions
         return $this->maxPerPage;
     }
 
+    /**
+     * Set the data type.
+     *
+     * @param string|null $dataType
+     *
+     * @return self
+     */
     public function setDataType(?string $dataType): self
     {
-        $this->dataType = $dataType;
+        if (!empty($dataType)) {
+            $this->dataType = explode(',', $dataType);
+        }
+
         return $this;
     }
 
+    /**
+     * Get the data type.
+     *
+     * @return array
+     */
     public function getDataType()
     {
         return $this->dataType;
