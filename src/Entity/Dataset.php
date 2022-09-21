@@ -115,7 +115,6 @@ class Dataset extends Entity
      * @Serializer\Groups({"card"})
      *
      * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
-     *
      */
     protected $dif;
 
