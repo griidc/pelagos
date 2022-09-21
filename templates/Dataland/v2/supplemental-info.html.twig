@@ -1,3 +1,4 @@
+{% if dataset.datasetSubmission and dataset.datasetSubmission.suppParams %}
 <hr>
 <div class="py-2">
     <h6><strong>Data Parameters and Units:</strong></h6>
@@ -5,6 +6,7 @@
         {{ dataset.datasetSubmission.suppParams|default | raw}}
     </p>
 </div>
+{% endif %}
 
 {% if dataset.datasetSubmission.suppMethods|default %}
 <hr>

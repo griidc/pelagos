@@ -27,6 +27,7 @@ $gray-700: #495057;
 $gray-800: #535e69;
 $gray-900: #212529;
 $black:    #000;
+$noaa1:    #0085CA;
 
 $theme-colors: (
         "primary":       $paleBlue,
@@ -35,14 +36,16 @@ $theme-colors: (
         "alternate":     $brightYellow,
         "available":     $green,
         "submitted":     $blue,
-        "identified":    $gray-600,
+        "identified":    $yellow,
         "restricted":    $red,
         "remotlyhosted": $yellow,
         "coldstorage":   $iceBlue,
         "erddap":        $orange,
+        "ncei":          $noaa1,
         "chart-primary":   $ncis,
         "chart-secondary":   $brightYellow,
         "chart-alternate":   $ncis,
+        "itemtype":          $gray-600,
 );
 
 $colors: (
