@@ -47,8 +47,7 @@ class MultiSearchController extends AbstractController
         $searchOptions->setFacets(array('researchGroup'));
 
         $searchResults = $multiSearch->search($searchOptions);
-
-        $groups = $groups = array(
+        $groups = array(
             'Default',
             'search',
             'result' => array(

@@ -50,6 +50,8 @@ function initialFormValues() {
     researchGroup: '',
     page: 1,
     perPage: 10,
+    fundingOrg: '',
+    dataType: '',
   };
 }
 

@@ -131,7 +131,7 @@ class MultiSearch
     {
         $fundingOrgFilterBoolQuery = new Query\BoolQuery();
 
-        // Dataset Research Group Filter
+        // Dataset Funding Org Filter
         $datasetFundingOrgNameQuery = new Query\Nested();
         $datasetFundingOrgNameQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
         $datasetFundingOrgQueryTerm = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
@@ -140,7 +140,7 @@ class MultiSearch
         $datasetFundingOrgNameQuery->setParam('ignore_unmapped', true);
         $fundingOrgFilterBoolQuery->addShould($datasetFundingOrgNameQuery);
 
-        // Information Product Research Group Filter
+        // Information Product Funding Org Filter
         $fundingOrgsNameQuery = new Query\Nested();
         $fundingOrgsNameQuery->setPath('researchGroups.fundingCycle.fundingOrganization');
         $fundingOrgsQueryTerm = new Query\Terms('researchGroups.fundingCycle.fundingOrganization.id');
@@ -150,27 +150,6 @@ class MultiSearch
         $fundingOrgFilterBoolQuery->addShould($fundingOrgsNameQuery);
 
         return $fundingOrgFilterBoolQuery;
-    }
-
-    /**
-     * Add facet filters to search query.
-     *
-     * @param BoolQuery     $boolQuery     Bool query for search.
-     * @param SearchOptions $searchOptions Options containing facet filters.
-     *
-     * @return void
-     */
-    private function addFilters(BoolQuery $boolQuery, SearchOptions $searchOptions): void
-    {
-        $researchGroupNameQuery = new Query\Nested();
-        $researchGroupNameQuery->setPath('researchGroup');
-
-        if ($searchOptions->isResearchGroupFilterSet()) {
-            $researchGroupQueryTerm = new Query\Terms('researchGroup.id');
-            $researchGroupQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
-            $researchGroupNameQuery->setQuery($researchGroupQueryTerm);
-            $boolQuery->addFilter($researchGroupNameQuery);
-        }
     }
 
     /**
