@@ -1,6 +1,6 @@
 <template>
     <b-card-text class="vh-100">
-        <DatasetRow :datasetRowData="dataset" v-for="dataset in datasets" v-bind:key="dataset.udi" v-if="dataset.dif.status === 2"/>
+        <DatasetRow :datasetRowData="dataset" v-for="dataset in datasets" v-bind:key="dataset.udi" v-show="dataset.dif.status === 2"/>
     </b-card-text>
 </template>
 
