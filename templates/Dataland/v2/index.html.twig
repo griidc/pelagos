@@ -25,42 +25,37 @@
                         {% include 'Dataland/v2/status-badge.html.twig' %}
                         <h2> {{ dataset.title }} </h2>
                     </div>
-                    {% if dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE") %}
-                    <div class="d-flex justify-content-between py-2">
-                        <div>
-                            <div>
-                                <strong>Identified On:</strong> {{ dataset.dif.approvedDate|date('M d Y H:i T', 'UTC') }}
-                            </div>
-                        </div>
-                        <div>
+                    {% if dataset.availabilityStatus != constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE") %}
+                        <div class="d-flex justify-content-between py-2">
                             <div>
                                 <div>
-                                    <strong>UDI:</strong> {{ dataset.udi }}
+                                    <strong>Authors:</strong> {{ dataset.datasetSubmission.authors|default }}
+                                </div>
+                                <div>
+                                    <strong>Published On:</strong> {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div>
+                                        <strong>DOI:</strong> {{ dataset.doi.doi|default }}
+                                    </div>
+                                    <div>
+                                        <strong>UDI:</strong> {{ dataset.udi }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     {% else %}
-                    <div class="d-flex justify-content-between py-2">
-                        <div>
-                            <div>
-                                <strong>Authors:</strong> {{ dataset.datasetSubmission.authors|default }}
-                            </div>
-                            <div>
-                                <strong>Published On:</strong> {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
-                            </div>
-                        </div>
-                        <div>
+                        <div class="d-flex justify-content-between py-2">
                             <div>
                                 <div>
-                                    <strong>DOI:</strong> {{ dataset.doi.doi|default }}
-                                </div>
-                                <div>
-                                    <strong>UDI:</strong> {{ dataset.udi }}
+                                    <div>
+                                        <strong>UDI:</strong> {{ dataset.udi }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     {% endif %}
                     <hr>
                 </div>
