@@ -183,7 +183,7 @@ class SearchResults
                 'key'
             );
             // dd($dataTypeBucket);
-            $this->facetInfo['dataTypeInfo'] = $this->getDatasetTypeInfo($dataTypeBucket);
+            $this->facetInfo['dataTypeInfo'] = $this->getDataTypeInfo($dataTypeBucket);
         }
 
         $productTypeDescriptorAggregations = $this->findKey($aggregations, 'product_type_aggregation');
@@ -212,7 +212,14 @@ class SearchResults
         $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
     }
 
-    private function getDatasetTypeInfo($dataTypeBucket): array
+    /**
+     * Get the facet info to Data Type.
+     *
+     * @param array $dataTypeBucket
+     *
+     * @return array
+     */
+    private function getDataTypeInfo(array $dataTypeBucket): array
     {
         $dataTypeInfo = [];
         foreach ($dataTypeBucket as $type => $count) {
@@ -222,23 +229,6 @@ class SearchResults
             $dataTypeInfo[] = $typeInfo;
         }
         return $dataTypeInfo;
-    }
-
-    private function getFacetInfo(string $facet, array $facetAgregation): ?array
-    {
-        switch ($facet) {
-            case 'researchGroup':
-                return $this->researchGroupRepository->getResearchGroupsInfo($facetAgregation);
-                break;
-            case 'digitalResourceTypeDescriptors':
-                return $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($facetAgregation);
-                break;
-            case 'productTypeDescriptors':
-                return $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($facetAgregation);
-                break;
-            default:
-                return null;
-        }
     }
 
     /**
@@ -276,41 +266,6 @@ class SearchResults
         }
 
         return $combinedBuckets;
-    }
-
-    /**
-     * Get combined research group aggregation values.
-     *
-     * @param $aggregations
-     *
-     * @return array
-     */
-    private function getResearchGroupBucket($aggregations): array
-    {
-        $datasetBucket = [];
-        $datasetAggregations = $this->findKey($aggregations, 'research_group_aggregation');
-        if (array_key_exists('buckets', $datasetAggregations)) {
-            $datasetBucket = array_column(
-                $datasetAggregations['buckets'],
-                'doc_count',
-                'key'
-            );
-        }
-
-        $infoProductBucket = [];
-        $infoProductAggregations = $this->findKey($aggregations, 'research_groups_aggregation');
-        if (array_key_exists('buckets', $infoProductAggregations)) {
-            $infoProductBucket = array_column(
-                $infoProductAggregations['buckets'],
-                'doc_count',
-                'key'
-            );
-        }
-
-        $researchGroupBucketKeys = array_merge(array_keys($datasetBucket), array_keys($infoProductBucket));
-        $researchGroupBucketValues = array_merge(array_values($datasetBucket), array_values($infoProductBucket));
-
-        return array_combine($researchGroupBucketKeys, $researchGroupBucketValues);
     }
 
     /**

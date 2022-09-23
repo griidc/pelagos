@@ -8,7 +8,6 @@ use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\SimpleQueryString;
-use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 /**
@@ -78,12 +77,10 @@ class MultiSearch
 
         if ($searchOptions->isResearchGroupFilterSet()) {
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
-            // $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
         }
 
         if ($searchOptions->isFundingOrgFilterSet()) {
             $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
-            // $query->setPostFilter($this->addFundingOrgFilter($searchOptions));
         }
 
         $query->setPostFilter(($postBoolQuery));
@@ -96,7 +93,7 @@ class MultiSearch
     }
 
     /**
-     * Added research group filter.
+     * Returns the query for research group filtering.
      *
      * @param SearchOptions $searchOptions
      *
@@ -127,6 +124,13 @@ class MultiSearch
         return $researchFilterBoolQuery;
     }
 
+    /**
+     * Returns the query for funding org filtering.
+     *
+     * @param SearchOptions $searchOptions
+     *
+     * @return BoolQuery
+     */
     private function addFundingOrgFilter(SearchOptions $searchOptions): BoolQuery
     {
         $fundingOrgFilterBoolQuery = new Query\BoolQuery();
