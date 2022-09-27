@@ -25,7 +25,7 @@
                         {% include 'Dataland/v2/status-badge.html.twig' %}
                         <h2> {{ dataset.title }} </h2>
                     </div>
-                    {% if dataset.availabilityStatus != constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE") %}
+                    {% if dataset.dif.status == constant("App\\Entity\\DIF::STATUS_APPROVED") %}
                         <div class="d-flex justify-content-between py-2">
                             <div>
                                 <div>
