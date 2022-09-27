@@ -26,6 +26,7 @@
         "oneup/flysystem-bundle": "^3.5",
         "opensoft/doctrine-postgres-types": "^1.2",
         "phayes/geophp": "^1.2",
+        "phpstan/phpstan": "^1.8",
         "ramsey/uuid": "^4.1",
         "sensio/framework-extra-bundle": "^5.0",
         "symfony/asset": "5.4.*",
