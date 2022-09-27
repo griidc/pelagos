@@ -52,7 +52,7 @@ class File extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -63,7 +63,7 @@ class File extends Entity
      *
      * @var integer
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="bigint", nullable=true)
      */
@@ -121,7 +121,7 @@ class File extends Entity
      *
      * @see FILE_* constants.
      *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text")
      */
@@ -176,6 +176,7 @@ class File extends Entity
      *
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("fileExtension")
+     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */

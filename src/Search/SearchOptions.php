@@ -43,6 +43,13 @@ class SearchOptions
     private $researchGroupFilter;
 
     /**
+     * Funding Organization Filter.
+     *
+     * @var array
+     */
+    private $fundingOrganizationFilter;
+
+    /**
      * Product type descriptor Filter.
      *
      * @var array
@@ -62,6 +69,13 @@ class SearchOptions
      * @var array
      */
     private $facets;
+
+    /**
+     * The datatype.
+     *
+     * @var array
+     */
+    private $dataType;
 
     /**
      * Class Contructor.
@@ -180,6 +194,32 @@ class SearchOptions
     }
 
     /**
+     * Set the data type.
+     *
+     * @param string|null $dataType
+     *
+     * @return self
+     */
+    public function setDataType(?string $dataType): self
+    {
+        if (!empty($dataType)) {
+            $this->dataType = explode(',', $dataType);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the data type.
+     *
+     * @return array
+     */
+    public function getDataType()
+    {
+        return $this->dataType;
+    }
+
+    /**
      * Sets the research groups to be filtered.
      *
      * @param string|null $researchGroups The comma delimited list of Research Groups.
@@ -213,6 +253,42 @@ class SearchOptions
     public function isResearchGroupFilterSet(): bool
     {
         return isset($this->researchGroupFilter);
+    }
+
+    /**
+     * Sets the Funding Organizations to be filtered.
+     *
+     * @param string|null $fundingOrganizations The comma delimited list of Funding Organizations.
+     *
+     * @return self
+     */
+    public function setFundingOrgFilter(?string $fundingOrganizations): self
+    {
+        if (!empty($fundingOrganizations)) {
+            $this->fundingOrganizationFilter = explode(',', $fundingOrganizations);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the list of Funding Organizations to be filtered on.
+     *
+     * @return array
+     */
+    public function getFundingOrgFilter(): array
+    {
+        return $this->fundingOrganizationFilter;
+    }
+
+    /**
+     * Is the Funding Organization filter set.
+     *
+     * @return boolean
+     */
+    public function isFundingOrgFilterSet(): bool
+    {
+        return isset($this->fundingOrganizationFilter);
     }
 
     /**

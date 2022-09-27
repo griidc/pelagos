@@ -66,9 +66,25 @@ class MultiSearch
         $query = new Query();
         $query->setQuery($boolQuery);
 
-        if ($searchOptions->isResearchGroupFilterSet()) {
-            $query->setPostFilter($this->addResearchGroupFilter($searchOptions));
+        $postBoolQuery = new BoolQuery();
+
+        if (!empty($searchOptions->getDataType())) {
+            $friendlyNameQueryTerm = new Query\Terms('friendlyName');
+            $friendlyNameQueryTerm->setTerms($searchOptions->getDataType());
+
+            $postBoolQuery->addMust($friendlyNameQueryTerm);
         }
+
+        if ($searchOptions->isResearchGroupFilterSet()) {
+            $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
+        }
+
+        if ($searchOptions->isFundingOrgFilterSet()) {
+            $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
+        }
+
+        $query->setPostFilter(($postBoolQuery));
+
         $this->addAggregators($query, $searchOptions);
 
         $resultsPaginator = $this->finder->findPaginated($query);
@@ -77,7 +93,7 @@ class MultiSearch
     }
 
     /**
-     * Added research group filter.
+     * Returns the query for research group filtering.
      *
      * @param SearchOptions $searchOptions
      *
@@ -88,45 +104,56 @@ class MultiSearch
         $researchFilterBoolQuery = new Query\BoolQuery();
 
         // Dataset Research Group Filter
-        $datasetResearchGrpNameQuery = new Query\Nested();
-        $datasetResearchGrpNameQuery->setPath('researchGroups');
-        $datasetResearchGrpQueryTerm = new Query\Terms('researchGroups.id');
-        $datasetResearchGrpQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
-        $datasetResearchGrpNameQuery->setQuery($datasetResearchGrpQueryTerm);
-        $datasetResearchGrpNameQuery->setParam('ignore_unmapped', true);
-        $researchFilterBoolQuery->addShould($datasetResearchGrpNameQuery);
+        $datasetFundingOrgNameQuery = new Query\Nested();
+        $datasetFundingOrgNameQuery->setPath('researchGroups');
+        $datasetFundingOrgQueryTerm = new Query\Terms('researchGroups.id');
+        $datasetFundingOrgQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
+        $datasetFundingOrgNameQuery->setQuery($datasetFundingOrgQueryTerm);
+        $datasetFundingOrgNameQuery->setParam('ignore_unmapped', true);
+        $researchFilterBoolQuery->addShould($datasetFundingOrgNameQuery);
 
         // Information Product Research Group Filter
-        $researchGroupsNameQuery = new Query\Nested();
-        $researchGroupsNameQuery->setPath('researchGroup');
-        $researchGroupsQueryTerm = new Query\Terms('researchGroup.id');
-        $researchGroupsQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
-        $researchGroupsNameQuery->setQuery($researchGroupsQueryTerm);
-        $researchGroupsNameQuery->setParam('ignore_unmapped', true);
-        $researchFilterBoolQuery->addShould($researchGroupsNameQuery);
+        $fundingOrgsNameQuery = new Query\Nested();
+        $fundingOrgsNameQuery->setPath('researchGroup');
+        $fundingOrgsQueryTerm = new Query\Terms('researchGroup.id');
+        $fundingOrgsQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
+        $fundingOrgsNameQuery->setQuery($fundingOrgsQueryTerm);
+        $fundingOrgsNameQuery->setParam('ignore_unmapped', true);
+        $researchFilterBoolQuery->addShould($fundingOrgsNameQuery);
 
         return $researchFilterBoolQuery;
     }
 
     /**
-     * Add facet filters to search query.
+     * Returns the query for funding org filtering.
      *
-     * @param BoolQuery     $boolQuery     Bool query for search.
-     * @param SearchOptions $searchOptions Options containing facet filters.
+     * @param SearchOptions $searchOptions
      *
-     * @return void
+     * @return BoolQuery
      */
-    private function addFilters(BoolQuery $boolQuery, SearchOptions $searchOptions): void
+    private function addFundingOrgFilter(SearchOptions $searchOptions): BoolQuery
     {
-        $researchGroupNameQuery = new Query\Nested();
-        $researchGroupNameQuery->setPath('researchGroup');
+        $fundingOrgFilterBoolQuery = new Query\BoolQuery();
 
-        if ($searchOptions->isResearchGroupFilterSet()) {
-            $researchGroupQueryTerm = new Query\Terms('researchGroup.id');
-            $researchGroupQueryTerm->setTerms($searchOptions->getResearchGroupFilter());
-            $researchGroupNameQuery->setQuery($researchGroupQueryTerm);
-            $boolQuery->addFilter($researchGroupNameQuery);
-        }
+        // Dataset Funding Org Filter
+        $datasetFundingOrgNameQuery = new Query\Nested();
+        $datasetFundingOrgNameQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+        $datasetFundingOrgQueryTerm = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
+        $datasetFundingOrgQueryTerm->setTerms($searchOptions->getFundingOrgFilter());
+        $datasetFundingOrgNameQuery->setQuery($datasetFundingOrgQueryTerm);
+        $datasetFundingOrgNameQuery->setParam('ignore_unmapped', true);
+        $fundingOrgFilterBoolQuery->addShould($datasetFundingOrgNameQuery);
+
+        // Information Product Funding Org Filter
+        $fundingOrgsNameQuery = new Query\Nested();
+        $fundingOrgsNameQuery->setPath('researchGroups.fundingCycle.fundingOrganization');
+        $fundingOrgsQueryTerm = new Query\Terms('researchGroups.fundingCycle.fundingOrganization.id');
+        $fundingOrgsQueryTerm->setTerms($searchOptions->getFundingOrgFilter());
+        $fundingOrgsNameQuery->setQuery($fundingOrgsQueryTerm);
+        $fundingOrgsNameQuery->setParam('ignore_unmapped', true);
+        $fundingOrgFilterBoolQuery->addShould($fundingOrgsNameQuery);
+
+        return $fundingOrgFilterBoolQuery;
     }
 
     /**
@@ -143,7 +170,6 @@ class MultiSearch
         $researchGroupAggregation->setField('researchGroups.id');
         $researchGroupAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregation->addAggregation($researchGroupAggregation);
-
         $query->addAggregation($researchGroupNestedAggregation);
 
         $researchGroupNestedAggregationa = new AggregationNested('researchGroupAgg', 'researchGroup');
@@ -151,7 +177,25 @@ class MultiSearch
         $researchGroupsAggregation->setField('researchGroup.id');
         $researchGroupsAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregationa->addAggregation($researchGroupsAggregation);
-
         $query->addAggregation($researchGroupNestedAggregationa);
+
+        $nestedFoAgg = new AggregationNested('fundingOrgAgg', 'researchGroup.fundingCycle.fundingOrganization');
+        $fundingOrgAgg = new AggregationTerms('funding_organization_aggregation');
+        $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
+        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $nestedFoAgg->addAggregation($fundingOrgAgg);
+        $query->addAggregation($nestedFoAgg);
+
+        $nestedFoAgg = new AggregationNested('fundingOrgsAgg', 'researchGroups.fundingCycle.fundingOrganization');
+        $fundingOrgAgg = new AggregationTerms('funding_organizations_aggregation');
+        $fundingOrgAgg->setField('researchGroups.fundingCycle.fundingOrganization.id');
+        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $nestedFoAgg->addAggregation($fundingOrgAgg);
+        $query->addAggregation($nestedFoAgg);
+
+        $friendlyNameAggregation = new AggregationTerms('friendly_name_agregation');
+        $friendlyNameAggregation->setField('friendlyName');
+        $friendlyNameAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $query->addAggregation($friendlyNameAggregation);
     }
 }

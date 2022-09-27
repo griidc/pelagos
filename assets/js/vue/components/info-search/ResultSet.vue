@@ -1,5 +1,5 @@
 <template>
-  <div v-if="results.informationProducts.length > 0">
+  <div v-if="results.count > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
@@ -12,7 +12,7 @@
         <div class="empty-div"></div>
         <b-pagination
             v-model="currentPage"
-            :total-rows="results.result"
+            :total-rows="results.count"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>

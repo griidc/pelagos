@@ -32,21 +32,27 @@ class MultiSearchController extends AbstractController
     {
         $queryString = $request->query->get('queryString');
         $page = $request->query->get('page');
+        $numberOfResultsPerPage = $request->query->get('perPage');
         $researchGroupFilter = $request->query->get('researchGroup');
+        $fundingOrganizationFilter = $request->query->get('fundingOrg');
+        $dataTypeFilter = $request->query->get('dataType');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
         $searchOptions->setResearchGroupFilter($researchGroupFilter);
+        $searchOptions->setFundingOrgFilter($fundingOrganizationFilter);
+        $searchOptions->setDataType($dataTypeFilter);
+        $searchOptions->setMaxPerPage($numberOfResultsPerPage);
 
         $searchOptions->setFacets(array('researchGroup'));
 
         $searchResults = $multiSearch->search($searchOptions);
-
-        $groups = $groups = array(
+        $groups = array(
             'Default',
             'search',
             'result' => array(
                 'search',
+                'card',
                 'researchGroup' => array(
                     'search',
                 ),
@@ -60,7 +66,15 @@ class MultiSearchController extends AbstractController
                     'search',
                 ),
                 'file' => array(
-                    'search',
+                    'card',
+                ),
+                'doi' => array(
+                    'doi',
+                ),
+                'datasetSubmission' => array(
+                    'authors',
+                    'coldStorage',
+                    'card',
                 ),
             ),
         );

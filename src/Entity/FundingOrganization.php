@@ -15,6 +15,8 @@ use JMS\Serializer\Annotation as Serializer;
  *
  * @ORM\Entity
  *
+ * @ORM\Entity(repositoryClass="App\Repository\FundingOrganizationRepository")
+ *
  * @UniqueEntity(
  *     fields={"name"},
  *     errorPath="name",
