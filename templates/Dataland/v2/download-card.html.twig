@@ -78,6 +78,10 @@
                             </a>
                         {% endif %}
                         {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#altDataAccessHelp">
+                                    <i class="fas fa-solid fa-info"></i> &nbsp; Help
+                                </button>
                             </div>
                         {% endif %}
                 </div>
