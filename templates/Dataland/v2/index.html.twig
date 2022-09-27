@@ -46,6 +46,9 @@
                         </div>
                     </div>
                     <hr>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">?</button>
+                    <hr>
                 </div>
                 <div class="sidebar w-25 float-right px-3">
                     {% include 'Dataland/v2/detail-cards.html.twig' %}
@@ -92,9 +95,45 @@
                 </div>
             </div>
             </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Alternative Data Access Methods</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                Some GRIIDC datasets have been made available via alternative means.
+                                These methods are provided as a convenience to the user. These methods
+                                may differ in format or organization from the originally submitted dataset files.
+                            </p>
+                            <ul>
+                                <li><strong>NCEI</strong> - This dataset has been archived with NCEI. Note that this dataset may
+                                    be part of a larger NCEI data package, e.g. one NCEI data package may consist
+                                    of multiple GRIIDC datasets.
+                                </li>
+                                &nbsp;
+                                <li>
+                                    <strong>ERDDAP</strong> - This dataset is also available via the GRIIDC ERDDAP instance.
+                                    ERDDAP is a data server that provides a simple, consistent way to download
+                                    subsets of scientific datasets in common file formats and make graphs and maps.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary btn-sml" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
-
 {% endblock %}
 
 {% block javascripts %}
