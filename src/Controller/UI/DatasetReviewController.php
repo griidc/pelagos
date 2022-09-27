@@ -28,6 +28,7 @@ use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.

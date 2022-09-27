@@ -114,6 +114,7 @@ class MailerLoggerUtil implements Swift_Events_SendListener
                 break;
 
             default:
+                return LogLevel::DEBUG;
                 break;
         }
     }

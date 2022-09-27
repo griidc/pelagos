@@ -563,6 +563,9 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             case ($dataset->getStatus() === 'Submitted'):
                 return 'Submitted';
                 break;
+            default:
+                return 'Unknown';
+                break;
         }
     }
 

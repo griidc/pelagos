@@ -23,6 +23,20 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class DatasetSubmissionType extends AbstractType
 {
     /**
+     * The Entity.
+     *
+     * @var Entity
+     */
+    private $formEntity;
+
+    /**
+     * The point of contact.
+     *
+     * @var PersonDatasetSubmissionDatasetContact
+     */
+    private $formPoc;
+
+    /**
      * Constructor for form type.
      *
      * @param Entity                                $entity The entity associated with this form.

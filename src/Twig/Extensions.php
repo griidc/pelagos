@@ -314,6 +314,8 @@ class Extensions extends AbstractExtension
 
             return $proc->transformToXml($xmlDoc);
         }
+
+        return 'NO XML';
     }
 
     /**

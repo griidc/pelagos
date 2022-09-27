@@ -11,16 +11,6 @@ use App\Handler\EntityHandler;
 class PubLinkUtil
 {
     /**
-     * Class constructor for Dependency Injection.
-     *
-     * @param EntityHandler $entityHandler The Pelagos EntityHandler class.
-     */
-    public function __construct(EntityHandler $entityHandler)
-    {
-        $this->entityHandler = $entityHandler;
-    }
-
-    /**
      * This method looks up a citation string at doi.org.
      *
      * @param string      $doi    The DOI of the publication.

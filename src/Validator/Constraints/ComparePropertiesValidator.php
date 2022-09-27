@@ -105,6 +105,7 @@ class ComparePropertiesValidator extends ConstraintValidator
                 ->atPath($errorPath)
                 ->addViolation();
         } else {
+            //* @phpstan-ignore-next-line */
             $this->buildViolation($constraint->message)
                 ->atPath($errorPath)
                 ->addViolation();

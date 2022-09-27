@@ -196,7 +196,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
 
         if ($fileStream === false) {
             $lastErrorMessage = error_get_last()['message'];
-            $this->logger->error(sprintf('Unreadable Queued File: "%s"', $lastErrorMessage, $loggingContext));
+            $this->logger->error(sprintf('Unreadable Queued File: "%s"', $lastErrorMessage), $loggingContext);
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
             return;

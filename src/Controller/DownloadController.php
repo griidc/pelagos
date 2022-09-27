@@ -175,6 +175,8 @@ class DownloadController extends AbstractController
         } else {
             throw new BadRequestHttpException('No files found in this dataset');
         }
+
+        return new Response('', response::HTTP_NO_CONTENT);
     }
 
     /**

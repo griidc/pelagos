@@ -132,28 +132,6 @@ abstract class PersonDatasetSubmission extends Entity
     }
 
     /**
-     * Settter for datasetSubmission.
-     *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission for this association.
-     *
-     * @return void
-     */
-    public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
-    {
-        $this->datasetSubmission = $datasetSubmission;
-    }
-
-    /**
-     * Getter for datasetSubmission.
-     *
-     * @return DatasetSubmission
-     */
-    public function getDatasetSubmission()
-    {
-        return $this->datasetSubmission;
-    }
-
-    /**
      * Getter for primary contact indicator.
      *
      * @return boolean

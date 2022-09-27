@@ -284,7 +284,7 @@ class Fileset extends Entity
     public function getProcessedAndNewFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return in_array($file->getStatus(), [FILE::FILE_NEW, FILE::FILE_DONE, FILE::FILE_IN_QUEUE]);
+            return in_array($file->getStatus(), [File::FILE_NEW, File::FILE_DONE, File::FILE_IN_QUEUE]);
         });
     }
 

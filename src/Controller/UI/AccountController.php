@@ -17,6 +17,9 @@ use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;
 use App\Util\MailSender;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Ldap\Exception\LdapException;
 
 /**
  * The account controller.
