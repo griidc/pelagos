@@ -25,7 +25,7 @@
                         {% include 'Dataland/v2/status-badge.html.twig' %}
                         <h2> {{ dataset.title }} </h2>
                     </div>
-                    {% if dataset.dif.status == constant("App\\Entity\\DIF::STATUS_APPROVED") %}
+                    {% if dataset.datasetsubmission|default and dataset.datasetsubmission.status != constant("App\\Entity\\DatasetSubmission::STATUS_UNSUBMITTED") %}
                         <div class="d-flex justify-content-between py-2">
                             <div>
                                 <div>
@@ -46,10 +46,42 @@
                                 </div>
                             </div>
                         </div>
+                    {% elseif dataset.dif.status == constant("App\\Entity\\DIF::STATUS_APPROVED") %}
+                        <div class="d-flex justify-content-between py-2">
+                            <div>
+                                <div>
+                                    &nbsp;
+                                </div>
+                                <div>
+                                    <strong>Identified On:</strong> {{ dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }}
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div>
+                                        &nbsp;
+                                    </div>
+                                    <div>
+                                        <strong>UDI:</strong> {{ dataset.udi }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     {% else %}
                         <div class="d-flex justify-content-between py-2">
                             <div>
                                 <div>
+                                    &nbsp;
+                                </div>
+                                <div>
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div>
+                                        &nbsp;
+                                    </div>
                                     <div>
                                         <strong>UDI:</strong> {{ dataset.udi }}
                                     </div>
