@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Handler\EntityHandler;
+use App\Util\DataStore;
 use App\Util\Geometry;
 use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

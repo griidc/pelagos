@@ -15,7 +15,7 @@ use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
 use App\Util\MailSender;
 use Twig\Environment;
-use App\Util\Datastore;
+use App\Util\DataStore;
 use App\Util\MdappLogger;
 
 /**

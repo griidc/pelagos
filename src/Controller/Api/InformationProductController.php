@@ -18,7 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
-use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,24 +30,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InformationProductController extends AbstractFOSRestController
 {
-
-    /**
-     * The logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * The contructor.
-     *
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
     /**
      * Get Information Product.
      *

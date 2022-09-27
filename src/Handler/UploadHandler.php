@@ -95,8 +95,6 @@ class UploadHandler
         if (null !== $request->files->get($this->inputName)) {
             return $request->files->get($this->inputName)->getClientOriginalName();
         }
-
-        return 'Unknown Filename';
     }
 
     /**

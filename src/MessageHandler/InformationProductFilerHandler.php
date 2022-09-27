@@ -45,13 +45,6 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
     protected $entityManager;
 
     /**
-     * Datastore Utility instance.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-    /**
      * Information Product Filer constructor.
      *
      * @param InformationProductRepository $datasetSubmissionRepository Dataset Submission Repository.
@@ -72,14 +65,6 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         $this->entityManager = $entityManager;
         $this->datastore = $datastore;
     }
-
-    /**
-     * Message invoke.
-     *
-     * @param InformationProductFiler $informationProductFiler
-     *
-     * @return void
-     */
     public function __invoke(InformationProductFiler $informationProductFiler)
     {
         $informationProductId = $informationProductFiler->getInformationProductId();
@@ -109,7 +94,7 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
 
         if ($fileStream === false) {
             $lastErrorMessage = error_get_last()['message'];
-            $this->logger->error(sprintf('Unreadable File: "%s"', $lastErrorMessage), $loggingContext);
+            $this->logger->error(sprintf('Unreadable File: "%s"', $lastErrorMessage, $loggingContext));
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
             return;

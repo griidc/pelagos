@@ -517,7 +517,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      */
     public function removeSshPublicKey(string $keyName)
     {
-        if (!array_key_exists($keyName, $this->sshPublicKeys)) {
+        if (!array_key_exists($number, $this->sshPublicKeys)) {
             throw new \Exception("SSH pubilc key $keyName does not exist");
         }
         unset($this->sshPublicKeys[$keyName]);

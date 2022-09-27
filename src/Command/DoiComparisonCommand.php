@@ -437,11 +437,8 @@ class DoiComparisonCommand extends Command
             case ($state === self::DOI_REGISTERED):
                 return DOI::STATE_REGISTERED;
                 break;
-            default:
-                return '';
         }
     }
-
 
     /**
      * Check if the url is valid.
