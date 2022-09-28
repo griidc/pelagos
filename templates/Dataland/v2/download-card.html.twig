@@ -27,8 +27,8 @@
         </div>
     {% else %}
         <div class="py-2">
-            <div class="card text-center text-light">
-                <div class="card-header bg-chart-primary">
+            <div class="card text-center">
+                <div class="card-header bg-chart-primary text-light">
                     Files
                 </div>
                 <div class="card-body">
@@ -62,26 +62,23 @@
                             <div>
                         {% endif %}
                         {% if dataset.datasetSubmission.nceiurl|default %}
-                            <a href="{{ dataset.datasetSubmission.nceiurl }}" target="_blank">
-                            <button type="button" class="btn btn-primary btn-sm">
-                                <i class="fas fa-external-link-alt"></i>
-                            NCEI
-                            </button>
-                            </a>
+                                <a href="{{ dataset.datasetSubmission.nceiurl }}" target="_blank">
+                                <button type="button" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                NCEI
+                                </button>
+                                </a>
                         {% endif %}
                         {% if dataset.datasetSubmission.erddapurl|default %}
-                            <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
-                            <button type="button" class="btn btn-primary btn-sm">
-                                <i class="fas fa-external-link-alt"></i>
-                            ERDDAP
-                            </button>
-                            </a>
+                                <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
+                                <button type="button" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                ERDDAP
+                                </button>
+                                </a>
                         {% endif %}
                         {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#altDataAccessHelp">
-                                    <i class="fas fa-solid fa-info"></i> &nbsp; Help
-                                </button>
+                                <span id="help-btn"></span>
                             </div>
                         {% endif %}
                 </div>
