@@ -2,7 +2,7 @@
     <div class="container" ref="formContainer">
         <hr>
         <b-card no-body class="main-card">
-            <b-tabs pills fill justified card v-if="showData" lazy vertical class="min-vh-100" nav-wrapper-class="m-3">
+            <b-tabs pills fill justified card v-if="showData" lazy vertical class="min-vh-100">
                 <b-tab title="Overview">
                     <OverviewTab :overview="researchGroupData"/>
                 </b-tab>
