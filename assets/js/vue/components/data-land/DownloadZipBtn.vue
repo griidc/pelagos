@@ -6,6 +6,7 @@
         {{ buttonTitle }}
       </b-button>
       <b-modal
+          centered
           id="modal-1"
           :title="buttonTitle"
           v-model="showDownloadDialog"
@@ -28,7 +29,7 @@
               imposed by the hosting entity.
             </p>
           </div>
-          <div>
+          <div class="text-left">
             <div>
               <strong>UDI:</strong> {{ datasetInfo.dataset.udi }}<br>
             </div>
@@ -72,8 +73,6 @@
 </template>
 
 <script>
-import 'devextreme/dist/css/dx.common.css';
-import 'devextreme/dist/css/dx.light.css';
 import { getApi } from '../../utils/axiosService';
 
 export default {
