@@ -1,5 +1,5 @@
 parameters:
 	level: 1
-	tmpDir: /var/tmp
+	tmpDir: var/tmp
 	paths:
 		- src
