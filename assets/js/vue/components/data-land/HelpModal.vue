@@ -1,9 +1,10 @@
 <template>
   <span>
-    <b-button class="sm rounded-circle" @click="openHelpModal" variant="primary">
+    <b-button class="btn-sm rounded-circle" @click="openHelpModal" variant="primary">
       <i class="fa fa-question-circle"></i>
     </b-button>
     <b-modal
+        centered
         id="modal-1"
         title="Alternative Data Access Methods"
         v-model="showHelpDialog"
@@ -11,7 +12,7 @@
         ok-variant="primary"
         hide-footer
         header-text-variant="dark">
-      <div class="modal-body">
+      <div class="modal-body text-left">
         <p>
           Some GRIIDC datasets have been made available via alternative means.
           These methods are provided as a convenience to the user. These methods
