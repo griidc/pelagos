@@ -1,6 +1,6 @@
 <template>
     <b-card-group>
-        <PublicationRow :publicationRow="publication" v-for="publication in getPublications()" v-bind:key="publication.id"/>
+        <PublicationRow :publicationRow="publication" v-for="publication in publications" v-bind:key="publication.id"/>
     </b-card-group>
 </template>
 
@@ -11,22 +11,7 @@ export default {
   name: 'PublicationsTab',
   components: { PublicationRow },
   props: {
-    datasets: {},
-  },
-  methods: {
-    getPublications() {
-      const publications = [];
-      const publicationId = [];
-      this.datasets.forEach((dataset) => {
-        dataset.datasetPublications.forEach((publication) => {
-          if (!publicationId.includes(publication.publication.id)) {
-            publications.push(publication.publication);
-            publicationId.push(publication.publication.id);
-          }
-        });
-      });
-      return publications;
-    },
+    publications: {},
   },
 };
 </script>
