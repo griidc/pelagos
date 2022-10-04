@@ -50,15 +50,14 @@ import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
 
 export default {
-  name: "HelpModal",
+  name: 'HelpModal',
   components: {
     DxPopup,
   },
   data() {
     return {
-      staticValue: true,
       showHelpDialog: false,
-      helpBtnTitle: 'Alternative Data Access Methods'
+      helpBtnTitle: 'Alternative Data Access Methods',
     };
   },
   methods: {
