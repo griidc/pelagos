@@ -109,6 +109,9 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.badge-pill {
+  top: 3px;
+  position: relative;
+}
 </style>
