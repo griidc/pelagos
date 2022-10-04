@@ -121,6 +121,8 @@ class DIF extends Entity
      * @see STATUS_* constants.
      *
      * @ORM\Column(type="smallint")
+     *
+     * @Serializer\Groups({"card"})
      */
     protected $status = self::STATUS_UNSUBMITTED;
 

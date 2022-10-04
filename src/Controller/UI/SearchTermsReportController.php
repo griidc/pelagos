@@ -216,6 +216,18 @@ class SearchTermsReportController extends ReportController
                 continue;
             }
 
+            // Skip the row if the search is parameterless, as is the case for default search
+            // page initial loads.
+            if (
+                empty($result['payLoad']['searchQueryParams']['inputFormTerms']['searchTerms']) &&
+                empty($result['payLoad']['searchQueryParams']['inputFormTerms']['specificFieldType']) &&
+                empty($result['payLoad']['searchQueryParams']['inputFormTerms']['aggregations']) &&
+                empty($result['payLoad']['searchQueryParams']['inputFormTerms']['dataCollectionStartDate']) &&
+                empty($result['payLoad']['searchQueryParams']['inputFormTerms']['dataCollectionEndDate'])
+            ) {
+                continue;
+            }
+
             $searchResults = array
             (
                 '1stScore' => '',
