@@ -48,7 +48,6 @@ if (downloadZipElement) {
 const helpBtnElement = document.getElementById('help-btn');
 if (helpBtnElement) {
   Vue.use(BootstrapVue);
-  Vue.use(IconsPlugin);
   // eslint-disable-next-line no-new
   new Vue({
     el: '#help-btn',
