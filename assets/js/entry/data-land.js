@@ -6,7 +6,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
 import HelpModal from '../vue/components/data-land/HelpModal.vue';
 import '../../scss/data-land.scss';
-import 'bootstrap';
 
 // Mount File Manager vue component
 const fileManagerElement = document.getElementById('file-manager-app');
@@ -48,7 +47,6 @@ if (downloadZipElement) {
 const helpBtnElement = document.getElementById('help-btn');
 if (helpBtnElement) {
   Vue.use(BootstrapVue);
-  Vue.use(IconsPlugin);
   // eslint-disable-next-line no-new
   new Vue({
     el: '#help-btn',

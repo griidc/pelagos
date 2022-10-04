@@ -32,15 +32,15 @@
                     Files
                 </div>
                 <div class="card-body">
+                    <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
-                        <div id="download-zip" data-id="{{ dataset.id }}"></div>
                         <p class="card-text text-dark">
                             <a href="#individual-files">Individual Files
                                 <img src="{{ asset('build/images/down-arrow.svg') }}"><br />
                             </a>
                         </p>
-                        <hr>
                     {% endif %}
+                    <hr>
                     <p class="card-text text-dark">
                         <strong>No. of Downloads: </strong>
                         {{ downloads }}
@@ -57,30 +57,30 @@
                         <strong>File Format(s): </strong><br>
                         {{ dataset.datasetSubmission.distributionFormatName }}
                     </p>
-                        {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
-                            <hr>
-                            <div>
-                        {% endif %}
-                        {% if dataset.datasetSubmission.nceiurl|default %}
-                                <a href="{{ dataset.datasetSubmission.nceiurl }}" target="_blank">
-                                <button type="button" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-external-link-alt"></i>
-                                NCEI
-                                </button>
-                                </a>
-                        {% endif %}
-                        {% if dataset.datasetSubmission.erddapurl|default %}
-                                <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
-                                <button type="button" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-external-link-alt"></i>
-                                ERDDAP
-                                </button>
-                                </a>
-                        {% endif %}
-                        {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
-                                <span id="help-btn"></span>
-                            </div>
-                        {% endif %}
+                    {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
+                        <hr>
+                        <div>
+                    {% endif %}
+                    {% if dataset.datasetSubmission.nceiurl|default %}
+                            <a href="{{ dataset.datasetSubmission.nceiurl }}" target="_blank">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i>
+                            NCEI
+                            </button>
+                            </a>
+                    {% endif %}
+                    {% if dataset.datasetSubmission.erddapurl|default %}
+                            <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i>
+                            ERDDAP
+                            </button>
+                            </a>
+                    {% endif %}
+                    {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
+                            <span id="help-btn"></span>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
