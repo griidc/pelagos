@@ -7,16 +7,40 @@
                     <OverviewTab :overview="researchGroupData"/>
                 </b-tab>
                 <b-tab title="Datasets">
+                  <template #title>
+                    <span class="mr-3">Datasets</span>
+                    <span class="float-right badge badge-pill badge-secondary">
+                      {{ researchGroupData.datasets.length }}
+                    </span>
+                  </template>
                     <DatasetsTab :datasets="researchGroupData.datasets"/>
                 </b-tab>
                 <b-tab title="People">
+                  <template #title>
+                    <span class="mr-3">People</span>
+                    <span class="float-right badge badge-pill badge-secondary">
+                      {{ researchGroupData.personResearchGroups.length }}
+                    </span>
+                  </template>
                     <PeopleTab :personResearchGroups="researchGroupData.personResearchGroups"/>
                 </b-tab>
                 <b-tab title="Publications">
-                    <PublicationsTab :datasets="researchGroupData.datasets"/>
+                  <template #title>
+                    <span class="mr-3">Publications</span>
+                    <span class="float-right badge badge-pill badge-secondary">
+                      {{ getPublications().length }}
+                    </span>
+                  </template>
+                    <PublicationsTab :publications="getPublications()"/>
                 </b-tab>
                 <b-tab title="Information Products">
-                  <InformationProductsTab :informationProductData="informationProductData"/>
+                  <template #title>
+                    <span class="mr-3">Information Products</span>
+                    <span class="float-right badge badge-pill badge-secondary">
+                      {{ informationProductData.length }}
+                    </span>
+                  </template>
+                    <InformationProductsTab :informationProductData="informationProductData"/>
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -48,6 +72,21 @@ export default {
       informationProductData: {},
     };
   },
+  methods: {
+    getPublications() {
+      const publications = [];
+      const publicationId = [];
+      this.researchGroupData.datasets.forEach((dataset) => {
+        dataset.datasetPublications.forEach((publication) => {
+          if (!publicationId.includes(publication.publication.id)) {
+            publications.push(publication.publication);
+            publicationId.push(publication.publication.id);
+          }
+        });
+      });
+      return publications;
+    },
+  },
   created() {
     getApi(
       // eslint-disable-next-line no-undef
@@ -70,6 +109,9 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.badge-pill {
+  top: 3px;
+  position: relative;
+}
 </style>
