@@ -92,7 +92,13 @@ class SetErddapCommand extends Command
 
                     $link->setName(DatasetLink::LINK_NAME_CODES["erddap"]["name"]);
                     $link->setUrl($erddapUrl);
-                    $link->setDescription('Related ERDDAP data');
+                    $linkDescription =
+                    'ERDDAP infomation table listing individual dataset files links for this dataset. '
+                    . 'Table is also available in other file formats (.csv, .htmlTable, .itx, .json, '
+                    . '.jsonlCSV1, .jsonlCSV, .jsonlKVP, .mat, .nc, .nccsv, .tsv, .xhtml) via a RESTful '
+                    . 'web service.';
+
+                    $link->setDescription($linkDescription);
                     //$link->setFunctionCode(DatasetLink::ONLINE_FUNCTION_CODES["download"]["code"]);
                     $link->setFunctionCode('download');
                     $link->setProtocol('https');
