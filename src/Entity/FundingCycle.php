@@ -121,8 +121,6 @@ class FundingCycle extends Entity
      * @access protected
      *
      * @ORM\Column(type="date", nullable=true)
-     *
-     * @Assert\DateTime()
      */
     protected $startDate;
 
@@ -134,9 +132,6 @@ class FundingCycle extends Entity
      * @access protected
      *
      * @ORM\Column(type="date", nullable=true)
-     *
-     * @Assert\DateTime()
-     * @Assert\GreaterThan(propertyPath="startDate", message="End Date must be after Start Date")
      */
     protected $endDate;
 
