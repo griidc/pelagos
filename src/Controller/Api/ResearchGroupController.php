@@ -527,7 +527,10 @@ class ResearchGroupController extends EntityController
                     'authors',
                     'coldStorage',
                     'card',
-                )
+                ),
+                'dif' => array(
+                    'card'
+                ),
             ),
             'personResearchGroups' => array(
                 'person',

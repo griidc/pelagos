@@ -94,12 +94,7 @@ class Dataset extends Entity
      *
      * @var DOI
      *
-<<<<<<< HEAD
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
-=======
      * @Serializer\Groups({"card"})
->>>>>>> develop
      *
      * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
@@ -122,7 +117,7 @@ class Dataset extends Entity
      *
      * @var DIF
      *
-     * @Serializer\MaxDepth(0)
+     * @Serializer\Groups({"card"})
      *
      * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
      */
@@ -133,12 +128,7 @@ class Dataset extends Entity
      *
      * @var DatasetSubmission
      *
-<<<<<<< HEAD
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
-=======
      * @Serializer\Groups({"card"})
->>>>>>> develop
      *
      * @ORM\OneToOne(targetEntity="DatasetSubmission")
      */
@@ -162,11 +152,7 @@ class Dataset extends Entity
      *
      * @var \DateTime $acceptedDate;
      *
-<<<<<<< HEAD
-     * @Serializer\Groups({"search"})
-=======
      * @Serializer\Groups({"card"})
->>>>>>> develop
      *
      * @ORM\Column(type="datetimetz", nullable=true)
      */
@@ -212,11 +198,7 @@ class Dataset extends Entity
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
      *
-<<<<<<< HEAD
-     * @Serializer\Groups({"search"})
-=======
      * @Serializer\Groups({"card"})
->>>>>>> develop
      *
      * @ORM\Column(type="smallint")
      */

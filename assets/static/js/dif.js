@@ -96,13 +96,11 @@ $(document).ready(function()
 
     $("#btnSubmit").button().click(function() {
         $("#btn").val($(this).val());
-        //$("#status").val("Open");
         $("#difForm").submit();
     });
 
     $("#btnSave").button().click(function() {
         $("#btn").val($(this).val());
-        //$("#status").val("Open");
         $("#difForm").submit();
     });
 
@@ -784,7 +782,7 @@ function formReset(dontScrollToTop)
         $("#udi").val("").change();
         $("#spatialExtentGeometry").val("").change();
         $("#spatialExtentDescription").val("").change();
-        $("#status").val("Open").change();
+        $("#status").val(0).change();
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
