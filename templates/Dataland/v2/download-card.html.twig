@@ -7,6 +7,7 @@
                     Cold Storage Files
                 </div>
                 <div class="card-body">
+                    <div id="download-zip" data-id="{{ dataset.id }}"></div>
                     <hr>
                     <p class="card-text text-dark">
                         <strong>Number of Cold Storage Files: </strong><br>
@@ -60,24 +61,22 @@
                     {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
                         <hr>
                         <div>
-                    {% endif %}
-                    {% if dataset.datasetSubmission.nceiurl|default %}
+                        {% if dataset.datasetSubmission.nceiurl|default %}
                             <a href="{{ dataset.datasetSubmission.nceiurl }}" target="_blank">
-                            <button type="button" class="btn btn-primary btn-sm">
-                                <i class="fas fa-external-link-alt"></i>
-                            NCEI
-                            </button>
+                                <button type="button" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                NCEI
+                                </button>
                             </a>
-                    {% endif %}
-                    {% if dataset.datasetSubmission.erddapurl|default %}
+                        {% endif %}
+                        {% if dataset.datasetSubmission.erddapurl|default %}
                             <a href="{{ dataset.datasetSubmission.erddapurl }}" target="_blank">
-                            <button type="button" class="btn btn-primary btn-sm">
-                                <i class="fas fa-external-link-alt"></i>
-                            ERDDAP
-                            </button>
+                                <button type="button" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                ERDDAP
+                                </button>
                             </a>
-                    {% endif %}
-                    {% if dataset.datasetSubmission.nceiurl|default or dataset.datasetSubmission.erddapurl|default %}
+                        {% endif %}
                             <span id="help-btn"></span>
                         </div>
                     {% endif %}
