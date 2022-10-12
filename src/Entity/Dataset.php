@@ -932,6 +932,6 @@ class Dataset extends Entity
             }
         }
 
-        return $coldStorageTotalUnpackedSize ?? $coldStorageArchiveSize ?? $filesetSize; ?? null;
+        return $coldStorageTotalUnpackedSize ?? $coldStorageArchiveSize ?? $filesetSize ?? null;
     }
 }
