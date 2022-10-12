@@ -930,9 +930,8 @@ class Dataset extends Entity
                 $coldStorageArchiveSize = $datasetSubmission->getDatasetFileColdStorageArchiveSize();
                 $coldStorageTotalUnpackedSize = $datasetSubmission->getColdStorageTotalUnpackedSize();
             }
-            return $coldStorageTotalUnpackedSize ?? $coldStorageArchiveSize ?? $filesetSize;
         }
 
-        return null;
+        return $coldStorageTotalUnpackedSize ?? $coldStorageArchiveSize ?? $filesetSize; ?? null;
     }
 }
