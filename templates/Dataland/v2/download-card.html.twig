@@ -46,14 +46,16 @@
                         <strong>No. of Downloads: </strong>
                         {{ downloads }}
                     </p>
-                    <p class="card-text text-dark">
-                        <strong>No. of Files: </strong>
-                        {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
-                    </p>
-                    <p class="card-text text-dark">
-                        <strong>File Size: </strong>
-                        {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
-                    </p>
+                    {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+                        <p class="card-text text-dark">
+                            <strong>No. of Files: </strong>
+                            {{ dataset.datasetSubmission.fileset.numberOfFiles|default(0) }}
+                        </p>
+                        <p class="card-text text-dark">
+                            <strong>File Size: </strong>
+                            {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
+                        </p>
+                    {% endif %}
                     <p class="card-text text-dark">
                         <strong>File Format(s): </strong><br>
                         {{ dataset.datasetSubmission.distributionFormatName }}
