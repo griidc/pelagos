@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class SetDatasetFileSizeCommand extends Command
 {
-    protected static $defaultName = 'pelagos:setDatasetFileSize';
+    protected static $defaultName = 'pelagos:set-dataset-filesize';
     protected static $defaultDescription = 'Set dataset filesize for all datasets.';
 
     /**
