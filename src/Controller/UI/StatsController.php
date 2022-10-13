@@ -218,8 +218,8 @@ class StatsController extends AbstractController
         $dataSizes = array();
 
         foreach ($dataSizeRanges as $index => $range) {
-            $lower =  array_key_exists('range0', $range) ? $range['range0'] : 0;
-            $upper =  array_key_exists('range1', $range) ? $range['range1'] : 0;
+            $lower =  array_key_exists('range0', $range) ? $range['range0'] : null;
+            $upper =  array_key_exists('range1', $range) ? $range['range1'] : null;
 
             $datasetCount = $repository->getDatasetByFileSizeRange($lower, $upper);
 

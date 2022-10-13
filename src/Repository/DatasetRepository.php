@@ -90,10 +90,8 @@ class DatasetRepository extends ServiceEntityRepository
      */
     public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = null): int
     {
-        $totalDatasetSize = 0;
-
         $qb = $this->createQueryBuilder('dataset')
-            ->select('')
+            ->select('SUM(COALESCE(datasetSubmission.coldStorageTotalUnpackedSize, datasetSubmission.datasetFileColdStorageArchiveSize, datasetSubmission.datasetFileSize))')
             ->join('dataset.datasetSubmission', 'datasetSubmission')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
@@ -123,11 +121,10 @@ class DatasetRepository extends ServiceEntityRepository
             ->andWhere('rg.id IN (:rgs)')
             ->setParameter('rgs', $researchGroupIds);
         }
-        foreach ($qb->getQuery()->getResult() as $dataset) {
-            $totalDatasetSize += $dataset->getDatasetFileSize();
-        }
 
-        return $totalDatasetSize;
+        return $qb
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
@@ -252,30 +249,36 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Return number of dataset in specified range.
      *
-     * @param int $lower The lower limit or null.
-     * @param int $upper The upper limit.
+     * @param int|null $lower The lower limit or null.
+     * @param int|null $upper The upper limit.
      *
      * @return integer
      */
-    public function getDatasetByFileSizeRange(int $lower, int $upper)
+    public function getDatasetByFileSizeRange(int $lower = null, int $upper = null)
     {
-        $criteria = [];
+        $qb = $this->createQueryBuilder('dataset');
+        $qb->select('count(dataset.id)');
+        $qb->join('dataset.datasetSubmission', 'ds');
+
+        if (!empty($lower)) {
+            $qb->andWhere('COALESCE(ds.coldStorageTotalUnpackedSize, ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) > :lower');
+            $qb->setParameter('lower', $lower);
+        }
+        if (!empty($upper)) {
+            $qb->andWhere('COALESCE(ds.coldStorageTotalUnpackedSize, ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) <= :upper');
+            $qb->setParameter('upper', $upper);
+        }
 
         if ($this->fundingOrgFilter->isActive()) {
-            $criteria = array_merge($criteria, array(
-                'researchGroup' =>
-                $this->fundingOrgFilter->getResearchGroupsIdArray(),
-            ));
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
         }
 
-        $datasets = $this->findBy($criteria);
-        $count = 0;
-        foreach ($datasets as $dataset) {
-            $datasetFileSize = $dataset->getDatasetFileSize();
-            if ($datasetFileSize > $lower and $datasetFileSize <= $upper) {
-                $count++;
-            }
-        }
-        return $count;
+        $query = $qb->getQuery();
+        return $query->getSingleScalarResult();
     }
 }
