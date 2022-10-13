@@ -35,7 +35,7 @@ class SetDatasetFileSizeCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('This will set the file size for all datasets, continue?', false);
+        $question = new ConfirmationQuestion('This will set the file size for all datasets, continue? [y/N]', false);
 
         if ($helper->ask($input, $output, $question)) {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
