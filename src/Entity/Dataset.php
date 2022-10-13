@@ -910,28 +910,4 @@ class Dataset extends Entity
 
         return null;
     }
-
-    /**
-     * Get dataset file size considering cold storage file archive and unpacked sizes.
-     *
-     * @return integer|null
-     */
-    public function getDatasetFileSize(): ?int
-    {
-        $datasetSubmission = $this->getDatasetSubmission();
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $fileSet = $datasetSubmission->getFileset();
-            $filesetSize = null;
-            if ($fileSet instanceof Fileset) {
-                $filesetSize = $fileSet->getFileSize();
-            }
-
-            if ($datasetSubmission->isDatasetFileInColdStorage()) {
-                $coldStorageArchiveSize = $datasetSubmission->getDatasetFileColdStorageArchiveSize();
-                $coldStorageTotalUnpackedSize = $datasetSubmission->getColdStorageTotalUnpackedSize();
-            }
-        }
-
-        return $coldStorageTotalUnpackedSize ?? $coldStorageArchiveSize ?? $filesetSize ?? null;
-    }
 }
