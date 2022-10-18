@@ -74,6 +74,9 @@ class DoctrineDatasetListener
                 $entityManager->persist($dataset);
                 $classMetadata = $entityManager->getClassMetadata(Dataset::class);
                 $entityManager->getUnitOfWork()->recomputeSingleEntityChangeSet($classMetadata, $dataset);
+                if ($entity instanceof DatasetSubmission) {
+                    $entity->setDatasetFileSize($dataset->getTotalFileSize());
+                }
             }
         }
     }
