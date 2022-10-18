@@ -53,16 +53,10 @@ export default {
       Routing.generate('pelagos_app_ui_stats_getstatisticsjson'),
     ).then((response) => {
       const datasetSize = response.data.totalSize?.split(" ");
-<<<<<<< HEAD
       if (datasetSize.length > 0) {
         this.totalsize = datasetSize[0];
         this.sizeUnit = datasetSize[1];
       }
-=======
-      if 
-      this.totalsize = datasetSize[0];
-      this.sizeUnit = datasetSize[1];
->>>>>>> 76c50fb99995c44165bb9eb3cd34e4683266413a
       this.datasets = response.data.totalDatasets;
       this.people = response.data.peopleCount;
       this.researchGroups = response.data.researchGroupCount;
