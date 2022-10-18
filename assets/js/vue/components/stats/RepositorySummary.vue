@@ -44,7 +44,7 @@ export default {
       totalDownloads: 0,
       researchGroups: 0,
       people: 0,
-      sizeUnit: "TB",
+      sizeUnit: 'TB',
     };
   },
   created() {
