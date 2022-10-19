@@ -15,16 +15,16 @@ use App\Entity\DatasetSubmission;
 use App\Entity\Person;
 
 /**
- * This command sets the issue ticket on a datset (submisison).
+ * This command adds a ERDDAP or NCEI dataset link.
  */
-class SetErddapCommand extends Command
+class AddDatasetLinkCommand extends Command
 {
     /**
      * The Command name.
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'pelagos:dataset-set-erddap';
+    protected static $defaultName = 'pelagos:dataset-add-link';
 
     /**
      * A Doctrine ORM EntityManager instance.
