@@ -52,8 +52,9 @@ class AddDatasetLinkCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Sets an ERDDAP link for a dataset.')
+            ->setDescription('Sets an ERDDAP or a NCEI link for a dataset.')
             ->addOption('udi', null, InputOption::VALUE_REQUIRED, 'UDI of dataset to add erddap link to')
+            ->addOption('type', null, InputOption::VALUE_REQUIRED, 'link type: ERDDAP or NCEI')
             ->addOption('url', null, InputOption::VALUE_REQUIRED, 'URL of ERDDAP link')
             ;
     }
@@ -72,41 +73,57 @@ class AddDatasetLinkCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $udi = $input->getOption('udi');
-        $erddapUrl =$input->getOption('url');
+        $type = $input->getOption('type');
+        $targetUrl =$input->getOption('url');
+
+        // Since Symfony doesn't allow mandatory options, and arguments are ordered and undescribed, not using.  Instead force options mandatory.
+        if (empty($udi) or empty($type) or empty($targetUrl)) {
+            $io->error("UDI, type, and URL parameters are not optional.");
+        }
+
+        // Accept only known types, 'NCEI' or 'ERDDAP'.
+        if (!in_array($type, array(DatasetLink::LINK_NAME_CODES["erddap"]["name"], DatasetLink::LINK_NAME_CODES["ncei"]["name"]))) {
+            $io->error("Please specify either ERDDAP or NCEI.");
+        }
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
         if (!($dataset instanceof Dataset)) {
-            $io->error("Could not find a dataset with UDI ($udi)");
+            $io->error('Could not find a dataset with UDI (' . $udi . ')');
         } else {
             // get submission
             $submission = $dataset->getDatasetSubmission();
             if ($submission instanceof DatasetSubmission) {
                 // create dataset link
-                $oldLink = $submission->getErdappDatasetLink();
-                if ($oldLink instanceof DatasetLink) {
-                    $io->warning("$udi already has an erddap link. Not changing.");
+                if (
+                    ($type === DatasetLink::LINK_NAME_CODES["erddap"]["name"] and !empty($submission->getErddapUrl())) or
+                    ($type === DatasetLink::LINK_NAME_CODES["ncei"]["name"] and !empty($submission->getNceiUrl()))
+                    ) {
+                    $io->warning("$udi already has link of type $type. Not changing.");
                 } else {
+                    if ($type === DatasetLink::LINK_NAME_CODES["erddap"]["name"]) {
+                        $linkDescription =
+                        'ERDDAP infomation table listing individual dataset files links for this dataset. '
+                        . 'Table is also available in other file formats (.csv, .htmlTable, .itx, .json, '
+                        . '.jsonlCSV1, .jsonlCSV, .jsonlKVP, .mat, .nc, .nccsv, .tsv, .xhtml) via a RESTful '
+                        . 'web service.';
+                    } else {
+                        $linkDescription = 'NCEI DESCRIPTION GOES HERE, TBD.';
+                    }
+
                     $link = new DatasetLink();
                     $link->setCreator($systemPerson);
                     $link->setModifier($systemPerson);
-
-                    $link->setName(DatasetLink::LINK_NAME_CODES["erddap"]["name"]);
-                    $link->setUrl($erddapUrl);
-                    $linkDescription =
-                    'ERDDAP infomation table listing individual dataset files links for this dataset. '
-                    . 'Table is also available in other file formats (.csv, .htmlTable, .itx, .json, '
-                    . '.jsonlCSV1, .jsonlCSV, .jsonlKVP, .mat, .nc, .nccsv, .tsv, .xhtml) via a RESTful '
-                    . 'web service.';
+                    $link->setName($type);
+                    $link->setUrl($targetUrl);
 
                     $link->setDescription($linkDescription);
-                    //$link->setFunctionCode(DatasetLink::ONLINE_FUNCTION_CODES["download"]["code"]);
                     $link->setFunctionCode('download');
                     $link->setProtocol('https');
 
                     $submission->addDatasetLink($link);
                     $this->entityManager->persist($dataset);
                     $this->entityManager->flush();
-                    $io->success("Set ERDDAP URL on $udi");
+                    $io->success("Set $type URL on $udi");
                 }
             } else {
                 $io->error("$udi has no submission.");
