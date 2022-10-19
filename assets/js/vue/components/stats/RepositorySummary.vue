@@ -54,7 +54,7 @@ export default {
     ).then((response) => {
       const datasetSize = response.data.totalSize?.split(' ');
       if (datasetSize.length > 0) {
-        [ this.totalsize, this.sizeUnit ] = datasetSize;
+        [this.totalsize, this.sizeUnit] = datasetSize;
       }
       this.datasets = response.data.totalDatasets;
       this.people = response.data.peopleCount;
