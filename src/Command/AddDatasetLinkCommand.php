@@ -79,16 +79,19 @@ class AddDatasetLinkCommand extends Command
         // Since Symfony doesn't allow mandatory options, and arguments are ordered and undescribed, not using.  Instead force options mandatory.
         if (empty($udi) or empty($type) or empty($targetUrl)) {
             $io->error("UDI, type, and URL parameters are not optional.");
+            exit(1);
         }
 
         // Accept only known types, 'NCEI' or 'ERDDAP'.
         if (!in_array($type, array(DatasetLink::LINK_NAME_CODES["erddap"]["name"], DatasetLink::LINK_NAME_CODES["ncei"]["name"]))) {
             $io->error("Please specify either ERDDAP or NCEI.");
+            exit(1);
         }
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
         if (!($dataset instanceof Dataset)) {
             $io->error('Could not find a dataset with UDI (' . $udi . ')');
+            exit(1);
         } else {
             // get submission
             $submission = $dataset->getDatasetSubmission();
@@ -100,25 +103,28 @@ class AddDatasetLinkCommand extends Command
                     ) {
                     $io->warning("$udi already has link of type $type. Not changing.");
                 } else {
+                    $link = new DatasetLink();
+
                     if ($type === DatasetLink::LINK_NAME_CODES["erddap"]["name"]) {
                         $linkDescription =
                         'ERDDAP infomation table listing individual dataset files links for this dataset. '
                         . 'Table is also available in other file formats (.csv, .htmlTable, .itx, .json, '
                         . '.jsonlCSV1, .jsonlCSV, .jsonlKVP, .mat, .nc, .nccsv, .tsv, .xhtml) via a RESTful '
                         . 'web service.';
+                        $link->setFunctionCode('download');
+                        $link->setProtocol('https');
                     } else {
                         $linkDescription = 'NCEI DESCRIPTION GOES HERE, TBD.';
+                        $link->setFunctionCode('download');
+                        $link->setProtocol('https');
                     }
 
-                    $link = new DatasetLink();
                     $link->setCreator($systemPerson);
                     $link->setModifier($systemPerson);
                     $link->setName($type);
                     $link->setUrl($targetUrl);
 
                     $link->setDescription($linkDescription);
-                    $link->setFunctionCode('download');
-                    $link->setProtocol('https');
 
                     $submission->addDatasetLink($link);
                     $this->entityManager->persist($dataset);
