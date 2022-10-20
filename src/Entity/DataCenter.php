@@ -22,34 +22,6 @@ use App\Validator\Constraints as CustomAssert;
  *     errorPath="organizationUrl",
  *     message="A data center with this Url already exists"
  * )
- *
- * @Hateoas\Relation(
- *   "self",
- *   href = @Hateoas\Route(
- *     "pelagos_api_data_center_get",
- *     parameters = { "id" = "expr(object.getId())" }
- *   )
- * )
- * @Hateoas\Relation(
- *   "edit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_data_center_put",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted('CAN_EDIT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_data_center_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted('CAN_DELETE', object))"
- *   )
- * )
  */
 
 /**

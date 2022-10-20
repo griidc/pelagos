@@ -4,6 +4,7 @@ import FileManager from '../vue/FileManager.vue';
 import '../../css/file-manager.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
+import HelpModal from '../vue/components/data-land/HelpModal.vue';
 import '../../scss/data-land.scss';
 
 // Mount File Manager vue component
@@ -39,6 +40,18 @@ if (downloadZipElement) {
       };
     },
     template: '<DownloadZipBtn :id="datasetId"/>',
+  });
+}
+
+// Mount Help Modal vue component
+const helpBtnElement = document.getElementById('help-btn');
+if (helpBtnElement) {
+  Vue.use(BootstrapVue);
+  // eslint-disable-next-line no-new
+  new Vue({
+    el: '#help-btn',
+    components: { HelpModal },
+    template: '<HelpModal/>',
   });
 }
 

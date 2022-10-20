@@ -10,7 +10,7 @@
             <div class="col-sm">
                 <img src="~images/icon-filesize.png">
                 <div class="count">{{ (totalsize == 0) ? '-' : totalsize }}</div>
-                <div class="label">TB Of Data</div>
+                <div class="label"> {{sizeUnit}} Of Data</div>
             </div>
             <div class="col-sm">
                 <img src="~images/icon-downloads.png">
@@ -44,6 +44,7 @@ export default {
       totalDownloads: 0,
       researchGroups: 0,
       people: 0,
+      sizeUnit: 'TB',
     };
   },
   created() {
@@ -51,8 +52,11 @@ export default {
       // eslint-disable-next-line no-undef
       Routing.generate('pelagos_app_ui_stats_getstatisticsjson'),
     ).then((response) => {
+      const datasetSize = response.data.totalSize?.split(' ');
+      if (datasetSize.length > 0) {
+        [this.totalsize, this.sizeUnit] = datasetSize;
+      }
       this.datasets = response.data.totalDatasets;
-      this.totalsize = response.data.totalSize;
       this.people = response.data.peopleCount;
       this.researchGroups = response.data.researchGroupCount;
       this.totalDownloads = response.data.totalDownloadCount;
