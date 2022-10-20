@@ -4,71 +4,12 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
  * DIF Entity class.
  *
  * @ORM\Entity
- *
- * @Hateoas\Relation(
- *   "self",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_get",
- *     parameters = { "id" = "expr(object.getId())" }
- *   )
- * )
- * @Hateoas\Relation(
- *   "edit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_put",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted('CAN_EDIT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "submit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_submit",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isSubmittable() or not service('security.authorization_checker').isGranted('CAN_SUBMIT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "approve",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_approve",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isApprovable() or not service('security.authorization_checker').isGranted('CAN_APPROVE', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "reject",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_reject",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isRejectable() or not service('security.authorization_checker').isGranted('CAN_REJECT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "unlock",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_unlock",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isUnlockable() or not service('security.authorization_checker').isGranted('CAN_UNLOCK', object))"
- *   )
- * )
  */
 class DIF extends Entity
 {

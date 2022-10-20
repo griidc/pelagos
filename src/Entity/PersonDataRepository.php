@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
-use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Entity class to represent a Person to Data Repository Association.
@@ -17,34 +16,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     fields={"person", "dataRepository"},
  *     errorPath="person",
  *     message="A Person can have only one association with a Data Repository"
- * )
- *
- * @Hateoas\Relation(
- *   "self",
- *   href = @Hateoas\Route(
- *     "pelagos_api_person_data_repositories_get",
- *     parameters = { "id" = "expr(object.getId())" }
- *   )
- * )
- * @Hateoas\Relation(
- *   "edit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_person_data_repositories_put",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted('CAN_EDIT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_person_data_repositories_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted('CAN_DELETE', object))"
- *   )
  * )
  */
 class PersonDataRepository extends Entity implements PersonAssociationInterface

@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
-use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -30,34 +29,6 @@ use App\Exception\NotDeletableException;
  *     fields={"emailAddress"},
  *     errorPath="emailAddress",
  *     message="A Person with this email address already exists"
- * )
- *
- * @Hateoas\Relation(
- *   "self",
- *   href = @Hateoas\Route(
- *     "pelagos_api_people_get",
- *     parameters = { "id" = "expr(object.getId())" }
- *   )
- * )
- * @Hateoas\Relation(
- *   "edit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_people_put",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted('CAN_EDIT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_people_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted('CAN_DELETE', object))"
- *   )
  * )
  */
 class Person extends Entity
