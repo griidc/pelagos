@@ -105,6 +105,13 @@ class AddDatasetLinkCommand extends Command
                 } else {
                     $link = new DatasetLink();
 
+                    // common elements
+                    $link->setProtocol('https');
+                    $link->setCreator($systemPerson);
+                    $link->setModifier($systemPerson);
+                    $link->setName($type);
+                    $link->setUrl($targetUrl);
+
                     if ($type === DatasetLink::LINK_NAME_CODES["erddap"]["name"]) {
                         $linkDescription =
                         'ERDDAP infomation table listing individual dataset files links for this dataset. '
@@ -112,18 +119,10 @@ class AddDatasetLinkCommand extends Command
                         . '.jsonlCSV1, .jsonlCSV, .jsonlKVP, .mat, .nc, .nccsv, .tsv, .xhtml) via a RESTful '
                         . 'web service.';
                         $link->setFunctionCode('download');
-                        $link->setProtocol('https');
                     } else {
-                        $linkDescription = 'NCEI DESCRIPTION GOES HERE, TBD.';
-                        $link->setFunctionCode('download');
-                        $link->setProtocol('https');
+                        $linkDescription = 'Navigate directly to the URL for a descriptive web page with download links.';
+                        $link->setFunctionCode('information');
                     }
-
-                    $link->setCreator($systemPerson);
-                    $link->setModifier($systemPerson);
-                    $link->setName($type);
-                    $link->setUrl($targetUrl);
-
                     $link->setDescription($linkDescription);
 
                     $submission->addDatasetLink($link);
