@@ -74,7 +74,7 @@ class AddDatasetLinkCommand extends Command
 
         $udi = $input->getOption('udi');
         $type = $input->getOption('type');
-        $targetUrl =$input->getOption('url');
+        $targetUrl = $input->getOption('url');
 
         // Since Symfony doesn't allow mandatory options, and arguments are ordered and undescribed, not using.  Instead force options mandatory.
         if (empty($udi) or empty($type) or empty($targetUrl)) {
@@ -100,7 +100,7 @@ class AddDatasetLinkCommand extends Command
                 if (
                     ($type === DatasetLink::LINK_NAME_CODES["erddap"]["name"] and !empty($submission->getErddapUrl())) or
                     ($type === DatasetLink::LINK_NAME_CODES["ncei"]["name"] and !empty($submission->getNceiUrl()))
-                    ) {
+                ) {
                     $io->warning("$udi already has link of type $type. Not changing.");
                 } else {
                     $link = new DatasetLink();
