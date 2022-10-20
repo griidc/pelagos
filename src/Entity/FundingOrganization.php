@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
-use Hateoas\Configuration\Annotation as Hateoas;
 use App\Exception\NotDeletableException;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -22,34 +21,6 @@ use JMS\Serializer\Annotation as Serializer;
  * )
  *
  * @UniqueEntity("shortName", message="A Funding Organization with this Short name already exists")
- *
- * @Hateoas\Relation(
- *   "self",
- *   href = @Hateoas\Route(
- *     "pelagos_api_funding_organizations_get",
- *     parameters = { "id" = "expr(object.getId())" }
- *   )
- * )
- * @Hateoas\Relation(
- *   "edit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_funding_organizations_put",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted('CAN_EDIT', object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_funding_organizations_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted('CAN_DELETE', object))"
- *   )
- * )
  */
 class FundingOrganization extends Entity
 {
