@@ -13,6 +13,8 @@ use App\Entity\Dataset;
 use App\Entity\DatasetLink;
 use App\Entity\DatasetSubmission;
 use App\Entity\Person;
+use DateTime;
+use DateTimeZone;
 
 /**
  * This command adds a ERDDAP or NCEI dataset link.
@@ -79,19 +81,19 @@ class AddDatasetLinkCommand extends Command
         // Since Symfony doesn't allow mandatory options, and arguments are ordered and undescribed, not using.  Instead force options mandatory.
         if (empty($udi) or empty($type) or empty($targetUrl)) {
             $io->error("UDI, type, and URL parameters are not optional.");
-            exit(1);
+            return(1);
         }
 
         // Accept only known types, 'NCEI' or 'ERDDAP'.
         if (!in_array($type, array(DatasetLink::LINK_NAME_CODES["erddap"]["name"], DatasetLink::LINK_NAME_CODES["ncei"]["name"]))) {
             $io->error("Please specify either ERDDAP or NCEI.");
-            exit(1);
+            return(1);
         }
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
         if (!($dataset instanceof Dataset)) {
             $io->error('Could not find a dataset with UDI (' . $udi . ')');
-            exit(1);
+            return(1);
         } else {
             // get submission
             $submission = $dataset->getDatasetSubmission();
@@ -109,6 +111,7 @@ class AddDatasetLinkCommand extends Command
                     $link->setProtocol('https');
                     $link->setCreator($systemPerson);
                     $link->setModifier($systemPerson);
+                    $link->setCreationTimeStamp(new DateTime('now', new DateTimeZone('UTC')));
                     $link->setName($type);
                     $link->setUrl($targetUrl);
 
@@ -126,7 +129,7 @@ class AddDatasetLinkCommand extends Command
                     $link->setDescription($linkDescription);
 
                     $submission->addDatasetLink($link);
-                    $this->entityManager->persist($dataset);
+                    $this->entityManager->persist($submission);
                     $this->entityManager->flush();
                     $io->success("Set $type URL on $udi");
                 }
@@ -134,6 +137,6 @@ class AddDatasetLinkCommand extends Command
                 $io->error("$udi has no submission.");
             }
         }
-        return 0;
+        return(0);
     }
 }
