@@ -135,8 +135,10 @@ class AddDatasetLinkCommand extends Command
                 }
             } else {
                 $io->error("$udi has no submission.");
+                return(1);
             }
         }
+        $io->success('Command Complete.');
         return(0);
     }
 }
