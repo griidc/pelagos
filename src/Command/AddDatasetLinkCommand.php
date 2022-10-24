@@ -4,7 +4,6 @@ namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -81,19 +80,19 @@ class AddDatasetLinkCommand extends Command
         // Since Symfony doesn't allow mandatory options, and arguments are ordered and undescribed, not using.  Instead force options mandatory.
         if (empty($udi) or empty($type) or empty($targetUrl)) {
             $io->error("UDI, type, and URL parameters are not optional.");
-            return(1);
+            return 1;
         }
 
         // Accept only known types, 'NCEI' or 'ERDDAP'.
         if (!in_array($type, array(DatasetLink::LINK_NAME_CODES["erddap"]["name"], DatasetLink::LINK_NAME_CODES["ncei"]["name"]))) {
             $io->error("Please specify either ERDDAP or NCEI.");
-            return(1);
+            return 1;
         }
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
         if (!($dataset instanceof Dataset)) {
             $io->error('Could not find a dataset with UDI (' . $udi . ')');
-            return(1);
+            return 1;
         } else {
             // get submission
             $submission = $dataset->getDatasetSubmission();
@@ -135,10 +134,10 @@ class AddDatasetLinkCommand extends Command
                 }
             } else {
                 $io->error("$udi has no submission.");
-                return(1);
+                return 1;
             }
         }
         $io->success('Command Complete.');
-        return(0);
+        return 0;
     }
 }
