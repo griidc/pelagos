@@ -34,11 +34,10 @@ security:
         main:
             # allow anonymous access
             lazy: true
-            #guard authentication
-            guard:
-               authenticators:
-                   - App\Security\LoginFormAuthenticator
-               provider: pelagos_account
+            entry_point: security_login
+            custom_authenticator:
+                - App\Security\LoginFormAuthenticator
+
             #logout
             logout:
                 path: security_logout
@@ -48,7 +47,10 @@ security:
             remote_user:
                 provider: pelagos_account
             # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+            switch_user:
+                provider: pelagos_account
+                role: ROLE_DATA_REPOSITORY_MANAGER
+
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
