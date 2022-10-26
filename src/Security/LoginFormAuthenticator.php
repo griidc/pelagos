@@ -2,12 +2,12 @@
 
 namespace App\Security;
 
-use App\Form\LoginForm;
 use App\Entity\Account;
 use App\Entity\LoginAttempts;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
+use App\Form\LoginForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
