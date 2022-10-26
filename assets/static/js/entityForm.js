@@ -196,6 +196,8 @@
                     .has("input[name='id']")
                     .parent()
                     .click();
+
+                    $("input[name='id']").val(999);
             }
 
             // Special stuff for Addform

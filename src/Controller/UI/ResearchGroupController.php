@@ -94,6 +94,9 @@ class ResearchGroupController extends AbstractController
         $researchGroupRepository = $this->managerRegistry->getRepository(ResearchGroup::class);
         /** @var ResearchGroupRepository $researchGroupRepository */
         $ui['FundingOrganizations'] = $researchGroupRepository->findAll();
+        # Replace with constants.
+        $nextId = $researchGroupRepository->getNextAvailableId(100, 999);
+        $ui['newId'] = $nextId;
 
         return $this->render('template/ResearchGroup.html.twig', $ui);
     }
