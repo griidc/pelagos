@@ -106,6 +106,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         return $request->attributes->get('_route') === 'security_login' && $request->isMethod('POST');
     }
 
+    /**
+     * Authenticate function for Form Authenticator.
+     *
+     * @param Request $request
+     *
+     * @return Passport
+     */
     public function authenticate(Request $request): Passport
     {
         $form = $this->formFactory->create(LoginForm::class);
@@ -124,7 +131,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $password = $credentials['_password'];
 
         return new Passport(
-            new UserBadge($username, function($userIdentifier) {
+            new UserBadge($username, function ($userIdentifier) {
                 // Try to find the user by e-mail.
                 $thePerson = $this->entityManager->getRepository(Person::class)
                     ->findOneBy(['emailAddress' => $userIdentifier]);
@@ -141,9 +148,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 }
 
                 return $theUser;
-
             }),
-            new CustomCredentials(function($credentials, Account $user) {
+            new CustomCredentials(function ($credentials, Account $user) {
                 // Here check to see if $user is locked out?
                 if ($user->isLockedOut()) {
                     throw new AuthenticationException('Too many login attempts');
