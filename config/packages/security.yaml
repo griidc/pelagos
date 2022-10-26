@@ -23,18 +23,18 @@ security:
             stateless: true
             # allow anonymous access
             lazy: true
+            provider: person_token
+
             # use a Person Token, if present
-            guard:
-               authenticators:
-                   - App\Security\PersonTokenAuthenticator
-               provider: person_token
+            custom_authenticator:
+                - App\Security\PersonTokenAuthenticator
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
         main:
             # allow anonymous access
             lazy: true
-
+            provider: pelagos_account
             custom_authenticator:
                 - App\Security\LoginFormAuthenticator
 
