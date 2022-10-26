@@ -68,6 +68,8 @@ class ResearchGroupController extends AbstractController
                 ->createView();
         } else {
             $researchGroup = new \App\Entity\ResearchGroup();
+            $nextId = $this->getDoctrine()->getRepository(ResearchGroup::class)->getNextAvailableId(100, 999);
+            $researchGroup->setId($nextId);
         }
 
         $form = $formFactory->createNamed('', ResearchGroupType::class, $researchGroup);
@@ -79,7 +81,7 @@ class ResearchGroupController extends AbstractController
     }
 
     /**
-     * The Research Group Ladning page action.
+     * The Research Group Landing page action.
      *
      * @param integer $id The id of the entity to retrieve.
      *

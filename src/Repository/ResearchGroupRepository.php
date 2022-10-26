@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
+use App\Util\ArrayHoleFinderUtil;
 
 /**
  * Research Group Entity Repository class.
@@ -80,5 +81,21 @@ class ResearchGroupRepository extends ServiceEntityRepository
         array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
+    }
+
+    /**
+     * Find the lowest-value ID available for use, in a specified range.
+     *
+     * @param int $min Range start.
+     * @param int $max Range end.
+     * @return int First available ID.
+     */
+    public function getNextAvailableId($min, $max)
+    {
+        $researchGroups = $this->findAll();
+        foreach ($researchGroups as $researchGroup) {
+            $ids[] = $researchGroup->getId();
+        }
+        return ArrayHoleFinderUtil::getAvailable($ids, $min, $max)[0];
     }
 }
