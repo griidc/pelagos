@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\FundingCycle;
+use App\Repository\ResearchGroupRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,6 +19,34 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  */
 class ResearchGroupType extends AbstractType
 {
+
+    /**
+     * Highest acceptable ID number.
+     */
+    public const MAX_ID = 999;
+
+    /**
+     * Minimum acceptable ID number.
+     */
+    public const MIN_ID = 100;
+
+    /**
+     * To hold injected ResearchGroupRepository.
+     *
+     * @var ResearchGroupRepository
+     */
+    private ResearchGroupRepository $researchGroupRepository;
+
+    /**
+     * A repository for Research Groups.
+     *
+     * @param ResearchGroupRepository $researchGroupRepository
+     */
+    public function __construct(ResearchGroupRepository $researchGroupRepository)
+    {
+        $this->researchGroupRepository = $researchGroupRepository;
+    }
+
     /**
      * Builds the form.
      *
@@ -33,6 +62,7 @@ class ResearchGroupType extends AbstractType
         $builder
             ->add('id', TextType::class, array(
                 'label' => 'Research Group ID:',
+                'attr' => array('next-id' => $this->researchGroupRepository->getNextAvailableId(self::MIN_ID, self::MAX_ID)),
                 'required' => false,
             ))
             ->add('name', TextType::class, array(

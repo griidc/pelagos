@@ -197,7 +197,10 @@
                     .parent()
                     .click();
 
-                    $("input[name='id']").val(999);
+                    var nextId = $("#id").attr("next-id");
+                    if (nextId != '') {
+                        $("input[name='id']").val(nextId);
+                    };
             }
 
             // Special stuff for Addform
