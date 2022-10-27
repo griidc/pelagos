@@ -27,9 +27,7 @@
       <div class="row">
         <aside class="col-lg-3">
           <div class="card card-filter">
-            <Facet :facet-info="results.facetInfo.dataTypeInfo" :facet-name="facetLabels.dataType" v-on="$listeners" :formValues="formValues"/>
-            <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
-            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues"/>
+            <Facet v-for="(facetInfo, name, index) in results.facetInfo" v-bind:key="index" :facet-info="facetInfo" :facet-name="getFacetLabel(name)" v-on="$listeners" :formValues="formValues" />
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
@@ -93,17 +91,21 @@ export default {
   data() {
     return {
       facetLabels: {
-        researchGroup: {
+        researchGroupInfo: {
           label: templateSwitch.getProperty('researchGroup'),
           queryParam: 'researchGroup',
         },
-        fundingOrg: {
+        fundingOrgInfo: {
           label: templateSwitch.getProperty('fundingOrg'),
           queryParam: 'fundingOrg',
         },
-        dataType: {
+        dataTypeInfo: {
           label: 'Type',
           queryParam: 'dataType',
+        },
+        statusInfo: {
+          label: templateSwitch.getProperty('status'),
+          queryParam: 'status',
         },
       },
       showResults: false,
@@ -128,6 +130,16 @@ export default {
     },
     perPage(value) {
       this.$emit('noOfResults', value);
+    },
+  },
+  methods: {
+    getFacetLabel(facetName) {
+      const tempFacetLabelObj = Object.entries(this.facetLabels);
+      const facetLabels = new Map(tempFacetLabelObj);
+      if (facetLabels.has(facetName)) {
+        return facetLabels.get(facetName);
+      }
+      return '';
     },
   },
 };
