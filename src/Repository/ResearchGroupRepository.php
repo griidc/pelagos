@@ -7,7 +7,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
-use App\Util\ArrayHoleFinderUtil;
 
 /**
  * Research Group Entity Repository class.
@@ -96,6 +95,6 @@ class ResearchGroupRepository extends ServiceEntityRepository
         foreach ($researchGroups as $researchGroup) {
             $ids[] = $researchGroup->getId();
         }
-        return ArrayHoleFinderUtil::getAvailable($ids, $min, $max)[0];
+        return array_values(array_diff(range($min, $max), $ids))[0];
     }
 }
