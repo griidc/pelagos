@@ -8,7 +8,6 @@ use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
 use App\Form\ResearchGroupType;
 use App\Form\PersonResearchGroupType;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -21,23 +20,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ResearchGroupController extends AbstractController
 {
-    /**
-     * New manager registry to get doctrine access.
-     *
-     * @var ManagerRegistry $managerRegistry An injected ManagerRegistry object.
-     */
-    protected ManagerRegistry $managerRegistry;
-
-    /**
-     * Constructor for dependency injection
-     *
-     * @param \Doctrine\Persistence\ManagerRegistry $managerRegistry
-     */
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
-
     /**
      * The Research Group action.
      *
@@ -91,18 +73,13 @@ class ResearchGroupController extends AbstractController
         $form = $formFactory->createNamed('', ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
-        $researchGroupRepository = $this->managerRegistry->getRepository(ResearchGroup::class);
-        /** @var ResearchGroupRepository $researchGroupRepository */
-        $ui['FundingOrganizations'] = $researchGroupRepository->findAll();
-        # Replace with constants.
-        $nextId = $researchGroupRepository->getNextAvailableId(100, 999);
-        $ui['newId'] = $nextId;
+        $ui['FundingOrganizations'] = $this->getDoctrine()->getRepository(FundingOrganization::class)->findAll();
 
         return $this->render('template/ResearchGroup.html.twig', $ui);
     }
 
     /**
-     * The Research Group Landing page action.
+     * The Research Group Ladning page action.
      *
      * @param integer $id The id of the entity to retrieve.
      *
