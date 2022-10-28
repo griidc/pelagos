@@ -19,7 +19,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  */
 class ResearchGroupType extends AbstractType
 {
-
     /**
      * Highest acceptable ID number.
      */
