@@ -62,7 +62,7 @@ class ResearchGroupType extends AbstractType
         $builder
             ->add('id', TextType::class, array(
                 'label' => 'Research Group ID:',
-                'attr' => array('next-id' => $this->researchGroupRepository->getNextAvailableId(self::MIN_ID, self::MAX_ID)),
+                'attr' => array('placeholder' => $this->researchGroupRepository->getNextAvailableId(self::MIN_ID, self::MAX_ID)),
                 'required' => false,
             ))
             ->add('name', TextType::class, array(
