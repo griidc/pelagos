@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\FundingCycle;
+use App\Entity\ResearchGroup;
 use App\Repository\ResearchGroupRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,16 +20,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  */
 class ResearchGroupType extends AbstractType
 {
-    /**
-     * Highest acceptable ID number.
-     */
-    public const MAX_ID = 999;
-
-    /**
-     * Minimum acceptable ID number.
-     */
-    public const MIN_ID = 100;
-
     /**
      * To hold injected ResearchGroupRepository.
      *
@@ -61,7 +52,7 @@ class ResearchGroupType extends AbstractType
         $builder
             ->add('id', TextType::class, array(
                 'label' => 'Research Group ID:',
-                'attr' => array('placeholder' => $this->researchGroupRepository->getNextAvailableId(self::MIN_ID, self::MAX_ID)),
+                'attr' => array('placeholder' => $this->researchGroupRepository->getNextAvailableId(ResearchGroup::MIN_ID, ResearchGroup::MAX_ID)),
                 'required' => false,
             ))
             ->add('name', TextType::class, array(
