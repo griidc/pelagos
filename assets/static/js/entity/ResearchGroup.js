@@ -39,6 +39,9 @@ $(document).ready(function()
     //Disable RIS ID if not in create mode
     if ($("form[entityType=\"ResearchGroup\"] #id").val() !== "") {
         $("form[entityType=\"ResearchGroup\"] #id").attr("readonly",true);
+    } else {
+        var nextId = $("#id").attr("next-id");
+        $("input[name='id']").val(nextId);
     }
 
     $("[fundingOrganization]").change(function () {
