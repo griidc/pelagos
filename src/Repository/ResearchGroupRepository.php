@@ -87,9 +87,10 @@ class ResearchGroupRepository extends ServiceEntityRepository
      *
      * @param  int $min Range start.
      * @param  int $max Range end.
+     *
      * @return int First available ID.
      */
-    public function getNextAvailableId($min, $max)
+    public function getNextAvailableId($min, $max): int
     {
         $qb = $this->createQueryBuilder('researchGroup')
             ->select('researchGroup.id')
