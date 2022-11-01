@@ -40,8 +40,8 @@ $(document).ready(function()
     if ($("form[entityType=\"ResearchGroup\"] #id").val() !== "") {
         $("form[entityType=\"ResearchGroup\"] #id").attr("readonly",true);
     } else {
-        var nextId = $("#id").attr("next-id");
-        $("input[name='id']").val(nextId);
+        var nextId = $("form[entityType=\"ResearchGroup\"] #id").attr("next-id");
+        $("form[entityType=\"ResearchGroup\"] #id").val(nextId);
     }
 
     $("[fundingOrganization]").change(function () {
@@ -111,7 +111,7 @@ function addOptionsByEntity(selectElement, entity, filter)
                 );
             });
         });
-        
+
         this.resolve();
     });
 }
