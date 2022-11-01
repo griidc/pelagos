@@ -2,14 +2,14 @@
 
 namespace App\Security;
 
+use App\Entity\Account;
+use App\Entity\PersonToken;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Account;
-use App\Entity\PersonToken;
 
 /**
  * A User Provider for Person Tokens.
@@ -36,6 +36,19 @@ class PersonTokenUserProvider implements UserProviderInterface
     }
 
     /**
+     * Load by username.
+     *
+     * @deprecated Remove this in Symfony 6. Use loadUserByIdentifier instead.
+     *
+     * @param string $username
+     * @return UserInterface
+     */
+    public function loadUserByUsername(string $username): UserInterface
+    {
+        return $this->loadUserByIdentifier($username);
+    }
+
+    /**
      * Load the Account for a given token string or create a temporary one.
      *
      * @param string $tokenString The token string to load the Account for.
@@ -48,9 +61,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return Account The account for the given token string.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $tokenString.
-    // phpcs:ignore
-    public function loadUserByUsername($tokenString)
+    public function loadUserByIdentifier(string $tokenString): UserInterface
     {
         $personTokens = $this->entityManager->getRepository(PersonToken::class)->findBy(
             array('tokenText' => $tokenString)
