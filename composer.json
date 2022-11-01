@@ -14,7 +14,6 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-ldap": "*",
-        "ext-memcache": "*",
         "ext-openssl": "*",
         "ext-pdo_pgsql": "*",
         "ext-simplexml": "*",
