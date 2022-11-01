@@ -227,7 +227,7 @@ class SearchResults
         $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
     }
 
-        /**
+    /**
      * Get dataset availability status information for the aggregations.
      *
      * @param array $aggregations Aggregations for each availability status.
