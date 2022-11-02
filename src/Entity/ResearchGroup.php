@@ -49,7 +49,7 @@ class ResearchGroup extends Entity
     /**
      * Minimum acceptable ID number.
      */
-    public const MIN_ID = 100;
+    public const MIN_ID = 1;
 
     /**
      * Name of a research group.
