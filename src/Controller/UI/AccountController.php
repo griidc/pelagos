@@ -167,7 +167,7 @@ class AccountController extends AbstractController
         $mailer->sendEmailMessage(
             $template,
             $mailData,
-            array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName())
+            array($person->getEmailAddress())
         );
 
         return $this->render(

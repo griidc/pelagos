@@ -124,7 +124,6 @@ abstract class EventListener
      * @param \Twig\TemplateWrapper $twigTemplate A twig template.
      * @param array                 $mailData     Mail data array for email.
      * @param array|null            $peopleObjs   An optional array of recipient Persons.
-     * @param array                 $attachments  An optional array of Swift_Message_Attachments to attach.
      *
      * @return void
      */
@@ -132,7 +131,6 @@ abstract class EventListener
         \Twig\TemplateWrapper $twigTemplate,
         array $mailData,
         array $peopleObjs = null,
-        array $attachments = array()
     ) {
         $currentToken = $this->tokenStorage->getToken();
         if ($currentToken instanceof TokenInterface) {
@@ -151,8 +149,7 @@ abstract class EventListener
             $this->mailer->sendEmailMessage(
                 $twigTemplate,
                 $mailData,
-                array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()),
-                $attachments
+                array($person->getEmailAddress()),
             );
         }
     }
