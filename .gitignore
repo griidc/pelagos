@@ -29,3 +29,7 @@ yarn-error.log
 ###< squizlabs/php_codesniffer ###
 php.ini
 .vscode/
+
+###> vimeo/psalm ###
+psalm.xml
+###< vimeo/psalm ###
