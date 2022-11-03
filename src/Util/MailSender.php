@@ -27,18 +27,11 @@ class MailSender
     protected $mailer;
 
     /**
-     * A string holding from email information.
+     * A string holding from email/name information.
      *
      * @var string
      */
-    protected $fromAddress;
-
-    /**
-     * A string holding from name information.
-     *
-     * @var string
-     */
-    protected $fromName;
+    protected $fromEmailAddr;
 
     /**
      * Bcc email address to send all emails from the system.
@@ -65,8 +58,7 @@ class MailSender
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
-        $this->fromAddress = $fromAddress;
-        $this->fromName = $fromName;
+        $this->fromEmailAddr = new Address($fromAddress, $fromName);
         $this->bccAddress = $bccAddress;
     }
 
@@ -87,7 +79,7 @@ class MailSender
         array $toAddresses = array(),
     ) {
         $email = (new Email())
-            ->from(new Address($this->fromAddress, $this->fromName))
+            ->from($this->fromEmailAddr)
             ->to(...$toAddresses)
             ->bcc($this->bccAddress)
             ->subject($emailTwigTemplate->renderBlock('subject', $mailData))

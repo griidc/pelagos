@@ -4,6 +4,7 @@ namespace App\Event;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Handler\EntityHandler;
@@ -149,7 +150,7 @@ abstract class EventListener
             $this->mailer->sendEmailMessage(
                 $twigTemplate,
                 $mailData,
-                array($person->getEmailAddress()),
+                array(new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName())),
             );
         }
     }
