@@ -54,9 +54,11 @@ class MailerSubscriber implements EventSubscriberInterface
         }
 
         $this->logger->info(
-            $message->getSubject(),
+            $message->generateMessageId(),
             [
-                'to'      => $message->getTo(),
+                'queued' => $event->isQueued(),
+                'subject' => $message->getSubject(),
+                'to' => $message->getTo(),
             ]
         );
     }
