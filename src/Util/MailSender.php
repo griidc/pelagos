@@ -6,6 +6,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
 use Twig\Environment as TwigEnvironment;
+use Twig\TemplateWrapper;
 
 /**
  * A utility to send e-mails from templates.
@@ -65,16 +66,14 @@ class MailSender
     /**
      * Method to build and send an email.
      *
-     * @param \Twig\TemplateWrapper $emailTwigTemplate A twig template.
-     * @param array                 $mailData          Mail data array for email.
-     * @param array                 $toAddresses       Recipient's email addresses.
-     *
-     * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
+     * @param TemplateWrapper $emailTwigTemplate A twig template.
+     * @param array           $mailData          Mail data array for email.
+     * @param array           $toAddresses       Recipient's email addresses.
      *
      * @return void
      */
     public function sendEmailMessage(
-        \Twig\TemplateWrapper $emailTwigTemplate,
+        TemplateWrapper $emailTwigTemplate,
         array $mailData,
         array $toAddresses = array(),
     ) {
