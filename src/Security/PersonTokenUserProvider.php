@@ -21,7 +21,7 @@ class PersonTokenUserProvider implements UserProviderInterface
     /**
      * An instance of the Doctrine entity manager.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -93,7 +93,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @throws UnsupportedUserException Always.
      *
-     * @return void
+     * @return UserInterface
      */
     public function refreshUser(UserInterface $user)
     {

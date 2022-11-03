@@ -127,8 +127,8 @@ class PersonTokenAuthenticator extends AbstractAuthenticator
     /**
      * Override to control what happens when the user hits a secure page but isn't logged in yet.
      *
-     * @param Request                 $request   A Symfony Request, req by interface.
-     * @param AuthenticationException $exception The exception thrown.
+     * @param Request                 $request       A Symfony Request, req by interface.
+     * @param AuthenticationException $authException The exception thrown.
      *
      * @throws \Exception This should not be reached.
      *

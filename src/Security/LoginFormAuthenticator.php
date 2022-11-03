@@ -20,7 +20,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
@@ -46,7 +45,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     /**
      * An instance of a Doctrine EntityManager class.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -60,7 +59,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     /**
      * A Monolog logger.
      *
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -176,7 +175,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
      *
      * @param Request $request A Request object.
      *
-     * @return array Return the credentials array.
+     * @return mixed Return the credentials array.
      */
     public function getCredentials(Request $request)
     {
@@ -222,9 +221,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     /**
      * Set a cookie and return the response to the target page.
      *
-     * @param Request        $request     A Symfony Request, req by interface.
-     * @param TokenInterface $token       A Symfony user token, req by interface.
-     * @param string         $providerKey The name of the used firewall key.
+     * @param Request        $request      A Symfony Request, req by interface.
+     * @param TokenInterface $token        A Symfony user token, req by interface.
+     * @param string         $firewallName The name of the used firewall key.
      *
      * @return Response The response or null to continue request.
      */
@@ -341,11 +340,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     /**
      * Log the attempt in loginAttemps.
      *
-     * @param UserInterface $user The home directory.
+     * @param Account $user The home directory.
      *
      * @return void
      */
-    private function userAttempt(UserInterface $user)
+    private function userAttempt(Account $user)
     {
         $anonymousPerson = $this->entityManager->find(Person::class, -1);
 
