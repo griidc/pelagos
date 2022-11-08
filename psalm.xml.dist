@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<psalm>
+<psalm
+    errorLevel="8"
+>
     <projectFiles>
         <directory name="src" />
     </projectFiles>
