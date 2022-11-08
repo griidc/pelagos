@@ -2,6 +2,12 @@
 
 namespace App\Security;
 
+use App\Entity\Account;
+use App\Entity\LoginAttempts;
+use App\Entity\Password;
+use App\Entity\Person;
+use App\Entity\PersonToken;
+use App\Form\LoginForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -14,23 +20,18 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use App\Form\LoginForm;
-use App\Entity\Account;
-use App\Entity\LoginAttempts;
-use App\Entity\Password;
-use App\Entity\Person;
-use App\Entity\PersonToken;
 
 /**
  * The login form authenticator.
  *
  * @see AbstractFormLoginAuthenticator
  */
-class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
+class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
@@ -44,7 +45,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * An instance of a Doctrine EntityManager class.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -58,7 +59,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * A Monolog logger.
      *
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -99,9 +100,74 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return boolean True if this a login request.
      */
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return $request->attributes->get('_route') === 'security_login' && $request->isMethod('POST');
+    }
+
+    /**
+     * Authenticate function for Form Authenticator.
+     *
+     * @param Request $request
+     *
+     * @return Passport
+     */
+    public function authenticate(Request $request): Passport
+    {
+        $form = $this->formFactory->create(LoginForm::class);
+        $form->handleRequest($request);
+
+        $credentials = $this->getCredentials($request);
+
+        $this->logAttempt($request);
+
+        $request->getSession()->set(
+            Security::LAST_USERNAME,
+            $credentials['_username']
+        );
+
+        $username = $credentials['_username'];
+        $password = $credentials['_password'];
+
+        return new Passport(
+            new UserBadge($username, function ($userIdentifier) {
+                // Try to find the user by e-mail.
+                $thePerson = $this->entityManager->getRepository(Person::class)
+                    ->findOneBy(['emailAddress' => $userIdentifier]);
+
+                if ($thePerson instanceof Person) {
+                    $theUser = $thePerson->getAccount();
+                } else {
+                    $theUser = $this->entityManager->getRepository(Account::class)
+                        ->findOneBy(['userId' => $userIdentifier]);
+                }
+
+                if (null == $theUser) {
+                    throw new AuthenticationException('Invalid Credentials');
+                }
+
+                return $theUser;
+            }),
+            new CustomCredentials(function ($credentials, Account $user) {
+                // Here check to see if $user is locked out?
+                if ($user->isLockedOut()) {
+                    throw new AuthenticationException('Too many login attempts');
+                }
+
+                $this->userAttempt($user);
+
+                // Check that password is correct.
+                if ($user->getPasswordEntity()->comparePassword($credentials)) {
+                    // Since password is correct, now check for expired password.
+                    if ($this->checkIfPasswordExpired($user->getPasswordEntity())) {
+                        throw new AuthenticationException('Password is expired.');
+                    }
+                    return true;
+                } else {
+                    throw new AuthenticationException('Invalid Credentials');
+                }
+            }, $password)
+        );
     }
 
     /**
@@ -109,89 +175,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @param Request $request A Request object.
      *
-     * @return array Return the credentials array.
+     * @return mixed Return the credentials array.
      */
     public function getCredentials(Request $request)
     {
         $form = $this->formFactory->create(LoginForm::class);
         $form->handleRequest($request);
 
-        $data = $form->getData();
-
-        $this->logAttempt($request);
-
-        $request->getSession()->set(
-            Security::LAST_USERNAME,
-            $data['_username']
-        );
-
-        return $data;
-    }
-
-    /**
-     * Return a UserInterface object based on the credentials.
-     *
-     * @param mixed                 $credentials  Credentials Array.
-     * @param UserProviderInterface $userProvider A User Provider.
-     *
-     * @throws AuthenticationException When login is invalid.
-     *
-     * @return UserInterface Return the user.
-     */
-    public function getUser($credentials, UserProviderInterface $userProvider)
-    {
-        $username = $credentials['_username'];
-
-        // Try to find the user by e-mail.
-        $thePerson = $this->entityManager->getRepository(Person::class)
-            ->findOneBy(['emailAddress' => $username]);
-
-        if ($thePerson instanceof Person) {
-            $theUser = $thePerson->getAccount();
-        } else {
-            $theUser = $this->entityManager->getRepository(Account::class)
-                ->findOneBy(['userId' => $username]);
-        }
-
-        if (null == $theUser) {
-            throw new AuthenticationException('Invalid Credentials');
-        }
-
-        return $theUser;
-    }
-
-    /**
-     * Returns true if the credentials are valid.
-     *
-     * @param mixed         $credentials Credentials Array.
-     * @param UserInterface $user        The user.
-     *
-     * @throws AuthenticationException When account is locked out.
-     * @throws AuthenticationException When this is a bad password.
-     * @throws AuthenticationException When this is an expired password.
-     *
-     * @return boolean True if the credentials are valid.
-     */
-    public function checkCredentials($credentials, UserInterface $user)
-    {
-        // Here check to see if $user is locked out?
-        if ($user->isLockedOut()) {
-            throw new AuthenticationException('Too many login attempts');
-        }
-
-        $this->userAttempt($user);
-
-        $password = $credentials['_password'];
-        // Check that password is correct.
-        if ($user->getPasswordEntity()->comparePassword($password)) {
-            // Since password is correct, now check for expired password.
-            if ($this->checkIfPasswordExpired($user->getPasswordEntity())) {
-                throw new AuthenticationException('Password is expired.');
-            }
-            return true;
-        } else {
-            throw new AuthenticationException('Invalid Credentials');
-        }
+        return $form->getData();
     }
 
     /**
@@ -222,38 +213,26 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return string The login page route.
      */
-    protected function getLoginUrl()
+    protected function getLoginUrl(Request $request): string
     {
         return $this->router->generate('security_login');
     }
 
     /**
-     * Return the URL to the home page.
-     *
-     * @return string The home page route.
-     */
-    protected function getDefaultSuccessRedirectUrl()
-    {
-        return $this->router->generate('pelagos_homepage');
-    }
-
-    /**
      * Set a cookie and return the response to the target page.
      *
-     * @param Request        $request     A Symfony Request, req by interface.
-     * @param TokenInterface $token       A Symfony user token, req by interface.
-     * @param string         $providerKey The name of the used firewall key.
+     * @param Request        $request      A Symfony Request, req by interface.
+     * @param TokenInterface $token        A Symfony user token, req by interface.
+     * @param string         $firewallName The name of the used firewall key.
      *
      * @return Response The response or null to continue request.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
-    // phpcs:ignore
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $destination = $request->query->get('destination');
 
         $session = $request->getSession();
-        $targetPath = $this->getTargetPath($session, $providerKey);
+        $targetPath = $this->getTargetPath($session, $firewallName);
 
         if (!isset($targetPath) and !empty($destination)) {
             $targetPath = $destination;
@@ -279,7 +258,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return Response The response or null to continue request.
      */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         if ($exception->getMessage() === 'Password is expired.') {
             $credentials = $this->getCredentials($request);
@@ -331,14 +310,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return Response
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         // Is this a JSON request?
         if (false !== strpos($request->getRequestFormat(), 'json')) {
             return new JsonResponse(['code' => 401, 'message' => 'Session expired! Please log in again'], Response::HTTP_UNAUTHORIZED);
         }
 
-        return new RedirectResponse($this->getLoginUrl());
+        return new RedirectResponse($this->getLoginUrl($request));
     }
 
     /**
@@ -361,11 +340,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Log the attempt in loginAttemps.
      *
-     * @param UserInterface $user The home directory.
+     * @param Account $user The home directory.
      *
      * @return void
      */
-    private function userAttempt(UserInterface $user)
+    private function userAttempt(Account $user)
     {
         $anonymousPerson = $this->entityManager->find(Person::class, -1);
 
