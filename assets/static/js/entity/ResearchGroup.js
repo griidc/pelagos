@@ -39,6 +39,9 @@ $(document).ready(function()
     //Disable RIS ID if not in create mode
     if ($("form[entityType=\"ResearchGroup\"] #id").val() !== "") {
         $("form[entityType=\"ResearchGroup\"] #id").attr("readonly",true);
+    } else {
+        var nextId = $("form[entityType=\"ResearchGroup\"] #id").attr("next-id");
+        $("form[entityType=\"ResearchGroup\"] #id").val(nextId);
     }
 
     $("[fundingOrganization]").change(function () {
@@ -108,7 +111,7 @@ function addOptionsByEntity(selectElement, entity, filter)
                 );
             });
         });
-        
+
         this.resolve();
     });
 }
