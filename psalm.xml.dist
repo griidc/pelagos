@@ -29,5 +29,11 @@
                 <referencedClass name="SensitiveParameter"/>
             </errorLevel>
         </UndefinedAttributeClass>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <!-- Supress warning of $container not set -->
+                <referencedProperty name="Symfony\Bundle\FrameworkBundle\Controller\AbstractController::$container"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
     </issueHandlers>
 </psalm>
