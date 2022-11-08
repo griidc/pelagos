@@ -252,7 +252,7 @@ class AccountExpirationNotifyCommand extends Command
                 $emailTemplate,
                 $twigData,
                 array(
-                    new Address($person->getEmailAddress(), 'GRIIDC'),
+                    new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName()),
                 )
             );
         }
