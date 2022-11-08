@@ -2,17 +2,17 @@
 
 namespace App\Security;
 
-use App\Entity\Account;
-use App\Repository\PersonTokenRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Twig\Environment as TwigEnvironment;
 
 /**
@@ -20,7 +20,7 @@ use Twig\Environment as TwigEnvironment;
  *
  * @see AbstractFormLoginAuthenticator
  */
-class PersonTokenAuthenticator extends AbstractGuardAuthenticator
+class PersonTokenAuthenticator extends AbstractAuthenticator
 {
     /**
      * An instance of Twig.
@@ -30,13 +30,21 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
     private $twig;
 
     /**
+     * The user provider for the token.
+     *
+     * @var UserProviderInterface
+     */
+    private $userProvider;
+
+    /**
      * Constructor.
      *
      * @param TwigEnvironment $twig An instance of Twig.
      */
-    public function __construct(TwigEnvironment $twig)
+    public function __construct(TwigEnvironment $twig, PersonTokenUserProvider $userProvider)
     {
         $this->twig = $twig;
+        $this->userProvider = $userProvider;
     }
 
     /**
@@ -52,44 +60,26 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
     }
 
     /**
-     * Get the authentication credentials from the request and return them.
+     * The authenticate function for this authenticator.
      *
-     * @param Request $request A Request object.
+     * @param Request $request
      *
-     * @return string Return the credential person token.
+     * @return Passport
      */
-    public function getCredentials(Request $request)
+    public function authenticate(Request $request): Passport
     {
-        return $request->query->get('person_token');
-    }
+        $token = $request->query->get('person_token');
 
-    /**
-     * Return a UserInterface object based on the credentials.
-     *
-     * @param string                $credentials  Person token credential.
-     * @param UserProviderInterface $userProvider A User Provider.
-     *
-     * @throws AuthenticationException When the token is invalid or expired.
-     *
-     * @return UserInterface Return the user.
-     */
-    public function getUser($credentials, UserProviderInterface $userProvider): UserInterface
-    {
-        return $userProvider->loadUserByUsername($credentials);
-    }
+        $user = $this->userProvider->loadUserByIdentifier($token);
 
-    /**
-     * Returns true if the credentials are valid.
-     *
-     * @param string        $credentials Credentials Array.
-     * @param UserInterface $user        The user.
-     *
-     * @return boolean True if the credentials are valid.
-     */
-    public function checkCredentials($credentials, UserInterface $user): bool
-    {
-        // No additional checking is needed.
-        return true;
+        return new Passport(
+            new UserBadge($token, function ($identifier) {
+                return $this->userProvider->loadUserByIdentifier($identifier);
+            }),
+            new CustomCredentials(function () {
+                return true;
+            }, null)
+        );
     }
 
     /**
@@ -100,7 +90,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return Response A Symfony response object containing the authentication failure message.
      */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         if ($exception instanceof AuthenticationCredentialsNotFoundException) {
             return new Response(
@@ -129,9 +119,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return Response|null The response or null to continue request.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
-    // phpcs:ignore
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) : ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         return null;
     }
@@ -139,8 +127,8 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * Override to control what happens when the user hits a secure page but isn't logged in yet.
      *
-     * @param Request                 $request   A Symfony Request, req by interface.
-     * @param AuthenticationException $exception The exception thrown.
+     * @param Request                 $request       A Symfony Request, req by interface.
+     * @param AuthenticationException $authException The exception thrown.
      *
      * @throws \Exception This should not be reached.
      *
