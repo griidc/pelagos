@@ -61,7 +61,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"card"})
+     * @Serializer\Groups({"card", "search"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -75,6 +75,8 @@ class Dataset extends Entity
      * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Groups({"search"})
      */
     protected $title;
 
@@ -102,6 +104,9 @@ class Dataset extends Entity
      * The Research Group this Dataset is attached to.
      *
      * @var ResearchGroup
+     *
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="datasets")
      */
@@ -133,6 +138,8 @@ class Dataset extends Entity
      * All Dataset Submissions for this dataset.
      *
      * @var Collection
+     *
+     * @Serializer\Exclude
      *
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
      *
@@ -909,5 +916,33 @@ class Dataset extends Entity
         }
 
         return null;
+    }
+
+    /**
+     * Show friendly name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("friendlyName")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getFriendlyName(): string
+    {
+        return $this::FRIENDLY_NAME;
+    }
+
+    /**
+     * Show class name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("className")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return get_class($this);
     }
 }
