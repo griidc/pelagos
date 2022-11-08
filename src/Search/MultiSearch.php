@@ -2,6 +2,7 @@
 
 namespace App\Search;
 
+use App\Entity\DatasetSubmission;
 use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
@@ -19,6 +20,16 @@ class MultiSearch
      * Default value for aggregation size to get all aggregation terms.
      */
     const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
+
+    /**
+     * Mapped values for dataset availability statuses.
+     */
+    const AVAILABILITY_STATUSES = array(
+        1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
+        2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
+        3 => [DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED, DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED],
+        4 => [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE, DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED]
+    );
 
     /**
      * FOS Elastica Object to find elastica documents.
@@ -75,6 +86,20 @@ class MultiSearch
             $postBoolQuery->addMust($friendlyNameQueryTerm);
         }
 
+        if (!empty($searchOptions->getDatasetStatus())) {
+            $statuses = array();
+            foreach ($searchOptions->getDatasetStatus() as $key => $value) {
+                $statuses[$key] = self::AVAILABILITY_STATUSES[$value];
+            }
+
+            $availabilityStatusQuery = new Query\Terms('availabilityStatus');
+            $availabilityStatusQuery->setTerms(
+                array_reduce($statuses, 'array_merge', array())
+            );
+            $postBoolQuery->addMust($availabilityStatusQuery);
+        }
+
+
         if ($searchOptions->isResearchGroupFilterSet()) {
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
         }
@@ -83,7 +108,7 @@ class MultiSearch
             $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
         }
 
-        $query->setPostFilter(($postBoolQuery));
+        $query->setPostFilter($postBoolQuery);
 
         $this->addAggregators($query, $searchOptions);
 
@@ -197,5 +222,10 @@ class MultiSearch
         $friendlyNameAggregation->setField('friendlyName');
         $friendlyNameAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $query->addAggregation($friendlyNameAggregation);
+
+        $availabilityStatusAgg = new AggregationTerms('status');
+        $availabilityStatusAgg->setField('availabilityStatus');
+        $availabilityStatusAgg->setSize(5);
+        $query->addAggregation($availabilityStatusAgg);
     }
 }

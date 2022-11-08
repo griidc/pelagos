@@ -78,6 +78,13 @@ class SearchOptions
     private $dataType;
 
     /**
+     * Dataset availability status.
+     *
+     * @var array
+     */
+    private $status;
+
+    /**
      * Class Contructor.
      *
      * @param string|null $queryString
@@ -217,6 +224,32 @@ class SearchOptions
     public function getDataType()
     {
         return $this->dataType;
+    }
+
+    /**
+     * Set the dataset status.
+     *
+     * @param string|null $status
+     *
+     * @return self
+     */
+    public function setDatasetStatus(?string $status): self
+    {
+        if (!empty($status)) {
+            $this->status = explode(',', $status);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the dataset status.
+     *
+     * @return array
+     */
+    public function getDatasetStatus()
+    {
+        return $this->status;
     }
 
     /**

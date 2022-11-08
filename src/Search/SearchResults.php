@@ -3,6 +3,7 @@
 namespace App\Search;
 
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\DatasetSubmission;
 use App\Entity\FundingOrganization;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\DigitalResourceTypeDescriptorRepository;
@@ -175,6 +176,7 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
+        // Data type aggregation
         $dataTypeAggregations = $this->findKey($aggregations, 'friendly_name_agregation');
         if (array_key_exists('buckets', $dataTypeAggregations)) {
             $dataTypeBucket = array_column(
@@ -182,10 +184,21 @@ class SearchResults
                 'doc_count',
                 'key'
             );
-            // dd($dataTypeBucket);
             $this->facetInfo['dataTypeInfo'] = $this->getDataTypeInfo($dataTypeBucket);
         }
 
+        // Status info aggregation
+        $datasetStatusAggregations = $this->findKey($aggregations, 'status');
+        if (array_key_exists('buckets', $datasetStatusAggregations)) {
+            $datasetStatusBucket = array_column(
+                $datasetStatusAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['statusInfo'] = $this->getStatusInfo($datasetStatusBucket);
+        }
+
+        // Product type aggregation
         $productTypeDescriptorAggregations = $this->findKey($aggregations, 'product_type_aggregation');
         if (array_key_exists('buckets', $productTypeDescriptorAggregations)) {
             $productTypeDescriptorBucket = array_column(
@@ -196,6 +209,7 @@ class SearchResults
             $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
         }
 
+        // Digital resource type aggregation
         $digitalResourceTypeDescriptorAggregations = $this->findKey($aggregations, 'digital_resource_aggregation');
         if (array_key_exists('buckets', $digitalResourceTypeDescriptorAggregations)) {
             $digitalResourceTypeDescriptorBucket = array_column(
@@ -205,11 +219,74 @@ class SearchResults
             );
             $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
         }
+
         $researchGroupBucket = $this->combineBuckets($aggregations, 'research_group_aggregation', 'research_groups_aggregation');
         $fundingOrgBucket = $this->combineBuckets($aggregations, 'funding_organization_aggregation', 'funding_organizations_aggregation');
 
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
         $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
+    }
+
+    /**
+     * Get dataset availability status information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each availability status.
+     *
+     * @return array
+     */
+    private function getStatusInfo(array $aggregations): array
+    {
+        $datasetCount = function ($status) use ($aggregations) {
+            if (array_key_exists($status, $aggregations)) {
+                return $aggregations[$status];
+            } else {
+                return 0;
+            }
+        };
+
+        $statusInfo = [
+            [
+                'id' => 1,
+                'name' => 'Identified',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
+            ],
+            [
+                'id' => 2,
+                'name' => 'Submitted',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
+                )
+            ],
+            [
+                'id' => 3,
+                'name' => 'Restricted',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
+                )
+            ],
+            [
+                'id' => 4,
+                'name' => 'Available',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
+                )
+            ],
+        ];
+
+        // Remove any element with a count of 0.
+        foreach ($statusInfo as $key => $value) {
+            if (0 === $value['count']) {
+                unset($statusInfo[$key]);
+            }
+        }
+
+        //Sorting based on highest count
+        $array_column = array_column($statusInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $statusInfo);
+        return $statusInfo;
     }
 
     /**
