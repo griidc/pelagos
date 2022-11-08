@@ -2,14 +2,14 @@
 
 namespace App\Security;
 
+use App\Entity\Account;
+use App\Entity\PersonToken;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Account;
-use App\Entity\PersonToken;
 
 /**
  * A User Provider for Person Tokens.
@@ -21,7 +21,7 @@ class PersonTokenUserProvider implements UserProviderInterface
     /**
      * An instance of the Doctrine entity manager.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -33,6 +33,19 @@ class PersonTokenUserProvider implements UserProviderInterface
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * Load by username.
+     *
+     * @deprecated Remove this in Symfony 6. Use loadUserByIdentifier instead.
+     *
+     * @param string $username
+     * @return UserInterface
+     */
+    public function loadUserByUsername(string $username): UserInterface
+    {
+        return $this->loadUserByIdentifier($username);
     }
 
     /**
@@ -48,9 +61,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return Account The account for the given token string.
      */
-    // Next line to be ignored because implemented function does not have type-hint on $tokenString.
-    // phpcs:ignore
-    public function loadUserByUsername($tokenString)
+    public function loadUserByIdentifier(string $tokenString): UserInterface
     {
         $personTokens = $this->entityManager->getRepository(PersonToken::class)->findBy(
             array('tokenText' => $tokenString)
@@ -82,7 +93,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @throws UnsupportedUserException Always.
      *
-     * @return void
+     * @return UserInterface
      */
     public function refreshUser(UserInterface $user)
     {

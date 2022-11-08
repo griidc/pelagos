@@ -6,10 +6,21 @@
     "homepage": "https://github.com/griidc/pelagos/",
     "license": "BSD-2-Clause",
     "require": {
-        "php": "^7.3.0",
+        "php": "^8.0.24",
         "ext-ctype": "*",
-        "ext-iconv": "*",
+        "ext-curl": "*",
+        "ext-fileinfo": "*",
+        "ext-filter": "*",
+        "ext-intl": "*",
         "ext-json": "*",
+        "ext-ldap": "*",
+        "ext-openssl": "*",
+        "ext-pdo_pgsql": "*",
+        "ext-simplexml": "*",
+        "ext-tidy": "*",
+        "ext-xml": "*",
+        "ext-xsl": "*",
+        "lib-libxml": "*",
         "doctrine/doctrine-bundle": "^2.0",
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "doctrine/doctrine-migrations-bundle": "^2.0",
@@ -69,7 +80,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "7.4.29"
+            "php": "8.0.24"
         },
         "allow-plugins": {
             "symfony/flex": true,
