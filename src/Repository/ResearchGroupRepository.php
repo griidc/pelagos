@@ -81,4 +81,22 @@ class ResearchGroupRepository extends ServiceEntityRepository
 
         return $researchGroupsInfo;
     }
+
+    /**
+     * Find the lowest-value ID available for use, in a specified range.
+     *
+     * @param  int $min Range start.
+     * @param  int $max Range end.
+     *
+     * @return int First available ID.
+     */
+    public function getNextAvailableId($min, $max): int
+    {
+        $qb = $this->createQueryBuilder('researchGroup')
+            ->select('researchGroup.id')
+            ->orderBy('researchGroup.id', 'ASC');
+        $existingIds = $qb->getQuery()->getResult(QUERY::HYDRATE_SCALAR_COLUMN);
+        $availableIds = array_values(array_diff(range($min, $max), $existingIds));
+        return reset($availableIds);
+    }
 }

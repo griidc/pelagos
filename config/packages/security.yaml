@@ -23,22 +23,21 @@ security:
             stateless: true
             # allow anonymous access
             lazy: true
+            provider: person_token
+
             # use a Person Token, if present
-            guard:
-               authenticators:
-                   - App\Security\PersonTokenAuthenticator
-               provider: person_token
+            custom_authenticator:
+                - App\Security\PersonTokenAuthenticator
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
         main:
             # allow anonymous access
             lazy: true
-            #guard authentication
-            guard:
-               authenticators:
-                   - App\Security\LoginFormAuthenticator
-               provider: pelagos_account
+            provider: pelagos_account
+            custom_authenticator:
+                - App\Security\LoginFormAuthenticator
+
             #logout
             logout:
                 path: security_logout
@@ -68,3 +67,11 @@ when@test:
                 cost: 4 # Lowest possible value for bcrypt
                 time_cost: 3 # Lowest possible value for argon
                 memory_cost: 10 # Lowest possible value for argon
+
+when@dev:
+    security:
+        firewalls:
+            main:
+                switch_user:
+                    provider: pelagos_account
+                    role: ROLE_DATA_REPOSITORY_MANAGER

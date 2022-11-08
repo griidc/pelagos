@@ -42,6 +42,16 @@ class ResearchGroup extends Entity
     const FRIENDLY_NAME = 'Research Group';
 
     /**
+     * Highest acceptable ID number.
+     */
+    public const MAX_ID = 999;
+
+    /**
+     * Minimum acceptable ID number.
+     */
+    public const MIN_ID = 1;
+
+    /**
      * Name of a research group.
      *
      * @var string $name

@@ -55,6 +55,14 @@
                             </a>
                         </p>
                     </div>
+                    <div v-show="this.datasetInfo.dataset.coldStorage">
+                      <hr>
+                      <p>
+                        This dataset has been put into cold storage due to its large size. The files below are manifests describing
+                        the dataset files and directory structure.  In order to obtain this dataset, please email <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>
+                        to make arrangements. If you would like a subset of the dataset files, please indicate which directories and/or files.
+                      </p>
+                    </div>
                     <hr>
                     <div>
                         <strong>UDI:</strong> {{ datasetInfo.dataset.udi }}<br>
