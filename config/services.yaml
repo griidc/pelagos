@@ -98,6 +98,8 @@ services:
             - { name: doctrine.event_listener, event: preRemove, entity: 'App\Entity\DigitalResourceTypeDescriptor' }
             - { name: doctrine.event_listener, event: preRemove, entity: 'App\Entity\ProductTypeDescriptor' }
 
+    App\Event\MailerSubscriber: ~
+
     App\Util\DOIutil:
         $doiApiUserName: "%env(DOI_API_USER_NAME)%"
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
@@ -178,10 +180,6 @@ services:
     App\Controller\UI\SearchPageController:
         bind:
             string $customTemplate: '%env(CUSTOM_BASE_TEMPLATE)%'
-
-    App\Util\MailerLoggerUtil:
-        tags:
-            - { name: "swiftmailer.default.plugin" }
 
     App\Util\FundingOrgFilter:
         bind:
