@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="8"
+>
+    <projectFiles>
+        <directory name="src" />
+    </projectFiles>
+
+    <issueHandlers>
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <!-- These classes have been added in PHP 8.1 -->
+                <referencedClass name="BackedEnum"/>
+                <referencedClass name="ReflectionIntersectionType"/>
+                <referencedClass name="UnitEnum"/>
+            </errorLevel>
+        </UndefinedClass>
+        <UndefinedDocblockClass>
+            <errorLevel type="suppress">
+                <!-- These classes have been added in PHP 8.1 -->
+                <referencedClass name="BackedEnum"/>
+                <referencedClass name="ReflectionIntersectionType"/>
+                <referencedClass name="UnitEnum"/>
+            </errorLevel>
+        </UndefinedDocblockClass>
+        <UndefinedAttributeClass>
+            <errorLevel type="suppress">
+                <!-- These classes have been added in PHP 8.2 -->
+                <referencedClass name="SensitiveParameter"/>
+            </errorLevel>
+        </UndefinedAttributeClass>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <!-- Supress warning of $container not set -->
+                <referencedProperty name="Symfony\Bundle\FrameworkBundle\Controller\AbstractController::$container"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+    </issueHandlers>
+</psalm>
