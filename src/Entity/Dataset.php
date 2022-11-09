@@ -943,6 +943,38 @@ class Dataset extends Entity
      */
     public function getClassName(): string
     {
-        return get_class($this);
+       return get_class($this);
+    }
+
+    /**
+     * Returns the "tags" for this datasets.
+     *
+     * @return array
+     */
+    public function getTags(): array
+    {
+        $tags = [];
+
+        $datasetSubmission = $this->getDatasetSubmission();
+
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->isDatasetFileInColdStorage()) {
+                $tags[] = 'Coldstorage';
+            }
+
+            if (!empty($datasetSubmission->getNceiUrl())) {
+                $tags[] = 'NCEI';
+            }
+
+            if (!empty($datasetSubmission->getErddapUrl())) {
+                $tags[] = 'ERDAPP';
+            }
+
+            if ($datasetSubmission->isRemotelyHosted()) {
+                $tags[] = 'Remotely Hosted';
+            }
+        }
+
+        return $tags;
     }
 }
