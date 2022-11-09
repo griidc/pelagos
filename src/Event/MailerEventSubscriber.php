@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Event\MessageEvent;
 use Symfony\Component\Mime\Email;
 
-class MailerSubscriber implements EventSubscriberInterface
+class MailerEventSubscriber implements EventSubscriberInterface
 {
     /**
       * A Monolog logger.
