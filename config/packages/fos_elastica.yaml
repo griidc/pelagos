@@ -89,6 +89,9 @@ fos_elastica:
                     type: 'text'
                 abstract:
                     type: 'text'
+                tags:
+                    type: 'text'
+                    property_path: false
                 researchGroup:
                     type: 'nested'
                     properties:
