@@ -83,6 +83,8 @@ fos_elastica:
                     logger: true
                 finder: ~
             properties:
+                friendlyName:
+                    type: 'keyword'
                 udi:
                     type: 'text'
                 title:
@@ -167,6 +169,8 @@ fos_elastica:
                     logger: true
                 finder: ~
             properties:
+                friendlyName:
+                    type: 'keyword'
                 title:
                     type: 'text'
                 creators:

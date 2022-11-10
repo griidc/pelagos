@@ -24,27 +24,29 @@
                     :options="perPageOptions"></b-form-select>
         </div>
       </div>
-
       <div class="row">
         <aside class="col-lg-3">
           <div class="card card-filter">
-            <!-- Need response data to get facet data -->
-            <Facet :facet-info="results.facetInfo.productTypeDescriptorInfo" :facet-name="facetLabels.productTypeDesc" v-on="$listeners" :formValues="formValues"/>
-            <Facet :facet-info="results.facetInfo.digitalResourceTypeDescriptorsInfo" :facet-name="facetLabels.digitalTypeDesc" v-on="$listeners" :formValues="formValues"/>
-            <Facet :facet-info="results.facetInfo.researchGroupInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
+            <Facet v-for="(facetInfo, name, index) in results.facetInfo" v-bind:key="index" :facet-info="facetInfo" :facet-name="getFacetLabel(name)" v-on="$listeners" :formValues="formValues" />
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
-          <InformationProductCard v-for="informationProduct in results.results"
-                                  :key="informationProduct.id"
-                                  :informationProduct="informationProduct"/>
+          <div v-for="resultItem in results.results" :key="resultItem.id">
+            <InformationProductCard v-if="resultItem.friendlyName == 'Information Product'"
+                                   :key="resultItem.id"
+                                   :informationProduct="resultItem"/>
+
+            <DatasetRow v-if="resultItem.friendlyName == 'Dataset'"
+                      :key="resultItem.udi"
+                      :datasetRowData="resultItem"/>
+          </div>
         </main>
       </div>
       <div class="row d-flex flex-row justify-content-between mb-2">
         <div class="empty-div"></div>
         <b-pagination
             v-model="currentPage"
-            :total-rows="results.result"
+            :total-rows="results.count"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
@@ -65,13 +67,19 @@
 
 <script>
 import InformationProductCard from '@/vue/components/information-product/InformationProductCard';
+import DatasetRow from '@/vue/components/search/DatasetRow';
 import NoResults from '@/vue/components/info-search/NoResults';
 import Facet from '@/vue/components/search/Facet';
 import templateSwitch from '@/vue/utils/template-switch';
 
 export default {
   name: 'ResultSet',
-  components: { NoResults, InformationProductCard, Facet },
+  components: {
+    NoResults,
+    InformationProductCard,
+    Facet,
+    DatasetRow,
+  },
   props: {
     results: {
       type: Object,
@@ -83,17 +91,21 @@ export default {
   data() {
     return {
       facetLabels: {
-        productTypeDesc: {
-          label: templateSwitch.getProperty('productTypeDesc'),
-          queryParam: 'productTypeDesc',
-        },
-        digitalTypeDesc: {
-          label: templateSwitch.getProperty('digitalTypeDesc'),
-          queryParam: 'digitalTypeDesc',
-        },
-        researchGroup: {
+        researchGroupInfo: {
           label: templateSwitch.getProperty('researchGroup'),
           queryParam: 'researchGroup',
+        },
+        fundingOrgInfo: {
+          label: templateSwitch.getProperty('fundingOrg'),
+          queryParam: 'fundingOrg',
+        },
+        dataTypeInfo: {
+          label: 'Type',
+          queryParam: 'dataType',
+        },
+        statusInfo: {
+          label: templateSwitch.getProperty('status'),
+          queryParam: 'status',
         },
       },
       showResults: false,
@@ -108,7 +120,7 @@ export default {
     };
   },
   mounted() {
-    if (this.results.informationProducts) {
+    if (this.results) {
       this.showResults = true;
     }
   },
@@ -120,30 +132,19 @@ export default {
       this.$emit('noOfResults', value);
     },
   },
+  methods: {
+    getFacetLabel(facetName) {
+      const tempFacetLabelObj = Object.entries(this.facetLabels);
+      const facetLabels = new Map(tempFacetLabelObj);
+      if (facetLabels.has(facetName)) {
+        return facetLabels.get(facetName);
+      }
+      return '';
+    },
+  },
 };
 </script>
 
-<style scoped lang="scss">
-.col-lg-3 {
-  padding-right: 7px !important;
-}
+<style scoped>
 
-.col-lg-9 {
-  padding-left: 7px !important;
-}
-
-@media (max-width: 1092px) {
-  .col-lg-3 {
-    padding-right: 15px !important;
-  }
-
-  .col-lg-9 {
-    padding-left: 15px !important;
-    margin-top: 10px;
-  }
-
-  .page-controls.d-flex.flex-row {
-    flex-direction: column !important;
-  }
-}
 </style>
