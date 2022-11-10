@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Mime\Address;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\UrlValidation;
@@ -131,7 +132,7 @@ class ValidateRemotelyHostedLinksCommand extends Command
             $this->mailer->sendEmailMessage(
                 $this->twig->load('Email/data-repository-managers.error-remotely-hosted.email.twig'),
                 array('errors' => $errors),
-                array('griidc@gomri.org' => 'GRIIDC')
+                array(new Address('griidc@gomri.org', 'GRIIDC')),
             );
         }
 

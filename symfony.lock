@@ -110,9 +110,6 @@
             "ref": "b131e6cbfe1b898a508987851963fff485986285"
         }
     },
-    "egulias/email-validator": {
-        "version": "2.1.15"
-    },
     "elasticsearch/elasticsearch": {
         "version": "v6.7.2"
     },
@@ -341,9 +338,6 @@
             "phpcs.xml.dist"
         ]
     },
-    "swiftmailer/swiftmailer": {
-        "version": "v6.2.3"
-    },
     "symfony/asset": {
         "version": "v4.4.4"
     },
@@ -471,6 +465,18 @@
     "symfony/ldap": {
         "version": "v4.4.4"
     },
+    "symfony/mailer": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.3",
+            "ref": "97a61eabb351d7f6cb7702039bcfe07fe9d7e03c"
+        },
+        "files": [
+            "config/packages/mailer.yaml"
+        ]
+    },
     "symfony/maker-bundle": {
         "version": "1.0",
         "recipe": {
@@ -529,9 +535,6 @@
         "version": "v1.25.0"
     },
     "symfony/polyfill-intl-icu": {
-        "version": "v1.13.1"
-    },
-    "symfony/polyfill-intl-idn": {
         "version": "v1.13.1"
     },
     "symfony/polyfill-intl-normalizer": {
@@ -609,20 +612,6 @@
     },
     "symfony/string": {
         "version": "v5.4.3"
-    },
-    "symfony/swiftmailer-bundle": {
-        "version": "2.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "2.5",
-            "ref": "f0b2fccdca2dfd97dc2fd5ad216d5e27c4f895ac"
-        },
-        "files": [
-            "config/packages/dev/swiftmailer.yaml",
-            "config/packages/swiftmailer.yaml",
-            "config/packages/test/swiftmailer.yaml"
-        ]
     },
     "symfony/templating": {
         "version": "v4.4.4"

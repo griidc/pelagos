@@ -1,0 +1,5 @@
+framework:
+    mailer:
+        # dsn: 'null://null'
+        # envelope:
+        #     recipients: ['default@abc.com.null']
