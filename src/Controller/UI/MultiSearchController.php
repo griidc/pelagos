@@ -31,6 +31,7 @@ class MultiSearchController extends AbstractController
     public function search(Request $request, MultiSearch $multiSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');
+        $facets = $request->query->get('facets');
         $page = $request->query->get('page');
         $numberOfResultsPerPage = $request->query->get('perPage');
         $researchGroupFilter = $request->query->get('researchGroup');
