@@ -2,66 +2,79 @@
   <div v-if="results.count > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
-        <h5>
-          Found {{ results.count }} results
-        </h5>
+        <h5>Found {{ results.count }} results</h5>
       </div>
     </section>
     <section class="section-content pb-2">
       <div class="row d-flex flex-row justify-content-between mb-2">
         <div class="empty-div"></div>
         <b-pagination
-            v-model="currentPage"
-            :total-rows="results.count"
-            :per-page="formValues.perPage"
-            class="justify-content-center pr-3 mr-3">
+          v-model="currentPage"
+          :total-rows="results.count"
+          :per-page="formValues.perPage"
+          class="justify-content-center pr-3 mr-3"
+        >
         </b-pagination>
         <div class="form-inline mx-2 mb-2 pr-2 pb-2">
-            <label for="perPageResults" class="pr-2">Per Page: </label>
-            <b-form-select
-                    name="perPageResults"
-                    v-model="perPage"
-                    :options="perPageOptions"></b-form-select>
+          <label for="perPageResults" class="pr-2">Per Page: </label>
+          <b-form-select
+            name="perPageResults"
+            v-model="perPage"
+            :options="perPageOptions"
+          ></b-form-select>
         </div>
       </div>
       <div class="row">
         <aside class="col-lg-3">
           <div class="card card-filter">
-            <Facet v-for="(facetInfo, name, index) in results.facetInfo" v-bind:key="index" :facet-info="facetInfo" :facet-name="getFacetLabel(name)" v-on="$listeners" :formValues="formValues" />
+            <Facet
+              v-for="(facetInfo, name, index) in results.facetInfo"
+              v-bind:key="index"
+              :facet-info="facetInfo"
+              :facet-name="getFacetLabel(name)"
+              v-on="$listeners"
+              :formValues="formValues"
+            />
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
           <div v-for="resultItem in results.results" :key="resultItem.id">
-            <InformationProductCard v-if="resultItem.friendlyName == 'Information Product'"
-                                   :key="resultItem.id"
-                                   :informationProduct="resultItem"/>
+            <InformationProductCard
+              v-if="resultItem.friendlyName == 'Information Product'"
+              :key="resultItem.id"
+              :informationProduct="resultItem"
+            />
 
-            <DatasetRow v-if="resultItem.friendlyName == 'Dataset'"
-                      :key="resultItem.udi"
-                      :datasetRowData="resultItem"/>
+            <DatasetRow
+              v-if="resultItem.friendlyName == 'Dataset'"
+              :key="resultItem.udi"
+              :datasetRowData="resultItem"
+            />
           </div>
         </main>
       </div>
       <div class="row d-flex flex-row justify-content-between mb-2">
         <div class="empty-div"></div>
         <b-pagination
-            v-model="currentPage"
-            :total-rows="results.count"
-            :per-page="formValues.perPage"
-            class="justify-content-center pr-3 mr-3">
+          v-model="currentPage"
+          :total-rows="results.count"
+          :per-page="formValues.perPage"
+          class="justify-content-center pr-3 mr-3"
+        >
         </b-pagination>
         <div class="form-inline mx-2 mb-2 pr-2 pb-2">
-            <label for="perPageResults" class="pr-2">Per Page: </label>
-            <b-form-select
-                    name="perPageResults"
-                    v-model="perPage"
-                    :options="perPageOptions"></b-form-select>
+          <label for="perPageResults" class="pr-2">Per Page: </label>
+          <b-form-select
+            name="perPageResults"
+            v-model="perPage"
+            :options="perPageOptions"
+          ></b-form-select>
         </div>
       </div>
     </section>
   </div>
   <div v-else>
-    <NoResults/>
+    <NoResults />
   </div>
 </template>
 
@@ -141,10 +154,14 @@ export default {
       }
       return '';
     },
+    toggleCollapses(ids) {
+      ids.forEach((id) => {
+        this.$root.$emit('bv::toggle::collapse', id);
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
-
 </style>
