@@ -1,24 +1,22 @@
 <template>
   <article class="card-group-item">
     <header class="card-header">
-      <h6 class="title">
-        <strong> {{ facetName.label }}</strong>
-      </h6>
+      <strong> {{ facetName.label }}</strong>
       <b-button
         @click="toggleCollapses([`accordion-${facetName.label}`])"
         variant="light"
       >
-        <span class="when-opened">
+        <span class="when-opened" v-if="expandFacet">
           <i class="fas fa-chevron-down"></i>
         </span>
-        <span class="when-closed">
+        <span class="when-closed" v-else>
           <i class="fas fa-chevron-up"></i>
         </span>
       </b-button>
     </header>
     <b-collapse
       :id="`accordion-${facetName.label}`"
-      visible
+      :visible="expandFacet"
     >
       <div class="filter-content">
         <div class="card-body">
@@ -111,6 +109,7 @@ export default {
     return {
       facetSearch: '',
       listOfCheckedFacets: [],
+      expandFacet: true,
     };
   },
   methods: {
@@ -153,10 +152,9 @@ export default {
       }
       return datasetStatusTooltip;
     },
-    toggleCollapses(ids) {
-      ids.forEach((id) => {
-        this.$root.$emit('bv::toggle::collapse', id);
-      });
+    toggleCollapses(id) {
+      this.$root.$emit('bv::toggle::collapse', id);
+      this.expandFacet = !this.expandFacet;
     },
   },
   computed: {
@@ -199,7 +197,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .scrollable-facet {
   height: auto;
   max-height: 20rem;
