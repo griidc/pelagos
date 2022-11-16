@@ -75,34 +75,9 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             }
             $array = json_decode($json, true);
 
-            // var_dump($array["type"]);
-            // var_dump($array['coordinates']);
-
             if (key_exists('coordinates', $array)) {
-
                 $array['coordinates'] = array_map(array($this, 'coordinatesToFloat'), $array['coordinates']);
-
-                // $array['coordinates'] = array_map(function ($coordinates) {
-                //     if (!is_array($coordinates)) {
-                //         return floatval($coordinates);
-                //     }
-                //     $floatCoordinates = [];
-                //     foreach ($coordinates as $pair) {
-                //         if (!is_array($pair)) {
-                //             $floatCoordinates[] = floatval($pair);
-                //         } else {
-                //             $floatPoints = [];
-                //             foreach ($pair as $point) {
-                //                 $floatPoints[] = floatval($point);
-                //             }
-                //             $floatCoordinates[] = $floatPoints;
-                //         }
-                //     }
-                //     return $floatCoordinates;
-                // }, $array['coordinates']);
             }
-
-            // dump($array);
 
             $document->set('simpleGeometry', $array);
         }
