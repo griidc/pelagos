@@ -92,7 +92,7 @@ fos_elastica:
                 abstract:
                     type: 'text'
                 tags:
-                    type: 'text'
+                    type: 'keyword'
                     property_path: false
                 researchGroup:
                     type: 'nested'

@@ -120,6 +120,10 @@ export default {
           label: templateSwitch.getProperty('status'),
           queryParam: 'status',
         },
+        tagsInfo: {
+          label: 'Tags',
+          queryParam: 'tags',
+        },
       },
       showResults: false,
       currentPage: 1,

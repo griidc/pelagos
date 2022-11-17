@@ -23,7 +23,7 @@ class SearchResults
     /**
      * Pager Fanta Search Results.
      *
-     * @var Pagerfanta $pagerFantaResults
+     * @var PagerfantaInterface $pagerFantaResults
      *
      * @Serializer\Exclude
      */
@@ -184,7 +184,7 @@ class SearchResults
                 'doc_count',
                 'key'
             );
-            $this->facetInfo['dataTypeInfo'] = $this->getDataTypeInfo($dataTypeBucket);
+            $this->facetInfo['dataTypeInfo'] = $this->bucketToInfoArray($dataTypeBucket);
         }
 
         // Status info aggregation
@@ -196,6 +196,17 @@ class SearchResults
                 'key'
             );
             $this->facetInfo['statusInfo'] = $this->getStatusInfo($datasetStatusBucket);
+        }
+
+        // Tags info aggregation
+        $tagsAggregations = $this->findKey($aggregations, 'tags_agg');
+        if (array_key_exists('buckets', $tagsAggregations)) {
+            $tagsBucket = array_column(
+                $tagsAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['tagsInfo'] = $this->bucketToInfoArray($tagsBucket);
         }
 
         // Product type aggregation
@@ -292,20 +303,21 @@ class SearchResults
     /**
      * Get the facet info to Data Type.
      *
-     * @param array $dataTypeBucket
+     * @param array $bucket
      *
      * @return array
      */
-    private function getDataTypeInfo(array $dataTypeBucket): array
+    private function bucketToInfoArray(array $bucket): array
     {
-        $dataTypeInfo = [];
-        foreach ($dataTypeBucket as $type => $count) {
-            $typeInfo['id'] = $type;
-            $typeInfo['name'] = $type;
-            $typeInfo['count'] = $count;
-            $dataTypeInfo[] = $typeInfo;
+        $infoArray = [];
+        foreach ($bucket as $type => $count) {
+            $info = [];
+            $info['id'] = $type;
+            $info['name'] = $type;
+            $info['count'] = $count;
+            $infoArray[] = $info;
         }
-        return $dataTypeInfo;
+        return $infoArray;
     }
 
     /**

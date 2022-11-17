@@ -227,5 +227,10 @@ class MultiSearch
         $availabilityStatusAgg->setField('availabilityStatus');
         $availabilityStatusAgg->setSize(5);
         $query->addAggregation($availabilityStatusAgg);
+
+        $tagsAgg = new AggregationTerms('tags_agg');
+        $tagsAgg->setField('tags');
+        $tagsAgg->setSize(5);
+        $query->addAggregation($tagsAgg);
     }
 }

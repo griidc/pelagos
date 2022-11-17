@@ -2,7 +2,6 @@
 
 namespace App\Controller\UI;
 
-use App\Search\InformationProductSearch;
 use App\Search\MultiSearch;
 use App\Search\SearchOptions;
 use App\Util\JsonSerializer;
@@ -30,14 +29,14 @@ class MultiSearchController extends AbstractController
      */
     public function search(Request $request, MultiSearch $multiSearch, JsonSerializer $jsonSerializer): Response
     {
-        $queryString = $request->query->get('queryString');
-        $facets = $request->query->get('facets');
-        $page = $request->query->get('page');
-        $numberOfResultsPerPage = $request->query->get('perPage');
-        $researchGroupFilter = $request->query->get('researchGroup');
-        $fundingOrganizationFilter = $request->query->get('fundingOrg');
-        $dataTypeFilter = $request->query->get('dataType');
-        $datasetStatusFilter = $request->query->get('status');
+        $queryString = (string) $request->query->get('queryString');
+        $page = (int) $request->query->get('page');
+        $numberOfResultsPerPage = (int) $request->query->get('perPage');
+        $researchGroupFilter = (string) $request->query->get('researchGroup');
+        $fundingOrganizationFilter = (string) $request->query->get('fundingOrg');
+        $dataTypeFilter = (string) $request->query->get('dataType');
+        $datasetStatusFilter = (string) $request->query->get('status');
+        $datasetTags = (string) $request->query->get('tags');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
@@ -45,10 +44,9 @@ class MultiSearchController extends AbstractController
         $searchOptions->setFundingOrgFilter($fundingOrganizationFilter);
         $searchOptions->setDataType($dataTypeFilter);
         $searchOptions->setDatasetStatus($datasetStatusFilter);
-
         $searchOptions->setMaxPerPage($numberOfResultsPerPage);
 
-        $searchOptions->setFacets(array('researchGroup'));
+
 
         $searchResults = $multiSearch->search($searchOptions);
         $groups = array(
