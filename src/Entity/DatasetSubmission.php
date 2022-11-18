@@ -2626,6 +2626,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the erddap url.
      *
+     * @Serializer\VirtualProperty
+     * @Serializer\Groups({"card"})
+     *
      * @return string|null
      */
     public function getErddapUrl(): ?string

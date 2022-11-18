@@ -99,6 +99,14 @@ class MultiSearch
             $postBoolQuery->addMust($availabilityStatusQuery);
         }
 
+        if (!empty($searchOptions->getTags())) {
+            $tagsQuery = new Query\Terms('tags');
+            $tagsQuery->setTerms(
+                $searchOptions->getTags()
+            );
+            $postBoolQuery->addMust($tagsQuery);
+        }
+
 
         if ($searchOptions->isResearchGroupFilterSet()) {
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
@@ -227,5 +235,10 @@ class MultiSearch
         $availabilityStatusAgg->setField('availabilityStatus');
         $availabilityStatusAgg->setSize(5);
         $query->addAggregation($availabilityStatusAgg);
+
+        $tagsAgg = new AggregationTerms('tags_agg');
+        $tagsAgg->setField('tags');
+        $tagsAgg->setSize(5);
+        $query->addAggregation($tagsAgg);
     }
 }

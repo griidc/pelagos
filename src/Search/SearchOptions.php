@@ -38,51 +38,58 @@ class SearchOptions
     /**
      * Research Group Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $researchGroupFilter;
 
     /**
      * Funding Organization Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $fundingOrganizationFilter;
 
     /**
      * Product type descriptor Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $productTypeDescFilter;
 
     /**
      * Digital resource type descriptor Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $digitalTypeDescFilter;
 
     /**
      * List of facets.
      *
-     * @var array
+     * @var array|null
      */
     private $facets;
 
     /**
      * The datatype.
      *
-     * @var array
+     * @var array|null
      */
     private $dataType;
 
     /**
      * Dataset availability status.
      *
-     * @var array
+     * @var array|null
      */
     private $status;
+
+    /**
+     * Dataset tags filter.
+     *
+     * @var array
+     */
+    private $tags = [];
 
     /**
      * Class Contructor.
@@ -411,10 +418,34 @@ class SearchOptions
     /**
      * Get the list of facets.
      *
-     * @return array
+     * @return array|null
      */
-    public function getFacets(): array
+    public function getFacets(): ?array
     {
         return $this->facets;
+    }
+
+    /**
+     * Get the tags.
+     *
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set the tag filter.
+     *
+     * @param string|null $tags
+     *
+     * @return void
+     */
+    public function setTags(?string $tags): void
+    {
+        if (!empty($tags)) {
+            $this->tags = explode(',', $tags);
+        }
     }
 }
