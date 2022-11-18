@@ -45,8 +45,7 @@ class MultiSearchController extends AbstractController
         $searchOptions->setDataType($dataTypeFilter);
         $searchOptions->setDatasetStatus($datasetStatusFilter);
         $searchOptions->setMaxPerPage($numberOfResultsPerPage);
-
-
+        $searchOptions->setTags($datasetTags);
 
         $searchResults = $multiSearch->search($searchOptions);
         $groups = array(

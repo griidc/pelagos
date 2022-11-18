@@ -99,6 +99,14 @@ class MultiSearch
             $postBoolQuery->addMust($availabilityStatusQuery);
         }
 
+        if (!empty($searchOptions->getTags())) {
+            $tagsQuery = new Query\Terms('tags');
+            $tagsQuery->setTerms(
+                $searchOptions->getTags()
+            );
+            $postBoolQuery->addMust($tagsQuery);
+        }
+
 
         if ($searchOptions->isResearchGroupFilterSet()) {
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));

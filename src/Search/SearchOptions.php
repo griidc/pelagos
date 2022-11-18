@@ -87,9 +87,9 @@ class SearchOptions
     /**
      * Dataset tags filter.
      *
-     * @var array|null
+     * @var array
      */
-    private $tags;
+    private $tags = [];
 
     /**
      * Class Contructor.
@@ -428,9 +428,9 @@ class SearchOptions
     /**
      * Get the tags.
      *
-     * @return array|null
+     * @return array
      */
-    public function getTags(): ?array
+    public function getTags(): array
     {
         return $this->tags;
     }
@@ -445,9 +445,7 @@ class SearchOptions
     public function setTags(?string $tags): void
     {
         if (!empty($tags)) {
-            $this->digitalTypeDescFilter = explode(',', $tags);
-        } else {
-            $this->tags = null;
+            $this->tags = explode(',', $tags);
         }
     }
 }

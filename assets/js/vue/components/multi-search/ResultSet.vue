@@ -121,7 +121,7 @@ export default {
           queryParam: 'status',
         },
         tagsInfo: {
-          label: 'Tags',
+          label: templateSwitch.getProperty('tags'),
           queryParam: 'tags',
         },
       },

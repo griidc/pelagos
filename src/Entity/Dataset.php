@@ -57,6 +57,37 @@ class Dataset extends Entity
     );
 
     /**
+     * Cold Storage Tag
+     */
+    const TAG_COLDSTORAGE = 'Coldstorage';
+
+    /**
+     * Remotely Hosted Tag
+     */
+    const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
+
+    /**
+     * ERDAPP Tag
+     */
+    const TAG_ERDAPP = 'ERDAPP';
+
+
+    /**
+     * NCEI Tag
+     */
+    const TAG_NCEI = 'NCEI';
+
+    /**
+     * Valid Tags for a dataset.
+     */
+    const TAGS = [
+        self::TAG_COLDSTORAGE => 'Coldstorage',
+        self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
+        self::TAG_ERDAPP => 'ERDAPP',
+        self::TAG_NCEI => 'NCEI',
+    ];
+
+    /**
      * The UDI for this Dataset.
      *
      * @var string
@@ -959,19 +990,19 @@ class Dataset extends Entity
 
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->isDatasetFileInColdStorage()) {
-                $tags[] = 'Coldstorage';
+                $tags[] = self::TAG_COLDSTORAGE;
             }
 
             if (!empty($datasetSubmission->getNceiUrl())) {
-                $tags[] = 'NCEI';
+                $tags[] = self::TAG_NCEI;
             }
 
             if (!empty($datasetSubmission->getErddapUrl())) {
-                $tags[] = 'ERDAPP';
+                $tags[] = self::TAG_ERDAPP;
             }
 
             if ($datasetSubmission->isRemotelyHosted()) {
-                $tags[] = 'Remotely Hosted';
+                $tags[] = self::TAG_REMOTELY_HOSTED;
             }
         }
 
