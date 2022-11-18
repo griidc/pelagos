@@ -12,6 +12,7 @@ const templateVariables = {
     researchAwardOption: 'Research Award',
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
+    tags: 'Tags',
   },
   GRP: {
     name: 'GRP',
@@ -26,6 +27,7 @@ const templateVariables = {
     cardHeadingText: 'View Project Overview By',
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
+    tags: 'Tags',
   },
   HRI: {
     name: 'HRI',
@@ -39,6 +41,7 @@ const templateVariables = {
     researchAwardOption: 'Research Award',
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
+    tags: 'Tags',
   },
 };
 

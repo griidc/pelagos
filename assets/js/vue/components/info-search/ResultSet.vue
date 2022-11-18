@@ -1,9 +1,9 @@
 <template>
-  <div v-if="results.result > 0">
+  <div v-if="results.count > 0">
     <section class="section-content pt-3">
       <div class="row d-flex flex-row justify-content-center">
         <h5>
-          Found {{ results.result }} results
+          Found {{ results.count }} results
         </h5>
       </div>
     </section>
@@ -12,7 +12,7 @@
         <div class="empty-div"></div>
         <b-pagination
             v-model="currentPage"
-            :total-rows="results.result"
+            :total-rows="results.count"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
@@ -35,8 +35,8 @@
           </div>
         </aside>
         <main class="col-lg-9 overflow-auto">
-          <InformationProductCard v-for="informationProduct in results.informationProducts"
-                                  :key="informationProduct.id" v-show="informationProduct.published"
+          <InformationProductCard v-for="informationProduct in results.results"
+                                  :key="informationProduct.id"
                                   :informationProduct="informationProduct"/>
         </main>
       </div>

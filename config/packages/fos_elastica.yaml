@@ -83,12 +83,17 @@ fos_elastica:
                     logger: true
                 finder: ~
             properties:
+                friendlyName:
+                    type: 'keyword'
                 udi:
                     type: 'text'
                 title:
                     type: 'text'
                 abstract:
                     type: 'text'
+                tags:
+                    type: 'keyword'
+                    property_path: false
                 researchGroup:
                     type: 'nested'
                     properties:
@@ -164,6 +169,8 @@ fos_elastica:
                     logger: true
                 finder: ~
             properties:
+                friendlyName:
+                    type: 'keyword'
                 title:
                     type: 'text'
                 creators:

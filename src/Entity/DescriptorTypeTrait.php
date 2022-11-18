@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Trait for description type.
@@ -11,6 +12,9 @@ trait DescriptorTypeTrait
 {
     /**
      * @ORM\Column(type="text")
+     *
+     * @Serializer\Groups({"search"})
+     * @Serializer\SerializedName("description")
      */
     private $description;
 
