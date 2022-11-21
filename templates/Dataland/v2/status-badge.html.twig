@@ -1,4 +1,5 @@
 <div>
+    <span class="badge badge-itemtype">Dataset</span>
     {% if dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE") %}
         <span class="badge badge-secondary">Identified</span>
     {% elseif dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION")
