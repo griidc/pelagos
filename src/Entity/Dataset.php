@@ -950,38 +950,6 @@ class Dataset extends Entity
     }
 
     /**
-     * Returns the "tags" for this datasets.
-     *
-     * @return array
-     */
-    public function getTags(): array
-    {
-        $tags = [];
-
-        $datasetSubmission = $this->getDatasetSubmission();
-
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            if ($datasetSubmission->isDatasetFileInColdStorage()) {
-                $tags[] = 'Coldstorage';
-            }
-
-            if (!empty($datasetSubmission->getNceiUrl())) {
-                $tags[] = 'NCEI';
-            }
-
-            if (!empty($datasetSubmission->getErddapUrl())) {
-                $tags[] = 'ERDAPP';
-            }
-
-            if ($datasetSubmission->isRemotelyHosted()) {
-                $tags[] = 'Remotely Hosted';
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * Show friendly name of this entity.
      *
      * @Serializer\VirtualProperty
@@ -1006,7 +974,7 @@ class Dataset extends Entity
      */
     public function getClassName(): string
     {
-       return get_class($this);
+        return get_class($this);
     }
 
     /**
