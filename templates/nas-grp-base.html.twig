@@ -130,6 +130,7 @@
             </div>
         </div>
     </div>
+{% endblock htmlbody %}
 
 {% block javascripts %}
     {{ encore_entry_script_tags('nas-app') }}
@@ -165,12 +166,6 @@
             };
         });
     </script>
-
-    <script>
-        window.PELAGOS_TEMPLATE_PROPS = {"BaseTemplateName": "GRP"};
-    </script>
-
 {% endblock %}
-{% endblock htmlbody %}
 </body>
 </html>
