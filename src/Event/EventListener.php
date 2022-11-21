@@ -4,6 +4,7 @@ namespace App\Event;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Handler\EntityHandler;
@@ -124,7 +125,6 @@ abstract class EventListener
      * @param \Twig\TemplateWrapper $twigTemplate A twig template.
      * @param array                 $mailData     Mail data array for email.
      * @param array|null            $peopleObjs   An optional array of recipient Persons.
-     * @param array                 $attachments  An optional array of Swift_Message_Attachments to attach.
      *
      * @return void
      */
@@ -132,7 +132,6 @@ abstract class EventListener
         \Twig\TemplateWrapper $twigTemplate,
         array $mailData,
         array $peopleObjs = null,
-        array $attachments = array()
     ) {
         $currentToken = $this->tokenStorage->getToken();
         if ($currentToken instanceof TokenInterface) {
@@ -151,8 +150,7 @@ abstract class EventListener
             $this->mailer->sendEmailMessage(
                 $twigTemplate,
                 $mailData,
-                array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()),
-                $attachments
+                array(new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName())),
             );
         }
     }

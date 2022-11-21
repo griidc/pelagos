@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Mime\Address;
 use Twig\Environment;
 use App\Util\MailSender;
 use App\Entity\Account;
@@ -251,7 +252,7 @@ class AccountExpirationNotifyCommand extends Command
                 $emailTemplate,
                 $twigData,
                 array(
-                    $person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName(),
+                    new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName()),
                 )
             );
         }

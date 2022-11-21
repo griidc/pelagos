@@ -130,7 +130,7 @@ class DatasetIndex
                 $researchGroupNameQuery = new Query\Nested();
                 $researchGroupNameQuery->setPath('researchGroup');
                 $researchGroupNameQuery->setQuery(
-                    new Query\Match('researchGroup.name', $text)
+                    new Query\MatchQuery('researchGroup.name', $text)
                 );
                 $textQuery->addShould($researchGroupNameQuery);
 
@@ -138,7 +138,7 @@ class DatasetIndex
                 $fundingOrgQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
 
                 $fundingOrgQuery->setQuery(
-                    new Query\Match('researchGroup.fundingCycle.fundingOrganization.name', $text)
+                    new Query\MatchQuery('researchGroup.fundingCycle.fundingOrganization.name', $text)
                 );
                 $fundingCycleQuery = new Query\Nested();
                 $fundingCycleQuery->setPath('researchGroup.fundingCycle');
@@ -151,7 +151,7 @@ class DatasetIndex
                 $datasetSubmissionQuery = new Query\Nested();
                 $datasetSubmissionQuery->setPath('datasetSubmission');
                 $datasetSubmissionQuery->setQuery(
-                    new Query\Match('datasetSubmission.authors', $text)
+                    new Query\MatchQuery('datasetSubmission.authors', $text)
                 );
                 $textQuery->addShould($datasetSubmissionQuery);
 
@@ -159,7 +159,7 @@ class DatasetIndex
                 $placeKeywordsQuery = new Query\Nested();
                 $placeKeywordsQuery->setPath('datasetSubmission');
                 $placeKeywordsQuery->setQuery(
-                    new Query\Match('datasetSubmission.placeKeywords', $text)
+                    new Query\MatchQuery('datasetSubmission.placeKeywords', $text)
                 );
                 $textQuery->addShould($placeKeywordsQuery);
 
@@ -167,7 +167,7 @@ class DatasetIndex
                 $themeKeywordsQuery = new Query\Nested();
                 $themeKeywordsQuery->setPath('datasetSubmission');
                 $themeKeywordsQuery->setQuery(
-                    new Query\Match('datasetSubmission.themeKeywords', $text)
+                    new Query\MatchQuery('datasetSubmission.themeKeywords', $text)
                 );
                 $textQuery->addShould($themeKeywordsQuery);
             }

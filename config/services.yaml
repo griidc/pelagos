@@ -201,10 +201,6 @@ services:
         bind:
             string $customTemplate: '%env(CUSTOM_BASE_TEMPLATE)%'
 
-    App\Util\MailerLoggerUtil:
-        tags:
-            - { name: "swiftmailer.default.plugin" }
-
     App\Util\FundingOrgFilter:
         bind:
             array $fundingOrgs: "%env(json:FILTER_BY_FUNDING_ORG)%"
