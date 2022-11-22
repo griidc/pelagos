@@ -13,6 +13,7 @@ const templateVariables = {
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
     tags: 'Tags',
+    tagsExpanded: false,
   },
   GRIIDC: {
   },
@@ -36,7 +37,6 @@ export default {
   getProperty: (name) => {
     if (
       global.baseTemplateName !== undefined
-            && global.baseTemplateName !== undefined
             && templateVariables[global.baseTemplateName] !== undefined
             && name in templateVariables[global.baseTemplateName]
     ) {

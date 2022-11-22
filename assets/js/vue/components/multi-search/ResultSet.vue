@@ -123,6 +123,7 @@ export default {
         tagsInfo: {
           label: templateSwitch.getProperty('tags'),
           queryParam: 'tags',
+          expanded: templateSwitch.getProperty('tagsExpanded'),
         },
       },
       showResults: false,
