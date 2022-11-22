@@ -154,11 +154,6 @@ export default {
       }
       return '';
     },
-    toggleCollapses(ids) {
-      ids.forEach((id) => {
-        this.$root.$emit('bv::toggle::collapse', id);
-      });
-    },
   },
 };
 </script>
