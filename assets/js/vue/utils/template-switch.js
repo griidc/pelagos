@@ -20,6 +20,7 @@ const templateVariables = {
     tagsExpanded: true,
   },
   GRIIDC: {
+    typeExpanded: false,
   },
   GRP: {
     fundingCycle: 'Grant Awards',
@@ -34,6 +35,7 @@ const templateVariables = {
     showFundingCycles: false,
     showProjectDirector: false,
     showFundingOrgFacet: false,
+    fundingOrgExpanded: false,
   },
 };
 
