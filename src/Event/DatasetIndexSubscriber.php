@@ -34,7 +34,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
     /**
      * Populate calculated fields in the Dataset index.
      *
-     * @param TransformEvent $event The event that triggeref this.
+     * @param PostTransformEvent $event The event that triggeref this.
      *
      * @return void
      */
@@ -61,7 +61,6 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             $wkt = null;
         }
 
-
         if (null !== $wkt) {
             $document->set('geometry', $wkt);
             $geometry = \geoPHP::load($wkt, 'wkt');
@@ -69,11 +68,18 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             // If the geometry couldn't be simplified.
             if (null == $simpleGeometry or $simpleGeometry->isEmpty()) {
                 // Set the original geometry as a GeoJSON array.
-                $document->set('simpleGeometry', json_decode($geometry->out('json'), true));
+                $json = $geometry->out('json');
             } else {
                 // Set the simpllified geometry as a GeoJSON array.
-                $document->set('simpleGeometry', json_decode($simpleGeometry->out('json'), true));
+                $json = $simpleGeometry->out('json');
             }
+            $array = json_decode($json, true);
+
+            if (key_exists('coordinates', $array)) {
+                $array['coordinates'] = array_map(array($this, 'coordinatesToFloat'), $array['coordinates']);
+            }
+
+            $document->set('simpleGeometry', $array);
         }
 
         if (null !== $dataset->getDatasetSubmission()) {
@@ -122,6 +128,28 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
         } else {
             $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
         }
+    }
+
+    /**
+     * Forces array elements to float.
+     *
+     * @param array|float $coordinates
+     */
+    private function coordinatesToFloat($coordinates): array|float
+    {
+        if (!is_array($coordinates)) {
+            return floatval($coordinates);
+        }
+        $floatCoordinates = [];
+        foreach ($coordinates as $pair) {
+            if (!is_array($pair)) {
+                $floatCoordinates[] = floatval($pair);
+            } else {
+                $floatCoordinates[] = $this->coordinatesToFloat($pair);
+            }
+        }
+
+        return $floatCoordinates;
     }
 
     /**
