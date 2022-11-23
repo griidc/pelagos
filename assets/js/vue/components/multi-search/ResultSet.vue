@@ -107,18 +107,22 @@ export default {
         researchGroupInfo: {
           label: templateSwitch.getProperty('researchGroup'),
           queryParam: 'researchGroup',
+          expanded: templateSwitch.getProperty('researchGroupExpanded'),
         },
         fundingOrgInfo: {
           label: templateSwitch.getProperty('fundingOrg'),
           queryParam: 'fundingOrg',
+          expanded: templateSwitch.getProperty('fundingOrgExpanded'),
         },
         dataTypeInfo: {
           label: 'Type',
           queryParam: 'dataType',
+          expanded: templateSwitch.getProperty('typeExpanded'),
         },
         statusInfo: {
           label: templateSwitch.getProperty('status'),
           queryParam: 'status',
+          expanded: templateSwitch.getProperty('statusExpanded'),
         },
         tagsInfo: {
           label: templateSwitch.getProperty('tags'),

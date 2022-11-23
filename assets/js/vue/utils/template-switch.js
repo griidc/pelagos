@@ -13,7 +13,11 @@ const templateVariables = {
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
     tags: 'Tags',
-    tagsExpanded: false,
+    researchGroupExpanded: true,
+    fundingOrgExpanded: true,
+    typeExpanded: true,
+    statusExpanded: true,
+    tagsExpanded: true,
   },
   GRIIDC: {
   },
