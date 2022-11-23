@@ -3,46 +3,121 @@
     <div class="container">
       <section class="section-content pt-2">
         <div class="search-form">
-          <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit"
-                  @reset.prevent="onReset">
+          <b-form
+            id="searchForm"
+            name="searchForm"
+            method="get"
+            @submit.prevent="onSubmit"
+            @reset.prevent="onReset"
+          >
             <div class="row">
               <div class="col-lg-9">
                 <div class="row">
                   <div class="col-lg">
-                    <b-form-input type="search"
-                                  name="query"
-                                  class="form-control"
-                                  placeholder="Search.."
-                                  id="searchBox"
-                                  v-model="form.queryString">
+                    <b-form-input
+                      type="search"
+                      name="query"
+                      class="form-control"
+                      placeholder="Search.."
+                      id="searchBox"
+                      v-model="form.queryString"
+                    >
                     </b-form-input>
                   </div>
                 </div>
-              </div>
-                <div class="col-lg-3 button-toolbar">
-                  <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
-                  <i class="fa fa-search pl-2"></i></button>
-                  <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                <div class="row mt-3 form-group form-inline pt-3">
+                  <div class="col-lg search-field-options">
+                    <span class="input-group">
+                      <label class="pl-2 pr-2" for="field"
+                        >Search by Date Type</label
+                      >
+                      <b-form-select
+                        name="dateType"
+                        id="dateType"
+                        v-model="form.dateType"
+                        :options="dateTypeOptions"
+                      >
+                      </b-form-select>
+                    </span>
+                  </div>
+                  <div class="col-lg range-start-date">
+                    <span class="input-group">
+                      <label for="rangeStartDate" class="pr-2">From</label>
+                      <DxDateBox
+                        :ref="rangeStartDateRef"
+                        :element-attr="dateBoxAttributes"
+                        id="rangeStartDate"
+                        :show-clear-button="true"
+                        :use-mask-behavior="true"
+                        :value="startDate"
+                        placeholder="yyyy-mm-dd"
+                        display-format="yyyy-MM-dd"
+                        width="80%"
+                        type="date"
+                        @value-changed="onStartDateChanged"
+                      />
+                    </span>
+                  </div>
+                  <div class="col-lg range-end-date">
+                    <span class="input-group">
+                      <label for="rangeEndDate" class="pr-2 pl-3"
+                        >To</label
+                      >
+                      <DxDateBox
+                        :ref="rangeEndDateRef"
+                        :element-attr="dateBoxAttributes"
+                        id="rangeEndDate"
+                        :show-clear-button="true"
+                        :use-mask-behavior="true"
+                        :value="endDate"
+                        placeholder="yyyy-mm-dd"
+                        display-format="yyyy-MM-dd"
+                        width="80%"
+                        type="date"
+                        @value-changed="onEndDateChanged"
+                      />
+                    </span>
+                  </div>
                 </div>
+              </div>
+              <div class="col-lg-3 button-toolbar">
+                <button
+                  id="searchSubmit"
+                  type="submit"
+                  class="btn btn-alternate search-button"
+                >
+                  Search <i class="fa fa-search pl-2"></i>
+                </button>
+                <button
+                  type="reset"
+                  id="search-clear"
+                  class="btn btn-dark clear-button"
+                >
+                  Clear
+                </button>
+              </div>
             </div>
           </b-form>
         </div>
       </section>
       <ResultSet
-          v-if="showResults"
-          :results="results"
-          @facetClicked="facetCheckBoxValues"
-          @pagination="changePageNo"
-          @noOfResults="changeNoOfResults"
-          :formValues="form"/>
+        v-if="showResults"
+        :results="results"
+        @facetClicked="facetCheckBoxValues"
+        @pagination="changePageNo"
+        @noOfResults="changeNoOfResults"
+        :formValues="form"
+      />
     </div>
   </div>
 </template>
 
 <script>
-
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/multi-search/ResultSet';
+import DxDateBox from 'devextreme-vue/date-box';
 
 function initialFormValues() {
   return {
@@ -53,17 +128,34 @@ function initialFormValues() {
     fundingOrg: '',
     dataType: '',
     status: '',
+    dateType: 'collectionDate',
+    rangeStartDate: '',
+    rangeEndDate: '',
   };
 }
 
+const rangeStartDateRef = 'range-start-date';
+const rangeEndDateRef = 'range-end-date';
+
 export default {
   name: 'MultiSearchApp',
-  components: { ResultSet },
+  components: { ResultSet, DxDateBox },
   data() {
     return {
       form: initialFormValues(),
       results: Object,
       showResults: false,
+      dateTypeOptions: [
+        { text: 'Collection Date', value: 'collectionDate' },
+        { text: 'Published Date', value: 'publishedDate' },
+      ],
+      dateBoxAttributes: {
+        class: 'datebox-font-family',
+      },
+      startDate: '',
+      endDate: '',
+      rangeStartDateRef,
+      rangeEndDateRef,
     };
   },
   methods: {
@@ -72,7 +164,9 @@ export default {
       this.onSubmit();
     },
     onSubmit() {
-      const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
+      const searchQuery = Object.keys(this.form)
+        .map((key) => `${key}=${this.form[key]}`)
+        .join('&');
       getApi(
         // eslint-disable-next-line no-undef
         `${Routing.generate('app_multi_search_api')}?${searchQuery}`,
@@ -82,7 +176,27 @@ export default {
         this.showResults = true;
       });
     },
+    onStartDateChanged(event) {
+      if (event.value instanceof Date) {
+        this.form.rangeStartDate = event.value.toLocaleDateString();
+      } else if (event.value) {
+        this.form.rangeStartDate = event.value;
+      } else {
+        this.form.rangeStartDate = '';
+      }
+    },
+    onEndDateChanged(event) {
+      if (event.value instanceof Date) {
+        this.form.rangeEndDate = event.value.toLocaleDateString();
+      } else if (event.value) {
+        this.form.rangeEndDate = event.value;
+      } else {
+        this.form.rangeEndDate = '';
+      }
+    },
     onReset() {
+      this.$refs[rangeStartDateRef].instance.reset();
+      this.$refs[rangeEndDateRef].instance.reset();
       this.init();
     },
     facetCheckBoxValues(value) {
