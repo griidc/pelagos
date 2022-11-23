@@ -1,7 +1,6 @@
 <template>
   <div ref="formContainer" class="bg">
     <div class="container">
-      <h2 class="text-center">Information Product Search</h2>
       <section class="section-content pt-2">
         <div class="search-form">
           <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit"
@@ -43,21 +42,23 @@
 <script>
 
 import { getApi } from '@/vue/utils/axiosService';
-import ResultSet from '@/vue/components/info-search/ResultSet';
+import ResultSet from '@/vue/components/multi-search/ResultSet';
 
 function initialFormValues() {
   return {
     queryString: '',
     researchGroup: '',
-    productTypeDesc: '',
-    digitalTypeDesc: '',
     page: 1,
     perPage: 10,
+    fundingOrg: '',
+    dataType: '',
+    status: '',
+    tags: '',
   };
 }
 
 export default {
-  name: 'InformationProductSearchApp',
+  name: 'MultiSearchApp',
   components: { ResultSet },
   data() {
     return {
@@ -75,7 +76,7 @@ export default {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
         // eslint-disable-next-line no-undef
-        `${Routing.generate('app_information_product_search_api')}?${searchQuery}`,
+        `${Routing.generate('app_multi_search_api')}?${searchQuery}`,
         { thisComponent: this, addLoading: true },
       ).then((response) => {
         this.results = response.data;

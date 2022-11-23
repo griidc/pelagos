@@ -62,6 +62,8 @@ class ResearchGroup extends Entity
      *
      * @ORM\Column(type="citext", options={"collation":"POSIX"})
      *
+     * @Serializer\Groups({"search"})
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )

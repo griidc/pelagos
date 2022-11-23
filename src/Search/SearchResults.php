@@ -3,10 +3,13 @@
 namespace App\Search;
 
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\DatasetSubmission;
+use App\Entity\FundingOrganization;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\DigitalResourceTypeDescriptorRepository;
 use App\Repository\ProductTypeDescriptorRepository;
 use App\Repository\ResearchGroupRepository;
+use App\Repository\FundingOrganizationRepository;
 use App\Entity\ResearchGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Annotation as Serializer;
@@ -20,7 +23,7 @@ class SearchResults
     /**
      * Pager Fanta Search Results.
      *
-     * @var Pagerfanta $pagerFantaResults
+     * @var PagerfantaInterface $pagerFantaResults
      *
      * @Serializer\Exclude
      */
@@ -40,7 +43,7 @@ class SearchResults
      *
      * @var integer
      *
-     * @Serializer\SerializedName("result")
+     * @Serializer\SerializedName("count")
      */
     private $numberOfResults;
 
@@ -83,7 +86,8 @@ class SearchResults
      *
      * @var object|iterable
      *
-     * @Serializer\SerializedName("informationProducts")
+     * @Serializer\SerializedName("results")
+     * @Serializer\Groups({"search"})
      */
     private $result;
 
@@ -106,7 +110,16 @@ class SearchResults
     private $researchGroupRepository;
 
     /**
-     * Instance of the ResearchGroupRepository.
+     * Instance of the FundingOrganizationRepository.
+     *
+     * @var FundingOrganizationRepository
+     *
+     * @Serializer\Exclude
+     */
+    private $fundingOrganizationRepository;
+
+    /**
+     * Instance of the DigitalResourceTypeDescriptorRepository.
      *
      * @var DigitalResourceTypeDescriptorRepository
      *
@@ -115,7 +128,7 @@ class SearchResults
     private $digitalResourceTypeDescriptorRepository;
 
     /**
-     * Instance of the ResearchGroupRepository.
+     * Instance of the ProductTypeDescriptorRepository.
      *
      * @var ProductTypeDescriptorRepository
      *
@@ -139,6 +152,7 @@ class SearchResults
         $this->researchGroupRepository = $this->entityManager->getRepository(ResearchGroup::class);
         $this->digitalResourceTypeDescriptorRepository = $this->entityManager->getRepository(DigitalResourceTypeDescriptor::class);
         $this->productTypeDescriptorRepository = $this->entityManager->getRepository(ProductTypeDescriptor::class);
+        $this->fundingOrganizationRepository = $this->entityManager->getRepository(FundingOrganization::class);
 
         $this->processResults();
     }
@@ -162,27 +176,185 @@ class SearchResults
 
         $aggregations = $this->pagerFantaResults->getAdapter()->getAggregations();
 
-        $researchGroupBucket = array_column(
-            $this->findKey($aggregations, 'research_group_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        // Data type aggregation
+        $dataTypeAggregations = $this->findKey($aggregations, 'friendly_name_agregation');
+        if (array_key_exists('buckets', $dataTypeAggregations)) {
+            $dataTypeBucket = array_column(
+                $dataTypeAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['dataTypeInfo'] = $this->bucketToInfoArray($dataTypeBucket);
+        }
 
-        $productTypeDescriptorBucket = array_column(
-            $this->findKey($aggregations, 'product_type_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        // Status info aggregation
+        $datasetStatusAggregations = $this->findKey($aggregations, 'status');
+        if (array_key_exists('buckets', $datasetStatusAggregations)) {
+            $datasetStatusBucket = array_column(
+                $datasetStatusAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['statusInfo'] = $this->getStatusInfo($datasetStatusBucket);
+        }
 
-        $digitalResourceTypeDescriptorBucket = array_column(
-            $this->findKey($aggregations, 'digital_resource_aggregation')['buckets'],
-            'doc_count',
-            'key'
-        );
+        // Tags info aggregation
+        $tagsAggregations = $this->findKey($aggregations, 'tags_agg');
+        if (array_key_exists('buckets', $tagsAggregations)) {
+            $tagsBucket = array_column(
+                $tagsAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['tagsInfo'] = $this->bucketToInfoArray($tagsBucket);
+        }
+
+        // Product type aggregation
+        $productTypeDescriptorAggregations = $this->findKey($aggregations, 'product_type_aggregation');
+        if (array_key_exists('buckets', $productTypeDescriptorAggregations)) {
+            $productTypeDescriptorBucket = array_column(
+                $productTypeDescriptorAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+        }
+
+        // Digital resource type aggregation
+        $digitalResourceTypeDescriptorAggregations = $this->findKey($aggregations, 'digital_resource_aggregation');
+        if (array_key_exists('buckets', $digitalResourceTypeDescriptorAggregations)) {
+            $digitalResourceTypeDescriptorBucket = array_column(
+                $digitalResourceTypeDescriptorAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
+        }
+
+        $researchGroupBucket = $this->combineBuckets($aggregations, 'research_group_aggregation', 'research_groups_aggregation');
+        $fundingOrgBucket = $this->combineBuckets($aggregations, 'funding_organization_aggregation', 'funding_organizations_aggregation');
 
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
-        $this->facetInfo['digitalResourceTypeDescriptorsInfo'] = $this->digitalResourceTypeDescriptorRepository->getDigitalResourceTypeDescriptorsInfo($digitalResourceTypeDescriptorBucket);
-        $this->facetInfo['productTypeDescriptorInfo'] = $this->productTypeDescriptorRepository->getProductTypeDescriptorInfo($productTypeDescriptorBucket);
+        $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
+    }
+
+    /**
+     * Get dataset availability status information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each availability status.
+     *
+     * @return array
+     */
+    private function getStatusInfo(array $aggregations): array
+    {
+        $datasetCount = function ($status) use ($aggregations) {
+            if (array_key_exists($status, $aggregations)) {
+                return $aggregations[$status];
+            } else {
+                return 0;
+            }
+        };
+
+        $statusInfo = [
+            [
+                'id' => 1,
+                'name' => 'Identified',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
+            ],
+            [
+                'id' => 2,
+                'name' => 'Submitted',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
+                )
+            ],
+            [
+                'id' => 3,
+                'name' => 'Restricted',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
+                )
+            ],
+            [
+                'id' => 4,
+                'name' => 'Available',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
+                )
+            ],
+        ];
+
+        // Remove any element with a count of 0.
+        foreach ($statusInfo as $key => $value) {
+            if (0 === $value['count']) {
+                unset($statusInfo[$key]);
+            }
+        }
+
+        //Sorting based on highest count
+        $array_column = array_column($statusInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $statusInfo);
+        return $statusInfo;
+    }
+
+    /**
+     * Get the facet info to Data Type.
+     *
+     * @param array $bucket
+     *
+     * @return array
+     */
+    private function bucketToInfoArray(array $bucket): array
+    {
+        $infoArray = [];
+        foreach ($bucket as $type => $count) {
+            $info = [];
+            $info['id'] = $type;
+            $info['name'] = $type;
+            $info['count'] = $count;
+            $infoArray[] = $info;
+        }
+        return $infoArray;
+    }
+
+    /**
+     * Get combined research group aggregation values.
+     *
+     * @param $aggregations
+     *
+     * @return array
+     */
+    private function combineBuckets($aggregations, string $datasetBucketName, string $infoProductBucketName): array
+    {
+        $datasetBucket = [];
+        $datasetAggregations = $this->findKey($aggregations, $datasetBucketName);
+        if (array_key_exists('buckets', $datasetAggregations)) {
+            $datasetBucket = array_column(
+                $datasetAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+        }
+
+        $infoProductBucket = [];
+        $infoProductAggregations = $this->findKey($aggregations, $infoProductBucketName);
+        if (array_key_exists('buckets', $infoProductAggregations)) {
+            $infoProductBucket = array_column(
+                $infoProductAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+        }
+
+        $combinedBuckets = array();
+        foreach (array_keys($datasetBucket + $infoProductBucket) as $key) {
+            $combinedBuckets[$key] = (isset($datasetBucket[$key]) ? $datasetBucket[$key] : 0) + (isset($infoProductBucket[$key]) ? $infoProductBucket[$key] : 0);
+        }
+
+        return $combinedBuckets;
     }
 
     /**
@@ -202,7 +374,6 @@ class SearchResults
             new \RecursiveArrayIterator($aggregations),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-
         //loop over the iterator
         foreach ($iterator as $key => $value) {
             //if the key matches our search

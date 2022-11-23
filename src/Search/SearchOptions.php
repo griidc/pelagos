@@ -19,7 +19,7 @@ class SearchOptions
      *
      * @var boolean
      */
-    private $onlyPublishedInformationProducts = true;
+    private $onlyPublishedInformationProducts = false;
 
     /**
      * The current page of results.
@@ -38,23 +38,58 @@ class SearchOptions
     /**
      * Research Group Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $researchGroupFilter;
 
     /**
+     * Funding Organization Filter.
+     *
+     * @var array|null
+     */
+    private $fundingOrganizationFilter;
+
+    /**
      * Product type descriptor Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $productTypeDescFilter;
 
     /**
      * Digital resource type descriptor Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $digitalTypeDescFilter;
+
+    /**
+     * List of facets.
+     *
+     * @var array|null
+     */
+    private $facets;
+
+    /**
+     * The datatype.
+     *
+     * @var array|null
+     */
+    private $dataType;
+
+    /**
+     * Dataset availability status.
+     *
+     * @var array|null
+     */
+    private $status;
+
+    /**
+     * Dataset tags filter.
+     *
+     * @var array
+     */
+    private $tags = [];
 
     /**
      * Class Contructor.
@@ -173,6 +208,58 @@ class SearchOptions
     }
 
     /**
+     * Set the data type.
+     *
+     * @param string|null $dataType
+     *
+     * @return self
+     */
+    public function setDataType(?string $dataType): self
+    {
+        if (!empty($dataType)) {
+            $this->dataType = explode(',', $dataType);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the data type.
+     *
+     * @return array
+     */
+    public function getDataType()
+    {
+        return $this->dataType;
+    }
+
+    /**
+     * Set the dataset status.
+     *
+     * @param string|null $status
+     *
+     * @return self
+     */
+    public function setDatasetStatus(?string $status): self
+    {
+        if (!empty($status)) {
+            $this->status = explode(',', $status);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the dataset status.
+     *
+     * @return array
+     */
+    public function getDatasetStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Sets the research groups to be filtered.
      *
      * @param string|null $researchGroups The comma delimited list of Research Groups.
@@ -206,6 +293,42 @@ class SearchOptions
     public function isResearchGroupFilterSet(): bool
     {
         return isset($this->researchGroupFilter);
+    }
+
+    /**
+     * Sets the Funding Organizations to be filtered.
+     *
+     * @param string|null $fundingOrganizations The comma delimited list of Funding Organizations.
+     *
+     * @return self
+     */
+    public function setFundingOrgFilter(?string $fundingOrganizations): self
+    {
+        if (!empty($fundingOrganizations)) {
+            $this->fundingOrganizationFilter = explode(',', $fundingOrganizations);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the list of Funding Organizations to be filtered on.
+     *
+     * @return array
+     */
+    public function getFundingOrgFilter(): array
+    {
+        return $this->fundingOrganizationFilter;
+    }
+
+    /**
+     * Is the Funding Organization filter set.
+     *
+     * @return boolean
+     */
+    public function isFundingOrgFilterSet(): bool
+    {
+        return isset($this->fundingOrganizationFilter);
     }
 
     /**
@@ -276,5 +399,53 @@ class SearchOptions
     public function isDigitalTypeDescFilterSet(): bool
     {
         return isset($this->digitalTypeDescFilter);
+    }
+
+    /**
+     * Set a list of facets to use.
+     *
+     * @param array $facets
+     *
+     * @return self
+     */
+    public function setFacets(array $facets): self
+    {
+        $this->facets = $facets;
+
+        return $this;
+    }
+
+    /**
+     * Get the list of facets.
+     *
+     * @return array|null
+     */
+    public function getFacets(): ?array
+    {
+        return $this->facets;
+    }
+
+    /**
+     * Get the tags.
+     *
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set the tag filter.
+     *
+     * @param string|null $tags
+     *
+     * @return void
+     */
+    public function setTags(?string $tags): void
+    {
+        if (!empty($tags)) {
+            $this->tags = explode(',', $tags);
+        }
     }
 }

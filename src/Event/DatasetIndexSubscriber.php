@@ -93,6 +93,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Ymd\THis\Z'));
                 $document->set('sortingDateForDisplay', $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d'));
             }
+            $document->set('tags', $dataset->getTags());
             // Populate file size and format values
             $document->set('fileSize', $dataset->getDatasetSubmission()->getDatasetFileSize());
             if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {

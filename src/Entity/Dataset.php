@@ -57,11 +57,42 @@ class Dataset extends Entity
     );
 
     /**
+     * Cold Storage Tag
+     */
+    const TAG_COLDSTORAGE = 'Coldstorage';
+
+    /**
+     * Remotely Hosted Tag
+     */
+    const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
+
+    /**
+     * ERDAPP Tag
+     */
+    const TAG_ERDAPP = 'ERDAPP';
+
+
+    /**
+     * NCEI Tag
+     */
+    const TAG_NCEI = 'NCEI';
+
+    /**
+     * Valid Tags for a dataset.
+     */
+    const TAGS = [
+        self::TAG_COLDSTORAGE => 'Coldstorage',
+        self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
+        self::TAG_ERDAPP => 'ERDAPP',
+        self::TAG_NCEI => 'NCEI',
+    ];
+
+    /**
      * The UDI for this Dataset.
      *
      * @var string
      *
-     * @Serializer\Groups({"card"})
+     * @Serializer\Groups({"card", "search"})
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -75,6 +106,8 @@ class Dataset extends Entity
      * @Serializer\Groups({"card"})
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Groups({"search"})
      */
     protected $title;
 
@@ -102,6 +135,9 @@ class Dataset extends Entity
      * The Research Group this Dataset is attached to.
      *
      * @var ResearchGroup
+     *
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      *
      * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="datasets")
      */
@@ -133,6 +169,8 @@ class Dataset extends Entity
      * All Dataset Submissions for this dataset.
      *
      * @var Collection
+     *
+     * @Serializer\Exclude
      *
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
      *
@@ -909,5 +947,65 @@ class Dataset extends Entity
         }
 
         return null;
+    }
+
+    /**
+     * Show friendly name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("friendlyName")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getFriendlyName(): string
+    {
+        return $this::FRIENDLY_NAME;
+    }
+
+    /**
+     * Show class name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("className")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return get_class($this);
+    }
+
+    /**
+     * Returns the "tags" for this datasets.
+     *
+     * @return array
+     */
+    public function getTags(): array
+    {
+        $tags = [];
+
+        $datasetSubmission = $this->getDatasetSubmission();
+
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->isDatasetFileInColdStorage()) {
+                $tags[] = self::TAG_COLDSTORAGE;
+            }
+
+            if (!empty($datasetSubmission->getNceiUrl())) {
+                $tags[] = self::TAG_NCEI;
+            }
+
+            if (!empty($datasetSubmission->getErddapUrl())) {
+                $tags[] = self::TAG_ERDAPP;
+            }
+
+            if ($datasetSubmission->isRemotelyHosted()) {
+                $tags[] = self::TAG_REMOTELY_HOSTED;
+            }
+        }
+
+        return $tags;
     }
 }
