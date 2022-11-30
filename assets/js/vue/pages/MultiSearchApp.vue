@@ -71,6 +71,8 @@ export default {
   methods: {
     init() {
       this.form = initialFormValues();
+      this.detectHashChange();
+      this.decodeHash();
       this.onSubmit();
     },
     onSubmit() {
@@ -88,7 +90,9 @@ export default {
       });
     },
     onReset() {
-      this.init();
+      this.form = initialFormValues();
+      this.detectHashChange();
+      this.onSubmit();
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
@@ -108,6 +112,10 @@ export default {
       this.route = window.location.hash;
       this.submitted = false;
     },
+    decodeHash() {
+      const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+      this.form = Object.fromEntries(urlHashSplit);
+    },
   },
   mounted() {
     this.init();
@@ -116,8 +124,7 @@ export default {
     route() {
       if (!this.submitted) {
         if (this.route) {
-          const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
-          this.form = Object.fromEntries(urlHashSplit);
+          this.decodeHash();
           this.onSubmit();
         } else {
           this.onReset();
