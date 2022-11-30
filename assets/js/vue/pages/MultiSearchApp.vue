@@ -53,6 +53,7 @@ function initialFormValues() {
     fundingOrg: '',
     dataType: '',
     status: '',
+    tags: '',
   };
 }
 

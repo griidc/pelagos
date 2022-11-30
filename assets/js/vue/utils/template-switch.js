@@ -1,7 +1,7 @@
+global.baseTemplateName = 'default';
+
 const templateVariables = {
-  default: 'GRIIDC',
-  GRIIDC: {
-    name: 'GRIIDC',
+  default: {
     status: 'Dataset Status',
     fundingCycle: 'Funding Cycles',
     researchGroup: 'Research Groups',
@@ -13,51 +13,44 @@ const templateVariables = {
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
     tags: 'Tags',
+    researchGroupExpanded: true,
+    fundingOrgExpanded: true,
+    typeExpanded: true,
+    statusExpanded: true,
+    tagsExpanded: true,
+  },
+  GRIIDC: {
+    typeExpanded: false,
   },
   GRP: {
-    name: 'GRP',
-    status: 'Dataset Status',
     fundingCycle: 'Grant Awards',
     researchGroup: 'Projects',
-    fundingOrg: 'Funding Organizations',
     showFundingCycles: true,
     showProjectDirector: true,
     showFundingOrgFacet: false,
     researchAwardOption: 'Grant Award',
     cardHeadingText: 'View Project Overview By',
-    digitalTypeDesc: 'Resource Type',
-    productTypeDesc: 'Product Type',
-    tags: 'Tags',
   },
   HRI: {
-    name: 'HRI',
-    status: 'Dataset Status',
-    fundingCycle: 'Funding Cycles',
-    researchGroup: 'Research Groups',
-    fundingOrg: 'Funding Organizations',
     showFundingCycles: false,
     showProjectDirector: false,
     showFundingOrgFacet: false,
-    researchAwardOption: 'Research Award',
-    digitalTypeDesc: 'Resource Type',
-    productTypeDesc: 'Product Type',
-    tags: 'Tags',
+    fundingOrgExpanded: false,
   },
 };
 
 export default {
   getProperty: (name) => {
     if (
-    // eslint-disable-next-line no-undef
-      PELAGOS_TEMPLATE_PROPS !== undefined
-      // eslint-disable-next-line no-undef
-            && PELAGOS_TEMPLATE_PROPS.BaseTemplateName !== undefined
-      // eslint-disable-next-line no-undef
-            && templateVariables[PELAGOS_TEMPLATE_PROPS.BaseTemplateName] !== undefined
+      global.baseTemplateName !== undefined
+            && templateVariables[global.baseTemplateName] !== undefined
+            && name in templateVariables[global.baseTemplateName]
     ) {
-      // eslint-disable-next-line no-undef
-      return templateVariables[PELAGOS_TEMPLATE_PROPS.BaseTemplateName][name];
+      return templateVariables[global.baseTemplateName][name];
     }
-    return templateVariables[templateVariables.default][name];
+    return templateVariables.default[name];
+  },
+  setTemplate: (template) => {
+    global.baseTemplateName = template;
   },
 };
