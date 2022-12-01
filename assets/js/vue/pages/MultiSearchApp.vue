@@ -113,8 +113,10 @@ export default {
       this.submitted = false;
     },
     decodeHash() {
-      const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
-      this.form = Object.fromEntries(urlHashSplit);
+      if (this.route) {
+        const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+        this.form = Object.fromEntries(urlHashSplit);
+      }
     },
   },
   mounted() {
