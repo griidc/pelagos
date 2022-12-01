@@ -65,11 +65,15 @@ export default {
       form: initialFormValues(),
       results: Object,
       showResults: false,
+      route: window.location.hash,
+      submitted: false,
     };
   },
   methods: {
     init() {
       this.form = initialFormValues();
+      this.detectHashChange();
+      this.decodeHash();
       this.onSubmit();
     },
     onSubmit() {
@@ -81,10 +85,15 @@ export default {
       ).then((response) => {
         this.results = response.data;
         this.showResults = true;
+        window.location.hash = searchQuery;
+        this.route = window.location.hash;
+        this.submitted = true;
       });
     },
     onReset() {
-      this.init();
+      this.form = initialFormValues();
+      this.detectHashChange();
+      this.onSubmit();
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
@@ -100,9 +109,29 @@ export default {
       this.form.perPage = noOfResults;
       this.onSubmit();
     },
+    detectHashChange() {
+      this.route = window.location.hash;
+      this.submitted = false;
+    },
+    decodeHash() {
+      const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+      this.form = Object.fromEntries(urlHashSplit);
+    },
   },
   mounted() {
     this.init();
+  },
+  watch: {
+    route() {
+      if (!this.submitted) {
+        if (this.route) {
+          this.decodeHash();
+          this.onSubmit();
+        } else {
+          this.onReset();
+        }
+      }
+    },
   },
 };
 </script>
