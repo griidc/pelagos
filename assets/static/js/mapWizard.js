@@ -106,6 +106,9 @@ function MapWizard(json)
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     pelagosUI.loadingSpinner.hideSpinner();
                     handleError(jqXHR);
+                })
+                .always(function () {
+                    pelagosUI.loadingSpinner.hideSpinner();
                 });
         });
 
