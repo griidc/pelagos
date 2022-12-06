@@ -188,6 +188,9 @@ export default {
   },
   created() {
     this.facetCheckBox();
+    if (this.facetName.expanded !== undefined) {
+      this.expandFacet = this.facetName.expanded;
+    }
   },
   watch: {
     formValues() {
