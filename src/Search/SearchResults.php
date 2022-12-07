@@ -13,6 +13,7 @@ use App\Repository\FundingOrganizationRepository;
 use App\Entity\ResearchGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Annotation as Serializer;
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\PagerfantaInterface;
 
 /**
@@ -165,7 +166,11 @@ class SearchResults
     private function processResults(): void
     {
         $this->currentPage = $this->searchOptions->getCurrentPage();
-        $this->pagerFantaResults->setCurrentPage($this->currentPage);
+        try {
+            $this->pagerFantaResults->setCurrentPage($this->currentPage);
+        } catch (OutOfRangeCurrentPageException $exception) {
+            $this->pagerFantaResults->setCurrentPage(1);
+        }
         $this->pagerFantaResults->setMaxPerPage($this->searchOptions->getMaxPerPage());
 
         $this->numberOfResults = $this->pagerFantaResults->getNbResults();
