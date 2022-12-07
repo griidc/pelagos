@@ -75,13 +75,25 @@ class MultiSearch
         $boolQuery->addMust($simpleQuery);
 
         $query = new Query();
-        $query->setQuery($boolQuery);
 
         $postBoolQuery = new BoolQuery();
 
+        if ($searchOptions->getDateType() === SearchOptions::DATE_TYPE_COLLECTION) {
+            $searchOptions->setDateType('Dataset');
+            // Bool query to get range temporal extent dates
+            $collectionDateBoolQuery = new Query\BoolQuery();
+            if (!empty($searchOptions->getRangeStartDate())) {
+                $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($searchOptions->getRangeStartDate()));
+            }
+            if (!empty($searchOptions->getRangeEndDate())) {
+                $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($searchOptions->getRangeEndDate()));
+            }
+            $boolQuery->addFilter($collectionDateBoolQuery);
+        }
+
         if (!empty($searchOptions->getDataType())) {
             $friendlyNameQueryTerm = new Query\Terms('friendlyName');
-            $friendlyNameQueryTerm->setTerms($searchOptions->getDataType());
+            $friendlyNameQueryTerm->setTerms(['Dataset']);
 
             $postBoolQuery->addMust($friendlyNameQueryTerm);
         }
@@ -107,7 +119,6 @@ class MultiSearch
             $postBoolQuery->addMust($tagsQuery);
         }
 
-
         if ($searchOptions->isResearchGroupFilterSet()) {
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
         }
@@ -115,13 +126,11 @@ class MultiSearch
         if ($searchOptions->isFundingOrgFilterSet()) {
             $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
         }
-
+        
+        $query->setQuery($boolQuery);
         $query->setPostFilter($postBoolQuery);
-
         $this->addAggregators($query, $searchOptions);
-
         $resultsPaginator = $this->finder->findPaginated($query);
-
         return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
     }
 
@@ -240,5 +249,37 @@ class MultiSearch
         $tagsAgg->setField('tags');
         $tagsAgg->setSize(5);
         $query->addAggregation($tagsAgg);
+    }
+
+        /**
+     * Added start date range for collection.
+     *
+     * @param array $collectionDates Data collection range start date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionStartDateQuery(string $collectionStartDate): Query\Range
+    {
+        $collectionStartDateRange = new Query\Range();
+        $collectionStartDate = new \DateTime($collectionStartDate);
+        $collectionStartDateRange->addField('collectionStartDate', ['gte' => $collectionStartDate->format('Y-m-d H:i:s')]);
+
+        return $collectionStartDateRange;
+    }
+
+    /**
+     * Added end date range for collection.
+     *
+     * @param array $collectionDates Data collection range end date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionEndDateQuery(string $collectionEndDate): Query\Range
+    {
+        $collectionEndDateRange = new Query\Range();
+        $collectionEndDate = new \DateTime($collectionEndDate);
+        $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionEndDate->format('Y-m-d H:i:s')]);
+
+        return $collectionEndDateRange;
     }
 }

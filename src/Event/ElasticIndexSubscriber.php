@@ -3,6 +3,7 @@
 namespace App\Event;
 
 use App\Entity\Dataset;
+use App\Entity\InformationProduct;
 use App\Exception\InvalidGmlException;
 use App\Twig\Extensions as TwigExtentions;
 use App\Util\Geometry;
@@ -32,7 +33,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Populate calculated fields in the Dataset index.
+     * Populate calculated fields in the Elastic index.
      *
      * @param PostTransformEvent $event The event that triggeref this.
      *
@@ -40,14 +41,26 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
      */
     public function populateCalculatedFields(PostTransformEvent $event)
     {
-        $dataset = $event->getObject();
-
-        if (!$dataset instanceof Dataset) {
-            return;
+        $entity = $event->getObject();
+        if ($entity instanceof Dataset) {
+            $this->populateDatasetAttributes($event);
+        } else if ($entity instanceof InformationProduct) {
+            $this->populateInformationProductAttributes($event);
         }
+        return;
+    }
 
+    /**
+     * Populate dataset attributes into elastic index.
+     *
+     * @param PostTransformEvent $event The event that triggered this.
+     * 
+     * @return void
+     */
+    private function populateDatasetAttributes(PostTransformEvent $event)
+    {
         $document = $event->getDocument();
-
+        $dataset = $event->getObject();
         $wkt = null;
 
         // Logic to get the spatialExtent is in Dataset Entity.
@@ -130,6 +143,23 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
         }
     }
+
+    /**
+     * Populate info product attributes into elastic index.
+     *
+     * @param PostTransformEvent $event
+     * 
+     * @return void
+     */
+    private function populateInformationProductAttributes(PostTransformEvent $event)
+    {
+        $document = $event->getDocument();
+        /**@var InformationProduct */
+        $infoProduct = $event->getObject();
+
+        $document->set('publishedDate', $infoProduct->getModificationTimeStamp()->format('Y-m-d'));
+    }
+
 
     /**
      * Forces array elements to float.
