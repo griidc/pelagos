@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * An event subscriber for events related to the dataset index.
  */
-class DatasetIndexSubscriber implements EventSubscriberInterface
+class ElasticIndexSubscriber implements EventSubscriberInterface
 {
     /**
      * The Geometry utility service.
@@ -100,11 +100,11 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('year', $dataset->getAcceptedDate()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getAcceptedDate()->format('Ymd\THis\Z'));
                 $document->set('acceptedDate', $dataset->getAcceptedDate()->format('Y-m-d'));
-                $document->set('sortingDateForDisplay', $dataset->getAcceptedDate()->format('Y-m-d'));
+                $document->set('publishedDate', $dataset->getAcceptedDate()->format('Y-m-d'));
             } else {
                 $document->set('year', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Ymd\THis\Z'));
-                $document->set('sortingDateForDisplay', $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d'));
+                $document->set('publishedDate', $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d'));
             }
             $document->set('tags', $dataset->getTags());
             // Populate file size and format values
@@ -137,7 +137,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('estimatedEndDate', $dataset->getDif()->getEstimatedEndDate()->format('Y-m-d'));
             }
             if ($dataset->getDif()->getApprovedDate() instanceof \DateTime) {
-                $document->set('sortingDateForDisplay', $dataset->getDif()->getApprovedDate()->format('Y-m-d'));
+                $document->set('publishedDate', $dataset->getDif()->getApprovedDate()->format('Y-m-d'));
             }
         } else {
             $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
