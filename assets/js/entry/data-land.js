@@ -97,3 +97,29 @@ if (metadataDownloadLink) {
     );
   });
 }
+
+const isTextClamped = (element) => element.scrollHeight > element.clientHeight;
+
+const clampedText = document.getElementsByClassName('clamped');
+clampedText.forEach((element) => {
+  const link = document.createElement('a');
+  link.text = 'More';
+  link.title = 'Click for more...';
+  link.href = '#';
+  link.addEventListener('click', (more) => {
+    const { target } = more;
+    const clampedElement = target.previousElementSibling;
+    if (clampedElement.classList.contains('clamped')) {
+      target.text = 'Less';
+      link.title = 'Click for less...';
+      clampedElement.classList.remove('clamped');
+    } else {
+      target.text = 'More';
+      link.title = 'Click for more...';
+      clampedElement.classList.add('clamped');
+    }
+  });
+  if (isTextClamped(element)) {
+    element.parentNode.appendChild(link);
+  }
+});
