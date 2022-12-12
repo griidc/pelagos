@@ -164,13 +164,13 @@ class SearchResults
      */
     private function processResults(): void
     {
-        $this->currentPage = $this->searchOptions->getCurrentPage();
-        $this->pagerFantaResults->setCurrentPage($this->currentPage);
         $this->pagerFantaResults->setMaxPerPage($this->searchOptions->getMaxPerPage());
 
         $this->numberOfResults = $this->pagerFantaResults->getNbResults();
         $this->numberOfPages = $this->pagerFantaResults->getNbPages();
         $this->resultsPerPage = $this->pagerFantaResults->getMaxPerPage();
+        $this->currentPage = ($this->searchOptions->getCurrentPage() <= $this->numberOfPages) ? $this->searchOptions->getCurrentPage() : 1;
+        $this->pagerFantaResults->setCurrentPage($this->currentPage);
 
         $this->result = $this->pagerFantaResults->getCurrentPageResults();
 
