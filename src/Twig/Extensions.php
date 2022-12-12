@@ -134,6 +134,10 @@ class Extensions extends AbstractExtension
                 array(self::class, 'formatBytes')
             ),
             new \Twig\TwigFilter(
+                'formatWebDoi',
+                array(self::class, 'formatWebDoi')
+            ),
+            new \Twig\TwigFilter(
                 'maintenanceModeColor',
                 [$this, 'maintenanceModeColor']
             ),
@@ -339,6 +343,18 @@ class Extensions extends AbstractExtension
             }
         }
         return "$bytes $units[0]";
+    }
+
+    /**
+     * Format a DOI as hyperlink-style, if it exits, otherwise return empty string.
+     *
+     * @param string $doiString
+     * @return string
+     */
+    public static function formatWebDoi($doiString): string
+    {
+        return (!empty($doiString)) ? 'https://doi.org/'.$doiString : '';
+        //return $formatted;
     }
 
      /**
