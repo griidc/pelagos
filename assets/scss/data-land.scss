@@ -14,3 +14,13 @@
 .pre-line-white-space {
   white-space: pre-line;
 }
+
+.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}

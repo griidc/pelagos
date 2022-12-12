@@ -75,7 +75,7 @@
                 <div class="other-metadata w-75 float-left px-3">
                     <div class="py-2">
                         <h6><strong>Abstract:</strong></h6>
-                        <p class="pre-line-white-space">
+                        <p class="pre-line-white-space clamped">
                             {{ dataset.abstract }}
                         </p>
                     </div>
@@ -103,7 +103,7 @@
                     {% if dataset.datasetSubmission and dataset.datasetSubmission.purpose %}
                     <div class="py-2">
                         <h6><strong>Purpose:</strong></h6>
-                        <p>
+                        <p class="clamped">
                             {{ dataset.datasetSubmission.purpose|default }}
                         </p>
                     </div>
