@@ -38,7 +38,7 @@
                             <div>
                                 <div>
                                     <div>
-                                        <strong>DOI:</strong> {{ dataset.doi.doi|default }}
+                                        <strong>DOI:</strong> {{ dataset.doi.doi|default|formatWebDoi }}
                                     </div>
                     {% elseif dataset.dif.status == constant("App\\Entity\\DIF::STATUS_APPROVED") %}
                         <div class="d-flex justify-content-between py-2">
