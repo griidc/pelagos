@@ -354,7 +354,6 @@ class Extensions extends AbstractExtension
     public static function formatWebDoi($doiString): string
     {
         return (!empty($doiString)) ? 'https://doi.org/'.$doiString : '';
-        //return $formatted;
     }
 
      /**
