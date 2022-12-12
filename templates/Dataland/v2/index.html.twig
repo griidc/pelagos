@@ -98,8 +98,9 @@
                             {{ dataset.citation }}
                         </p>
                     </div>
-                    <hr>
                     {% endif %}
+                    {% include 'Dataland/v2/publications.html.twig' %}
+                    <hr>
                     {% if dataset.datasetSubmission and dataset.datasetSubmission.purpose %}
                     <div class="py-2">
                         <h6><strong>Purpose:</strong></h6>
@@ -109,7 +110,6 @@
                     </div>
                     {% endif %}
                     {% include 'Dataland/v2/supplemental-info.html.twig' %}
-                    {% include 'Dataland/v2/publications.html.twig' %}
                     {% include 'Dataland/v2/file-manager.html.twig' %}
                 </div>
             </div>
