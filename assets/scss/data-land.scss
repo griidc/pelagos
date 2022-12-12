@@ -17,9 +17,10 @@
 
 .clamped {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 10;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
   hyphens: auto;
 }

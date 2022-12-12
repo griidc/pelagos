@@ -106,8 +106,8 @@ clampedText.forEach((element) => {
   link.text = 'More';
   link.title = 'Click for more...';
   link.href = '#';
-  link.addEventListener('click', (more) => {
-    const { target } = more;
+  link.addEventListener('click', (event) => {
+    const { target } = event;
     const clampedElement = target.previousElementSibling;
     if (clampedElement.classList.contains('clamped')) {
       target.text = 'Less';
