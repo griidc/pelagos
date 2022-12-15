@@ -67,7 +67,7 @@ class Search
     /**
      * Elastic index mapping for sorting date used for displaying results.
      */
-    const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'sortingDateForDisplay';
+    const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'publishedDate';
 
     /**
      * Elastic index mapping for publication dois.

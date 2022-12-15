@@ -37,6 +37,9 @@ class MultiSearchController extends AbstractController
         $dataTypeFilter = (string) $request->query->get('dataType');
         $datasetStatusFilter = (string) $request->query->get('status');
         $datasetTags = (string) $request->query->get('tags');
+        $dateType = (string) $request->query->get('dateType');
+        $rangeStartDate = (string) $request->query->get('rangeStartDate');
+        $rangeEndDate = (string) $request->query->get('rangeEndDate');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
@@ -46,6 +49,9 @@ class MultiSearchController extends AbstractController
         $searchOptions->setDatasetStatus($datasetStatusFilter);
         $searchOptions->setMaxPerPage($numberOfResultsPerPage);
         $searchOptions->setTags($datasetTags);
+        $searchOptions->setDateType($dateType);
+        $searchOptions->setRangeStartDate($rangeStartDate);
+        $searchOptions->setRangeEndDate($rangeEndDate);
 
         $searchResults = $multiSearch->search($searchOptions);
         $groups = array(
