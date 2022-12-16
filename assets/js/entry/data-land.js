@@ -105,7 +105,8 @@ clampedText.forEach((element) => {
   const link = document.createElement('a');
   link.text = 'More';
   link.title = 'Click for more...';
-  link.href = '#';
+  // eslint-disable-next-line no-script-url
+  link.href = 'javascript:void(0)';
   link.addEventListener('click', (event) => {
     const { target } = event;
     const clampedElement = target.previousElementSibling;
