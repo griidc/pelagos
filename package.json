@@ -45,7 +45,6 @@
         "jquery-migrate": "^3.1.0",
         "jquery-ui": "^1.13.2",
         "jquery.cookie": "^1.4.1",
-        "loader-utils": "^2.0.4",
         "postcss-loader": "^7.0.0",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
