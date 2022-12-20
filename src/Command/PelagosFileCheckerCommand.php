@@ -92,7 +92,11 @@ class PelagosFileCheckerCommand extends Command
 
         /** @var File $file */
         foreach ($files as $file) {
-            $file->setStatus(File::FILE_IN_QUEUE);
+            if (str_contains($file->getPhysicalFilePath(), $file->getFilePathName())) {
+                $file->setStatus(File::FILE_DONE);
+            } else {
+                $file->setStatus(File::FILE_IN_QUEUE);
+            }
         }
 
         $this->entityManager->flush();
