@@ -6,8 +6,7 @@
       </div>
     </section>
     <section class="section-content pb-2">
-      <div class="row d-flex flex-row justify-content-between mb-2">
-        <div class="empty-div"></div>
+      <div class="row d-flex flex-row justify-content-end page-controls">
         <b-pagination
           v-model="currentPage"
           :total-rows="results.count"
@@ -15,13 +14,23 @@
           class="justify-content-center pr-3 mr-3"
         >
         </b-pagination>
-        <div class="form-inline mx-2 mb-2 pr-2 pb-2">
-          <label for="perPageResults" class="pr-2">Per Page: </label>
-          <b-form-select
-            name="perPageResults"
-            v-model="perPage"
-            :options="perPageOptions"
-          ></b-form-select>
+        <div class="form-inline">
+          <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+            <label for="sortBy" class="pr-2">Sort By: </label>
+            <b-form-select
+              name="sortBy"
+              v-model="sortBy"
+              :options="sortByOptions">
+            </b-form-select>
+          </div>
+          <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+            <label for="perPageResults" class="pr-2">Per Page: </label>
+            <b-form-select
+              name="perPageResults"
+              v-model="perPage"
+              :options="perPageOptions"
+            ></b-form-select>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -139,6 +148,12 @@ export default {
         { value: 50, text: '50' },
         { value: 100, text: '100' },
       ],
+      sortBy: this.formValues.sortOrder,
+      sortByOptions: [
+        { value: 'default', text: 'Relevance' },
+        { value: 'desc', text: 'Published Date (Desc)' },
+        { value: 'asc', text: 'Published Date (Asc)' },
+      ],
     };
   },
   mounted() {
@@ -152,6 +167,9 @@ export default {
     },
     perPage(value) {
       this.$emit('noOfResults', value);
+    },
+    sortBy(value) {
+      this.$emit('sortOrder', value);
     },
   },
   methods: {
@@ -172,5 +190,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @media (max-width: 1092px) {
+    .page-controls.d-flex.flex-row {
+      flex-direction: column !important;
+    }
+  }
 </style>

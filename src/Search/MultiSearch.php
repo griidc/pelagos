@@ -137,6 +137,12 @@ class MultiSearch
 
         $query->setQuery($boolQuery);
         $query->setPostFilter($postBoolQuery);
+
+        // Add sort order
+        if ($searchOptions->getSortOrder() !== 'default') {
+            $query->addSort(array('publishedDate' => array('order' => $searchOptions->getSortOrder())));
+        }
+        
         $this->addAggregators($query, $searchOptions);
         $resultsPaginator = $this->finder->findPaginated($query);
         return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
