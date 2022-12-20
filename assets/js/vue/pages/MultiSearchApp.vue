@@ -41,7 +41,10 @@
                     </span>
                   </div>
                   <div class="col-lg range-start-date">
-                    <span class="input-group">
+                    <span class="input-group"  v-tooltip="{
+                          content: `Published Date: date resource was published on GRIIDC.
+                                    Collection Date: date data were collected/generated.`,
+                          placement:'top'}">
                       <label for="rangeStartDate" class="pr-2">From</label>
                       <DxDateBox
                         :ref="rangeStartDateRef"
@@ -59,7 +62,10 @@
                     </span>
                   </div>
                   <div class="col-lg range-end-date">
-                    <span class="input-group">
+                    <span class="input-group"  v-tooltip="{
+                          content: `Published Date: date resource was published on GRIIDC.
+                                    Collection Date: date data were collected/generated.`,
+                          placement:'top'}">
                       <label for="rangeEndDate" class="pr-2 pl-3"
                         >To</label
                       >
@@ -78,20 +84,6 @@
                       />
                     </span>
                   </div>
-                  <span>
-                     <HelpModal :helpBtnTitle="helpTitle" :width="helpModalWidth" :height="helpModalHeight">
-                        <div>
-                          <ul>
-                            <li>
-                              Published Date: date resource was published on GRIIDC.
-                            </li>
-                            <li>
-                              Collection Date: date data were collected/generated.
-                            </li>
-                          </ul>
-                        </div>
-                      </HelpModal>
-                  </span>
                 </div>
               </div>
               <div class="col-lg-3 button-toolbar">
@@ -132,7 +124,6 @@ import 'devextreme/dist/css/dx.light.css';
 import DxDateBox from 'devextreme-vue/date-box';
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/multi-search/ResultSet';
-import HelpModal from '@/vue/components/data-land/HelpModal.vue';
 
 function initialFormValues() {
   return {
@@ -155,15 +146,15 @@ const rangeEndDateRef = 'range-end-date';
 
 export default {
   name: 'MultiSearchApp',
-  components: { ResultSet, DxDateBox, HelpModal },
+  components: { ResultSet, DxDateBox },
   data() {
     return {
       form: initialFormValues(),
       results: Object,
       showResults: false,
       dateTypeOptions: [
-        { text: 'Collection Date', value: 'collectionDate' },
-        { text: 'Published Date', value: 'publishedDate' },
+        { text: 'Collection', value: 'collectionDate' },
+        { text: 'Published', value: 'publishedDate' },
       ],
       dateBoxAttributes: {
         class: 'datebox-font-family',
@@ -174,9 +165,6 @@ export default {
       rangeEndDateRef,
       route: window.location.hash,
       submitted: false,
-      helpTitle: 'Date range tooltip',
-      helpModalWidth: 300,
-      helpModalHeight: 200,
     };
   },
   methods: {
