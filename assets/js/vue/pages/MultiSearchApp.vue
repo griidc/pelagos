@@ -27,7 +27,10 @@
                 </div>
                 <div class="row mt-3 form-group form-inline pt-3">
                   <div class="col-lg search-field-options">
-                    <span class="input-group">
+                    <span class="input-group" v-tooltip="{
+                          content: `Published Date: date resource was published on GRIIDC.
+                                    Collection Date: date data were collected/generated.`,
+                          placement:'top'}">
                       <label class="pl-2 pr-2" for="field"
                         >Search by Date Type</label
                       >
@@ -41,10 +44,7 @@
                     </span>
                   </div>
                   <div class="col-lg range-start-date">
-                    <span class="input-group"  v-tooltip="{
-                          content: `Published Date: date resource was published on GRIIDC.
-                                    Collection Date: date data were collected/generated.`,
-                          placement:'top'}">
+                    <span class="input-group">
                       <label for="rangeStartDate" class="pr-2">From</label>
                       <DxDateBox
                         :ref="rangeStartDateRef"
@@ -62,10 +62,7 @@
                     </span>
                   </div>
                   <div class="col-lg range-end-date">
-                    <span class="input-group"  v-tooltip="{
-                          content: `Published Date: date resource was published on GRIIDC.
-                                    Collection Date: date data were collected/generated.`,
-                          placement:'top'}">
+                    <span class="input-group">
                       <label for="rangeEndDate" class="pr-2 pl-3"
                         >To</label
                       >
