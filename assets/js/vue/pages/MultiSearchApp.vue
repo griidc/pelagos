@@ -28,8 +28,8 @@
                 <div class="row mt-3 form-group form-inline pt-3">
                   <div class="col-lg search-field-options">
                     <span class="input-group" v-tooltip="{
-                          content: `Published Date: date resource was published on GRIIDC.
-                                    Collection Date: date data were collected/generated.`,
+                          content: `Collection Date: date data were collected/generated.
+                                    Published Date: date resource was published on GRIIDC.`,
                           placement:'top'}">
                       <label class="pl-2 pr-2" for="field"
                         >Search by Date Type</label
