@@ -97,8 +97,8 @@ class PelagosFileCheckerCommand extends Command
                 $file->setStatus(File::FILE_DONE);
             } else {
                 // if filePathName contains "funkywhitespace"...
-                if (preg_match("\p{C}+", $filePathName)) {
-                    $file->setFilePathName(preg_replace("\p{C}+", ' ', $filePathName));
+                if (preg_match("/\p{C}+/", $filePathName)) {
+                    $file->setFilePathName(preg_replace("/\p{C}+/u", ' ', $filePathName));
                 }
                 $file->setStatus(File::FILE_IN_QUEUE);
             }
