@@ -215,6 +215,7 @@ export default {
       this.$refs[rangeEndDateRef].instance.reset();
       this.form = initialFormValues();
       this.detectHashChange();
+      this.showResults = false;
       this.onSubmit();
     },
     facetCheckBoxValues(value) {
