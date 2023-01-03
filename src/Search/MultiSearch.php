@@ -93,10 +93,11 @@ class MultiSearch
         }
 
         // Published Date Filter
-        if ($searchOptions->getDateType() === SearchOptions::DATE_TYPE_PUBLISHED &&
+        if (
+            $searchOptions->getDateType() === SearchOptions::DATE_TYPE_PUBLISHED &&
             $searchOptions->getRangeEndDate() &&
             $searchOptions->getRangeStartDate()
-            ) {
+        ) {
             $boolQuery->addFilter($this->getPublishedDateRangeQuery($searchOptions->getRangeStartDate(), $searchOptions->getRangeEndDate()));
         }
 
@@ -296,7 +297,7 @@ class MultiSearch
      *
      * @param string $publishedStartDate Published range start date.
      * @param string $publishedEndDate   Published range end date.
-     * 
+     *
      * @return BoolQuery
      */
     private function getPublishedDateRangeQuery(string $publishedStartDate, string $publishedEndDate): BoolQuery
@@ -307,12 +308,12 @@ class MultiSearch
 
         $publishedDateRange = new Range();
         $publishedDateRange->addField(
-            'publishedDate', 
+            'publishedDate',
             [
                 'gte' => $publishedStartDate->format('Y-m-d'),
                 'lte' => $publishedEndDate->format('Y-m-d')
             ]
-        );        
+        );
         $publishedDateBoolQuery->addShould($publishedDateRange);
 
         return $publishedDateBoolQuery;
