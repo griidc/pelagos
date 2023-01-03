@@ -54,7 +54,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
      * Populate dataset attributes into elastic index.
      *
      * @param PostTransformEvent $event The event that triggered this.
-     * 
+     *
      * @return void
      */
     private function populateDatasetAttributes(PostTransformEvent $event)
@@ -148,7 +148,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
      * Populate info product attributes into elastic index.
      *
      * @param PostTransformEvent $event
-     * 
+     *
      * @return void
      */
     private function populateInformationProductAttributes(PostTransformEvent $event)
