@@ -14,3 +14,10 @@
 .pre-line-white-space {
   white-space: pre-line;
 }
+
+.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
