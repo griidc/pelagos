@@ -153,7 +153,7 @@ fos_elastica:
                     properties:
                         id:
                             type: 'keyword'
-                sortingDateForDisplay:
+                publishedDate:
                     property_path: false
                     type: 'date'
                     format: 'yyyy-MM-dd'
@@ -215,3 +215,7 @@ fos_elastica:
                     properties:
                         id:
                             type: 'keyword'
+                publishedDate:
+                    property_path: false
+                    type: 'date'
+                    format: 'yyyy-MM-dd'                

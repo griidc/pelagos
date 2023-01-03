@@ -8,6 +8,7 @@ use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
+use Elastica\Query\Range;
 use Elastica\Query\SimpleQueryString;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 
@@ -75,14 +76,33 @@ class MultiSearch
         $boolQuery->addMust($simpleQuery);
 
         $query = new Query();
-        $query->setQuery($boolQuery);
 
         $postBoolQuery = new BoolQuery();
+
+        // Collection Date Filter
+        if ($searchOptions->getDateType() === SearchOptions::DATE_TYPE_COLLECTION) {
+            // Bool query to get range temporal extent dates
+            $collectionDateBoolQuery = new Query\BoolQuery();
+            if (!empty($searchOptions->getRangeStartDate())) {
+                $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($searchOptions->getRangeStartDate()));
+            }
+            if (!empty($searchOptions->getRangeEndDate())) {
+                $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($searchOptions->getRangeEndDate()));
+            }
+            $boolQuery->addFilter($collectionDateBoolQuery);
+        }
+
+        // Published Date Filter
+        if ($searchOptions->getDateType() === SearchOptions::DATE_TYPE_PUBLISHED &&
+            $searchOptions->getRangeEndDate() &&
+            $searchOptions->getRangeStartDate()
+            ) {
+            $boolQuery->addFilter($this->getPublishedDateRangeQuery($searchOptions->getRangeStartDate(), $searchOptions->getRangeEndDate()));
+        }
 
         if (!empty($searchOptions->getDataType())) {
             $friendlyNameQueryTerm = new Query\Terms('friendlyName');
             $friendlyNameQueryTerm->setTerms($searchOptions->getDataType());
-
             $postBoolQuery->addMust($friendlyNameQueryTerm);
         }
 
@@ -107,7 +127,6 @@ class MultiSearch
             $postBoolQuery->addMust($tagsQuery);
         }
 
-
         if ($searchOptions->isResearchGroupFilterSet()) {
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
         }
@@ -116,12 +135,10 @@ class MultiSearch
             $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
         }
 
+        $query->setQuery($boolQuery);
         $query->setPostFilter($postBoolQuery);
-
         $this->addAggregators($query, $searchOptions);
-
         $resultsPaginator = $this->finder->findPaginated($query);
-
         return new SearchResults($resultsPaginator, $searchOptions, $this->entityManager);
     }
 
@@ -240,5 +257,64 @@ class MultiSearch
         $tagsAgg->setField('tags');
         $tagsAgg->setSize(5);
         $query->addAggregation($tagsAgg);
+    }
+
+        /**
+     * Added start date range for collection.
+     *
+     * @param array $collectionDates Data collection range start date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionStartDateQuery(string $collectionStartDate): Range
+    {
+        $collectionStartDateRange = new Range();
+        $collectionStartDate = new \DateTime($collectionStartDate);
+        $collectionStartDateRange->addField('collectionStartDate', ['gte' => $collectionStartDate->format('Y-m-d H:i:s')]);
+
+        return $collectionStartDateRange;
+    }
+
+    /**
+     * Added end date range for collection.
+     *
+     * @param array $collectionDates Data collection range end date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionEndDateQuery(string $collectionEndDate): Range
+    {
+        $collectionEndDateRange = new Range();
+        $collectionEndDate = new \DateTime($collectionEndDate);
+        $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionEndDate->format('Y-m-d H:i:s')]);
+
+        return $collectionEndDateRange;
+    }
+
+    /**
+     * Get published date range query.
+     *
+     * @param string $publishedStartDate Published range start date.
+     * @param string $publishedEndDate   Published range end date.
+     * 
+     * @return BoolQuery
+     */
+    private function getPublishedDateRangeQuery(string $publishedStartDate, string $publishedEndDate): BoolQuery
+    {
+        $publishedDateBoolQuery = new BoolQuery();
+        $publishedStartDate = new \DateTime($publishedStartDate);
+        $publishedEndDate = new \DateTime($publishedEndDate);
+
+        $publishedDateRange = new Range();
+        $publishedDateRange->addField(
+            'publishedDate', 
+            [
+                'gte' => $publishedStartDate->format('Y-m-d'),
+                'lte' => $publishedEndDate->format('Y-m-d')
+            ]
+        );        
+        $publishedDateBoolQuery->addShould($publishedDateRange);
+
+        return $publishedDateBoolQuery;
     }
 }

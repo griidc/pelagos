@@ -12,33 +12,11 @@
       :visible.sync="showHelpDialog"
       :close-on-outside-click="true"
       :show-title="true"
-      :width="500"
-      :height="500"
+      :width="width"
+      :height="height"
     >
       <template>
-        <div>
-          <p>
-            Some GRIIDC datasets have been made available via alternative means.
-            These methods are provided as a convenience to the user. These
-            methods may differ in format or organization from the originally
-            submitted dataset files.
-          </p>
-          <ul>
-            <li>
-              <strong>NCEI</strong> - This dataset has been archived with NCEI.
-              Note that this dataset may be part of a larger NCEI data package,
-              e.g. one NCEI data package may consist of multiple GRIIDC
-              datasets.
-            </li>
-            &nbsp;
-            <li>
-              <strong>ERDDAP</strong> - This dataset is also available via the
-              GRIIDC ERDDAP instance. ERDDAP is a data server that provides a
-              simple, consistent way to download subsets of scientific datasets
-              in common file formats and make graphs and maps.
-            </li>
-          </ul>
-        </div>
+        <slot></slot>
       </template>
     </DxPopup>
   </span>
@@ -54,10 +32,20 @@ export default {
   components: {
     DxPopup,
   },
+  props: {
+    helpBtnTitle: {
+      type: String,
+    },
+    width: {
+      type: Number,
+    },
+    height: {
+      type: Number,
+    },
+  },
   data() {
     return {
       showHelpDialog: false,
-      helpBtnTitle: 'Alternative Data Access Methods',
     };
   },
   methods: {

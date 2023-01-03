@@ -92,6 +92,37 @@ class SearchOptions
     private $tags = [];
 
     /**
+     * Date type filter.
+     *
+     * @var string
+     */
+    private $dateType;
+
+    /**
+     * Start Date range filter.
+     *
+     * @var string
+     */
+    private $rangeStartDate;
+
+    /**
+     * End Date range filter.
+     *
+     * @var string
+     */
+    private $rangeEndDate;
+
+    /**
+     * Date type collection date.
+     */
+    const DATE_TYPE_COLLECTION = 'collectionDate';
+
+    /**
+     * Date type published date.
+     */
+    const DATE_TYPE_PUBLISHED = 'publishedDate';
+
+    /**
      * Class Contructor.
      *
      * @param string|null $queryString
@@ -447,5 +478,71 @@ class SearchOptions
         if (!empty($tags)) {
             $this->tags = explode(',', $tags);
         }
+    }
+
+    /**
+     * Get the date type filter.
+     *
+     * @return string
+     */
+    public function getDateType(): string
+    {
+        return $this->dateType;
+    }
+
+    /**
+     * Set the date type filter.
+     *
+     * @param string $dateType
+     *
+     * @return void
+     */
+    public function setDateType(string $dateType): void
+    {
+        $this->dateType = $dateType;
+    }
+
+    /**
+     * Get the start date range filter.
+     *
+     * @return string
+     */
+    public function getRangeStartDate(): string
+    {
+        return $this->rangeStartDate;
+    }
+
+    /**
+     * Set the start date range filter.
+     *
+     * @param string $rangeStartDate
+     *
+     * @return void
+     */
+    public function setRangeStartDate(string $rangeStartDate): void
+    {
+        $this->rangeStartDate = $rangeStartDate;
+    }
+
+    /**
+     * Get the end date range filter.
+     *
+     * @return string
+     */
+    public function getRangeEndDate(): string
+    {
+        return $this->rangeEndDate;
+    }
+
+    /**
+     * Set the end date range filter.
+     *
+     * @param string $rangeEndDate
+     *
+     * @return void
+     */
+    public function setRangeEndDate(string $rangeEndDate): void
+    {
+        $this->rangeEndDate = $rangeEndDate;
     }
 }
