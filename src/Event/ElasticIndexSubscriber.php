@@ -77,7 +77,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         if (null !== $wkt) {
             $document->set('geometry', $wkt);
             $geometry = \geoPHP::load($wkt, 'wkt');
-            $simpleGeometry = $geometry->simplify(0.1);
+            $simpleGeometry = $geometry->simplify(0.00001);
             // If the geometry couldn't be simplified.
             if (null == $simpleGeometry or $simpleGeometry->isEmpty()) {
                 // Set the original geometry as a GeoJSON array.
