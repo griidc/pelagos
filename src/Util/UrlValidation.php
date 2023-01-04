@@ -7,6 +7,12 @@ namespace App\Util;
  */
 class UrlValidation
 {
+
+    /**
+     * Constant for user-agent string.
+     */
+    const USER_AGENT = 'GRIIDC Link Checker (https://griidc.org)';
+
     /**
      * The URL validation method.
      *
@@ -24,10 +30,11 @@ class UrlValidation
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, self::USER_AGENT);
         curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-
+     
         //check to see if it worked.
         if (200 !== $httpCode) {
             return "Could not get URL, returned HTTP code $httpCode";
