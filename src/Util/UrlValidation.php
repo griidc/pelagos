@@ -7,7 +7,6 @@ namespace App\Util;
  */
 class UrlValidation
 {
-
     /**
      * Constant for user-agent string.
      */
@@ -34,7 +33,7 @@ class UrlValidation
         curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-     
+
         //check to see if it worked.
         if (200 !== $httpCode) {
             return "Could not get URL, returned HTTP code $httpCode";
