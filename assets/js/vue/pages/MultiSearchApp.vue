@@ -110,6 +110,7 @@
         @pagination="changePageNo"
         @noOfResults="changeNoOfResults"
         :formValues="form"
+        @sortOrder="changeSortOrder"
       />
     </div>
   </div>
@@ -135,6 +136,7 @@ function initialFormValues() {
     rangeStartDate: '',
     rangeEndDate: '',
     tags: '',
+    sortOrder: 'default',
   };
 }
 
@@ -210,6 +212,7 @@ export default {
       this.$refs[rangeEndDateRef].instance.reset();
       this.form = initialFormValues();
       this.detectHashChange();
+      this.showResults = false;
       this.onSubmit();
     },
     facetCheckBoxValues(value) {
@@ -235,6 +238,10 @@ export default {
         const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
         this.form = Object.fromEntries(urlHashSplit);
       }
+    },
+    changeSortOrder(sortOrder) {
+      this.form.sortOrder = sortOrder;
+      this.onSubmit();
     },
   },
   mounted() {

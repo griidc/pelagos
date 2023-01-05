@@ -29,6 +29,13 @@ class SearchOptions
     private $currentPage = 1;
 
     /**
+     * Sort order of results.
+     *
+     * @var string
+     */
+    private $sortOrder = '';
+
+    /**
      * The maximum results per page.
      *
      * @var integer $maxPerPage
@@ -544,5 +551,27 @@ class SearchOptions
     public function setRangeEndDate(string $rangeEndDate): void
     {
         $this->rangeEndDate = $rangeEndDate;
+    }
+
+    /**
+     * Get the sort order filter.
+     *
+     * @return string
+     */
+    public function getSortOrder(): string
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * Set the sort order filter.
+     *
+     * @param string $sortOrder
+     * 
+     * @return void
+     */
+    public function setSortOrder(string $sortOrder): void
+    {
+        $this->sortOrder = $sortOrder;
     }
 }
