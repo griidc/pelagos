@@ -8,20 +8,23 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Funder class.
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\FunderRepository")
  */
-#[ORM\Entity(repositoryClass: FunderRepository::class)]
 class Funder extends Entity
 {
     /**
      * Name of the Funder.
+     *
+     * @ORM\Column(type="text")
      */
-    #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
 
     /**
      * Reference URI of the Funder.
+     *
+     * @ORM\Column(type="text", nullable=true)
      */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $referenceUri = null;
 
     /**
