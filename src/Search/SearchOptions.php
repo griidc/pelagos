@@ -567,7 +567,7 @@ class SearchOptions
      * Set the sort order filter.
      *
      * @param string $sortOrder
-     * 
+     *
      * @return void
      */
     public function setSortOrder(string $sortOrder): void
