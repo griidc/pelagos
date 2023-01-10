@@ -1,10 +1,24 @@
 <?xml version="1.0"?>
 <psalm
     errorLevel="8"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="src" />
+        <directory name="src"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
     </projectFiles>
+
+    <extraFiles>
+        <directory name="var/cache/dev/Symfony/Config"/> <!-- https://github.com/psalm/psalm-plugin-symfony/issues/201 -->
+    </extraFiles>
+
+    <fileExtensions>
+        <extension name=".php"/>
+    </fileExtensions>
 
     <issueHandlers>
         <UndefinedClass>
@@ -29,11 +43,9 @@
                 <referencedClass name="SensitiveParameter"/>
             </errorLevel>
         </UndefinedAttributeClass>
-        <PropertyNotSetInConstructor>
-            <errorLevel type="suppress">
-                <!-- Supress warning of $container not set -->
-                <referencedProperty name="Symfony\Bundle\FrameworkBundle\Controller\AbstractController::$container"/>
-            </errorLevel>
-        </PropertyNotSetInConstructor>
     </issueHandlers>
+
+    <plugins>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+    </plugins>
 </psalm>
