@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Repository\InformationProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
