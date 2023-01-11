@@ -218,6 +218,15 @@ class Dataset extends Entity
     protected $issueTrackingTicket;
 
     /**
+     * Funders associated with this Dataset.
+     *
+     * @var Collection
+     *
+      * @ORM\ManyToMany(targetEntity="Funder", mappedBy="datasets")
+     */
+    protected $funders;
+
+    /**
      * Constructor.
      */
     public function __construct()
