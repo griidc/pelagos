@@ -5,20 +5,20 @@ namespace App\Controller\Admin;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Repository\InformationProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Digital Resource Type Crud Controller.
  */
 class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 {
+    use EasyAdminCrudTrait;
+
     /**
      * Returns Fully Qualified Class Name.
      *
@@ -99,41 +99,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
         $digitalResourceTypeDescriptor->setCreator($this->getUser()->getPerson());
 
         return $digitalResourceTypeDescriptor;
-    }
-
-    /**
-     * Update the Crud entity.
-     *
-     * @param EntityManagerInterface $entityManager  The Entity Manager.
-     * @param mixed                  $entityInstance The entity to update.
-     *
-     * @return void
-     */
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        /** @var DigitalResourceTypeDescriptor $entityInstance */
-        $entityInstance->setModifier($this->getUser()->getPerson());
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
-    }
-
-    /**
-     * Crud delete an entity.
-     *
-     * @param EntityManagerInterface $entityManager  The Entity Manager.
-     * @param mixed                  $entityInstance The entity to delete.
-     *
-     * @return void
-     */
-    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        try {
-            $entityManager->remove($entityInstance);
-        } catch (\Exception $e) {
-            throw new AccessDeniedHttpException('Unable to delete. Reason:' . $e->getMessage());
-        }
-
-        $entityManager->flush();
     }
 
     /**
