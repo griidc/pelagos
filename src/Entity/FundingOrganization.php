@@ -268,6 +268,16 @@ class FundingOrganization extends Entity
      */
     protected $sortOrder;
 
+
+    /**
+     * The default funder for this Funding Organization.
+     *
+     * @var ?Funder
+     *
+     * @ORM\OneToOne(targetEntity="Funder")
+     */
+    protected $defaultFunder;
+
     /**
      * Getter for fundingCycles.
      *
@@ -771,5 +781,27 @@ class FundingOrganization extends Entity
     public function setShortName(?string $shortName): void
     {
         $this->shortName = $shortName;
+    }
+
+    /**
+     * Get the default funder for this Funding Organization.
+     *
+     * @return Funder|null
+     */
+    public function getDefaultFunder(): ?Funder
+    {
+        return $this->defaultFunder;
+    }
+
+    /**
+     * Sets the default funder for this Funding Organization.
+     *
+     * @param Funder|null $defaultFunder
+     *
+     * @return void
+     */
+    public function setDefaultFunder(?Funder $defaultFunder)
+    {
+        $this->defaultFunder = $defaultFunder;
     }
 }
