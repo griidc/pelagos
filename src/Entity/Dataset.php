@@ -585,6 +585,41 @@ class Dataset extends Entity
     }
 
     /**
+     * Add a Funder to Dataset's collection of Funders.
+     *
+     * @param Funder $funder
+     */
+    public function addFunder(Funder $funder): self
+    {
+        if ($this->funders->contains($funder) === false) {
+            $this->funders->add($funder);
+        }
+        return $this;
+    }
+
+    /**
+     * Remove a Funder from the Dataset's collection of Funders.
+     *
+     * @param Funder $funder
+     */
+    public function removeFunder(Funder $funder): self
+    {
+        $this->funders->removeElement($funder);
+        return $this;
+    }
+
+    /**
+     * Returns a collection of all Funders associated with this Dataset.
+     *
+     * @return Collection
+     */
+    public function getFunders(): Collection
+    {
+        return $this->funders;
+    }
+
+
+    /**
      * Whether this Dataset has a DIF.
      *
      * @return boolean
