@@ -27,9 +27,9 @@ final class Version20230111160822 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_6C4073C0D47C2D1B ON funder_dataset (dataset_id)');
         $this->addSql('ALTER TABLE funder_dataset ADD CONSTRAINT FK_6C4073C06CC88588 FOREIGN KEY (funder_id) REFERENCES funder (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE funder_dataset ADD CONSTRAINT FK_6C4073C0D47C2D1B FOREIGN KEY (dataset_id) REFERENCES dataset (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE funding_organization DROP CONSTRAINT fk_2a1bcca0fdaaad2f');
-        $this->addSql('DROP INDEX uniq_2a1bcca0fdaaad2f');
-        $this->addSql('ALTER TABLE funding_organization DROP default_funder_id');
+        //$this->addSql('ALTER TABLE funding_organization DROP CONSTRAINT fk_2a1bcca0fdaaad2f');
+        //$this->addSql('DROP INDEX uniq_2a1bcca0fdaaad2f');
+        //$this->addSql('ALTER TABLE funding_organization DROP default_funder_id');
     }
 
     public function down(Schema $schema) : void
