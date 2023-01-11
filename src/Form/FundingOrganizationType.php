@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\DataRepository;
+use App\Entity\Funder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -43,6 +44,12 @@ class FundingOrganizationType extends AbstractType
                 'class' => DataRepository::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Data Repository]',
+            ))
+            ->add('defaultFunder', EntityType::class, array(
+                'label' => 'Default Funder',
+                'class' => Funder::class,
+                'choice_label' => 'name',
+                'placeholder' => '[Please Select a Default Funder]',
             ))
             ->add('emailAddress', TextType::class, array(
                 'label' => 'E-Mail Address:',
