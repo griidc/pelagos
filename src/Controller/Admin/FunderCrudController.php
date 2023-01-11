@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Entity;
 use App\Entity\Funder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -10,22 +11,30 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * Funder Crud Controller.
+ */
 class FunderCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    /**
+     * Returns Entity Class Name.
+     *
+     * @return string
+     */    
     public static function getEntityFqcn(): string
     {
         return Funder::class;
     }
 
      /**
-     * Configure fields for CRUD.
-     *
-     * @param string $pageName
-     *
-     * @return iterable
-     */
+      * Configure fields for EZAdmin CRUD Controller.
+      *
+      * @param string $pageName Default param for parent method (not used).
+      *
+      * @return iterable
+      */
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -39,13 +48,13 @@ class FunderCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn
-     *
-     * @return void
+     * @param string $entityFqcn Entity class name.
+     * 
+     * @return Entity
      */
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Entity
     {
-        $funder = new Funder();
+        $funder = new $entityFqcn();
         $funder->setCreator($this->getUser()->getPerson());
 
         return $funder;
@@ -54,7 +63,7 @@ class FunderCrudController extends AbstractCrudController
      /**
      * Configure the Crud actions.
      *
-     * @param Actions $actions
+     * @param Actions $actions Actions object that need to be configured.
      *
      * @return Actions
      */
@@ -76,7 +85,7 @@ class FunderCrudController extends AbstractCrudController
     /**
      * CRUD configuration function.
      *
-     * @param Crud $crud
+     * @param Crud $crud Instance for crud controller to add additional configuration.
      *
      * @return Crud
      */
