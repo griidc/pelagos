@@ -232,6 +232,7 @@ class Dataset extends Entity
     public function __construct()
     {
         $this->datasetSubmissionHistory = new ArrayCollection();
+        $this->funders = new ArrayCollection();
     }
 
     /**
