@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Dataset;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,8 +14,11 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetLink;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;
+use App\Entity\Funder;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -50,6 +54,18 @@ class DatasetSubmissionType extends AbstractType
         $builder
             ->add('title', Type\TextType::class, array(
                 'label' => 'Dataset Title',
+                'required' => true,
+            ))
+            ->add('Funder', Type\CollectionType::class, array(
+                'label' => 'Funder(s)',
+                'entry_type' => FunderType::class,
+                'entry_options' => array(
+                    'data_class' => Funder::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
                 'required' => true,
             ))
             ->add('abstract', Type\TextareaType::class, array(
