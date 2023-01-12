@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FunderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,6 +28,15 @@ class Funder extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     private ?string $referenceUri = null;
+
+    /**
+     * The datasets associated with this Funder
+     *
+     * @var Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Dataset", inversedBy="funders", cascade={"persist"})
+     */
+    private Collection $datasets;
 
     /**
      * Gets name of the funder.
