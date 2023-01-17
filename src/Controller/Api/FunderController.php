@@ -3,11 +3,8 @@
 namespace App\Controller\Api;
 
 use App\Repository\FunderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,13 +16,7 @@ class FunderController extends AbstractController
     public function getFunderByName(Request $request, FunderRepository $funderRepository, SerializerInterface $serializer): Response
     {
         $queryString = $request->get('queryString');
-        $expressionBuilder = Criteria::expr();
-        $expression = $expressionBuilder->contains('name', $queryString);
-        $criteria = new Criteria($expression);
-        $funders = $funderRepository->matching($criteria);
-        $json = json_encode($funders->toArray());
-        dd($json);
-
-        return new JsonResponse($funders->toArray());
+        $funders = $funderRepository->findByQuery($queryString);
+        return new JsonResponse(serialize($funders), 200);
     }
 }

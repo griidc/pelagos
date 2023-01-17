@@ -39,6 +39,19 @@ class FunderRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return Funder[] Returns an array of Funder objects
+     */
+    public function findByQuery($value): array
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->select('f.name, f.referenceUri')
+            ->where('LOWER(f.name) like LOWER(:queryString)')
+            ->setParameter('queryString', "%$value%");
+
+            return $qb->getQuery()->getArrayResult();
+    }
+
 //    /**
 //     * @return Funder[] Returns an array of Funder objects
 //     */
