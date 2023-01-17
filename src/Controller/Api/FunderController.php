@@ -17,6 +17,7 @@ class FunderController extends AbstractController
     {
         $queryString = $request->get('queryString');
         $funders = $funderRepository->findByQuery($queryString);
-        return new JsonResponse(serialize($funders), 200);
+        /** @param Funder $funders */
+        return new JsonResponse($funders, 200);
     }
 }
