@@ -48,6 +48,22 @@ class AccountController extends AbstractController
     protected $passwordRules;
 
     /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler      $entityHandler The entity handler.
+     * @param ValidatorInterface $validator     The validator interface.
+     * @param boolean            $passwordRules Boolean value for account_less_strict_password_rules.
+     *
+     * @return void
+     */
+    public function __construct(EntityHandler $entityHandler, ValidatorInterface $validator, bool $passwordRules)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->validator = $validator;
+        $this->passwordRules = $passwordRules;
+    }
+
+    /**
      * The index action.
      *
      * @Route("/account", methods={"GET"}, name="pelagos_app_ui_account_default")
@@ -310,7 +326,7 @@ class AccountController extends AbstractController
 
             try {
                 $ldap->updatePerson($person);
-            } catch (exception $e) {
+            } catch (\Exception $e) {
                 $logger->error('LDAP error: ' . $e->getMessage());
             }
         } else {
@@ -333,7 +349,7 @@ class AccountController extends AbstractController
 
             // Persist Account
             $account = $this->entityHandler->create($account);
-
+        }
         // Delete the person token.
         $this->entityHandler->delete($person->getToken());
         $person->setToken(null);
@@ -433,7 +449,7 @@ class AccountController extends AbstractController
         } catch (UidNumberInUseInLDAPException $exception) {
             // If that fails, try to update the person in LDAP.
             $ldap->updatePerson($person);
-        } catch (UidNumberInUseInLDAPException $exception) {
+        } catch (\Exception $exception) {
             $logger->error('LDAP Error: ' . $exception->getMessage());
         }
 
