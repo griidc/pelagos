@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,8 +26,8 @@ class DatasetSubmissionType extends AbstractType
     /**
      * Constructor for form type.
      *
-     * @param Entity                                $entity        The entity associated with this form.
-     * @param PersonDatasetSubmissionDatasetContact $poc           A point of contact.
+     * @param Entity                                $entity The entity associated with this form.
+     * @param PersonDatasetSubmissionDatasetContact $poc    A point of contact.
      */
     public function __construct(Entity $entity = null, PersonDatasetSubmissionDatasetContact $poc = null)
     {
@@ -359,7 +358,6 @@ class DatasetSubmissionType extends AbstractType
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
                 $entity->setTitle(preg_replace("/(\r|\n)/", " ", $title));
-                $this->entityManager->flush();
             }
         );
     }

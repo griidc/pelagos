@@ -475,9 +475,6 @@ class DatasetReviewController extends AbstractController
             foreach ($funders as $funder) {
                 $dataset->addFunder($funder);
             }
-
-            dump($dataset);
-            exit;
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
