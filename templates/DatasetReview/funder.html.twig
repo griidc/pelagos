@@ -1,0 +1,22 @@
+<fieldset>
+    <legend>Funders</legend>
+    {{ form_widget(form.funders) }}
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					<img class="info" src="{{ asset('build/images/info32.png') }}">
+					<div class="tooltiptext">
+                        Please add one or more funders who have funded this dataset.
+					</div>
+				</span>
+                <div class="dx-viewport">
+                    <div class="dx-field">
+                        <label for="funderTagBox" class="emRequired">Add Funder(s)</label>
+                        <div id="funderTagBox"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</fieldset>

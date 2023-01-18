@@ -33,6 +33,37 @@ $(function() {
 
     $("html").show();
 
+    const selectedFunders = [];
+
+    function removeItemFromList(arr, value) {
+        var index = arr.indexOf(value);
+        if (index > -1) {
+          arr.splice(index, 1);
+        }
+        return arr;
+    }
+
+    $("#funderTagBox").dxTagBox({
+        placeholder: 'Choose Funder...',
+        width: "90%",
+        dataSource: new DevExpress.data.ArrayStore({
+            data: products,
+            key: 'id',
+          }),
+        displayExpr: 'Name',
+        valueExpr: 'id',
+        onSelectionChanged(event) {
+            event.addedItems.forEach(addedItem => {
+                selectedFunders.push(addedItem.id);
+            });
+            event.removedItems.forEach(removedItem => {
+                removeItemFromList(selectedFunders, removedItem.id);
+            });
+            console.log(selectedFunders);
+            $("#funders").val(selectedFunders);
+        },
+    });
+
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {

@@ -23,6 +23,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
 use App\Entity\Fileset;
+use App\Entity\Funder;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Message\DatasetSubmissionFiler;
@@ -462,6 +463,21 @@ class DatasetReviewController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $funderIds = explode(',', $form->get('funders')->getViewData());
+            $funders = $entityManager->getRepository(Funder::class)->findBy(array('id' => $funderIds));
+
+            // Clear existing funders
+            $dataset = $datasetSubmission->getDataset();
+            foreach ($dataset->getFunders() as $funder) {
+                $dataset->removeFunder($funder);
+            }
+            // Add selected funders
+            foreach ($funders as $funder) {
+                $dataset->addFunder($funder);
+            }
+
+            dump($dataset);
+            exit;
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
