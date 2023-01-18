@@ -349,6 +349,17 @@ class AccountController extends AbstractController
 
             // Persist Account
             $account = $this->entityHandler->create($account);
+
+            try {
+                // Try to add the person to LDAP.
+                $ldap->addPerson($person);
+            } catch (UidNumberInUseInLDAPException $exception) {
+                // If that fails, try to update the person in LDAP.
+                $ldap->updatePerson($person);
+            } catch (LdapException $exception) {
+                // If something else fails, log and move on.
+                $logger->error('LDAP Error: ' . $exception->getMessage());
+            }   
         }
         // Delete the person token.
         $this->entityHandler->delete($person->getToken());
