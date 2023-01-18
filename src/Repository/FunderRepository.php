@@ -42,7 +42,8 @@ class FunderRepository extends ServiceEntityRepository
     /**
      * This method queries Funders by partial match of name, returning name and ID.
      *
-     * @param string|null $value The user query.
+     * @param string|null $userQueryString The user query.
+     *
      * @return array Returns an array of Funder objects.
      */
     public function findFunderByPartialName(?string $userQueryString): array

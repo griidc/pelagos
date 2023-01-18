@@ -19,12 +19,14 @@ class FunderController extends AbstractController
      *
      * @param  Request          $request          A request object.
      * @param  FunderRepository $funderRepository The FunderRepository class.
-     * @return Response                           A http response object that sends JSON to browser.
+     *
+     * @return Response A http response object that sends JSON to browser.
      */
     #[Route('/api/funders', name: 'app_api_funders_by_name')]
     public function getFunderByName(Request $request, FunderRepository $funderRepository): Response
     {
         $userQueryString = $request->query->get('queryString');
+        $userQueryString = null;
         $funders = $funderRepository->findFunderByPartialName($userQueryString);
         return new JsonResponse($funders);
     }
