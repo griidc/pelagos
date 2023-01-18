@@ -40,14 +40,16 @@ class FunderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Funder[] Returns an array of Funder objects
+     * @return array Returns an array of Funder objects.
+     *
+     * @param string|null $value The user query.
      */
-    public function findByQuery($value): array
+    public function findFunderByPartialName(?string $userQueryString): array
     {
         $qb = $this->createQueryBuilder('f')
-            ->select('f.name, f.referenceUri')
+            ->select('f.id, f.name')
             ->where('LOWER(f.name) like LOWER(:queryString)')
-            ->setParameter('queryString', "%$value%");
+            ->setParameter('queryString', "%$userQueryString%");
 
             return $qb->getQuery()->getArrayResult();
     }
