@@ -6,6 +6,7 @@ use App\Entity\Account;
 use App\Util\Ldap\Ldap;
 use App\Handler\EntityHandler;
 use App\Exception\AccountAlreadyPOSIXEnabledException;
+use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -90,7 +91,7 @@ class POSIXifyAccount
      *
      * @return void
      */
-    public function POSIXifyAccount(Account $account)
+    public function POSIXifyAccount(Account $account, LoggerInterface $logger)
     {
         if ($account->isPosix() == true) {
             throw new AccountAlreadyPOSIXEnabledException('This account already has SFTP/GridFTP access.');
@@ -102,7 +103,11 @@ class POSIXifyAccount
         $account->makePosix($uidNumber, $this->posixGidNumber, $this->homedirPrefix);
 
         // Update LDAP with this modified Account (via Person).
-        $this->ldap->updatePerson($account->getPerson());
+        try {
+            $this->ldap->updatePerson($account->getPerson());
+        } catch (\Exception $e) {
+            $logger->error('LDAP error updating record for POSIX: ' . $e->getMessage());
+        }
 
         // Persist changes.
         $this->entityHandler->update($account);

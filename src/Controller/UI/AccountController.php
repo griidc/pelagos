@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mime\Address;
@@ -13,6 +14,7 @@ use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
 use App\Exception\PasswordException;
+use App\Exception\UidNumberInUseInLDAPException;
 use App\Event\EntityEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
@@ -44,22 +46,6 @@ class AccountController extends AbstractController
      * @var boolean
      */
     protected $passwordRules;
-
-    /**
-     * Constructor for this Controller, to set up default services.
-     *
-     * @param EntityHandler      $entityHandler The entity handler.
-     * @param ValidatorInterface $validator     The validator interface.
-     * @param boolean            $passwordRules Boolean value for account_less_strict_password_rules.
-     *
-     * @return void
-     */
-    public function __construct(EntityHandler $entityHandler, ValidatorInterface $validator, bool $passwordRules)
-    {
-        $this->entityHandler = $entityHandler;
-        $this->validator = $validator;
-        $this->passwordRules = $passwordRules;
-    }
 
     /**
      * The index action.
@@ -266,7 +252,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Symfony Response instance.
      */
-    public function createAction(Request $request, Ldap $ldap)
+    public function createAction(Request $request, Ldap $ldap, LoggerInterface $logger)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -322,7 +308,11 @@ class AccountController extends AbstractController
             // Persist Account
             $account = $this->entityHandler->update($account);
 
-            $ldap->updatePerson($person);
+            try {
+                $ldap->updatePerson($person);
+            } catch (exception $e) {
+                $logger->error('LDAP error: ' . $e->getMessage());
+            }
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
@@ -343,15 +333,6 @@ class AccountController extends AbstractController
 
             // Persist Account
             $account = $this->entityHandler->create($account);
-
-            try {
-                // Try to add the person to LDAP.
-                $ldap->addPerson($person);
-            } catch (LdapException $exception) {
-                // If that fails, try to update the person in LDAP.
-                $ldap->updatePerson($person);
-            }
-        }
 
         // Delete the person token.
         $this->entityHandler->delete($person->getToken());
@@ -400,7 +381,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Symfony Response instance.
      */
-    public function changePasswordPostAction(Request $request, Ldap $ldap)
+    public function changePasswordPostAction(Request $request, Ldap $ldap, LoggerInterface $logger)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -449,9 +430,11 @@ class AccountController extends AbstractController
         try {
             // Try to add the person to LDAP, incase it needs to re-create.
             $ldap->addPerson($person);
-        } catch (\Exception $exception) {
+        } catch (UidNumberInUseInLDAPException $exception) {
             // If that fails, try to update the person in LDAP.
             $ldap->updatePerson($person);
+        } catch (UidNumberInUseInLDAPException $exception) {
+            $logger->error('LDAP Error: ' . $exception->getMessage());
         }
 
         return $this->render('Account/AccountReset.html.twig');
