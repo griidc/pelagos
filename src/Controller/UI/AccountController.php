@@ -359,7 +359,7 @@ class AccountController extends AbstractController
             } catch (LdapException $exception) {
                 // If something else fails, log and move on.
                 $logger->error('LDAP Error: ' . $exception->getMessage());
-            }   
+            }
         }
         // Delete the person token.
         $this->entityHandler->delete($person->getToken());
