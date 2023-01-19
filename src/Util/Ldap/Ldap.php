@@ -5,6 +5,7 @@ namespace App\Util\Ldap;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use App\Entity\Person;
 use App\Exception\UidNumberInUseInLDAPException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An LDAP abstraction library.
@@ -26,18 +27,29 @@ class Ldap
     protected $peopleOu;
 
     /**
+     * A Monolog Logger.
+     */
+    protected LoggerInterface $logger;
+
+    /**
      * Constructor.
      *
-     * @param LdapClient $ldapClient An instance of the LDAP client.
-     * @param string     $ldapBindDn The distinguished name to bind with.
-     * @param string     $ldapBindPw The password to bind with.
-     * @param string     $peopleOu   The OU which contains people.
+     * @param LdapClient      $ldapClient An instance of the LDAP client.
+     * @param string          $ldapBindDn The distinguished name to bind with.
+     * @param string          $ldapBindPw The password to bind with.
+     * @param string          $peopleOu   The OU which contains people.
+     * @param LoggerInterface $logger     A PSR Logger.
      */
-    public function __construct(LdapClient $ldapClient, string $ldapBindDn, string $ldapBindPw, string $peopleOu)
+    public function __construct(LdapClient $ldapClient, string $ldapBindDn, string $ldapBindPw, string $peopleOu, LoggerInterface $logger)
     {
         $this->ldapClient = $ldapClient;
         $this->peopleOu = $peopleOu;
-        $this->ldapClient->bind($ldapBindDn, $ldapBindPw);
+        $this->logger = $logger;
+        try {
+            $this->ldapClient->bind($ldapBindDn, $ldapBindPw);
+        } catch (\Exception $exception) {
+            $this->logger->error('LDAP Error: ' . $exception->getMessage());
+        }
     }
 
     /**
