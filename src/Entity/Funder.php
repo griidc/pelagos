@@ -38,6 +38,11 @@ class Funder extends Entity
      */
     private Collection $datasets;
 
+    public function __construct()
+    {
+        $this->datasets = new ArrayCollection();
+    }
+
     /**
      * Gets name of the funder.
      */
@@ -76,5 +81,10 @@ class Funder extends Entity
         $this->referenceUri = $referenceUri;
 
         return $this;
+    }
+
+    public function setDataset(Dataset $dataset): void
+    {
+        $this->datasets->add($dataset);
     }
 }

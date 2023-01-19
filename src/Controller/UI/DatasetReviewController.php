@@ -443,6 +443,7 @@ class DatasetReviewController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
+        /** @var DatasetSubmission $datasetSubmission */
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -474,7 +475,9 @@ class DatasetReviewController extends AbstractController
             // Add selected funders
             foreach ($funders as $funder) {
                 $dataset->addFunder($funder);
+                $funder->setDataset($dataset);
             }
+
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);

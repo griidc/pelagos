@@ -176,7 +176,7 @@ class Dataset extends Entity
     /**
      * The status of this Dataset.
      *
-     * @var status
+     * @var string
      *
      * @see self::DATASET_STATUS_* constants.
      *
@@ -594,6 +594,7 @@ class Dataset extends Entity
     {
         if ($this->funders->contains($funder) === false) {
             $this->funders->add($funder);
+            dump('add funder');
         }
         return $this;
     }
