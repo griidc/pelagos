@@ -475,7 +475,7 @@ class DatasetReviewController extends AbstractController
             // Add selected funders
             foreach ($funders as $funder) {
                 $dataset->addFunder($funder);
-                $funder->setDataset($dataset);
+                // $funder->setDataset($dataset);
             }
 
             switch (true) {

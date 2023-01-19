@@ -34,7 +34,7 @@ class Funder extends Entity
      *
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity="Dataset", inversedBy="funders", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Dataset", mappedBy="funders", cascade={"persist"})
      */
     private Collection $datasets;
 

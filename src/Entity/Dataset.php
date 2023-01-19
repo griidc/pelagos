@@ -222,7 +222,7 @@ class Dataset extends Entity
      *
      * @var Collection
      *
-      * @ORM\ManyToMany(targetEntity="Funder", mappedBy="datasets")
+      * @ORM\ManyToMany(targetEntity="Funder", inversedBy="datasets")
      */
     protected $funders;
 
@@ -594,7 +594,7 @@ class Dataset extends Entity
     {
         if ($this->funders->contains($funder) === false) {
             $this->funders->add($funder);
-            dump('add funder');
+            // $funder->setDataset($this);
         }
         return $this;
     }
