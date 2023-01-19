@@ -594,7 +594,6 @@ class Dataset extends Entity
     {
         if ($this->funders->contains($funder) === false) {
             $this->funders->add($funder);
-            // $funder->setDataset($this);
         }
         return $this;
     }

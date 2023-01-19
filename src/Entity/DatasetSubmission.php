@@ -2926,39 +2926,4 @@ class DatasetSubmission extends Entity
 
         return '';
     }
-
-    /**
-     * Add a Funder to Dataset's collection of Funders.
-     *
-     * @param Funder $funder
-     */
-    public function addFunder(Funder $funder): self
-    {
-        if ($this->dataset->getFunders()->contains($funder) === false) {
-            $this->dataset->addFunder($funder);
-        }
-        return $this;
-    }
-
-    /**
-     * Remove a Funder from the Dataset's collection of Funders.
-     *
-     * @param Funder $funder
-     */
-    public function removeFunder(Funder $funder): self
-    {
-        $this->dataset->getFunders()->removeElement($funder);
-        return $this;
-    }
-
-    /**
-     * Returns a collection of all Funders associated with this Dataset.
-     *
-     * @return Collection
-     */
-    public function getFunder(): Collection
-    {
-        return $this->dataset->getFunders();
-    }
-
 }

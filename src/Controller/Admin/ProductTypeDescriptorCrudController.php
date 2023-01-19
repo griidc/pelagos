@@ -17,7 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 class ProductTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
-    
+
     /**
      * Returns Fully Qualified Class Name.
      *

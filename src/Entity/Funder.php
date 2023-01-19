@@ -82,9 +82,4 @@ class Funder extends Entity
 
         return $this;
     }
-
-    public function setDataset(Dataset $dataset): void
-    {
-        $this->datasets->add($dataset);
-    }
 }

@@ -470,12 +470,12 @@ class DatasetReviewController extends AbstractController
             // Clear existing funders
             $dataset = $datasetSubmission->getDataset();
             foreach ($dataset->getFunders() as $funder) {
+                /** @var Funder $funder */
                 $dataset->removeFunder($funder);
             }
             // Add selected funders
             foreach ($funders as $funder) {
                 $dataset->addFunder($funder);
-                // $funder->setDataset($dataset);
             }
 
             switch (true) {
