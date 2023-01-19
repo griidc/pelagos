@@ -39,6 +39,24 @@ class FunderRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * This method queries Funders by partial match of name, returning name and ID.
+     *
+     * @param string|null $userQueryString The user query.
+     *
+     * @return array Returns an array of Funder objects.
+     */
+    public function findFunderByPartialName(?string $userQueryString): array
+    {
+        $userQueryString = $userQueryString ?? '';
+        $qb = $this->createQueryBuilder('f')
+            ->select('f.id, f.name')
+            ->where('LOWER(f.name) like LOWER(:queryString)')
+            ->setParameter('queryString', "%$userQueryString%");
+
+            return $qb->getQuery()->getArrayResult();
+    }
+
 //    /**
 //     * @return Funder[] Returns an array of Funder objects
 //     */
