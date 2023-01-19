@@ -26,7 +26,6 @@ class FunderController extends AbstractController
     public function getFunderByName(Request $request, FunderRepository $funderRepository): Response
     {
         $userQueryString = $request->query->get('queryString');
-        $userQueryString = null;
         $funders = $funderRepository->findFunderByPartialName($userQueryString);
         return new JsonResponse($funders);
     }
