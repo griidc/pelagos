@@ -48,6 +48,7 @@ class FunderRepository extends ServiceEntityRepository
      */
     public function findFunderByPartialName(?string $userQueryString): array
     {
+        $userQueryString = $userQueryString ?? '';
         $qb = $this->createQueryBuilder('f')
             ->select('f.id, f.name')
             ->where('LOWER(f.name) like LOWER(:queryString)')
