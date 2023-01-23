@@ -15,6 +15,7 @@ use App\Entity\DistributionPoint;
 use App\Entity\Entity;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -51,6 +52,11 @@ class DatasetSubmissionType extends AbstractType
             ->add('title', Type\TextType::class, array(
                 'label' => 'Dataset Title',
                 'required' => true,
+            ))
+            ->add('funders', Type\HiddenType::class, array(
+                'label' => 'Funders',
+                'required' => false,
+                'mapped' => false,
             ))
             ->add('abstract', Type\TextareaType::class, array(
                 'label' => 'Dataset Abstract',
