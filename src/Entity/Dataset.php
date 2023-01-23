@@ -612,7 +612,7 @@ class Dataset extends Entity
     /**
      * Returns a collection of all Funders associated with this Dataset.
      *
-     * @return Collection
+     * @return Collection<int, Funder>
      */
     public function getFunders(): Collection
     {

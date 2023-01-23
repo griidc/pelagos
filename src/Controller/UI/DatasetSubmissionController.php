@@ -230,17 +230,21 @@ class DatasetSubmissionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            $funderIds = explode(',', $form->get('funders')->getViewData());
-            $funders = $entityManager->getRepository(Funder::class)->findBy(array('id' => $funderIds));
-
             // Clear existing funders
             $dataset = $datasetSubmission->getDataset();
             foreach ($dataset->getFunders() as $funder) {
                 $dataset->removeFunder($funder);
             }
-            // Add selected funders
-            foreach ($funders as $funder) {
-                $dataset->addFunder($funder);
+            $funderList = $form->get('funders')->getViewData();
+            if (false === empty($funderList)) {
+                $funderIds = explode(',', $funderList);
+
+                $funders = $entityManager->getRepository(Funder::class)->findBy(['id' => $funderIds]);
+
+                // Add selected funders
+                foreach ($funders as $funder) {
+                    $dataset->addFunder($funder);
+                }
             }
 
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
