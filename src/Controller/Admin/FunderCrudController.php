@@ -45,14 +45,14 @@ class FunderCrudController extends AbstractCrudController
             ->onlyOnIndex(),
             TextField::new('name'),
             TextField::new('referenceUri'),
-            ChoiceField::new('source')->setChoices(["Imported" => Funder::SOURCE_IMPORTED, "User" => funder::SOURCE_USER])->hideWhenCreating(),
+            ChoiceField::new('source')->setChoices(Funder::SOURCES)->hideWhenCreating(),
         ];
     }
 
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(ChoiceFilter::new('source')->setChoices(["Imported" => Funder::SOURCE_IMPORTED, "User" => funder::SOURCE_USER]))
+            ->add(ChoiceFilter::new('source')->setChoices(Funder::SOURCES))
         ;
     }
 

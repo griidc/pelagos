@@ -16,8 +16,8 @@ class Funder extends Entity
     public const SOURCE_USER = 'user';
 
     public const SOURCES = [
-        self::SOURCE_IMPORTED,
-        self::SOURCE_USER,
+        'Imported' => self::SOURCE_IMPORTED,
+        'User' => self::SOURCE_USER,
     ];
 
     /**
