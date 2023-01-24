@@ -20,8 +20,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Returns Fully Qualified Class Name.
-     *
-     * @return string
      */
     public static function getEntityFqcn(): string
     {
@@ -30,10 +28,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Configure Crud Actions.
-     *
-     * @param Actions $actions
-     *
-     * @return Actions
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -55,10 +49,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * CRUD configuration function.
-     *
-     * @param Crud $crud
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -67,15 +57,11 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Product Type Descriptor')
             ->setPageTitle(Crud::PAGE_NEW, 'Create Product Type Descriptor')
             ->showEntityActionsInlined()
-            ;
+        ;
     }
 
     /**
      * Configure fields for CRUD.
-     *
-     * @param string $pageName
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {
@@ -89,8 +75,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn
-     *
      * @return void
      */
     public function createEntity(string $entityFqcn)
@@ -103,10 +87,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Is this Product Type Descriptor in use on an Information Product.
-     *
-     * @param ProductTypeDescriptor $productTypeDescriptor
-     *
-     * @return boolean
      */
     private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor): bool
     {

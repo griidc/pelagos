@@ -92,7 +92,16 @@ class PelagosFileCheckerCommand extends Command
 
         /** @var File $file */
         foreach ($files as $file) {
-            $file->setStatus(File::FILE_IN_QUEUE);
+            $filePathName = $file->getFilePathName();
+            if (str_contains($file->getPhysicalFilePath(), $filePathName)) {
+                $file->setStatus(File::FILE_DONE);
+            } else {
+                // if filePathName contains "funkywhitespace"...
+                if (preg_match("/\p{C}+/u", $filePathName)) {
+                    $file->setFilePathName(preg_replace("/\p{C}+/u", ' ', $filePathName));
+                }
+                $file->setStatus(File::FILE_IN_QUEUE);
+            }
         }
 
         $this->entityManager->flush();
