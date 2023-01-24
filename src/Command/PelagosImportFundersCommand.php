@@ -35,6 +35,7 @@ class PelagosImportFundersCommand extends Command
 
         if (false === $io->confirm('Are you sure you want to import all the Funders?', false)) {
             $io->caution('Opertation Aborted!');
+
             return Command::FAILURE;
         }
 
@@ -63,13 +64,13 @@ class PelagosImportFundersCommand extends Command
                 $funderReferenceUri = $funderItem['uri'];
                 $funderReplaced = 'R' == $funderItem['replaced'] ? true : false;
 
+                if (true === $funderReplaced) {
+                    continue;
+                }
+
                 $funderRepository = $this->entityManager->getRepository(Funder::class);
 
                 $funder = $funderRepository->findOneBy(['referenceUri' => $funderReferenceUri]);
-
-                if ($funderReplaced === true) {
-                    // Do something?
-                }
 
                 if ($funder instanceof Funder) {
                     $funder->setName($funderName);
@@ -86,6 +87,8 @@ class PelagosImportFundersCommand extends Command
             $io->progressFinish();
             $io->note('Flushing Funders!');
             $this->entityManager->flush();
+        } else {
+            $io->caution('No funders imported.');
         }
 
         $io->success('Done!');
