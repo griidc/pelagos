@@ -183,8 +183,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * @param File  $file           The File.
      * @param array $loggingContext Logging Context.
      *
-     * @throws Exception When file couldn't we written by the Datastore.
-     *
      * @return void
      */
     private function processFile(File $file, array $loggingContext): void
@@ -216,7 +214,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $file->setDescription("Error writing to store:" . $fileExistException->getMessage());
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
-            throw new \Exception($fileExistException->getMessage());
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setDescription("Error writing to store:" . $exception->getMessage());
