@@ -275,6 +275,10 @@ class FundingOrganization extends Entity
      * @var ?Funder
      *
      * @ORM\OneToOne(targetEntity="Funder")
+     *
+     * @Assert\NotBlank(
+     *     message="Default Funder is required"
+     * )
      */
     protected $defaultFunder;
 

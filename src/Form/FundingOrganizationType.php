@@ -50,6 +50,7 @@ class FundingOrganizationType extends AbstractType
                 'class' => Funder::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Default Funder]',
+                'required' => true,
             ))
             ->add('emailAddress', TextType::class, array(
                 'label' => 'E-Mail Address:',
