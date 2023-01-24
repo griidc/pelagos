@@ -64,6 +64,7 @@ $(function() {
             displayExpr: 'name',
             value: addedFunders,
             valueExpr: 'id',
+            searchEnabled: true,
             onSelectionChanged(event) {
                 event.addedItems.forEach(addedItem => {
                     selectedFunders.push(addedItem.id);
