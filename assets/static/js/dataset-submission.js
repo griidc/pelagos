@@ -48,11 +48,13 @@ $(function() {
     $.ajax({
         url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + $("#regForm").attr("udi") + '&_properties=funders.id',
         success: function(data){
-            addedFunders.push
-              let associatedFunders = data[0].funders;
-              associatedFunders.forEach((funder) => {
-                addedFunders.push(funder.id);
-              });
+            if (data && data.length > 0) {
+                addedFunders.push
+                let associatedFunders = data[0].funders;
+                associatedFunders.forEach((funder) => {
+                  addedFunders.push(funder.id);
+                });
+            }
         },
     }).always(function() {
         $("#funderTagBox").dxTagBox({
