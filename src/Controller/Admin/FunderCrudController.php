@@ -4,12 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Entity;
 use App\Entity\Funder;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
  * Funder Crud Controller.
@@ -20,21 +20,17 @@ class FunderCrudController extends AbstractCrudController
 
     /**
      * Returns Entity Class Name.
-     *
-     * @return string
-     */    
+     */
     public static function getEntityFqcn(): string
     {
         return Funder::class;
     }
 
-     /**
-      * Configure fields for EZAdmin CRUD Controller.
-      *
-      * @param string $pageName Default param for parent method (not used).
-      *
-      * @return iterable
-      */
+    /**
+     * Configure fields for EZAdmin CRUD Controller.
+     *
+     * @param string $pageName default param for parent method (not used)
+     */
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -48,9 +44,7 @@ class FunderCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn Entity class name.
-     * 
-     * @return Entity
+     * @param string $entityFqcn entity class name
      */
     public function createEntity(string $entityFqcn): Entity
     {
@@ -60,12 +54,10 @@ class FunderCrudController extends AbstractCrudController
         return $funder;
     }
 
-     /**
+    /**
      * Configure the Crud actions.
      *
-     * @param Actions $actions Actions object that need to be configured.
-     *
-     * @return Actions
+     * @param Actions $actions actions object that need to be configured
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -85,9 +77,7 @@ class FunderCrudController extends AbstractCrudController
     /**
      * CRUD configuration function.
      *
-     * @param Crud $crud Instance for crud controller to add additional configuration.
-     *
-     * @return Crud
+     * @param Crud $crud instance for crud controller to add additional configuration
      */
     public function configureCrud(Crud $crud): Crud
     {
