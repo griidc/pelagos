@@ -52,6 +52,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
             TextField::new('postalCode')->onlyOnForms(),
             TextField::new('country')->onlyOnForms(),
             NumberField::new('sortOrder')->onlyOnForms(),
+            AssociationField::new('defaultFunder')->onlyOnIndex(),
         ]);
     }
 
