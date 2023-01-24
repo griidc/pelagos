@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Funder;
-use App\Repository\FunderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -36,26 +35,23 @@ class PelagosImportFundersCommand extends Command
 
         if (false === $io->confirm('Are you sure you want to import all the Funders?', false)) {
             $io->caution('Opertation Aborted!');
-
             return Command::FAILURE;
         }
 
-        $csvFilePath = $input->getArgument('csv') ?? '';
-
-        $csvFilePath = empty($csvFilePath) ? 'https://doi.crossref.org/funderNames?mode=list' : $csvFilePath;
+        $csvFilePath = $input->getArgument('csv') ?? 'https://doi.crossref.org/funderNames?mode=list';
 
         $funderData = [];
 
         $io->note("Getting Funders from $csvFilePath");
         $io->progressStart(count($funderData));
 
-        if (($handle = fopen($csvFilePath, 'r')) !== false) {
-            $keys = fgetcsv($handle, 0);
-            while (($data = fgetcsv($handle)) !== false) {
+        if (($resource = fopen($csvFilePath, 'r')) !== false) {
+            $keys = fgetcsv($resource, 0);
+            while (($data = fgetcsv($resource)) !== false) {
                 $funderData[] = array_combine($keys, $data);
                 $io->progressAdvance();
             }
-            fclose($handle);
+            fclose($resource);
             $io->progressFinish();
 
             $io->note('Importing Funders!');
@@ -86,11 +82,12 @@ class PelagosImportFundersCommand extends Command
 
                 $funderRepository->save($funder, false);
             }
+
+            $io->progressFinish();
+            $io->note('Flushing Funders!');
+            $this->entityManager->flush();
         }
 
-        $io->progressFinish();
-        $io->note('Flushing Funders!');
-        $this->entityManager->flush();
         $io->success('Done!');
 
         return Command::SUCCESS;
