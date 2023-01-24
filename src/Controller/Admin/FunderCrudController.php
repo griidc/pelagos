@@ -8,8 +8,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 /**
  * Funder Crud Controller.
@@ -22,7 +25,7 @@ class FunderCrudController extends AbstractCrudController
      * Returns Entity Class Name.
      *
      * @return string
-     */    
+     */
     public static function getEntityFqcn(): string
     {
         return Funder::class;
@@ -42,14 +45,22 @@ class FunderCrudController extends AbstractCrudController
             ->onlyOnIndex(),
             TextField::new('name'),
             TextField::new('referenceUri'),
+            ChoiceField::new('source')->setChoices(["Imported" => Funder::SOURCE_IMPORTED, "User" => funder::SOURCE_USER])->hideWhenCreating(),
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(ChoiceFilter::new('source')->setChoices(["Imported" => Funder::SOURCE_IMPORTED, "User" => funder::SOURCE_USER]))
+        ;
     }
 
     /**
      * Overwrite for when entity is created.
      *
      * @param string $entityFqcn Entity class name.
-     * 
+     *
      * @return Entity
      */
     public function createEntity(string $entityFqcn): Entity
