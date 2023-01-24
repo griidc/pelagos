@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\FunderRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -65,5 +63,13 @@ class Funder extends Entity
         $this->referenceUri = $referenceUri;
 
         return $this;
+    }
+
+    /**
+     * Gets the name of the Funder.
+     */
+    public function __toString(): string
+    {
+        return $this->getName() ?? '';
     }
 }
