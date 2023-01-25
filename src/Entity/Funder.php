@@ -77,4 +77,12 @@ class Funder extends Entity
 
         return $this;
     }
+
+    /**
+     * Gets the name of the Funder.
+     */
+    public function __toString(): string
+    {
+        return $this->getName() ?? '';
+    }
 }
