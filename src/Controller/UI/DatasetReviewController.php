@@ -472,10 +472,13 @@ class DatasetReviewController extends AbstractController
             $funderList = $form->get('funders')->getViewData();
             if (false === empty($funderList)) {
                 $funderIds = explode(',', $form->get('funders')->getViewData());
-                $funders = $entityManager->getRepository(Funder::class)->findBy(['id' => $funderIds]);
-
-                // Add selected funders
-                foreach ($funders as $funder) {
+                foreach ($funderIds as $funderId) {
+                    $funder = $entityManager->getRepository(Funder::class)->findOneBy(['id' => (int) $funderId]);
+                    if (!$funder instanceof Funder) {
+                        $funder = new Funder();
+                        $funder->setName($funderId);
+                        $entityManager->persist($funder);
+                    }
                     $dataset->addFunder($funder);
                 }
             }

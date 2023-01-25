@@ -23,7 +23,6 @@ $(document).ready(function(){
         url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + $("#regForm").attr("udi") + '&_properties=funders.id',
         success: function(data){
             if (data && data.length > 0) {
-                addedFunders.push
                 let associatedFunders = data[0].funders;
                 associatedFunders.forEach((funder) => {
                   addedFunders.push(funder.id);
@@ -39,6 +38,7 @@ $(document).ready(function(){
             value: addedFunders,
             valueExpr: 'id',
             searchEnabled: true,
+            acceptCustomValue: true,
             onSelectionChanged(event) {
                 event.addedItems.forEach(addedItem => {
                     selectedFunders.push(addedItem.id);
@@ -47,6 +47,18 @@ $(document).ready(function(){
                     removeItemFromList(selectedFunders, removedItem.id);
                 });
                 $("#funders").val(selectedFunders);
+            },
+            onCustomItemCreating(args) {
+                const newItem = {
+                    id: -1,
+                    name: args.text.trim(),
+                }
+                const { component } = args;
+                const currentItems = component.option('items');
+                currentItems.unshift(newItem);
+                component.option('items', currentItems);
+                args.customItem = newItem;
+                selectedFunders.push(newItem.name);
             },
         });
     });
