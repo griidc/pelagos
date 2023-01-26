@@ -161,9 +161,9 @@ class DIFType extends AbstractType
                 'multiple' => false,
             ))
             ->add('variablesObserved', TextareaType::class, array(
-                'attr' => array('rows' => 3),
                 'label' => 'Data Parameters and Units:',
                 'attr' => array(
+                    'rows' => 3,
                     'placeholder' => 'Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)'
                 ),
                 'required' => false,
@@ -213,6 +213,11 @@ class DIFType extends AbstractType
                 'attr' => array(
                     'placeholder' => 'yyyy-mm-dd'
                 ),
+            ))
+            ->add('funders', HiddenType::class, array(
+                'label' => 'Funders',
+                'required' => false,
+                'mapped' => false,
             ))
             ->add('spatialExtentDescription', TextareaType::class, array(
                 'label' => 'Description:',

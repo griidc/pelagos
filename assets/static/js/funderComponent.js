@@ -1,6 +1,3 @@
-//FOUC preventor
-$("html").hide();
-
 $(function() {
     "use strict";
 
