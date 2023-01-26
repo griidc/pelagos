@@ -2,11 +2,11 @@ var $ = jQuery.noConflict();
 var geowizard;
 
 //FOUC preventor
-$("html").hide();
+$("html").hide();  
 
 $(document).ready(function(){
     "use strict";
-
+    
     $("#udiLoadReviewform").on("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {

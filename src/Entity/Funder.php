@@ -34,9 +34,14 @@ class Funder extends Entity
      *
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity="Dataset", inversedBy="funders", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Dataset", mappedBy="funders", cascade={"persist"})
      */
     private Collection $datasets;
+
+    public function __construct()
+    {
+        $this->datasets = new ArrayCollection();
+    }
 
     /**
      * Gets name of the funder.
