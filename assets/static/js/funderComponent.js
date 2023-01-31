@@ -11,8 +11,11 @@ $(function() {
             }
         });
         if (!haveDuplicate) {
-            var newElement = '<input id="funders_' + maxFunderId + '" name="funders[' + maxFunderId + ']" value="' + funderId + '">';
-            $('[id^="funders_"]').last().after(newElement);
+            var newElement = document.createElement("input");
+            newElement.id = `funders_${maxFunderId}`;
+            newElement.name = `funders[${maxFunderId}]`;
+            newElement.value = funderId;
+            $('[id="funder-items"]').append(newElement);
             maxFunderId++;
         }
     }
@@ -20,23 +23,16 @@ $(function() {
     function removeItemFromList(funderId) {
         $('[id^="funders_"]').each(function(id, element) {
             if ($(element).val() == funderId) {
-                console.log('found element');
-                //remove element
                 $(element).remove();
-                // haveDuplicate = true;
             }
         });
-        // var index = arr.indexOf(value);
-        // if (index > -1) {
-        //   arr.splice(index, 1);
-        // }
-        // return arr;
     }
 
-    const addedFunders = [];
+    var addedFunders = [];
 
     $('[id^="funders_"]').each(function(id, element) {
-        addedFunders.push($(element).val());
+        var value = $(element).val();
+        addedFunders.push(parseInt(value));
         maxFunderId++;
     });
 
@@ -50,15 +46,12 @@ $(function() {
         searchEnabled: true,
         acceptCustomValue: false,
         onSelectionChanged(event) {
-            event.removedItems.forEach(removedItem => {
-                removeItemFromList(removedItem.id);
-            });
             event.addedItems.forEach(addedItem => {
                 addFunderToList(addedItem.id);
             });
-
-            // Add funders for funder collection.
-            // $("#funder").val(selectedFunders);
+            event.removedItems.forEach(removedItem => {
+                removeItemFromList(removedItem.id);
+            });
         },
     });
 });
