@@ -15,6 +15,7 @@ $(function() {
             newElement.id = `funders_${maxFunderId}`;
             newElement.name = `funders[${maxFunderId}]`;
             newElement.value = funderId;
+            newElement.type = "hidden";
             $('[id="funder-items"]').append(newElement);
             maxFunderId++;
         }

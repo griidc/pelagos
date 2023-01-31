@@ -1,6 +1,7 @@
 <fieldset>
     <legend>Funders</legend>
     <div id="funder-items">
+    <input name="funders">
     {% for funder in form.funders %}
         <input type="hidden" id="{{funder.vars.id}}" name="{{funder.vars.full_name}}" value="{{funder.vars.value}}">
     {% endfor %}
@@ -35,6 +36,8 @@
 				{{ form_row(form.additionalFunders) }}
             </td>
         </tr>
+
+        <label for="funder" class="error"></label>
 
 
 

@@ -170,7 +170,8 @@ $(function() {
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl largeFileUri"
+            files: "filesUploaded remotelyHostedUrl largeFileUri",
+            funder: "funders additionalFunders",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
