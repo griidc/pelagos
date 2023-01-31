@@ -1,6 +1,15 @@
 <fieldset>
     <legend>Funders</legend>
-    {{ form_widget(form.funders) }}
+    {% for funder in form.funders %}
+        {% dump(funder) %}
+        <input type="input" id="{{funder.vars.id}}" name="{{funder.vars.full_name}}" value="{{funder.vars.value}}">
+    {% endfor %}
+
+    {# {{ form_row(form.funders) }} #}
+
+
+    {# <input name="funders[99]" value="2"> #}
+
     <table class="tab-table">
         <tr>
             <td>
@@ -10,13 +19,28 @@
                         Please add one or more funders who have funded this dataset.
 					</div>
 				</span>
-                <div class="dx-viewport">
-                    <div class="dx-field">
+                <div>
+                    <div>
                         <label for="funderTagBox" class="emRequired">Add Funder(s)</label>
                         <div id="funderTagBox"></div>
                     </div>
                 </div>
             </td>
         </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+					<img class="info" src="{{ asset('build/images/info32.png') }}">
+					<div class="tooltiptext">
+                        Provide funders here that are not found in the list above.
+					</div>
+				</span>
+
+				{{ form_row(form.additionalFunders) }}
+            </td>
+        </tr>
+
+
+
     </table>
 </fieldset>
