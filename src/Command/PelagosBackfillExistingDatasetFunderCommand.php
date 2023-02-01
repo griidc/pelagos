@@ -59,33 +59,29 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
         $io->title('Dataset Funder Backfiller');
-
         $overwrite = $input->getOption('overwrite') ? true : false;
 
         $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
         $io->section('Starting Backfill');
-
         $progressBar = new ProgressBar($output, count($datasets));
         $progressBar->start();
-
         foreach ($datasets as $dataset) {
             /** @var Dataset $dataset */
             $fundingOrg = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization();
             $defaultFunder = $fundingOrg->getDefaultFunder();
+            $existingFunders = $dataset->getFunders();
 
-            // set dataset's funder
+            // Set each dataset's funder, but only if it's affiliated FO doesn't have a null Funder.
             if ($defaultFunder instanceof Funder) {
-                $existingFunders = $dataset->getFunders();
                 // Clear existing funders if overwrite flag is set.
                 if ($overwrite === true) {
                     foreach ($existingFunders as $funder) {
                         $dataset->removeFunder($funder);
                     }
                 }
-
+                // Don't add a duplicate Funder.
                 if ($existingFunders->contains($defaultFunder)) {
                     $io->warning("Not setting Funder on " . $dataset->getUdi() . " because it's already set.");
                 } else {
@@ -95,13 +91,12 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
                 $io->warning("Not setting Funder on " . $dataset->getUdi() . " because FO " . $fundingOrg->getName() . " has no default funder set.");
             }
 
+            $this->entityManager->flush();
+            $progressBar->advance();
         }
+
         $progressBar->finish();
         $io->newLine(3);
-
-        $io->section('Flushing');
-        $this->entityManager->flush();
-
         $io->success('Done!');
 
         return 0;
