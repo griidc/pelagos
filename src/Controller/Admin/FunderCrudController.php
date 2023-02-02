@@ -4,12 +4,16 @@ namespace App\Controller\Admin;
 
 use App\Entity\Entity;
 use App\Entity\Funder;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 /**
  * Funder Crud Controller.
@@ -40,7 +44,15 @@ class FunderCrudController extends AbstractCrudController
             ->onlyOnIndex(),
             TextField::new('name'),
             TextField::new('referenceUri'),
+            ChoiceField::new('source')->setChoices(Funder::SOURCES)->hideWhenCreating(),
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(ChoiceFilter::new('source')->setChoices(Funder::SOURCES))
+        ;
     }
 
     /**
@@ -56,6 +68,15 @@ class FunderCrudController extends AbstractCrudController
         $funder->setCreator($this->getUser()->getPerson());
 
         return $funder;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        /** @var Funder $entityInstance */
+        $entityInstance->setSource(Funder::SOURCE_DRPM);
+        $entityInstance->setModifier($this->getUser()->getPerson());
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
     }
 
     /**

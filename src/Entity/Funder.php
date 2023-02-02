@@ -2,10 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\FunderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,6 +11,16 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Funder extends Entity
 {
+    public const SOURCE_IMPORTED = 'imported';
+    public const SOURCE_USER = 'user';
+    public const SOURCE_DRPM = 'drpm';
+
+    public const SOURCES = [
+        'Imported' => self::SOURCE_IMPORTED,
+        'User' => self::SOURCE_USER,
+        'DRPM' => self::SOURCE_DRPM,
+    ];
+
     /**
      * Name of the Funder.
      *
@@ -30,18 +36,11 @@ class Funder extends Entity
     private ?string $referenceUri = null;
 
     /**
-     * The datasets associated with this Funder
+     * The source of the Funder.
      *
-     * @var Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Dataset", mappedBy="funders", cascade={"persist"})
+     * @ORM\Column(type="text", nullable=false)
      */
-    private Collection $datasets;
-
-    public function __construct()
-    {
-        $this->datasets = new ArrayCollection();
-    }
+    private string $source = self::SOURCE_USER;
 
     /**
      * Gets name of the funder.
@@ -83,7 +82,37 @@ class Funder extends Entity
         return $this;
     }
 
+    /*
+     * Set the source for this Funder.
+     *
+     * @see Funder::SOURCES
+     */
+    public function getSource(): string
+    {
+        return $this->source;
+    }
+
     /**
+     * Set the source for this Funder.
+     *
+     * @param string $source source for this Funder
+     *
+     * @see Funder::SOURCES
+     *
+     * @throws \InvalidArgumentException if the source is not a valid source
+     */
+    public function setSource(string $source): self
+    {
+        if (false === in_array($source, self::SOURCES)) {
+            throw new \InvalidArgumentException('This is not a valid source');
+        }
+
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /*
      * Gets the name of the Funder.
      */
     public function __toString(): string

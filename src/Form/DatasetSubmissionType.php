@@ -13,6 +13,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetLink;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;
+use App\Entity\Funder;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -53,10 +54,21 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset Title',
                 'required' => true,
             ))
-            ->add('funders', Type\HiddenType::class, array(
+            ->add('funders', Type\CollectionType::class, array(
                 'label' => 'Funders',
+                'entry_type' => EntityType::class,
+                'entry_options' => array(
+                    'class' => Funder::class,
+                ),
+                'by_reference' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
                 'required' => false,
-                'mapped' => false,
+            ))
+            ->add('additionalFunders', Type\TextType::class, array(
+                'label' => 'Additional Funders',
+                'required' => false,
             ))
             ->add('abstract', Type\TextareaType::class, array(
                 'label' => 'Dataset Abstract',
