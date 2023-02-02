@@ -22,9 +22,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Doctrine\ORM\EntityManager;
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\Funder;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
  * A form for creating a DIF.
@@ -214,10 +216,17 @@ class DIFType extends AbstractType
                     'placeholder' => 'yyyy-mm-dd'
                 ),
             ))
-            ->add('funders', HiddenType::class, array(
+            ->add('funders', CollectionType::class, array(
                 'label' => 'Funders',
+                'entry_type' => EntityType::class,
+                'entry_options' => array(
+                    'class' => Funder::class,
+                ),
+                'by_reference' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
                 'required' => false,
-                'mapped' => false,
             ))
             ->add('additionalFunders', TextType::class, array(
                 'label' => 'Additional Funders',

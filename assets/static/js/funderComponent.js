@@ -54,6 +54,7 @@ $(function() {
         valueExpr: 'id',
         searchEnabled: true,
         acceptCustomValue: false,
+        inputAttr: { id: 'devExtremeID' },
         onSelectionChanged(event) {
             event.addedItems.forEach(addedItem => {
                 addFunderToList(addedItem.id);

@@ -783,6 +783,7 @@ function formReset(dontScrollToTop)
         $("#spatialExtentGeometry").val("").change();
         $("#spatialExtentDescription").val("").change();
         $("#status").val(0).change();
+        $("#funderTagBox").data('dxTagBox').reset();
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
