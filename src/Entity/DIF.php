@@ -398,6 +398,15 @@ class DIF extends Entity
     protected $approvedDate;
 
     /**
+     * Additional funders for this DIF.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $additionalFunders;
+
+    /**
      * Constructor.
      *
      * Initializes status to unsubmitted.
@@ -1464,5 +1473,23 @@ class DIF extends Entity
         }
 
         return '';
+    }
+
+    /**
+     * Set the additional funders.
+     */
+    public function setAdditionalFunders(?string $additionalFunders): self
+    {
+        $this->additionalFunders = $additionalFunders;
+
+        return $this;
+    }
+
+    /**
+     * Get the additional funders.
+     */
+    public function getAdditionalFunders(): ?string
+    {
+        return $this->additionalFunders;
     }
 }

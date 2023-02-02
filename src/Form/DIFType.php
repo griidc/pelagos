@@ -219,6 +219,10 @@ class DIFType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ))
+            ->add('additionalFunders', TextType::class, array(
+                'label' => 'Additional Funders',
+                'required' => false,
+            ))
             ->add('spatialExtentDescription', TextareaType::class, array(
                 'label' => 'Description:',
                 'attr' => array(
