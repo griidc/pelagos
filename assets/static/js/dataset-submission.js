@@ -157,10 +157,20 @@ $(function() {
         $("#largeFileUri").val($(this).val()).trigger("change");
     });
 
+    $("#funderList").on("keyup change", function() {
+        $(this).valid();
+    });
+
     $("#regForm").validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
+            }
         },
         errorPlacement: function(error, element) {
             if (element.is("#filesUploaded") || element.is("#remotelyHostedUrl") || element.is("#largeFileUri")) {
@@ -171,7 +181,7 @@ $(function() {
         },
         groups: {
             files: "filesUploaded remotelyHostedUrl largeFileUri",
-            funder: "funders additionalFunders",
+            funders: "additionalFunders funderList",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",

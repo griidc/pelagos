@@ -1,11 +1,12 @@
 <fieldset>
     <legend>Funders</legend>
     <div id="funder-items">
-    <input name="funders">
-    {% for funder in form.funders %}
-        <input type="hidden" id="{{funder.vars.id}}" name="{{funder.vars.full_name}}" value="{{funder.vars.value}}">
-    {% endfor %}
+        <input id="funderList" name="funderList" type="hidden" class="funders"/>
+        {% for funder in form.funders %}
+            <input type="hidden" id="{{funder.vars.id}}" name="{{funder.vars.full_name}}" value="{{funder.vars.value}}">
+        {% endfor %}
     </div>
+    <label for="funders" class="error"></label>
 
     <table class="tab-table">
         <tr>
@@ -33,13 +34,8 @@
 					</div>
 				</span>
 
-				{{ form_row(form.additionalFunders) }}
+				{{ form_row(form.additionalFunders, { attr: { class: 'funders'} }) }}
             </td>
         </tr>
-
-        <label for="funder" class="error"></label>
-
-
-
     </table>
 </fieldset>

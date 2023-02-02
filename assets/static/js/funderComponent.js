@@ -2,6 +2,7 @@ $(function() {
     "use strict";
 
     var maxFunderId = 0;
+    var addedFunders = [];
 
     function addFunderToList(funderId) {
         var haveDuplicate = false;
@@ -18,6 +19,8 @@ $(function() {
             newElement.type = "hidden";
             $('[id="funder-items"]').append(newElement);
             maxFunderId++;
+            addedFunders.push(funderId);
+            $("#funderList").val(addedFunders.toString()).trigger("change");
         }
     }
 
@@ -26,16 +29,21 @@ $(function() {
             if ($(element).val() == funderId) {
                 $(element).remove();
             }
+            let index = addedFunders.indexOf(funderId);
+            if (index > -1) {
+                addedFunders.splice(index, 1);
+            }
+            $("#funderList").val(addedFunders.toString()).trigger("change");
         });
     }
-
-    var addedFunders = [];
 
     $('[id^="funders_"]').each(function(id, element) {
         var value = $(element).val();
         addedFunders.push(parseInt(value));
         maxFunderId++;
     });
+
+    $("#funderList").val(addedFunders.toString());
 
     $("#funderTagBox").dxTagBox({
         placeholder: 'Choose Funder...',
