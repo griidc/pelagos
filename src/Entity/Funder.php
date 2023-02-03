@@ -2,11 +2,8 @@
 
 namespace App\Entity;
 
-<<<<<<< HEAD
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-=======
->>>>>>> feature/PELAGOS-5092-add-funder-to-submission-and-review-forms
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -87,7 +84,6 @@ class Funder extends Entity
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * Gets the name of the Funder.
      */
@@ -96,8 +92,6 @@ class Funder extends Entity
         return $this->getName() ?? '';
     }
 
-=======
->>>>>>> feature/PELAGOS-5092-add-funder-to-submission-and-review-forms
     /*
      * Set the source for this Funder.
      *
@@ -126,16 +120,5 @@ class Funder extends Entity
         $this->source = $source;
 
         return $this;
-<<<<<<< HEAD
-=======
-    }
-
-    /*
-     * Gets the name of the Funder.
-     */
-    public function __toString(): string
-    {
-        return $this->getName() ?? '';
->>>>>>> feature/PELAGOS-5092-add-funder-to-submission-and-review-forms
     }
 }
