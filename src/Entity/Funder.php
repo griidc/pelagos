@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
+<<<<<<< HEAD
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+=======
+>>>>>>> feature/PELAGOS-5092-add-funder-to-submission-and-review-forms
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,10 +18,12 @@ class Funder extends Entity
 {
     public const SOURCE_IMPORTED = 'imported';
     public const SOURCE_USER = 'user';
+    public const SOURCE_DRPM = 'drpm';
 
     public const SOURCES = [
         'Imported' => self::SOURCE_IMPORTED,
         'User' => self::SOURCE_USER,
+        'DRPM' => self::SOURCE_DRPM,
     ];
 
     /**
@@ -41,18 +46,6 @@ class Funder extends Entity
      * @ORM\Column(type="text", nullable=false)
      */
     private string $source = self::SOURCE_USER;
-
-    /**
-     * The datasets associated with this Funder.
-     *
-     * @ORM\ManyToMany(targetEntity="Dataset", mappedBy="funders", cascade={"persist"})
-     */
-    private Collection $datasets;
-
-    public function __construct()
-    {
-        $this->datasets = new ArrayCollection();
-    }
 
     /**
      * Gets name of the funder.
@@ -94,6 +87,7 @@ class Funder extends Entity
         return $this;
     }
 
+<<<<<<< HEAD
     /**
      * Gets the name of the Funder.
      */
@@ -102,6 +96,8 @@ class Funder extends Entity
         return $this->getName() ?? '';
     }
 
+=======
+>>>>>>> feature/PELAGOS-5092-add-funder-to-submission-and-review-forms
     /*
      * Set the source for this Funder.
      *
@@ -130,5 +126,16 @@ class Funder extends Entity
         $this->source = $source;
 
         return $this;
+<<<<<<< HEAD
+=======
+    }
+
+    /*
+     * Gets the name of the Funder.
+     */
+    public function __toString(): string
+    {
+        return $this->getName() ?? '';
+>>>>>>> feature/PELAGOS-5092-add-funder-to-submission-and-review-forms
     }
 }

@@ -25,7 +25,6 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Fileset;
-use App\Entity\Funder;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Handler\EntityHandler;
@@ -230,23 +229,6 @@ class DatasetSubmissionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            // Clear existing funders
-            $dataset = $datasetSubmission->getDataset();
-            foreach ($dataset->getFunders() as $funder) {
-                $dataset->removeFunder($funder);
-            }
-            $funderList = $form->get('funders')->getViewData();
-            if (false === empty($funderList)) {
-                $funderIds = explode(',', $funderList);
-
-                $funders = $entityManager->getRepository(Funder::class)->findBy(['id' => $funderIds]);
-
-                // Add selected funders
-                foreach ($funders as $funder) {
-                    $dataset->addFunder($funder);
-                }
-            }
-
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
 
             $datasetSubmission->submit($this->getUser()->getPerson());

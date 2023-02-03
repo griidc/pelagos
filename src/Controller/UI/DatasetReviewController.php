@@ -464,22 +464,6 @@ class DatasetReviewController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            // Clear existing funders
-            $dataset = $datasetSubmission->getDataset();
-            foreach ($dataset->getFunders() as $funder) {
-                $dataset->removeFunder($funder);
-            }
-            $funderList = $form->get('funders')->getViewData();
-            if (false === empty($funderList)) {
-                $funderIds = explode(',', $form->get('funders')->getViewData());
-                $funders = $entityManager->getRepository(Funder::class)->findBy(['id' => $funderIds]);
-
-                // Add selected funders
-                foreach ($funders as $funder) {
-                    $dataset->addFunder($funder);
-                }
-            }
-
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);

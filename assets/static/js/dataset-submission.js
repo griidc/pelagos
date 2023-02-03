@@ -33,47 +33,6 @@ $(function() {
 
     $("html").show();
 
-    const selectedFunders = [];
-
-    function removeItemFromList(arr, value) {
-        var index = arr.indexOf(value);
-        if (index > -1) {
-          arr.splice(index, 1);
-        }
-        return arr;
-    }
-
-    const addedFunders = [];
-
-    $.ajax({
-        url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + $("#regForm").attr("udi") + '&_properties=funders.id',
-        success: function(data){
-            addedFunders.push
-              let associatedFunders = data[0].funders;
-              associatedFunders.forEach((funder) => {
-                addedFunders.push(funder.id);
-              });
-        },
-    }).always(function() {
-        $("#funderTagBox").dxTagBox({
-            placeholder: 'Choose Funder...',
-            width: "90%",
-            dataSource: Routing.generate('app_api_funders_by_name'),
-            displayExpr: 'name',
-            value: addedFunders,
-            valueExpr: 'id',
-            onSelectionChanged(event) {
-                event.addedItems.forEach(addedItem => {
-                    selectedFunders.push(addedItem.id);
-                });
-                event.removedItems.forEach(removedItem => {
-                    removeItemFromList(selectedFunders, removedItem.id);
-                });
-                $("#funders").val(selectedFunders);
-            },
-        });
-    });
-
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
@@ -202,6 +161,12 @@ $(function() {
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
+            }
         },
         errorPlacement: function(error, element) {
             if (element.is("#filesUploaded") || element.is("#remotelyHostedUrl") || element.is("#largeFileUri")) {
@@ -211,7 +176,8 @@ $(function() {
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl largeFileUri"
+            files: "filesUploaded remotelyHostedUrl largeFileUri",
+            funders: "additionalFunders funderList",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",

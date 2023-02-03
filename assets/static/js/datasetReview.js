@@ -7,49 +7,6 @@ $("html").hide();
 $(document).ready(function(){
     "use strict";
     
-    const selectedFunders = [];
-
-    function removeItemFromList(arr, value) {
-        var index = arr.indexOf(value);
-        if (index > -1) {
-          arr.splice(index, 1);
-        }
-        return arr;
-    }
-
-    const addedFunders = [];
-
-    $.ajax({
-        url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + $("#regForm").attr("udi") + '&_properties=funders.id',
-        success: function(data){
-            addedFunders.push
-              let associatedFunders = data[0].funders;
-              associatedFunders.forEach((funder) => {
-                addedFunders.push(funder.id);
-              });
-        },
-    }).always(function() {
-        $("#funderTagBox").dxTagBox({
-            placeholder: 'Choose Funder...',
-            width: "90%",
-            dataSource: Routing.generate('app_api_funders_by_name'),
-            displayExpr: 'name',
-            value: addedFunders,
-            valueExpr: 'id',
-            onSelectionChanged(event) {
-                event.addedItems.forEach(addedItem => {
-                    selectedFunders.push(addedItem.id);
-                });
-                event.removedItems.forEach(removedItem => {
-                    removeItemFromList(selectedFunders, removedItem.id);
-                });
-                $("#funders").val(selectedFunders);
-            },
-        });
-    });
-
-
-
     $("#udiLoadReviewform").on("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
@@ -99,6 +56,10 @@ $(document).ready(function(){
         $("#datasetFileTransferType").val(datasetFileTransferType);
     });
 
+    $("#funderList").on("keyup change", function() {
+        $(this).valid();
+    });
+
     regForm.validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
@@ -111,10 +72,17 @@ $(document).ready(function(){
             },
             largeFileUri:{
                 require_from_group: [1, '.files']
+            },
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl largeFileUri"
+            files: "filesUploaded remotelyHostedUrl largeFileUri",
+            funders: "additionalFunders funderList",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",

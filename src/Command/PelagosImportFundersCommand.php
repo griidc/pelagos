@@ -25,7 +25,7 @@ class PelagosImportFundersCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('csv', InputArgument::OPTIONAL, 'CSV File Path to import from')
+            ->addArgument('csv', InputArgument::REQUIRED, 'CSV File Path to import from')
         ;
     }
 
@@ -39,7 +39,7 @@ class PelagosImportFundersCommand extends Command
             return Command::FAILURE;
         }
 
-        $csvFilePath = $input->getArgument('csv') ?? 'https://doi.crossref.org/funderNames?mode=list';
+        $csvFilePath = $input->getArgument('csv');
 
         $funderData = [];
 
