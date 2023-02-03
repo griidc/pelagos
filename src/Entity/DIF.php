@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
@@ -398,6 +399,15 @@ class DIF extends Entity
     protected $approvedDate;
 
     /**
+     * Additional funders for this DIF.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $additionalFunders;
+
+    /**
      * Constructor.
      *
      * Initializes status to unsubmitted.
@@ -430,7 +440,7 @@ class DIF extends Entity
     /**
      * Gets the Dataset this DIF identifies.
      *
-     * @return Dataset The Dataset this DIF identifies.
+     * @return ?Dataset The Dataset this DIF identifies.
      */
     public function getDataset()
     {
@@ -1464,5 +1474,31 @@ class DIF extends Entity
         }
 
         return '';
+    }
+
+    /**
+     * Get the funders for this Dataset.
+     */
+    public function getFunders(): ?Collection
+    {
+        return $this->getDataset()?->getFunders() ?? null;
+    }
+
+    /**
+     * Set the additional funders.
+     */
+    public function setAdditionalFunders(?string $additionalFunders): self
+    {
+        $this->additionalFunders = $additionalFunders;
+
+        return $this;
+    }
+
+    /**
+     * Get the additional funders.
+     */
+    public function getAdditionalFunders(): ?string
+    {
+        return $this->additionalFunders;
     }
 }

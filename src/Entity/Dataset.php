@@ -222,7 +222,7 @@ class Dataset extends Entity
      *
      * @var Collection
      *
-      * @ORM\ManyToMany(targetEntity="Funder", inversedBy="datasets")
+      * @ORM\ManyToMany(targetEntity="Funder")
      */
     protected $funders;
 
