@@ -23,8 +23,6 @@ final class Version20230202151933 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE dataset_submission ADD additional_funders TEXT DEFAULT NULL');
-        $this->addSql('ALTER TABLE dataset_submission ALTER cold_storage_total_unpacked_size TYPE INT');
-        $this->addSql('ALTER TABLE dataset_submission ALTER cold_storage_total_unpacked_size DROP DEFAULT');
         $this->addSql('ALTER TABLE funder ADD source TEXT NOT NULL');
     }
 
@@ -34,8 +32,6 @@ final class Version20230202151933 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE dataset_submission DROP additional_funders');
-        $this->addSql('ALTER TABLE dataset_submission ALTER cold_storage_total_unpacked_size TYPE BIGINT');
-        $this->addSql('ALTER TABLE dataset_submission ALTER cold_storage_total_unpacked_size DROP DEFAULT');
         $this->addSql('ALTER TABLE funder DROP source');
     }
 }
