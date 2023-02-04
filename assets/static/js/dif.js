@@ -1059,6 +1059,16 @@ function fillForm(Form, UDI, ID)
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
             }
 
+            if (json.dataset.funders != null) {
+                var funders = json.dataset.funders;
+                var addedFunders = [];
+                $.each(funders, function(key, value) {
+                    addedFunders.push(parseInt(value.id));
+                })
+
+                $("#funderList").val(addedFunders.toString());
+            }
+
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
             $.each(json, function(name,value) {
                 var element = $("[name="+name+"]");

@@ -44,6 +44,9 @@ $(function() {
     });
 
     $("#funderList").val(addedFunders.toString());
+    $("#funderList").on("change", function(event){
+        console.log(event);
+    });
 
     $("#funderTagBox").dxTagBox({
         placeholder: 'Choose Funder...',
