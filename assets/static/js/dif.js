@@ -1059,14 +1059,24 @@ function fillForm(Form, UDI, ID)
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
             }
 
+            var maxFunderId = 0;
+
             if (json.dataset.funders != null) {
                 var funders = json.dataset.funders;
                 var addedFunders = [];
                 $.each(funders, function(key, value) {
-                    addedFunders.push(parseInt(value.id));
+                    var newElement = document.createElement("input");
+                    var funderId = value.id;
+                    newElement.id = `funders_${maxFunderId}`;
+                    newElement.name = `funders[${maxFunderId}]`;
+                    newElement.value = funderId;
+                    newElement.type = "hidden";
+                    $('[id="funder-items"]').append(newElement);
+                    maxFunderId++;
+                    addedFunders.push(funderId);
                 })
 
-                $("#funderList").val(addedFunders.toString());
+                $("#funderList").val(addedFunders.toString()).trigger("fundersAdded");
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
