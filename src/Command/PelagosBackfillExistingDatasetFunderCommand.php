@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -28,8 +27,6 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
 
     /**
      * Class constructor for dependency injection.
-     *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -40,7 +37,7 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
     /**
      * Configure function to allow for options and parameters.
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription("This command will set all dataset's funder to it's upstream Funding Org's default funder. ")
@@ -50,11 +47,6 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
 
     /**
      * The symfony command execute function.
-     *
-     * @param InputInterface  $input  The Symfony Console Input.
-     * @param OutputInterface $output The Symfony Console Output.
-     *
-     * @return int Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -65,8 +57,6 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
         $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
         $io->section('Starting Backfill');
-        $progressBar = new ProgressBar($output, count($datasets));
-        $progressBar->start();
         foreach ($datasets as $dataset) {
             /** @var Dataset $dataset */
             $fundingOrg = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization();
@@ -91,11 +81,9 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
                 $io->warning("Not setting Funder on " . $dataset->getUdi() . " because FO " . $fundingOrg->getName() . " has no default funder set.");
             }
 
-            $this->entityManager->flush();
-            $progressBar->advance();
         }
 
-        $progressBar->finish();
+        $this->entityManager->flush();
         $io->newLine(3);
         $io->success('Done!');
 
