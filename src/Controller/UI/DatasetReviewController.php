@@ -23,6 +23,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
 use App\Entity\Fileset;
+use App\Entity\Funder;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Message\DatasetSubmissionFiler;
@@ -440,6 +441,7 @@ class DatasetReviewController extends AbstractController
      */
     public function postAction(Request $request, EntityManagerInterface $entityManager, MessageBusInterface $messageBus, int $id = null)
     {
+        /** @var DatasetSubmission $datasetSubmission */
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {

@@ -976,6 +976,14 @@ class DatasetSubmission extends Entity
     private $coldStorageTotalUnpackedSize;
 
     /**
+     * User provided funders during submission.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $additionalFunders = null;
+
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -2925,5 +2933,32 @@ class DatasetSubmission extends Entity
         }
 
         return '';
+    }
+
+
+    /**
+     * Get the funders for this Dataset.
+     */
+    public function getFunders(): Collection
+    {
+        return $this->getDataset()->getFunders();
+    }
+
+    /**
+     * Set the additional funders.
+     */
+    public function setAdditionalFunders(?string $additionalFunders): self
+    {
+        $this->additionalFunders = $additionalFunders;
+
+        return $this;
+    }
+
+    /**
+     * Get the additional funders.
+     */
+    public function getAdditionalFunders(): ?string
+    {
+        return $this->additionalFunders;
     }
 }

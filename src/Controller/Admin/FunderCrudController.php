@@ -24,6 +24,8 @@ class FunderCrudController extends AbstractCrudController
 
     /**
      * Returns Entity Class Name.
+     *
+     * @return string
      */
     public static function getEntityFqcn(): string
     {
@@ -56,7 +58,9 @@ class FunderCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn entity class name
+     * @param string $entityFqcn Entity class name.
+     *
+     * @return Entity
      */
     public function createEntity(string $entityFqcn): Entity
     {

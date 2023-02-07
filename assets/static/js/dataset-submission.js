@@ -161,6 +161,12 @@ $(function() {
         rules: {
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
+            }
         },
         errorPlacement: function(error, element) {
             if (element.is("#filesUploaded") || element.is("#remotelyHostedUrl") || element.is("#largeFileUri")) {
@@ -170,7 +176,8 @@ $(function() {
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl largeFileUri"
+            files: "filesUploaded remotelyHostedUrl largeFileUri",
+            funders: "additionalFunders funderList",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",

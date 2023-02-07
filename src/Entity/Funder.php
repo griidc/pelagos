@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -44,13 +43,6 @@ class Funder extends Entity
     private string $source = self::SOURCE_USER;
 
     /**
-     * The datasets associated with this Funder.
-     *
-     * @ORM\ManyToMany(targetEntity="Dataset", inversedBy="funders", cascade={"persist"})
-     */
-    private Collection $datasets;
-
-    /**
      * Gets name of the funder.
      */
     public function getName(): ?string
@@ -90,7 +82,7 @@ class Funder extends Entity
         return $this;
     }
 
-    /**
+    /*
      * Set the source for this Funder.
      *
      * @see Funder::SOURCES
