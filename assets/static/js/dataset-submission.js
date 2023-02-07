@@ -33,6 +33,8 @@ $(function() {
 
     $("html").show();
 
+    $("#funderList").trigger("fundersAdded", {"disabled":true});
+
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {

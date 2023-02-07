@@ -783,6 +783,7 @@ function formReset(dontScrollToTop)
         $("#spatialExtentGeometry").val("").change();
         $("#spatialExtentDescription").val("").change();
         $("#status").val(0).change();
+        $("#funderTagBox").data('dxTagBox').reset();
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
@@ -1056,6 +1057,26 @@ function fillForm(Form, UDI, ID)
 
             if (json.secondaryPointOfContact != null) {
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
+            }
+
+            var maxFunderId = 0;
+
+            if (json.dataset.funders != null) {
+                var funders = json.dataset.funders;
+                var addedFunders = [];
+                $.each(funders, function(key, value) {
+                    var newElement = document.createElement("input");
+                    var funderId = value.id;
+                    newElement.id = `funders_${maxFunderId}`;
+                    newElement.name = `funders[${maxFunderId}]`;
+                    newElement.value = funderId;
+                    newElement.type = "hidden";
+                    $('[id="funder-items"]').append(newElement);
+                    maxFunderId++;
+                    addedFunders.push(funderId);
+                })
+
+                $("#funderList").val(addedFunders.toString()).trigger("fundersAdded");
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);

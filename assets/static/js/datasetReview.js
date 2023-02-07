@@ -2,11 +2,13 @@ var $ = jQuery.noConflict();
 var geowizard;
 
 //FOUC preventor
-$("html").hide();  
+$("html").hide();
 
 $(document).ready(function(){
     "use strict";
-    
+
+    $("#funderList").trigger("fundersAdded");
+
     $("#udiLoadReviewform").on("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
@@ -104,7 +106,7 @@ $(document).ready(function(){
             form.submit();
         }
     });
-    
+
     // load qTip descriptions
     $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({
