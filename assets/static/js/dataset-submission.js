@@ -157,10 +157,6 @@ $(function() {
         $("#largeFileUri").val($(this).val()).trigger("change");
     });
 
-    $("#funderList").on("keyup change", function() {
-        $(this).valid();
-    });
-
     $("#regForm").validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",

@@ -430,9 +430,7 @@ class DatasetReviewController extends AbstractController
     /**
      * The post action for Dataset Review.
      *
-     * @param Request             $request    The Symfony request object.
-     * @param integer|null        $id         The id of the Dataset Submission to load.
-     * @param MessageBusInterface $messageBus Message bus interface to dispatch messages.
+     * @param integer|null $id The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -441,7 +439,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function postAction(Request $request, EntityManagerInterface $entityManager, MessageBusInterface $messageBus, int $id = null)
     {
         /** @var DatasetSubmission $datasetSubmission */
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);

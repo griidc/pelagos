@@ -14,7 +14,7 @@ final class Version20230119170405 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Changed dataset to funder relationship';
     }
 
     public function up(Schema $schema) : void
