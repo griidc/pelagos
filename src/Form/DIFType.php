@@ -22,9 +22,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Doctrine\ORM\EntityManager;
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\Funder;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
  * A form for creating a DIF.
@@ -161,9 +163,9 @@ class DIFType extends AbstractType
                 'multiple' => false,
             ))
             ->add('variablesObserved', TextareaType::class, array(
-                'attr' => array('rows' => 3),
                 'label' => 'Data Parameters and Units:',
                 'attr' => array(
+                    'rows' => 3,
                     'placeholder' => 'Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)'
                 ),
                 'required' => false,
@@ -213,6 +215,22 @@ class DIFType extends AbstractType
                 'attr' => array(
                     'placeholder' => 'yyyy-mm-dd'
                 ),
+            ))
+            ->add('funders', CollectionType::class, array(
+                'label' => 'Funders',
+                'entry_type' => EntityType::class,
+                'entry_options' => array(
+                    'class' => Funder::class,
+                ),
+                'by_reference' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => false,
+            ))
+            ->add('additionalFunders', TextType::class, array(
+                'label' => 'Additional Funders',
+                'required' => false,
             ))
             ->add('spatialExtentDescription', TextareaType::class, array(
                 'label' => 'Description:',

@@ -176,7 +176,7 @@ class Dataset extends Entity
     /**
      * The status of this Dataset.
      *
-     * @var status
+     * @var string
      *
      * @see self::DATASET_STATUS_* constants.
      *
@@ -222,7 +222,7 @@ class Dataset extends Entity
      *
      * @var Collection
      *
-      * @ORM\ManyToMany(targetEntity="Funder", mappedBy="datasets")
+      * @ORM\ManyToMany(targetEntity="Funder")
      */
     protected $funders;
 
@@ -612,7 +612,7 @@ class Dataset extends Entity
     /**
      * Returns a collection of all Funders associated with this Dataset.
      *
-     * @return Collection
+     * @return Collection<int, Funder>
      */
     public function getFunders(): Collection
     {

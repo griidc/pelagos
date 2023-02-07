@@ -10,11 +10,11 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230123232937 extends AbstractMigration
+final class Version20230202022823 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return 'Add funder source';
+        return 'Add additional funders to DIF';
     }
 
     public function up(Schema $schema) : void
@@ -22,7 +22,7 @@ final class Version20230123232937 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE funder ADD source TEXT NOT NULL');
+        $this->addSql('ALTER TABLE dif ADD additional_funders TEXT DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -30,6 +30,7 @@ final class Version20230123232937 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE funder DROP source');
+        $this->addSql('ALTER TABLE dif DROP additional_funders');
+
     }
 }

@@ -971,9 +971,17 @@ class DatasetSubmission extends Entity
     /**
      * For cold-stored, the total unpacked bytecount.
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="bigint", nullable=true)
      */
     private $coldStorageTotalUnpackedSize;
+
+    /**
+     * User provided funders during submission.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $additionalFunders = null;
+
 
     /**
      * Constructor.
@@ -1021,6 +1029,9 @@ class DatasetSubmission extends Entity
                 $this->addDatasetContact($newDatasetContact);
             }
 
+            // Set additional funders
+            $this->setAdditionalFunders($entity->getAdditionalFunders());
+
             $this->addDistributionPoint(new DistributionPoint());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
@@ -1066,6 +1077,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
             $this->setColdStorageTotalUnpackedCount($entity->getColdStorageTotalUnpackedCount());
             $this->setColdStorageTotalUnpackedSize($entity->getColdStorageTotalUnpackedSize());
+            $this->setAdditionalFunders($entity->getAdditionalFunders());
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -2925,5 +2937,32 @@ class DatasetSubmission extends Entity
         }
 
         return '';
+    }
+
+
+    /**
+     * Get the funders for this Dataset.
+     */
+    public function getFunders(): Collection
+    {
+        return $this->getDataset()->getFunders();
+    }
+
+    /**
+     * Set the additional funders.
+     */
+    public function setAdditionalFunders(?string $additionalFunders): self
+    {
+        $this->additionalFunders = $additionalFunders;
+
+        return $this;
+    }
+
+    /**
+     * Get the additional funders.
+     */
+    public function getAdditionalFunders(): ?string
+    {
+        return $this->additionalFunders;
     }
 }
