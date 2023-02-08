@@ -1,9 +1,8 @@
 $(function() {
     "use strict";
 
-    $("#funderList").on('fundersAdded', function(event, parameters) {
+    $("#funderList").on('fundersAdded', function(event, { disabled }) {
 
-        console.log(parameters);
         var maxFunderId = 0;
         var addedFunders = [];
 
@@ -55,7 +54,7 @@ $(function() {
             displayExpr: 'name',
             value: addedFunders,
             valueExpr: 'id',
-            disabled: parameters.disabled,
+            disabled: disabled,
             searchEnabled: true,
             acceptCustomValue: false,
             inputAttr: { id: 'devExtremeID' },

@@ -87,6 +87,8 @@ $(document).ready(function()
         }
     });
 
+    $("#funderList").trigger("fundersAdded", {"disabled": false});
+
     $("#btnDS").button({
         disabled : true
     }).click(function() {
@@ -160,6 +162,12 @@ $(document).ready(function()
             },
             estimatedEndDate: {
                 required: "End Date is a required field."
+            },
+            additionalFunders: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            },
+            funderList: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
             }
         },
         submitHandler: function(form) {
@@ -175,9 +183,17 @@ $(document).ready(function()
                         return ($("#difPrivacy:checked").val() == "Yes" || $("#difPrivacy:checked").val() == "Uncertain");
                     }
                 }
+            },
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
             }
-        }
-
+        },
+        groups: {
+            funders: "additionalFunders funderList",
+        },
     });
 
     $("#spatialExtentGeometry").change(function() {
@@ -214,6 +230,7 @@ $(document).ready(function()
             html += '</fieldset>';
             $("#statustext").html(html);
             formHash = $("#difForm").serialize();
+            $("#funderList").trigger("fundersAdded", {"disabled": true});
         }
         else if ($('[name="udi"]').val() != "")
         {
@@ -784,6 +801,7 @@ function formReset(dontScrollToTop)
         $("#spatialExtentDescription").val("").change();
         $("#status").val(0).change();
         $("#funderTagBox").data('dxTagBox').reset();
+        $("#funderList").trigger("fundersAdded", {"disabled": false});
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
@@ -1076,7 +1094,7 @@ function fillForm(Form, UDI, ID)
                     addedFunders.push(funderId);
                 })
 
-                $("#funderList").val(addedFunders.toString()).trigger("fundersAdded");
+                $("#funderList").val(addedFunders.toString()).trigger("fundersAdded", {"disabled": false});
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
