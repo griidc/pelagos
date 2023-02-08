@@ -1028,7 +1028,7 @@ function formChanged()
                     "Continue": function() {
                         $(this).dialog("close");
                         formHash = $("#difForm").serialize();
-                        difValidator.resetForm();
+                        formReset(true);
                         self.resolve();
                         //fillForm(Form,UDI);
                     },
