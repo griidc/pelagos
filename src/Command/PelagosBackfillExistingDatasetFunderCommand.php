@@ -87,6 +87,6 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
         $io->newLine(3);
         $io->success('Done!');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
