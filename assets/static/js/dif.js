@@ -87,6 +87,8 @@ $(document).ready(function()
         }
     });
 
+    $("#funderList").trigger("fundersAdded", {"disabled": false});
+
     $("#btnDS").button({
         disabled : true
     }).click(function() {
@@ -160,6 +162,12 @@ $(document).ready(function()
             },
             estimatedEndDate: {
                 required: "End Date is a required field."
+            },
+            additionalFunders: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            },
+            funderList: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
             }
         },
         submitHandler: function(form) {
@@ -175,9 +183,17 @@ $(document).ready(function()
                         return ($("#difPrivacy:checked").val() == "Yes" || $("#difPrivacy:checked").val() == "Uncertain");
                     }
                 }
+            },
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
             }
-        }
-
+        },
+        groups: {
+            funders: "additionalFunders funderList",
+        },
     });
 
     $("#spatialExtentGeometry").change(function() {
@@ -447,6 +463,7 @@ function setFormStatus()
         $("form :input").not(":hidden,#btnReset").prop("disabled",true);
         $("#btnSubmit").prop("disabled",true);
         $("#btnSave").prop("disabled",true);
+        $("#funderList").trigger("fundersAdded", {"disabled": true});
         if (Status == "2")
         {
           $("#btnReqUnlock").show();
@@ -784,6 +801,7 @@ function formReset(dontScrollToTop)
         $("#spatialExtentDescription").val("").change();
         $("#status").val(0).change();
         $("#funderTagBox").data('dxTagBox').reset();
+        $("#funderList").trigger("fundersAdded", {"disabled": false});
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
@@ -1010,7 +1028,7 @@ function formChanged()
                     "Continue": function() {
                         $(this).dialog("close");
                         formHash = $("#difForm").serialize();
-                        difValidator.resetForm();
+                        formReset(true);
                         self.resolve();
                         //fillForm(Form,UDI);
                     },
@@ -1057,6 +1075,26 @@ function fillForm(Form, UDI, ID)
 
             if (json.secondaryPointOfContact != null) {
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
+            }
+
+            var maxFunderId = 0;
+
+            if (json.dataset.funders != null) {
+                var funders = json.dataset.funders;
+                var addedFunders = [];
+                $.each(funders, function(key, value) {
+                    var newElement = document.createElement("input");
+                    var funderId = value.id;
+                    newElement.id = `funders_${maxFunderId}`;
+                    newElement.name = `funders[${maxFunderId}]`;
+                    newElement.value = funderId;
+                    newElement.type = "hidden";
+                    $('[id="funder-items"]').append(newElement);
+                    maxFunderId++;
+                    addedFunders.push(funderId);
+                })
+
+                $("#funderList").val(addedFunders.toString()).trigger("fundersAdded", {"disabled": false});
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);

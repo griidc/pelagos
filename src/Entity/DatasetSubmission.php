@@ -971,7 +971,7 @@ class DatasetSubmission extends Entity
     /**
      * For cold-stored, the total unpacked bytecount.
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="bigint", nullable=true)
      */
     private $coldStorageTotalUnpackedSize;
 
@@ -1029,6 +1029,9 @@ class DatasetSubmission extends Entity
                 $this->addDatasetContact($newDatasetContact);
             }
 
+            // Set additional funders
+            $this->setAdditionalFunders($entity->getAdditionalFunders());
+
             $this->addDistributionPoint(new DistributionPoint());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
@@ -1074,6 +1077,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
             $this->setColdStorageTotalUnpackedCount($entity->getColdStorageTotalUnpackedCount());
             $this->setColdStorageTotalUnpackedSize($entity->getColdStorageTotalUnpackedSize());
+            $this->setAdditionalFunders($entity->getAdditionalFunders());
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {

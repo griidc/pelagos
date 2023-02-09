@@ -2,11 +2,13 @@ var $ = jQuery.noConflict();
 var geowizard;
 
 //FOUC preventor
-$("html").hide();  
+$("html").hide();
 
 $(document).ready(function(){
     "use strict";
-    
+
+    $("#funderList").trigger("fundersAdded", {"disabled": false});
+
     $("#udiLoadReviewform").on("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
@@ -95,6 +97,12 @@ $(document).ready(function(){
             },
             largeFileUri: {
                 require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
+            },
+            additionalFunders: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            },
+            funderList: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
             }
         },
         ignore: ".ignore,.prototype",
@@ -104,7 +112,7 @@ $(document).ready(function(){
             form.submit();
         }
     });
-    
+
     // load qTip descriptions
     $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({

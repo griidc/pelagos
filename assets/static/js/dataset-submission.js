@@ -26,12 +26,16 @@ $(function() {
         left: "50%" // Left position relative to parent
     }).spin($("#spinner")[0]);
 
+    let defaultFunderTagBoxDisabled = false;
     // Check datasetSubmissionStatus for locked/unlocked.
     if ($("#regForm").attr("datasetSubmissionStatus") == true) {
         $("#regForm :input").prop("disabled", true);
+        defaultFunderTagBoxDisabled = true;
     }
 
     $("html").show();
+
+    $("#funderList").trigger("fundersAdded", {"disabled": defaultFunderTagBoxDisabled});
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
     //Setup qTip
@@ -182,6 +186,12 @@ $(function() {
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
+            additionalFunders: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            },
+            funderList: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            }
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -542,6 +552,7 @@ $(function() {
         $(".qq-upload-button :input").prop("disabled", true);
         // Disable Spatial Wizard button.
         $("#geoWizard #geowizBtn").prop("disabled", "true");
+
     }
 
     $("select.keywordinput").dblclick(function (event) {
