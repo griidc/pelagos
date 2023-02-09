@@ -971,7 +971,7 @@ class DatasetSubmission extends Entity
     /**
      * For cold-stored, the total unpacked bytecount.
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="bigint", nullable=true)
      */
     private $coldStorageTotalUnpackedSize;
 
