@@ -230,7 +230,6 @@ $(document).ready(function()
             html += '</fieldset>';
             $("#statustext").html(html);
             formHash = $("#difForm").serialize();
-            $("#funderList").trigger("fundersAdded", {"disabled": true});
         }
         else if ($('[name="udi"]').val() != "")
         {
@@ -464,6 +463,7 @@ function setFormStatus()
         $("form :input").not(":hidden,#btnReset").prop("disabled",true);
         $("#btnSubmit").prop("disabled",true);
         $("#btnSave").prop("disabled",true);
+        $("#funderList").trigger("fundersAdded", {"disabled": true});
         if (Status == "2")
         {
           $("#btnReqUnlock").show();
