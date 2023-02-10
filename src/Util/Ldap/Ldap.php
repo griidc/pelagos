@@ -6,6 +6,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use App\Entity\Person;
 use App\Exception\UidNumberInUseInLDAPException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Ldap\Exception\LdapException;
 
 /**
  * An LDAP abstraction library.
@@ -66,7 +67,12 @@ class Ldap
         $uidNumber = $person->getAccount()->getUidNumber();
         if ($this->checkIfUidNumberAvailable($uidNumber)) {
             $ldapPerson = $this->buildLdapPerson($person);
-            $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
+            try {
+                $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
+            }
+                catch (LdapException $e) {
+                    $this->logger->error("LDAP Error: " . $e->getMessage());
+            }
         } else {
             throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
         }
