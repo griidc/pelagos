@@ -5,12 +5,18 @@ namespace App\Util\Ldap;
 use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Ldap\Exception\LdapException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An LDAP client class.
  */
 class LdapClient
 {
+    /**
+     * A Monolog Logger.
+     */
+    protected LoggerInterface $logger;
+
     /**
      * The hostname to connect to.
      *
@@ -63,27 +69,30 @@ class LdapClient
     /**
      * Constructor.
      *
+     * @param LoggerInterface $logger     A PSR Logger.
      * @param string  $host         The hostname to connect to.
      * @param integer $port         The LDAP port to connect to.
      * @param integer $version      The version of LDAP to use.
      * @param boolean $useSsl       Whether or not to use SSL when connecting.
      * @param boolean $useStartTls  Whether or not to use StartTls.
-     * @param boolean $optReferrals Whether or not to use referrals.
+     * @param boolean $optReferrals Whether or not to use
      *
      * @throws LdapException When the ldap module is not loaded.
      */
     public function __construct(
+        LoggerInterface $logger,
         string $host = null,
         int $port = 389,
         int $version = 3,
         bool $useSsl = false,
         bool $useStartTls = false,
-        bool $optReferrals = false
+        bool $optReferrals = false,
     ) {
         if (!extension_loaded('ldap')) {
             throw new LdapException('The ldap module is needed.');
         }
 
+        $this->logger = $logger;
         $this->host = $host;
         $this->port = $port;
         $this->version = $version;
