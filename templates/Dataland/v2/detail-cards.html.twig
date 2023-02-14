@@ -11,11 +11,9 @@
         <div class="card-body">
             <p class="card-text text-dark">
                 <u>Funded By:</u> <br>
-                {% set funders = [] %}
                 {% for funder in dataset.funders|default %}
-                    {% set funders = funders|merge([funder.name|trim('"')]) %}
+                    <span> {{ funder.name }}</span><br>
                 {% endfor %}
-                <span>{{ funders|join('| ') }}</span>
             </p>
             {% if not dataset.researchGroup.fundingCycle.fundingOrganization.id in excludedFundingCycleList %}
                 <p class="card-text text-dark">
