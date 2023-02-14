@@ -69,9 +69,8 @@ class Ldap
             $ldapPerson = $this->buildLdapPerson($person);
             try {
                 $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
-            }
-                catch (LdapException $e) {
-                    $this->logger->error("LDAP Error: " . $e->getMessage());
+            } catch (LdapException $e) {
+                $this->logger->error("LDAP Error: " . $e->getMessage());
             }
         } else {
             throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
