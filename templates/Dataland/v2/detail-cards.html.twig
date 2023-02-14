@@ -1,6 +1,8 @@
 {% include 'Dataland/v2/ticketing-system-card.html.twig' %}
 {% include 'Dataland/v2/download-card.html.twig' %}
 
+{% set excludedFundingCycleList = [6, 12, 13, 14] %}
+
 <div class="py-2">
     <div class="card text-center text-light">
         <div class="card-header bg-chart-primary">
@@ -9,12 +11,18 @@
         <div class="card-body">
             <p class="card-text text-dark">
                 <u>Funded By:</u> <br>
-                <span>{{ dataset.researchGroup.fundingCycle.fundingOrganization.name }}</span>
+                {% set funders = [] %}
+                {% for funder in dataset.funders|default %}
+                    {% set funders = funders|merge([funder.name|trim('"')]) %}
+                {% endfor %}
+                <span>{{ funders|join('| ') }}</span>
             </p>
-            <p class="card-text text-dark">
-                <u>Funding Cycle:</u> <br>
-                <span>{{ dataset.researchGroup.fundingCycle.name }}</span>
-            </p>
+            {% if not dataset.researchGroup.fundingCycle.fundingOrganization.id in excludedFundingCycleList %}
+                <p class="card-text text-dark">
+                    <u>Funding Cycle:</u> <br>
+                    <span>{{ dataset.researchGroup.fundingCycle.name }}</span>
+                </p>
+            {% endif %}
             <p class="card-text text-dark">
                 <u>Research Group:</u> <br>
                 <span>
