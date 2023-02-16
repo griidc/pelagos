@@ -15,7 +15,7 @@
                     <span> {{ funder.name }}</span><br>
                 {% endfor %}
             </p>
-            {% if not dataset.researchGroup.fundingCycle.fundingOrganization.id in excludedFundingCycleList %}
+            {% if dataset.researchGroup.fundingCycle.fundingOrganization.id not in excludedFundingCycleList %}
                 <p class="card-text text-dark">
                     <u>Funding Cycle:</u> <br>
                     <span>{{ dataset.researchGroup.fundingCycle.name }}</span>
