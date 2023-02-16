@@ -10,7 +10,6 @@ use Pagerfanta\Pagerfanta;
 use App\Entity\DatasetSubmission;
 use App\Entity\Funder;
 use App\Entity\FundingCycle;
-use App\Entity\FundingOrganization;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use RecursiveArrayIterator;
@@ -159,8 +158,7 @@ class Search
 
         // Add facet filters
         if (
-            !empty($requestTerms['options']['funOrgId'])
-            || !empty($requestTerms['options']['rgId'])
+            !empty($requestTerms['options']['rgId'])
             || !empty($requestTerms['options']['status']
             || !empty($requestTerms['options']['fundingCycleId'])
             || !empty($requestTerms['options']['projectDirectorId'])
@@ -169,7 +167,7 @@ class Search
             $mainQuery->setPostFilter($this->getFiltersQuery($requestTerms));
         }
 
-        // Add nested agg for research group and funding org to main agg
+        // Add nested agg for research group, funding cycle to main agg
         $mainQuery->addAggregation($this->getAggregationsQuery($requestTerms));
 
         // Add dataset funder aggregation to mainQuery
@@ -253,56 +251,6 @@ class Search
         array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
-    }
-
-    /**
-     * Get the aggregations for the query.
-     *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
-     */
-    public function getFundingOrgAggregations(Query $query): array
-    {
-        $userPaginator = $this->getPaginator($query);
-
-        $fundingOrgBucket = array_column(
-            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'fundingOrgId')['buckets'],
-            'doc_count',
-            'key'
-        );
-
-        return $this->getFundingOrgInfo($fundingOrgBucket);
-    }
-
-    /**
-     * Get funding org information for the aggregations.
-     *
-     * @param array $aggregations Aggregations for each funding org id.
-     *
-     * @return array
-     */
-    private function getFundingOrgInfo(array $aggregations): array
-    {
-        $fundingOrgInfo = array();
-
-        $fundingOrgs = $this->entityManager
-            ->getRepository(FundingOrganization::class)
-            ->findBy(array('id' => array_keys($aggregations)));
-
-        foreach ($fundingOrgs as $fundingOrg) {
-            $fundingOrgInfo[$fundingOrg->getId()] = array(
-                'id' => $fundingOrg->getId(),
-                'name' => $fundingOrg->getName(),
-                'shortName' => $fundingOrg->getShortName(),
-                'count' => $aggregations[$fundingOrg->getId()]
-            );
-        }
-        //Sorting based on highest count
-        $array_column = array_column($fundingOrgInfo, 'count');
-        array_multisort($array_column, SORT_DESC, $fundingOrgInfo);
-
-        return $fundingOrgInfo;
     }
 
     /**
@@ -631,21 +579,7 @@ class Search
         $researchGroupAgg->setField('researchGroup.id');
         $researchGroupAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
 
-        if (!empty($requestTerms['options']['funOrgId'])) {
-            $fundOrgFilter = new Aggregation\Filter('fundOrgFilter');
-            $fundOrgNestedQuery = new Query\Nested();
-            $fundOrgNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
-            $fundOrgTerm = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
-            $fundOrgTerm->setTerms(
-                explode(',', $requestTerms['options']['funOrgId'])
-            );
-            $fundOrgNestedQuery->setQuery($fundOrgTerm);
-            $fundOrgFilter->setFilter($fundOrgNestedQuery);
-            $fundOrgFilter->addAggregation($researchGroupAgg);
-
-            // Add research group agg to nested
-            $nestedRgAgg->addAggregation($fundOrgFilter);
-        } elseif (!empty($requestTerms['options']['fundingCycleId'])) {
+        if (!empty($requestTerms['options']['fundingCycleId'])) {
             $fundingCycleFilter = new Aggregation\Filter('fundingCycleFilter');
             $fundingCycleNestedQuery = new Query\Nested();
             $fundingCycleNestedQuery->setPath('researchGroup.fundingCycle');
@@ -667,20 +601,6 @@ class Search
         $fundingCycleTerms = new Aggregation\Terms('fundingCycleId');
         $fundingCycleTerms->setField('researchGroup.fundingCycle.id');
         $fundingCycleTerms->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
-
-        // Add nested field path for funding org field
-        $nestedFoAgg = new Aggregation\Nested('nestedFunOrg', 'researchGroup.fundingCycle.fundingOrganization');
-        // Add funding Org id field to the aggregation
-        $fundingOrgAgg = new Aggregation\Terms('fundingOrgId');
-        $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
-        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
-
-
-        // Add funding Org agg to nested agg
-        $nestedFoAgg->addAggregation($fundingOrgAgg);
-
-        // Add funding org to funding cycle agg
-        $nestedFcAgg->addAggregation($nestedFoAgg);
 
         // Add funding cycle terms to funding cycle agg
         $nestedFcAgg->addAggregation($fundingCycleTerms);
@@ -762,21 +682,6 @@ class Search
             $researchGroupNameQuery->setQuery($rgNameQuery);
 
             $postFilterBoolQuery->addMust($researchGroupNameQuery);
-        }
-
-        if (!empty($requestTerms['options']['funOrgId'])) {
-            // Add nested field path for funding org field
-            $nestedFoQuery = new Query\Nested();
-            $nestedFoQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
-
-            // Add funding Org id field to the aggregation
-            $fundingOrgIdQuery = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
-            $fundingOrgIdQuery->setTerms(
-                explode(',', $requestTerms['options']['funOrgId'])
-            );
-
-            $nestedFoQuery->setQuery($fundingOrgIdQuery);
-            $postFilterBoolQuery->addMust($nestedFoQuery);
         }
 
         if (!empty($requestTerms['options']['status'])) {
