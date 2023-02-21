@@ -83,10 +83,10 @@ class SearchPageController extends AbstractController
         }
         $count = $searchUtil->getCount($buildQuery);
         $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
-        $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
         $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
         $fundingCycleInfo = $searchUtil->getFundingCycleAggregations($buildQuery);
         $projectDirectorInfo = $searchUtil->getProjectDirectorAggregations($buildQuery);
+        $funderInfo = $searchUtil->getFunderAggregations($buildQuery);
         $elasticScoreFirstResult = null;
         if (!empty($results)) {
             $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
@@ -106,10 +106,10 @@ class SearchPageController extends AbstractController
                 'count' => $count,
                 'facetInfo' => array (
                     'researchGroupsInfo' => $researchGroupsInfo,
-                    'fundingOrgInfo' => $fundingOrgInfo,
                     'statusInfo' => $statusInfo,
                     'fundingCycleInfo' => $fundingCycleInfo,
-                    'projectDirectorInfo' => $projectDirectorInfo
+                    'projectDirectorInfo' => $projectDirectorInfo,
+                    'funderInfo' => $funderInfo,
                 ),
             )
         );
@@ -134,10 +134,10 @@ class SearchPageController extends AbstractController
             'collectionEndDate' => $request->get('collectionEndDate'),
             'options' => array(
                 'rgId' => $request->get('researchGroup'),
-                'funOrgId' => $request->get('fundingOrg'),
                 'status' => $request->get('status'),
                 'fundingCycleId' => $request->get('fundingCycle'),
-                'projectDirectorId' => $request->get('projectDirector')
+                'projectDirectorId' => $request->get('projectDirector'),
+                'funderId' => $request->get('funder'),
             ),
             'sessionId' => $request->getSession()->getId()
         );
@@ -176,7 +176,7 @@ class SearchPageController extends AbstractController
             ),
             'aggregations' => array(
                 'datasetStatus' => $requestParams['options']['status'],
-                'fundingOrganizations' => $requestParams['options']['funOrgId'],
+                'funders' => $requestParams['options']['funderId'],
                 'researchGroups' => $requestParams['options']['rgId'],
                 'fundingCycles' => $requestParams['options']['fundingCycleId'],
                 'projectDirectors' => $requestParams['options']['projectDirectorId']
