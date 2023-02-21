@@ -2,18 +2,16 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Elastica\Aggregation;
-use Elastica\Query;
-use FOS\ElasticaBundle\Finder\TransformedFinder;
-use Pagerfanta\Pagerfanta;
 use App\Entity\DatasetSubmission;
 use App\Entity\Funder;
 use App\Entity\FundingCycle;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
+use Doctrine\ORM\EntityManagerInterface;
+use Elastica\Aggregation;
+use Elastica\Query;
+use FOS\ElasticaBundle\Finder\TransformedFinder;
+use Pagerfanta\Pagerfanta;
 
 /**
  * Util class for FOS Elastic Search.
@@ -37,65 +35,65 @@ class Search
     /**
      * Elastic index mapping for title.
      */
-    const ELASTIC_INDEX_MAPPING_TITLE = 'title';
+    public const ELASTIC_INDEX_MAPPING_TITLE = 'title';
 
     /**
      * Elastic index mapping for abstract.
      */
-    const ELASTIC_INDEX_MAPPING_ABSTRACT = 'abstract';
+    public const ELASTIC_INDEX_MAPPING_ABSTRACT = 'abstract';
 
     /**
      * Elastic index mapping for authors.
      */
-    const ELASTIC_INDEX_MAPPING_AUTHORS = 'datasetSubmission.authors';
+    public const ELASTIC_INDEX_MAPPING_AUTHORS = 'datasetSubmission.authors';
 
     /**
      * Elastic index mapping for theme keywords.
      */
-    const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
+    public const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
     /**
      * Elastic index mapping for dataset DOI.
      */
-    const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
+    public const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
 
     /**
      * Elastic index mapping for udi.
      */
-    const ELASTIC_INDEX_MAPPING_UDI = 'udi';
+    public const ELASTIC_INDEX_MAPPING_UDI = 'udi';
 
     /**
      * Elastic index mapping for sorting date used for displaying results.
      */
-    const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'sortingDateForDisplay';
+    public const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'sortingDateForDisplay';
 
     /**
      * Elastic index mapping for publication dois.
      */
-    const ELASTIC_INDEX_MAPPING_PUB_DOI = 'publications.doi';
+    public const ELASTIC_INDEX_MAPPING_PUB_DOI = 'publications.doi';
 
-    const AVAILABILITY_STATUSES = array(
+    public const AVAILABILITY_STATUSES = [
         1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
         2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
         3 => [DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED, DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED],
-        4 => [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE, DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED]
-    );
+        4 => [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE, DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED],
+    ];
 
     /**
      * Index boost for Title, Authors, Theme Keywords.
      */
-    const BOOST = '^2';
+    private const BOOST = '^2';
 
     /**
      * Default value for aggregation size to get all aggregation terms.
      */
-    const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
+    private const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
 
     /**
      * Constructor.
      *
-     * @param TransformedFinder      $finder        The finder interface object.
-     * @param EntityManagerInterface $entityManager An entity manager.
+     * @param TransformedFinder      $finder        the finder interface object
+     * @param EntityManagerInterface $entityManager an entity manager
      */
     public function __construct(TransformedFinder $finder, EntityManagerInterface $entityManager)
     {
@@ -106,9 +104,7 @@ class Search
     /**
      * Find datasets using Fos Elastic search.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function findDatasets(Query $query): array
     {
@@ -118,9 +114,7 @@ class Search
     /**
      * Get number of results.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return integer
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function getCount(Query $query): int
     {
@@ -130,9 +124,7 @@ class Search
     /**
      * Build Query using Fos Elastic search.
      *
-     * @param array $requestTerms Options for the query.
-     *
-     * @return Query
+     * @param array $requestTerms options for the query
      */
     public function buildQuery(array $requestTerms): Query
     {
@@ -141,9 +133,9 @@ class Search
         $specificField = $requestTerms['field'];
         $perPage = $requestTerms['perPage'];
         $sortOrder = $requestTerms['sortOrder'];
-        $collectionDateRange = array();
+        $collectionDateRange = [];
         if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
-            $collectionDateRange = array();
+            $collectionDateRange = [];
             if (!empty($requestTerms['collectionStartDate'])) {
                 $collectionDateRange['startDate'] = $requestTerms['collectionStartDate'];
             }
@@ -181,8 +173,8 @@ class Search
         $mainQuery->setQuery($subMainQuery);
 
         // Add sort order
-        if ($sortOrder !== 'default') {
-            $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => $sortOrder)));
+        if ('default' !== $sortOrder) {
+            $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
         }
 
         $mainQuery->setFrom(($page - 1) * 10);
@@ -194,9 +186,7 @@ class Search
     /**
      * Get the paginator adapter for the query.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return Pagerfanta
+     * @param Query $query the query built based on the search terms and parameters
      */
     private function getPaginator(Query $query): Pagerfanta
     {
@@ -206,9 +196,7 @@ class Search
     /**
      * Get the aggregations for the query.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function getResearchGroupAggregations(Query $query): array
     {
@@ -225,28 +213,26 @@ class Search
     /**
      * Get research group information for the aggregations.
      *
-     * @param array $aggregations Aggregations for each research id.
-     *
-     * @return array
+     * @param array $aggregations aggregations for each research id
      */
     private function getResearchGroupsInfo(array $aggregations): array
     {
-        $researchGroupsInfo = array();
+        $researchGroupsInfo = [];
 
         $researchGroups = $this->entityManager
             ->getRepository(ResearchGroup::class)
-            ->findBy(array('id' => array_keys($aggregations)));
+            ->findBy(['id' => array_keys($aggregations)]);
 
         foreach ($researchGroups as $researchGroup) {
-            $researchGroupsInfo[$researchGroup->getId()] = array(
+            $researchGroupsInfo[$researchGroup->getId()] = [
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
                 'shortName' => $researchGroup->getShortName(),
-                'count' => $aggregations[$researchGroup->getId()]
-            );
+                'count' => $aggregations[$researchGroup->getId()],
+            ];
         }
 
-        //Sorting based on highest count
+        // Sorting based on highest count
         $array_column = array_column($researchGroupsInfo, 'count');
         array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
 
@@ -256,9 +242,7 @@ class Search
     /**
      * Get the aggregations for the query.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function getStatusAggregations(Query $query): array
     {
@@ -276,9 +260,7 @@ class Search
     /**
      * Get dataset availability status information for the aggregations.
      *
-     * @param array $aggregations Aggregations for each availability status.
-     *
-     * @return array
+     * @param array $aggregations aggregations for each availability status
      */
     private function getStatusInfo(array $aggregations): array
     {
@@ -294,7 +276,7 @@ class Search
             [
                 'id' => 1,
                 'name' => 'Identified',
-                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE),
             ],
             [
                 'id' => 2,
@@ -302,7 +284,7 @@ class Search
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
-                )
+                ),
             ],
             [
                 'id' => 3,
@@ -310,7 +292,7 @@ class Search
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
-                )
+                ),
             ],
             [
                 'id' => 4,
@@ -318,7 +300,7 @@ class Search
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
-                )
+                ),
             ],
         ];
 
@@ -329,7 +311,7 @@ class Search
             }
         }
 
-        //Sorting based on highest count
+        // Sorting based on highest count
         $array_column = array_column($statusInfo, 'count');
         array_multisort($array_column, SORT_DESC, $statusInfo);
 
@@ -339,9 +321,7 @@ class Search
     /**
      * Get the funding cycle aggregations for the query.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function getFundingCycleAggregations(Query $query): array
     {
@@ -358,26 +338,24 @@ class Search
     /**
      * Get funding cycle information for the aggregations.
      *
-     * @param array $aggregations Aggregations for each funding cycle id.
-     *
-     * @return array
+     * @param array $aggregations aggregations for each funding cycle id
      */
     private function getFundingCycleInfo(array $aggregations): array
     {
-        $fundingCycleInfo = array();
+        $fundingCycleInfo = [];
 
         $fundingCycles = $this->entityManager
             ->getRepository(FundingCycle::class)
-            ->findBy(array('id' => array_keys($aggregations)));
+            ->findBy(['id' => array_keys($aggregations)]);
 
         foreach ($fundingCycles as $fundingCycle) {
-            $fundingCycleInfo[$fundingCycle->getId()] = array(
+            $fundingCycleInfo[$fundingCycle->getId()] = [
                 'id' => $fundingCycle->getId(),
                 'name' => $fundingCycle->getName(),
-                'count' => $aggregations[$fundingCycle->getId()]
-            );
+                'count' => $aggregations[$fundingCycle->getId()],
+            ];
         }
-        //Sorting based on highest count
+        // Sorting based on highest count
         $array_column = array_column($fundingCycleInfo, 'count');
         array_multisort($array_column, SORT_DESC, $fundingCycleInfo);
 
@@ -387,9 +365,7 @@ class Search
     /**
      * Get the project director aggregations for the query.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function getProjectDirectorAggregations(Query $query): array
     {
@@ -406,26 +382,24 @@ class Search
     /**
      * Get project director information for the aggregations.
      *
-     * @param array $aggregations Aggregations for each project director id.
-     *
-     * @return array
+     * @param array $aggregations aggregations for each project director id
      */
     private function getProjectDirectorInfo(array $aggregations): array
     {
-        $projectDirectorInfo = array();
+        $projectDirectorInfo = [];
 
         $people = $this->entityManager
             ->getRepository(Person::class)
-            ->findBy(array('id' => array_keys($aggregations)));
+            ->findBy(['id' => array_keys($aggregations)]);
 
         foreach ($people as $projectDirector) {
-            $projectDirectorInfo[$projectDirector->getId()] = array(
+            $projectDirectorInfo[$projectDirector->getId()] = [
                 'id' => $projectDirector->getId(),
-                'name' => $projectDirector->getLastName() . ', ' . $projectDirector->getFirstName(),
-                'count' => $aggregations[$projectDirector->getId()]
-            );
+                'name' => $projectDirector->getLastName().', '.$projectDirector->getFirstName(),
+                'count' => $aggregations[$projectDirector->getId()],
+            ];
         }
-        //Sorting based on highest count
+        // Sorting based on highest count
         $array_column1 = array_column($projectDirectorInfo, 'count');
         $array_column2 = array_column($projectDirectorInfo, 'name');
         array_multisort(
@@ -442,9 +416,7 @@ class Search
     /**
      * Get the funder aggregations for the query.
      *
-     * @param Query $query The query built based on the search terms and parameters.
-     *
-     * @return array
+     * @param Query $query the query built based on the search terms and parameters
      */
     public function getFunderAggregations(Query $query): array
     {
@@ -454,30 +426,29 @@ class Search
             'doc_count',
             'key'
         );
+
         return $this->getFunderInfo($funderBucket);
     }
 
     /**
      * Get funders information for the aggregations.
      *
-     * @param array $aggregations Aggregations for each funder id.
-     *
-     * @return array
+     * @param array $aggregations aggregations for each funder id
      */
     private function getFunderInfo(array $aggregations): array
     {
-        $fundersInfo = array();
+        $fundersInfo = [];
         $funders = $this->entityManager
             ->getRepository(Funder::class)
-            ->findBy(array('id' => array_keys($aggregations)));
+            ->findBy(['id' => array_keys($aggregations)]);
         foreach ($funders as $funder) {
-            $fundersInfo[$funder->getId()] = array(
+            $fundersInfo[$funder->getId()] = [
                 'id' => $funder->getId(),
                 'name' => $funder->getName(),
-                'count' => $aggregations[$funder->getId()]
-            );
+                'count' => $aggregations[$funder->getId()],
+            ];
         }
-        //Sorting based on highest count
+        // Sorting based on highest count
         $array_column1 = array_column($fundersInfo, 'count');
         $array_column2 = array_column($fundersInfo, 'name');
         array_multisort(
@@ -487,61 +458,62 @@ class Search
             SORT_ASC,
             $fundersInfo
         );
+
         return $fundersInfo;
     }
+
     /**
      * Find the bucket name of the aggregation.
      *
-     * @param array  $aggregations Array of aggregations.
-     * @param string $bucketKey    The name of the bucket to be found.
+     * @param array  $aggregations array of aggregations
+     * @param string $bucketKey    the name of the bucket to be found
      *
      * @return array
      */
     private function findKey(array $aggregations, string $bucketKey)
     {
-        $bucket = array();
+        $bucket = [];
 
-        //create a recursive iterator to loop over the array recursively
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveArrayIterator($aggregations),
-            RecursiveIteratorIterator::SELF_FIRST
+        // create a recursive iterator to loop over the array recursively
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($aggregations),
+            \RecursiveIteratorIterator::SELF_FIRST
         );
 
-        //loop over the iterator
+        // loop over the iterator
         foreach ($iterator as $key => $value) {
-            //if the key matches our search
+            // if the key matches our search
             if ($key === $bucketKey) {
-                //add the current key
-                $keys = array($key);
-                //loop up the recursive chain
-                for ($i = ($iterator->getDepth() - 1); $i >= 0; $i--) {
-                    //add each parent key
+                // add the current key
+                $keys = [$key];
+                // loop up the recursive chain
+                for ($i = ($iterator->getDepth() - 1); $i >= 0; --$i) {
+                    // add each parent key
                     array_unshift($keys, $iterator->getSubIterator($i)->key());
                 }
-                //return our output array
+                // return our output array
                 $bucket = $value;
             }
         }
+
         return $bucket;
     }
 
     /**
      * Get Bool query for fields.
      *
-     * @param string     $queryTerm           Query term that needs to be searched upon.
-     * @param string     $specificField       Query a specific field for data.
-     * @param array|null $collectionDateRange Query for collection date range.
-     *
-     * @return Query\BoolQuery
+     * @param string     $queryTerm           query term that needs to be searched upon
+     * @param string     $specificField       query a specific field for data
+     * @param array|null $collectionDateRange query for collection date range
      */
     private function getFieldsQuery(string $queryTerm, string $specificField = null, array $collectionDateRange = null): Query\BoolQuery
     {
         if (empty($specificField)) {
             $specificField = [
-                self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_TITLE.self::BOOST,
                 self::ELASTIC_INDEX_MAPPING_ABSTRACT,
-                self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
-                self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
+                self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS.self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_AUTHORS.self::BOOST,
             ];
         } else {
             $specificField = [$specificField];
@@ -565,9 +537,7 @@ class Search
     /**
      * Get aggregations for the query.
      *
-     * @param array $requestTerms Options for the query.
-     *
-     * @return Aggregation\Nested
+     * @param array $requestTerms options for the query
      */
     private function getAggregationsQuery(array $requestTerms): Aggregation\Nested
     {
@@ -612,8 +582,6 @@ class Search
 
     /**
      * Get project director aggregations for the query.
-     *
-     * @return Aggregation\Nested
      */
     private function getProjectDirectorAggregationQuery(): Aggregation\Nested
     {
@@ -630,8 +598,6 @@ class Search
 
     /**
      * Get status aggregations for the query.
-     *
-     * @return Aggregation\Terms
      */
     private function getStatusAggregationQuery(): Aggregation\Terms
     {
@@ -644,8 +610,6 @@ class Search
 
     /**
      * Get funders aggregation query.
-     *
-     * @return Aggregation\Nested
      */
     private function getFundersAggregationQuery(): Aggregation\Nested
     {
@@ -663,9 +627,7 @@ class Search
     /**
      * Get post filter query.
      *
-     * @param array $requestTerms Options for the query.
-     *
-     * @return Query\BoolQuery
+     * @param array $requestTerms options for the query
      */
     private function getFiltersQuery(array $requestTerms): Query\BoolQuery
     {
@@ -685,14 +647,14 @@ class Search
         }
 
         if (!empty($requestTerms['options']['status'])) {
-            $statuses = array();
+            $statuses = [];
             foreach (explode(',', $requestTerms['options']['status']) as $key => $value) {
                 $statuses[$key] = self::AVAILABILITY_STATUSES[$value];
             }
 
             $availabilityStatusQuery = new Query\Terms('availabilityStatus');
             $availabilityStatusQuery->setTerms(
-                array_reduce($statuses, 'array_merge', array())
+                array_reduce($statuses, 'array_merge', [])
             );
             $postFilterBoolQuery->addMust($availabilityStatusQuery);
         }
@@ -750,9 +712,7 @@ class Search
     /**
      * Added start date range for collection.
      *
-     * @param array $collectionDates Data collection range start date.
-     *
-     * @return Query\Range
+     * @param array $collectionDates data collection range start date
      */
     private function getCollectionStartDateQuery(array $collectionDates): Query\Range
     {
@@ -766,9 +726,7 @@ class Search
     /**
      * Added end date range for collection.
      *
-     * @param array $collectionDates Data collection range end date.
-     *
-     * @return Query\Range
+     * @param array $collectionDates data collection range end date
      */
     private function getCollectionEndDateQuery(array $collectionDates): Query\Range
     {
@@ -782,10 +740,8 @@ class Search
     /**
      * To check if DOI exists in the search term.
      *
-     * @param string          $queryTerm       Query term that needs to be checked if DOI exists.
-     * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that DOI query is added to.
-     *
-     * @return void
+     * @param string          $queryTerm       query term that needs to be checked if DOI exists
+     * @param Query\BoolQuery $fieldsBoolQuery the fields elastic boolean query that DOI query is added to
      */
     private function doesDoiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): void
     {
@@ -801,9 +757,7 @@ class Search
     /**
      * Get the DOI query.
      *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\Nested
+     * @param string $queryTerm query term that needs to be searched upon
      */
     private function getDoiQuery(string $queryTerm): Query\Nested
     {
@@ -814,15 +768,14 @@ class Search
         $doiNestedQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_DOI, $queryTerm);
         $doiNestedQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_DOI, 4);
         $doiQuery->setQuery($doiNestedQuery);
+
         return $doiQuery;
     }
 
     /**
      * Get the Publication doi query.
      *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\Nested
+     * @param string $queryTerm query term that needs to be searched upon
      */
     private function getPubDoiQuery(string $queryTerm): Query\Nested
     {
@@ -831,15 +784,14 @@ class Search
         $pubDoiQuery = new Query\MatchPhrase();
         $pubDoiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_PUB_DOI, $queryTerm);
         $pubDoiNestedQuery->setQuery($pubDoiQuery);
+
         return $pubDoiNestedQuery;
     }
 
     /**
      * Get the UDI query.
      *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\MatchPhrase
+     * @param string $queryTerm query term that needs to be searched upon
      */
     private function getUdiQuery(string $queryTerm): Query\MatchPhrase
     {
@@ -853,10 +805,8 @@ class Search
     /**
      * To check if udi exists in the search term.
      *
-     * @param string          $queryTerm       Query term that needs to be checked if udi exists.
-     * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that udi query is added to.
-     *
-     * @return void
+     * @param string          $queryTerm       query term that needs to be checked if udi exists
+     * @param Query\BoolQuery $fieldsBoolQuery the fields elastic boolean query that udi query is added to
      */
     private function doesUdiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): void
     {
@@ -874,18 +824,16 @@ class Search
     /**
      * Split the query terms into must match and must not match terms.
      *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return array
+     * @param string $queryTerm query term that needs to be searched upon
      */
     private function splitQueryTerms(string $queryTerm): array
     {
-        $splitUpQueryTerms = array();
+        $splitUpQueryTerms = [];
         if (preg_match_all('/(?:\s(?<!\b)|^)-\b(\w*)\b/', $queryTerm, $matches)) {
-            $splitUpQueryTerms = array(
+            $splitUpQueryTerms = [
                 'mustNotMatch' => '',
-                'mustMatch' => ''
-            );
+                'mustMatch' => '',
+            ];
             $splitUpQueryTerms['mustMatch'] = str_replace($matches[0], '', $queryTerm);
             $splitUpQueryTerms['mustNotMatch'] = $matches[1];
         }
@@ -896,9 +844,7 @@ class Search
     /**
      * Get must not include terms query.
      *
-     * @param string $mustNotQueryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\MultiMatch
+     * @param string $mustNotQueryTerm query term that needs to be searched upon
      */
     private function getMustNotIncludeTermsQuery(string $mustNotQueryTerm): Query\MultiMatch
     {
@@ -908,7 +854,7 @@ class Search
                 self::ELASTIC_INDEX_MAPPING_ABSTRACT,
                 self::ELASTIC_INDEX_MAPPING_TITLE,
                 self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS,
-                self::ELASTIC_INDEX_MAPPING_AUTHORS
+                self::ELASTIC_INDEX_MAPPING_AUTHORS,
             ]
         );
         $mustNotMultiMatch->setQuery($mustNotQueryTerm);
@@ -919,11 +865,9 @@ class Search
     /**
      * Get sub main query.
      *
-     * @param string|null $queryTerm           Query term that needs to be searched upon.
-     * @param string|null $specificField       Specific field option to filter the results.
-     * @param array|null  $collectionDateRange Date range option to filter the results.
-     *
-     * @return Query\BoolQuery
+     * @param string|null $queryTerm           query term that needs to be searched upon
+     * @param string|null $specificField       specific field option to filter the results
+     * @param array|null  $collectionDateRange date range option to filter the results
      */
     private function getSubMainQuery(string $queryTerm = null, string $specificField = null, array $collectionDateRange = null): Query\BoolQuery
     {

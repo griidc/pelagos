@@ -2,22 +2,21 @@
 
 namespace App\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Entity\DatasetSubmission;
 use App\Entity\DatasetLink;
+use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;
 use App\Entity\Funder;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -27,8 +26,8 @@ class DatasetSubmissionType extends AbstractType
     /**
      * Constructor for form type.
      *
-     * @param Entity                                $entity The entity associated with this form.
-     * @param PersonDatasetSubmissionDatasetContact $poc    A point of contact.
+     * @param Entity                                $entity the entity associated with this form
+     * @param PersonDatasetSubmissionDatasetContact $poc    a point of contact
      */
     public function __construct(Entity $entity = null, PersonDatasetSubmissionDatasetContact $poc = null)
     {
@@ -39,8 +38,7 @@ class DatasetSubmissionType extends AbstractType
     /**
      * Builds the form.
      *
-     * @param FormBuilderInterface $builder The form builder.
-     * @param array                $options The options.
+     * @param array $options the options
      *
      * @see FormTypeExtensionInterface::buildForm()
      *
@@ -48,289 +46,289 @@ class DatasetSubmissionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $days = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $builder
-            ->add('title', Type\TextType::class, array(
+            ->add('title', Type\TextType::class, [
                 'label' => 'Dataset Title',
                 'required' => true,
-            ))
-            ->add('funders', Type\CollectionType::class, array(
+            ])
+            ->add('funders', Type\CollectionType::class, [
                 'label' => 'Funders',
                 'entry_type' => EntityType::class,
-                'entry_options' => array(
+                'entry_options' => [
                     'class' => Funder::class,
-                ),
+                ],
                 'by_reference' => true,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => false,
-            ))
-            ->add('additionalFunders', Type\TextType::class, array(
+            ])
+            ->add('additionalFunders', Type\TextType::class, [
                 'label' => 'Additional Funders',
                 'required' => false,
-            ))
-            ->add('abstract', Type\TextareaType::class, array(
+            ])
+            ->add('abstract', Type\TextareaType::class, [
                 'label' => 'Dataset Abstract',
                 'required' => true,
-                'attr' => array('rows' => '16'),
-            ))
-            ->add('authors', Type\TextType::class, array(
+                'attr' => ['rows' => '16'],
+            ])
+            ->add('authors', Type\TextType::class, [
                 'label' => 'Dataset Author(s)',
                 'required' => true,
-            ))
-            ->add('restrictions', Type\ChoiceType::class, array(
+            ])
+            ->add('restrictions', Type\ChoiceType::class, [
                 'choices' => DatasetSubmission::getRestrictionsChoices(),
                 'label' => 'Restrictions',
                 'placeholder' => false,
                 'required' => false,
                 'expanded' => true,
                 'multiple' => false,
-            ))
-            ->add('datasetFileTransferType', Type\HiddenType::class, array(
+            ])
+            ->add('datasetFileTransferType', Type\HiddenType::class, [
                 'required' => false,
-            ))
-            ->add('shortTitle', Type\TextType::class, array(
+            ])
+            ->add('shortTitle', Type\TextType::class, [
                 'label' => 'Short Title',
                 'required' => false,
-            ))
-            ->add('purpose', Type\TextareaType::class, array(
+            ])
+            ->add('purpose', Type\TextareaType::class, [
                 'label' => 'Purpose',
                 'required' => true,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('suppParams', Type\TextareaType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('suppParams', Type\TextareaType::class, [
                 'label' => 'Supplemental Information - Data Parameters and Units',
                 'required' => true,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('suppMethods', Type\TextareaType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('suppMethods', Type\TextareaType::class, [
                 'label' => 'Supplemental Information - Methods',
                 'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('suppInstruments', Type\TextareaType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('suppInstruments', Type\TextareaType::class, [
                 'label' => 'Supplemental Information - Instruments',
                 'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('suppSampScalesRates', Type\TextareaType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('suppSampScalesRates', Type\TextareaType::class, [
                 'label' => 'Supplemental Information - Sampling Scales and Rates',
                 'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('suppErrorAnalysis', Type\TextareaType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('suppErrorAnalysis', Type\TextareaType::class, [
                 'label' => 'Supplemental Information - Error Analysis',
                 'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('suppProvenance', Type\TextareaType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('suppProvenance', Type\TextareaType::class, [
                 'label' => 'Supplemental Information - Provenance and Historical References',
                 'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('themeKeywords', Type\CollectionType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('themeKeywords', Type\CollectionType::class, [
                 'label' => 'Theme Keywords',
                 'entry_type' => Type\TextType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-            ))
-            ->add('placeKeywords', Type\CollectionType::class, array(
+            ])
+            ->add('placeKeywords', Type\CollectionType::class, [
                 'label' => 'Place Keywords',
                 'entry_type' => Type\TextType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => false,
-            ))
-            ->add('topicKeywords', Type\ChoiceType::class, array(
+            ])
+            ->add('topicKeywords', Type\ChoiceType::class, [
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
                 'multiple' => true,
                 'required' => true,
-            ))
-            ->add('spatialExtent', Type\HiddenType::class, array(
+            ])
+            ->add('spatialExtent', Type\HiddenType::class, [
                 'required' => true,
-            ))
-            ->add('spatialExtentDescription', Type\TextareaType::class, array(
+            ])
+            ->add('spatialExtentDescription', Type\TextareaType::class, [
                 'label' => 'Spatial Extent Description',
                 'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
-            ->add('temporalExtentNilReasonType', Type\ChoiceType::class, array(
+                'attr' => ['rows' => '5'],
+            ])
+            ->add('temporalExtentNilReasonType', Type\ChoiceType::class, [
                 'label' => 'Nilreason Type',
                 'choices' => DatasetSubmission::getNilReasonTypes(),
                 'required' => 'false',
                 'placeholder' => '[Please Select a Reason]',
-            ))
-            ->add('temporalExtentDesc', Type\ChoiceType::class, array(
+            ])
+            ->add('temporalExtentDesc', Type\ChoiceType::class, [
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
                 'required' => true,
                 'placeholder' => '[Please Select a Time Period Description]',
-            ))
-            ->add('temporalExtentBeginPosition', Type\DateType::class, array(
+            ])
+            ->add('temporalExtentBeginPosition', Type\DateType::class, [
                 'label' => 'Start Date',
-                'attr' => array('placeholder' => 'yyyy-mm-dd'),
+                'attr' => ['placeholder' => 'yyyy-mm-dd'],
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
                 'model_timezone' => 'UTC',
                 'view_timezone' => 'UTC',
-            ))
-            ->add('temporalExtentEndPosition', Type\DateType::class, array(
+            ])
+            ->add('temporalExtentEndPosition', Type\DateType::class, [
                 'label' => 'End Date',
-                'attr' => array('placeholder' => 'yyyy-mm-dd'),
+                'attr' => ['placeholder' => 'yyyy-mm-dd'],
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
                 'model_timezone' => 'UTC',
                 'view_timezone' => 'UTC',
-            ))
-            ->add('distributionFormatName', Type\TextType::class, array(
+            ])
+            ->add('distributionFormatName', Type\TextType::class, [
                 'label' => 'Distribution Format Name',
                 'required' => false,
-            ))
-            ->add('fileDecompressionTechnique', Type\TextType::class, array(
+            ])
+            ->add('fileDecompressionTechnique', Type\TextType::class, [
                 'label' => 'File Decompression Technique',
                 'required' => false,
-            ))
-            ->add('datasetLinks', Type\CollectionType::class, array(
+            ])
+            ->add('datasetLinks', Type\CollectionType::class, [
                 'label' => 'Dataset Links',
                 'entry_type' => DatasetLinkType::class,
-                'entry_options' => array(
+                'entry_options' => [
                     'data_class' => DatasetLink::class,
-                ),
+                ],
                 'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-            ))
-            ->add('datasetContacts', Type\CollectionType::class, array(
+            ])
+            ->add('datasetContacts', Type\CollectionType::class, [
                 'label' => 'Dataset Contacts',
                 'entry_type' => PersonDatasetSubmissionType::class,
-                'entry_options' => array(
+                'entry_options' => [
                     'data_class' => PersonDatasetSubmissionDatasetContact::class,
-                ),
+                ],
                 'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-            ))
-            ->add('metadataContacts', Type\CollectionType::class, array(
+            ])
+            ->add('metadataContacts', Type\CollectionType::class, [
                 'label' => 'Metadata Contacts',
                 'entry_type' => PersonDatasetSubmissionType::class,
-                'entry_options' => array(
+                'entry_options' => [
                     'data_class' => PersonDatasetSubmissionMetadataContact::class,
-                ),
+                ],
                 'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-            ))
-            ->add('distributionPoints', Type\CollectionType::class, array(
+            ])
+            ->add('distributionPoints', Type\CollectionType::class, [
                 'label' => 'Distribution Points',
                 'entry_type' => DistributionPointType::class,
-                'entry_options' => array(
+                'entry_options' => [
                     'data_class' => DistributionPoint::class,
-                ),
+                ],
                 'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-            ))
-            ->add('remotelyHostedUrl', Type\TextType::class, array(
+            ])
+            ->add('remotelyHostedUrl', Type\TextType::class, [
                 'label' => 'Remotely Hosted URL',
-                'required' => false
-            ))
-            ->add('isRemotelyHosted', Type\CheckboxType::class, array(
+                'required' => false,
+            ])
+            ->add('isRemotelyHosted', Type\CheckboxType::class, [
                 'label' => 'Is Remotely Hosted',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('remotelyHostedName', Type\TextType::class, array(
+            ])
+            ->add('remotelyHostedName', Type\TextType::class, [
                 'label' => 'Remotely Hosted Name',
                 'required' => false,
-            ))
-            ->add('remotelyHostedDescription', Type\TextType::class, array(
+            ])
+            ->add('remotelyHostedDescription', Type\TextType::class, [
                 'label' => 'Remotely Hosted Description',
                 'required' => false,
-            ))
-            ->add('remotelyHostedFunction', Type\ChoiceType::class, array(
+            ])
+            ->add('remotelyHostedFunction', Type\ChoiceType::class, [
                 'label' => 'Remotely Hosted Function',
                 'choices' => DatasetSubmission::getOnlineFunctionCodes(),
                 'placeholder' => '[Please Select]',
                 'required' => false,
-            ))
-            ->add('isDatasetFileInColdStorage', Type\CheckboxType::class, array(
+            ])
+            ->add('isDatasetFileInColdStorage', Type\CheckboxType::class, [
                 'label' => 'In Cold Storage',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('datasetFileColdStorageArchiveSize', Type\IntegerType::class, array(
+            ])
+            ->add('datasetFileColdStorageArchiveSize', Type\IntegerType::class, [
                 'label' => 'Cold Storage Archive Size (Bytes)',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('datasetFileColdStorageArchiveSha256Hash', Type\TextType::class, array(
+            ])
+            ->add('datasetFileColdStorageArchiveSha256Hash', Type\TextType::class, [
                 'label' => 'Cold Storage Archive Sha256 Hash',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('datasetFileColdStorageOriginalFilename', Type\TextType::class, array(
+            ])
+            ->add('datasetFileColdStorageOriginalFilename', Type\TextType::class, [
                 'label' => 'Cold Storage Archive Original Filename',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('coldStorageTotalUnpackedCount', Type\IntegerType::class, array(
+            ])
+            ->add('coldStorageTotalUnpackedCount', Type\IntegerType::class, [
                 'label' => 'Cold Storage Total Unpacked File Count',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('coldStorageTotalUnpackedSize', Type\IntegerType::class, array(
+            ])
+            ->add('coldStorageTotalUnpackedSize', Type\IntegerType::class, [
                 'label' => 'Cold Storage Total Unpacked Bytes',
                 'mapped' => false,
                 'required' => false,
-            ))
-            ->add('largeFileUri', Type\HiddenType::class, array(
+            ])
+            ->add('largeFileUri', Type\HiddenType::class, [
                 'label' => 'Large File Path',
                 'required' => false,
                 'mapped' => true,
-            ))
-            ->add('issueTrackingTicket', Type\TextType::class, array(
+            ])
+            ->add('issueTrackingTicket', Type\TextType::class, [
                 'label' => 'Issue Tracking Ticket',
                 'required' => false,
-            ))
-            ->add('submitButton', Type\SubmitType::class, array(
+            ])
+            ->add('submitButton', Type\SubmitType::class, [
                 'label' => 'Submit',
-                'attr'  => array('class' => 'submitButton'),
-            ))
-            ->add('endReviewBtn', Type\SubmitType::class, array(
+                'attr' => ['class' => 'submitButton'],
+            ])
+            ->add('endReviewBtn', Type\SubmitType::class, [
                 'label' => 'End Review',
-                'attr'  => array('class' => 'submitButton'),
-             ))
-            ->add('acceptDatasetBtn', Type\SubmitType::class, array(
+                'attr' => ['class' => 'submitButton'],
+             ])
+            ->add('acceptDatasetBtn', Type\SubmitType::class, [
                 'label' => 'Accept Dataset',
-                'attr'  => array('class' => 'submitButton'),
-            ))
-            ->add('requestRevisionsBtn', Type\SubmitType::class, array(
+                'attr' => ['class' => 'submitButton'],
+            ])
+            ->add('requestRevisionsBtn', Type\SubmitType::class, [
                 'label' => 'Request Revisions',
-                'attr'  => array('class' => 'submitButton'),
-            ));
+                'attr' => ['class' => 'submitButton'],
+            ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
             if ($data) {
-                if ($data->isDatasetFileInColdStorage() === true) {
+                if (true === $data->isDatasetFileInColdStorage()) {
                     $form->get('isDatasetFileInColdStorage')->setData(true);
                     $form->get('datasetFileColdStorageArchiveSize')->setData(
                         $data->getDatasetFileColdStorageArchiveSize()
@@ -369,15 +367,13 @@ class DatasetSubmissionType extends AbstractType
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
-                $entity->setTitle(preg_replace("/(\r|\n)/", " ", $title));
+                $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
             }
         );
     }
 
     /**
      * Configures the options for this type.
-     *
-     * @param OptionsResolver $resolver The resolver for the options.
      *
      * @return void
      */
@@ -386,13 +382,13 @@ class DatasetSubmissionType extends AbstractType
         $entity = $this->formEntity;
         $poc = $this->formPoc;
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => DatasetSubmission::class,
             'allow_extra_fields' => true,
             'empty_data' => function (FormInterface $form) use ($entity, $poc) {
                 return new DatasetSubmission($entity, $poc);
             },
             'csrf_protection' => false,
-        ));
+        ]);
     }
 }

@@ -21,8 +21,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Returns Fully Qualified Class Name.
-     *
-     * @return string
      */
     public static function getEntityFqcn(): string
     {
@@ -31,10 +29,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Configure the Crud actions.
-     *
-     * @param Actions $actions
-     *
-     * @return Actions
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -56,10 +50,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * CRUD configuration function.
-     *
-     * @param Crud $crud
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -72,10 +62,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Configure fields for CRUD.
-     *
-     * @param string $pageName
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {
@@ -89,8 +75,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn
-     *
      * @return void
      */
     public function createEntity(string $entityFqcn)
@@ -103,10 +87,6 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Is this digital resource in use on an Information Product.
-     *
-     * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
-     *
-     * @return boolean
      */
     private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): bool
     {

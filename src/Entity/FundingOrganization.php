@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
+use App\Exception\NotDeletableException;
+use App\Validator\Constraints as CustomAssert;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
-use App\Exception\NotDeletableException;
-use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Entity class to represent a Funding Organization.
@@ -19,7 +19,6 @@ use JMS\Serializer\Annotation as Serializer;
  *     errorPath="name",
  *     message="A Funding Organization with this name already exists"
  * )
- *
  * @UniqueEntity("shortName", message="A Funding Organization with this Short name already exists")
  */
 class FundingOrganization extends Entity
@@ -27,14 +26,12 @@ class FundingOrganization extends Entity
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'Funding Organization';
+    public const FRIENDLY_NAME = 'Funding Organization';
 
     /**
      * Name of a funding organization.
      *
-     * @var string $name
-     *
-     * @access protected
+     * @var string
      *
      * @Serializer\Groups({"organization"})
      *
@@ -43,6 +40,7 @@ class FundingOrganization extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
+     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
@@ -52,7 +50,7 @@ class FundingOrganization extends Entity
     /**
      * Short Name of a funding organization.
      *
-     * @var string $shortName
+     * @var string
      *
      * @ORM\Column(type="citext", unique=true, nullable=true)
      *
@@ -65,9 +63,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's logo.
      *
-     * @var string|resource $logo
-     *
-     * @access protected
+     * @var string|resource
      *
      * @ORM\Column(type="blob", nullable=true)
      */
@@ -76,15 +72,14 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's email address.
      *
-     * @var string $emailAddress
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
+     *
      * @Assert\Email(
      *     message="Email address is invalid"
      * )
@@ -94,9 +89,7 @@ class FundingOrganization extends Entity
     /**
      * Description of a funding organization.
      *
-     * @var string $description
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -109,9 +102,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's Website url.
      *
-     * @var string $url
-     *
-     * @access protected
+     * @var string
      *
      * @Serializer\Groups({"organization"})
      *
@@ -126,9 +117,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's telephone number.
      *
-     * @var string $phoneNumber
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -141,9 +130,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's delivery point (street address).
      *
-     * @var string $deliveryPoint
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -156,9 +143,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's city.
      *
-     * @var string $city
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -171,9 +156,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's administrative area (state).
      *
-     * @var string $administrativeArea
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -186,9 +169,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's postal code (zipcode).
      *
-     * @var string $postalCode
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -201,9 +182,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's country.
      *
-     * @var string $country
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      *
@@ -218,8 +197,6 @@ class FundingOrganization extends Entity
      *
      * @var FundingCycle
      *
-     * @access protected
-     *
      * @ORM\OneToMany(targetEntity="FundingCycle", mappedBy="fundingOrganization")
      *
      * @ORM\OrderBy({"sortOrder" = "ASC", "name" = "ASC"})
@@ -229,9 +206,7 @@ class FundingOrganization extends Entity
     /**
      * Funding Organization's PersonFundingOrganizations.
      *
-     * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
-     *
-     * @access protected
+     * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\OneToMany(targetEntity="PersonFundingOrganization", mappedBy="fundingOrganization")
      */
@@ -240,9 +215,7 @@ class FundingOrganization extends Entity
     /**
      * This FundingOrganization's parent DataRepository.
      *
-     * @var DataRepository $dataRepository
-     *
-     * @access protected
+     * @var DataRepository
      *
      * @ORM\ManyToOne(targetEntity="DataRepository", inversedBy="fundingOrganizations")
      *
@@ -255,7 +228,7 @@ class FundingOrganization extends Entity
     /**
      * This holds the position in the sort order of this Entity.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(nullable=true, type="integer")
      *
@@ -267,7 +240,6 @@ class FundingOrganization extends Entity
      * )
      */
     protected $sortOrder;
-
 
     /**
      * The default funder for this Funding Organization.
@@ -285,9 +257,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for fundingCycles.
      *
-     * @access public
-     *
-     * @return string String containing fundingCycles of funding organization.
+     * @return string string containing fundingCycles of funding organization
      */
     public function getFundingCycles()
     {
@@ -297,14 +267,12 @@ class FundingOrganization extends Entity
     /**
      * Setter for fundingCycles.
      *
-     * @param array|\Traversable $fundingCycles Set of FundingCycle objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-funding cycle found in $fundingCycles.
-     * @throws \Exception When $fundingCycles is not an array or traversable object.
+     * @param array|\Traversable $fundingCycles set of FundingCycle objects
      *
      * @return void
+     *
+     * @throws \Exception when Non-funding cycle found in $fundingCycles
+     * @throws \Exception when $fundingCycles is not an array or traversable object
      */
     public function setFundingCycles($fundingCycles)
     {
@@ -324,9 +292,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for name.
      *
-     * @param string $name Textual name of funding organization.
-     *
-     * @access public
+     * @param string $name textual name of funding organization
      *
      * @return void
      */
@@ -338,9 +304,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for name.
      *
-     * @access public
-     *
-     * @return string String containing name of funding organization.
+     * @return string string containing name of funding organization
      */
     public function getName()
     {
@@ -350,9 +314,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for logo.
      *
-     * @param string|resource $logo Containing byte string of logo.
-     *
-     * @access public
+     * @param string|resource $logo containing byte string of logo
      *
      * @return void
      */
@@ -364,47 +326,44 @@ class FundingOrganization extends Entity
     /**
      * Getter for logo.
      *
-     * @param boolean $asStream Whether to return the logo as a stream.
+     * @param bool $asStream whether to return the logo as a stream
      *
-     * @access public
-     *
-     * @return string|resource Binary string containing the logo or a stream resource pointing to it.
+     * @return string|resource binary string containing the logo or a stream resource pointing to it
      */
     public function getLogo(bool $asStream = false)
     {
         if ($asStream) {
-            if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
+            if (is_resource($this->logo) and 'stream' == get_resource_type($this->logo)) {
                 return $this->logo;
             } else {
                 return null;
             }
         }
-        if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
+        if (is_resource($this->logo) and 'stream' == get_resource_type($this->logo)) {
             rewind($this->logo);
+
             return stream_get_contents($this->logo);
         }
+
         return $this->logo;
     }
 
     /**
      * Get the mime type of logo.
      *
-     * @access public
-     *
-     * @return string The mime type of logo.
+     * @return string the mime type of logo
      */
     public function getLogoMimeType()
     {
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
+
         return $finfo->buffer($this->getLogo());
     }
 
     /**
      * Setter for emailAddress.
      *
-     * @param string|null $emailAddress Containing email address of funding organization.
-     *
-     * @access public
+     * @param string|null $emailAddress containing email address of funding organization
      *
      * @return void
      */
@@ -416,9 +375,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for emailAddress.
      *
-     * @access public
-     *
-     * @return string Containing emailADdress.
+     * @return string containing emailADdress
      */
     public function getEmailAddress()
     {
@@ -428,9 +385,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for description.
      *
-     * @param string|null $description Description of funding organization.
-     *
-     * @access public
+     * @param string|null $description description of funding organization
      *
      * @return void
      */
@@ -442,9 +397,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for description.
      *
-     * @access public
-     *
-     * @return string Description of funding organization.
+     * @return string description of funding organization
      */
     public function getDescription()
     {
@@ -454,9 +407,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for url.
      *
-     * @param string|null $url Funding organization's Website URL.
-     *
-     * @access public
+     * @param string|null $url funding organization's Website URL
      *
      * @return void
      */
@@ -468,9 +419,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for url.
      *
-     * @access public
-     *
-     * @return string URL of funding organization's Website.
+     * @return string URL of funding organization's Website
      */
     public function getUrl()
     {
@@ -480,13 +429,11 @@ class FundingOrganization extends Entity
     /**
      * Setter for sortOrder.
      *
-     * @param integer|null $position The position to set in the sort ordering.
-     *
-     * @access public
-     *
-     * @throws \InvalidArgumentException If parameter passed is neither integer or null.
+     * @param int|null $position the position to set in the sort ordering
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException if parameter passed is neither integer or null
      */
     public function setSortOrder(?int $position)
     {
@@ -496,9 +443,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for sortOrder.
      *
-     * @access public
-     *
-     * @return integer Of position to use in a sorted list.
+     * @return int of position to use in a sorted list
      */
     public function getSortOrder()
     {
@@ -508,9 +453,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string|null $phoneNumber Funding organization's phone number.
-     *
-     * @access public
+     * @param string|null $phoneNumber funding organization's phone number
      *
      * @return void
      */
@@ -522,9 +465,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for phoneNumber.
      *
-     * @access public
-     *
-     * @return string Phone number of funding organization.
+     * @return string phone number of funding organization
      */
     public function getPhoneNumber()
     {
@@ -534,9 +475,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string|null $deliveryPoint Street address of funding organization.
-     *
-     * @access public
+     * @param string|null $deliveryPoint street address of funding organization
      *
      * @return void
      */
@@ -548,9 +487,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for deliveryPoint.
      *
-     * @access public
-     *
-     * @return string Street address of funding organization.
+     * @return string street address of funding organization
      */
     public function getDeliveryPoint()
     {
@@ -560,9 +497,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for city.
      *
-     * @param string|null $city City of funding organization.
-     *
-     * @access public
+     * @param string|null $city city of funding organization
      *
      * @return void
      */
@@ -574,9 +509,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for city.
      *
-     * @access public
-     *
-     * @return string City of funding organization.
+     * @return string city of funding organization
      */
     public function getCity()
     {
@@ -586,9 +519,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string|null $administrativeArea Funding organization's administrative area (state).
-     *
-     * @access public
+     * @param string|null $administrativeArea funding organization's administrative area (state)
      *
      * @return void
      */
@@ -600,9 +531,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for administrativeArea.
      *
-     * @access public
-     *
-     * @return string Funding organization's administrative area (state).
+     * @return string funding organization's administrative area (state)
      */
     public function getAdministrativeArea()
     {
@@ -612,9 +541,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string|null $postalCode Postal (zip) code.
-     *
-     * @access public
+     * @param string|null $postalCode postal (zip) code
      *
      * @return void
      */
@@ -626,9 +553,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for postalCode.
      *
-     * @access public
-     *
-     * @return string Containing postal (zip) code.
+     * @return string containing postal (zip) code
      */
     public function getPostalCode()
     {
@@ -638,9 +563,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for country.
      *
-     * @param string|null $country Funding organization's country.
-     *
-     * @access public
+     * @param string|null $country funding organization's country
      *
      * @return void
      */
@@ -652,9 +575,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for country.
      *
-     * @access public
-     *
-     * @return string Funding organization's country.
+     * @return string funding organization's country
      */
     public function getCountry()
     {
@@ -664,14 +585,12 @@ class FundingOrganization extends Entity
     /**
      * Setter for personFundingOrganizations.
      *
-     * @param array|\Traversable $personFundingOrganizations Set of PersonFundingOrganization objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When $personFundingOrganizations is not an array or traversable object.
-     * @throws \Exception When Non-PersonFundingOrganization found within $personFundingOrganizations.
+     * @param array|\Traversable $personFundingOrganizations set of PersonFundingOrganization objects
      *
      * @return void
+     *
+     * @throws \Exception when $personFundingOrganizations is not an array or traversable object
+     * @throws \Exception when Non-PersonFundingOrganization found within $personFundingOrganizations
      */
     public function setPersonFundingOrganizations($personFundingOrganizations)
     {
@@ -693,10 +612,8 @@ class FundingOrganization extends Entity
     /**
      * Getter for personFundingOrganizations.
      *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection Collection containing personFundingOrganizations
-     *                                                 listings for this Funding Organization.
+     * @return \Doctrine\Common\Collections\Collection collection containing personFundingOrganizations
+     *                                                 listings for this Funding Organization
      */
     public function getPersonFundingOrganizations()
     {
@@ -706,16 +623,14 @@ class FundingOrganization extends Entity
     /**
      * Setter for dataRepository.
      *
-     * @param DataRepository $dataRepository An instance of \App\Entity\DataRepository.
-     *
-     * @access public
+     * @param DataRepository $dataRepository an instance of \App\Entity\DataRepository
      *
      * @return void
      */
     public function setDataRepository(DataRepository $dataRepository = null)
     {
         $this->dataRepository = $dataRepository;
-        if ($dataRepository !== null) {
+        if (null !== $dataRepository) {
             $this->dataRepository->addFundingOrganization($this);
         }
     }
@@ -723,9 +638,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for dataRepository.
      *
-     * @access public
-     *
-     * @return DataRepository instance representing the parent data repository.
+     * @return DataRepository instance representing the parent data repository
      */
     public function getDataRepository()
     {
@@ -739,23 +652,23 @@ class FundingOrganization extends Entity
      * FundingCycles or Persons. The NotDeletableException will have its reasons set to a list of
      * reasons the FundingOrganization is not deletable.
      *
-     * @throws NotDeletableException When the FundingOrganization has associated FundingCycles or Persons.
-     *
      * @return void
+     *
+     * @throws NotDeletableException when the FundingOrganization has associated FundingCycles or Persons
      */
     public function checkDeletable()
     {
-        $notDeletableReasons = array();
+        $notDeletableReasons = [];
         $fundingCycleCount = count($this->getFundingCycles());
         if ($fundingCycleCount > 0) {
-            $notDeletableReasons[] = 'there ' . ($fundingCycleCount > 1 ? 'are' : 'is') .
-                " $fundingCycleCount associated Funding Cycle" .
+            $notDeletableReasons[] = 'there '.($fundingCycleCount > 1 ? 'are' : 'is').
+                " $fundingCycleCount associated Funding Cycle".
                 ($fundingCycleCount > 1 ? 's' : '');
         }
         $personFundingOrganizationCount = count($this->getPersonFundingOrganizations());
         if ($personFundingOrganizationCount > 0) {
-            $notDeletableReasons[] = 'there ' . ($personFundingOrganizationCount > 1 ? 'are' : 'is') .
-                " $personFundingOrganizationCount associated Person" .
+            $notDeletableReasons[] = 'there '.($personFundingOrganizationCount > 1 ? 'are' : 'is').
+                " $personFundingOrganizationCount associated Person".
                 ($personFundingOrganizationCount > 1 ? 's' : '');
         }
         if (count($notDeletableReasons) > 0) {
@@ -767,8 +680,6 @@ class FundingOrganization extends Entity
 
     /**
      * Getter for short name.
-     *
-     * @return string|null
      */
     public function getShortName(): ?string
     {
@@ -778,9 +689,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for short name.
      *
-     * @param string|null $shortName Short name for the funding organization.
-     *
-     * @return void
+     * @param string|null $shortName short name for the funding organization
      */
     public function setShortName(?string $shortName): void
     {
@@ -789,8 +698,6 @@ class FundingOrganization extends Entity
 
     /**
      * Get the default funder for this Funding Organization.
-     *
-     * @return Funder|null
      */
     public function getDefaultFunder(): ?Funder
     {
@@ -799,8 +706,6 @@ class FundingOrganization extends Entity
 
     /**
      * Sets the default funder for this Funding Organization.
-     *
-     * @param Funder|null $defaultFunder
      *
      * @return void
      */

@@ -20,10 +20,8 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
 
     /**
      * A Doctrine ORM EntityManager instance.
-     *
-     * @var EntityManagerInterface $entityManager
      */
-    protected $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * Class constructor for dependency injection.
@@ -66,21 +64,20 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
             // Set each dataset's funder, but only if it's affiliated FO doesn't have a null Funder.
             if ($defaultFunder instanceof Funder) {
                 // Clear existing funders if overwrite flag is set.
-                if ($overwrite === true) {
+                if (true === $overwrite) {
                     foreach ($existingFunders as $funder) {
                         $dataset->removeFunder($funder);
                     }
                 }
                 // Don't add a duplicate Funder.
                 if ($existingFunders->contains($defaultFunder)) {
-                    $io->warning("Not setting Funder on " . $dataset->getUdi() . " because it's already set.");
+                    $io->warning('Not setting Funder on '.$dataset->getUdi()." because it's already set.");
                 } else {
                     $dataset->addFunder($defaultFunder);
                 }
             } else {
-                $io->warning("Not setting Funder on " . $dataset->getUdi() . " because FO " . $fundingOrg->getName() . " has no default funder set.");
+                $io->warning('Not setting Funder on '.$dataset->getUdi().' because FO '.$fundingOrg->getName().' has no default funder set.');
             }
-
         }
 
         $this->entityManager->flush();

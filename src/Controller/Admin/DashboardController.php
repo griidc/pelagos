@@ -22,6 +22,7 @@ class DashboardController extends AbstractDashboardController
      * Main dashboard page.
      *
      * @Route("/admin", name="admin")
+     *
      * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
     public function index(): Response
