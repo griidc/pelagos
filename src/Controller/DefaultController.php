@@ -104,7 +104,7 @@ class DefaultController extends AbstractController
                 'projectDirectors' => $projectDirectorList,
                 'stats' => [
                     'datasetCount' => $stats['totalDatasets'],
-                    'datasetsTotalFileSize' => preg_replace('/[^0-9]/', "", $stats['totalSize']),
+                    'datasetsTotalFileSize' => preg_replace('/[^0-9], ./', "", $stats['totalSize']),
                     'researchGroupCount' => $stats['researchGroupCount'],
                     'peopleCount' => $stats['peopleCount'],
                 ],
