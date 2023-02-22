@@ -25,7 +25,7 @@
                     </p>
                 </div>
             </div>
-            <div class="bg-image bg-nav-chart" style="background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}');">
+            <div class="bg-image bg-nav-chart" style="background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}'); background-size: cover;">
                 <h2 class="text-center text-white font-italic p-3"> Ensuring a Data Legacy </h2>
                 <div class="row mt-3">
                     <div class="col-md-3"></div>
@@ -63,6 +63,32 @@
                         </div>
                     </div>
                     <div class="col-md-3"></div>
+                </div>
+            </div>
+            <div class="bg-image bg-numbers" style="background-image: url('{{ asset("build/images/bg-numbers.jpg") }}'); background-size: cover;">
+                <div class="row py-4">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-datasets.png") }}" alt="Dataset Icon">
+                        <div class="font-weight-bold"> {{ stats.datasetCount }}</div>
+                        <div class="text-uppercase font-weight-bold">Datasets</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-filesize.png") }}" alt="Filesize Icon">
+                        <div class="font-weight-bold"> {{ stats.datasetsTotalFileSize }}</div>
+                        <div class="text-uppercase font-weight-bold">TB OF DATA</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-projects.png") }}" alt="Research Group Icon">
+                        <div class="font-weight-bold"> {{ stats.researchGroupCount }}</div>
+                        <div class="text-uppercase font-weight-bold">RESEARCH GROUPS</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-researchers.png") }}" alt="People Icon">
+                        <div class="font-weight-bold">{{ stats.peopleCount }}</div>
+                        <div class="text-uppercase font-weight-bold">PEOPLE</div>
+                    </div>
+                    <div class="col-md-2"></div>
                 </div>
             </div>
 
