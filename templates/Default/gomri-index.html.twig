@@ -9,23 +9,7 @@
 {% block body %}
     <div class="bootstrap">
         <div class="container">
-
-            <div class="row align-items-center my-3">
-                <div class="col-lg-6">
-                    <img id="home-image" class="rounded mb-4 img-fluid" src="{{ asset("build/images/hri-home.jpg") }}" alt="GOMRI">
-                </div>
-                <div class="col-lg-6">
-                    <h1 class="font-weight-light">The Gulf of Mexico Research Initiative</h1>
-                    <p>
-                        The Gulf of Mexico Research Initiative (GoMRI) is an independent research program designed to study the impact of the Deepwater Horizon oil spill on the environment and public health in the Gulf of Mexico.
-                        The goal of this 10-year program was to improve society’s ability to understand and mitigate the impacts of hydrocarbon pollution and stressors on the marine environment.
-                        The scientific direction of GoMRI and funding decisions were made by an independent Research Board comprising of 20 marine science, education, and public health experts.
-                        The initiative was administered by the Gulf of Mexico Alliance (GoMA).
-                        All data obtained through GoMRI are shared openly through GRIIDC and results are published in peer-reviewed scientific journals with no requirement for BP approval.
-                    </p>
-                </div>
-            </div>
-            <div class="bg-image bg-nav-chart" style="background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}'); background-size: cover;">
+             <div class="bg-image bg-nav-chart" style="background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}'); background-size: cover;">
                 <h2 class="text-center text-white font-italic p-3"> Ensuring a Data Legacy </h2>
                 <div class="row mt-3">
                     <div class="col-md-3"></div>
@@ -91,6 +75,25 @@
                     <div class="col-md-2"></div>
                 </div>
             </div>
+            <div class="p-2" style="background-color: #ebebeb;">
+                <div class="row align-items-center" >
+                    <div class="col-md-6">
+                        <img id="home-image" class="rounded img-fluid" src="{{ asset("build/images/hri-home.jpg") }}" alt="GOMRI">
+                    </div>
+                    <div class="col-md-6 px-2">
+                        <h1 class="font-weight-light">The Gulf of Mexico Research Initiative</h1>
+                        <p>
+                            The Gulf of Mexico Research Initiative (GoMRI) is an independent research program designed to study the impact of the Deepwater Horizon oil spill on the environment and public health in the Gulf of Mexico.
+                            The goal of this 10-year program was to improve society’s ability to understand and mitigate the impacts of hydrocarbon pollution and stressors on the marine environment.
+                            The scientific direction of GoMRI and funding decisions were made by an independent Research Board comprising of 20 marine science, education, and public health experts.
+                            The initiative was administered by the Gulf of Mexico Alliance (GoMA).
+                            All data obtained through GoMRI are shared openly through GRIIDC and results are published in peer-reviewed scientific journals with no requirement for BP approval.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
 
         </div>
         <footer class="py-5 bg-dark">
