@@ -4,25 +4,62 @@
     {{ parent() }}
     {{ encore_entry_link_tags('grp-home') }}
 
+    <style>
+        .bg-nav-chart {
+            background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}'); 
+            background-size: cover;
+         }
+
+        .bg-numbers {
+            background-image: url('{{ asset("build/images/bg-numbers.jpg") }}'); 
+            background-size: cover;
+        }
+
+        .bg-search {
+            background-image: url('{{ asset("build/images/icon-find.png") }}'); 
+            background-size: auto;
+            background-repeat: no-repeat;
+            width: 300px;
+            padding: 20px;
+        }
+
+        .bg-monitoring {
+            background-image: url('{{ asset("build/images/icon-monitoring.png") }}'); 
+            background-size: auto;
+            background-repeat: no-repeat;
+            width: 300px;
+            padding: 20px;
+        }
+
+        .bg-address {
+            background-image: url('{{ asset("build/images/icon-location.png") }}'); 
+            background-size: auto;
+            background-repeat: no-repeat;
+        }
+    </style>
+
 {% endblock %}
 
 {% block body %}
     <div class="bootstrap">
         <div class="container">
-             <div class="bg-image bg-nav-chart" style="background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}'); background-size: cover;">
+             <div class="bg-image bg-nav-chart">
                 <h2 class="text-center text-white font-italic p-3"> Ensuring a Data Legacy </h2>
                 <div class="row mt-3">
                     <div class="col-md-3"></div>
                     <div class="col-md-3 mb-5">
                         <div class="card card-product bg-secondary">
                             <div class="card-body">
-                                <div class="p-2">
+                                {# <div class="p-2">
                                     <img class="card-img-top p-2 w-50 mx-auto d-block bg-secondary" src="{{ asset("build/images/icon-find.png") }}" alt="Search data icon">
-                                </div>
+                                </div> #}
                                 <div class="p-2">
-                                    <h4 class="card-title text-center">
-                                        <a href="{{ path('pelagos_app_ui_searchpage_default') }}" class="stretched-link text-white" target="_blank">
-                                            Search Data
+                                    <h4 class="text-center bg-search">
+                                        <a href="{{ path('pelagos_app_ui_searchpage_default') }}" 
+                                           class="stretched-link text-white text-uppercase" 
+                                           target="_blank"
+                                        >
+                                            Search<br>Data
                                         </a>
                                     </h4>
                                 </div>
@@ -34,12 +71,13 @@
                         <div class="card card-product bg-secondary">
                             <div class="card-body">
                                 <div class="p-2">
-                                    <img class="card-img-top p-2 w-50 mx-auto d-block" src="{{ asset("build/images/icon-monitoring.png") }}" alt="Monitor data icon">
-                                </div>
-                                <div class="p-2">
-                                    <h4 class="card-title text-center">
-                                        <a href="{{ path('pelagos_app_ui_datasetmonitoring_default') }}" target="_blank" class="stretched-link text-white">
-                                            Monitor data
+                                    {# <img class="card-img-top p-2 w-50 mx-auto d-block" src="{{ asset("build/images/icon-monitoring.png") }}" alt="Monitor data icon"> #}
+                                    <h4 class="card-title text-center bg-monitoring">
+                                        <a href="{{ path('pelagos_app_ui_datasetmonitoring_default') }}" 
+                                           target="_blank" 
+                                           class="stretched-link text-white text-uppercase"
+                                        >
+                                            Monitor<br>data
                                         </a>
                                     </h4>
                                 </div>
@@ -49,7 +87,7 @@
                     <div class="col-md-3"></div>
                 </div>
             </div>
-            <div class="bg-image bg-numbers" style="background-image: url('{{ asset("build/images/bg-numbers.jpg") }}'); background-size: cover;">
+            <div class="bg-image bg-numbers">
                 <div class="row py-4">
                     <div class="col-md-2"></div>
                     <div class="col-md-2 text-center">
@@ -77,10 +115,10 @@
             </div>
             <div class="p-2" style="background-color: #ebebeb;">
                 <div class="row align-items-center" >
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <img id="home-image" class="rounded img-fluid" src="{{ asset("build/images/hri-home.jpg") }}" alt="GOMRI">
                     </div>
-                    <div class="col-md-6 px-2">
+                    <div class="col-md-7 px-3">
                         <h1 class="font-weight-light">The Gulf of Mexico Research Initiative</h1>
                         <p>
                             The Gulf of Mexico Research Initiative (GoMRI) is an independent research program designed to study the impact of the Deepwater Horizon oil spill on the environment and public health in the Gulf of Mexico.
@@ -93,9 +131,27 @@
                 </div>
             </div>
 
-
-
+            <div class="p-2 text-white" style="background-color: black;">
+                <div class="row align-items-center">
+                    <div class="logo col-sm-2"><img src="{{ asset("build/images/griidc-logo-white.png") }}" alt="GRIIDC"></div>
+                    <div class="address col-sm-1 text-center"><img src="{{ asset("build/images/icon-location.png") }}"></div>
+                    <div class="address col-sm-2 text-center">6300 Ocean Drive<br>Corpus Christi, TX 78412</div>
+                    <div class="telephone col-sm-1"><img src="{{ asset("build/images/icon-phone.png") }}"></div>
+                    <div class="telephone col-sm-2"><a href="tel:3618253604">(361) 825-3719</a></div>
+                    <div class="mail col-sm-1"><img src="{{ asset("build/images/icon-mail.png") }}"></div>
+                    <div class="mail col-sm-1"><a href="mailto:griidc@gomri.org">griidc@gomri.org</a></div>
+                    <div class="social col-sm-1"><img src="{{ asset("build/images/icon-twitter.png") }}"></div>
+                    <div class="social col-sm-1"><a href="http://www.twitter.com/griidc">@griidc</a></div>
+                </div>
+            </div>
         </div>
+
+        
+
+
+        
+
+
         <footer class="py-5 bg-dark">
             <div class="container">
                 <p class="m-0 text-center text-white">Copyright &copy; HRI - GRIIDC 2022</p>
