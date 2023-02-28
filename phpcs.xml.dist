@@ -4,13 +4,15 @@
          xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
 
     <arg name="basepath" value="."/>
-    <arg name="standard" value="coding-standards/GRIIDC"/>
     <arg name="cache" value=".phpcs-cache"/>
     <arg name="colors"/>
     <arg name="extensions" value="php"/>
     <arg value="nps"/>
 
-    <rule ref="PSR12"/>
+    <rule ref="PSR12">
+        <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceBefore"/>
+        <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceAfter"/>
+    </rule>
 
     <file>src/</file>
 
