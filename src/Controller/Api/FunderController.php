@@ -15,18 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class FunderController extends AbstractController
 {
     /**
-     * READ method for the Funder API controller class.
-     *
-     * @param  Request          $request          A request object.
-     * @param  FunderRepository $funderRepository The FunderRepository class.
-     *
-     * @return Response A http response object that sends JSON to browser.
+     * Get funders by name API call.
      */
     #[Route('/api/funders', name: 'app_api_funders_by_name')]
     public function getFunderByName(Request $request, FunderRepository $funderRepository): Response
     {
         $userQueryString = $request->query->get('queryString');
         $funders = $funderRepository->findFunderByPartialName($userQueryString);
+
         return new JsonResponse($funders);
     }
 }

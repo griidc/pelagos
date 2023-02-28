@@ -24,8 +24,6 @@ class FunderCrudController extends AbstractCrudController
 
     /**
      * Returns Entity Class Name.
-     *
-     * @return string
      */
     public static function getEntityFqcn(): string
     {
@@ -58,9 +56,7 @@ class FunderCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn Entity class name.
-     *
-     * @return Entity
+     * @param string $entityFqcn entity class name
      */
     public function createEntity(string $entityFqcn): Entity
     {
@@ -72,7 +68,7 @@ class FunderCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        /** @var Funder $entityInstance */
+        /* @var Funder $entityInstance */
         $entityInstance->setSource(Funder::SOURCE_DRPM);
         $entityInstance->setModifier($this->getUser()->getPerson());
         $entityManager->persist($entityInstance);
