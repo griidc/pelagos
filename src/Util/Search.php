@@ -395,7 +395,7 @@ class Search
         foreach ($people as $projectDirector) {
             $projectDirectorInfo[$projectDirector->getId()] = [
                 'id' => $projectDirector->getId(),
-                'name' => $projectDirector->getLastName().', '.$projectDirector->getFirstName(),
+                'name' => $projectDirector->getLastName() . ', ' . $projectDirector->getFirstName(),
                 'count' => $aggregations[$projectDirector->getId()],
             ];
         }
@@ -510,10 +510,10 @@ class Search
     {
         if (empty($specificField)) {
             $specificField = [
-                self::ELASTIC_INDEX_MAPPING_TITLE.self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
                 self::ELASTIC_INDEX_MAPPING_ABSTRACT,
-                self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS.self::BOOST,
-                self::ELASTIC_INDEX_MAPPING_AUTHORS.self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST,
             ];
         } else {
             $specificField = [$specificField];

@@ -195,14 +195,14 @@ class DatasetSubmission extends Entity
     public const TEMPORAL_EXTENT_DESCRIPTIONS = [
         'ground condition' => [
             'name' => 'Ground Condition',
-            'description' => 'Data represent the actual condition of things on the ground during '.
-                             'the time period specified and may also be used to characterize data '.
-                             'generated from a sample collection in the field when samples are subsequently '.
+            'description' => 'Data represent the actual condition of things on the ground during ' .
+                             'the time period specified and may also be used to characterize data ' .
+                             'generated from a sample collection in the field when samples are subsequently ' .
                              'analyzed in a laboratory.',
         ],
         'modeled period' => [
             'name' => 'Modeled Period',
-            'description' => 'Data represents simulated conditions during the time period, '.
+            'description' => 'Data represents simulated conditions during the time period, ' .
                              'and may be used to characterize data generated using a computational model.',
         ],
         'ground condition and modeled period' => [
@@ -1138,7 +1138,7 @@ class DatasetSubmission extends Entity
                 $this->setFileset($newFileset);
             }
         } else {
-            throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A '.get_class($entity).' was passed.');
+            throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
     }
 
@@ -1156,20 +1156,20 @@ class DatasetSubmission extends Entity
         if (null !== $this->spatialExtent) {
             if (null === $this->temporalExtentNilReasonType) {
                 if (null === $this->temporalExtentDesc) {
-                    $context->buildViolation('Since a spatial extent is present, this submission must '.
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
                         'include a time period description.')
                         ->atPath('temporalExtentDesc')
                         ->addViolation();
                 }
                 if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
-                    $context->buildViolation('Since a spatial extent is present, this submission must '.
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
                         'include a start date.')
                         ->atPath('temporalExtentBeginPosition')
                         ->addViolation();
                 }
 
                 if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
-                    $context->buildViolation('Since a spatial extent is present, this submission must '.
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
                         'include a end date.')
                         ->atPath('temporalExtentEndPosition')
                         ->addViolation();
@@ -1539,7 +1539,7 @@ class DatasetSubmission extends Entity
             return null;
         }
 
-        return $contactPerson->getLastName().', '.$contactPerson->getFirstName();
+        return $contactPerson->getLastName() . ', ' . $contactPerson->getFirstName();
     }
 
     /**
@@ -1953,7 +1953,7 @@ class DatasetSubmission extends Entity
             return null;
         }
 
-        return $this->dataset->getUdi().'.'.sprintf('%03d', $this->sequence);
+        return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->sequence);
     }
 
     /**

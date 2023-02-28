@@ -88,8 +88,8 @@ class DatasetReviewController extends AbstractController
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login').'?destination='
-                .$this->generateUrl('pelagos_app_ui_datasetreview_default')
+                $this->generateUrl('security_login') . '?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetreview_default')
             );
         }
 
@@ -229,15 +229,15 @@ class DatasetReviewController extends AbstractController
         $flashBag = $request->getSession()->getFlashBag();
 
         $listOfErrors = [
-            'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) '.
-                $udi.' could not be found. Please email
+            'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
+                $udi . ' could not be found. Please email
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
                         if you have any questions.',
-            'notSubmitted' => 'The dataset '.$udi.' cannot be loaded in review mode at this time because it has not been submitted.',
+            'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted.',
             'processing' => "The dataset $udi cannot be loaded in review mode at this time because it is still being processed.",
-            'hasDraft' => 'The dataset '.$udi.' currently has a draft submission and cannot be loaded in review mode.',
-            'requestRevision' => 'The status of dataset '.$udi.' is Request Revisions and cannot be loaded in review mode.',
-            'locked' => 'The dataset '.$udi.' is in review mode. Username: '.$reviewerUserName,
+            'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
+            'requestRevision' => 'The status of dataset ' . $udi . ' is Request Revisions and cannot be loaded in review mode.',
+            'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
         ];
 
         $listOfNotices = [
@@ -425,9 +425,9 @@ class DatasetReviewController extends AbstractController
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect(
-                $this->generateUrl('security_login').'?destination='
-                .$this->generateUrl('pelagos_app_ui_datasetreview_default').'?udiReview='
-                .$datasetSubmission->getDataset()->getUdi()
+                $this->generateUrl('security_login') . '?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetreview_default') . '?udiReview='
+                . $datasetSubmission->getDataset()->getUdi()
             );
         }
         // set to default event

@@ -34,7 +34,7 @@ trait EasyAdminCrudTrait
         try {
             $entityManager->remove($entityInstance);
         } catch (\Exception $e) {
-            throw new AccessDeniedHttpException('Unable to delete. Reason:'.$e->getMessage());
+            throw new AccessDeniedHttpException('Unable to delete. Reason:' . $e->getMessage());
         }
 
         $entityManager->flush();
