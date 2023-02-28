@@ -41,6 +41,7 @@ class MultiSearchController extends AbstractController
         $rangeStartDate = (string) $request->query->get('rangeStartDate');
         $rangeEndDate = (string) $request->query->get('rangeEndDate');
         $sortOrder = (string) $request->query->get('sortOrder');
+        $field = (string) $request->query->get('field');
 
         $searchOptions = new SearchOptions($queryString);
         $searchOptions->setCurrentPage($page);
@@ -54,6 +55,7 @@ class MultiSearchController extends AbstractController
         $searchOptions->setRangeStartDate($rangeStartDate);
         $searchOptions->setRangeEndDate($rangeEndDate);
         $searchOptions->setSortOrder($sortOrder);
+        $searchOptions->setField($field);
 
         $searchResults = $multiSearch->search($searchOptions);
         $groups = array(

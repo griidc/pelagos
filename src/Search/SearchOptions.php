@@ -120,6 +120,13 @@ class SearchOptions
     private $rangeEndDate;
 
     /**
+     * Specific field to be searched upon.
+     *
+     * @var string
+     */
+    private $field;
+
+    /**
      * Date type collection date.
      */
     const DATE_TYPE_COLLECTION = 'collectionDate';
@@ -573,5 +580,21 @@ class SearchOptions
     public function setSortOrder(string $sortOrder): void
     {
         $this->sortOrder = $sortOrder;
+    }
+
+    /**
+     * Get specific field to be searched upon.
+     */ 
+    public function getField(): ?string
+    {
+        return $this->field;
+    }
+
+    /**
+     * Set specific field to be searched upon.
+    */ 
+    public function setField(string $field): void
+    {
+        $this->field = $field;
     }
 }
