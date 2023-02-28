@@ -71,12 +71,12 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
                 }
                 // Don't add a duplicate Funder.
                 if ($existingFunders->contains($defaultFunder)) {
-                    $io->warning('Not setting Funder on '.$dataset->getUdi()." because it's already set.");
+                    $io->warning('Not setting Funder on ' . $dataset->getUdi() . " because it's already set.");
                 } else {
                     $dataset->addFunder($defaultFunder);
                 }
             } else {
-                $io->warning('Not setting Funder on '.$dataset->getUdi().' because FO '.$fundingOrg->getName().' has no default funder set.');
+                $io->warning('Not setting Funder on ' . $dataset->getUdi() . ' because FO ' . $fundingOrg->getName() . ' has no default funder set.');
             }
         }
 

@@ -783,7 +783,7 @@ class DIF extends Entity
     public function setDataSize(?string $dataSize)
     {
         if (!in_array($dataSize, self::DATA_SIZES)) {
-            throw new \InvalidArgumentException('Data size must be one of: '.implode(', ', self::DATA_SIZES));
+            throw new \InvalidArgumentException('Data size must be one of: ' . implode(', ', self::DATA_SIZES));
         }
         $this->dataSize = $dataSize;
     }
@@ -1208,7 +1208,7 @@ class DIF extends Entity
     public function setEthicalIssues(?string $ethicalIssues)
     {
         if (!in_array($ethicalIssues, self::ETHICAL_ISSUES)) {
-            throw new \InvalidArgumentException('Ethical issues must be one of: '.implode(', ', self::ETHICAL_ISSUES));
+            throw new \InvalidArgumentException('Ethical issues must be one of: ' . implode(', ', self::ETHICAL_ISSUES));
         }
 
         $this->ethicalIssues = $ethicalIssues;

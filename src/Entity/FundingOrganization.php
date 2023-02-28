@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Entity class to represent a Funding Organization.
  *
  * @ORM\Entity
- *
  * @UniqueEntity(
  *     fields={"name"},
  *     errorPath="name",
@@ -34,13 +33,10 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @Serializer\Groups({"organization"})
-     *
      * @ORM\Column(type="citext", unique=true)
-     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
@@ -53,7 +49,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="citext", unique=true, nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
@@ -75,11 +70,9 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
-     *
      * @Assert\Email(
      *     message="Email address is invalid"
      * )
@@ -92,7 +85,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
@@ -105,9 +97,7 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @Serializer\Groups({"organization"})
-     *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
@@ -120,7 +110,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
@@ -133,7 +122,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
@@ -146,7 +134,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
@@ -159,7 +146,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
@@ -172,7 +158,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
@@ -185,7 +170,6 @@ class FundingOrganization extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
@@ -198,7 +182,6 @@ class FundingOrganization extends Entity
      * @var FundingCycle
      *
      * @ORM\OneToMany(targetEntity="FundingCycle", mappedBy="fundingOrganization")
-     *
      * @ORM\OrderBy({"sortOrder" = "ASC", "name" = "ASC"})
      */
     protected $fundingCycles;
@@ -218,7 +201,6 @@ class FundingOrganization extends Entity
      * @var DataRepository
      *
      * @ORM\ManyToOne(targetEntity="DataRepository", inversedBy="fundingOrganizations")
-     *
      * @Assert\NotBlank(
      *     message="Data Repository is required"
      * )
@@ -231,7 +213,6 @@ class FundingOrganization extends Entity
      * @var int
      *
      * @ORM\Column(nullable=true, type="integer")
-     *
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
@@ -247,7 +228,6 @@ class FundingOrganization extends Entity
      * @var ?Funder
      *
      * @ORM\ManyToOne(targetEntity="Funder")
-     *
      * @Assert\NotBlank(
      *     message="Default Funder is required"
      * )
@@ -661,14 +641,14 @@ class FundingOrganization extends Entity
         $notDeletableReasons = [];
         $fundingCycleCount = count($this->getFundingCycles());
         if ($fundingCycleCount > 0) {
-            $notDeletableReasons[] = 'there '.($fundingCycleCount > 1 ? 'are' : 'is').
-                " $fundingCycleCount associated Funding Cycle".
+            $notDeletableReasons[] = 'there ' . ($fundingCycleCount > 1 ? 'are' : 'is') .
+                " $fundingCycleCount associated Funding Cycle" .
                 ($fundingCycleCount > 1 ? 's' : '');
         }
         $personFundingOrganizationCount = count($this->getPersonFundingOrganizations());
         if ($personFundingOrganizationCount > 0) {
-            $notDeletableReasons[] = 'there '.($personFundingOrganizationCount > 1 ? 'are' : 'is').
-                " $personFundingOrganizationCount associated Person".
+            $notDeletableReasons[] = 'there ' . ($personFundingOrganizationCount > 1 ? 'are' : 'is') .
+                " $personFundingOrganizationCount associated Person" .
                 ($personFundingOrganizationCount > 1 ? 's' : '');
         }
         if (count($notDeletableReasons) > 0) {
