@@ -9,10 +9,7 @@
     <arg name="extensions" value="php"/>
     <arg value="nps"/>
 
-    <rule ref="PSR12">
-        <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceBefore"/>
-        <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceAfter"/>
-    </rule>
+    <rule ref="PSR12"/>
 
     <file>src/</file>
 
