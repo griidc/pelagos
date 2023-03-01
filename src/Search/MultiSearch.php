@@ -93,9 +93,9 @@ class MultiSearch
     public function search(SearchOptions $searchOptions): SearchResults
     {
         $queryString = $searchOptions->getQueryString();
-        $specifiedField = $searchOptions->getField() ?? '';
+        $specifiedField = empty($searchOptions->getField()) ? [] : [$searchOptions->getField()];
 
-        $simpleQuery = new Query\SimpleQueryString($queryString, [$specifiedField]);
+        $simpleQuery = new Query\SimpleQueryString($queryString, $specifiedField);
         $simpleQuery->setParam('flags', 'PHRASE|PREFIX|WHITESPACE');
         $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
 
@@ -170,8 +170,6 @@ class MultiSearch
         if ($searchOptions->getSortOrder() !== 'default') {
             $query->addSort(array('publishedDate' => array('order' => $searchOptions->getSortOrder())));
         }
-
-        // Add field 
 
         $this->addAggregators($query, $searchOptions);
         $resultsPaginator = $this->finder->findPaginated($query);
