@@ -455,7 +455,7 @@ abstract class Entity
     public function filterArrayBlanks(array $arrayWithBlanks)
     {
         // strlen callback
-        return array_values(array_filter($arrayWithBlanks, function($var) {
+        return array_values(array_filter($arrayWithBlanks, function ($var) {
             $var = $var ?? '';
             return strlen($var);
         }));
