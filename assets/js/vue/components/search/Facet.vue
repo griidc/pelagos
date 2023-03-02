@@ -70,6 +70,19 @@
                 </span>
                 <span
                   class="form-check-label"
+                  v-else-if="facetName.queryParam === 'tags'"
+                  v-tooltip="{
+                    content: tagsTooltip(facet.name),
+                    placement: 'top',
+                  }"
+                >
+                  <span class="float-right badge badge-light round">{{
+                    facet.count
+                  }}</span>
+                  {{ facet.name }}
+                </span>
+                <span
+                  class="form-check-label"
                   v-tooltip="{
                     content: facet.name,
                     placement: 'top',
@@ -151,6 +164,26 @@ export default {
           break;
       }
       return datasetStatusTooltip;
+    },
+    tagsTooltip(tagName) {
+      let tagTooltip = '';
+      switch (true) {
+        case tagName === 'ERDDAP':
+          tagTooltip = 'This data is also available via the GRIIDC ERDDAP Server';
+          break;
+        case tagName === 'NCEI':
+          tagTooltip = 'This data has also been Archived via NCEI';
+          break;
+        case tagName === 'Cold Storage':
+          tagTooltip = 'This data has been put in Cold Storage and must be requested via Email';
+          break;
+        case tagName === 'Remotely Hosted':
+          tagTooltip = 'This data is hosted on a external non-GRIIDC host';
+          break;
+        default:
+          break;
+      }
+      return tagTooltip;
     },
     toggleCollapses(id) {
       this.$root.$emit('bv::toggle::collapse', id);
