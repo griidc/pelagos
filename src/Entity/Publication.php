@@ -9,9 +9,8 @@ use Pelagos\HTTPStatus;
 
 /**
  * This class generates a Publication object,* which holds the DOI an a Citation object.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class Publication extends Entity
 {
     /**
@@ -35,18 +34,16 @@ class Publication extends Entity
      * @var $citationText string
      *
      * @Serializer\Groups({"citation"})
-     *
-     * @ORM\Column(type="citext")
      */
+    #[ORM\Column(type: 'citext')]
     private $citationText;
 
     /**
      * DOI.
      *
      * @var string
-     *
-     * @ORM\Column(type="citext")
      */
+    #[ORM\Column(type: 'citext')]
     protected $doi;
 
     /**
@@ -54,10 +51,10 @@ class Publication extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="publication")
      *
      * @Serializer\MaxDepth(1)
      */
+    #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'publication')]
     protected $datasetPublications;
 
     /**
