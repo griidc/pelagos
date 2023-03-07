@@ -11,9 +11,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Information Product Entity class.
- *
- * @ORM\Entity(repositoryClass=InformationProductRepository::class)
  */
+#[ORM\Entity(repositoryClass: InformationProductRepository::class)]
 class InformationProduct extends Entity
 {
     /**
@@ -26,12 +25,12 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="A title is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     private $title;
 
     /**
@@ -39,12 +38,12 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="A creator is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     private $creators;
 
     /**
@@ -52,40 +51,37 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="A publisher is required."
      * )
      *
      */
+    #[ORM\Column(type: 'text')]
     private $publisher;
 
     /**
      * An external DOI for the Information Product.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $externalDoi;
 
     /**
      * Is the Information Product published.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $published = false;
 
     /**
      * Is the Information Product remotely hosted.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $remoteResource = false;
 
     /**
@@ -93,20 +89,19 @@ class InformationProduct extends Entity
      *
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity=ResearchGroup::class)
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\SerializedName("researchGroup")
      */
+    #[ORM\ManyToMany(targetEntity: ResearchGroup::class)]
     private $researchGroups;
 
     /**
      * The remote uri for this Information Product.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $remoteUri;
 
     /**
@@ -115,9 +110,8 @@ class InformationProduct extends Entity
      * @var File
      *
      * @Serializer\MaxDepth(1)
-     *
-     * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
      */
+    #[ORM\OneToOne(targetEntity: File::class, cascade: ['persist', 'remove'])]
     private $file;
 
     /**
@@ -126,9 +120,8 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
-     *
-     * @ORM\ManyToMany(targetEntity=ProductTypeDescriptor::class)
      */
+    #[ORM\ManyToMany(targetEntity: ProductTypeDescriptor::class)]
     private $productTypeDescriptors;
 
     /**
@@ -137,9 +130,8 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
-     *
-     * @ORM\ManyToMany(targetEntity=DigitalResourceTypeDescriptor::class)
      */
+    #[ORM\ManyToMany(targetEntity: DigitalResourceTypeDescriptor::class)]
     private $digitalResourceTypeDescriptors;
 
     /**

@@ -10,7 +10,6 @@ use App\Validator\Constraints as CustomAssert;
 /**
  * Entity class to represent a Person to Funding Organization Association.
  *
- * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"person", "fundingOrganization"},
@@ -18,6 +17,7 @@ use App\Validator\Constraints as CustomAssert;
  *     message="A Person can have only one association with a Funding Organization"
  * )
  */
+#[ORM\Entity]
 class PersonFundingOrganization extends Entity implements PersonAssociationInterface
 {
     /**
@@ -30,12 +30,12 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @var Person
      *
-     * @ORM\ManyToOne(targetEntity="Person", inversedBy="personFundingOrganizations")
      *
      * @Assert\NotBlank(
      *     message="Person is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'personFundingOrganizations')]
     protected $person;
 
     /**
@@ -43,12 +43,12 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @var FundingOrganization
      *
-     * @ORM\ManyToOne(targetEntity="FundingOrganization", inversedBy="personFundingOrganizations")
      *
      * @Assert\NotBlank(
      *     message="Funding Organization is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'personFundingOrganizations')]
     protected $fundingOrganization;
 
     /**
@@ -56,12 +56,12 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @var FundingOrganizationRole
      *
-     * @ORM\ManyToOne(targetEntity="FundingOrganizationRole")
      *
      * @Assert\NotBlank(
      *     message="Role is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'FundingOrganizationRole')]
     protected $role;
 
     /**
@@ -69,7 +69,6 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Label is required"
@@ -78,6 +77,7 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *     message="Label cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $label;
 
     /**

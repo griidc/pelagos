@@ -7,9 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entity class to represent a Data Repository Role.
- *
- * @ORM\Entity(repositoryClass="App\Repository\LogActionItemRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\LogActionItemRepository')]
 class LogActionItem extends Entity
 {
     /**
@@ -24,12 +23,12 @@ class LogActionItem extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *      message="Action Name is required"
      * )
      */
+    #[ORM\Column(type: 'citext')]
     protected $actionName;
 
     /**
@@ -38,9 +37,8 @@ class LogActionItem extends Entity
      * @var string
      *
      * @access protected
-     *
-     * @ORM\Column(type="text", nullable= true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $subjectEntityName;
 
     /**
@@ -49,9 +47,8 @@ class LogActionItem extends Entity
      * @var integer
      *
      * @access protected
-     *
-     * @ORM\Column(type="integer", nullable = true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $subjectEntityId;
 
     /**
@@ -60,9 +57,8 @@ class LogActionItem extends Entity
      * @var array
      *
      * @access protected
-     *
-     * @ORM\Column(type="json", nullable = true)
      */
+    #[ORM\Column(type: 'json_array', nullable: true)]
     protected $payLoad = array();
 
     /**

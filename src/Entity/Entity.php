@@ -11,8 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
  *
- * @ORM\MappedSuperclass
- * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(
  *     fields = {"id"},
  *     errorPath = "id",
@@ -20,6 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     groups = {"unique_id"}
  * )
  */
+#[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class Entity
 {
     /**
@@ -33,9 +33,8 @@ abstract class Entity
      * @var int
      *
      * @Serializer\Groups({"id"})
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue
+     *
+     *
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
@@ -44,6 +43,9 @@ abstract class Entity
      *     groups = {"id"}
      * )
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
     protected $id;
 
     /**
@@ -51,27 +53,26 @@ abstract class Entity
      *
      * @var Person;
      *
-     * @ORM\ManyToOne(targetEntity="Person")
+     *
      * @Serializer\Exclude
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $creator;
 
     /**
      * The creation time stamp (in UTC) for this Entity.
      *
-     * @var \DateTime;
-     *
-     * @ORM\Column(type="datetimetz")
+     * @var \DateTime $creationTimeStamp;
      */
+    #[ORM\Column(type: 'datetimetz')]
     protected $creationTimeStamp;
 
     /**
      * The last modification time stamp (in UTC) for this Entity.
      *
-     * @var \DateTime;
-     *
-     * @ORM\Column(type="datetimetz")
+     * @var \DateTime $modificationTimeStamp;
      */
+    #[ORM\Column(type: 'datetimetz')]
     protected $modificationTimeStamp;
 
     /**
@@ -79,9 +80,10 @@ abstract class Entity
      *
      * @var Person
      *
-     * @ORM\ManyToOne(targetEntity="Person")
+     *
      * @Serializer\Exclude
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $modifier;
 
     /**
@@ -235,11 +237,11 @@ abstract class Entity
      *
      * The creation time stamp is only updated if not already set.
      *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
      *
      * @return void
      */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateTimeStamps()
     {
         if (null == $this->creationTimeStamp) {
@@ -331,10 +333,10 @@ abstract class Entity
      *
      * @see \Pelagos\Exception\NotDeletableException
      *
-     * @ORM\PreRemove
      *
      * @return void
      */
+    #[ORM\PreRemove]
     public function checkDeletable()
     {
         // Do nothing.

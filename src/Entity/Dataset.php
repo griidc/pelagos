@@ -10,9 +10,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Dataset Entity class.
- *
- * @ORM\Entity(repositoryClass="App\Repository\DatasetRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\DatasetRepository')]
 class Dataset extends Entity
 {
     /**
@@ -62,9 +61,8 @@ class Dataset extends Entity
      * @var string
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 
     /**
@@ -73,18 +71,16 @@ class Dataset extends Entity
      * @var string
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $title;
 
     /**
      * The abstract for this Dataset.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
     /**
@@ -93,18 +89,16 @@ class Dataset extends Entity
      * @var DOI
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
+    #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
     protected $doi;
 
     /**
      * The Research Group this Dataset is attached to.
      *
      * @var ResearchGroup
-     *
-     * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="datasets")
      */
+    #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     protected $researchGroup;
 
     /**
@@ -113,9 +107,8 @@ class Dataset extends Entity
      * @var DIF
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
      */
+    #[ORM\OneToOne(targetEntity: 'DIF', inversedBy: 'dataset')]
     protected $dif;
 
     /**
@@ -124,9 +117,8 @@ class Dataset extends Entity
      * @var DatasetSubmission
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\OneToOne(targetEntity="DatasetSubmission")
      */
+    #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
     protected $datasetSubmission;
 
     /**
@@ -134,10 +126,10 @@ class Dataset extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
      *
-     * @ORM\OrderBy({"sequence" = "DESC"})
      */
+    #[ORM\OneToMany(targetEntity: 'DatasetSubmission', mappedBy: 'dataset', cascade: ['remove'])]
+    #[ORM\OrderBy(['sequence' => 'DESC'])]
     protected $datasetSubmissionHistory;
 
     /**
@@ -146,9 +138,8 @@ class Dataset extends Entity
      * @var \DateTime;
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $acceptedDate;
 
     /**
@@ -157,9 +148,8 @@ class Dataset extends Entity
      * @var int
      *
      * @see DIF::STATUS_* constants.
-     *
-     * @ORM\Column(type="smallint")
      */
+    #[ORM\Column(type: 'smallint')]
     protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
 
     /**
@@ -168,9 +158,8 @@ class Dataset extends Entity
      * @var int
      *
      * @see DatasetSubmission::STATUS_* constants.
-     *
-     * @ORM\Column(type="smallint")
      */
+    #[ORM\Column(type: 'smallint')]
     protected $datasetSubmissionStatus = DatasetSubmission::STATUS_UNSUBMITTED;
 
     /**
@@ -179,9 +168,8 @@ class Dataset extends Entity
      * @var string
      *
      * @see self::DATASET_STATUS_* constants.
-     *
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     protected $datasetStatus = self::DATASET_STATUS_NONE;
 
     /**
@@ -192,9 +180,8 @@ class Dataset extends Entity
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="smallint")
      */
+    #[ORM\Column(type: 'smallint')]
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
     /**
@@ -203,18 +190,16 @@ class Dataset extends Entity
      * @var Collection
      *
      * @Serializer\Groups({"publications"})
-     *
-     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset", orphanRemoval=true)
      */
+    #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'dataset', orphanRemoval: true)]
     protected $datasetPublications;
 
     /**
      * The identifier for an issue tracking ticket related to this Dataset.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $issueTrackingTicket;
 
     /**
