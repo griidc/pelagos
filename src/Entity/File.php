@@ -7,9 +7,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * File Entity class.
- *
- * @ORM\Entity(repositoryClass="App\Repository\FileRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\FileRepository')]
 class File extends Entity
 {
     /**
@@ -41,73 +40,65 @@ class File extends Entity
      * Fileset which contains this file.
      *
      * @var Fileset
-     *
-     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="files")
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: 'Fileset', inversedBy: 'files')]
+    #[ORM\JoinColumn(nullable: true)]
     protected $fileset;
 
     /**
      * Filepath name.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $filePathName;
 
     /**
      * File size(bytes).
      *
      * @var integer
-     *
-     * @ORM\Column(type="bigint", nullable=true)
      */
+    #[ORM\Column(type: 'bigint', nullable: true)]
     protected $fileSize;
 
     /**
      * File sha256 hash.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $fileSha256Hash;
 
     /**
      * The date the file is uploaded.
      *
      * @var \DateTime
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $uploadedAt;
 
     /**
      * The Person who uploaded this file.
      *
      * @var Person
-     *
-     * @ORM\ManyToOne(targetEntity="Person")
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $uploadedBy;
 
     /**
      * Description of the file.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
     /**
      * File location on disk.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $physicalFilePath;
 
     /**
@@ -116,9 +107,8 @@ class File extends Entity
      * @var string
      *
      * @see FILE_* constants.
-     *
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     protected $status = self::FILE_NEW;
 
     /**

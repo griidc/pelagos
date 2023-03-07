@@ -6,9 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Entity class to log a collection of Login Attemps.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class LoginAttempts extends Entity
 {
     /**
@@ -21,10 +20,10 @@ class LoginAttempts extends Entity
      *
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="loginAttempts")
      *
-     * @ORM\JoinColumn(referencedColumnName="person_id")
      */
+    #[ORM\ManyToOne(targetEntity: 'Account', inversedBy: 'loginAttempts')]
+    #[ORM\JoinColumn(referencedColumnName: 'person_id')]
     protected $account;
 
     /**

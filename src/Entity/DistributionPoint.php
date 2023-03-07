@@ -7,9 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * DatasetSubmission to Data Center association abstract class.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class DistributionPoint extends Entity
 {
     /**
@@ -79,11 +78,11 @@ class DistributionPoint extends Entity
      *
      * @var DatasetSubmission
      *
-     * @ORM\ManyToOne(targetEntity="DatasetSubmission", inversedBy="distributionPoints")
      *
      * @Assert\NotBlank(
      *     message="Dataset Submission is required")
      */
+    #[ORM\ManyToOne(targetEntity: 'DatasetSubmission', inversedBy: 'distributionPoints')]
     protected $datasetSubmission;
 
     /**
@@ -91,29 +90,27 @@ class DistributionPoint extends Entity
      *
      * @var DataCenter
      *
-     * @ORM\ManyToOne(targetEntity="DataCenter")
      *
      * @Assert\NotBlank(
      *     message="Distribution Contact is required")
      */
+    #[ORM\ManyToOne(targetEntity: 'DataCenter')]
     protected $dataCenter;
 
     /**
      * The distribution Url for this association.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $distributionUrl;
 
     /**
      *  The Role Code for this association (CI_RoleCode).
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $roleCode;
 
     /**

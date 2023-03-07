@@ -8,9 +8,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Enitity class to represent a Person Token.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class PersonToken extends Entity
 {
     /**
@@ -31,9 +30,8 @@ class PersonToken extends Entity
      * Property containing a \DateInterval of validity of token.
      *
      * @var \DateInterval $validFor
-     *
-     * @ORM\Column(type="dateinterval")
      */
+    #[ORM\Column(type: 'dateinterval')]
     protected $validFor;
 
     /**
@@ -41,13 +39,13 @@ class PersonToken extends Entity
      *
      * @var Person
      *
-     * @ORM\OneToOne(targetEntity="Person", inversedBy="token")
-     * @ORM\Id
      *
      * @Assert\NotBlank(
      *     message="Person is required"
      * )
      */
+    #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'token')]
+    #[ORM\Id]
     protected $person;
 
     /**
@@ -55,14 +53,13 @@ class PersonToken extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Token text is required."
      * )
-     *
      * @Serializer\Exclude
      */
+    #[ORM\Column(type: 'text')]
     protected $tokenText;
 
     /**
@@ -70,12 +67,12 @@ class PersonToken extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Token use is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $use;
 
     /**

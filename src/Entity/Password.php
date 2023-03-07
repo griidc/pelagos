@@ -11,9 +11,8 @@ use App\Exception\PasswordException;
  * Entity class to represent a Password.
  *
  * This class defines an Password, which consists of a type, hash, and salt.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class Password extends Entity
 {
     /**
@@ -26,14 +25,14 @@ class Password extends Entity
      *
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="passwordHistory")
      *
-     * @ORM\JoinColumn(referencedColumnName="person_id")
      *
      * @Assert\NotBlank(
      *     message="A Password must be attached to an Account"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'Account', inversedBy: 'passwordHistory')]
+    #[ORM\JoinColumn(referencedColumnName: 'person_id')]
     protected $account;
 
     /**
@@ -41,14 +40,13 @@ class Password extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="blob")
      *
      * @Assert\NotBlank(
      *     message="Password hash is required"
      * )
-     *
      * @Serializer\Exclude
      */
+    #[ORM\Column(type: 'blob')]
     protected $passwordHash;
 
     /**
@@ -70,14 +68,13 @@ class Password extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Password hash algorithm is required"
      * )
-     *
      * @Serializer\Exclude
      */
+    #[ORM\Column(type: 'text')]
     protected $passwordHashAlgorithm;
 
     /**
@@ -85,14 +82,13 @@ class Password extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="blob")
      *
      * @Assert\NotBlank(
      *     message="Password hash salt is required"
      * )
-     *
      * @Serializer\Exclude
      */
+    #[ORM\Column(type: 'blob')]
     protected $passwordHashSalt;
 
     /**
