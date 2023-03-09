@@ -770,7 +770,7 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     * @ORM\Column(type="json_array", nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission theme keyword(s) field is required."
@@ -783,7 +783,7 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     * @ORM\Column(type="json_array", nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      */
     protected $placeKeywords = array();
 
@@ -792,7 +792,7 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     * @ORM\Column(type="json_array", nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission topic keyword(s) field is required."
