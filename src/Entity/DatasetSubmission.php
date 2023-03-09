@@ -753,7 +753,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission theme keyword(s) field is required."
      * )
      */
-    #[ORM\Column(type: 'json_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $themeKeywords = array();
 
     /**
@@ -761,7 +761,7 @@ class DatasetSubmission extends Entity
      *
      * @var array
      */
-    #[ORM\Column(type: 'json_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $placeKeywords = array();
 
     /**
@@ -774,7 +774,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
-    #[ORM\Column(type: 'json_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $topicKeywords = array();
 
     /**
