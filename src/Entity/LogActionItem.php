@@ -58,7 +58,7 @@ class LogActionItem extends Entity
      *
      * @access protected
      */
-    #[ORM\Column(type: 'json_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $payLoad = array();
 
     /**
