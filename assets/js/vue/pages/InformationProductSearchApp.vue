@@ -41,7 +41,6 @@
 </template>
 
 <script>
-
 import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/info-search/ResultSet';
 

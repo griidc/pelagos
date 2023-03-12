@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue, { createApp } from 'vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import VTooltip from 'v-tooltip';
 import Loading from 'vue-loading-overlay';
@@ -14,12 +14,11 @@ window.addEventListener('load', () => {
   Vue.use(Loading);
   Vue.use(VTooltip);
   Vue.filter('truncate', (text, length) => filters.truncate(text, length));
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#ip-search-app',
+  const ipSearchApp = createApp({
     components: { InformationProductSearchApp },
     template: `<div class="bootstrap">
                     <InformationProductSearchApp/>
                    </div>`,
   });
+  ipSearchApp.mount('#ip-search-app');
 });
