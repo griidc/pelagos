@@ -1,5 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const webpack = require('webpack');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -19,8 +21,15 @@ Encore
 
 // Enable Vue js
   .enableVueLoader(() => {}, {
-    runtimeCompilerBuild: false,
+    runtimeCompilerBuild: true,
+    version: 3,
   })
+  .addPlugin(
+    new webpack.DefinePlugin({
+      __VUE_OPTIONS_API__: true,
+      __VUE_PROD_DEVTOOLS__: false,
+    }),
+  )
 
 /*
      * ENTRY CONFIG
@@ -63,7 +72,8 @@ Encore
   .addAliases({
     '@': path.resolve(__dirname, 'assets', 'js'),
     images: path.resolve(__dirname, 'assets', 'images'),
-    vue: Encore.isProduction() ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
+    // vue: Encore.isProduction() ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
+    vue: '@vue/compat',
   })
 
 /*
