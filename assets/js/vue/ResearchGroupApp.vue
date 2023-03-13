@@ -48,12 +48,12 @@
 </template>
 
 <script>
-import { getApi } from '@/vue/utils/axiosService';
 import PublicationsTab from '@/vue/components/research-group/PublicationsTab';
 import OverviewTab from '@/vue/components/research-group/OverviewTab';
 import DatasetsTab from '@/vue/components/research-group/DatasetsTab';
 import PeopleTab from '@/vue/components/research-group/PeopleTab';
 import InformationProductsTab from '@/vue/components/research-group/InformationProductsTab';
+import { getApi } from '@/vue/utils/axiosService';
 
 export default {
   name: 'ResearchGroupApp',

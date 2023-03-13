@@ -6,14 +6,12 @@ import InformationProductSearchApp from '../vue/pages/InformationProductSearchAp
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../../css/search-ui.css';
 import 'vue-loading-overlay/dist/vue-loading.css';
-import filters from '../vue/utils/filters';
 
 window.addEventListener('load', () => {
   Vue.use(BootstrapVue);
   Vue.use(IconsPlugin);
   Vue.use(Loading);
   Vue.use(VTooltip);
-  Vue.filter('truncate', (text, length) => filters.truncate(text, length));
   const ipSearchApp = createApp({
     components: { InformationProductSearchApp },
     template: `<div class="bootstrap">

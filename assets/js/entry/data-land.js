@@ -1,19 +1,18 @@
-import Vue from 'vue';
+import Vue, { createApp } from 'vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-import FileManager from '../vue/FileManager.vue';
+import FileManager from '../vue/FileManager';
 import '../../css/file-manager.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
-import HelpModal from '../vue/components/data-land/HelpModal.vue';
+import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn';
+import HelpModal from '../vue/components/data-land/HelpModal';
 import '../../scss/data-land.scss';
 
 // Mount File Manager vue component
 const fileManagerElement = document.getElementById('file-manager-app');
 if (fileManagerElement) {
   const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#file-manager-app',
+
+  const fileManagerApp = createApp({
     data() {
       return {
         datasetSubmissionId,
@@ -22,6 +21,8 @@ if (fileManagerElement) {
     components: { FileManager },
     template: '<FileManager :datasetSubId="datasetSubmissionId" :writeMode="false"/>',
   });
+
+  fileManagerApp.mount('#file-manager-app');
 }
 
 // Mount Download button vue component
@@ -30,9 +31,7 @@ if (downloadZipElement) {
   const datasetId = downloadZipElement.dataset.id;
   Vue.use(BootstrapVue);
   Vue.use(IconsPlugin);
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#download-zip',
+  const downloadZipApp = createApp({
     components: { DownloadZipBtn },
     data() {
       return {
@@ -41,18 +40,19 @@ if (downloadZipElement) {
     },
     template: '<DownloadZipBtn :id="datasetId"/>',
   });
+  downloadZipApp.mount('#download-zip');
 }
 
 // Mount Help Modal vue component
 const helpBtnElement = document.getElementById('help-btn');
 if (helpBtnElement) {
   Vue.use(BootstrapVue);
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#help-btn',
+  const helpBtnApp = createApp({
     components: { HelpModal },
     template: '<HelpModal/>',
   });
+
+  helpBtnApp.mount('#help-btn');
 }
 
 // eslint-disable-next-line no-undef

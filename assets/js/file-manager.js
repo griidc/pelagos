@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import FileManager from './vue/FileManager.vue';
+import { createApp } from 'vue';
+import FileManager from './vue/FileManager';
 import '../css/file-manager.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -9,9 +9,7 @@ if (fileManagerElement) {
   if (fileManagerElement.dataset) {
     const datasetSubmissionId = Number(fileManagerElement.dataset.id);
     const fileManagerMode = Boolean(fileManagerElement.dataset.writeMode);
-    // eslint-disable-next-line no-new
-    new Vue({
-      el: '#file-manager-app',
+    const fileManagerApp = createApp({
       data() {
         return {
           datasetSubmissionId,
@@ -22,5 +20,6 @@ if (fileManagerElement) {
       template: `
               <FileManager :datasetSubId="datasetSubmissionId" :writeMode="fileManagerMode"/>`,
     });
+    fileManagerApp.mount('#file-manager-app');
   }
 }

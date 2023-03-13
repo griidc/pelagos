@@ -46,6 +46,7 @@
 
 <script>
 import templateSwitch from '@/vue/utils/template-switch';
+import { truncate } from '../utils/filters';
 
 export default {
   name: 'FundingCyclesList',
@@ -80,7 +81,7 @@ export default {
           fundingCycle.researchGroups.forEach((researchGroup) => {
             this.researchGroupOptions.push({
               value: researchGroup.id,
-              text: this.$options.filters.truncate(researchGroup.name, 100),
+              text: truncate(researchGroup.name, 100),
             });
           });
         }

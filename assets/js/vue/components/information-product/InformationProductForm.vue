@@ -196,7 +196,7 @@
       </div>
     </b-form>
     <DxPopup
-        :visible.sync="ipCreatedSuccessModal"
+        :visible="ipCreatedSuccessModal"
         :drag-enabled="false"
         :close-on-outside-click="true"
         :show-title="true"
@@ -216,7 +216,7 @@
       </template>
     </DxPopup>
     <DxPopup
-        :visible.sync="errorDialog"
+        :visible="errorDialog"
         :drag-enabled="false"
         :close-on-outside-click="true"
         :show-title="true"
@@ -232,7 +232,7 @@
       </template>
     </DxPopup>
     <DxPopup
-        :visible.sync="deleteConfirmationDialog"
+        :visible="deleteConfirmationDialog"
         :close-on-outside-click="false"
         :show-title="false"
         position="center"
@@ -269,7 +269,6 @@
 </template>
 
 <script>
-import { postApi, deleteApi, patchApi } from '@/vue/utils/axiosService';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxPopup } from 'devextreme-vue/popup';
@@ -278,6 +277,8 @@ import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
 import DxTagBox from 'devextreme-vue/tag-box';
 import DataSource from 'devextreme/data/data_source';
+import { postApi, deleteApi, patchApi } from '../../utils/axiosService';
+import { truncate } from '../../utils/filters';
 
 Dropzone.autoDiscover = false;
 
@@ -446,7 +447,7 @@ export default {
           if (researchGroup.shortName) {
             researchGroupShortName = researchGroup.shortName;
           } else {
-            researchGroupShortName = this.$options.filters.truncate(researchGroup.name, 50);
+            researchGroupShortName = truncate(researchGroup.name, 50);
           }
         }
       });
@@ -468,7 +469,7 @@ export default {
         if (researchGroup.shortName) {
           researchGroupShortName = researchGroup.shortName;
         } else {
-          researchGroupShortName = this.$options.filters.truncate(researchGroup.name, 50);
+          researchGroupShortName = truncate(researchGroup.name, 50);
         }
 
         if (this.addedRgShortName === researchGroupShortName) {

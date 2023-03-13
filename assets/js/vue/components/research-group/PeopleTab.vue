@@ -9,7 +9,7 @@
                             content: person.person.organization,
                             placement:'top'
                             }">
-                {{ person.person.organization | truncate(75) }}
+                {{ truncateText(person.person.organization, 75) }}
             </b-card-text>
             <b-card-text class="text-muted">
                 {{ person.person.emailAddress }}
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { truncate, sort } from '../../utils/filters';
+
 export default {
   name: 'PeopleTab',
   props: {
@@ -30,7 +32,12 @@ export default {
     };
   },
   created() {
-    this.sortedPeople = this.$options.filters.sort('person.lastName', this.personResearchGroups);
+    this.sortedPeople = sort('person.lastName', this.personResearchGroups);
+  },
+  methods: {
+    truncateText(text, length) {
+      return truncate(text, length);
+    },
   },
 };
 </script>

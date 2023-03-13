@@ -1,12 +1,9 @@
-import Vue from 'vue';
-import { BootstrapVue } from 'bootstrap-vue';
+import { createApp } from 'vue';
 import InformationProductListApp from '@/vue/InformationProductListApp';
 
-Vue.use(BootstrapVue);
-
-// eslint-disable-next-line no-new
-new Vue({
-  el: '#information-product-list',
+const infoProdListApp = createApp({
   components: { InformationProductListApp },
   template: '<InformationProductListApp/>',
 });
+
+infoProdListApp.mount('#information-product-list');

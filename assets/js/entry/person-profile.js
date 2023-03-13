@@ -1,14 +1,15 @@
-import Vue from 'vue';
+import Vue, { createApp } from 'vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import Loading from 'vue-loading-overlay';
-import PersonProfile from '../vue/pages/PersonProfile.vue';
+import PersonProfile from '../vue/pages/PersonProfile';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(Loading);
-new Vue({
+
+createApp({
   components: { PersonProfile },
   data() {
     return {
@@ -16,7 +17,7 @@ new Vue({
     };
   },
   beforeMount() {
-    this.person = Number(this.$el.attributes['data-name'].value);
+    this.person = Number(document.getElementById('person-profile').dataset.name);
   },
   template: '<div class="bootstrap"><PersonProfile :personId=\'person\'/></div>',
-}).$mount('#person-profile');
+}).mount('#person-profile');
