@@ -61,7 +61,7 @@ class LogActionItem extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="json_array", nullable = true)
+     * @ORM\Column(type="json", nullable = true)
      */
     protected $payLoad = array();
 
@@ -71,7 +71,7 @@ class LogActionItem extends Entity
      * @param string     $actionName        The action Name for this Log Item.
      * @param string     $subjectEntityName The subject entity name for this Log Item.
      * @param integer    $subjectEntityId   The subject entity Id for this Log Item.
-     * @param json_array $payLoad           The additional information for this Log Item.
+     * @param array      $payLoad           The additional information for this Log Item.
      *
      * @throws \Exception When there is no Subject Entity ID for a not-null Subject Entity Name.
      */
@@ -178,7 +178,7 @@ class LogActionItem extends Entity
     /**
      * Setter for payLoad.
      *
-     * @param array|null $payLoad The additional information to attach to this Action Log Item (json_array).
+     * @param array|null $payLoad The additional information to attach to this Action Log Item (json).
      *
      * @access public
      *
@@ -194,7 +194,7 @@ class LogActionItem extends Entity
      *
      * @access public
      *
-     * @return array additional information for the log action item (json_array)
+     * @return array additional information for the log action item (json)
      */
     public function getPayLoad()
     {
