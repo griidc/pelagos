@@ -188,7 +188,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
     /**
      * Override Account's getId() method with Person's Id.
      *
-     * @return The EntityID of the Person associated with this Account.
+     * @return int The EntityID of the Person associated with this Account.
      */
     public function getId()
     {
