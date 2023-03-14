@@ -43,9 +43,9 @@ class Geometry
 
         $sql = 'SELECT ST_AsText(ST_Envelope(ST_GeomFromGML(:gml, :srid)))';
         $connection = $this->entityManager->getConnection();
-        $sth = $connection->prepare($sql);
+        $statement = $connection->prepare($sql);
         try {
-            $sth->execute(array('gml' => $gml, 'srid' => 4326));
+            $result = $statement->executeQuery(array('gml' => $gml, 'srid' => 4326));
         } catch (DriverException $e) {
             if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
                 $err = 'unknown spatial reference system in GML';
@@ -54,7 +54,7 @@ class Geometry
             }
             throw new InvalidGmlException($err);
         }
-        $geom = $sth->fetchColumn();
+        $geom = $result->fetchFirstColumn();
 
         return $geom;
     }
@@ -79,9 +79,9 @@ class Geometry
                     ST_YMax(ST_GeomFromGml(:gml)) as "northBoundLatitude"';
 
         $connection = $this->entityManager->getConnection();
-        $sth = $connection->prepare($sql);
+        $statement = $connection->prepare($sql);
         try {
-            $sth->execute(array('gml' => $gml));
+            $result = $statement->executeQuery(array('gml' => $gml));
         } catch (DriverException $e) {
             if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
                 $err = 'unknown spatial reference system in GML';
@@ -90,7 +90,7 @@ class Geometry
             }
             throw new InvalidGmlException($err);
         }
-        $geom = $sth->fetch(\PDO::FETCH_ASSOC);
+        $geom = $result->fetchAssociative();
 
         return $geom;
     }
@@ -110,9 +110,9 @@ class Geometry
 
         $sql = 'SELECT ST_AsText(ST_GeomFromGML(:gml, :srid))';
         $connection = $this->entityManager->getConnection();
-        $sth = $connection->prepare($sql);
+        $statement = $connection->prepare($sql);
         try {
-            $sth->execute(array('gml' => $gml, 'srid' => 4326));
+            $result = $statement->executeQuery(array('gml' => $gml, 'srid' => 4326));
         } catch (DriverException $e) {
             if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
                 $err = 'unknown spatial reference system in GML';
@@ -121,7 +121,7 @@ class Geometry
             }
             throw new InvalidGmlException($err);
         }
-        $wkt = $sth->fetchColumn();
+        $wkt = $result->fetchFirstColumn();
         return $wkt;
     }
 }
