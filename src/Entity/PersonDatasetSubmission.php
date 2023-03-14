@@ -6,11 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Person to Dataset Submission association abstract class.
- *
- * @ORM\Entity
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discr")
  */
+#[ORM\Entity]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discr')]
 abstract class PersonDatasetSubmission extends Entity
 {
     /**
@@ -38,9 +37,8 @@ abstract class PersonDatasetSubmission extends Entity
      * The person for this association.
      *
      * @var Person
-     *
-     * @ORM\ManyToOne(targetEntity="Person")
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $person;
 
     /**
@@ -49,18 +47,16 @@ abstract class PersonDatasetSubmission extends Entity
      * @var string
      *
      * @see ROLES class constant for possible values.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $role;
 
     /**
      * Whether this entity is a primary contact, or not.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $primaryContact;
 
     /**
