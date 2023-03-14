@@ -13,12 +13,11 @@ use PDO;
 class ColumnHydrator extends AbstractHydrator
 {
     /**
-     * Hydrate data using PDO::FETCH_COLUMN.
      *
      * @return array Result set.
      */
     protected function hydrateAllData()
     {
-        return $this->_stmt->fetchAll(PDO::FETCH_COLUMN);
+        return $this->_stmt->fetchOne();
     }
 }

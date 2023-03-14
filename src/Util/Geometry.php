@@ -56,7 +56,7 @@ class Geometry
         }
         $geom = $result->fetchFirstColumn();
 
-        return $geom;
+        return $geom[0];
     }
 
     /**
@@ -122,6 +122,7 @@ class Geometry
             throw new InvalidGmlException($err);
         }
         $wkt = $result->fetchFirstColumn();
-        return $wkt;
+
+        return $wkt[0];
     }
 }
