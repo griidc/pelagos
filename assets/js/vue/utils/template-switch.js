@@ -19,9 +19,6 @@ const templateVariables = {
     statusExpanded: true,
     tagsExpanded: true,
   },
-  GRIIDC: {
-    typeExpanded: false,
-  },
   GRP: {
     fundingCycle: 'Grant Awards',
     researchGroup: 'Projects',

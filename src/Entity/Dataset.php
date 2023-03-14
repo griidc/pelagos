@@ -59,7 +59,7 @@ class Dataset extends Entity
     /**
      * Cold Storage Tag
      */
-    const TAG_COLDSTORAGE = 'Coldstorage';
+    const TAG_COLD_STORAGE = 'Cold Storage';
 
     /**
      * Remotely Hosted Tag
@@ -67,9 +67,9 @@ class Dataset extends Entity
     const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
 
     /**
-     * ERDAPP Tag
+     * ERDDAP Tag
      */
-    const TAG_ERDAPP = 'ERDAPP';
+    const TAG_ERDDAP = 'ERDDAP';
 
 
     /**
@@ -81,9 +81,9 @@ class Dataset extends Entity
      * Valid Tags for a dataset.
      */
     const TAGS = [
-        self::TAG_COLDSTORAGE => 'Coldstorage',
+        self::TAG_COLD_STORAGE => 'Cold Storage',
         self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
-        self::TAG_ERDAPP => 'ERDAPP',
+        self::TAG_ERDDAP => 'ERDDAP',
         self::TAG_NCEI => 'NCEI',
     ];
 
@@ -990,7 +990,7 @@ class Dataset extends Entity
 
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->isDatasetFileInColdStorage()) {
-                $tags[] = self::TAG_COLDSTORAGE;
+                $tags[] = self::TAG_COLD_STORAGE;
             }
 
             if (!empty($datasetSubmission->getNceiUrl())) {
@@ -998,7 +998,7 @@ class Dataset extends Entity
             }
 
             if (!empty($datasetSubmission->getErddapUrl())) {
-                $tags[] = self::TAG_ERDAPP;
+                $tags[] = self::TAG_ERDDAP;
             }
 
             if ($datasetSubmission->isRemotelyHosted()) {
