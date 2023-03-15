@@ -40,6 +40,24 @@
         #pelagos-container {
             background-color: #022f3a!important;
         }
+        
+        #pelagos-content {
+            font-family: "Lato", Arial, sans-serif !important;
+        }
+
+        .griidc-card-tile {
+            background-position: 10px 15px;
+        }
+
+        .griidc-card-link {
+            background-position: 100px 5px;
+            font-size: 18px;
+        }
+
+        .stats-count {
+            font-size: 30px;
+            line-height: 1.33em;
+        }
     </style>
 
 {% endblock %}
@@ -54,18 +72,15 @@
                     <div class="col-md-3 mb-5">
                         <div class="card card-product bg-secondary">
                             <div class="card-body">
-                                {# <div class="p-2">
-                                    <img class="card-img-top p-2 w-50 mx-auto d-block bg-secondary" src="{{ asset("build/images/icon-find.png") }}" alt="Search data icon">
-                                </div> #}
                                 <div class="p-2">
-                                    <h4 class="text-center bg-search">
+                                    <div class="text-center bg-search griidc-card-tile">
                                         <a href="{{ path('pelagos_app_ui_searchpage_default') }}" 
-                                           class="stretched-link text-white text-uppercase" 
+                                           class="stretched-link text-white text-uppercase griidc-card-link" 
                                            target="_blank"
                                         >
                                             Search<br>Data
                                         </a>
-                                    </h4>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -75,11 +90,10 @@
                         <div class="card card-product bg-secondary">
                             <div class="card-body">
                                 <div class="p-2">
-                                    {# <img class="card-img-top p-2 w-50 mx-auto d-block" src="{{ asset("build/images/icon-monitoring.png") }}" alt="Monitor data icon"> #}
-                                    <h4 class="card-title text-center bg-monitoring">
+                                    <div class="text-center bg-monitoring griidc-card-tile">
                                         <a href="{{ path('pelagos_app_ui_datasetmonitoring_default') }}" 
                                            target="_blank" 
-                                           class="stretched-link text-white text-uppercase"
+                                           class="stretched-link text-white text-uppercase griidc-card-link"
                                         >
                                             Monitor<br>data
                                         </a>
@@ -96,22 +110,22 @@
                     <div class="col-md-2"></div>
                     <div class="col-md-2 text-center">
                         <img src="{{ asset("build/images/icon-datasets.png") }}" alt="Dataset Icon">
-                        <div class="font-weight-bold"> {{ stats.datasetCount }}</div>
+                        <div class="font-weight-bold stats-count"> {{ stats.datasetCount }}</div>
                         <div class="text-uppercase font-weight-bold">Datasets</div>
                     </div>
                     <div class="col-md-2 text-center">
                         <img src="{{ asset("build/images/icon-filesize.png") }}" alt="Filesize Icon">
-                        <div class="font-weight-bold"> {{ stats.datasetsTotalFileSize }}</div>
+                        <div class="font-weight-bold stats-count"> {{ stats.datasetsTotalFileSize }}</div>
                         <div class="text-uppercase font-weight-bold">TB OF DATA</div>
                     </div>
                     <div class="col-md-2 text-center">
                         <img src="{{ asset("build/images/icon-projects.png") }}" alt="Research Group Icon">
-                        <div class="font-weight-bold"> {{ stats.researchGroupCount }}</div>
+                        <div class="font-weight-bold stats-count"> {{ stats.researchGroupCount }}</div>
                         <div class="text-uppercase font-weight-bold">RESEARCH GROUPS</div>
                     </div>
                     <div class="col-md-2 text-center">
                         <img src="{{ asset("build/images/icon-researchers.png") }}" alt="People Icon">
-                        <div class="font-weight-bold">{{ stats.peopleCount }}</div>
+                        <div class="font-weight-bold stats-count">{{ stats.peopleCount }}</div>
                         <div class="text-uppercase font-weight-bold">PEOPLE</div>
                     </div>
                     <div class="col-md-2"></div>
@@ -144,18 +158,9 @@
                     <div class="telephone col-sm-2"><a href="tel:3618253604">(361) 825-3719</a></div>
                     <div class="mail col-sm-1"><img src="{{ asset("build/images/icon-mail.png") }}"></div>
                     <div class="mail col-sm-1"><a href="mailto:griidc@gomri.org">griidc@gomri.org</a></div>
-                    <div class="social col-sm-1"><img src="{{ asset("build/images/icon-twitter.png") }}"></div>
-                    <div class="social col-sm-1"><a href="http://www.twitter.com/griidc">@griidc</a></div>
                 </div>
             </div>
         </div>
-
-        
-
-
-        
-
-
         <footer class="py-5 bg-dark">
             <div class="container">
                 <p class="m-0 text-center text-white">Copyright &copy; HRI - GRIIDC 2022</p>
