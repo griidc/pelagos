@@ -25,14 +25,23 @@
                     </b-form-input>
                   </div>
                 </div>
-                <div class="row mt-3 form-group form-inline pt-3">
+                <div class="row mt-3 form-group form-inline pt-3 d-flex justify-content-between">
+                  <div class="col-lg search-field-options">
+                    <span class="input-group" v-tooltip="{
+                            content: 'Search only in selected field',
+                            placement:'top'}">
+                        <label class="pr-1" for="field">Field Type</label>
+                        <b-form-select name="field" id="field" v-model="form.field" :options="fields">
+                        </b-form-select>
+                    </span>
+                  </div>
                   <div class="col-lg search-field-options">
                     <span class="input-group" v-tooltip="{
                           content: `Collection Date: date data were collected/generated.
                                     Published Date: date resource was published on GRIIDC.`,
                           placement:'top'}">
-                      <label class="pl-2 pr-2" for="field"
-                        >Search by Date Type</label
+                      <label class="pr-1" for="field"
+                        >Date Type</label
                       >
                       <b-form-select
                         name="dateType"
@@ -45,7 +54,7 @@
                   </div>
                   <div class="col-lg range-start-date">
                     <span class="input-group">
-                      <label for="rangeStartDate" class="pr-2">From</label>
+                      <label for="rangeStartDate" class="pr-1">From</label>
                       <DxDateBox
                         :ref="rangeStartDateRef"
                         :element-attr="dateBoxAttributes"
@@ -63,7 +72,7 @@
                   </div>
                   <div class="col-lg range-end-date">
                     <span class="input-group">
-                      <label for="rangeEndDate" class="pr-2 pl-3"
+                      <label for="rangeEndDate" class="pr-1"
                         >To</label
                       >
                       <DxDateBox
@@ -97,6 +106,13 @@
                   class="btn btn-dark clear-button"
                 >
                   Clear
+                </button>
+                <div class="mt-3 pt-3 empty-button-div"></div>
+                <button
+                  type="button"
+                  id="map-search"
+                  class="btn btn-dark map-search-button"
+                  @click="dataDiscovery()">Map Search
                 </button>
               </div>
             </div>
@@ -137,6 +153,7 @@ function initialFormValues() {
     rangeEndDate: '',
     tags: '',
     sortOrder: 'default',
+    field: '',
   };
 }
 
@@ -164,6 +181,12 @@ export default {
       rangeEndDateRef,
       route: window.location.hash,
       submitted: false,
+      fields: [
+        { text: '-- All --', value: '' },
+        { text: 'Title', value: 'title' },
+        { text: 'Abstract', value: 'abstract' },
+        { text: 'Author', value: 'datasetSubmission.authors' },
+        { text: 'Theme Keywords', value: 'datasetSubmission.themeKeywords' }],
     };
   },
   methods: {
@@ -243,6 +266,10 @@ export default {
       this.form.sortOrder = sortOrder;
       this.onSubmit();
     },
+    dataDiscovery() {
+      // eslint-disable-next-line no-undef
+      window.location.href = Routing.generate('pelagos_app_ui_datadiscovery_default');
+    },
   },
   mounted() {
     this.init();
@@ -301,6 +328,10 @@ export default {
         margin-right: 0.5rem;
         margin-left: 0.5rem;
         width: 30%;
+      }
+
+      .map-search-button {
+        margin-left: 4.1rem;
       }
     }
   }

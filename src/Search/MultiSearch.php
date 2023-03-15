@@ -33,6 +33,31 @@ class MultiSearch
     );
 
     /**
+     * Elastic index mapping for title.
+     */
+    const ELASTIC_INDEX_MAPPING_TITLE = 'title';
+
+    /**
+     * Elastic index mapping for abstract.
+     */
+    const ELASTIC_INDEX_MAPPING_ABSTRACT = 'abstract';
+
+    /**
+     * Elastic index mapping for authors.
+     */
+    const ELASTIC_INDEX_MAPPING_AUTHORS = 'datasetSubmission.authors';
+
+    /**
+     * Elastic index mapping for theme keywords.
+     */
+    const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
+
+    /**
+     * Index boost for Title, Authors, Theme Keywords.
+     */
+    const BOOST = '^2';
+
+    /**
      * FOS Elastica Object to find elastica documents.
      *
      * @var TransformedFinder
@@ -68,9 +93,11 @@ class MultiSearch
     public function search(SearchOptions $searchOptions): SearchResults
     {
         $queryString = $searchOptions->getQueryString();
+        $specifiedField = empty($searchOptions->getField()) ? [] : [$searchOptions->getField()];
 
-        $simpleQuery = new SimpleQueryString($queryString);
-        $simpleQuery->setDefaultOperator(SimpleQueryString::OPERATOR_AND);
+        $simpleQuery = new Query\SimpleQueryString($queryString, $specifiedField);
+        $simpleQuery->setParam('flags', 'PHRASE|PREFIX|WHITESPACE');
+        $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
 
         $boolQuery = new BoolQuery();
         $boolQuery->addMust($simpleQuery);
