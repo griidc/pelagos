@@ -42,7 +42,7 @@ class FunderCrudController extends AbstractCrudController
             ->onlyOnIndex(),
             TextField::new('name'),
             TextField::new('referenceUri'),
-            ChoiceField::new('source')->setChoices(Funder::SOURCES)->hideWhenCreating(),
+            ChoiceField::new('source')->setChoices(Funder::SOURCES),
         ];
     }
 
