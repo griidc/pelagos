@@ -1,0 +1,174 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('grp-home') }}
+
+    <style>
+        .bg-nav-chart {
+            background-image: url('{{ asset("build/images/bg-nav-chart.jpg") }}'); 
+            background-size: cover;
+         }
+
+        .bg-numbers {
+            background-image: url('{{ asset("build/images/bg-numbers.jpg") }}'); 
+            background-size: cover;
+        }
+
+        .bg-search {
+            background-image: url('{{ asset("build/images/icon-find.png") }}'); 
+            background-size: auto;
+            background-repeat: no-repeat;
+            width: 300px;
+            padding: 20px;
+        }
+
+        .bg-monitoring {
+            background-image: url('{{ asset("build/images/icon-monitoring.png") }}'); 
+            background-size: auto;
+            background-repeat: no-repeat;
+            width: 300px;
+            padding: 20px;
+        }
+
+        .bg-address {
+            background-image: url('{{ asset("build/images/icon-location.png") }}'); 
+            background-size: auto;
+            background-repeat: no-repeat;
+        }
+
+        #pelagos-container {
+            background-color: #022f3a!important;
+        }
+        
+        #pelagos-content {
+            font-family: "Lato", Arial, sans-serif !important;
+        }
+
+        .griidc-card-tile {
+            background-position: 10px 15px;
+        }
+
+        .griidc-card-link {
+            background-position: 100px 5px;
+            font-size: 18px;
+        }
+
+        .stats-count {
+            font-size: 30px;
+            line-height: 1.33em;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+    <div class="bootstrap">
+        <div class="container">
+             <div class="bg-image bg-nav-chart">
+                <h2 class="text-center text-white font-italic p-3"> Ensuring a Data Legacy </h2>
+                <div class="row mt-3">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3 mb-5">
+                        <div class="card card-product bg-secondary">
+                            <div class="card-body">
+                                <div class="p-2">
+                                    <div class="text-center bg-search griidc-card-tile">
+                                        <a href="{{ path('pelagos_app_ui_searchpage_default') }}" 
+                                           class="stretched-link text-white text-uppercase griidc-card-link" 
+                                           target="_blank"
+                                        >
+                                            Search<br>Data
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <div class="card card-product bg-secondary">
+                            <div class="card-body">
+                                <div class="p-2">
+                                    <div class="text-center bg-monitoring griidc-card-tile">
+                                        <a href="{{ path('pelagos_app_ui_datasetmonitoring_default') }}" 
+                                           target="_blank" 
+                                           class="stretched-link text-white text-uppercase griidc-card-link"
+                                        >
+                                            Monitor<br>data
+                                        </a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+            <div class="bg-image bg-numbers">
+                <div class="row py-4">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-datasets.png") }}" alt="Dataset Icon">
+                        <div class="font-weight-bold stats-count"> {{ stats.datasetCount }}</div>
+                        <div class="text-uppercase font-weight-bold">Datasets</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-filesize.png") }}" alt="Filesize Icon">
+                        <div class="font-weight-bold stats-count"> {{ stats.datasetsTotalFileSize }}</div>
+                        <div class="text-uppercase font-weight-bold">TB OF DATA</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-projects.png") }}" alt="Research Group Icon">
+                        <div class="font-weight-bold stats-count"> {{ stats.researchGroupCount }}</div>
+                        <div class="text-uppercase font-weight-bold">RESEARCH GROUPS</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <img src="{{ asset("build/images/icon-researchers.png") }}" alt="People Icon">
+                        <div class="font-weight-bold stats-count">{{ stats.peopleCount }}</div>
+                        <div class="text-uppercase font-weight-bold">PEOPLE</div>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+            </div>
+            <div class="p-2" style="background-color: #ebebeb;">
+                <div class="row align-items-center" >
+                    <div class="col-md-5">
+                        <img id="home-image" class="rounded img-fluid" src="{{ asset("build/images/hri-home.jpg") }}" alt="GOMRI">
+                    </div>
+                    <div class="col-md-7 px-3">
+                        <h1 class="font-weight-light">The Gulf of Mexico Research Initiative</h1>
+                        <p>
+                            The Gulf of Mexico Research Initiative (GoMRI) is an independent research program designed to study the impact of the Deepwater Horizon oil spill on the environment and public health in the Gulf of Mexico.
+                            The goal of this 10-year program was to improve society’s ability to understand and mitigate the impacts of hydrocarbon pollution and stressors on the marine environment.
+                            The scientific direction of GoMRI and funding decisions were made by an independent Research Board comprising of 20 marine science, education, and public health experts.
+                            The initiative was administered by the Gulf of Mexico Alliance (GoMA).
+                            All data obtained through GoMRI are shared openly through GRIIDC and results are published in peer-reviewed scientific journals with no requirement for BP approval.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-2 text-white" style="background-color: black;">
+                <div class="row align-items-center">
+                    <div class="logo col-sm-2"><img src="{{ asset("build/images/griidc-logo-white.png") }}" alt="GRIIDC"></div>
+                    <div class="address col-sm-1 text-center"><img src="{{ asset("build/images/icon-location.png") }}"></div>
+                    <div class="address col-sm-2 text-center">6300 Ocean Drive<br>Corpus Christi, TX 78412</div>
+                    <div class="telephone col-sm-1"><img src="{{ asset("build/images/icon-phone.png") }}"></div>
+                    <div class="telephone col-sm-2"><a href="tel:3618253604">(361) 825-3719</a></div>
+                    <div class="mail col-sm-1"><img src="{{ asset("build/images/icon-mail.png") }}"></div>
+                    <div class="mail col-sm-1"><a href="mailto:griidc@gomri.org">griidc@gomri.org</a></div>
+                </div>
+            </div>
+        </div>
+        <footer class="py-5 bg-dark">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; HRI - GRIIDC 2022</p>
+            </div>
+        </footer>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
