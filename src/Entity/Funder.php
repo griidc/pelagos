@@ -40,7 +40,7 @@ class Funder extends Entity
      *
      * @ORM\Column(type="text", nullable=false)
      */
-    private string $source = self::SOURCE_USER;
+    private string $source = self::SOURCE_DRPM;
 
     /**
      * Gets name of the funder.
