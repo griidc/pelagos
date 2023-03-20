@@ -54,7 +54,7 @@ class MailerEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $toAddresses = array_map(function(Address $to) {
+        $toAddresses = array_map(function (Address $to) {
             return $to->toString();
         }, $message->getTo());
 
