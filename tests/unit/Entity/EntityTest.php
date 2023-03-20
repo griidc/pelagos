@@ -2,9 +2,9 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\Entity;
 use App\Entity\Person;
 use PHPUnit\Framework\TestCase;
-
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -15,49 +15,49 @@ class EntityTest extends TestCase
     /**
      * Property to hold an instance of a mock Entity for testing.
      *
-     * @var mixed $testEntity
+     * @var Entity
      */
     protected $testEntity;
 
     /**
      * Property to hold an instance of the Symfony Validator.
      *
-     * @var \Symfony\Component\Validator\Validator $validator
+     * @var \Symfony\Component\Validator\Validator
      */
     protected $validator;
 
     /**
      * Property to hold a time stamp to use in testing.
      *
-     * @var \DateTime $timeStamp
+     * @var \DateTime
      */
     protected $timeStamp;
 
     /**
      * Property to hold an ISO 8601 representation of a time stamp to use in testing.
      *
-     * @var string $timeStampISO
+     * @var string
      */
     protected $timeStampISO;
 
     /**
      * Property to hold a localized time stamp to use in testing.
      *
-     * @var \DateTime $timeStampLocalized
+     * @var \DateTime
      */
     protected $timeStampLocalized;
 
     /**
      * Property to hold an ISO 8601 representation of a localized time stamp to use in testing.
      *
-     * @var string $timeStampLocalizedISO
+     * @var string
      */
     protected $timeStampLocalizedISO;
 
     /**
      * Property to hold a creator to use for testing.
      *
-     * @var Person $testCreator
+     * @var Person
      */
     protected $testCreator;
 
@@ -70,7 +70,7 @@ class EntityTest extends TestCase
      */
     protected function setUp()
     {
-        $this->testCreator = new Person;
+        $this->testCreator = new Person();
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping(true)
             ->addDefaultDoctrineAnnotationReader()

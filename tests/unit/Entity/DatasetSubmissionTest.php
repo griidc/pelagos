@@ -14,10 +14,8 @@ use App\Entity\Fileset;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Framework\TestCase;
-
 use Doctrine\Common\Collections\Collection;
-use \DateTime;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for App\Entity\DatasetSubmission.
@@ -59,11 +57,11 @@ class DatasetSubmissionTest extends TestCase
      */
     protected $mockPerson;
 
-  /**
-   * A mock Dataset Submission Review.
-   *
-   * @var DatasetSubmissionReview
-   */
+    /**
+     * A mock Dataset Submission Review.
+     *
+     * @var DatasetSubmissionReview
+     */
     protected $mockDatasetSubmissionReview;
 
     /**
@@ -91,7 +89,7 @@ class DatasetSubmissionTest extends TestCase
     {
         $this->mockDataset = \Mockery::mock(
             Dataset::class,
-            array(
+            [
                 'setDatasetSubmission' => null,
                 'setDatasetSubmissionStatus' => null,
                 'setDatasetStatus' => null,
@@ -99,19 +97,19 @@ class DatasetSubmissionTest extends TestCase
                 'updateAvailabilityStatus' => null,
                 'getUdi' => 'T1.x123.000:0001',
                 'setAcceptedDate' => null,
-            )
+            ]
         );
         $this->mockPerson = \Mockery::mock(
             Person::class,
-            array(
+            [
                 'getLastName' => 'Person',
                 'getFirstName' => 'Mock',
                 'getEmailAddress' => 'mock.person@test.null',
-            )
+            ]
         );
         $this->mockDif = \Mockery::mock(
             DIF::class,
-            array(
+            [
                 'getDataset' => $this->mockDataset,
                 'getTitle' => 'Title from DIF',
                 'getAbstract' => 'Abstract from DIF',
@@ -120,43 +118,44 @@ class DatasetSubmissionTest extends TestCase
                 'getSpatialExtentDescription' => null,
                 'getPrimaryPointOfContact' => $this->mockPerson,
                 'getSecondaryPointOfContact' => null,
-            )
+                'getAdditionalFunders' => null,
+            ]
         );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
             PersonDatasetSubmissionDatasetContact::class,
-            array(
+            [
                 'setDatasetSubmission' => null,
                 'getPerson' => $this->mockPerson,
                 'setPerson' => null,
                 'setRole' => null,
-                'setPrimaryContact' => null
-            )
+                'setPrimaryContact' => null,
+            ]
         );
         $this->mockFile = \Mockery::mock(
             File::class,
-            array(
+            [
                 'setFileset' => \Mockery::mock(Fileset::class),
                 'setFilePathName' => 'foobar.baz',
                 'getFilePathName' => 'foobar.baz',
                 'setFileSize' => 1234,
                 'getFileSize' => 1234,
                 'setFileSha256Hash' => 'cafe',
-                'getFileSha256Hash' => 'cafe'
-            )
+                'getFileSha256Hash' => 'cafe',
+            ]
         );
 
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
-            array(
-                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+            [
+                'getAllFiles' => new ArrayCollection([$this->mockFile]),
                 'getFileSize' => 1234,
                 'getZipFilePath' => '/path/to/zip',
                 'getZipFileSha256Hash' => 'cfsdaf',
                 'getZipFileSize' => 32432324,
                 'doesZipFileExist' => true,
-                'getProcessedAndNewFiles' => new ArrayCollection,
-                'setZipFileSize' => 0
-            )
+                'getProcessedAndNewFiles' => new ArrayCollection(),
+                'setZipFileSize' => 0,
+            ]
         );
         $this->datasetSubmission = new DatasetSubmission(
             $this->mockDif,
@@ -211,7 +210,6 @@ class DatasetSubmissionTest extends TestCase
      */
     public function testSequence()
     {
-
         $this->datasetSubmission->setSequence(42);
         $this->assertEquals(
             42,
@@ -497,27 +495,27 @@ class DatasetSubmissionTest extends TestCase
     public function testKeywords()
     {
         $this->assertEquals(
-            array(),
+            [],
             $this->datasetSubmission->getThemeKeywords()
         );
-        $themeKeywords = array('foo','bar','baz');
+        $themeKeywords = ['foo', 'bar', 'baz'];
         $this->datasetSubmission->setThemeKeywords($themeKeywords);
         $this->assertEquals(
             $themeKeywords,
             $this->datasetSubmission->getThemeKeywords()
         );
         $this->assertEquals(
-            array(),
+            [],
             $this->datasetSubmission->getPlaceKeywords()
         );
-        $placeKeywords = array('Texas','Louisiana','Mississippi');
+        $placeKeywords = ['Texas', 'Louisiana', 'Mississippi'];
         $this->datasetSubmission->setPlaceKeywords($placeKeywords);
         $this->assertEquals(
             $placeKeywords,
             $this->datasetSubmission->getPlaceKeywords()
         );
         $this->assertEquals(
-            array(),
+            [],
             $this->datasetSubmission->getTopicKeywords()
         );
         $topicKeywords = array_keys(DatasetSubmission::TOPIC_KEYWORDS);
@@ -536,7 +534,7 @@ class DatasetSubmissionTest extends TestCase
     public function testBadTopicKeywords()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->datasetSubmission->setTopicKeywords(array('badTopic'));
+        $this->datasetSubmission->setTopicKeywords(['badTopic']);
     }
 
     /**
@@ -577,14 +575,14 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->getTemporalExtentDesc()
         );
         $this->datasetSubmission->setTemporalExtentBeginPosition(null);
-        $temporalExtentBeginPosition = new \DateTime;
+        $temporalExtentBeginPosition = new \DateTime();
         $this->datasetSubmission->setTemporalExtentBeginPosition($temporalExtentBeginPosition);
         $this->assertSame(
             $temporalExtentBeginPosition,
             $this->datasetSubmission->getTemporalExtentBeginPosition()
         );
         $this->datasetSubmission->setTemporalExtentEndPosition(null);
-        $temporalExtentEndPosition = new \DateTime;
+        $temporalExtentEndPosition = new \DateTime();
         $this->datasetSubmission->setTemporalExtentEndPosition($temporalExtentEndPosition);
         $this->assertSame(
             $temporalExtentEndPosition,
@@ -746,11 +744,11 @@ class DatasetSubmissionTest extends TestCase
     {
         $this->mockDatasetSubmissionReview = \Mockery::mock(
             DatasetSubmissionReview::class,
-            array(
+            [
                 'setDatasetSubmission' => $this->datasetSubmission,
                 'getReviewedBy' => $this->mockPerson,
-                'getReviewStartDateTime' => new DateTime('now')
-            )
+                'getReviewStartDateTime' => new \DateTime('now'),
+            ]
         );
         $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
         $this->assertSame($this->mockDatasetSubmissionReview, $this->datasetSubmission->getDatasetSubmissionReview());
@@ -765,7 +763,7 @@ class DatasetSubmissionTest extends TestCase
     {
         $this->datasetSubmission->setDataset($this->mockDataset);
 
-        $testStartDateTime = new DateTime('now');
+        $testStartDateTime = new \DateTime('now');
 
         $datasetSubmissionReview = new DatasetSubmissionReview(
             $this->mockPerson,
@@ -804,41 +802,41 @@ class DatasetSubmissionTest extends TestCase
      */
     public function testAddRemoveAndGetDistributionPoint()
     {
-        //setup
+        // setup
         $this->mockDataCenter = \Mockery::mock(
             DataCenter::class,
-            array(
+            [
                 'getOrganizationName' => 'GRIIDC',
-                'getOrganizationUrl' => 'www.griidc.org'
-            )
+                'getOrganizationUrl' => 'www.griidc.org',
+            ]
         );
 
         $this->mockDistributionPoint = \Mockery::mock(
             DistributionPoint::class,
-            array(
+            [
                 'setDatasetSubmission' => $this->datasetSubmission,
                 'setDataCenter' => $this->mockDataCenter,
                 'getDistributionUrl' => 'www.org.com',
-            )
+            ]
         );
 
-        //remove default distribution point initially created in dataset submission entity
+        // remove default distribution point initially created in dataset submission entity
         $defaultDistributionPoint = $this->datasetSubmission->getDistributionPoints()->first();
         if (null !== $defaultDistributionPoint) {
             $this->datasetSubmission->removeDistributionPoint($defaultDistributionPoint);
         }
 
-        //test adder
+        // test adder
         $this->datasetSubmission->addDistributionPoint($this->mockDistributionPoint);
         $this->assertEquals(
             1,
             $this->datasetSubmission->getDistributionPoints()->count()
         );
 
-        //test getter
+        // test getter
         $this->assertSame($this->datasetSubmission->getDistributionPoints()->first(), $this->mockDistributionPoint);
 
-        //test remover
+        // test remover
         $this->datasetSubmission->removeDistributionPoint($this->mockDistributionPoint);
         $this->assertEquals(
             0,
@@ -916,40 +914,40 @@ class DatasetSubmissionTest extends TestCase
      */
     public function testAddRemoveAndGetDatasetLink()
     {
-        //setup
+        // setup
         $this->mockDatasetLink = \Mockery::mock(
             DatasetLink::class,
-            array(
+            [
                 'getDatasetSubmission' => $this->datasetSubmission,
                 'setDatasetSubmission' => new DatasetLink(),
                 'getUrl' => 'www.bla.null',
-            )
+            ]
         );
 
-        //test adder
+        // test adder
         $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
         $this->assertEquals(
             1,
             $this->datasetSubmission->getDatasetLinks()->count()
         );
 
-        //remove default distribution point initially created in dataset submission entity
+        // remove default distribution point initially created in dataset submission entity
         $defaultDatasetLink = $this->datasetSubmission->getDatasetLinks()->first();
         if (null !== $defaultDatasetLink) {
             $this->datasetSubmission->removeDatasetLink($defaultDatasetLink);
         }
 
-        //test adder again
+        // test adder again
         $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
         $this->assertEquals(
             1,
             $this->datasetSubmission->getDatasetLinks()->count()
         );
 
-        //test getter
+        // test getter
         $this->assertSame($this->datasetSubmission->getDatasetLinks()->first(), $this->mockDatasetLink);
 
-        //test remover
+        // test remover
         $this->datasetSubmission->removeDatasetLink($this->mockDatasetLink);
         $this->assertEquals(
             0,
@@ -971,7 +969,7 @@ class DatasetSubmissionTest extends TestCase
         $this->assertEquals($remotelyHostedUrl, $this->datasetSubmission->getRemotelyHostedUrl());
     }
 
-     /**
+    /**
      * Test the setter and getter for remotely hosted url.
      *
      * @return void

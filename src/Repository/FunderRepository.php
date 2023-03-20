@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Funder Repository.
+ *
  * @extends ServiceEntityRepository<Funder>
  *
  * @method Funder|null find($id, $lockMode = null, $lockVersion = null)
@@ -42,9 +44,9 @@ class FunderRepository extends ServiceEntityRepository
     /**
      * This method queries Funders by partial match of name, returning name and ID.
      *
-     * @param string|null $userQueryString The user query.
+     * @param string|null $userQueryString the user query
      *
-     * @return array Returns an array of Funder objects.
+     * @return array returns an array of Funder objects
      */
     public function findFunderByPartialName(?string $userQueryString): array
     {
@@ -54,7 +56,7 @@ class FunderRepository extends ServiceEntityRepository
             ->where('LOWER(f.name) like LOWER(:queryString)')
             ->setParameter('queryString', "%$userQueryString%");
 
-            return $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getArrayResult();
     }
 
 //    /**

@@ -5,7 +5,7 @@ namespace App\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * A generic dispatcher.
+ * Log Action Item Event Dispatcher.
  */
 class LogActionItemEventDispatcher
 {
