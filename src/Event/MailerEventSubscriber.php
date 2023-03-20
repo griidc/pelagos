@@ -8,30 +8,17 @@ use Symfony\Component\Mailer\Event\MessageEvent;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
+/**
+ * Event Subscriber for mailing events.
+ *
+ * Logs e-mail events to mailler log.
+ */
 class MailerEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * A Monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * Mailer Logger Subscriber constructor.
-     *
-     * @param LoggerInterface $mailerLogger the Logger Interface
-     */
-    public function __construct(LoggerInterface $mailerLogger)
+    public function __construct(protected LoggerInterface $mailerLogger)
     {
-        $this->logger = $mailerLogger;
     }
 
-    /**
-     * Subscribe to the event.
-     *
-     * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
-     */
     public static function getSubscribedEvents()
     {
         return [
@@ -50,7 +37,7 @@ class MailerEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->logger->info(
+        $this->mailerLogger->info(
             $message->generateMessageId(),
             [
                 'queued' => $event->isQueued(),
