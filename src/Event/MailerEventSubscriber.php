@@ -11,16 +11,16 @@ use Symfony\Component\Mime\Email;
 class MailerEventSubscriber implements EventSubscriberInterface
 {
     /**
-      * A Monolog logger.
-      *
-      * @var LoggerInterface
-      */
-      protected $logger;
+     * A Monolog logger.
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * Mailer Logger Subscriber constructor.
      *
-     * @param LoggerInterface $mailerLogger The Logger Interface.
+     * @param LoggerInterface $mailerLogger the Logger Interface
      */
     public function __construct(LoggerInterface $mailerLogger)
     {
@@ -41,10 +41,6 @@ class MailerEventSubscriber implements EventSubscriberInterface
 
     /**
      * Event handler for message event.
-     *
-     * @param MessageEvent $event
-     *
-     * @return void
      */
     public function onMessage(MessageEvent $event): void
     {
@@ -54,16 +50,14 @@ class MailerEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $toAddresses = array_map(function (Address $to) {
-            return $to->toString();
-        }, $message->getTo());
-
         $this->logger->info(
             $message->generateMessageId(),
             [
                 'queued' => $event->isQueued(),
                 'subject' => $message->getSubject(),
-                'to' => $toAddresses,
+                'to' => array_map(function (Address $to) {
+                    return $to->toString();
+                }, $message->getTo()),
             ]
         );
     }
