@@ -7,9 +7,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * DOI Entity class.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class DOI extends Entity
 {
     /**
@@ -38,9 +37,8 @@ class DOI extends Entity
      * @var string
      *
      * @Serializer\Groups({"doi"})
-     *
-     * @ORM\Column(type="text", nullable=false)
      */
+    #[ORM\Column(type: 'text', nullable: false)]
     protected $doi;
 
     /**
@@ -49,18 +47,16 @@ class DOI extends Entity
      * @var integer
      *
      * @see STATUS_* constants.
-     *
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     protected $status;
 
     /**
      * The date the DOI is made public.
      *
      * @var \DateTime
-     *
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $publicDate;
 
     /**

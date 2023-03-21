@@ -9,9 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 trait DescriptorTypeTrait
 {
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**

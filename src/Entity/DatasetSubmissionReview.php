@@ -8,9 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * This class represents Pelagos DatasetSubmission Review information.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class DatasetSubmissionReview extends Entity
 {
     /**
@@ -22,45 +21,40 @@ class DatasetSubmissionReview extends Entity
      * The Person who started this review.
      *
      * @var Person
-     *
-     * @ORM\ManyToOne(targetEntity="Person")
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $reviewedBy;
 
     /**
      * The time and date when the review was started.
      *
      * @var \Datetime
-     *
-     * @ORM\Column(type="datetimetz", nullable=false)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: false)]
     protected $reviewStartDateTime;
 
     /**
      * The time and date when the review ended.
      *
      * @var \Datetime
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $reviewEndDateTime;
 
     /**
      * Any notes the reviewer has provided for this review.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $reviewNotes;
 
     /**
      * The Person who ended this review.
      *
      * @var Person
-     *
-     * @ORM\ManyToOne(targetEntity="Person")
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $reviewEndedBy;
 
     /**
