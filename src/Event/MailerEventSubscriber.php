@@ -11,7 +11,7 @@ use Symfony\Component\Mime\Email;
 /**
  * Event Subscriber for mailing events.
  *
- * Logs e-mail events to mailler log.
+ * Logs e-mail events to mailer log.
  */
 class MailerEventSubscriber implements EventSubscriberInterface
 {
