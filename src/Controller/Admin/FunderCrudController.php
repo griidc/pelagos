@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Entity;
 use App\Entity\Funder;
+use App\Entity\Dataset;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -91,7 +92,10 @@ class FunderCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
-                    ->setLabel('Delete');
+                    ->setLabel('Delete')
+                    ->displayIf(function (Funder $funder) {
+                        return !$this->isFunderBeingUsed($funder);
+                    });
             });
     }
 
@@ -107,5 +111,18 @@ class FunderCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Funder')
             ->setPageTitle(Crud::PAGE_NEW, 'Create Funder')
             ->showEntityActionsInlined();
+    }
+
+    /**
+     * Is this funder linked with any dataset.
+     */
+    private function isFunderBeingUsed(Funder $funder): bool
+    {
+        $entityManager = $this->container->get('doctrine')->getManager();
+
+        /** @var DatasetRepository $datasetRepository */
+        $datasetRepository = $entityManager->getRepository(Dataset::class);
+
+        return count($datasetRepository->findByFunder($funder)) > 0;
     }
 }
