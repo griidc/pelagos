@@ -12,7 +12,6 @@ use App\Exception\NotDeletableException;
 /**
  * Entity class to represent a Funding Cycle.
  *
- * @ORM\Entity
  *
  * @Assert\GroupSequence({
  *     "id",
@@ -20,13 +19,13 @@ use App\Exception\NotDeletableException;
  *     "FundingCycle",
  *     "Entity",
  * })
- *
  * @UniqueEntity(
  *     fields={"fundingOrganization","name"},
  *     errorPath="name",
  *     message="Name must be unique within a FundingOrganization"
  * )
  */
+#[ORM\Entity]
 class FundingCycle extends Entity
 {
     /**
@@ -43,7 +42,6 @@ class FundingCycle extends Entity
      *
      * @Serializer\Groups({"organization"})
      *
-     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -52,6 +50,7 @@ class FundingCycle extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'citext')]
     protected $name;
 
     /**
@@ -61,12 +60,12 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
     /**
@@ -76,12 +75,12 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="URL cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
     /**
@@ -90,9 +89,8 @@ class FundingCycle extends Entity
      * @var \Datetime $startDate
      *
      * @access protected
-     *
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $startDate;
 
     /**
@@ -101,9 +99,8 @@ class FundingCycle extends Entity
      * @var \Datetime $endDate
      *
      * @access protected
-     *
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $endDate;
 
     /**
@@ -115,14 +112,13 @@ class FundingCycle extends Entity
      *
      * @Serializer\Groups({"organization"})
      *
-     * @ORM\ManyToOne(targetEntity="FundingOrganization", inversedBy="fundingCycles")
      *
      * @Assert\NotBlank(
      *     message="Funding Organization is required"
      * )
-     *
      * @Serializer\MaxDepth(1)
      */
+    #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'fundingCycles')]
     protected $fundingOrganization;
 
     /**
@@ -132,12 +128,12 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="ResearchGroup", mappedBy="fundingCycle")
      *
-     * @ORM\OrderBy({"name" = "ASC"})
      *
      * @Serializer\MaxDepth(2)
      */
+    #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     protected $researchGroups;
 
     /**
@@ -147,17 +143,16 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=false)
      *
      * @Assert\NotBlank(
      *     message="UDI Prefix is required"
      * )
-     *
      * @Assert\Regex(
      *      pattern="/^[A-Z\d]{2}$/",
      *      message="Funding Cycle prefix must be composed of 2 uppercase characters or numbers."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: false)]
     protected $udiPrefix;
 
     /**
@@ -165,7 +160,6 @@ class FundingCycle extends Entity
      *
      * @var integer
      *
-     * @ORM\Column(nullable=true, type="integer")
      *
      * @Assert\Range(
      *     min = 1,
@@ -174,6 +168,7 @@ class FundingCycle extends Entity
      *     invalidMessage = "Sort position must be a positive integer."
      * )
      */
+    #[ORM\Column(nullable: true, type: 'integer')]
     protected $sortOrder;
 
     /**

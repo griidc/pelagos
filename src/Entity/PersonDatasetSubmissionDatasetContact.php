@@ -6,9 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Person to Dataset Submission dataset contact association entity class.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
 {
     /**
@@ -20,9 +19,8 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
      * The Dataset Submission for this association.
      *
      * @var DatasetSubmission
-     *
-     * @ORM\ManyToOne(targetEntity="DatasetSubmission", inversedBy="datasetContacts")
      */
+    #[ORM\ManyToOne(targetEntity: 'DatasetSubmission', inversedBy: 'datasetContacts')]
     protected $datasetSubmission;
 
     /**
