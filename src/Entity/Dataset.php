@@ -206,9 +206,8 @@ class Dataset extends Entity
      * Funders associated with this Dataset.
      *
      * @var Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Funder")
      */
+    #[ORM\OneToMany(targetEntity: Funder::class)]
     protected $funders;
 
     /**

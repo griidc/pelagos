@@ -247,11 +247,11 @@ class FundingOrganization extends Entity
      *
      * @var ?Funder
      *
-     * @ORM\ManyToOne(targetEntity="Funder")
      * @Assert\NotBlank(
      *     message="Default Funder is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: Funder::class)]
     protected $defaultFunder;
 
     /**

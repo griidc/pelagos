@@ -935,9 +935,8 @@ class DatasetSubmission extends Entity
 
     /**
      * User provided funders during submission.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $additionalFunders = null;
 
     /**

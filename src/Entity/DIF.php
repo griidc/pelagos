@@ -371,9 +371,8 @@ class DIF extends Entity
      * Additional funders for this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $additionalFunders;
 
     /**

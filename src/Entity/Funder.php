@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\FunderRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Funder class.
- *
- * @ORM\Entity(repositoryClass="App\Repository\FunderRepository")
  */
+#[ORM\Entity(repositoryClass: FunderRepository::class)]
 class Funder extends Entity
 {
     public const SOURCE_IMPORTED = 'imported';
@@ -23,23 +23,20 @@ class Funder extends Entity
 
     /**
      * Name of the Funder.
-     *
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private ?string $name = null;
 
     /**
      * Reference URI of the Funder.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $referenceUri = null;
 
     /**
      * The source of the Funder.
-     *
-     * @ORM\Column(type="text", nullable=false)
      */
+    #[ORM\Column(type: 'text', nullable: false)]
     private string $source = self::SOURCE_DRPM;
 
     /**
