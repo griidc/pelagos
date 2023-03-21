@@ -8,9 +8,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * DIF Entity class.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class DIF extends Entity
 {
     /**
@@ -49,9 +48,8 @@ class DIF extends Entity
      * @var Dataset
      *
      * @Serializer\MaxDepth(2)
-     *
-     * @ORM\OneToOne(targetEntity="Dataset", mappedBy="dif", cascade={"persist"})
      */
+    #[ORM\OneToOne(targetEntity: 'Dataset', mappedBy: 'dif', cascade: ['persist'])]
     protected $dataset;
 
     /**
@@ -61,10 +59,10 @@ class DIF extends Entity
      *
      * @see STATUS_* constants.
      *
-     * @ORM\Column(type="smallint")
      *
      * @Serializer\Groups({"card"})
      */
+    #[ORM\Column(type: 'smallint')]
     protected $status = self::STATUS_UNSUBMITTED;
 
     /**
@@ -72,12 +70,12 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Title is required"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $title;
 
     /**
@@ -85,14 +83,13 @@ class DIF extends Entity
      *
      * @var Person
      *
-     * @ORM\ManyToOne(targetEntity="Person")
      *
      * @Assert\NotBlank(
      *     message="Primary Point of Contact is required"
      * )
-     *
      * @Serializer\MaxDepth(1)
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $primaryPointOfContact;
 
     /**
@@ -100,10 +97,10 @@ class DIF extends Entity
      *
      * @var Person
      *
-     * @ORM\ManyToOne(targetEntity="Person")
      *
      * @Serializer\MaxDepth(1)
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $secondaryPointOfContact;
 
     /**
@@ -111,84 +108,76 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Abstract is required"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $abstract;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Ecological/Biological.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudyEcologicalBiological;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Physical Oceanography.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudyPhysicalOceanography;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Atmospheric.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudyAtmospheric;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Chemical.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudyChemical;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Human Health.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudyHumanHealth;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Social/Cultural/Political.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudySocialCulturalPolitical;
 
     /**
      * Whether the fields of study for the dataset identified by this DIF include Economics.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $fieldOfStudyEconomics;
 
     /**
      * Other fields of study for the dataset identified by this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $fieldOfStudyOther;
 
     /**
@@ -197,72 +186,64 @@ class DIF extends Entity
      * @var string
      *
      * @see DATA_SIZES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $dataSize;
 
     /**
      * The Phenomenon/Variables Observed or Generated for the dataset identified by this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $variablesObserved;
 
     /**
      * Whether the methods for collecting or generating the dataset identified by this DIF include Field Sampling.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $collectionMethodFieldSampling;
 
     /**
      * Whether the methods for collecting or generating the dataset identified by this DIF include Simulated/Generated.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $collectionMethodSimulatedGenerated;
 
     /**
      * Whether the methods for collecting or generating the dataset identified by this DIF include Laboratory.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $collectionMethodLaboratory;
 
     /**
      * Whether the methods for collecting or generating the dataset identified by this DIF include Literature Based.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $collectionMethodLiteratureBased;
 
     /**
      * Whether the methods for collecting or generating the dataset identified by this DIF include Remote Sensing.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $collectionMethodRemoteSensing;
 
     /**
      * Other methods for collecting or generating the dataset identified by this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $collectionMethodOther;
 
     /**
@@ -270,10 +251,10 @@ class DIF extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="date", nullable=true)
      *
      * @Serializer\Type("DateTime<'Y-m-d'>")
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $estimatedStartDate;
 
     /**
@@ -281,82 +262,74 @@ class DIF extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="date", nullable=true)
      *
      * @Serializer\Type("DateTime<'Y-m-d'>")
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $estimatedEndDate;
 
     /**
      * A text description of the spatial extent.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtentDescription;
 
     /**
      * The geometry for the spatial extent.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtentGeometry;
 
     /**
      * Whether the national data archives for the dataset identified by this DIF include the National Oceanographic Data Center (NODC).
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $nationalDataArchiveNODC;
 
     /**
      * Whether the national data archives for the dataset identified by this DIF include US EPA Storet.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $nationalDataArchiveStoret;
 
     /**
      * Whether the national data archives for the dataset identified by this DIF include the Global Biodiversity Information Facility.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $nationalDataArchiveGBIF;
 
     /**
      * Whether the national data archives for the dataset identified by this DIF include the National Center for Biotechnology Information.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $nationalDataArchiveNCBI;
 
     /**
      * Whether the national data archives for the dataset identified by this DIF include the Data.gov Dataset Management System.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $nationalDataArchiveDataGov;
 
     /**
      * Other national data archives for the dataset identified by this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $nationalDataArchiveOther;
 
     /**
@@ -365,36 +338,32 @@ class DIF extends Entity
      * @var string
      *
      * @see ETHICAL_ISSUES class constant for valid values;
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $ethicalIssues;
 
     /**
      * An explanation of ethical issues for the dataset identified by this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $ethicalIssuesExplanation;
 
     /**
      * Additional remarks for this DIF.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $remarks;
 
     /**
      * Approved Date Timestamp for DIF.
      *
      * @var \DateTime $approvedDate;
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $approvedDate;
 
     /**

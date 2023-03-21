@@ -31,10 +31,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     approval_status - not used
  *     jira_ticket - probably belongs in Dataset entity?
  *
- * @ORM\Entity
  *
- * @ORM\Entity(repositoryClass="App\Repository\DatasetSubmissionRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\DatasetSubmissionRepository')]
 class DatasetSubmission extends Entity
 {
     /**
@@ -376,9 +375,8 @@ class DatasetSubmission extends Entity
      * Status of this Dataset Submission.
      *
      * @var integer
-     *
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     protected $status = self::STATUS_INCOMPLETE;
 
     /**
@@ -386,19 +384,18 @@ class DatasetSubmission extends Entity
      *
      * @var Dataset
      *
-     * @ORM\ManyToOne(targetEntity="Dataset", inversedBy="datasetSubmissionHistory", cascade={"persist"})
      *
-     * @ORM\JoinColumn(onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: 'Dataset', inversedBy: 'datasetSubmissionHistory', cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     protected $dataset;
 
     /**
      * The review for this Dataset Submission.
      *
      * @var DatasetSubmissionReview
-     *
-     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", cascade={"persist"}, orphanRemoval=true)
      */
+    #[ORM\OneToOne(targetEntity: 'DatasetSubmissionReview', cascade: ['persist'], orphanRemoval: true)]
     protected $datasetSubmissionReview;
 
     /**
@@ -409,9 +406,8 @@ class DatasetSubmission extends Entity
      * Legacy DB column: registry_id (the sequence portion)
      *
      * @var integer
-     *
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     protected $sequence;
 
     /**
@@ -421,21 +417,20 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission title is required."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $title;
 
     /**
      * The short title for this Dataset Submission.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $shortTitle;
 
     /**
@@ -445,12 +440,12 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission abstract is required."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
     /**
@@ -462,12 +457,12 @@ class DatasetSubmission extends Entity
      *
      * @Serializer\Groups({"authors"})
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission author list is required."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $authors;
 
     /**
@@ -478,9 +473,8 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @deprecated Replaced by self::$datasetContacts.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $pointOfContactName;
 
     /**
@@ -491,9 +485,8 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @deprecated Replaced by self::$datasetContacts.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $pointOfContactEmail;
 
     /**
@@ -501,15 +494,15 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
-     * @ORM\OrderBy({"primaryContact" = "DESC", "creationTimeStamp" = "ASC"})
      *
      * @Assert\Count(
      *      min = "1",
      *      minMessage="A Dataset contact person is required."
      * )
      */
+    #[ORM\OneToMany(targetEntity: 'PersonDatasetSubmissionDatasetContact', mappedBy: 'datasetSubmission', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['primaryContact' => 'DESC', 'creationTimeStamp' => 'ASC'])]
     protected $datasetContacts;
 
     /**
@@ -517,15 +510,15 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
-     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      *
      * @Assert\Count(
      *      min = "1",
      *      minMessage="A Metadata contact person is required."
      * )
      */
+    #[ORM\OneToMany(targetEntity: 'PersonDatasetSubmissionMetadataContact', mappedBy: 'datasetSubmission', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['creationTimeStamp' => 'ASC'])]
     protected $metadataContacts;
 
     /**
@@ -537,12 +530,12 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column(type="text", nullable=false)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission restrictions must be set."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: false)]
     protected $restrictions = self::RESTRICTION_NONE;
 
     /**
@@ -554,12 +547,12 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission dataset file transfer type must be set."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileTransferType;
 
     /**
@@ -571,9 +564,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileUri;
 
     /**
@@ -583,9 +576,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $largeFileUri;
 
     /**
@@ -596,9 +589,8 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileTransferStatus;
 
     /**
@@ -607,9 +599,8 @@ class DatasetSubmission extends Entity
      * Legacy DB column: dataset_filename
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileName;
 
     /**
@@ -620,9 +611,8 @@ class DatasetSubmission extends Entity
      * @var integer
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="bigint", nullable=true)
      */
+    #[ORM\Column(type: 'bigint', nullable: true)]
     protected $datasetFileSize;
 
     /**
@@ -631,54 +621,48 @@ class DatasetSubmission extends Entity
      * Legacy DB column: fs_sha256_hash
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileSha256Hash;
 
     /**
      * The dataset file cold storage archive size.
      *
      * @var integer
-     *
-     * @ORM\Column(type="bigint", nullable=true)
      */
+    #[ORM\Column(type: 'bigint', nullable: true)]
     protected $datasetFileColdStorageArchiveSize;
 
     /**
      * The dataset file cold storage archive sha256 hash.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileColdStorageArchiveSha256Hash;
 
     /**
      * The dataset file cold storage archive original filename.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileColdStorageOriginalFilename;
 
     /**
      * The date the file link was last checked.
      *
      * @var \DateTime
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $datasetFileUrlLastCheckedDate;
 
     /**
      * The status code returned when the file link was checked.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $datasetFileUrlStatusCode;
 
     /**
@@ -689,9 +673,8 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @see DATASET_STATUSES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=false)
      */
+    #[ORM\Column(type: 'text', nullable: false)]
     protected $datasetStatus = Dataset::DATASET_STATUS_NONE;
 
     /**
@@ -699,12 +682,12 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission purpose field is required."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $purpose;
 
     /**
@@ -712,57 +695,52 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission data parameters/units field is required."
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $suppParams;
 
     /**
      * Supplemental information - methods.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $suppMethods;
 
     /**
      * Supplemental information - instruments.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $suppInstruments;
 
     /**
      * Supplemental information - sample scales and rates.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $suppSampScalesRates;
 
     /**
      * Supplemental information - error analysis.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $suppErrorAnalysis;
 
     /**
      * Supplemental information - provenance and historical references.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $suppProvenance;
 
     /**
@@ -770,21 +748,19 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     * @ORM\Column(type="json", nullable=true)
-     *
      * @Assert\NotBlank(
      *     message="The dataset submission theme keyword(s) field is required."
      * )
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $themeKeywords = array();
 
     /**
      * Place keywords describing this dataset.
      *
      * @var array
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $placeKeywords = array();
 
     /**
@@ -792,30 +768,28 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     * @ORM\Column(type="json", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $topicKeywords = array();
 
     /**
      * Spatial extent.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtent;
 
     /**
      * Spatial extent description.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtentDescription;
 
     /**
@@ -824,27 +798,24 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $temporalExtentDesc;
 
     /**
      * The temporal beginning position (date).
      *
      * @var \DateTime
-     *
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $temporalExtentBeginPosition;
 
     /**
      * The temporal ending position (date).
      *
      * @var \DateTime
-     *
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $temporalExtentEndPosition;
 
     /**
@@ -853,9 +824,8 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @see NILREASON_TYPES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $temporalExtentNilReasonType;
 
     /**
@@ -864,36 +834,32 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $distributionFormatName;
 
     /**
      * The technique used to decompress the dataset.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $fileDecompressionTechnique;
 
     /**
      * When this Dataset Submission was submitted.
      *
      * @var \DateTime
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $submissionTimeStamp;
 
     /**
      * The Person who submitted this Dataset Submission.
      *
      * @var Person
-     *
-     * @ORM\ManyToOne(targetEntity="Person")
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $submitter;
 
     /**
@@ -902,77 +868,68 @@ class DatasetSubmission extends Entity
      * @var Collection $distributionPoints
      *
      * @access protected
-     *
-     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
+    #[ORM\OneToMany(targetEntity: 'DistributionPoint', mappedBy: 'datasetSubmission', cascade: ['persist'], orphanRemoval: true)]
     protected $distributionPoints;
 
     /**
      * Remotely Hosted Dataset Name.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $remotelyHostedName;
 
     /**
      * Remotely Hosted Dataset Description.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $remotelyHostedDescription;
 
     /**
      * Remotely Hosted Dataset Function.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $remotelyHostedFunction;
 
     /**
      * Remotely Hosted Dataset URL.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $remotelyHostedUrl;
 
     /**
      * Fileset for the datasetSubmission instance.
      *
      * @var Fileset
-     *
-     * @ORM\OneToOne(targetEntity="Fileset", inversedBy="datasetSubmission", cascade={"persist", "remove"})
      */
+    #[ORM\OneToOne(targetEntity: 'Fileset', inversedBy: 'datasetSubmission', cascade: ['persist', 'remove'])]
     protected $fileset;
 
     /**
      * The Point of Contact for this Dataset Submission.
      *
      * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLink", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
+    #[ORM\OneToMany(targetEntity: 'App\Entity\DatasetLink', mappedBy: 'datasetSubmission', cascade: ['persist'], orphanRemoval: true)]
     private $datasetLinks;
 
     /**
      * For cold-stored, the total unpacked filecount (not dirs).
-     *
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $coldStorageTotalUnpackedCount;
 
     /**
      * For cold-stored, the total unpacked bytecount.
-     *
-     * @ORM\Column(type="bigint", nullable=true)
      */
+    #[ORM\Column(type: 'bigint', nullable: true)]
     private $coldStorageTotalUnpackedSize;
 
     /**

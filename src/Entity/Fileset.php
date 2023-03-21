@@ -10,50 +10,43 @@ use Doctrine\Common\Collections\Expr\Comparison;
 
 /**
  * Fileset Entity class.
- *
- * @ORM\Entity(repositoryClass="App\Repository\FilesetRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\FilesetRepository')]
 class Fileset extends Entity
 {
     /**
      * Collection of files.
      *
      * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="File", mappedBy="fileset", cascade={"persist"}, orphanRemoval=true)
      */
+    #[ORM\OneToMany(targetEntity: 'File', mappedBy: 'fileset', cascade: ['persist'], orphanRemoval: true)]
     protected $files;
 
     /**
      * Zipped files path on disk.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $zipFilePath;
 
     /**
      * Zipped files size on disk.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $zipFileSize;
 
     /**
      * Zipped files hash on disk.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $zipFileSha256Hash;
 
-    /**
-     * @ORM\OneToOne(targetEntity="DatasetSubmission", mappedBy="fileset", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: 'DatasetSubmission', mappedBy: 'fileset', cascade: ['persist', 'remove'])]
     protected $datasetSubmission;
 
 
