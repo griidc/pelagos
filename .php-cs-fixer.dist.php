@@ -8,6 +8,7 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => false,
+        'concat_space' => ['spacing' => 'one'],
     ])
     ->setRiskyAllowed(true)
     ->setFinder(
