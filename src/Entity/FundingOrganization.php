@@ -143,7 +143,6 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
@@ -182,7 +181,6 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
@@ -217,7 +215,6 @@ class FundingOrganization extends Entity
      * This FundingOrganization's parent DataRepository.
      *
      * @var DataRepository
-     *
      *
      * @Assert\NotBlank(
      *     message="Data Repository is required"

@@ -748,7 +748,6 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     *
      * @Assert\NotBlank(
      *     message="The dataset submission theme keyword(s) field is required."
      * )
