@@ -32,7 +32,6 @@ class Keyword extends Entity
         return $this->json;
     }
 
-
     /**
      * Set the JSON for this Keyword.
      */
