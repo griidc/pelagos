@@ -134,9 +134,6 @@
             ".php-cs-fixer.dist.php"
         ]
     },
-    "friendsofphp/proxy-manager-lts": {
-        "version": "v1.0.5"
-    },
     "friendsofsymfony/elastica-bundle": {
         "version": "5.0",
         "recipe": {
@@ -210,9 +207,6 @@
             "config/packages/jms_serializer.yaml",
             "config/packages/prod/jms_serializer.yaml"
         ]
-    },
-    "laminas/laminas-code": {
-        "version": "3.4.1"
     },
     "league/flysystem": {
         "version": "1.1.3"
