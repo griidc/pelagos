@@ -94,7 +94,7 @@ class LogActionItemEvent extends Event
      *
      * @access public
      *
-     * @return array additional information for the log action item event(json_array)
+     * @return array additional information for the log action item event(json)
      */
     public function getPayLoad()
     {

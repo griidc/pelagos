@@ -5,32 +5,20 @@ namespace App\Event;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Event\MessageEvent;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
+/**
+ * Event Subscriber for mailing events.
+ *
+ * Logs e-mail events to mailer log.
+ */
 class MailerEventSubscriber implements EventSubscriberInterface
 {
-    /**
-      * A Monolog logger.
-      *
-      * @var LoggerInterface
-      */
-      protected $logger;
-
-    /**
-     * Mailer Logger Subscriber constructor.
-     *
-     * @param LoggerInterface $mailerLogger The Logger Interface.
-     */
-    public function __construct(LoggerInterface $mailerLogger)
+    public function __construct(protected LoggerInterface $mailerLogger)
     {
-        $this->logger = $mailerLogger;
     }
 
-    /**
-     * Subscribe to the event.
-     *
-     * @return void
-     */
     public static function getSubscribedEvents()
     {
         return [
@@ -40,10 +28,6 @@ class MailerEventSubscriber implements EventSubscriberInterface
 
     /**
      * Event handler for message event.
-     *
-     * @param MessageEvent $event
-     *
-     * @return void
      */
     public function onMessage(MessageEvent $event): void
     {
@@ -53,12 +37,14 @@ class MailerEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->logger->info(
+        $this->mailerLogger->info(
             $message->generateMessageId(),
             [
                 'queued' => $event->isQueued(),
                 'subject' => $message->getSubject(),
-                'to' => $message->getTo(),
+                'to' => array_map(function (Address $to) {
+                    return $to->toString();
+                }, $message->getTo()),
             ]
         );
     }

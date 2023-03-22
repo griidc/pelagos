@@ -15,9 +15,8 @@ use App\Exception\PasswordException;
  * Entity class to represent an Account.
  *
  * This class defines an Account, which is a set of credentials for a Person.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class Account extends Entity implements UserInterface, EquatableInterface
 {
     /**
@@ -59,13 +58,13 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Person
      *
-     * @ORM\OneToOne(targetEntity="Person", inversedBy="account")
-     * @ORM\Id
      *
      * @Assert\NotBlank(
      *     message="An account must be attached to a Person"
      * )
      */
+    #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
+    #[ORM\Id]
     protected $person;
 
     /**
@@ -73,12 +72,12 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var string
      *
-     * @ORM\Column(type="citext", unique=true)
      *
      * @Assert\NotBlank(
      *     message="User ID is required"
      * )
      */
+    #[ORM\Column(type: 'citext', unique: true)]
     protected $userId;
 
     /**
@@ -86,12 +85,12 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Password
      *
-     * @ORM\OneToOne(targetEntity="Password", cascade={"persist"})
      *
      * @Assert\NotBlank(
      *     message="An Account must be attached to a Password"
      * )
      */
+    #[ORM\OneToOne(targetEntity: 'Password', cascade: ['persist'])]
     protected $password;
 
     /**
@@ -99,10 +98,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="Password", mappedBy="account", fetch="EXTRA_LAZY")
      *
-     * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
+    #[ORM\OneToMany(targetEntity: 'Password', mappedBy: 'account', fetch: 'EXTRA_LAZY')]
+    #[ORM\OrderBy(['modificationTimeStamp' => 'DESC'])]
     protected $passwordHistory;
 
     /**
@@ -110,64 +109,58 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="LoginAttempts", mappedBy="account", fetch="EXTRA_LAZY")
      *
-     * @ORM\OrderBy({"creationTimeStamp"="DESC"})
      */
+    #[ORM\OneToMany(targetEntity: 'LoginAttempts', mappedBy: 'account', fetch: 'EXTRA_LAZY')]
+    #[ORM\OrderBy(['creationTimeStamp' => 'DESC'])]
     protected $loginAttempts;
 
     /**
      * Whether this Account is a POSIX account.
      *
      * @var boolean
-     *
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     protected $posix = false;
 
     /**
      * The uid number for this Account.
      *
      * @var integer
-     *
-     * @ORM\Column(type="integer", nullable=true, unique=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true, unique: true)]
     protected $uidNumber;
 
     /**
      * The gid number for this Account.
      *
      * @var integer
-     *
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $gidNumber;
 
     /**
      * The home directory for this Account.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $homeDirectory;
 
     /**
      * The login shell for this Account.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $loginShell;
 
     /**
      * SSH public keys for this account.
      *
      * @var array
-     *
-     * @ORM\Column(type="json_array", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $sshPublicKeys = array();
 
     /**
@@ -195,7 +188,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
     /**
      * Override Account's getId() method with Person's Id.
      *
-     * @return The EntityID of the Person associated with this Account.
+     * @return int The EntityID of the Person associated with this Account.
      */
     public function getId()
     {

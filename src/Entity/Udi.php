@@ -8,7 +8,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Entity class to keep list of issued UDI's.
  *
- * @ORM\Entity(repositoryClass="App\Repository\UdiRepository")
  *
  * @UniqueEntity(
  *     fields={"uniqueDataIdentifier"},
@@ -16,16 +15,16 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     message="This UDI already exists"
  * )
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\UdiRepository')]
 class Udi
 {
     /**
      * A string containing the UDI.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=false, unique=true)
-     * @ORM\Id
      */
+    #[ORM\Column(type: 'text', nullable: false, unique: true)]
+    #[ORM\Id]
     protected $uniqueDataIdentifier;
 
     /**

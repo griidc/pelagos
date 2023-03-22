@@ -12,7 +12,6 @@ use App\Exception\NotDeletableException;
 /**
  * Entity class to represent a Data Repository.
  *
- * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"name"},
@@ -20,6 +19,7 @@ use App\Exception\NotDeletableException;
  *     message="A Data Repository with this name already exists"
  * )
  */
+#[ORM\Entity]
 class DataRepository extends Entity
 {
     /**
@@ -34,7 +34,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="citext", unique=true)
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -43,6 +42,7 @@ class DataRepository extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'citext', unique: true)]
     protected $name;
 
     /**
@@ -52,7 +52,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Email address is required"
@@ -64,6 +63,7 @@ class DataRepository extends Entity
      *     message="Email address is invalid"
      * )
      */
+    #[ORM\Column(type: 'citext')]
     protected $emailAddress;
 
     /**
@@ -73,7 +73,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Description is required"
@@ -82,6 +81,7 @@ class DataRepository extends Entity
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $description;
 
     /**
@@ -91,7 +91,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Website URL is required"
@@ -100,6 +99,7 @@ class DataRepository extends Entity
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $url;
 
     /**
@@ -109,7 +109,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Phone number is required"
@@ -118,6 +117,7 @@ class DataRepository extends Entity
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $phoneNumber;
 
     /**
@@ -127,7 +127,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Delivery point is required"
@@ -136,6 +135,7 @@ class DataRepository extends Entity
      *     message="Delivery point (address) cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $deliveryPoint;
 
     /**
@@ -145,7 +145,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="City is required"
@@ -154,6 +153,7 @@ class DataRepository extends Entity
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $city;
 
     /**
@@ -163,7 +163,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Administrative area (state) is required"
@@ -172,6 +171,7 @@ class DataRepository extends Entity
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $administrativeArea;
 
     /**
@@ -181,7 +181,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Postal code (zip) is required"
@@ -190,6 +189,7 @@ class DataRepository extends Entity
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $postalCode;
 
     /**
@@ -199,7 +199,6 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Country is required"
@@ -208,6 +207,7 @@ class DataRepository extends Entity
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $country;
 
     /**
@@ -216,9 +216,8 @@ class DataRepository extends Entity
      * @var \Doctrine\Common\Collections\Collection $personDataRepositories
      *
      * @access protected
-     *
-     * @ORM\OneToMany(targetEntity="PersonDataRepository", mappedBy="dataRepository")
      */
+    #[ORM\OneToMany(targetEntity: 'PersonDataRepository', mappedBy: 'dataRepository')]
     protected $personDataRepositories;
 
     /**
@@ -227,9 +226,8 @@ class DataRepository extends Entity
      * @var ArrayCollection
      *
      * @access protected
-     *
-     * @ORM\OneToMany(targetEntity="FundingOrganization", mappedBy="dataRepository")
      */
+    #[ORM\OneToMany(targetEntity: 'FundingOrganization', mappedBy: 'dataRepository')]
     protected $fundingOrganizations;
 
     /**
