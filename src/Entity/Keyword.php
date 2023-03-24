@@ -15,8 +15,8 @@ class Keyword extends Entity
     /**
      * JSON containing Standard Keyword Data.
      */
-    #[ORM\Column]
-    private array $json = [];
+    #[ORM\Column(type: 'json')]
+    private mixed $json = null;
 
     /**
      * Type of the Keyword.
@@ -27,7 +27,7 @@ class Keyword extends Entity
     /**
      * Get the JSON for this Keyword.
      */
-    public function getJson(): array
+    public function getJson(): mixed
     {
         return $this->json;
     }
@@ -35,7 +35,7 @@ class Keyword extends Entity
     /**
      * Set the JSON for this Keyword.
      */
-    public function setJson(array $json): self
+    public function setJson(mixed $json): self
     {
         $this->json = $json;
 
