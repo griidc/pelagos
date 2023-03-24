@@ -269,6 +269,12 @@ class TreeController extends EntityController
      */
     public function getLettersAction(Request $request, FundingOrgFilter $fundingOrgFilter)
     {
+        $this->doctrineOrmEntityManager
+            ->getConfiguration()
+            ->addCustomHydrationMode(
+                'COLUMN_HYDRATOR',
+                'App\DoctrineExtensions\Hydrators\ColumnHydrator'
+            );
         $qb = $this->doctrineOrmEntityManager
             ->getRepository(Person::class)
             ->createQueryBuilder('person');
@@ -288,7 +294,7 @@ class TreeController extends EntityController
         }
 
         $query = $qb->getQuery();
-        $letters = $query->getSingleColumnResult();
+        $letters = $query->getResult('COLUMN_HYDRATOR');
 
         return $this->render(
             'Api/Tree/letters.json.twig',
