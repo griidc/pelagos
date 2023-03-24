@@ -364,12 +364,6 @@ class EntityHandler
         if (!$class->hasField($property) && !$class->hasAssociation($property)) {
             throw new UnmappedPropertyException($entityClass, $property);
         }
-        $this->entityManager
-            ->getConfiguration()
-            ->addCustomHydrationMode(
-                'COLUMN_HYDRATOR',
-                'App\DoctrineExtensions\Hydrators\ColumnHydrator'
-            );
         // Get distinct vals
         $query = $this->entityManager
             ->getRepository($entityClass)
@@ -379,7 +373,7 @@ class EntityHandler
             ->distinct()
             ->orderBy("entity.$property")
             ->getQuery();
-        return $query->getResult('COLUMN_HYDRATOR');
+        return $query->getSingleColumnResult();
     }
 
     /**
