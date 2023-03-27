@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\Funder;
+use App\Entity\FundingOrganization;
 use App\Entity\ProductTypeDescriptor;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -22,8 +24,6 @@ class DashboardController extends AbstractDashboardController
      * @Route("/admin", name="admin")
      *
      * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
-     *
-     * @return Response
      */
     public function index(): Response
     {
@@ -32,8 +32,6 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Dashboard configuration function.
-     *
-     * @return Dashboard
      */
     public function configureDashboard(): Dashboard
     {
@@ -43,8 +41,6 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Function to configure menu items.
-     *
-     * @return iterable
      */
     public function configureMenuItems(): iterable
     {
@@ -52,6 +48,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Editors');
         yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', ProductTypeDescriptor::class);
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
+        yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
+        yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
         yield MenuItem::section('Create New');
