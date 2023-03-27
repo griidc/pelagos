@@ -105,3 +105,7 @@ function showConfirmation(options) //title, message, yesText, noText
         }, options));
     });
 }
+
+function gmapsCallback()
+{
+}
