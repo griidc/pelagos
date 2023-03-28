@@ -173,8 +173,7 @@ class EntityHandler
         }
         // Filter by Funding Organization is needed.
         $this->filterByFundingOrganization($qb, $entityClass);
-        // Eliminate duplicates.
-        $qb->distinct();
+
         // Get the query.
         $query = $qb->getQuery();
         // Return the result using the requested hydrator.
