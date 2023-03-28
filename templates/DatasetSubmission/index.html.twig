@@ -33,13 +33,16 @@
 
     <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
 
+    <script type="text/javascript" src="{{ asset('build/js/funderComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/fileBrowser.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/mapWizard.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/dataset-submission.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/datasetsWithApprovedDifs.js') }}"></script>
+
     {{ encore_entry_script_tags('file-manager') }}
 
 {% endblock %}

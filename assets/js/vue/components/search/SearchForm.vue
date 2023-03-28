@@ -118,6 +118,7 @@ function initialFormValues() {
     perPage: 10,
     projectDirector: '',
     sortOrder: 'default',
+    funder: '',
   };
 }
 

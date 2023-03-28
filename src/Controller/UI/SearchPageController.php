@@ -2,17 +2,16 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Entity\Account;
 use App\Event\LogActionItemEventDispatcher;
 use App\Util\Search;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * The Dataset Review controller for the Pelagos UI App Bundle.
+ * The Search Page Controller UI.
  */
 class SearchPageController extends AbstractController
 {
@@ -32,8 +31,6 @@ class SearchPageController extends AbstractController
 
     /**
      * Constructor for this Controller, to set up default services.
-     *
-     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action item event dispatcher.
      */
     public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher, string $customTemplate)
     {
@@ -41,9 +38,9 @@ class SearchPageController extends AbstractController
         if (empty($customTemplate)) {
             // If custom template is not set, subSite is 'GRIIDC'.
             $this->subSite = 'GRIIDC';
-        } elseif ($customTemplate === 'nas-grp-base.html.twig') {
+        } elseif ('nas-grp-base.html.twig' === $customTemplate) {
             $this->subSite = 'GRP';
-        } elseif ($customTemplate === 'hri-base.html.twig') {
+        } elseif ('hri-base.html.twig' === $customTemplate) {
             $this->subSite = 'HRI';
         } else {
             $this->subSite = 'UNKNOWN';
@@ -64,9 +61,7 @@ class SearchPageController extends AbstractController
 
     /**
      * The default action for Dataset Review.
-     *
-     * @param Request $request    The Symfony request object.
-     * @param Search  $searchUtil Search utility class object.
+
      *
      * @Route("/search/results", name="pelagos_app_ui_searchpage_results")
      *
@@ -74,7 +69,7 @@ class SearchPageController extends AbstractController
      */
     public function getSearchResults(Request $request, Search $searchUtil)
     {
-        $results = array();
+        $results = [];
         $requestParams = $this->getRequestParams($request);
         $buildQuery = $searchUtil->buildQuery($requestParams);
         $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
@@ -83,10 +78,10 @@ class SearchPageController extends AbstractController
         }
         $count = $searchUtil->getCount($buildQuery);
         $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
-        $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
         $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
         $fundingCycleInfo = $searchUtil->getFundingCycleAggregations($buildQuery);
         $projectDirectorInfo = $searchUtil->getProjectDirectorAggregations($buildQuery);
+        $funderInfo = $searchUtil->getFunderAggregations($buildQuery);
         $elasticScoreFirstResult = null;
         if (!empty($results)) {
             $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
@@ -94,37 +89,33 @@ class SearchPageController extends AbstractController
         $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
 
         return $this->json(
-            array(
-                'formValues' => array (
+            [
+                'formValues' => [
                     'query' => $requestParams['query'],
                     'field' => $requestParams['field'],
                     'page' => $requestParams['page'],
                     'collectionStartDate' => $requestParams['collectionStartDate'],
                     'collectionEndDate' => $requestParams['collectionEndDate'],
-                ),
+                ],
                 'resultData' => $results,
                 'count' => $count,
-                'facetInfo' => array (
+                'facetInfo' => [
                     'researchGroupsInfo' => $researchGroupsInfo,
-                    'fundingOrgInfo' => $fundingOrgInfo,
                     'statusInfo' => $statusInfo,
                     'fundingCycleInfo' => $fundingCycleInfo,
-                    'projectDirectorInfo' => $projectDirectorInfo
-                ),
-            )
+                    'projectDirectorInfo' => $projectDirectorInfo,
+                    'funderInfo' => $funderInfo,
+                ],
+            ]
         );
     }
 
     /**
      * Gets the request parameters from the request.
-     *
-     * @param Request $request The Symfony request object.
-     *
-     * @return array
      */
     private function getRequestParams(Request $request): array
     {
-        return array(
+        return [
             'query' => $request->get('query'),
             'page' => $request->get('page'),
             'field' => $request->get('field'),
@@ -132,32 +123,30 @@ class SearchPageController extends AbstractController
             'sortOrder' => $request->get('sortOrder'),
             'collectionStartDate' => $request->get('collectionStartDate'),
             'collectionEndDate' => $request->get('collectionEndDate'),
-            'options' => array(
+            'options' => [
                 'rgId' => $request->get('researchGroup'),
-                'funOrgId' => $request->get('fundingOrg'),
                 'status' => $request->get('status'),
                 'fundingCycleId' => $request->get('fundingCycle'),
-                'projectDirectorId' => $request->get('projectDirector')
-            ),
-            'sessionId' => $request->getSession()->getId()
-        );
+                'projectDirectorId' => $request->get('projectDirector'),
+                'funderId' => $request->get('funder'),
+            ],
+            'sessionId' => $request->getSession()->getId(),
+        ];
     }
 
     /**
      * This dispatches a search term log event.
      *
-     * @param array   $requestParams           The request passed from datasetAction.
-     * @param integer $numOfResults            Number of results returned by a search.
-     * @param integer $elasticScoreFirstResult Elastic score of the first result.
-     *
-     * @return void
+     * @param array $requestParams           the request passed from datasetAction
+     * @param int   $numOfResults            number of results returned by a search
+     * @param int   $elasticScoreFirstResult elastic score of the first result
      */
     protected function dispatchSearchTermsLogEvent(array $requestParams, int $numOfResults, int $elasticScoreFirstResult = null): void
     {
-        //get logged in user's id
-        $clientInfo = array(
-            'sessionId' => $requestParams['sessionId']
-        );
+        // get logged in user's id
+        $clientInfo = [
+            'sessionId' => $requestParams['sessionId'],
+        ];
         if ($this->getUser() instanceof Account) {
             $clientInfo['userType'] = 'GoMRI';
             $clientInfo['userId'] = $this->getUser()->getUserId();
@@ -166,37 +155,37 @@ class SearchPageController extends AbstractController
             $clientInfo['userId'] = 'anonymous';
         }
 
-        //get form inputs and facets
-        $searchQueryParams = array(
-            'inputFormTerms' => array(
-                'searchTerms' => $requestParams['query'] ,
+        // get form inputs and facets
+        $searchQueryParams = [
+            'inputFormTerms' => [
+                'searchTerms' => $requestParams['query'],
                 'specificFieldType' => $requestParams['field'],
                 'dataCollectionStartDate' => $requestParams['collectionStartDate'],
                 'dataCollectionEndDate' => $requestParams['collectionEndDate'],
-            ),
-            'aggregations' => array(
+            ],
+            'aggregations' => [
                 'datasetStatus' => $requestParams['options']['status'],
-                'fundingOrganizations' => $requestParams['options']['funOrgId'],
+                'funders' => $requestParams['options']['funderId'],
                 'researchGroups' => $requestParams['options']['rgId'],
                 'fundingCycles' => $requestParams['options']['fundingCycleId'],
-                'projectDirectors' => $requestParams['options']['projectDirectorId']
-            )
-        );
+                'projectDirectors' => $requestParams['options']['projectDirectorId'],
+            ],
+        ];
 
-        //dispatch the event
+        // dispatch the event
         $this->logActionItemEventDispatcher->dispatch(
-            array(
+            [
                 'actionName' => 'New Search',
                 'subjectEntityName' => null,
                 'subjectEntityId' => null,
-                'payLoad' => array(
+                'payLoad' => [
                     'clientInfo' => $clientInfo,
                     'searchQueryParams' => $searchQueryParams,
                     'numResults' => $numOfResults,
                     'elasticScoreFirstResult' => $elasticScoreFirstResult,
-                    'subSite' => $this->subSite
-                )
-            ),
+                    'subSite' => $this->subSite,
+                ],
+            ],
             'search_terms_log'
         );
     }

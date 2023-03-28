@@ -2,6 +2,7 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\Funder;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Entity\Person;
@@ -472,5 +473,15 @@ class FundingOrganizationTest extends TestCase
         $shortName = 'Harte Research Institute';
         $this->fundingOrganization->setShortName($shortName);
         $this->assertEquals($shortName, $this->fundingOrganization->getShortName());
+    }
+
+    public function testGetAndSetDefaultFunder(): void
+    {
+        $funder = new Funder();
+        $funder->setName('Test');
+
+        $this->fundingOrganization->setDefaultFunder($funder);
+
+        $this->assertEquals($funder, $this->fundingOrganization->getDefaultFunder());
     }
 }
