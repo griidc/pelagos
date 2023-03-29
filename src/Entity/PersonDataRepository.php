@@ -10,7 +10,6 @@ use App\Validator\Constraints as CustomAssert;
 /**
  * Entity class to represent a Person to Data Repository Association.
  *
- * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"person", "dataRepository"},
@@ -18,6 +17,7 @@ use App\Validator\Constraints as CustomAssert;
  *     message="A Person can have only one association with a Data Repository"
  * )
  */
+#[ORM\Entity]
 class PersonDataRepository extends Entity implements PersonAssociationInterface
 {
     /**
@@ -30,12 +30,12 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
-     * @ORM\ManyToOne(targetEntity="Person", inversedBy="personDataRepositories")
      *
      * @Assert\NotBlank(
      *     message="Person is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'personDataRepositories')]
     protected $person;
 
     /**
@@ -43,12 +43,12 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var DataRepository
      *
-     * @ORM\ManyToOne(targetEntity="DataRepository", inversedBy="personDataRepositories")
      *
      * @Assert\NotBlank(
      *     message="Data Repositry is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'DataRepository', inversedBy: 'personDataRepositories')]
     protected $dataRepository;
 
     /**
@@ -56,12 +56,12 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var DataRepositoryRole
      *
-     * @ORM\ManyToOne(targetEntity="DataRepositoryRole")
      *
      * @Assert\NotBlank(
      *     message="Role is required"
      * )
      */
+    #[ORM\ManyToOne(targetEntity: 'DataRepositoryRole')]
     protected $role;
 
     /**
@@ -69,7 +69,6 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Label is required"
@@ -78,6 +77,7 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *     message="Label cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text')]
     protected $label;
 
     /**

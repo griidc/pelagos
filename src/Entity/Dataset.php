@@ -3,58 +3,57 @@
 namespace App\Entity;
 
 use App\Util\DatasetCitationUtil;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Dataset Entity class.
- *
- * @ORM\Entity(repositoryClass="App\Repository\DatasetRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\DatasetRepository')]
 class Dataset extends Entity
 {
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'Dataset';
+    public const FRIENDLY_NAME = 'Dataset';
 
-        /**
+    /**
      * A value for $datasetStatus that indicates no status has been set.
      */
-    const DATASET_STATUS_NONE = 'None';
+    public const DATASET_STATUS_NONE = 'None';
 
     /**
      * A value for $datasetStatus that indicates that metadata has been submitted.
      */
-    const DATASET_STATUS_SUBMITTED = 'Submitted';
+    public const DATASET_STATUS_SUBMITTED = 'Submitted';
 
     /**
      * A value for $datasetStatus that indicates that the metadata is in review.
      */
-    const DATASET_STATUS_IN_REVIEW = 'InReview';
+    public const DATASET_STATUS_IN_REVIEW = 'InReview';
 
     /**
      * A value for $datasetStatus that indicates that the metadata has been accepted.
      */
-    const DATASET_STATUS_ACCEPTED = 'Accepted';
+    public const DATASET_STATUS_ACCEPTED = 'Accepted';
 
     /**
      * A value for $datasetStatus that indicates that the metadata has been sent back to the submitter for revision.
      */
-    const DATASET_STATUS_BACK_TO_SUBMITTER = 'BackToSubmitter';
+    public const DATASET_STATUS_BACK_TO_SUBMITTER = 'BackToSubmitter';
 
     /**
      * Valid values for $datasetStatus.
      */
-    const DATASET_STATUSES = array(
+    public const DATASET_STATUSES = [
         self::DATASET_STATUS_NONE => 'No Status',
         self::DATASET_STATUS_SUBMITTED => 'Submitted',
         self::DATASET_STATUS_IN_REVIEW => 'In Review',
         self::DATASET_STATUS_ACCEPTED => 'Accepted',
         self::DATASET_STATUS_BACK_TO_SUBMITTER => 'Request Revisions',
-    );
+    ];
 
     /**
      * Cold Storage Tag
@@ -93,9 +92,9 @@ class Dataset extends Entity
      * @var string
      *
      * @Serializer\Groups({"card", "search"})
-     *
-     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Groups({"card"})
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 
     /**
@@ -104,20 +103,17 @@ class Dataset extends Entity
      * @var string
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="text", nullable=true)
-     *
      * @Serializer\Groups({"search"})
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $title;
 
     /**
      * The abstract for this Dataset.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
     /**
@@ -126,9 +122,8 @@ class Dataset extends Entity
      * @var DOI
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
+    #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
     protected $doi;
 
     /**
@@ -139,8 +134,8 @@ class Dataset extends Entity
      * @Serializer\MaxDepth(1)
      * @Serializer\Groups({"search"})
      *
-     * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="datasets")
      */
+    #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     protected $researchGroup;
 
     /**
@@ -149,9 +144,8 @@ class Dataset extends Entity
      * @var DIF
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
      */
+    #[ORM\OneToOne(targetEntity: 'DIF', inversedBy: 'dataset')]
     protected $dif;
 
     /**
@@ -160,9 +154,8 @@ class Dataset extends Entity
      * @var DatasetSubmission
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\OneToOne(targetEntity="DatasetSubmission")
      */
+    #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
     protected $datasetSubmission;
 
     /**
@@ -172,67 +165,61 @@ class Dataset extends Entity
      *
      * @Serializer\Exclude
      *
-     * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
-     *
-     * @ORM\OrderBy({"sequence" = "DESC"})
      */
+    #[ORM\OneToMany(targetEntity: 'DatasetSubmission', mappedBy: 'dataset', cascade: ['remove'])]
+    #[ORM\OrderBy(['sequence' => 'DESC'])]
     protected $datasetSubmissionHistory;
 
     /**
      * Accepted Date Timestamp for Dataset.
      *
-     * @var \DateTime $acceptedDate;
+     * @var \DateTime;
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
      */
+    #[ORM\Column(type: 'datetimetz', nullable: true)]
     protected $acceptedDate;
 
     /**
      * The identified status of this Dataset.
      *
-     * @var integer
+     * @var int
      *
      * @see DIF::STATUS_* constants.
-     *
-     * @ORM\Column(type="smallint")
      */
+    #[ORM\Column(type: 'smallint')]
     protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
 
     /**
      * The latest saved dataset submission status.
      *
-     * @var integer
+     * @var int
      *
      * @see DatasetSubmission::STATUS_* constants.
-     *
-     * @ORM\Column(type="smallint")
      */
+    #[ORM\Column(type: 'smallint')]
     protected $datasetSubmissionStatus = DatasetSubmission::STATUS_UNSUBMITTED;
 
     /**
      * The status of this Dataset.
      *
-     * @var status
+     * @var string
      *
      * @see self::DATASET_STATUS_* constants.
-     *
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     protected $datasetStatus = self::DATASET_STATUS_NONE;
 
     /**
      * The availability status of this Dataset.
      *
-     * @var integer
+     * @var int
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
      *
      * @Serializer\Groups({"card"})
-     *
-     * @ORM\Column(type="smallint")
      */
+    #[ORM\Column(type: 'smallint')]
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
     /**
@@ -241,19 +228,25 @@ class Dataset extends Entity
      * @var Collection
      *
      * @Serializer\Groups({"publications"})
-     *
-     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset", orphanRemoval=true)
      */
+    #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'dataset', orphanRemoval: true)]
     protected $datasetPublications;
 
     /**
      * The identifier for an issue tracking ticket related to this Dataset.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $issueTrackingTicket;
+
+    /**
+     * Funders associated with this Dataset.
+     *
+     * @var Collection
+     */
+    #[ORM\ManyToMany(targetEntity: Funder::class)]
+    protected $funders;
 
     /**
      * Constructor.
@@ -261,12 +254,13 @@ class Dataset extends Entity
     public function __construct()
     {
         $this->datasetSubmissionHistory = new ArrayCollection();
+        $this->funders = new ArrayCollection();
     }
 
     /**
      * Sets the UDI for this Dataset.
      *
-     * @param string|null $udi The UDI for this Dataset.
+     * @param string|null $udi the UDI for this Dataset
      *
      * @return void
      */
@@ -278,7 +272,7 @@ class Dataset extends Entity
     /**
      * Gets the UDI for this Dataset.
      *
-     * @return string The UDI for this Dataset.
+     * @return string the UDI for this Dataset
      */
     public function getUdi()
     {
@@ -288,7 +282,7 @@ class Dataset extends Entity
     /**
      * Sets the Research Group this Dataset is attached to.
      *
-     * @param ResearchGroup|null $researchGroup The Research Group this Dataset is attached to.
+     * @param ResearchGroup|null $researchGroup the Research Group this Dataset is attached to
      *
      * @return void
      */
@@ -300,7 +294,7 @@ class Dataset extends Entity
     /**
      * Gets the Research Group this Dataset is attached to.
      *
-     * @return ResearchGroup The Research Group this DIF is attached to.
+     * @return ResearchGroup the Research Group this DIF is attached to
      */
     public function getResearchGroup()
     {
@@ -310,7 +304,7 @@ class Dataset extends Entity
     /**
      * Sets the DIF for this Dataset.
      *
-     * @param DIF $dif The DIF for this Dataset.
+     * @param DIF $dif the DIF for this Dataset
      *
      * @return void
      */
@@ -325,7 +319,7 @@ class Dataset extends Entity
     /**
      * Gets the DIF for this Dataset.
      *
-     * @return DIF The DIF for this Dataset.
+     * @return DIF the DIF for this Dataset
      */
     public function getDif()
     {
@@ -335,15 +329,15 @@ class Dataset extends Entity
     /**
      * Set the latest Dataset Submission.
      *
-     * @param DatasetSubmission $datasetSubmission The latest Dataset Submission.
+     * @param DatasetSubmission $datasetSubmission the latest Dataset Submission
      *
      * @return void
      */
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
         if (
-            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_IN_REVIEW
+            DatasetSubmission::STATUS_COMPLETE === $datasetSubmission->getStatus() or
+            DatasetSubmission::STATUS_IN_REVIEW === $datasetSubmission->getStatus()
         ) {
             $this->datasetSubmission = $datasetSubmission;
         } else {
@@ -446,7 +440,7 @@ class Dataset extends Entity
     /**
      * Set the DOI for this Dataset.
      *
-     * @param DOI $doi The DOI entity for this Dataset.
+     * @param DOI $doi the DOI entity for this Dataset
      *
      * @return void
      */
@@ -468,7 +462,7 @@ class Dataset extends Entity
     /**
      * Set the identified status.
      *
-     * @param integer $identifiedStatus The identified status.
+     * @param int $identifiedStatus the identified status
      *
      * @return void
      */
@@ -480,7 +474,7 @@ class Dataset extends Entity
     /**
      * Get the identified status.
      *
-     * @return integer
+     * @return int
      */
     public function getIdentifiedStatus()
     {
@@ -490,7 +484,7 @@ class Dataset extends Entity
     /**
      * Set the dataset submission status.
      *
-     * @param integer $datasetSubmissionStatus The dataset submission status.
+     * @param int $datasetSubmissionStatus the dataset submission status
      *
      * @return void
      */
@@ -502,7 +496,7 @@ class Dataset extends Entity
     /**
      * Get the dataset submission status.
      *
-     * @return integer
+     * @return int
      */
     public function getDatasetSubmissionStatus()
     {
@@ -512,7 +506,7 @@ class Dataset extends Entity
     /**
      * Set the dataset status.
      *
-     * @param string $datasetStatus The dataset status.
+     * @param string $datasetStatus the dataset status
      *
      * @return void
      */
@@ -534,7 +528,7 @@ class Dataset extends Entity
     /**
      * Set the availability status.
      *
-     * @param integer $availabilityStatus The availability status.
+     * @param int $availabilityStatus the availability status
      *
      * @return void
      */
@@ -546,7 +540,7 @@ class Dataset extends Entity
     /**
      * Get the availability status.
      *
-     * @return integer
+     * @return int
      */
     public function getAvailabilityStatus()
     {
@@ -578,13 +572,14 @@ class Dataset extends Entity
                 $collection->add($datasetPublication->getPublication());
             }
         }
+
         return $collection;
     }
 
     /**
      * Sets the issue tracking ticket for this Dataset.
      *
-     * @param string|null $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
+     * @param string|null $issueTrackingTicket the identifier for an issue tracking ticket related to this Dataset
      *
      * @return void
      */
@@ -614,9 +609,41 @@ class Dataset extends Entity
     }
 
     /**
+     * Add a Funder to Dataset's collection of Funders.
+     */
+    public function addFunder(Funder $funder): self
+    {
+        if (false === $this->funders->contains($funder)) {
+            $this->funders->add($funder);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove a Funder from the Dataset's collection of Funders.
+     */
+    public function removeFunder(Funder $funder): self
+    {
+        $this->funders->removeElement($funder);
+
+        return $this;
+    }
+
+    /**
+     * Returns a collection of all Funders associated with this Dataset.
+     *
+     * @return Collection<int, Funder>
+     */
+    public function getFunders(): Collection
+    {
+        return $this->funders;
+    }
+
+    /**
      * Whether this Dataset has a DIF.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasDif()
     {
@@ -626,7 +653,7 @@ class Dataset extends Entity
     /**
      * Whether this Dataset has a Dataset Submission.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasDatasetSubmission()
     {
@@ -643,13 +670,14 @@ class Dataset extends Entity
         if (!$this->getDatasetSubmission() instanceof DatasetSubmission) {
             // Set availability status to not available and return if we don't have a Dataset Submission.
             $this->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE);
+
             return;
         }
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
         // Updating availability status for datasets that are marked as REMOTELY HOSTED.
         if ($this->getDatasetSubmission()->isRemotelyHosted()) {
-            if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
+            if (self::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
                 switch ($this->getDatasetSubmission()->getRestrictions()) {
                     case DatasetSubmission::RESTRICTION_NONE:
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
@@ -659,8 +687,8 @@ class Dataset extends Entity
                         break;
                 }
             } elseif (
-                $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW
+                DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus() or
+                DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
             ) {
                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
             } else {
@@ -671,7 +699,7 @@ class Dataset extends Entity
             $fileset = $this->getDatasetSubmission()->getFileset();
             if ($fileset instanceof Fileset) {
                 if ($fileset->isDone()) {
-                    if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
+                    if (self::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
                         switch ($this->getDatasetSubmission()->getRestrictions()) {
                             case DatasetSubmission::RESTRICTION_NONE:
                                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
@@ -681,8 +709,8 @@ class Dataset extends Entity
                                 break;
                         }
                     } elseif (
-                        $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                        $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW
+                        DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus() or
+                        DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
                     ) {
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                     } else {
@@ -702,50 +730,45 @@ class Dataset extends Entity
 
     /**
      * Whether this Dataset is available.
-     *
-     * @return boolean
      */
     public function isAvailable(): bool
     {
         return in_array(
             $this->availabilityStatus,
-            array(
+            [
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
-            )
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+            ]
         );
     }
 
     /**
      * Whether this Dataset is remotely hosted.
-     *
-     * @return boolean
      */
     public function isRemotelyHosted(): bool
     {
         return in_array(
             $this->availabilityStatus,
-            array(
+            [
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
-            )
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+            ]
         );
     }
 
     /**
      * Whether this Dataset is restricted.
-     *
-     * @return boolean
      */
     public function isRestricted(): bool
     {
         $isRestricted = false;
         if (
             $this->getDatasetSubmission() instanceof DatasetSubmission and
-            $this->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_RESTRICTED
+            DatasetSubmission::RESTRICTION_RESTRICTED === $this->getDatasetSubmission()->getRestrictions()
         ) {
             $isRestricted = true;
         }
+
         return $isRestricted;
     }
 
@@ -761,27 +784,27 @@ class Dataset extends Entity
         $availabilityStatus = $this->getAvailabilityStatus();
 
         $statusResult = 'NoDif';
-        if ($difStatus == DIF::STATUS_APPROVED) {
+        if (DIF::STATUS_APPROVED == $difStatus) {
             $statusResult = 'DIF';
-            if ($datasetStatus == self::DATASET_STATUS_IN_REVIEW) {
+            if (self::DATASET_STATUS_IN_REVIEW == $datasetStatus) {
                 $statusResult = 'In Review';
-            } elseif ($datasetStatus == self::DATASET_STATUS_BACK_TO_SUBMITTER) {
+            } elseif (self::DATASET_STATUS_BACK_TO_SUBMITTER == $datasetStatus) {
                 $statusResult = 'Back to Submitter';
-            } elseif ($datasetStatus == self::DATASET_STATUS_ACCEPTED) {
+            } elseif (self::DATASET_STATUS_ACCEPTED == $datasetStatus) {
                 if (
-                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
-                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED == $availabilityStatus ||
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED == $availabilityStatus
                 ) {
                     $statusResult = 'Completed, Restricted';
                 } elseif (
-                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
-                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE == $availabilityStatus ||
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED == $availabilityStatus
                 ) {
                     $statusResult = 'Completed';
                 } else {
                     $statusResult = 'DIF';
                 }
-            } elseif ($datasetStatus == self::DATASET_STATUS_SUBMITTED) {
+            } elseif (self::DATASET_STATUS_SUBMITTED == $datasetStatus) {
                 $statusResult = 'Submitted';
             } else {
                 //  $difStatus == DIF::STATUS_APPROVED
@@ -790,15 +813,16 @@ class Dataset extends Entity
         } else {
             $statusResult = 'NoDif';
         }
+
         return $statusResult;
     }
 
     /**
      * Gets the Dataset's Primary Point of Contact Person.
      *
-     * @throws \Exception If a Dataset Submission is encountered missing a contact.
-     *
      * @return Person|null
+     *
+     * @throws \Exception if a Dataset Submission is encountered missing a contact
      */
     public function getPrimaryPointOfContact()
     {
@@ -808,7 +832,7 @@ class Dataset extends Entity
         // If we have a submission, use its POC.
         if (
             $datasetSubmission instanceof DatasetSubmission
-            and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE
+            and DatasetSubmission::STATUS_COMPLETE == $datasetSubmission->getStatus()
         ) {
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
@@ -828,7 +852,7 @@ class Dataset extends Entity
     /**
      * Get the spatialExtentGeometry for this Metadata.
      *
-     * @return string|null  The gml for the dataset.
+     * @return string|null the gml for the dataset
      */
     public function getSpatialExtentGeometry()
     {
@@ -838,7 +862,7 @@ class Dataset extends Entity
 
         if ($datasetSubmission instanceof DatasetSubmission) {
             $spatialExtent = $datasetSubmission->getSpatialExtent();
-        } elseif ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {
+        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED === $dif->getStatus() and $dif->getSpatialExtentGeometry()) {
             $spatialExtent = $dif->getSpatialExtentGeometry();
         }
 
@@ -858,7 +882,7 @@ class Dataset extends Entity
     /**
      * Setter to accepted date.
      *
-     * @param \DateTime $acceptedDate The accepted date for the Dataset.
+     * @param \DateTime $acceptedDate the accepted date for the Dataset
      *
      * @return void
      */
@@ -877,9 +901,9 @@ class Dataset extends Entity
         $datasetSubmission = ($this->getDatasetSubmissionHistory()->first() ? $this->getDatasetSubmissionHistory()->first() : null);
 
         if (
-            $this->getDatasetStatus() === self::DATASET_STATUS_IN_REVIEW
+            self::DATASET_STATUS_IN_REVIEW === $this->getDatasetStatus()
             and $this->getDatasetStatus() !== $datasetSubmission->getDatasetStatus()
-            and $datasetSubmission->getDatasetStatus() === self::DATASET_STATUS_BACK_TO_SUBMITTER
+            and self::DATASET_STATUS_BACK_TO_SUBMITTER === $datasetSubmission->getDatasetStatus()
         ) {
             $datasetSubmission = $this->getDatasetSubmission();
         }
@@ -889,8 +913,6 @@ class Dataset extends Entity
 
     /**
      * Gets Project Directors associated with this Dataset.
-     *
-     * @return ArrayCollection
      */
     public function getProjectDirectors(): ArrayCollection
     {
@@ -898,7 +920,7 @@ class Dataset extends Entity
         foreach ($this->getResearchGroup()->getPersonResearchGroups() as $personResearchGroup) {
             if (
                 $personResearchGroup instanceof PersonResearchGroup
-                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP
+                and ResearchGroupRole::LEADERSHIP === $personResearchGroup->getRole()->getName()
             ) {
                 $collection->add($personResearchGroup->getPerson());
             }
@@ -911,9 +933,8 @@ class Dataset extends Entity
      * Return the total file size for this dataset.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("totalFileSize")
      *
-     * @return integer|null
+     * @Serializer\SerializedName("totalFileSize")
      */
     public function getTotalFileSize(): ?int
     {
@@ -928,13 +949,12 @@ class Dataset extends Entity
         return null;
     }
 
-     /**
+    /**
      * Return the number of files in this dataset.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("numberOfFiles")
      *
-     * @return integer|null
+     * @Serializer\SerializedName("numberOfFiles")
      */
     public function getNumberOfFiles(): ?int
     {

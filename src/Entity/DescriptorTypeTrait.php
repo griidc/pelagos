@@ -11,11 +11,10 @@ use JMS\Serializer\Annotation as Serializer;
 trait DescriptorTypeTrait
 {
     /**
-     * @ORM\Column(type="text")
-     *
      * @Serializer\Groups({"search"})
      * @Serializer\SerializedName("description")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**

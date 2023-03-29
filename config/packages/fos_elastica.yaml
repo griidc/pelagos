@@ -157,6 +157,11 @@ fos_elastica:
                     property_path: false
                     type: 'date'
                     format: 'yyyy-MM-dd'
+                funders:
+                    type: 'nested'
+                    properties:
+                        id: 
+                            type: 'keyword'
         info_products:
             client: default
             index_name: "%env(INFO_PRODUCT_INDEX)%"

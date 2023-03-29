@@ -13,6 +13,7 @@ use App\Exception\InvalidGmlException;
 use App\Util\Geometry;
 use App\Util\GmlUtil;
 use App\Util\Metadata;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * A controller that does GML conversion.
@@ -30,12 +31,11 @@ class GmlController extends AbstractController
      *
      * @return Response A response containing converted wkt.
      */
-    public function toWktAction(Request $request)
+    public function toWktAction(Request $request, Geometry $geometryUtil)
     {
         $gml = $request->request->get('gml');
 
         if (!empty($gml)) {
-            $geometryUtil = new Geometry($this->getDoctrine()->getManager());
             try {
                 $wkt = $geometryUtil->convertGmlToWkt($gml);
             } catch (InvalidGmlException $e) {
@@ -58,22 +58,22 @@ class GmlController extends AbstractController
      *
      * @return Response A response containing converted gml.
      */
-    public function fromWktAction(Request $request)
+    public function fromWktAction(Request $request, EntityManagerInterface $entityManager)
     {
         $wkt = $request->request->get('wkt');
 
         if (!empty($wkt)) {
             $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),6,17)';
-            $connection = $this->getDoctrine()->getManager()->getConnection();
+            $connection = $entityManager->getConnection();
             $statement = $connection->prepare($query);
             $statement->bindValue('wkt', $wkt);
             try {
-                $statement->execute();
+                $result = $statement->executeQuery();
             } catch (\Throwable $th) {
                 throw new BadRequestHttpException("Error while trying to convert Well Known Text (wkt=$wkt)");
             }
 
-            $results = $statement->fetchAll();
+            $results = $result->fetchAllAssociative();
             $gml = $results[0]['st_asgml'];
             $gml = $this->addGMLid($gml);
 
@@ -200,7 +200,7 @@ class GmlController extends AbstractController
      *
      * @return Response Includes boolean and invalid reason.
      */
-    public function validateGeometryFromWktAction(Request $request)
+    public function validateGeometryFromWktAction(Request $request, EntityManagerInterface $entityManager)
     {
         $wkt = $request->request->get('wkt');
         if (!empty($wkt)) {
@@ -214,12 +214,12 @@ class GmlController extends AbstractController
                 );
             }
             $query = 'SELECT ST_IsValidReason(ST_GeomFromText(:wkt))';
-            $connection = $this->getDoctrine()->getManager()->getConnection();
+            $connection = $entityManager->getConnection();
             $statement = $connection->prepare($query);
             $statement->bindValue('wkt', $wkt);
-            $statement->execute();
+            $result = $statement->executeQuery();
 
-            $results = $statement->fetchAll();
+            $results = $result->fetchAllAssociative();
             $message = $results[0]['st_isvalidreason'];
 
             $returnCode = Response::HTTP_OK;

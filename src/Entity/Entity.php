@@ -2,18 +2,14 @@
 
 namespace App\Entity;
 
+use App\Exception\NotDeletableException;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use JMS\Serializer\Annotation as Serializer;
-use App\Exception\NotDeletableException;
-use App\Entity\Person;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
- *
- * @ORM\MappedSuperclass
- * @ORM\HasLifecycleCallbacks
  *
  * @UniqueEntity(
  *     fields = {"id"},
@@ -22,23 +18,22 @@ use App\Entity\Person;
  *     groups = {"unique_id"}
  * )
  */
+#[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class Entity
 {
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'Pelagos Entity';
+    public const FRIENDLY_NAME = 'Pelagos Entity';
 
     /**
      * Entity identifier.
      *
-     * @var integer $id
+     * @var int
      *
      * @Serializer\Groups({"id"})
      *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue
      *
      * @Serializer\Groups({"search"})
      *
@@ -50,63 +45,64 @@ abstract class Entity
      *     groups = {"id"}
      * )
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
     protected $id;
 
     /**
      * The Person who created this Entity.
      *
-     * @var Person $creator;
+     * @var Person;
      *
-     * @ORM\ManyToOne(targetEntity="Person")
      *
      * @Serializer\Exclude
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $creator;
 
     /**
      * The creation time stamp (in UTC) for this Entity.
      *
      * @var \DateTime $creationTimeStamp;
-     *
-     * @ORM\Column(type="datetimetz")
      */
+    #[ORM\Column(type: 'datetimetz')]
     protected $creationTimeStamp;
 
     /**
      * The last modification time stamp (in UTC) for this Entity.
      *
      * @var \DateTime $modificationTimeStamp;
-     *
-     * @ORM\Column(type="datetimetz")
      */
+    #[ORM\Column(type: 'datetimetz')]
     protected $modificationTimeStamp;
 
     /**
      * The Person who last modified this Entity.
      *
-     * @var Person $modifier
+     * @var Person
      *
-     * @ORM\ManyToOne(targetEntity="Person")
      *
      * @Serializer\Exclude
      */
+    #[ORM\ManyToOne(targetEntity: 'Person')]
     protected $modifier;
 
     /**
      * The time zone to use when returning time stamps.
      *
-     * @var string $timeZone
+     * @var string
      */
     protected $timeZone = 'UTC';
 
     /**
      * Setter for identifier.
      *
-     * @param integer|null $id This entity's Identifier.
-     *
-     * @throws \InvalidArgumentException When $id id not an integer or null.
+     * @param int|null $id this entity's Identifier
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException when $id id not an integer or null
      */
     public function setId($id = null)
     {
@@ -123,7 +119,7 @@ abstract class Entity
     /**
      * Getter for id property.
      *
-     * @return integer Persistent identifier for the Entity.
+     * @return int persistent identifier for the Entity
      */
     public function getId()
     {
@@ -133,9 +129,7 @@ abstract class Entity
     /**
      * Setter for creator.
      *
-     * @param Person $creator This entity's creator.
-     *
-     * @access public
+     * @param Person $creator this entity's creator
      *
      * @return void
      */
@@ -148,9 +142,7 @@ abstract class Entity
     /**
      * Getter for creator.
      *
-     * @access public
-     *
-     * @return Person This entity's creator.
+     * @return Person this entity's creator
      */
     public function getCreator()
     {
@@ -160,7 +152,7 @@ abstract class Entity
     /**
      * Setter for modifier property.
      *
-     * @param Person $modifier The Person who last modified this Entity.
+     * @param Person $modifier the Person who last modified this Entity
      *
      * @return void
      */
@@ -172,7 +164,7 @@ abstract class Entity
     /**
      * Getter for modifier property.
      *
-     * @return Person The Person who modified this Entity.
+     * @return Person the Person who modified this Entity
      */
     public function getModifier()
     {
@@ -182,16 +174,16 @@ abstract class Entity
     /**
      * Setter for creationTimeStamp property.
      *
-     * @param \DateTime $timeStamp Creation time stamp to set.
-     *
-     * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     * @param \DateTime $timeStamp creation time stamp to set
      *
      * @return void
+     *
+     * @throws \Exception when $timeStamp does not have a timezone of UTC
      */
     public function setCreationTimeStamp(\DateTime $timeStamp = null)
     {
         if (isset($timeStamp)) {
-            if ($timeStamp->getTimezone()->getName() != 'UTC') {
+            if ('UTC' != $timeStamp->getTimezone()->getName()) {
                 throw new \Exception('creationTimeStamp must be in UTC');
             }
             $this->creationTimeStamp = $timeStamp;
@@ -207,9 +199,9 @@ abstract class Entity
      * The default is to return the time stamp in the time zone set in $this->timeZone.
      * Setting $localized to true will return the time stamp localized to the current time zone.
      *
-     * @param boolean $localized Whether to convert time stamp to the local time zone.
+     * @param bool $localized whether to convert time stamp to the local time zone
      *
-     * @return \DateTime Creation time stamp for this Person.
+     * @return \DateTime creation time stamp for this Person
      */
     public function getCreationTimeStamp(bool $localized = false)
     {
@@ -222,21 +214,23 @@ abstract class Entity
         } else {
             $timeStamp->setTimeZone(new \DateTimeZone($this->timeZone));
         }
+
         return $timeStamp;
     }
 
     /**
      * Get the creationTimeStamp property as an ISO8601 string.
      *
-     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     * @param bool $localized whether to convert time stamp to the local timezone
      *
-     * @return string ISO8601 string representing creationTimeStamp.
+     * @return string ISO8601 string representing creationTimeStamp
      */
     public function getCreationTimeStampAsISO(bool $localized = false)
     {
         if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
             return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
         }
+
         return null;
     }
 
@@ -245,14 +239,14 @@ abstract class Entity
      *
      * The creation time stamp is only updated if not already set.
      *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
      *
      * @return void
      */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateTimeStamps()
     {
-        if ($this->creationTimeStamp == null) {
+        if (null == $this->creationTimeStamp) {
             $this->setCreationTimeStamp();
         }
         $this->setModificationTimeStamp();
@@ -261,16 +255,16 @@ abstract class Entity
     /**
      * Setter for modificationTimeStamp property.
      *
-     * @param \DateTime $timeStamp Modification time stamp to set.
-     *
-     * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     * @param \DateTime $timeStamp modification time stamp to set
      *
      * @return void
+     *
+     * @throws \Exception when $timeStamp does not have a timezone of UTC
      */
     public function setModificationTimeStamp(\DateTime $timeStamp = null)
     {
         if (isset($timeStamp)) {
-            if ($timeStamp->getTimezone()->getName() != 'UTC') {
+            if ('UTC' != $timeStamp->getTimezone()->getName()) {
                 throw new \Exception('modificationTimeStamp must be in UTC');
             }
             $this->modificationTimeStamp = $timeStamp;
@@ -284,9 +278,9 @@ abstract class Entity
      *
      * The default is to return the time stamp in the time zone set in $this->timeZone.
      *
-     * @param boolean $localized Whether to convert time stamp to the local time zone.
+     * @param bool $localized whether to convert time stamp to the local time zone
      *
-     * @return \DateTime Modification time stamp for this Person.
+     * @return \DateTime modification time stamp for this Person
      */
     public function getModificationTimeStamp(bool $localized = false)
     {
@@ -299,28 +293,30 @@ abstract class Entity
         } else {
             $timeStamp->setTimeZone(new \DateTimeZone($this->timeZone));
         }
+
         return $timeStamp;
     }
 
     /**
      * Get the modificationTimeStamp property as an ISO8601 string.
      *
-     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     * @param bool $localized whether to convert time stamp to the local timezone
      *
-     * @return string ISO8601 string representing modificationTimeStamp.
+     * @return string ISO8601 string representing modificationTimeStamp
      */
     public function getModificationTimeStampAsISO(bool $localized = false)
     {
         if (isset($this->modificationTimeStamp) and $this->modificationTimeStamp instanceof \DateTime) {
             return $this->getModificationTimeStamp($localized)->format(\DateTime::ISO8601);
         }
+
         return null;
     }
 
     /**
      * Setter for $timeZone.
      *
-     * @param string $timeZone The time zone to set.
+     * @param string $timeZone the time zone to set
      *
      * @return void
      */
@@ -339,10 +335,10 @@ abstract class Entity
      *
      * @see \Pelagos\Exception\NotDeletableException
      *
-     * @ORM\PreRemove
      *
      * @return void
      */
+    #[ORM\PreRemove]
     public function checkDeletable()
     {
         // Do nothing.
@@ -351,27 +347,27 @@ abstract class Entity
     /**
      * Static method to serialize a binary attribute.
      *
-     * @param string $binaryData The binary data to serialize.
+     * @param string $binaryData the binary data to serialize
      *
-     * @return string The serialized binary data.
+     * @return string the serialized binary data
      */
     public static function serializeBinary(string $binaryData)
     {
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->buffer($binaryData);
 
-        return array(
+        return [
             'mimeType' => $mimeType,
-            'base64' => base64_encode($binaryData)
-        );
+            'base64' => base64_encode($binaryData),
+        ];
     }
 
     /**
      * Return true if the class type and instance id of the $other are the same is $this.
      *
-     * @param Entity $other The object to which this is compared.
+     * @param Entity $other the object to which this is compared
      *
-     * @return boolean Return true if the type and id match.
+     * @return bool return true if the type and id match
      */
     public function isSameTypeAndId(Entity $other)
     {
@@ -381,13 +377,14 @@ abstract class Entity
         ) {
             return true;
         }
+
         return false;
     }
 
     /**
      * Checks if the entty is deletable.
      *
-     * @return boolean True is the entity is deletable, false otherwise.
+     * @return bool true is the entity is deletable, false otherwise
      */
     public function isDeletable()
     {
@@ -396,6 +393,7 @@ abstract class Entity
         } catch (NotDeletableException $e) {
             return false;
         }
+
         return true;
     }
 
@@ -412,11 +410,12 @@ abstract class Entity
         if (!($this->creator instanceof Person)) {
             return null;
         }
-        return array(
+
+        return [
             'id' => $this->creator->getId(),
             'firstName' => $this->creator->getFirstName(),
             'lastName' => $this->creator->getLastName(),
-        );
+        ];
     }
 
     /**
@@ -432,11 +431,12 @@ abstract class Entity
         if (!($this->modifier instanceof Person)) {
             return null;
         }
-        return array(
+
+        return [
             'id' => $this->modifier->getId(),
             'firstName' => $this->modifier->getFirstName(),
             'lastName' => $this->modifier->getLastName(),
-        );
+        ];
     }
 
     /**
@@ -452,13 +452,16 @@ abstract class Entity
     /**
      * Remove blanks from specified arrays.
      *
-     * @param array $arrayWithBlanks An array that potentially contains blank line entries.
+     * @param array $arrayWithBlanks an array that potentially contains blank line entries
      *
-     * @return array The same array with blank lines removed, same order, but re-indexed.
+     * @return array the same array with blank lines removed, same order, but re-indexed
      */
     public function filterArrayBlanks(array $arrayWithBlanks)
     {
         // strlen callback
-        return array_values(array_filter($arrayWithBlanks, 'strlen'));
+        return array_values(array_filter($arrayWithBlanks, function ($var) {
+            $var = $var ?? '';
+            return strlen($var);
+        }));
     }
 }

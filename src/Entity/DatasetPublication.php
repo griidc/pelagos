@@ -8,10 +8,11 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * This Entity contains a link between Publications and Datasets.
  *
- * @ORM\Entity
  *
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="uniq_dataset_publication",columns={"publication_id", "dataset_id"})})
  */
+#[ORM\Table]
+#[ORM\UniqueConstraint(name: 'uniq_dataset_publication', columns: ['publication_id', 'dataset_id'])]
+#[ORM\Entity]
 class DatasetPublication extends Entity
 {
     /**
@@ -20,18 +21,16 @@ class DatasetPublication extends Entity
      * @var Publication
      *
      * @Serializer\Groups({"publications"})
-     *
-     * @ORM\ManyToOne(targetEntity="Publication", inversedBy="datasetPublications")
      */
+    #[ORM\ManyToOne(targetEntity: 'Publication', inversedBy: 'datasetPublications')]
     protected $publication;
 
     /**
      * A Pelagos Datasent entity.
      *
      * @var Dataset
-     *
-     * @ORM\ManyToOne(targetEntity="Dataset", inversedBy="datasetPublications")
      */
+    #[ORM\ManyToOne(targetEntity: 'Dataset', inversedBy: 'datasetPublications')]
     protected $dataset;
 
     /**

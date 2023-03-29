@@ -6,6 +6,7 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use App\Entity\Fileset;
+use App\Entity\Funder;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use PHPUnit\Framework\TestCase;
@@ -394,5 +395,20 @@ class DatasetTest extends TestCase
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteMissingContact);
         $this->assertNull($this->dataset->getPrimaryPointOfContact());
+    }
+
+    /**
+     * Test add/remove/get Funders methods.
+     *
+     * @return void
+     */
+    public function testAddRemoveFunder()
+    {
+        $funder = new Funder();
+        $funder->setName('TestFunder');
+        $this->dataset->addFunder($funder);
+        $this->assertTrue($this->dataset->getFunders()->contains($funder));
+        $this->dataset->removeFunder($funder);
+        $this->assertFalse($this->dataset->getFunders()->contains($funder));
     }
 }

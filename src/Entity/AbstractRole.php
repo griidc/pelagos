@@ -10,9 +10,8 @@ use App\Validator\Constraints as CustomAssert;
  * Base entity class for the representation of typed Role classes.
  *
  * Classes of the type XxxRole can extend this base class.
- *
- * @ORM\MappedSuperclass
  */
+#[ORM\MappedSuperclass]
 abstract class AbstractRole extends Entity implements RoleInterface
 {
     /**
@@ -25,7 +24,6 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @var string
      *
-     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -34,6 +32,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'citext')]
     protected $name;
 
     /**
@@ -41,12 +40,12 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @var integer
      *
-     * @ORM\Column(type="integer")
      *
      * @Assert\NotBlank(
      *     message="Weight is required"
      * )
      */
+    #[ORM\Column(type: 'integer')]
     protected $weight;
 
     /**

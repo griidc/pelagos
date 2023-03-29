@@ -15,9 +15,7 @@ use App\Exception\NotDeletableException;
 /**
  * Entity class to represent a Research Group.
  *
- * @ORM\Entity
  *
- * @ORM\Entity(repositoryClass="App\Repository\ResearchGroupRepository")
  *
  * @Assert\GroupSequence({
  *     "id",
@@ -34,6 +32,7 @@ use App\Exception\NotDeletableException;
  *
  * @UniqueEntity("shortName", message="A Research Group with this Short name already exists")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\ResearchGroupRepository')]
 class ResearchGroup extends Entity
 {
     /**
@@ -60,7 +59,6 @@ class ResearchGroup extends Entity
      *
      * @Serializer\Groups({"overview"})
      *
-     * @ORM\Column(type="citext", options={"collation":"POSIX"})
      *
      * @Serializer\Groups({"search"})
      *
@@ -71,6 +69,7 @@ class ResearchGroup extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     protected $name;
 
     /**
@@ -78,16 +77,15 @@ class ResearchGroup extends Entity
      *
      * @var string $shortName
      *
-     * @ORM\Column(type="citext", unique=true, nullable=true)
      *
      * @Assert\NotBlank(
      *     message="Short Name is required"
      * )
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'citext', unique: true, nullable: true)]
     protected $shortName;
 
     /**
@@ -97,7 +95,6 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\ManyToOne(targetEntity="FundingCycle", inversedBy="researchGroups")
      *
      * @Assert\NotBlank(
      *     message="Funding Cycle is required"
@@ -106,6 +103,7 @@ class ResearchGroup extends Entity
      * @Serializer\MaxDepth(2)
      * @Serializer\Groups({"overview"})
      */
+    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
     protected $fundingCycle;
 
     /**
@@ -115,12 +113,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
     /**
@@ -130,12 +128,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $phoneNumber;
 
     /**
@@ -145,12 +143,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $deliveryPoint;
 
     /**
@@ -160,12 +158,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $city;
 
     /**
@@ -175,12 +173,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $administrativeArea;
 
     /**
@@ -190,12 +188,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $postalCode;
 
     /**
@@ -205,12 +203,12 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $country;
 
     /**
@@ -222,12 +220,12 @@ class ResearchGroup extends Entity
      *
      * @Serializer\Groups({"overview"})
      *
-     * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
     /**
@@ -236,9 +234,8 @@ class ResearchGroup extends Entity
      * @var string|resource $logo
      *
      * @access protected
-     *
-     * @ORM\Column(type="blob", nullable=true)
      */
+    #[ORM\Column(type: 'blob', nullable: true)]
     protected $logo;
 
     /**
@@ -249,7 +246,6 @@ class ResearchGroup extends Entity
      * @access protected
      *
      *
-     * @ORM\Column(type="citext", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
@@ -258,6 +254,7 @@ class ResearchGroup extends Entity
      *     message="Email address is invalid"
      * )
      */
+    #[ORM\Column(type: 'citext', nullable: true)]
     protected $emailAddress;
 
     /**
@@ -267,10 +264,10 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="PersonResearchGroup", mappedBy="researchGroup")
      *
      * @Serializer\Groups({"overview"})
      */
+    #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
     protected $personResearchGroups;
 
     /**
@@ -278,12 +275,12 @@ class ResearchGroup extends Entity
      *
      * @var Collection $datasets
      *
-     * @ORM\OneToMany(targetEntity="Dataset", mappedBy="researchGroup")
      *
-     * @ORM\OrderBy({"udi" = "ASC"})
      *
      * @Serializer\Groups({"overview"})
      */
+    #[ORM\OneToMany(targetEntity: 'Dataset', mappedBy: 'researchGroup')]
+    #[ORM\OrderBy(['udi' => 'ASC'])]
     protected $datasets;
 
     /**
@@ -298,9 +295,8 @@ class ResearchGroup extends Entity
      * @Assert\NotNull(
      *     message="Please select Yes or No"
      * )
-     *
-     * @ORM\Column(type="boolean", nullable=false)
      */
+    #[ORM\Column(type: 'boolean', nullable: false)]
     protected $locked = false;
 
     /**

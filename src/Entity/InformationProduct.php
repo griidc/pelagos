@@ -11,9 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Information Product Entity class.
- *
- * @ORM\Entity(repositoryClass=InformationProductRepository::class)
  */
+#[ORM\Entity(repositoryClass: InformationProductRepository::class)]
 class InformationProduct extends Entity
 {
     /**
@@ -26,7 +25,6 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Serializer\Groups({"card"})
      *
@@ -34,6 +32,7 @@ class InformationProduct extends Entity
      *     message="A title is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     private $title;
 
     /**
@@ -41,7 +40,6 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Serializer\Groups({"card"})
      *
@@ -49,6 +47,7 @@ class InformationProduct extends Entity
      *     message="A creator is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     private $creators;
 
     /**
@@ -56,7 +55,6 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
      *
      * @Serializer\Groups({"card"})
      *
@@ -65,6 +63,7 @@ class InformationProduct extends Entity
      * )
      *
      */
+    #[ORM\Column(type: 'text')]
     private $publisher;
 
     /**
@@ -72,10 +71,9 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
-     *
      * @Serializer\Groups({"card"})
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $externalDoi;
 
     /**
@@ -83,10 +81,9 @@ class InformationProduct extends Entity
      *
      * @var boolean
      *
-     * @ORM\Column(type="boolean")
-     *
      * @Serializer\Groups({"search"})
      */
+    #[ORM\Column(type: 'boolean')]
     private $published = false;
 
     /**
@@ -94,10 +91,9 @@ class InformationProduct extends Entity
      *
      * @var boolean
      *
-     * @ORM\Column(type="boolean")
-     *
      * @Serializer\Groups({"search", "card"})
      */
+    #[ORM\Column(type: 'boolean')]
     private $remoteResource = false;
 
     /**
@@ -105,12 +101,12 @@ class InformationProduct extends Entity
      *
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity=ResearchGroup::class)
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\SerializedName("researchGroup")
      * @Serializer\Groups({"search"})
      */
+    #[ORM\ManyToMany(targetEntity: ResearchGroup::class)]
     private $researchGroups;
 
     /**
@@ -119,9 +115,8 @@ class InformationProduct extends Entity
      * @var string
      *
      * @Serializer\Groups({"search", "card"})
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $remoteUri;
 
     /**
@@ -131,9 +126,8 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\Groups({"search", "card"})
-     *
-     * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
      */
+    #[ORM\OneToOne(targetEntity: File::class, cascade: ['persist', 'remove'])]
     private $file;
 
     /**
@@ -143,9 +137,8 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\Groups({"search"})
-     *
-     * @ORM\ManyToMany(targetEntity=ProductTypeDescriptor::class)
      */
+    #[ORM\ManyToMany(targetEntity: ProductTypeDescriptor::class)]
     private $productTypeDescriptors;
 
     /**
@@ -155,9 +148,8 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\Groups({"search"})
-     *
-     * @ORM\ManyToMany(targetEntity=DigitalResourceTypeDescriptor::class)
      */
+    #[ORM\ManyToMany(targetEntity: DigitalResourceTypeDescriptor::class)]
     private $digitalResourceTypeDescriptors;
 
     /**
