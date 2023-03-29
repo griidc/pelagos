@@ -10,21 +10,21 @@ class SearchOptions
     /**
      * The query string to be searched.
      *
-     * @var string $queryString
+     * @var string
      */
     private $queryString = '*';
 
     /**
      * Only search for published Information Products.
      *
-     * @var boolean
+     * @var bool
      */
     private $onlyPublishedInformationProducts = false;
 
     /**
      * The current page of results.
      *
-     * @var integer $currentPage
+     * @var int
      */
     private $currentPage = 1;
 
@@ -38,7 +38,7 @@ class SearchOptions
     /**
      * The maximum results per page.
      *
-     * @var integer $maxPerPage
+     * @var int
      */
     private $maxPerPage = 10;
 
@@ -129,17 +129,15 @@ class SearchOptions
     /**
      * Date type collection date.
      */
-    const DATE_TYPE_COLLECTION = 'collectionDate';
+    public const DATE_TYPE_COLLECTION = 'collectionDate';
 
     /**
      * Date type published date.
      */
-    const DATE_TYPE_PUBLISHED = 'publishedDate';
+    public const DATE_TYPE_PUBLISHED = 'publishedDate';
 
     /**
      * Class Contructor.
-     *
-     * @param string|null $queryString
      */
     public function __construct(?string $queryString)
     {
@@ -148,10 +146,6 @@ class SearchOptions
 
     /**
      * Set the query string.
-     *
-     * @param string|null $queryString
-     *
-     * @return self
      */
     public function setQueryString(?string $queryString): self
     {
@@ -166,8 +160,6 @@ class SearchOptions
 
     /**
      * Get the query string.
-     *
-     * @return string
      */
     public function getQueryString(): string
     {
@@ -176,8 +168,6 @@ class SearchOptions
 
     /**
      * If only published Information Products should be searched for.
-     *
-     * @return self
      */
     public function onlyPublishedInformationProducts(): self
     {
@@ -188,8 +178,6 @@ class SearchOptions
 
     /**
      * Should I filter only by published Information Products.
-     *
-     * @return boolean
      */
     public function shouldFilterOnlyPublishedInformationProducts(): bool
     {
@@ -198,10 +186,6 @@ class SearchOptions
 
     /**
      * Set the curent page.
-     *
-     * @param integer|null $currentPage
-     *
-     * @return self
      */
     public function setCurrentPage(?int $currentPage): self
     {
@@ -214,8 +198,6 @@ class SearchOptions
 
     /**
      * Get the current page.
-     *
-     * @return integer
      */
     public function getCurrentPage(): int
     {
@@ -225,11 +207,9 @@ class SearchOptions
     /**
      * Sets the max results per page.
      *
-     * @param integer $maxPerPage
+     * @param int $maxPerPage
      *
      * @throws \OutOfRangeException When max page number is 0;
-     *
-     * @return self
      */
     public function setMaxPerPage(?int $maxPerPage): self
     {
@@ -244,8 +224,6 @@ class SearchOptions
 
     /**
      * Get the max number of results per page.
-     *
-     * @return integer
      */
     public function getMaxPerPage(): int
     {
@@ -254,10 +232,6 @@ class SearchOptions
 
     /**
      * Set the data type.
-     *
-     * @param string|null $dataType
-     *
-     * @return self
      */
     public function setDataType(?string $dataType): self
     {
@@ -280,10 +254,6 @@ class SearchOptions
 
     /**
      * Set the dataset status.
-     *
-     * @param string|null $status
-     *
-     * @return self
      */
     public function setDatasetStatus(?string $status): self
     {
@@ -307,9 +277,7 @@ class SearchOptions
     /**
      * Sets the research groups to be filtered.
      *
-     * @param string|null $researchGroups The comma delimited list of Research Groups.
-     *
-     * @return self
+     * @param string|null $researchGroups the comma delimited list of Research Groups
      */
     public function setResearchGroupFilter(?string $researchGroups): self
     {
@@ -322,8 +290,6 @@ class SearchOptions
 
     /**
      * Return the list of research groups to be filtered on.
-     *
-     * @return array
      */
     public function getResearchGroupFilter(): array
     {
@@ -332,8 +298,6 @@ class SearchOptions
 
     /**
      * Is the Research Group filter set.
-     *
-     * @return boolean
      */
     public function isResearchGroupFilterSet(): bool
     {
@@ -343,9 +307,7 @@ class SearchOptions
     /**
      * Sets the Funding Organizations to be filtered.
      *
-     * @param string|null $fundingOrganizations The comma delimited list of Funding Organizations.
-     *
-     * @return self
+     * @param string|null $fundingOrganizations the comma delimited list of Funding Organizations
      */
     public function setFundingOrgFilter(?string $fundingOrganizations): self
     {
@@ -358,8 +320,6 @@ class SearchOptions
 
     /**
      * Return the list of Funding Organizations to be filtered on.
-     *
-     * @return array
      */
     public function getFundingOrgFilter(): array
     {
@@ -368,8 +328,6 @@ class SearchOptions
 
     /**
      * Is the Funding Organization filter set.
-     *
-     * @return boolean
      */
     public function isFundingOrgFilterSet(): bool
     {
@@ -378,8 +336,6 @@ class SearchOptions
 
     /**
      * Get the product type descriptor filter.
-     *
-     * @return array
      */
     public function getProductTypeDescFilter(): array
     {
@@ -389,9 +345,7 @@ class SearchOptions
     /**
      * Set the product type descriptor filter.
      *
-     * @param string|null $productTypeDescriptors A list of comma delimited product type descriptors.
-     *
-     * @return self
+     * @param string|null $productTypeDescriptors a list of comma delimited product type descriptors
      */
     public function setProductTypeDescFilter(?string $productTypeDescriptors): self
     {
@@ -404,8 +358,6 @@ class SearchOptions
 
     /**
      * Is the Product Type Filter set.
-     *
-     * @return bool
      */
     public function isProductTypeDescFilterSet(): bool
     {
@@ -414,8 +366,6 @@ class SearchOptions
 
     /**
      * Gets the digital resource type filter.
-     *
-     * @return array
      */
     public function getDigitalTypeDescFilter(): array
     {
@@ -425,9 +375,7 @@ class SearchOptions
     /**
      * Sets the digital resource type filter.
      *
-     * @param string|null $digitalResourceTypes A comma delimited list of Digital Resource Type Descriptors.
-     *
-     * @return void
+     * @param string|null $digitalResourceTypes a comma delimited list of Digital Resource Type Descriptors
      */
     public function setDigitalTypeDescFilter(?string $digitalResourceTypes): void
     {
@@ -438,8 +386,6 @@ class SearchOptions
 
     /**
      * If the digital resource type filter is set.
-     *
-     * @return bool
      */
     public function isDigitalTypeDescFilterSet(): bool
     {
@@ -448,10 +394,6 @@ class SearchOptions
 
     /**
      * Set a list of facets to use.
-     *
-     * @param array $facets
-     *
-     * @return self
      */
     public function setFacets(array $facets): self
     {
@@ -462,8 +404,6 @@ class SearchOptions
 
     /**
      * Get the list of facets.
-     *
-     * @return array|null
      */
     public function getFacets(): ?array
     {
@@ -472,8 +412,6 @@ class SearchOptions
 
     /**
      * Get the tags.
-     *
-     * @return array
      */
     public function getTags(): array
     {
@@ -482,10 +420,6 @@ class SearchOptions
 
     /**
      * Set the tag filter.
-     *
-     * @param string|null $tags
-     *
-     * @return void
      */
     public function setTags(?string $tags): void
     {
@@ -496,8 +430,6 @@ class SearchOptions
 
     /**
      * Get the date type filter.
-     *
-     * @return string
      */
     public function getDateType(): string
     {
@@ -506,10 +438,6 @@ class SearchOptions
 
     /**
      * Set the date type filter.
-     *
-     * @param string $dateType
-     *
-     * @return void
      */
     public function setDateType(string $dateType): void
     {
@@ -518,8 +446,6 @@ class SearchOptions
 
     /**
      * Get the start date range filter.
-     *
-     * @return string
      */
     public function getRangeStartDate(): string
     {
@@ -528,10 +454,6 @@ class SearchOptions
 
     /**
      * Set the start date range filter.
-     *
-     * @param string $rangeStartDate
-     *
-     * @return void
      */
     public function setRangeStartDate(string $rangeStartDate): void
     {
@@ -540,8 +462,6 @@ class SearchOptions
 
     /**
      * Get the end date range filter.
-     *
-     * @return string
      */
     public function getRangeEndDate(): string
     {
@@ -550,10 +470,6 @@ class SearchOptions
 
     /**
      * Set the end date range filter.
-     *
-     * @param string $rangeEndDate
-     *
-     * @return void
      */
     public function setRangeEndDate(string $rangeEndDate): void
     {
@@ -562,8 +478,6 @@ class SearchOptions
 
     /**
      * Get the sort order filter.
-     *
-     * @return string
      */
     public function getSortOrder(): string
     {
@@ -572,10 +486,6 @@ class SearchOptions
 
     /**
      * Set the sort order filter.
-     *
-     * @param string $sortOrder
-     *
-     * @return void
      */
     public function setSortOrder(string $sortOrder): void
     {
@@ -584,7 +494,7 @@ class SearchOptions
 
     /**
      * Get specific field to be searched upon.
-     */ 
+     */
     public function getField(): ?string
     {
         return $this->field;
@@ -592,7 +502,7 @@ class SearchOptions
 
     /**
      * Set specific field to be searched upon.
-    */ 
+     */
     public function setField(string $field): void
     {
         $this->field = $field;

@@ -2,15 +2,15 @@
 
 namespace App\Search;
 
-use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\DatasetSubmission;
+use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\FundingOrganization;
 use App\Entity\ProductTypeDescriptor;
+use App\Entity\ResearchGroup;
 use App\Repository\DigitalResourceTypeDescriptorRepository;
+use App\Repository\FundingOrganizationRepository;
 use App\Repository\ProductTypeDescriptorRepository;
 use App\Repository\ResearchGroupRepository;
-use App\Repository\FundingOrganizationRepository;
-use App\Entity\ResearchGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Annotation as Serializer;
 use Pagerfanta\PagerfantaInterface;
@@ -23,7 +23,7 @@ class SearchResults
     /**
      * Pager Fanta Search Results.
      *
-     * @var PagerfantaInterface $pagerFantaResults
+     * @var PagerfantaInterface
      *
      * @Serializer\Exclude
      */
@@ -32,7 +32,7 @@ class SearchResults
     /**
      * An instance of the SearchOptions.
      *
-     * @var SearchOptions $searchOptions
+     * @var SearchOptions
      *
      * @Serializer\Exclude
      */
@@ -41,7 +41,7 @@ class SearchResults
     /**
      * The number of results returned.
      *
-     * @var integer
+     * @var int
      *
      * @Serializer\SerializedName("count")
      */
@@ -50,7 +50,7 @@ class SearchResults
     /**
      * Number of pages available.
      *
-     * @var integer
+     * @var int
      *
      * @Serializer\SerializedName("pages")
      */
@@ -59,7 +59,7 @@ class SearchResults
     /**
      * Number of results per page.
      *
-     * @var integer
+     * @var int
      *
      * @Serializer\SerializedName("resultPerPage")
      */
@@ -68,7 +68,7 @@ class SearchResults
     /**
      * The current page of results.
      *
-     * @var integer
+     * @var int
      *
      * @Serializer\SerializedName("currentPage")
      */
@@ -87,6 +87,7 @@ class SearchResults
      * @var object|iterable
      *
      * @Serializer\SerializedName("results")
+     *
      * @Serializer\Groups({"search"})
      */
     private $result;
@@ -139,9 +140,9 @@ class SearchResults
     /**
      * Class Contructor.
      *
-     * @param PagerfantaInterface    $pagerFantaResults The Pager Fanta results.
-     * @param SearchOptions          $searchOptions     An instance of the SearchOptions.
-     * @param EntityManagerInterface $entityManager     An instance of the Entity Manager.
+     * @param PagerfantaInterface    $pagerFantaResults the Pager Fanta results
+     * @param SearchOptions          $searchOptions     an instance of the SearchOptions
+     * @param EntityManagerInterface $entityManager     an instance of the Entity Manager
      */
     public function __construct(PagerfantaInterface $pagerFantaResults, SearchOptions $searchOptions, EntityManagerInterface $entityManager)
     {
@@ -159,8 +160,6 @@ class SearchResults
 
     /**
      * Processed the search results.
-     *
-     * @return void
      */
     private function processResults(): void
     {
@@ -235,15 +234,13 @@ class SearchResults
                 'key'
             );
             $this->facetInfo['tagsInfo'] = $this->bucketToInfoArray($tagsBucket);
-        }        
+        }
     }
 
     /**
      * Get dataset availability status information for the aggregations.
      *
-     * @param array $aggregations Aggregations for each availability status.
-     *
-     * @return array
+     * @param array $aggregations aggregations for each availability status
      */
     private function getStatusInfo(array $aggregations): array
     {
@@ -259,7 +256,7 @@ class SearchResults
             [
                 'id' => 1,
                 'name' => 'Identified',
-                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE),
             ],
             [
                 'id' => 2,
@@ -267,7 +264,7 @@ class SearchResults
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
-                )
+                ),
             ],
             [
                 'id' => 3,
@@ -275,7 +272,7 @@ class SearchResults
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
-                )
+                ),
             ],
             [
                 'id' => 4,
@@ -283,7 +280,7 @@ class SearchResults
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
-                )
+                ),
             ],
         ];
 
@@ -294,18 +291,15 @@ class SearchResults
             }
         }
 
-        //Sorting based on highest count
+        // Sorting based on highest count
         $array_column = array_column($statusInfo, 'count');
         array_multisort($array_column, SORT_DESC, $statusInfo);
+
         return $statusInfo;
     }
 
     /**
      * Get the facet info to Data Type.
-     *
-     * @param array $bucket
-     *
-     * @return array
      */
     private function bucketToInfoArray(array $bucket): array
     {
@@ -317,15 +311,12 @@ class SearchResults
             $info['count'] = $count;
             $infoArray[] = $info;
         }
+
         return $infoArray;
     }
 
     /**
      * Get combined research group aggregation values.
-     *
-     * @param $aggregations
-     *
-     * @return array
      */
     private function combineBuckets($aggregations, string $datasetBucketName, string $infoProductBucketName): array
     {
@@ -349,7 +340,7 @@ class SearchResults
             );
         }
 
-        $combinedBuckets = array();
+        $combinedBuckets = [];
         foreach (array_keys($datasetBucket + $infoProductBucket) as $key) {
             $combinedBuckets[$key] = (isset($datasetBucket[$key]) ? $datasetBucket[$key] : 0) + (isset($infoProductBucket[$key]) ? $infoProductBucket[$key] : 0);
         }
@@ -360,35 +351,34 @@ class SearchResults
     /**
      * Find the bucket name of the aggregation.
      *
-     * @param array  $aggregations Array of aggregations.
-     * @param string $bucketKey    The name of the bucket to be found.
-     *
-     * @return array
+     * @param array  $aggregations array of aggregations
+     * @param string $bucketKey    the name of the bucket to be found
      */
     private function findKey(array $aggregations, string $bucketKey): array
     {
-        $bucket = array();
+        $bucket = [];
 
-        //create a recursive iterator to loop over the array recursively
+        // create a recursive iterator to loop over the array recursively
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator($aggregations),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-        //loop over the iterator
+        // loop over the iterator
         foreach ($iterator as $key => $value) {
-            //if the key matches our search
+            // if the key matches our search
             if ($key === $bucketKey) {
-                //add the current key
-                $keys = array($key);
-                //loop up the recursive chain
-                for ($i = ($iterator->getDepth() - 1); $i >= 0; $i--) {
-                    //add each parent key
+                // add the current key
+                $keys = [$key];
+                // loop up the recursive chain
+                for ($i = ($iterator->getDepth() - 1); $i >= 0; --$i) {
+                    // add each parent key
                     array_unshift($keys, $iterator->getSubIterator($i)->key());
                 }
-                //return our output array
+                // return our output array
                 $bucket = $value;
             }
         }
+
         return $bucket;
     }
 }
