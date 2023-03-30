@@ -17,82 +17,31 @@ class StandardKeywordController extends AbstractController
     #[Route('/api/standard/keyword', name: 'app_api_standard_keyword')]
     public function index(Request $request): Response
     {
-        $uri = $request->query->get('uri');
+        $lookfor = $request->query->get('lookfor');
+
+        if (empty($lookfor)) {
+            $uri = 'https://vocabs.ardc.edu.au/apps/vocab_widget/proxy/?api_key=public&action=top&repository=anzsrc-2020-for';
+        } else {
+            $uri = 'https://vocabs.ardc.edu.au/apps/vocab_widget/proxy/?api_key=public&action=narrow&repository=anzsrc-2020-for&lookfor=' . $lookfor;
+        }
+
+        $guzzleClient = new Client();
 
         $json = [];
 
-        if (empty($uri)) {
-            $url = 'https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/concept/topConcepts.json';
-            $json = $this->getItems($url);
-        } else {
-            $url = 'https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/resource.json?uri=' . $uri;
-            $json = $this->getLabelAndNarrower($url);
+        try {
+            $response = $guzzleClient->request(
+                'GET',
+                $uri
+            );
+
+            if (preg_match('/^function\((.*)\);$/s', $response->getBody()->getContents(), $matches)) {
+                $json = json_decode($matches[1]);
+            }
+        } catch (GuzzleException $e) {
+            throw new HttpException(500, 'Could not get keywords!');
         }
 
         return new JsonResponse($json);
-    }
-
-    private function getLabelAndNarrower(string $uri):mixed
-    {
-        $guzzleClient = new Client();
-
-        try {
-            $response = $guzzleClient->request(
-                'GET',
-                $uri
-            );
-
-            $data = json_decode($response->getBody()->getContents());
-        } catch (GuzzleException $e) {
-            throw new HttpException(400, 'doesnt work');
-        }
-
-        // if (empty($data->result->_about)) {
-        //     dd($data, $uri);
-        // }
-
-        $json = [];
-        $json['_about'] = $data->result->primaryTopic->_about ?? [];
-        $json['label'] = $data->result->primaryTopic->prefLabel->_value ?? [];
-
-        $narrower = $data->result->primaryTopic->narrower ?? [];
-
-        foreach ($narrower as $narrow)
-        {
-            $json['narrower'][]  = $this->getLabelAndNarrower($narrow->_about);
-        }
-
-        return $json;
-    }
-
-    private function getItems(string $uri):mixed
-    {
-        $guzzleClient = new Client();
-
-        try {
-            $response = $guzzleClient->request(
-                'GET',
-                $uri
-            );
-
-            $data = json_decode($response->getBody()->getContents());
-        } catch (GuzzleException $e) {
-            throw new HttpException(400, 'doesnt work');
-        }
-
-        // dd($data);
-
-        $json = [];
-
-        foreach ($data->result->items as $item) {
-            $itemArray = [];
-
-            $itemArray['_about'] = $item->_about;
-            $itemArray['label'] = $item->prefLabel->_value;
-
-            $json[] = $itemArray;
-
-        }
-        return $json;
     }
 }
