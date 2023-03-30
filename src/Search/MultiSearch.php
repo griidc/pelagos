@@ -166,6 +166,11 @@ class MultiSearch
         $query->setQuery($boolQuery);
         $query->setPostFilter($postBoolQuery);
 
+        // sort by asc when search term doesn't exist
+        if ($queryString === '*') {
+            $query->addSort(array('friendlyName' => array('order' => 'ASC')));
+        }
+
         // Add sort order
         if ($searchOptions->getSortOrder() !== 'default') {
             $query->addSort(array('publishedDate' => array('order' => $searchOptions->getSortOrder())));
