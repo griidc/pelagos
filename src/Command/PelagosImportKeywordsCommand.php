@@ -6,6 +6,7 @@ use App\Entity\Keyword;
 use App\Enum\KeywordType;
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Elastica\Client;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,6 +35,19 @@ class PelagosImportKeywordsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // $elasticClient = new Client(array(
+        //     'servers' => array(
+        //         array('host' => 'localhost', 'port' => 9200),
+        //     )
+        // ));
+
+        // $elasticClient->connect();
+
+        // $index = $elasticClient->getIndex('pelagos_mvde');
+
+        // dd($index);
+
+
         $io = new SymfonyStyle($input, $output);
         $dataURI = $input->getArgument('dataURI');
         $type = $input->getArgument('type');
@@ -49,12 +63,12 @@ class PelagosImportKeywordsCommand extends Command
         $keywordReposity = $this->entityManager->getRepository(Keyword::class);
 
         foreach ($items as $item) {
-            $aboutURI = $item->_about;
-            $conceptData = file_get_contents($prefix . $aboutURI);
-            $conceptJson = json_decode($conceptData);
+            // $aboutURI = $item->_about;
+            // $conceptData = file_get_contents($prefix . $aboutURI);
+            // $conceptJson = json_decode($conceptData);
             $keyword = new Keyword();
             $keyword->setType(KeywordType::TYPE_ANZSRC);
-            $keyword->setJson($conceptJson);
+            $keyword->setJson($item);
             $keywordReposity->save($keyword);
         }
 
