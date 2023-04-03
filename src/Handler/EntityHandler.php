@@ -151,7 +151,8 @@ class EntityHandler
         array $criteria,
         array $orderBy = array(),
         array $properties = array(),
-        $hydrator = null
+        $hydrator = null,
+        $distinct = true
     ) {
         // If properties are specified and we're using the default hydrator or an object hydrator, throw an exception.
         if (count($properties) > 0 and in_array($hydrator, array(null, Query::HYDRATE_OBJECT, Query::HYDRATE_SIMPLEOBJECT))) {
@@ -174,7 +175,7 @@ class EntityHandler
         // Filter by Funding Organization is needed.
         $this->filterByFundingOrganization($qb, $entityClass);
         // Eliminate duplicates.
-        $qb->distinct();
+        $qb->distinct($distinct);
         // Get the query.
         $query = $qb->getQuery();
         // Return the result using the requested hydrator.
