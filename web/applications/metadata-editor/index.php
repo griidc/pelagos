@@ -28,7 +28,7 @@ drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.va
 
 drupal_add_js('//cdn.jsdelivr.net/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 
-drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false&key='.$config['google_maps_api_key'],array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false&key='.$config['google_maps_api_key'].'&callback=Function.prototype',array('type'=>'external'));
 
 drupal_add_js('includes/geoviz/geoviz.js',array('type'=>'external'));
 drupal_add_js('includes/geoviz/mapWizard.js',array('type'=>'external'));
