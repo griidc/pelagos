@@ -29,15 +29,17 @@ class StandardKeywordController extends AbstractController
         foreach ($keywords as $keyword) {
             $json = $keyword->getJson();
 
-            if (empty($json) or !preg_match($regex, $json["notation"])) {
-                continue;
-            }
+            // if (empty($json) or !preg_match($regex, $json["notation"])) {
+            //     continue;
+            // }
+
+            $notation = $json["notation"];
 
             $data[] = [
-                "notation" => $json["notation"],
+                "notation" => $notation,
                 "label" => $json["prefLabel"]["_value"],
-                "hasItems" => !(strlen($parentId) == 4),
-                "parentId" => $parentId,
+                // "hasItems" => !(strlen($parentId) == 4),
+                "parentId" => (empty(substr($notation, 0, -2))) ? "-1" : substr($notation, 0, -2),
             ];
         }
 
