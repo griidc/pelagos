@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\KeywordType;
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Keywords class for Standardized keywords.
@@ -22,6 +23,7 @@ class Keyword extends Entity
      * Type of the Keyword.
      */
     #[ORM\Column(length: 255, enumType: KeywordType::class)]
+    #[Serializer\Type(name: KeywordType::class)]
     private ?KeywordType $type = null;
 
     /**
