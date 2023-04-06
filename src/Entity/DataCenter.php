@@ -9,8 +9,6 @@ use App\Validator\Constraints as CustomAssert;
 /**
  * This class represent data center entity information.
  *
- * @ORM\Entity
- *
  * @UniqueEntity(
  *     fields={"organizationName"},
  *     errorPath="organizationName",

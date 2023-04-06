@@ -2,13 +2,13 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManager;
 use App\Entity\DataCenter;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Doctrine\ORM\EntityManager;
 
 /**
  * A utility class for extracting information from ISO metadata.
@@ -22,13 +22,13 @@ class ISOMetadataExtractorUtil
      * the Dataset Submission and the XML object, with values from the
      * XML object overriding any values from the Dataset Submission.
      *
-     * @param \SimpleXmlElement $xmlMetadata       The XML to be read from.
-     * @param DatasetSubmission $datasetSubmission The datasetSubmission object to be modified.
-     * @param EntityManager     $entityManager     An entity manager.
+     * @param \SimpleXmlElement $xmlMetadata       the XML to be read from
+     * @param DatasetSubmission $datasetSubmission the datasetSubmission object to be modified
+     * @param EntityManager     $entityManager     an entity manager
      *
      * @return void
      */
-    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityManager $entityManager)
+    public static function populateDatasetSubmissionWithXMLValues(\SimpleXMLElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityManager $entityManager)
     {
         $pointsOfContact = self::extractPointsOfContact($xmlMetadata, $datasetSubmission, $entityManager);
         foreach ($pointsOfContact as $poc) {
@@ -70,9 +70,9 @@ class ISOMetadataExtractorUtil
     /**
      * Sets value in DatasetSubmission (by reference) if not null in XML.
      *
-     * @param DatasetSubmission $ds     A DatasetSubmission object.
-     * @param string            $setter DatasetSubmission's setter/adder for the attribute.
-     * @param mixed             $value  The value of the attribute derived from the XML.
+     * @param DatasetSubmission $ds     a DatasetSubmission object
+     * @param string            $setter datasetSubmission's setter/adder for the attribute
+     * @param mixed             $value  the value of the attribute derived from the XML
      *
      * @return void
      */
@@ -90,13 +90,13 @@ class ISOMetadataExtractorUtil
     /**
      * Get the 1st email addresses from the 1st POC from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityManager     $em  An entity manager.
+     * @param \SimpleXmlElement $xml the XML to extract from
+     * @param DatasetSubmission $ds  a Pelagos DatasetSubmission instance
+     * @param EntityManager     $em  an entity manager
      *
-     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array array of PersonDatasetSubmissionDatasetContacts, or empty array if none
      */
-    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXMLElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $targetEmailAddress = null;
 
@@ -104,7 +104,6 @@ class ISOMetadataExtractorUtil
             '/gmd:identificationInfo' .
             '/gmd:MD_DataIdentification' .
             '/gmd:pointOfContact';
-
 
         $pointsOfContact = @$xml->xpath($query);
 
@@ -122,27 +121,27 @@ class ISOMetadataExtractorUtil
 
             $targetEmailAddress = self::querySingle($pointOfContact, $query);
         }
+
         return $targetEmailAddress;
     }
 
     /**
      * Get the all email addresses from all POCs from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityManager     $em  An entity manager.
+     * @param \SimpleXmlElement $xml the XML to extract from
+     * @param DatasetSubmission $ds  a Pelagos DatasetSubmission instance
+     * @param EntityManager     $em  an entity manager
      *
-     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array array of PersonDatasetSubmissionDatasetContacts, or empty array if none
      */
-    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXMLElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
-        $emailAddressColection = array();
+        $emailAddressColection = [];
 
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
             '/gmd:MD_DataIdentification' .
             '/gmd:pointOfContact';
-
 
         $pointsOfContact = @$xml->xpath($query);
 
@@ -165,21 +164,22 @@ class ISOMetadataExtractorUtil
                 }
             }
         }
+
         return $emailAddressColection;
     }
 
     /**
      * Determines the dataset contact from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityManager     $em  An entity manager.
+     * @param \SimpleXmlElement $xml the XML to extract from
+     * @param DatasetSubmission $ds  a Pelagos DatasetSubmission instance
+     * @param EntityManager     $em  an entity manager
      *
-     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array array of PersonDatasetSubmissionDatasetContacts, or empty array if none
      */
-    public static function extractPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    public static function extractPointsOfContact(\SimpleXMLElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
-        $personDatasetSubmissionDatasetContacts = array();
+        $personDatasetSubmissionDatasetContacts = [];
 
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -201,7 +201,7 @@ class ISOMetadataExtractorUtil
 
                 $email = self::querySingle($pointOfContact, $query);
                 $personArray = $em->getRepository(Person::class)->findBy(
-                    array('emailAddress' => $email)
+                    ['emailAddress' => $email]
                 );
 
                 if (count($personArray) > 0) {
@@ -229,19 +229,20 @@ class ISOMetadataExtractorUtil
                 }
             }
         }
+
         return $personDatasetSubmissionDatasetContacts;
     }
 
     /**
      * Determines the metadata contact from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityManager     $em  An entity manager.
+     * @param \SimpleXmlElement $xml the XML to extract from
+     * @param DatasetSubmission $ds  a Pelagos DatasetSubmission instance
+     * @param EntityManager     $em  an entity manager
      *
-     * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
+     * @return PersonDatasetSubmissionMetadataContact|null returns the metadata contact, or null
      */
-    protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    protected static function extractMetadataContact(\SimpleXMLElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:contact[1]' .
@@ -256,7 +257,7 @@ class ISOMetadataExtractorUtil
         $email = self::querySingle($xml, $query);
 
         $people = $em->getRepository(Person::class)->findBy(
-            array('emailAddress' => $email)
+            ['emailAddress' => $email]
         );
 
         if (count($people) > 0) {
@@ -281,6 +282,7 @@ class ISOMetadataExtractorUtil
                 $personDatasetSubmissionMetadataContact->setRole($role);
             }
             $personDatasetSubmissionMetadataContact->setDatasetSubmission($ds);
+
             return $personDatasetSubmissionMetadataContact;
         } else {
             return null;
@@ -290,15 +292,15 @@ class ISOMetadataExtractorUtil
     /**
      * Determines the distribution point from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityManager     $em  An entity manager.
+     * @param \SimpleXmlElement $xml the XML to extract from
+     * @param DatasetSubmission $ds  a Pelagos DatasetSubmission instance
+     * @param EntityManager     $em  an entity manager
      *
-     * @return array Array of DistributionPoint, or empty array if none.
+     * @return array array of DistributionPoint, or empty array if none
      */
-    public static function extractDistributionPoint(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    public static function extractDistributionPoint(\SimpleXMLElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
-        $distributionPoints = array();
+        $distributionPoints = [];
 
         $query = '/gmi:MI_Metadata' .
             '/gmd:distributionInfo' .
@@ -320,9 +322,9 @@ class ISOMetadataExtractorUtil
                     '/gmd:electronicMailAddress' .
                     '/gco:CharacterString';
 
-                $email = strtolower(self::querySingle($distributor, $query));
+                $email = strtolower(self::querySingle($distributor, $query) ?? '');
 
-                //hard-coding to map outdated metadata's distribution contact to the national data center entity
+                // hard-coding to map outdated metadata's distribution contact to the national data center entity
                 switch ($email) {
                     case 'gb-admin@ncbi.nlm.nih.gov':
                     case 'info@ncbi.nml.nih.gov':
@@ -342,7 +344,7 @@ class ISOMetadataExtractorUtil
                 }
 
                 $dataCenterArray = $em->getRepository(DataCenter::class)->findBy(
-                    array('emailAddress' => $email)
+                    ['emailAddress' => $email]
                 );
 
                 if (count($dataCenterArray) > 0) {
@@ -384,17 +386,18 @@ class ISOMetadataExtractorUtil
                 }
             }
         }
+
         return $distributionPoints;
     }
 
     /**
      * Extracts title from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the title as a string, or null.
+     * @return string|null returns the title as a string, or null
      */
-    protected static function extractTitle(\SimpleXmlElement $xml)
+    protected static function extractTitle(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -410,11 +413,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts short title from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the title as a string, or null.
+     * @return string|null returns the title as a string, or null
      */
-    protected static function extractShortTitle(\SimpleXmlElement $xml)
+    protected static function extractShortTitle(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -430,11 +433,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts abstract from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the abstract as a string, or null.
+     * @return string|null returns the abstract as a string, or null
      */
-    protected static function extractAbstract(\SimpleXmlElement $xml)
+    protected static function extractAbstract(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -448,11 +451,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts purpose from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the purpose as a string, or null.
+     * @return string|null returns the purpose as a string, or null
      */
-    protected static function extractPurpose(\SimpleXmlElement $xml)
+    protected static function extractPurpose(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -466,11 +469,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts supplemental parameters from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the parameters as a string, or null.
+     * @return string|null returns the parameters as a string, or null
      */
-    protected static function extractSuppParams(\SimpleXmlElement $xml)
+    protected static function extractSuppParams(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -484,11 +487,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts supplemental methods from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the methods as a string, or null.
+     * @return string|null returns the methods as a string, or null
      */
-    protected static function extractSuppMethods(\SimpleXmlElement $xml)
+    protected static function extractSuppMethods(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -502,11 +505,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts supplemental instruments from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the instruments as a string, or null.
+     * @return string|null returns the instruments as a string, or null
      */
-    protected static function extractSuppInstruments(\SimpleXmlElement $xml)
+    protected static function extractSuppInstruments(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -520,11 +523,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts sample scales and rates from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the sample scales and rates as a string, or null.
+     * @return string|null returns the sample scales and rates as a string, or null
      */
-    protected static function extractSuppSampScalesRates(\SimpleXmlElement $xml)
+    protected static function extractSuppSampScalesRates(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -532,18 +535,17 @@ class ISOMetadataExtractorUtil
             '/gmd:supplementalInformation' .
             '/gco:CharacterString';
 
-
         return self::getDelimitedItem(self::querySingle($xml, $query), 3);
     }
 
     /**
      * Extracts error analysis from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the error analysis as a string, or null.
+     * @return string|null returns the error analysis as a string, or null
      */
-    protected static function extractSuppErrorAnalysis(\SimpleXmlElement $xml)
+    protected static function extractSuppErrorAnalysis(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -557,11 +559,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts provenance from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the provenance as a string, or null.
+     * @return string|null returns the provenance as a string, or null
      */
-    protected static function extractSuppProvenance(\SimpleXmlElement $xml)
+    protected static function extractSuppProvenance(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -575,11 +577,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts reference date from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return \DateTime|null Returns the reference date as a DateTime, or null.
+     * @return \DateTime|null returns the reference date as a DateTime, or null
      */
-    protected static function extractReferenceDate(\SimpleXmlElement $xml)
+    protected static function extractReferenceDate(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -594,6 +596,7 @@ class ISOMetadataExtractorUtil
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
             $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
+
             return $dateTime;
         } else {
             return null;
@@ -603,11 +606,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts theme keywords from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return array Returns the theme keywords as an array, or empty array.
+     * @return array returns the theme keywords as an array, or empty array
      */
-    protected static function extractThemeKeywords(\SimpleXmlElement $xml)
+    protected static function extractThemeKeywords(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -625,11 +628,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts place keywords from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return array Returns the place keywords as an array, or empty array.
+     * @return array returns the place keywords as an array, or empty array
      */
-    protected static function extractPlaceKeywords(\SimpleXmlElement $xml)
+    protected static function extractPlaceKeywords(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -647,11 +650,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts topic keywords from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return array Returns the topic keywords as an array, or empty array.
+     * @return array returns the topic keywords as an array, or empty array
      */
-    protected static function extractTopicKeywords(\SimpleXmlElement $xml)
+    protected static function extractTopicKeywords(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -665,11 +668,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts GML from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the GML as a string, or null.
+     * @return string|null returns the GML as a string, or null
      */
-    protected static function extractSpatialExtent(\SimpleXmlElement $xml)
+    protected static function extractSpatialExtent(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -687,11 +690,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts spatial extent description from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the spatial extent description as a string, or null.
+     * @return string|null returns the spatial extent description as a string, or null
      */
-    protected static function extractSpatialExtentDescription(\SimpleXmlElement $xml)
+    protected static function extractSpatialExtentDescription(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -707,11 +710,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts temporal extent description from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the temporal extent description as a string, or null.
+     * @return string|null returns the temporal extent description as a string, or null
      */
-    protected static function extractTemporalExtentDesc(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentDesc(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -724,7 +727,7 @@ class ISOMetadataExtractorUtil
             '/gml:TimePeriod' .
             '/gml:description';
 
-        $temporalExtentDescription = self::querySingle($xml, $query);
+        $temporalExtentDescription = self::querySingle($xml, $query) ?? '';
         $groundCondition = preg_match('/ground.*condition/i', $temporalExtentDescription);
         $modeledPeriod = preg_match('/modeled.*period/i', $temporalExtentDescription);
 
@@ -737,17 +740,18 @@ class ISOMetadataExtractorUtil
         if (1 === $modeledPeriod) {
             return 'modeled period';
         }
+
         return $temporalExtentDescription;
     }
 
     /**
      * Extracts temporal begin position from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return \DateTime|null Returns the starting date as a DateTime, or null.
+     * @return \DateTime|null returns the starting date as a DateTime, or null
      */
-    protected static function extractTemporalExtentBeginPosition(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentBeginPosition(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -763,6 +767,7 @@ class ISOMetadataExtractorUtil
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
             $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
+
             return $dateTime;
         } else {
             return null;
@@ -772,11 +777,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts temporal end position from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return \DateTime|null Returns the ending date as a DateTime, or null.
+     * @return \DateTime|null returns the ending date as a DateTime, or null
      */
-    protected static function extractTemporalExtentEndPosition(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentEndPosition(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -792,6 +797,7 @@ class ISOMetadataExtractorUtil
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
             $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
+
             return $dateTime;
         } else {
             return null;
@@ -801,11 +807,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts file format from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the file format as a string, or null.
+     * @return string|null returns the file format as a string, or null
      */
-    protected static function extractDistributionFormatName(\SimpleXmlElement $xml)
+    protected static function extractDistributionFormatName(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:distributionInfo' .
@@ -823,11 +829,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts archive format from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the archive format as a string, or null.
+     * @return string|null returns the archive format as a string, or null
      */
-    protected static function extractFileDecompressionTechnique(\SimpleXmlElement $xml)
+    protected static function extractFileDecompressionTechnique(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:distributionInfo' .
@@ -845,12 +851,12 @@ class ISOMetadataExtractorUtil
     /**
      * Runs xpath and returns resulting single value or null.
      *
-     * @param \SimpleXmlElement $xml   The XML to query.
-     * @param string            $xpath The xpath query to run.
+     * @param \SimpleXmlElement $xml   the XML to query
+     * @param string            $xpath the xpath query to run
      *
-     * @return string|null Item queried in xpath.
+     * @return string|null item queried in xpath
      */
-    protected static function querySingle(\SimpleXmlElement $xml, string $xpath)
+    protected static function querySingle(\SimpleXMLElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -868,9 +874,9 @@ class ISOMetadataExtractorUtil
             // remove new lines
             $value = trim(preg_replace('/\s+/', ' ', $value));
 
-            //replace xml escape chars
+            // replace xml escape chars
             while (preg_match_all('/\&(amp|quot|lt|gt|#039|apos)\;/', $value)) {
-                $value = htmlspecialchars_decode($value, (ENT_QUOTES | ENT_XML1));
+                $value = htmlspecialchars_decode($value, ENT_QUOTES | ENT_XML1);
             }
 
             return $value;
@@ -882,12 +888,12 @@ class ISOMetadataExtractorUtil
     /**
      * Runs xpath and returns resulting single value as GML or null.
      *
-     * @param \SimpleXmlElement $xml   The XML to query.
-     * @param string            $xpath The xpath query to run.
+     * @param \SimpleXmlElement $xml   the XML to query
+     * @param string            $xpath the xpath query to run
      *
-     * @return string|null Item queried in xpath.
+     * @return string|null item queried in xpath
      */
-    protected static function querySingleGml(\SimpleXmlElement $xml, string $xpath)
+    protected static function querySingleGml(\SimpleXMLElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -897,6 +903,7 @@ class ISOMetadataExtractorUtil
 
         if (count($query) > 0) {
             $gml = $query[0]->asXML();
+
             return $gml;
         } else {
             return null;
@@ -906,37 +913,38 @@ class ISOMetadataExtractorUtil
     /**
      * Runs xpath and returns an array, or empty array.
      *
-     * @param \SimpleXmlElement $xml   The XML to query.
-     * @param string            $xpath The xpath query to run.
+     * @param \SimpleXmlElement $xml   the XML to query
+     * @param string            $xpath the xpath query to run
      *
-     * @return array Result of items queried in xpath.
+     * @return array result of items queried in xpath
      */
-    protected static function queryMultiple(\SimpleXmlElement $xml, string $xpath)
+    protected static function queryMultiple(\SimpleXMLElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
         if (false === $query) {
             // This is a best effort, so empty array if xpath fails.
-            return array();
+            return [];
         }
 
-        $arrayOfStrings = array();
+        $arrayOfStrings = [];
         // Cast results to string.
         foreach ($query as $key => $value) {
             if (!empty($value)) {
                 $arrayOfStrings[$key] = (string) $value;
             }
         }
+
         return $arrayOfStrings;
     }
 
     /**
      * Picks an item from a bar delimited list.
      *
-     * @param string|null $list   A bar delimited list of strings.
-     * @param integer     $offset The array offset of the desired position in the list.
+     * @param string|null $list   a bar delimited list of strings
+     * @param int         $offset the array offset of the desired position in the list
      *
-     * @return string|null The item at the given offset, or null.
+     * @return string|null the item at the given offset, or null
      */
     private static function getDelimitedItem(?string $list, int $offset)
     {
@@ -968,11 +976,11 @@ class ISOMetadataExtractorUtil
     /**
      * Extracts temporal nilReason from XML metadata.
      *
-     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml the XML to extract from
      *
-     * @return string|null Returns the temporal nilReason as a string, or null.
+     * @return string|null returns the temporal nilReason as a string, or null
      */
-    protected static function extractTemporalExtentNilReasonType(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentNilReasonType(\SimpleXMLElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
             '/gmd:identificationInfo' .
@@ -985,8 +993,9 @@ class ISOMetadataExtractorUtil
         $queryXpath = @$xml->xpath($query);
 
         if (!empty($queryXpath) and is_array($queryXpath)) {
-            $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
+            $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason') ?? '';
             $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
+
             return $value;
         }
         // This is a best effort, so null if xpath fails.
@@ -996,10 +1005,10 @@ class ISOMetadataExtractorUtil
     /**
      * Static function to get the XML attribute from the SimpleXmlElement object.
      *
-     * @param \SimpleXMLElement $xmlObject The Xml object from the query.
-     * @param string            $attribute The attribute needed to be extracted.
+     * @param \SimpleXMLElement $xmlObject the Xml object from the query
+     * @param string            $attribute the attribute needed to be extracted
      *
-     * @return null|string
+     * @return string|null
      */
     private static function getXmlAttribute(\SimpleXMLElement $xmlObject, string $attribute)
     {

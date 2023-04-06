@@ -7,6 +7,8 @@ $("html").hide();
 $(document).ready(function(){
     "use strict";
 
+    $("#funderList").trigger("fundersAdded", {"disabled": false});
+
     $("#udiLoadReviewform").on("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
@@ -56,6 +58,10 @@ $(document).ready(function(){
         $("#datasetFileTransferType").val(datasetFileTransferType);
     });
 
+    $("#funderList").on("keyup change", function() {
+        $(this).valid();
+    });
+
     regForm.validate({
         rules: {
             temporalExtentBeginPosition: "trueISODate",
@@ -68,10 +74,17 @@ $(document).ready(function(){
             },
             largeFileUri:{
                 require_from_group: [1, '.files']
+            },
+            additionalFunders:{
+                require_from_group: [1, '.funders']
+            },
+            funderList: {
+                require_from_group: [1, '.funders']
             }
         },
         groups: {
-            files: "filesUploaded remotelyHostedUrl largeFileUri"
+            files: "filesUploaded remotelyHostedUrl largeFileUri",
+            funders: "additionalFunders funderList",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
@@ -84,6 +97,12 @@ $(document).ready(function(){
             },
             largeFileUri: {
                 require_from_group: "Please upload a file, or add remotely hosted url, or Large file URI"
+            },
+            additionalFunders: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            },
+            funderList: {
+                require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
             }
         },
         ignore: ".ignore,.prototype",
@@ -93,7 +112,7 @@ $(document).ready(function(){
             form.submit();
         }
     });
-    
+
     // load qTip descriptions
     $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({

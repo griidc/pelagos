@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Entity\Funder;
 use App\Util\FundingOrgFilter;
 
 /**
@@ -280,5 +281,21 @@ class DatasetRepository extends ServiceEntityRepository
 
         $query = $qb->getQuery();
         return $query->getSingleScalarResult();
+    }
+
+    /**
+     * Get datasets based on associated funders.
+     *
+     * @param Funder $funder
+     *
+     * @return array An array of Datasets.
+     */
+    public function findByFunder(Funder $funder): array
+    {
+        $qb = $this->createQueryBuilder('dataset');
+        $qb->setParameter('funder', $funder);
+        $qb->where($qb->expr()->isMemberOf(':funder', 'dataset.funders'));
+
+        return $qb->getQuery()->getResult();
     }
 }
