@@ -1,7 +1,7 @@
 $(() => {
 
     stuff =  $.ajax({
-        url: 'https://localhost:8082/api/standard/keyword',
+        url: '/api/standard/keyword',
         dataType: 'json',
       }).then((result) => {
         console.log(result);
