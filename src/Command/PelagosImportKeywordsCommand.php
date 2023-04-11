@@ -7,6 +7,7 @@ use App\Enum\KeywordType;
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Client;
+use Elastica\Document;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -43,10 +44,10 @@ class PelagosImportKeywordsCommand extends Command
 
         // $elasticClient->connect();
 
-        // $index = $elasticClient->getIndex('pelagos_mvde');
+        // $index = $elasticClient->getIndex('standard_keywords');
+
 
         // dd($index);
-
 
         $io = new SymfonyStyle($input, $output);
         $dataURI = $input->getArgument('dataURI');
@@ -66,10 +67,30 @@ class PelagosImportKeywordsCommand extends Command
             // $aboutURI = $item->_about;
             // $conceptData = file_get_contents($prefix . $aboutURI);
             // $conceptJson = json_decode($conceptData);
+
+            // dd($item);
+
+            // $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+            
             $keyword = new Keyword();
             $keyword->setType(KeywordType::TYPE_ANZSRC);
             $keyword->setJson($item);
             $keywordReposity->save($keyword);
+
+            // $data = [
+            //     "type" => KeywordType::TYPE_ANZSRC,
+            //     "id" => $item->notation,
+            //     "label" => $item->prefLabel->_value,
+            //     "uri" => $item->_about,
+
+            // ];
+
+            // $document = new Document($guid, $data);
+            // $index->addDocument($document);
+            // $index->refresh();
+
+
+
         }
 
         $this->entityManager->flush();
