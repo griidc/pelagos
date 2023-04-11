@@ -4,10 +4,10 @@ namespace App\Command;
 
 use App\Entity\Keyword;
 use App\Enum\KeywordType;
-use App\Repository\KeywordRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Elastica\Client;
-use Elastica\Document;
+use EasyRdf\Graph;
+use EasyRdf\Literal;
+use EasyRdf\Resource;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,67 +30,39 @@ class PelagosImportKeywordsCommand extends Command
     {
         $this
             ->addArgument('dataURI', InputArgument::REQUIRED, 'The file, or URI with the data.')
-            ->addArgument('type', InputArgument::REQUIRED, 'The type of data to import.')
+            ->addArgument('type', InputArgument::OPTIONAL, 'The type of data to import.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // $elasticClient = new Client(array(
-        //     'servers' => array(
-        //         array('host' => 'localhost', 'port' => 9200),
-        //     )
-        // ));
-
-        // $elasticClient->connect();
-
-        // $index = $elasticClient->getIndex('standard_keywords');
-
-
-        // dd($index);
-
         $io = new SymfonyStyle($input, $output);
         $dataURI = $input->getArgument('dataURI');
-        $type = $input->getArgument('type');
-
-        $fileData = file_get_contents($dataURI);
-
-        $json = json_decode($fileData);
-
-        $items = $json->result->items;
-
-        $prefix = "https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/resource.json?uri=";
-
+        $type = KeywordType::fromString($input->getArgument('type'));
         $keywordReposity = $this->entityManager->getRepository(Keyword::class);
 
-        foreach ($items as $item) {
-            // $aboutURI = $item->_about;
-            // $conceptData = file_get_contents($prefix . $aboutURI);
-            // $conceptJson = json_decode($conceptData);
+        // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/discipline/?format=rdf (DISCIPLINE)
+        // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/sciencekeywords/?format=rdf&page_num=2 (KEYWORDS)
 
-            // dd($item);
+        $keywords = new Graph($dataURI);
+        $keywords->load();
+        $resources = $keywords->allOfType('skos:Concept');
+        
+        foreach ($resources as $resource) {
+            $uri = $resource->getUri();
+            $label = $this->getPropertyValue($resource, 'skos:prefLabel');
+            $broader = $this->getPropertyValue($resource, 'skos:broader');
+            $definition = $this->getPropertyValue($resource, 'skos:definition');
+            $identifier = $resource->localName();
 
-            // $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
-            
             $keyword = new Keyword();
-            $keyword->setType(KeywordType::TYPE_ANZSRC);
-            $keyword->setJson($item);
+            $keyword->setType(KeywordType::TYPE_GCMD);
+            $keyword->setIdentifier($identifier);
+            $keyword->setLabel($label);
+            $keyword->setReferenceUri($uri);
+            $keyword->setParentUri($broader);
+            $keyword->setDefinition($definition);
             $keywordReposity->save($keyword);
-
-            // $data = [
-            //     "type" => KeywordType::TYPE_ANZSRC,
-            //     "id" => $item->notation,
-            //     "label" => $item->prefLabel->_value,
-            //     "uri" => $item->_about,
-
-            // ];
-
-            // $document = new Document($guid, $data);
-            // $index->addDocument($document);
-            // $index->refresh();
-
-
-
         }
 
         $this->entityManager->flush();
@@ -98,5 +70,16 @@ class PelagosImportKeywordsCommand extends Command
         $io->success('DONE!');
 
         return Command::SUCCESS;
+    }
+
+    private function getPropertyValue(Resource $resource, string $propertyName): mixed
+    {
+        $property = $resource->get($propertyName);
+
+        if ($property instanceof Literal) {
+            return $property->getValue();
+        }
+
+        return  $property;
     }
 }

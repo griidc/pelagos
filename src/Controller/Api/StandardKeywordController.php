@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use App\Enum\KeywordType;
 use App\Repository\KeywordRepository;
-use App\Util\JsonSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,35 +15,30 @@ class StandardKeywordController extends AbstractController
     #[Route('/api/standard/keyword', name: 'app_api_standard_keyword')]
     public function index(Request $request, KeywordRepository $keywordRepository): Response
     {
-        $type = $request->query->get('type') ?? KeywordType::TYPE_ANZSRC;        
+        $type = $request->query->get('type') ?? KeywordType::TYPE_GCMD;        
         $keywords = $keywordRepository->findBy(
             ['type' => $type]
         );
       
         $data = [];
-        $parentIds = $request->query->get('parentIds');
-        $parentId = $parentIds[0] ?? '';
-        $regex = '/^' . $parentId . '\d\d$/i';
 
         foreach ($keywords as $keyword) {
-            $json = $keyword->getJson();
-
-            // if (empty($json) or !preg_match($regex, $json["notation"])) {
-            //     continue;
-            // }
-
-            $notation = $json["notation"];
+            $uri = $keyword->getReferenceUri();
+            $label = $keyword->getLabel();
+            $parentId = $keyword->getParentUri();
+            $definition = $keyword->getDefinition();
 
             $data[] = [
-                "notation" => $notation,
-                "label" => $json["prefLabel"]["_value"],
-                // "hasItems" => !(strlen($parentId) == 4),
-                "parentId" => (empty(substr($notation, 0, -2))) ? "-1" : substr($notation, 0, -2),
+                "key" => $uri,
+                "label" => $label,
+                "hasItems" => !(empty($parentId)),
+                "parent" => $parentId,
+                "definition" => $definition,
             ];
         }
 
         usort($data, function($a, $b) {
-            return strcmp($a["notation"], $b["notation"]);
+            return strcmp($a["label"], $b["label"]);
         });
 
         return new JsonResponse($data);

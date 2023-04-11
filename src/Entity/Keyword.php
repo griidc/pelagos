@@ -15,53 +15,29 @@ use JMS\Serializer\Annotation as Serializer;
 class Keyword extends Entity
 {
     /**
-     * JSON containing Standard Keyword Data.
-     */
-    #[ORM\Column(type: 'json')]
-    private mixed $json = null;
-
-    /**
      * Type of the Keyword.
      */
     #[ORM\Column(length: 255, enumType: KeywordType::class)]
     #[Serializer\Type(name: KeywordType::class)]
     private ?KeywordType $type = null;
 
-    // #[ORM\Column(type: Types::TEXT)]
-    // private ?string $identifier = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $identifier = null;
 
-    // #[ORM\Column(type: Types::TEXT, nullable: true)]
-    // private ?string $description = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $definition = null;
 
-    // #[ORM\Column(type: Types::TEXT)]
-    // private ?string $label = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $label = null;
 
-    // #[ORM\Column(type: Types::TEXT, nullable: true)]
-    // private ?string $referenceUri = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $referenceUri = null;
 
-    // #[ORM\Column(type: Types::TEXT, nullable: true)]
-    // private ?string $parentIdentifier = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $parentUri = null;
 
-    // #[ORM\Column(type: Types::TEXT, nullable: true)]
-    // private ?string $displayPath = null;
-
-    /**
-     * Get the JSON for this Keyword.
-     */
-    public function getJson(): mixed
-    {
-        return $this->json;
-    }
-
-    /**
-     * Set the JSON for this Keyword.
-     */
-    public function setJson(mixed $json): self
-    {
-        $this->json = $json;
-
-        return $this;
-    }
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $displayPath = null;
 
     /**
      * Get the Type for this Keyword.
@@ -81,14 +57,14 @@ class Keyword extends Entity
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDefinition(): ?string
     {
-        return $this->description;
+        return $this->definition;
     }
 
-    public function setDescription(?string $description): self
+    public function setDefinition(?string $definition): self
     {
-        $this->description = $description;
+        $this->definition = $definition;
 
         return $this;
     }
@@ -117,14 +93,14 @@ class Keyword extends Entity
         return $this;
     }
 
-    public function getParentIdentifier(): ?string
+    public function getParentUri(): ?string
     {
-        return $this->parentIdentifier;
+        return $this->parentUri;
     }
 
-    public function setParentIdentifier(string $parentIdentifier): self
+    public function setParentUri(?string $parentUri): self
     {
-        $this->parentIdentifier = $parentIdentifier;
+        $this->parentUri = $parentUri;
 
         return $this;
     }
