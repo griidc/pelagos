@@ -17,7 +17,6 @@ enum KeywordType: string implements BackedEnum
         return match ($keyword) {
             KeywordType::TYPE_ANZSRC->value => KeywordType::TYPE_ANZSRC,
             KeywordType::TYPE_GCMD->value => KeywordType::TYPE_GCMD,
-            default => null,
         };
     }
 }
