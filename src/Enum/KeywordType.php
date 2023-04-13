@@ -2,34 +2,22 @@
 
 namespace App\Enum;
 
+use BackedEnum;
+
 /**
  * Types for Keywords.
  */
-enum KeywordType: string
+enum KeywordType: string implements BackedEnum
 {
     case TYPE_ANZSRC = 'anzsrc';
     case TYPE_GCMD = 'gcmd';
-    case TYPE_GCMD_SCIENCE = 'gcmd:science';
-    case TYPE_GCMD_DISCIPLINE = 'gcmd:discipline';
 
-    static public function fromString(?string $keyword): ?KeywordType
+    static public function tryFrom(int|string $keyword): ?static
     {
-        switch ($keyword)
-        {
-            case 'anzsrc':
-                return KeywordType::TYPE_ANZSRC;
-                break;
-            case 'gcmd':
-                return KeywordType::TYPE_GCMD;
-                break;
-            case 'gcmd:science':
-                return KeywordType::TYPE_GCMD_SCIENCE;
-                break;
-            case 'gcmd:discipline':
-                return KeywordType::TYPE_GCMD_DISCIPLINE;
-                break;
-            default:
-                return null;
-        }
+        return match ($keyword) {
+            KeywordType::TYPE_ANZSRC->value => KeywordType::TYPE_ANZSRC,
+            KeywordType::TYPE_GCMD->value => KeywordType::TYPE_GCMD,
+            default => null,
+        };
     }
 }

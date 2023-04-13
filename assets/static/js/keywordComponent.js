@@ -1,6 +1,6 @@
 $(() => {
   $.ajax({
-    url: '/api/standard/keyword',
+    url: '/api/standard/keyword?type=anzsrc',
     dataType: 'json',
   }).then((result) => {
     $('#treelist').dxTreeList({
