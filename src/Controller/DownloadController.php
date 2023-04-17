@@ -17,6 +17,8 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
+use App\Util\ZipFiles;
+use GuzzleHttp\Psr7\Stream;
 
 /**
  * The Dataset download controller.
@@ -200,5 +202,40 @@ class DownloadController extends AbstractController
             $datasetInfo['coldStorage'] = $datasetSubmission->isDatasetFileInColdStorage();
         }
         return $datasetInfo;
+    }
+
+     /**
+     * Download zip as stream.
+     *
+     * @Route("/download/zip/{id}")
+     *
+     * @return Response
+     */
+    public function downloadZip(Dataset $dataset, Datastore $dataStore, ZipFiles $zipFiles): Response
+    {
+        return new StreamedResponse(
+            function() use ($dataset, $dataStore, $zipFiles) {
+                $outputFileStream = new Stream(
+                    stream: fopen('php://output', 'wb')
+                );
+        
+                $zipFiles->start(
+                    zipFileName: $dataset->getUdi() . '.zip',
+                    outputFileStream: $outputFileStream
+                );
+
+                $fileset = $dataset->getDatasetSubmission()->getFileset();
+                if ($fileset instanceof Fileset) {
+                    foreach ($fileset->getAllFiles() as $file) {
+                        $zipFiles->addFile(
+                            fileName: $file->getFilePathName(),
+                            fileStream: $dataStore->getFile($file->getPhysicalFilePath())
+                        );
+                    }
+                }
+
+                $zipFiles->finish();
+            }
+        );
     }
 }
