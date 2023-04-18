@@ -17,6 +17,9 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
+use GuzzleHttp\Psr7\Stream;
+use ZipStream\CompressionMethod;
+use ZipStream\ZipStream;
 
 /**
  * The Dataset download controller.
@@ -57,6 +60,40 @@ class DownloadController extends AbstractController
         $this->downloadBaseDir = $downloadBaseDir;
         $this->downloadBaseUrl = $downloadBaseUrl;
     }
+
+    /**
+     * Download zipped testfile as stream.
+     *
+     * @Route("/download/teststream")
+     *
+     * @return Response
+     */
+    public function downloadTestZipStream(): Response
+    {
+        return new StreamedResponse(
+            function () {
+                $outputFileStream = new Stream(
+                    stream: fopen('php://output', 'wb')
+                );
+
+                $zip = new ZipStream(
+                    outputName: 'testZipStream.zip',
+                    outputStream: $outputFileStream
+                );
+
+                $file = '/home/users/test-data/10GB-of-pseudorandom-uncompressible-data.dat';
+                $stream = new Stream(fopen($file, 'r'));
+                $zip->addFileFromPsr7Stream(
+                    fileName: 'testdata.zip',
+                    stream: $stream,
+                    compressionMethod: CompressionMethod::STORE,
+                );
+
+                $zip->finish();
+            }
+        );
+    }
+
 
     /**
      * Produce json response for download dialog box.
