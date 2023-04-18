@@ -42,7 +42,7 @@ class PelagosImportKeywordsCommand extends Command
 
         $keywordReposity = $this->entityManager->getRepository(Keyword::class);
 
-        if ($type === KeywordType::TYPE_GCMD) // anzsrc
+        if ($type === KeywordType::TYPE_GCMD) // gcmd
         {
             // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/discipline/?format=rdf (DISCIPLINE)
             // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/sciencekeywords/?format=rdf&page_num=2 (KEYWORDS)
@@ -67,7 +67,7 @@ class PelagosImportKeywordsCommand extends Command
                 $keyword->setDefinition($definition);
                 $keywordReposity->save($keyword);
             }
-        } elseif ($type === KeywordType::TYPE_ANZSRC) {
+        } elseif ($type === KeywordType::TYPE_ANZSRC) { //anzsrc
             // https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/concept.json
             $fileData = file_get_contents($dataURI);
 
