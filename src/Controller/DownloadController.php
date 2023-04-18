@@ -19,6 +19,7 @@ use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
 use App\Util\ZipFiles;
 use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\StreamWrapper;
 
 /**
  * The Dataset download controller.
@@ -126,7 +127,7 @@ class DownloadController extends AbstractController
                     $response = new StreamedResponse();
                     $response->setCallback(function () use ($fileStream) {
                         $outputStream = fopen('php://output', 'wb');
-                        stream_copy_to_stream($fileStream['fileStream'], $outputStream);
+                        stream_copy_to_stream(StreamWrapper::getResource($fileStream), $outputStream);
                     });
                     $filename = $datasetSubmission->getDatasetFileName();
                     $mimeType = $dataStore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';
@@ -211,15 +212,15 @@ class DownloadController extends AbstractController
      *
      * @return Response
      */
-    public function downloadZip(Dataset $dataset, Datastore $dataStore, ZipFiles $zipFiles): Response
+    public function downloadZip(Dataset $dataset, Datastore $dataStore): Response
     {
         return new StreamedResponse(
-            function() use ($dataset, $dataStore, $zipFiles) {
+            function() use ($dataset, $dataStore) {
                 $outputFileStream = new Stream(
                     stream: fopen('php://output', 'wb')
                 );
         
-                $zipFiles->start(
+                $zipFiles =  new ZipFiles(
                     zipFileName: $dataset->getUdi() . '.zip',
                     outputFileStream: $outputFileStream
                 );

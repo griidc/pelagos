@@ -2,6 +2,9 @@
 
 namespace App\Util;
 
+use Exception;
+use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\StreamWrapper;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,17 +78,23 @@ class FileUploader
      */
     public function combineChunks(Request $request): array
     {
-        $uuid = trim($request->get('dzuuid'));
-        $fileName = $request->get('fileName');
-        $totalChunks = $request->get('dztotalchunkcount');
-        $fileSize = $request->get('dztotalfilesize');
+        $uuid = $request->query->get('dzuuid');
+        $fileName = $request->query->get('fileName');
+        $totalChunks = $request->query->get('dztotalchunkcount');
+        $fileSize = $request->query->get('dztotalfilesize');
+
+        if (empty($fileName) or empty($uuid) or empty($fileSize)) {
+            throw new UploadException('Not enough parameters given!');
+        }
+
+        $uuid = trim($uuid);
 
         $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
         //combine chunks
         $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
         $targetFileName = $targetDirectory . DIRECTORY_SEPARATOR . basename(FileNameUtilities::fixFileNameLength($fileName));
         $this->isFolder($targetDirectory);
-        $targetFile = fopen($targetFileName, 'wb');
+        $targetFileStream = new Stream(fopen($targetFileName, 'wb'));
         for ($i = 0; $i < $totalChunks; $i++) {
             $chunk = fopen(
                 $chunksFolder .
@@ -93,14 +102,15 @@ class FileUploader
                 $i,
                 'rb'
             );
+            $targetFile = StreamWrapper::getResource($targetFileStream);
             stream_copy_to_stream($chunk, $targetFile);
             fclose($chunk);
             unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
         @rmdir($chunksFolder);
-        $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
-        fclose($targetFile);
-        if ($targetFileSize !== $fileSize) {
+        $targetFileSize = $targetFileStream->getSize();
+        $targetFileStream->close();
+        if ($targetFileSize != $fileSize) {
             unlink($targetFileName);
             rmdir($targetDirectory);
             throw new UploadException(

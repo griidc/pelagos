@@ -14,9 +14,9 @@ class ZipFiles
     private $zip;
 
     /**
-     * Start the file zip.
+     * Make a new zip file.
      */
-    public function start(Stream $outputFileStream, string $zipFileName): void
+    public function __construct(Stream $outputFileStream, string $zipFileName)
     {
         $this->zip = new ZipStream(
             outputName: $zipFileName,
@@ -30,12 +30,12 @@ class ZipFiles
      * @param string $fileName   file name of the file that needs to be zipped
      * @param Stream $fileStream file stream of the file that needs to be zipped
      */
-    public function addFile(string $fileName, Stream $fileStream): void
+    public function addFile(string $fileName, Stream $fileStream, CompressionMethod $compressionMethod = CompressionMethod::STORE): void
     {
         $this->zip->addFileFromPsr7Stream(
             fileName: $fileName,
             stream: $fileStream,
-            compressionMethod: CompressionMethod::STORE
+            compressionMethod: $compressionMethod
         );
     }
 

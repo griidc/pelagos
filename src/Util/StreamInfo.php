@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use App\Entity\DatasetSubmission;
+use GuzzleHttp\Psr7\Stream;
 
 /**
  * A utility class to get various information from a file stream.
@@ -28,14 +29,20 @@ class StreamInfo
     /**
      * Get the file size for the file stream.
      *
-     * @param array $inputFileStream The file stream array.
+     * @param Stream $inputFileStream The file stream.
      *
      * @return integer The file size of the stream.
      */
-    public static function getFileSize(array $inputFileStream): int
+    public static function getFileSize(Stream $inputFileStream): int
     {
-        $fileStream = $inputFileStream['fileStream'] ?? null;
-        $fstat = fstat($fileStream);
-        return (int) $fstat['size'];
+        $fileStream = $inputFileStream->detach();
+        $size = 0;
+        if (is_resource($fileStream)) {
+            $fstat = fstat($fileStream);
+            $size = $fstat['size'];
+        }
+
+        return $size;
+        
     }
 }

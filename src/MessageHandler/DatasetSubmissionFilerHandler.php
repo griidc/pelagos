@@ -13,6 +13,7 @@ use App\Util\Datastore;
 use App\Util\StreamInfo;
 use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Psr7\Stream;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -96,7 +97,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         EntityEventDispatcher $entityEventDispatcher,
         Datastore $datastore,
         string $downloadDirectory,
-        ZipFiles $zipFiles
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
@@ -105,7 +105,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->datastore = $datastore;
         $this->downloadDirectory = $downloadDirectory;
-        $this->zipFiles = $zipFiles;
     }
 
     /**
@@ -145,14 +144,14 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             }
             $this->logger->info('Zipfile opened: ' . $destinationPath, array_merge($loggingContext, array('PHP_memory_usage' => memory_get_usage())));
             $fileStream = fopen($destinationPath, 'w+');
-            $outputStream = array('fileStream' => $fileStream);
-            $this->zipFiles->start($outputStream, basename($destinationPath));
+            $outputStream = new Stream($fileStream);
+            $zipFiles = new zipFiles($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
                 $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName'], $loggingContext);
-                $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
+                $zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
             $this->logger->info('Zipfile to be closed: ' . $destinationPath, array_merge($loggingContext, array('PHP_memory_usage' => memory_get_usage())));
-            $this->zipFiles->finish();
+            $zipFiles->finish();
             $this->logger->info('Zipfile closed: ' . $destinationPath, array_merge($loggingContext, array('PHP_memory_usage' => memory_get_usage())));
             rewind($fileStream);
             $fileset->setZipFilePath($destinationPath);
