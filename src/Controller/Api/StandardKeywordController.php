@@ -15,11 +15,11 @@ class StandardKeywordController extends AbstractController
     #[Route('/api/standard/keyword', name: 'app_api_standard_keyword')]
     public function index(Request $request, KeywordRepository $keywordRepository): Response
     {
-        $type = $request->query->get('type') ?? KeywordType::TYPE_GCMD;        
+        $type = $request->query->get('type') ?? KeywordType::TYPE_GCMD;
         $keywords = $keywordRepository->findBy(
             ['type' => $type]
         );
-      
+
         $data = [];
 
         foreach ($keywords as $keyword) {
@@ -29,16 +29,16 @@ class StandardKeywordController extends AbstractController
             $definition = $keyword->getDefinition();
 
             $data[] = [
-                "key" => $uri,
-                "label" => $label,
-                "hasItems" => !(empty($parentId)),
-                "parent" => $parentId,
-                "definition" => $definition,
+                'key' => $uri,
+                'label' => $label,
+                'hasItems' => !(empty($parentId)),
+                'parent' => $parentId,
+                'definition' => $definition,
             ];
         }
 
-        usort($data, function($a, $b) {
-            return strcmp($a["label"], $b["label"]);
+        usort($data, function ($a, $b) {
+            return strcmp($a['label'], $b['label']);
         });
 
         return new JsonResponse($data);

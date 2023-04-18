@@ -21,21 +21,39 @@ class Keyword extends Entity
     #[Serializer\Type(name: KeywordType::class)]
     private ?KeywordType $type = null;
 
+    /**
+     * Identifier for the Keyword.
+     */
     #[ORM\Column(type: Types::TEXT)]
     private ?string $identifier = null;
 
+    /**
+     * Description for the Keyword.
+     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $definition = null;
 
+    /**
+     * Display label for the Keyword.
+     */
     #[ORM\Column(type: Types::TEXT)]
     private ?string $label = null;
 
+    /**
+     * Reference URI for the Keyword.
+     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $referenceUri = null;
 
+    /**
+     * The parent URI for this Keyword.
+     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $parentUri = null;
 
+    /**
+     * Breadcrumb part off all parent for the Keyword as display value.
+     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $displayPath = null;
 
@@ -57,11 +75,17 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * Get the Definitaiton for this Keyword.
+     */
     public function getDefinition(): ?string
     {
         return $this->definition;
     }
 
+    /**
+     * Set the definition for the Keyword.
+     */
     public function setDefinition(?string $definition): self
     {
         $this->definition = $definition;
@@ -69,11 +93,17 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * Get the label for this Keyword.
+     */
     public function getLabel(): ?string
     {
         return $this->label;
     }
 
+    /**
+     * Set the label for this Keyword.
+     */
     public function setLabel(string $label): self
     {
         $this->label = $label;
@@ -81,11 +111,17 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * Get the reference URI for this.
+     */
     public function getReferenceUri(): ?string
     {
         return $this->referenceUri;
     }
 
+    /**
+     * Set the reference URI for this.
+     */
     public function setReferenceUri(?string $referenceUri): self
     {
         $this->referenceUri = $referenceUri;
@@ -93,11 +129,17 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * Get the parent URI for the Keyword.
+     */
     public function getParentUri(): ?string
     {
         return $this->parentUri;
     }
 
+    /**
+     * Get the parent URI for the Keyword.
+     */
     public function setParentUri(?string $parentUri): self
     {
         $this->parentUri = $parentUri;
@@ -105,11 +147,17 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * Get the parent URI for the Keyword.
+     */
     public function getDisplayPath(): ?string
     {
         return $this->displayPath;
     }
 
+    /**
+     * Set the diplay path for the Keyword.
+     */
     public function setDisplayPath(?string $displayPath): self
     {
         $this->displayPath = $displayPath;
@@ -117,11 +165,17 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * Get the identifier for the Keyword.
+     */
     public function getIdentifier(): ?string
     {
         return $this->identifier;
     }
 
+    /**
+     * Set the identifier for the Keyword.
+     */
     public function setIdentifier(string $identifier): self
     {
         $this->identifier = $identifier;
