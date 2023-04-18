@@ -43,7 +43,7 @@ class JsonSerializer
      *
      * @return self
      */
-    public function serialize(mixed $object, array $groups = null): self
+    public function serialize(mixed $data, array $groups = null): self
     {
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
@@ -52,7 +52,7 @@ class JsonSerializer
             $context->setGroups($groups);
         }
 
-        $this->json = $this->serializer->serialize($object, 'json', $context);
+        $this->json = $this->serializer->serialize($data, 'json', $context);
 
         return $this;
     }
