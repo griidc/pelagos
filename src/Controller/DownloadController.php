@@ -219,7 +219,7 @@ class DownloadController extends AbstractController
         if (!$dataset instanceof Dataset) {
             throw new NotFoundException('Dataset is not found!');
         }
-        
+
         return new StreamedResponse(
             function () use ($dataset, $dataStore) {
                 $outputFileStream = Utils::streamFor(
