@@ -2,27 +2,21 @@
 
 namespace App\MessageHandler;
 
+use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Person;
 use App\Message\InformationProductFiler;
 use App\Message\ScanFileForVirus;
 use App\Repository\InformationProductRepository;
 use App\Util\Datastore;
-use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class InformationProductFilerHandler implements MessageHandlerInterface
 {
-    /**
-     * The information product repository.
-     *
-     * @var InformationProductRepository
-     */
-    private $informationProductRepository;
-
     /**
      * The monolog logger.
      *
@@ -31,98 +25,82 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
     private $logger;
 
     /**
-     * Instance of symfony messenger message bus.
-     *
-     * @var MessageBusInterface
-     */
-    private $messageBus;
-
-    /**
-     * The entity manager.
-     *
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
      * Information Product Filer constructor.
      *
-     * @param InformationProductRepository $datasetSubmissionRepository Dataset Submission Repository.
-     * @param LoggerInterface              $ipFileLogger                 Name hinted filer logger.
-     * @param EntityManagerInterface       $entityManager               The entity manager.
-     * @param string                       $downloadDirectory           Temporary download directory path.
+     * @param LoggerInterface $ipFileLogger      name hinted filer logger
+     * @param string          $downloadDirectory temporary download directory path
      */
     public function __construct(
-        InformationProductRepository $informationProductRepository,
+        private InformationProductRepository $informationProductRepository,
         LoggerInterface $ipFilerLogger,
-        MessageBusInterface $messageBus,
-        EntityManagerInterface $entityManager,
-        Datastore $datastore
+        private MessageBusInterface $messageBus,
+        private EntityManagerInterface $entityManager,
+        private Datastore $datastore
     ) {
-        $this->informationProductRepository = $informationProductRepository;
         $this->logger = $ipFilerLogger;
-        $this->messageBus = $messageBus;
-        $this->entityManager = $entityManager;
-        $this->datastore = $datastore;
     }
+
     public function __invoke(InformationProductFiler $informationProductFiler)
     {
         $informationProductId = $informationProductFiler->getInformationProductId();
         $informationProduct = $this->informationProductRepository->find($informationProductId);
 
-        $loggingContext = array(
+        $loggingContext = [
             'information_product_id' => $informationProductId,
-        );
+        ];
+
+        $this->logger->info('Information Product process started', $loggingContext);
 
         $file = $informationProduct->getFile();
         if (!$file instanceof File) {
-            $this->logger->error("No file for this IP, bye!", $loggingContext);
+            $this->logger->error('No file for this IP, bye!', $loggingContext);
+
             return;
         }
         $fileId = $file->getId();
         $filePath = $file->getPhysicalFilePath();
-        @$fileStream = fopen($filePath, 'r');
 
         $systemPerson = $this->entityManager->find(Person::class, 0);
         $file->setModifier($systemPerson);
 
-        $this->logger->info('Information Product process started', $loggingContext);
-
         $destinationPath = 'information_products'
-            . DIRECTORY_SEPARATOR .  $informationProductId
+            . DIRECTORY_SEPARATOR . $informationProductId
             . DIRECTORY_SEPARATOR . $file->getFilePathName();
 
-        if ($fileStream === false) {
-            $lastErrorMessage = error_get_last()['message'];
+        try {
+            $fileStream = Utils::streamFor(fopen($filePath, 'r'));
+        } catch (\RuntimeException $e) {
+            $lastErrorMessage = $e->getMessage();
             $this->logger->error(sprintf('Unreadable File: "%s"', $lastErrorMessage, $loggingContext));
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
+
             return;
-        } else {
-            $fileHash = StreamInfo::calculateHash(array('fileStream' => $fileStream));
-            $file->setFileSha256Hash($fileHash);
         }
+
+        $file->setFileSha256Hash(Utils::hash($fileStream, DatasetSubmission::SHA256));
 
         try {
             $newFileDestination = $this->datastore->addFile(
-                ['fileStream' => $fileStream],
-                $destinationPath
+                fileStream: $fileStream,
+                filePathName: $destinationPath
             );
             $file->setPhysicalFilePath($newFileDestination);
         } catch (\League\Flysystem\Exception $fileExistException) {
             $this->logger->warning(sprintf('Rejecting: Unable to add file to datastore. Message: "%s"', $fileExistException->getMessage()), $loggingContext);
-            $file->setDescription("Error writing to store:" . $fileExistException->getMessage());
+            $file->setDescription('Error writing to store:' . $fileExistException->getMessage());
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
             throw new \Exception($fileExistException->getMessage());
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
-            $file->setDescription("Error writing to store:" . $exception->getMessage());
+            $file->setDescription('Error writing to store:' . $exception->getMessage());
             $file->setStatus(File::FILE_ERROR);
+
             return;
         }
 
-        @fclose($fileStream);
+        $fileStream->close();
 
         try {
             unlink($filePath);

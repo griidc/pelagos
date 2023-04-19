@@ -5,6 +5,7 @@ namespace App\Util;
 use GuzzleHttp\Psr7\Stream;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -12,13 +13,6 @@ use Psr\Log\LoggerInterface;
  */
 class Datastore
 {
-    /**
-     * Flysystem interface object for Datastore.
-     *
-     * @var FilesystemInterface
-     */
-    private $datastoreFlysystem;
-
     /**
      * Logger interface instance for Monolog default channel.
      *
@@ -29,34 +23,30 @@ class Datastore
     /**
      * String appended to filename to mark as deleted.
      */
-    const MARK_FILE_AS_DELETED = '_DELETED';
+    public const MARK_FILE_AS_DELETED = '_DELETED';
 
     /**
      * Datastore constructor.
      *
-     * @param FilesystemInterface $datastoreFlysystem Datastore flystystem instance.
-     * @param LoggerInterface     $logger             Monolog logger interface instance.
+     * @param LoggerInterface $logger monolog logger interface instance
      */
-    public function __construct(FilesystemInterface $datastoreFlysystem, LoggerInterface $logger)
+    public function __construct(private FilesystemInterface $datastoreFlysystem, LoggerInterface $logger)
     {
-        $this->datastoreFlysystem = $datastoreFlysystem;
         $this->logger = $logger;
     }
 
     /**
      * Retrieves a file from disk.
      *
-     * @param string $filePath The retrieve file path.
+     * @param string $filePath the retrieve file path
      *
-     * @throws \Exception Exception thrown when read stream fails.
-     *
-     * @return Stream
+     * @throws \Exception exception thrown when read stream fails
      */
     public function getFile(string $filePath): Stream
     {
         $resource = $this->datastoreFlysystem->readStream($filePath);
 
-        if ($resource === false) {
+        if (false === $resource) {
             throw new \Exception(sprintf('Error opening stream for "%s"', $filePath));
         }
 
@@ -66,9 +56,7 @@ class Datastore
     /**
      * Checks whether a file exists or not.
      *
-     * @param string $filePath The file path.
-     *
-     * @return bool
+     * @param string $filePath the file path
      */
     public function has(string $filePath): bool
     {
@@ -76,9 +64,9 @@ class Datastore
     }
 
     /**
-     * Queries Flysys for a file's mimetype
+     * Queries Flysys for a file's mimetype.
      *
-     * @param string $filePath The file's path.
+     * @param string $filePath the file's path
      *
      * @return string|false
      */
@@ -90,41 +78,38 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param array  $fileStream   File stream resource object.
-     * @param string $filePathName File destination path on datastore.
-     *
-     * @return string
+     * @param StreamInterface $fileStream   file stream of the file to add
+     * @param string          $filePathName file destination path on datastore
      */
-    public function addFile(array $fileStream, string $filePathName): string
+    public function addFile(StreamInterface $fileStream, string $filePathName): string
     {
         $newFilePathName = FileNameUtilities::makeFileName($filePathName);
         $newFilePathName = FileNameUtilities::fixFileNameLength($newFilePathName);
+        $fileResource = $fileStream->detach();
         try {
-            $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
+            if (is_resource($fileResource)) {
+                $this->datastoreFlysystem->writeStream($newFilePathName, $fileResource);
+                fclose($fileResource);
+            }
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
 
-        if (is_resource($fileStream['fileStream'])) {
-            fclose($fileStream['fileStream']);
-        }
         return $newFilePathName;
     }
 
     /**
      * Deletes a file from the disk.
      *
-     * @param string  $filePath  File path for the file that is to be removed.
-     * @param boolean $deleteDir If the path is a directory, and should be deleted.
+     * @param string $filePath  file path for the file that is to be removed
+     * @param bool   $deleteDir if the path is a directory, and should be deleted
      *
-     * @throws \Exception Exception thrown when file delete is failed.
-     *
-     * @return bool
+     * @throws \Exception exception thrown when file delete is failed
      */
     public function deleteFile(string $filePath, bool $deleteDir = false): bool
     {
         if ($deleteDir) {
-             $deleteFile = $this->deleteDir($filePath);
+            $deleteFile = $this->deleteDir($filePath);
         } else {
             $deleteFile = $this->datastoreFlysystem->delete($filePath);
         }
@@ -133,7 +118,7 @@ class Datastore
         $contents = $this->datastoreFlysystem->listContents($path, true);
 
         $contents = array_filter($contents, function ($array) {
-            if (array_key_exists('type', $array) and $array['type'] === 'file') {
+            if (array_key_exists('type', $array) and 'file' === $array['type']) {
                 return $array;
             }
         });
@@ -148,34 +133,32 @@ class Datastore
     /**
      * Renames a file on the disk.
      *
-     * @param string $oldFilePath Old file path that needs to be renamed.
-     * @param string $newFilePath New file path for the file.
-     * @param bool   $deleteFlag  Delete flag for rename.
-     *
-     * @return string
+     * @param string $oldFilePath old file path that needs to be renamed
+     * @param string $newFilePath new file path for the file
+     * @param bool   $deleteFlag  delete flag for rename
      */
     public function renameFile(string $oldFilePath, string $newFilePath, bool $deleteFlag = false): string
     {
-        if ($deleteFlag === false) {
+        if (false === $deleteFlag) {
             $newFilePath = FileNameUtilities::makeFileName($newFilePath);
         }
         $newFilePath = FileNameUtilities::fixFileNameLength($newFilePath);
         $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
+
         return $newFilePath;
     }
 
     /**
      * Deletes a folder from the disk.
      *
-     * @param string $dirPath File path for the folder that is to be removed.
-     *
-     * @return bool
+     * @param string $dirPath file path for the folder that is to be removed
      */
     public function deleteDir(string $dirPath): bool
     {
         if ($this->datastoreFlysystem->has($dirPath)) {
             return $this->datastoreFlysystem->deleteDir($dirPath);
         }
+
         return false;
     }
 }

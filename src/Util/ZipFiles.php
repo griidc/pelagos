@@ -2,7 +2,7 @@
 
 namespace App\Util;
 
-use GuzzleHttp\Psr7\Stream;
+use Psr\Http\Message\StreamInterface;
 use ZipStream\CompressionMethod;
 use ZipStream\ZipStream;
 
@@ -16,7 +16,7 @@ class ZipFiles
     /**
      * Make a new zip file.
      */
-    public function __construct(Stream $outputFileStream, string $zipFileName)
+    public function __construct(StreamInterface $outputFileStream, string $zipFileName)
     {
         $this->zip = new ZipStream(
             outputName: $zipFileName,
@@ -27,10 +27,11 @@ class ZipFiles
     /**
      * Add file to the zip.
      *
-     * @param string $fileName   file name of the file that needs to be zipped
-     * @param Stream $fileStream file stream of the file that needs to be zipped
+     * @param string            $fileName          file name of the file that needs to be zipped
+     * @param StreamInterface   $fileStream        file stream of the file that needs to be zipped
+     * @param CompressionMethod $compressionMethod The storage method for this file (default store)
      */
-    public function addFile(string $fileName, Stream $fileStream, CompressionMethod $compressionMethod = CompressionMethod::STORE): void
+    public function addFile(string $fileName, StreamInterface $fileStream, CompressionMethod $compressionMethod = CompressionMethod::STORE): void
     {
         $this->zip->addFileFromPsr7Stream(
             fileName: $fileName,
