@@ -6,7 +6,7 @@
     "homepage": "https://github.com/griidc/pelagos/",
     "license": "BSD-2-Clause",
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",
@@ -24,8 +24,9 @@
         "doctrine/doctrine-bundle": "^2.0",
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "doctrine/doctrine-migrations-bundle": "^3.0",
-        "doctrine/orm": "^2.5",
+        "doctrine/orm": "^2.11",
         "easycorp/easyadmin-bundle": "^3.5",
+        "easyrdf/easyrdf": "^1.1",
         "friendsofsymfony/elastica-bundle": "^6.1.0",
         "friendsofsymfony/jsrouting-bundle": "^2.1",
         "friendsofsymfony/rest-bundle": "^3.0",
@@ -85,7 +86,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "8.0"
+            "php": "8.1"
         },
         "allow-plugins": {
             "symfony/flex": true,
