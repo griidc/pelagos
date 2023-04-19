@@ -81,11 +81,11 @@ class DownloadController extends AbstractController
                     outputStream: $outputFileStream
                 );
 
-                $file = '/home/users/test-data/100MB-compressible-data.dat';
-                for ($i=0; $i<1000; $i++) {
+                $file = '/home/users/test-data/10MB-compressible-data.dat';
+                for ($i=0; $i<10; $i++) {
                     $stream = new Stream(fopen($file, 'r'));
                     $zip->addFileFromPsr7Stream(
-                        fileName: "100MB-compressible-data-$i.dat",
+                        fileName: "10MB-compressible-data-$i.dat",
                         stream: $stream,
                     );
                 }
