@@ -25,7 +25,7 @@ class Funder extends Entity
     /**
      * Name of the Funder.
      */
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
 
     /**
@@ -37,13 +37,13 @@ class Funder extends Entity
     /**
      * Reference URI of the Funder.
      */
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $referenceUri = null;
 
     /**
      * The source of the Funder.
      */
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
     private string $source = self::SOURCE_DRPM;
 
     /**
