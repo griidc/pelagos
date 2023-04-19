@@ -18,8 +18,10 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
 use App\Util\ZipFiles;
-use GuzzleHttp\Psr7\Stream;
+use Elastica\Exception\NotFoundException;
 use GuzzleHttp\Psr7\StreamWrapper;
+use GuzzleHttp\Psr7\Utils;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
  * The Dataset download controller.
@@ -214,12 +216,16 @@ class DownloadController extends AbstractController
      */
     public function downloadZip(Dataset $dataset, Datastore $dataStore): Response
     {
-        return new StreamedResponse(
-            function() use ($dataset, $dataStore) {
-                $outputFileStream = new Stream(
-                    stream: fopen('php://output', 'wb')
-                );
+        if (!$dataset instanceof Dataset) {
+            throw new NotFoundException('Dataset is not found!');
+        }
         
+        return new StreamedResponse(
+            function () use ($dataset, $dataStore) {
+                $outputFileStream = Utils::streamFor(
+                    fopen('php://output', 'wb')
+                );
+
                 $zipFiles =  new ZipFiles(
                     zipFileName: $dataset->getUdi() . '.zip',
                     outputFileStream: $outputFileStream
