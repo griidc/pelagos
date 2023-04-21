@@ -20,12 +20,12 @@ class MultiSearch
     /**
      * Default value for aggregation size to get all aggregation terms.
      */
-    const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
+    public const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
 
     /**
      * Mapped values for dataset availability statuses.
      */
-    const AVAILABILITY_STATUSES = array(
+    public const AVAILABILITY_STATUSES = array(
         1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
         2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
         3 => [DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED, DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED],
@@ -35,27 +35,27 @@ class MultiSearch
     /**
      * Elastic index mapping for title.
      */
-    const ELASTIC_INDEX_MAPPING_TITLE = 'title';
+    public const ELASTIC_INDEX_MAPPING_TITLE = 'title';
 
     /**
      * Elastic index mapping for abstract.
      */
-    const ELASTIC_INDEX_MAPPING_ABSTRACT = 'abstract';
+    public const ELASTIC_INDEX_MAPPING_ABSTRACT = 'abstract';
 
     /**
      * Elastic index mapping for authors.
      */
-    const ELASTIC_INDEX_MAPPING_AUTHORS = 'datasetSubmission.authors';
+    public const ELASTIC_INDEX_MAPPING_AUTHORS = 'datasetSubmission.authors';
 
     /**
      * Elastic index mapping for theme keywords.
      */
-    const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
+    public const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
     /**
      * Index boost for Title, Authors, Theme Keywords.
      */
-    const BOOST = '^2';
+    public const BOOST = '^2';
 
     /**
      * FOS Elastica Object to find elastica documents.
@@ -163,6 +163,10 @@ class MultiSearch
             $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
         }
 
+        if ($searchOptions->isFunderFilterSet()) {
+            $postBoolQuery->addMust($this->addFunderFilter($searchOptions));
+        }
+
         $query->setQuery($boolQuery);
         $query->setPostFilter($postBoolQuery);
 
@@ -243,6 +247,40 @@ class MultiSearch
         $fundingOrgFilterBoolQuery->addShould($fundingOrgsNameQuery);
 
         return $fundingOrgFilterBoolQuery;
+    }
+
+    /**
+     * Returns the query for Funder filtering.
+     *
+     * @param SearchOptions $searchOptions
+     *
+     * @return BoolQuery
+     */
+    private function addFunderFilter(SearchOptions $searchOptions): BoolQuery
+    {
+        $funderFilterBoolQuery = new Query\BoolQuery();
+
+        // Dataset Funder Filter
+        $datasetFunderNameQuery = new Query\Nested();
+        $datasetFunderNameQuery->setPath('funder');
+        $datasetFunderQueryTerm = new Query\Terms('funder.id');
+        $datasetFunderQueryTerm->setTerms($searchOptions->getFunderFilter());
+        $datasetFunderNameQuery->setQuery($datasetFunderQueryTerm);
+        $datasetFunderNameQuery->setParam('ignore_unmapped', true);
+        $funderFilterBoolQuery->addShould($datasetFunderNameQuery);
+
+        /*
+        // Information Product Funder Filter
+        $fundingOrgsNameQuery = new Query\Nested();
+        $fundingOrgsNameQuery->setPath('researchGroups.fundingCycle.fundingOrganization');
+        $fundingOrgsQueryTerm = new Query\Terms('researchGroups.fundingCycle.fundingOrganization.id');
+        $fundingOrgsQueryTerm->setTerms($searchOptions->getFundingOrgFilter());
+        $fundingOrgsNameQuery->setQuery($fundingOrgsQueryTerm);
+        $fundingOrgsNameQuery->setParam('ignore_unmapped', true);
+        $fundingOrgFilterBoolQuery->addShould($fundingOrgsNameQuery);
+        */
+
+        return $funderFilterBoolQuery;
     }
 
     /**

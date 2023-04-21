@@ -57,6 +57,13 @@ class SearchOptions
     private $fundingOrganizationFilter;
 
     /**
+     * Funder Filter.
+     *
+     * @var array|null
+     */
+    private $funderFilter;
+
+    /**
      * Product type descriptor Filter.
      *
      * @var array|null
@@ -327,11 +334,41 @@ class SearchOptions
     }
 
     /**
+     * Sets the Funders to be filtered.
+     *
+     * @param string|null $funders A comma delimited list of Funders
+     */
+    public function setFunderFilter(?string $funders): self
+    {
+        if (!empty($funders)) {
+            $this->funderFilter = explode(',', $funders);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the list of Funders to be filtered on.
+     */
+    public function getFunderFilter(): array
+    {
+        return $this->funderFilter;
+    }
+
+    /**
      * Is the Funding Organization filter set.
      */
     public function isFundingOrgFilterSet(): bool
     {
         return isset($this->fundingOrganizationFilter);
+    }
+
+    /**
+     * Is the Funder filter set.
+     */
+    public function isFunderFilterSet(): bool
+    {
+        return isset($this->funderFilter);
     }
 
     /**
