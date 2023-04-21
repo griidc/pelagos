@@ -102,7 +102,8 @@ abstract class EntityController extends AbstractFOSRestController
             $params,
             $orderBy,
             $properties,
-            $hydrator
+            $hydrator,
+            distinct: false
         );
         if (isset($permission)) {
             $entities = $this->filterByPermission($entities, $permission);
