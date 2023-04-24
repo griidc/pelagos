@@ -27,6 +27,7 @@ class StandardKeywordController extends AbstractController
             $label = $keyword->getLabel();
             $parentId = $keyword->getParentUri();
             $definition = $keyword->getDefinition();
+            $path = $keyword->getDisplayPath();
 
             $data[] = [
                 'key' => $uri,
@@ -34,6 +35,7 @@ class StandardKeywordController extends AbstractController
                 'hasItems' => !(empty($parentId)),
                 'parent' => $parentId,
                 'definition' => $definition,
+                'path' => $path,
             ];
         }
 
