@@ -16,11 +16,17 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Exception\InvalidGmlException;
 use App\Twig\Extensions as TwigExtentions;
+use App\Util\Geometry;
+use App\Util\Metadata;
 use App\Util\ZipFiles;
 use Elastica\Exception\NotFoundException;
+use Exception;
+use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\StreamWrapper;
 use GuzzleHttp\Psr7\Utils;
+use League\Flysystem\FileNotFoundException;
 use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
@@ -214,29 +220,51 @@ class DownloadController extends AbstractController
      *
      * @return Response
      */
-    public function downloadZip(Dataset $dataset, Datastore $dataStore): Response
+    public function downloadZip(Dataset $dataset, Datastore $dataStore, Geometry $geoUtil, Metadata $metadataUtility): Response
     {
         if (!$dataset instanceof Dataset) {
             throw new NotFoundException('Dataset is not found!');
         }
 
         return new StreamedResponse(
-            function () use ($dataset, $dataStore) {
+            function () use ($dataset, $dataStore, $geoUtil, $metadataUtility) {
                 $outputFileStream = Utils::streamFor(
                     fopen('php://output', 'wb')
                 );
 
+                $udi = $dataset->getUdi();
+
                 $zipFiles =  new ZipFiles(
-                    zipFileName: $dataset->getUdi() . '.zip',
+                    zipFileName: $udi . '.zip',
                     outputFileStream: $outputFileStream
+                );
+
+                $boundingBoxArray = [];
+                $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
+                if (!empty($gml)) {
+                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                }
+
+                $generatedXmlMetadata = $metadataUtility->getXmlRepresentation($dataset, $boundingBoxArray);
+
+                $metadataStream = Utils::streamFor($generatedXmlMetadata);
+ 
+                $zipFiles->addFile(
+                    fileName: $udi . '.xml',
+                    fileStream: $metadataStream
                 );
 
                 $fileset = $dataset->getDatasetSubmission()->getFileset();
                 if ($fileset instanceof Fileset) {
                     foreach ($fileset->getAllFiles() as $file) {
+                        try {
+                            $fileStream = $dataStore->getFile($file->getPhysicalFilePath());
+                        } catch (FileNotFoundException $e) {
+                           $fileStream = Utils::streamFor($e->getMessage());
+                        }
                         $zipFiles->addFile(
                             fileName: $file->getFilePathName(),
-                            fileStream: $dataStore->getFile($file->getPhysicalFilePath())
+                            fileStream: $fileStream
                         );
                     }
                 }
