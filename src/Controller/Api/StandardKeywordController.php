@@ -15,7 +15,7 @@ class StandardKeywordController extends AbstractController
     #[Route('/api/standard/keyword', name: 'app_api_standard_keyword')]
     public function index(Request $request, KeywordRepository $keywordRepository): Response
     {
-        $type = $request->query->get('type') ?? KeywordType::TYPE_GCMD;
+        $type = $request->query->get('type') ?? [KeywordType::TYPE_GCMD, KeywordType::TYPE_ANZSRC];
         $keywords = $keywordRepository->findBy(
             ['type' => $type]
         );
@@ -27,7 +27,7 @@ class StandardKeywordController extends AbstractController
             $label = $keyword->getLabel();
             $parentId = $keyword->getParentUri();
             $definition = $keyword->getDefinition();
-            $path = $keyword->getDisplayPath();
+            $displayPath = $keyword->getDisplayPath();
 
             $data[] = [
                 'key' => $uri,
@@ -35,7 +35,7 @@ class StandardKeywordController extends AbstractController
                 'hasItems' => !(empty($parentId)),
                 'parent' => $parentId,
                 'definition' => $definition,
-                'path' => $path,
+                'displayPath' => $displayPath,
             ];
         }
 
