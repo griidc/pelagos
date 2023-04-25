@@ -32,8 +32,8 @@ class PelagosImportKeywordsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('action', InputArgument::REQUIRED, 'Action to use. [IMPORT|SORT]')    
-            ->addArgument('type', InputArgument::REQUIRED, 'The type of data to import.')    
+            ->addArgument('action', InputArgument::REQUIRED, 'Action to use. [IMPORT|SORT]')
+            ->addArgument('type', InputArgument::REQUIRED, 'The type of data to import.')
             ->addArgument('dataURI', InputArgument::OPTIONAL, 'The file, or URI with the data.')
         ;
     }
@@ -45,7 +45,7 @@ class PelagosImportKeywordsCommand extends Command
         $type = KeywordType::tryFrom($input->getArgument('type'));
         $dataURI = $input->getArgument('dataURI');
 
-        if ($action == 'IMPORT') {
+        if ('IMPORT' == $action) {
             $this->importKeyword($type, $dataURI);
         } else {
             $io->note('Sorting, ITS SLOW');
@@ -87,12 +87,12 @@ class PelagosImportKeywordsCommand extends Command
     {
         $criteria = Criteria::create()
             ->where(
-                new Comparison('referenceUri',  '=',  $parentUri)
+                new Comparison('referenceUri', '=', $parentUri)
             );
 
         $parentKeyword = $keywordCollection->matching($criteria);
 
-        if ($parentKeyword->count() <> 0) {
+        if (0 != $parentKeyword->count()) {
             $keyword = $parentKeyword->first();
             $path = $keyword->getLabel() . $path;
             $parentUri = $keyword->getParentUri();
@@ -108,22 +108,21 @@ class PelagosImportKeywordsCommand extends Command
     {
         $keywordReposity = $this->entityManager->getRepository(Keyword::class);
 
-        if ($keywordType === KeywordType::TYPE_GCMD) // gcmd
-        {
+        if (KeywordType::TYPE_GCMD === $keywordType) { // gcmd
             // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/discipline/?format=rdf (DISCIPLINE)
             // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/sciencekeywords/?format=rdf&page_num=2 (KEYWORDS)
 
             $keywords = new Graph($dataURI);
             $keywords->load();
             $resources = $keywords->allOfType('skos:Concept');
-            
+
             foreach ($resources as $resource) {
                 $uri = $resource->getUri();
                 $label = $this->getPropertyValue($resource, 'skos:prefLabel');
                 $broader = $this->getPropertyValue($resource, 'skos:broader');
                 $definition = $this->getPropertyValue($resource, 'skos:definition');
                 $identifier = $resource->localName();
-    
+
                 $keyword = new Keyword();
                 $keyword->setType(KeywordType::TYPE_GCMD);
                 $keyword->setIdentifier($identifier);
@@ -133,7 +132,7 @@ class PelagosImportKeywordsCommand extends Command
                 $keyword->setDefinition($definition);
                 $keywordReposity->save($keyword);
             }
-        } elseif ($keywordType === KeywordType::TYPE_ANZSRC) { //anzsrc
+        } elseif (KeywordType::TYPE_ANZSRC === $keywordType) { // anzsrc
             // https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/concept.json
             $fileData = file_get_contents($dataURI);
 
@@ -168,6 +167,6 @@ class PelagosImportKeywordsCommand extends Command
             return $property->getValue();
         }
 
-        return  $property;
+        return $property;
     }
 }
