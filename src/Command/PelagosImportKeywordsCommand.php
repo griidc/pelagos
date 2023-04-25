@@ -72,10 +72,12 @@ class PelagosImportKeywordsCommand extends Command
 
             if (!empty($parentUri)) {
                 $path = $this->getParentPath($keywordCollection, $parentUri, ' > ' . $keyword->getLabel());
-                $keyword->setDisplayPath($path);
-                $keywordRepository->save($keyword);
-                // $this->entityManager->flush();
+            } else {
+                $path = $keyword->getLabel();
             }
+
+            $keyword->setDisplayPath($path);
+            $keywordRepository->save($keyword);
 
             $io->progressAdvance();
         }
