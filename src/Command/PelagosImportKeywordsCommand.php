@@ -4,6 +4,9 @@ namespace App\Command;
 
 use App\Entity\Keyword;
 use App\Enum\KeywordType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyRdf\Graph;
 use EasyRdf\Literal;
@@ -29,35 +32,99 @@ class PelagosImportKeywordsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('type', InputArgument::REQUIRED, 'The type of data to import.')    
-            ->addArgument('dataURI', InputArgument::REQUIRED, 'The file, or URI with the data.')
+            ->addArgument('action', InputArgument::REQUIRED, 'Action to use. [IMPORT|SORT]')
+            ->addArgument('type', InputArgument::REQUIRED, 'The type of data to import.')
+            ->addArgument('dataURI', InputArgument::OPTIONAL, 'The file, or URI with the data.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $action = $input->getArgument('action');
         $type = KeywordType::tryFrom($input->getArgument('type'));
         $dataURI = $input->getArgument('dataURI');
 
+        if ('IMPORT' == $action) {
+            $this->importKeyword($type, $dataURI);
+        } else {
+            $io->note('Sorting, ITS SLOW');
+            $this->sortKeyword($type, $io);
+        }
+
+        $this->entityManager->flush();
+
+        $io->success('DONE!');
+
+        return Command::SUCCESS;
+    }
+
+    private function sortKeyword(KeywordType $keywordType, SymfonyStyle $io): void
+    {
+        $keywordRepository = $this->entityManager->getRepository(Keyword::class);
+        $keywords = $keywordRepository->findBy(['type' => $keywordType->value]);
+        $keywordCollection = new ArrayCollection($keywords);
+
+        $io->progressStart($keywordCollection->count());
+
+        foreach ($keywords as $keyword) {
+            $parentUri = $keyword->getParentUri();
+
+            if (!empty($parentUri)) {
+                $path = $this->getParentPath($keywordCollection, $parentUri, ' > ' . $keyword->getLabel());
+            } else {
+                $path = $keyword->getLabel();
+            }
+
+            $keyword->setDisplayPath($path);
+            $keywordRepository->save($keyword);
+
+            $io->progressAdvance();
+        }
+
+        $io->progressFinish();
+    }
+
+    private function getParentPath(ArrayCollection $keywordCollection, string $parentUri, string $path = ''): string
+    {
+        $criteria = Criteria::create()
+            ->where(
+                new Comparison('referenceUri', '=', $parentUri)
+            );
+
+        $parentKeyword = $keywordCollection->matching($criteria);
+
+        if (0 != $parentKeyword->count()) {
+            $keyword = $parentKeyword->first();
+            $path = $keyword->getLabel() . $path;
+            $parentUri = $keyword->getParentUri();
+            if (!empty($parentUri)) {
+                $path = $this->getParentPath($keywordCollection, $parentUri) . ' > ' . $path;
+            }
+        }
+
+        return $path;
+    }
+
+    private function importKeyword(KeywordType $keywordType, string $dataURI): void
+    {
         $keywordReposity = $this->entityManager->getRepository(Keyword::class);
 
-        if ($type === KeywordType::TYPE_GCMD) // gcmd
-        {
+        if (KeywordType::TYPE_GCMD === $keywordType) { // gcmd
             // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/discipline/?format=rdf (DISCIPLINE)
             // https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/sciencekeywords/?format=rdf&page_num=2 (KEYWORDS)
 
             $keywords = new Graph($dataURI);
             $keywords->load();
             $resources = $keywords->allOfType('skos:Concept');
-            
+
             foreach ($resources as $resource) {
                 $uri = $resource->getUri();
                 $label = $this->getPropertyValue($resource, 'skos:prefLabel');
                 $broader = $this->getPropertyValue($resource, 'skos:broader');
                 $definition = $this->getPropertyValue($resource, 'skos:definition');
                 $identifier = $resource->localName();
-    
+
                 $keyword = new Keyword();
                 $keyword->setType(KeywordType::TYPE_GCMD);
                 $keyword->setIdentifier($identifier);
@@ -67,7 +134,7 @@ class PelagosImportKeywordsCommand extends Command
                 $keyword->setDefinition($definition);
                 $keywordReposity->save($keyword);
             }
-        } elseif ($type === KeywordType::TYPE_ANZSRC) { //anzsrc
+        } elseif (KeywordType::TYPE_ANZSRC === $keywordType) { // anzsrc
             // https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/concept.json
             $fileData = file_get_contents($dataURI);
 
@@ -92,12 +159,6 @@ class PelagosImportKeywordsCommand extends Command
                 $keywordReposity->save($keyword);
             }
         }
-
-        $this->entityManager->flush();
-
-        $io->success('DONE!');
-
-        return Command::SUCCESS;
     }
 
     private function getPropertyValue(Resource $resource, string $propertyName): mixed
@@ -108,6 +169,6 @@ class PelagosImportKeywordsCommand extends Command
             return $property->getValue();
         }
 
-        return  $property;
+        return $property;
     }
 }
