@@ -84,8 +84,26 @@
             <label for="keywordSelected" class="emRequired">Select Keywords</label>
             <div id="keywordSelected">
                 <div id="simpleList"></div>
-                <div id="add-button"></div>
-                <div id="treelist" style="height:300px;"></div>
+                <table style="width:100%">
+                    <tr>
+                        <td style="width:50%">
+                            <div id="treelist" style="height:300px;"></div>
+                        </td>
+                        <td style="width:50%">
+                            
+                            <div id="selecteditem" style="height:300px;"></div>
+                            <script type="text/html" id="item-template">
+                                <div>
+                                    <label>Label:</label>
+                                    <span> <%= label %> </span>
+                                    <label>Definititon:</label>
+                                    <span> <%= definition %> </span>
+                                </div>
+                            </script>
+                            <div id="add-button"></div>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
         </fieldset>
