@@ -22,10 +22,10 @@ $(() => {
       selection: {
         mode: 'single',
       },
-      // onSelectionChanged() {
-      //   const selectedData = treeList.getSelectedRowsData();
-      //   console.log(selectedData);
-      // },
+      onSelectionChanged() {
+        const selectedData = treeList.getSelectedRowsData();
+        // TODO: Show selected show in display somewhere
+      },
       searchPanel: { visible: true },
     }).dxTreeList('instance');
 
@@ -33,6 +33,7 @@ $(() => {
       dataSource: selectedKeywords,
       allowItemDeleting: true,
       itemDeleteMode: 'static',
+      displayExpr: 'displayPath',
     }).dxList('instance');
 
     $('#add-button').dxButton({
@@ -41,10 +42,10 @@ $(() => {
       width: 120,
       onClick() {
         const selectedRow = treeList.getSelectedRowsData();
-        const displayPath = selectedRow.map((keyword) => keyword.displayPath).toString();
-
-        if (!selectedKeywords.includes(displayPath)) {
-          selectedKeywords.push(displayPath);
+        console.log(selectedRow);
+        
+        if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
+          selectedKeywords.push(selectedRow[0]);
         }
 
         listWidget.reload();
