@@ -2,7 +2,7 @@ $(() => {
   var selectedKeywords = [];
 
   $.ajax({
-    url: '/api/standard/keyword?type=gcmd',
+    url: Routing.generate("app_api_standard_keyword") + "?type=gcmd",
     dataType: 'json',
   }).then((result) => {
     const treeList = $('#treelist').dxTreeList({
@@ -24,7 +24,12 @@ $(() => {
       },
       onSelectionChanged() {
         const selectedData = treeList.getSelectedRowsData();
-        // TODO: Show selected show in display somewhere
+    
+        const selectedItem = selectedData[0];
+ 
+        var compiled = _.template($("#item-template ").html());
+
+        $("#selecteditem").html(compiled(selectedItem));
       },
       searchPanel: { visible: true },
     }).dxTreeList('instance');
@@ -34,6 +39,7 @@ $(() => {
       allowItemDeleting: true,
       itemDeleteMode: 'static',
       displayExpr: 'displayPath',
+      noDataText: 'Please select some keywords',
     }).dxList('instance');
 
     $('#add-button').dxButton({
@@ -42,7 +48,6 @@ $(() => {
       width: 120,
       onClick() {
         const selectedRow = treeList.getSelectedRowsData();
-        console.log(selectedRow);
         
         if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
           selectedKeywords.push(selectedRow[0]);
