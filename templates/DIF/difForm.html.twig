@@ -84,7 +84,7 @@
             <label for="keywordSelected" class="emRequired">Select Keywords</label>
             <div id="keywordSelected">
                 <div id="simpleList"></div>
-                <div id="add-button"></div>
+
                 <div id="keyword-details">
                     <table style="width:100%">
                         <tr>
@@ -98,8 +98,9 @@
                                         <label>Label:</label>
                                         <span> <%= label %> </span>
                                         <label>Definititon:</label>
-                                        <span> <%= definition %> </span>
+                                        <div style="height:200px;overflow: auto;"> <%= definition %> </div>
                                     </div>
+                                    <div id="add-button"></div>
                                 </script>
 
                             </td>

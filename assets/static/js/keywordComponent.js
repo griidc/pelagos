@@ -31,19 +31,23 @@ $(() => {
 
         $("#selecteditem").html(compiled(selectedItem));
 
-        $('#add-button').dxSpeedDialAction({
+        $('#add-button').dxButton({
           hint: "Add Keyword",
           icon: "add",
-          position: {
-            my: "right bottom",
-            at: "right bottom",
-            of: "#selecteditem",
-            offset: "-16 -16"
-          },
+          text: "Add Keyword",
+          stylingMode: 'contained',
+          type: 'default',
           onClick() {
-            alert('ok');
+            const selectedRow = treeList.getSelectedRowsData();
+
+            if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
+              selectedKeywords.push(selectedRow[0]);
+            }
+
+            listWidget.reload();
+            listWidget.repaint();
           },
-        }).dxSpeedDialAction('instance');
+        }).dxButton('instance');
       },
       searchPanel: { visible: true },
     }).dxTreeList('instance');
@@ -55,25 +59,5 @@ $(() => {
       displayExpr: 'displayPath',
       noDataText: 'Please select some keywords',
     }).dxList('instance');
-
-
-
-    // $('#add-button').dxButton({
-    //   text: 'Add',
-    //   icon: 'add',
-    //   width: 120,
-    //   onClick() {
-    //     const selectedRow = treeList.getSelectedRowsData();
-
-    //     if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
-    //       selectedKeywords.push(selectedRow[0]);
-    //     }
-
-    //     listWidget.reload();
-    //     listWidget.repaint();
-    //   },
-    // });
-
-
   });
 });
