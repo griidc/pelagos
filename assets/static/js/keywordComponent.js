@@ -24,12 +24,26 @@ $(() => {
       },
       onSelectionChanged() {
         const selectedData = treeList.getSelectedRowsData();
-    
+
         const selectedItem = selectedData[0];
- 
+
         var compiled = _.template($("#item-template ").html());
 
         $("#selecteditem").html(compiled(selectedItem));
+
+        $('#add-button').dxSpeedDialAction({
+          hint: "Add Keyword",
+          icon: "add",
+          position: {
+            my: "right bottom",
+            at: "right bottom",
+            of: "#selecteditem",
+            offset: "-16 -16"
+          },
+          onClick() {
+            alert('ok');
+          },
+        }).dxSpeedDialAction('instance');
       },
       searchPanel: { visible: true },
     }).dxTreeList('instance');
@@ -42,20 +56,24 @@ $(() => {
       noDataText: 'Please select some keywords',
     }).dxList('instance');
 
-    $('#add-button').dxButton({
-      text: 'Add',
-      icon: 'add',
-      width: 120,
-      onClick() {
-        const selectedRow = treeList.getSelectedRowsData();
-        
-        if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
-          selectedKeywords.push(selectedRow[0]);
-        }
 
-        listWidget.reload();
-        listWidget.repaint();
-      },
-    });
+
+    // $('#add-button').dxButton({
+    //   text: 'Add',
+    //   icon: 'add',
+    //   width: 120,
+    //   onClick() {
+    //     const selectedRow = treeList.getSelectedRowsData();
+
+    //     if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
+    //       selectedKeywords.push(selectedRow[0]);
+    //     }
+
+    //     listWidget.reload();
+    //     listWidget.repaint();
+    //   },
+    // });
+
+
   });
 });
