@@ -4,24 +4,23 @@ namespace App\Controller\Admin;
 
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\InformationProductRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Information Product Type Descriptor controller.
  */
 class ProductTypeDescriptorCrudController extends AbstractCrudController
 {
+    use EasyAdminCrudTrait;
+
     /**
      * Returns Fully Qualified Class Name.
-     *
-     * @return string
      */
     public static function getEntityFqcn(): string
     {
@@ -30,10 +29,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * Configure Crud Actions.
-     *
-     * @param Actions $actions
-     *
-     * @return Actions
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -55,10 +50,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 
     /**
      * CRUD configuration function.
-     *
-     * @param Crud $crud
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -67,15 +58,11 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Product Type Descriptor')
             ->setPageTitle(Crud::PAGE_NEW, 'Create Product Type Descriptor')
             ->showEntityActionsInlined()
-            ;
+        ;
     }
 
     /**
      * Configure fields for CRUD.
-     *
-     * @param string $pageName
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {
@@ -89,8 +76,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Overwrite for when entity is created.
      *
-     * @param string $entityFqcn
-     *
      * @return void
      */
     public function createEntity(string $entityFqcn)
@@ -102,46 +87,7 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     }
 
     /**
-     * Update the Crud entity.
-     *
-     * @param EntityManagerInterface $entityManager  The Entity Manager.
-     * @param mixed                  $entityInstance The entity to update.
-     *
-     * @return void
-     */
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        /** @var ProductTypeDescriptor $entityInstance */
-        $entityInstance->setModifier($this->getUser()->getPerson());
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
-    }
-
-    /**
-     * Crud delete an entity.
-     *
-     * @param EntityManagerInterface $entityManager  The Entity Manager.
-     * @param mixed                  $entityInstance The entity to delete.
-     *
-     * @return void
-     */
-    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        try {
-            $entityManager->remove($entityInstance);
-        } catch (\Exception $e) {
-            throw new AccessDeniedHttpException('Unable to delete. Reason:' . $e->getMessage());
-        }
-
-        $entityManager->flush();
-    }
-
-    /**
      * Is this Product Type Descriptor in use on an Information Product.
-     *
-     * @param ProductTypeDescriptor $productTypeDescriptor
-     *
-     * @return boolean
      */
     private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor): bool
     {

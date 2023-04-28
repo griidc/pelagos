@@ -2,21 +2,22 @@
 
 namespace App\Tests\Util;
 
+use App\Entity\DataCenter;
 use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\Entity;
 use App\Entity\File;
 use App\Entity\Fileset;
-use PHPUnit\Framework\TestCase;
-
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-
-use App\Entity\DatasetSubmission;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmission;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Util\ISOMetadataExtractorUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for App\Util\ISOMetadataExtractorUtilTest.
@@ -33,7 +34,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
     /**
      * A DatasetSubmission object used for testing.
      *
-     * @var DatasetSubmission $datasetSubmission
+     * @var DatasetSubmission
      */
     protected $datasetSubmission;
 
@@ -100,6 +101,13 @@ class ISOMetadataExtractorUtilTest extends TestCase
     protected $mockDataset;
 
     /**
+     * Holds a Mock DistributionPoint.
+     *
+     * @var DistributionPoint
+     */
+    protected $mockDistributionPoint;
+
+    /**
      * Holds a Mock dataset.
      *
      * @var Dataset
@@ -121,11 +129,25 @@ class ISOMetadataExtractorUtilTest extends TestCase
     protected $mockFile;
 
     /**
+     * Mock object for DataCenter.
+     *
+     * @var DataCenter
+     */
+    protected $mockDataCenter;
+
+    /**
      * Mock object for Fileset entity instance.
      *
      * @var Fileset
      */
     protected $mockFileset;
+
+    /**
+     * Mock object for Fileset entity instance.
+     *
+     * @var Entity
+     */
+    protected $mockEntityManagerUnknownPerson;
 
     /**
      * The directory that contains the test data.
@@ -143,35 +165,35 @@ class ISOMetadataExtractorUtilTest extends TestCase
     {
         $this->mockPerson = \Mockery::mock(
             'App\Entity\Person',
-            array(
+            [
                 'getEmailAddress' => 'blah@blah.com',
                 'getFirstName' => 'Mock',
                 'getLastName' => 'Person',
-            )
+            ]
         );
 
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
             'App\Entity\PersonDatasetSubmissionDatasetContact',
-            array(
+            [
                 'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
                 'getPerson' => $this->mockPerson,
                 'getId' => 8675309,
                 'isPrimaryContact' => true,
-            )
+            ]
         );
 
         $this->mockPersonDatasetSubmissionMetadataContact = \Mockery::mock(
             'App\Entity\mockPersonDatasetSubmissionMetadataContact',
-            array(
+            [
                 'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
                 'getPerson' => $this->mockPerson,
                 'getId' => 8675309,
-            )
+            ]
         );
 
         $this->mockFile = \Mockery::mock(
             File::class,
-            array(
+            [
                 'setFileset' => \Mockery::mock(Fileset::class),
                 'setFilePathName' => 'foobar.baz',
                 'getFilePathName' => 'foobar.baz',
@@ -188,33 +210,33 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getPhysicalFilePath' => 'path/to/file',
                 'setPhysicalFilePath' => null,
                 'getStatus' => File::FILE_DONE,
-                'setStatus' => FILE::FILE_DONE
-            )
+                'setStatus' => FILE::FILE_DONE,
+            ]
         );
 
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
-            array(
-                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+            [
+                'getAllFiles' => new ArrayCollection([$this->mockFile]),
                 'getZipFilePath' => '/path/to/zip',
                 'getZipFileSha256Hash' => 'cfsdaf',
                 'getZipFileSize' => '32432324',
-                'doesZipFileExist' => true
-            )
+                'doesZipFileExist' => true,
+            ]
         );
 
         $this->mockDataset = \Mockery::mock(
             'App\Entity\Dataset',
-            array(
+            [
                 'updateAvailabilityStatus' => null,
                 'updateDoi' => null,
                 'setDatasetStatus' => null,
                 'getDatasetSubmissionHistory' => \Mockery::mock(
                     'App\Entity\DatasetSubmission',
-                    array(
+                    [
                         'first' => \Mockery::mock(
                             'App\Entity\DatasetSubmission',
-                            array(
+                            [
                                 'getDataset' => $this->mockDataset,
                                 'getSequence' => 2012,
                                 'getTitle' => 'title from mock dataset submission',
@@ -238,9 +260,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getSuppSampScalesRates' => 'SuppSampScalesRates from mock dataset submission',
                                 'getSuppErrorAnalysis' => 'SuppErrorAnalysis from mock dataset submission',
                                 'getSuppProvenance' => 'SuppProvenance from mock dataset submission',
-                                'getThemeKeywords' => array('theme', 'keywords', 'from', 'mock', 'dataset'),
-                                'getPlaceKeywords' => array('place', 'keywords', 'from', 'mock', 'dataset'),
-                                'getTopicKeywords' => array('oceans', 'biota'),
+                                'getThemeKeywords' => ['theme', 'keywords', 'from', 'mock', 'dataset'],
+                                'getPlaceKeywords' => ['place', 'keywords', 'from', 'mock', 'dataset'],
+                                'getTopicKeywords' => ['oceans', 'biota'],
                                 'getSpatialExtent' => 'spatial extent from mock dataset submission',
                                 'getSpatialExtentDescription' => 'spatial extent description from mock dataset submission',
                                 'getTemporalExtentDesc' => 'ground condition and modeled period',
@@ -250,26 +272,26 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
                                 'getFileDecompressionTechnique' => 'zip',
                                 'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
-                                'getDatasetContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionDatasetContact)),
+                                'getDatasetContacts' => new ArrayCollection([$this->mockPersonDatasetSubmissionDatasetContact]),
                                 'getSubmitter' => $this->mockPerson,
                                 'getSubmissionTimeStamp' => $this->testingDatetime,
-                                'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
-                                'getDistributionPoints' => new ArrayCollection(array(\Mockery::mock(
+                                'getMetadataContacts' => new ArrayCollection([$this->mockPersonDatasetSubmissionMetadataContact]),
+                                'getDistributionPoints' => new ArrayCollection([\Mockery::mock(
                                     'App\Entity\DistributionPoint',
-                                    array(
+                                    [
                                         'getId' => 2222,
                                         'getRoleCode' => 'distributor',
                                         'getDataCenter' => \Mockery::mock(
                                             'App\Entity\DataCenter',
-                                            array(
+                                            [
                                                 'getId' => 1234,
                                                 'getOrganizationName' => 'testOrgName',
                                                 'getOrganizationUrl' => 'testOrgUrl',
-                                            )
+                                            ]
                                         ),
                                         'getDistributionUrl' => 'testDistributionUrl',
-                                    )
-                                ))),
+                                    ]
+                                )]),
                                 'getErddapUrl' => 'https://xyz',
                                 'getRemotelyHostedName' => 'remote name',
                                 'getRemotelyHostedDescription' => 'remote description',
@@ -277,38 +299,38 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getDatasetLinks' => new ArrayCollection(),
                                 'getFileset' => $this->mockFileset,
                                 'getRemotelyHostedUrl' => '/path/to',
-                                'isRemotelyHosted' => false
-                            )
+                                'isRemotelyHosted' => false,
+                            ]
                         ),
-                    )
-                )
-            )
+                    ]
+                ),
+            ]
         );
 
         $this->mockDataCenter = \Mockery::mock(
             'App\Entity\DataCenter',
-            array(
+            [
                 'getId' => 1234,
                 'getOrganizationName' => 'testOrgName',
                 'getOrganizationUrl' => 'testOrgUrl',
-            )
+            ]
         );
 
         $this->mockDistributionPoint = \Mockery::mock(
             'App\Entity\DistributionPoint',
-            array(
+            [
                 'getId' => 2222,
                 'getRoleCode' => 'distributor',
                 'getDataCenter' => $this->mockDataCenter,
                 'getDistributionUrl' => 'testDistributionUrl',
-            )
+            ]
         );
 
-        $this->testingDatetime = new \Datetime;
+        $this->testingDatetime = new \DateTime();
 
         $this->mockDatasetSubmission = \Mockery::mock(
             'App\Entity\DatasetSubmission',
-            array(
+            [
                 'getDataset' => $this->mockDataset,
                 'getSequence' => 2012,
                 'getTitle' => 'title from mock dataset submission',
@@ -334,9 +356,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getSuppSampScalesRates' => 'SuppSampScalesRates from mock dataset submission',
                 'getSuppErrorAnalysis' => 'SuppErrorAnalysis from mock dataset submission',
                 'getSuppProvenance' => 'SuppProvenance from mock dataset submission',
-                'getThemeKeywords' => array('theme', 'keywords', 'from', 'mock', 'dataset'),
-                'getPlaceKeywords' => array('place', 'keywords', 'from', 'mock', 'dataset'),
-                'getTopicKeywords' => array('oceans', 'biota'),
+                'getThemeKeywords' => ['theme', 'keywords', 'from', 'mock', 'dataset'],
+                'getPlaceKeywords' => ['place', 'keywords', 'from', 'mock', 'dataset'],
+                'getTopicKeywords' => ['oceans', 'biota'],
                 'getSpatialExtent' => 'spatial extent from mock dataset submission',
                 'getSpatialExtentDescription' => 'spatial extent description from mock dataset submission',
                 'getTemporalExtentDesc' => 'ground condition and modeled period',
@@ -346,11 +368,11 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
                 'getFileDecompressionTechnique' => 'zip',
                 'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
-                'getDatasetContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionDatasetContact)),
+                'getDatasetContacts' => new ArrayCollection([$this->mockPersonDatasetSubmissionDatasetContact]),
                 'getSubmitter' => $this->mockPerson,
                 'getSubmissionTimeStamp' => $this->testingDatetime,
-                'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
-                'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint)),
+                'getMetadataContacts' => new ArrayCollection([$this->mockPersonDatasetSubmissionMetadataContact]),
+                'getDistributionPoints' => new ArrayCollection([$this->mockDistributionPoint]),
                 'getErddapUrl' => 'https://xyz',
                 'getRemotelyHostedName' => 'remote name',
                 'getRemotelyHostedDescription' => 'remote description',
@@ -363,47 +385,48 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetLinks' => new ArrayCollection(),
                 'getFileset' => $this->mockFileset,
                 'getRemotelyHostedUrl' => '/path/to',
-                'isRemotelyHosted' => false
-            )
+                'getAdditionalFunders' => null,
+                'isRemotelyHosted' => false,
+            ]
         );
 
         $this->mockEntityManager = \Mockery::mock(
             EntityManager::class,
-            array(
+            [
                 'getRepository' => \Mockery::mock(
                     EntityRepository::class,
-                    array(
-                        'findBy' => array($this->mockPerson),
-                    )
+                    [
+                        'findBy' => [$this->mockPerson],
+                    ]
                 ),
-            )
+            ]
         );
 
         $this->mockEntityManagerUnknownPerson = \Mockery::mock(
             EntityManager::class,
-            array(
+            [
                 'getRepository' => \Mockery::mock(
                     EntityRepository::class,
-                    array(
+                    [
                         'findBy' => null,
-                    )
+                    ]
                 ),
-            )
+            ]
         );
 
         $this->mockEntityManagerNoMatch = \Mockery::mock(
             EntityManager::class,
-            array(
+            [
                 'getRepository' => \Mockery::mock(
                     EntityRepository::class,
-                    array(
-                        'findBy' => array(),
-                    )
+                    [
+                        'findBy' => [],
+                    ]
                 ),
-            )
+            ]
         );
 
-        $this->util = new ISOMetadataExtractorUtil;
+        $this->util = new ISOMetadataExtractorUtil();
 
         $this->datasetSubmission = new DatasetSubmission($this->mockDatasetSubmission);
     }
@@ -431,9 +454,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $this->assertEquals('test scale', $this->datasetSubmission->getSuppSampScalesRates());
         $this->assertEquals('test error', $this->datasetSubmission->getSuppErrorAnalysis());
         $this->assertEquals('test provenance', $this->datasetSubmission->getSuppProvenance());
-        $this->assertEquals(array('test keyword 1', 'test keyword 2', 'test keyword 3'), $this->datasetSubmission->getThemeKeywords());
-        $this->assertEquals(array('test place 1', 'test place 2', 'test place 3'), $this->datasetSubmission->getPlaceKeywords());
-        $this->assertEquals(array('oceans', 'economy'), $this->datasetSubmission->getTopicKeywords());
+        $this->assertEquals(['test keyword 1', 'test keyword 2', 'test keyword 3'], $this->datasetSubmission->getThemeKeywords());
+        $this->assertEquals(['test place 1', 'test place 2', 'test place 3'], $this->datasetSubmission->getPlaceKeywords());
+        $this->assertEquals(['oceans', 'economy'], $this->datasetSubmission->getTopicKeywords());
         $this->assertEquals($this->testSpatialExtent, $this->datasetSubmission->getSpatialExtent());
         $this->assertEquals('ground condition', $this->datasetSubmission->getTemporalExtentDesc());
         $this->assertEquals(new \DateTime('2016-10-21', new \DateTimeZone('UTC')), $this->datasetSubmission->getTemporalExtentBeginPosition());
@@ -591,15 +614,15 @@ class ISOMetadataExtractorUtilTest extends TestCase
             $this->datasetSubmission->getSuppProvenance()
         );
         $this->assertEquals(
-            array('theme', 'keywords', 'from', 'mock', 'dataset'),
+            ['theme', 'keywords', 'from', 'mock', 'dataset'],
             $this->datasetSubmission->getThemeKeywords()
         );
         $this->assertEquals(
-            array('place', 'keywords', 'from', 'mock', 'dataset'),
+            ['place', 'keywords', 'from', 'mock', 'dataset'],
             $this->datasetSubmission->getPlaceKeywords()
         );
         $this->assertEquals(
-            array('oceans', 'biota'),
+            ['oceans', 'biota'],
             $this->datasetSubmission->getTopicKeywords()
         );
         $this->assertEquals(
@@ -642,7 +665,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $this->xml = simplexml_load_file($this->testDataDir . 'test-multi-contacts.xml');
 
         $contacts = ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManager);
-;
+
         $this->assertInstanceOf(PersonDatasetSubmissionDatasetContact::class, $contacts[0]);
         $this->assertEquals(
             'Mock',
@@ -682,6 +705,5 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $mockTemporalNilReason = 'unknown';
 
         $this->assertEquals($mockTemporalNilReason, $this->datasetSubmission->getTemporalExtentNilReasonType());
-
     }
 }

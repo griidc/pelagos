@@ -5,6 +5,7 @@
     {{ parent() }}
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
 
     <link href="{{ asset('build/css/dif.css') }}" rel="stylesheet" />
 {% endblock %}
@@ -12,14 +13,14 @@
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
-    <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
+    <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}&callback=Function.prototype"></script>
+    <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js"></script>
-
+    <script type="text/javascript" src="{{ asset('build/js/funderComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/mapWizard.js') }}"></script>
