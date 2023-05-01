@@ -88,6 +88,7 @@ $(document).ready(function()
     });
 
     $("#funderList").trigger("fundersAdded", {"disabled": false});
+    $("#keywordList").trigger("keywordsAdded", {"disabled": false});
 
     $("#btnDS").button({
         disabled : true

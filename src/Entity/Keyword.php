@@ -25,50 +25,50 @@ class Keyword extends Entity
      * Identifier for the Keyword.
      */
     #[ORM\Column(type: Types::TEXT)]
-    #[Serializer\Groups(["api"])]
+    #[Serializer\Groups(['api'])]
     private ?string $identifier = null;
 
     /**
      * Description for the Keyword.
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Serializer\Groups(["api"])]
+    #[Serializer\Groups(['api'])]
     private ?string $definition = null;
 
     /**
      * Display label for the Keyword.
      */
     #[ORM\Column(type: Types::TEXT)]
-    #[Serializer\Groups(["api"])]
+    #[Serializer\Groups(['api'])]
     private ?string $label = null;
 
     /**
      * Reference URI for the Keyword.
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Serializer\Groups(["api"])]
+    #[Serializer\Groups(['api'])]
     private ?string $referenceUri = null;
 
     /**
      * The parent URI for this Keyword.
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Serializer\Groups(["api"])]
+    #[Serializer\Groups(['api'])]
     private ?string $parentUri = null;
 
     /**
      * Breadcrumb part off all parent for the Keyword as display value.
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Serializer\Groups(["api"])]
+    #[Serializer\Groups(['api'])]
     private ?string $displayPath = null;
 
     /**
      * Does the item have and parents?
      */
     #[Serializer\VirtualProperty]
-    #[Serializer\Groups(["api"])]
-    #[Serializer\SerializedName("hasItems")]
+    #[Serializer\Groups(['api'])]
+    #[Serializer\SerializedName('hasItems')]
     public function hasItems(): bool
     {
         return !(empty($this->parentUri));
@@ -198,5 +198,10 @@ class Keyword extends Entity
         $this->identifier = $identifier;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getLabel() ?? '';
     }
 }
