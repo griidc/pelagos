@@ -15,11 +15,9 @@ class StandardKeywordController extends AbstractController
     #[Route('/api/standard/keyword', name: 'app_api_standard_keyword')]
     public function index(Request $request, KeywordRepository $keywordRepository, JsonSerializer $jsonSerializer): Response
     {
-        $type = $request->query->get('type') ?? KeywordType::cases();
-        $keywords = $keywordRepository->findBy(
-            criteria: ['type' => $type],
-            orderBy: ['label' => 'ASC']
-        );
+        $type = KeywordType::tryFrom($request->query->get('type') ?? '');
+
+        $keywords = $keywordRepository->getKeywords($type);
 
         return $jsonSerializer->serialize($keywords, ['api'])->createJsonResponse();
     }

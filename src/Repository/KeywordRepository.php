@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Keyword;
+use App\Enum\KeywordType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,24 @@ class KeywordRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getKeywords(?KeywordType $keywordType)
+    {
+        $qb = $this->createQueryBuilder('k');
+
+        $qb
+        ->where('k.type = :type')
+        ->andWhere($qb->expr()->notLike('k.displayPath', ':path'))
+        ->orWhere('k.label = :science')
+        ->setParameter('path', '%EARTH SCIENCE SERVICES%')
+        ->setParameter('science', 'Science Keywords')
+        ->setParameter('type', $keywordType)
+        ;
+
+        return $qb->getQuery()
+        ->getResult();
+
     }
 
 //    /**
