@@ -1479,7 +1479,7 @@ class DIF extends Entity
      */
     public function addKeyword(Keyword $keyword): self
     {
-        if (false === $this->keywords->contains($keyword)) {
+        if (!empty($this->keywords) and false === $this->keywords->contains($keyword)) {
             $this->keywords->add($keyword);
         }
 

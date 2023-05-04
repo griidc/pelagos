@@ -465,6 +465,7 @@ function setFormStatus()
         $("#btnSubmit").prop("disabled",true);
         $("#btnSave").prop("disabled",true);
         $("#funderList").trigger("fundersAdded", {"disabled": true});
+        $("#keywordList").trigger("keywordsAdded", {"disabled": true});
         if (Status == "2")
         {
           $("#btnReqUnlock").show();
@@ -796,6 +797,7 @@ function updateDIF(form)
 function formReset(dontScrollToTop)
 {
     $.when(formChanged()).done(function() {
+        console.log('clear?');
         $("#difForm").trigger("reset");
         $("#udi").val("").change();
         $("#spatialExtentGeometry").val("").change();
@@ -803,6 +805,8 @@ function formReset(dontScrollToTop)
         $("#status").val(0).change();
         $("#funderTagBox").data('dxTagBox').reset();
         $("#funderList").trigger("fundersAdded", {"disabled": false});
+        $("#keywordList").trigger("keywordsAdded", {"disabled": false});
+
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
@@ -1083,6 +1087,7 @@ function fillForm(Form, UDI, ID)
             if (json.dataset.funders != null) {
                 var funders = json.dataset.funders;
                 var addedFunders = [];
+                $('[id^="funders_"]').remove();
                 $.each(funders, function(key, value) {
                     var newElement = document.createElement("input");
                     var funderId = value.id;
@@ -1096,6 +1101,27 @@ function fillForm(Form, UDI, ID)
                 })
 
                 $("#funderList").val(addedFunders.toString()).trigger("fundersAdded", {"disabled": false});
+            }
+
+            var maxKeywordId = 0;
+
+            if (json.keywords != null) {
+                var keywords = json.keywords;
+                var addedKeywords = [];
+                $('[id^="keywords_"]').remove();
+                $.each(keywords, function(key, value) {
+                    var newElement = document.createElement("input");
+                    var keywordId = value.id;
+                    newElement.id = `keywords_${maxKeywordId}`;
+                    newElement.name = `keywords[${maxKeywordId}]`;
+                    newElement.value = keywordId;
+                    newElement.type = "hidden";
+                    $('[id="keyword-items"]').append(newElement);
+                    maxKeywordId++;
+                    addedKeywords.push(keywordId);
+                })
+
+                $("#keywordList").val(addedKeywords.toString()).trigger("keywordsAdded", {"disabled": false});
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
