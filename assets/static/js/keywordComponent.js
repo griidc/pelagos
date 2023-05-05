@@ -43,28 +43,16 @@ $(() => {
     dataType: 'json',
   }).then((result) => {
     allKeywords = result;
-    const treeList = $('#treelist').dxTreeList({
-      dataSource: result,
+    $('#treelist').dxTreeView({
+      items: allKeywords,
+      dataStructure: 'plain',
       rootValue: -1,
       keyExpr: 'referenceUri',
       parentIdExpr: 'parentUri',
-      columns: [{
-        dataField: 'label',
-        caption: 'Keywords',
-      }],
-      expandedRowKeys: [1],
-      showRowLines: true,
-      showBorders: true,
-      columnAutoWidth: true,
-      showColumnHeaders: false,
-      selection: {
-        mode: 'single',
-      },
-      onSelectionChanged() {
-        const selectedData = treeList.getSelectedRowsData();
-
-        const selectedItem = selectedData[0];
-
+      searchEnabled: true,
+      displayExpr: 'label',
+      onItemClick(item) {
+        const selectedItem = item.itemData;
         var compiled = _.template($("#item-template ").html());
 
         $("#selecteditem").html(compiled(selectedItem));
@@ -76,27 +64,23 @@ $(() => {
           stylingMode: 'contained',
           type: 'default',
           onClick() {
-            const selectedRow = treeList.getSelectedRowsData();
-
-            if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
-              var keywordItem = selectedRow[0];
-              console.log(keywordItem);
-              selectedKeywords.push(keywordItem);
-              addKeywordToList(keywordItem.id);
+            if (!selectedKeywords.includes(selectedItem)) {
+              selectedKeywords.push(selectedItem);
+              addKeywordToList(selectedItem.id);
             }
 
             keywordList.reload();
             keywordList.repaint();
 
-            var keywordItems = [];
-            keywordList.option('items').forEach(function(item) {
-              keywordItems.push(item.id);
-            });
+            // var keywordItems = [];
+            // keywordList.option('items').forEach(function(item) {
+            //   keywordItems.push(item.id);
+            // });
           },
-        }).dxButton('instance');
+        });
       },
       searchPanel: { visible: true },
-    }).dxTreeList('instance');
+    });
 
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedKeywords,
