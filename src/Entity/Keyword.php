@@ -60,7 +60,6 @@ class Keyword extends Entity
      * Breadcrumb part off all parent for the Keyword as display value.
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Serializer\Groups(["api"])]
     private ?string $displayPath = null;
 
     /**
@@ -72,6 +71,19 @@ class Keyword extends Entity
     public function hasItems(): bool
     {
         return !(empty($this->parentUri));
+    }
+
+    /**
+     * Display path with possible Science Keywords string removed.
+     */
+    #[Serializer\VirtualProperty]
+    #[Serializer\Groups(["api"])]
+    #[Serializer\SerializedName("displayPath")]
+    public function getShortDisplayPath(): string
+    {
+        $displayPath = $this->getDisplayPath() ?? '';
+
+        return preg_replace('/^Science Keywords( > )?/i', '', $displayPath);
     }
 
     /**

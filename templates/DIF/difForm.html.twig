@@ -78,10 +78,37 @@
             <span class="helpSection">
                 <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
-                    <p>Keywords here!</p>
+                    <p>Add your keywords here.</p>
                 </div>
             </span>
-            <div id="treelist" style="height:300px;"></div>
+            <label for="keywordSelected" class="emRequired">Select Keywords</label>
+            <div id="keywordSelected">
+                <div id="simpleList"></div>
+
+                <div id="keyword-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:50%">
+                                <div id="treelist" style="height:300px;"></div>
+                            </td>
+                            <td style="width:50%">
+                                <div id="selecteditem" style="height:300px;"></div>
+                                <script type="text/html" id="item-template">
+                                    <div>
+                                        <label>Label:</label>
+                                        <span> <%= label %> </span>
+                                        <label>Definititon:</label>
+                                        <div style="height:200px;overflow: auto;"> <%= definition %> </div>
+                                    </div>
+                                    <div id="add-button"></div>
+                                </script>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
         </fieldset>
     </div>
 

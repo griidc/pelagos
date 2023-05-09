@@ -1,25 +1,63 @@
 $(() => {
+  var selectedKeywords = [];
+
   $.ajax({
-    url: '/api/standard/keyword?type=gcmd',
+    url: Routing.generate("app_api_standard_keyword") + "?type=gcmd",
     dataType: 'json',
   }).then((result) => {
-    $('#treelist').dxTreeList({
+    const treeList = $('#treelist').dxTreeList({
       dataSource: result,
       rootValue: -1,
-      keyExpr: 'key',
-      parentIdExpr: 'parent',
+      keyExpr: 'referenceUri',
+      parentIdExpr: 'parentUri',
       columns: [{
-          dataField: 'label',
-          caption: 'Keywords',
-        }],
+        dataField: 'label',
+        caption: 'Keywords',
+      }],
       expandedRowKeys: [1],
       showRowLines: true,
       showBorders: true,
       columnAutoWidth: true,
-      sorting: {
-          mode: "none",
+      showColumnHeaders: false,
+      selection: {
+        mode: 'single',
+      },
+      onSelectionChanged() {
+        const selectedData = treeList.getSelectedRowsData();
+
+        const selectedItem = selectedData[0];
+
+        var compiled = _.template($("#item-template ").html());
+
+        $("#selecteditem").html(compiled(selectedItem));
+
+        $('#add-button').dxButton({
+          hint: "Add Keyword",
+          icon: "add",
+          text: "Add Keyword",
+          stylingMode: 'contained',
+          type: 'default',
+          onClick() {
+            const selectedRow = treeList.getSelectedRowsData();
+
+            if (selectedRow.length > 0 && !selectedKeywords.includes(selectedRow[0])) {
+              selectedKeywords.push(selectedRow[0]);
+            }
+
+            listWidget.reload();
+            listWidget.repaint();
+          },
+        }).dxButton('instance');
       },
       searchPanel: { visible: true },
-    });
+    }).dxTreeList('instance');
+
+    const listWidget = $('#simpleList').dxList({
+      dataSource: selectedKeywords,
+      allowItemDeleting: true,
+      itemDeleteMode: 'static',
+      displayExpr: 'displayPath',
+      noDataText: 'Please select some keywords',
+    }).dxList('instance');
   });
 });
