@@ -51,7 +51,7 @@ function GeoViz()
 
         google_hybrid = new OpenLayers.Layer.Google("Google Hybrid Map",
         {
-            type: google.maps.MapTypeId.HYBRID,
+            type: google.maps.MapTypeId.SATELLITE,
             numZoomLevels: googleZoomLevel,
             sphericalMercator: true,
             displayInLayerSwitcher: true
