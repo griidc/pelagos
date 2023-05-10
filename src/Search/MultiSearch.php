@@ -320,6 +320,13 @@ class MultiSearch
         $nestedFoAgg->addAggregation($fundingOrgAgg);
         $query->addAggregation($nestedFoAgg);
 
+        $nestedFundersAgg = new AggregationNested('fundersAgg', 'dataset.datasetSubmission.funders');
+        $fundersAgg = new AggregationTerms('funders_aggregation');
+        $fundersAgg->setField('dataset.datasetSubmission.funders.id');
+        $fundersAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+        $nestedFundersAgg->addAggregation($fundersAgg);
+        $query->addAggregation($nestedFundersAgg);
+
         $friendlyNameAggregation = new AggregationTerms('friendly_name_agregation');
         $friendlyNameAggregation->setField('friendlyName');
         $friendlyNameAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
