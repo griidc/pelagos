@@ -76,15 +76,14 @@ class FunderRepository extends ServiceEntityRepository
         foreach ($funders as $funder) {
             $funderInfo[$funder->getId()] = array(
                 'id' => $funder->getId(),
-                'name' => $funder->getShortName(),
+                'name' => $funder->getName(),
                 'shortName' => $funder->getShortName(),
                 'count' => $aggregations[$funder->getId()]
             );
         }
         // Sort
         $array_column = array_column($funderInfo, 'shortName');
-        array_multisort($array_column, SORT_DESC, $funderInfo);
-
+        array_multisort($array_column, SORT_ASC, $funderInfo);
         return $funderInfo;
     }
 
