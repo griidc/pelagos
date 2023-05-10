@@ -4,6 +4,7 @@ namespace App\Search;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\Funder;
 use App\Entity\FundingOrganization;
 use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
@@ -120,6 +121,15 @@ class SearchResults
     private $fundingOrganizationRepository;
 
     /**
+     * Instance of the FunderRepository.
+     *
+     * @var FunderRepository
+     *
+     * @Serializer\Exclude
+     */
+    private $funderRepository;
+
+    /**
      * Instance of the DigitalResourceTypeDescriptorRepository.
      *
      * @var DigitalResourceTypeDescriptorRepository
@@ -154,6 +164,7 @@ class SearchResults
         $this->digitalResourceTypeDescriptorRepository = $this->entityManager->getRepository(DigitalResourceTypeDescriptor::class);
         $this->productTypeDescriptorRepository = $this->entityManager->getRepository(ProductTypeDescriptor::class);
         $this->fundingOrganizationRepository = $this->entityManager->getRepository(FundingOrganization::class);
+        $this->funderRepository = $this->entityManager->getRepository(Funder::class);
 
         $this->processResults();
     }
@@ -234,6 +245,18 @@ class SearchResults
                 'key'
             );
             $this->facetInfo['tagsInfo'] = $this->bucketToInfoArray($tagsBucket);
+        }
+
+        // Funder aggregation
+        $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($fundingOrgBucket);
+        $funderAggregations = $this->findKey($aggregations, 'fundersAgg');
+        if (array_key_exists('buckets', $funderAggregations)) {
+            $funderBucket = array_column(
+                $funderAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['fundersInfo'] = $this->bucketToInfoArray($funderBucket);
         }
     }
 
