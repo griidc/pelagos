@@ -60,6 +60,34 @@ class FunderRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
+   /**
+     * Get funder information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each funder id.
+     *
+     * @return array
+     */
+    public function getFunderInfo(array $aggregations): array
+    {
+        $funderInfo = array();
+
+        $funders = $this->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($funders as $funder) {
+            $funderInfo[$funder->getId()] = array(
+                'id' => $funder->getId(),
+                'name' => $funder->getShortName(),
+                'shortName' => $funder->getShortName(),
+                'count' => $aggregations[$funder->getId()]
+            );
+        }
+        // Sort
+        $array_column = array_column($funderInfo, 'shortName');
+        array_multisort($array_column, SORT_DESC, $funderInfo);
+
+        return $funderInfo;
+    }
+
 //    /**
 //     * @return Funder[] Returns an array of Funder objects
 //     */
