@@ -1,5 +1,4 @@
 $(() => {
-
   var selectedKeywords = [];
   var maxKeywordId = 0;
   var addedKeywords = [];
@@ -71,11 +70,6 @@ $(() => {
 
             keywordList.reload();
             keywordList.repaint();
-
-            // var keywordItems = [];
-            // keywordList.option('items').forEach(function(item) {
-            //   keywordItems.push(item.id);
-            // });
           },
         });
       },
@@ -90,33 +84,24 @@ $(() => {
       displayExpr: 'displayPath',
       noDataText: 'Please select some keywords',
       onItemDeleted(item) {
-        console.log(item);
+        removeKeywordFromList(item.id);
       }
     }).dxList('instance');
 
-
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
-      $('[id^="keywords_"]').each(function(id, element) {
-          var value = $(element).val();
-          addedKeywords.push(parseInt(value));
-          maxKeywordId++;
-          // console.log(allKeywords);
-          console.log(value);
-          var keywordItem = allKeywords.find((keyword, index) => {
-            return keyword.id = value;
-          });
-          // var keywordItem = allKeywords.find(function(keyword) {
-          //   console.log(value);
-          //   return keyword.id = 16;
-          // });
-          console.log(keywordItem);
-          selectedKeywords.push(keywordItem);
+      keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
 
-          keywordList.reload();
-          keywordList.repaint();
-      });
+      var value = $("#keywordList").val();
+      allKeywords.filter(function(keyword) {
+        if (!value) {
+          return;
+        }
+        return String(keyword.id).match(value.replace(/\s?\,\s?/g, "|"));
+      })
+      .forEach(keyword => selectedKeywords.push(keyword));
 
-      $("#keywordList").val(addedKeywords.toString());
+      keywordList.reload();
+      keywordList.repaint();
     });
   });
 });
