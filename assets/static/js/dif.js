@@ -90,6 +90,21 @@ $(document).ready(function()
     $("#funderList").trigger("fundersAdded", {"disabled": false});
     $("#keywordList").trigger("keywordsAdded", {"disabled": false});
 
+    $("#keywordList").on("change", function(event){
+        $('[id^="keywords_"]').remove();
+        var maxKeywordId = 0;
+        $.each(($("#keywordList").val().split(',')), function(key, value) {
+            var newElement = document.createElement("input");
+            var keywordId = value;
+            newElement.id = `keywords_${maxKeywordId}`;
+            newElement.name = `keywords[${maxKeywordId}]`;
+            newElement.value = keywordId;
+            newElement.type = "hidden";
+            $('[id="keyword-items"]').append(newElement);
+            maxKeywordId++;
+        })
+    });
+
     $("#btnDS").button({
         disabled : true
     }).click(function() {
@@ -1103,25 +1118,9 @@ function fillForm(Form, UDI, ID)
                 $("#funderList").val(addedFunders.toString()).trigger("fundersAdded", {"disabled": false});
             }
 
-            var maxKeywordId = 0;
-
             if (json.keywords != null) {
                 var keywords = json.keywords;
-                var addedKeywords = [];
-                $('[id^="keywords_"]').remove();
-                $.each(keywords, function(key, value) {
-                    var newElement = document.createElement("input");
-                    var keywordId = value.id;
-                    newElement.id = `keywords_${maxKeywordId}`;
-                    newElement.name = `keywords[${maxKeywordId}]`;
-                    newElement.value = keywordId;
-                    newElement.type = "hidden";
-                    $('[id="keyword-items"]').append(newElement);
-                    maxKeywordId++;
-                    addedKeywords.push(keywordId);
-                })
-
-                $("#keywordList").val(addedKeywords.toString()).trigger("keywordsAdded", {"disabled": false});
+                $("#keywordList").val(keywords.map(keyword => keyword["id"]).toString()).trigger("keywordsAdded", {"disabled": false}).trigger("change");
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
