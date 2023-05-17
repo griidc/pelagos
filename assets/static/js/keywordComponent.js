@@ -56,13 +56,15 @@ $(() => {
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
       var value = $("#keywordList").val();
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
-      allKeywords.filter(function(keyword) {
-        if (!value) {
-          return;
+      var matchedKeywords = allKeywords.filter(function(keyword) {
+        if (value) {
+          return String(keyword.id).match(value.replace(/\s?\,\s?/g, "|"));
         }
-        return String(keyword.id).match(value.replace(/\s?\,\s?/g, "|"));
-      })
-      .forEach(keyword => selectedKeywords.push(keyword));
+      });
+
+      if (matchedKeywords.length > 0) {
+        matchedKeywords.forEach(keyword => selectedKeywords.push(keyword));
+      }
 
       keywordList.reload();
       keywordList.repaint();
