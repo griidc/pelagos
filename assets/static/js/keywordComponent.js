@@ -58,7 +58,11 @@ $(() => {
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
       var matchedKeywords = allKeywords.filter(function(keyword) {
         if (value) {
-          return String(keyword.id).match(value.replace(/\s?\,\s?/g, "|"));
+          valueArray = value.split(",");
+          if (valueArray.includes(String(keyword.id))) {
+            return keyword;
+          }
+          // return String(keyword.id).match(value.replace(/\s?\,\s?/g, "|"));
         }
       });
 
