@@ -55,7 +55,6 @@ class KeywordRepository extends ServiceEntityRepository
 
         return $qb->getQuery()
         ->getResult();
-
     }
 
 //    /**

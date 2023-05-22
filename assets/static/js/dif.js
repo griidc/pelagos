@@ -88,6 +88,22 @@ $(document).ready(function()
     });
 
     $("#funderList").trigger("fundersAdded", {"disabled": false});
+    $("#keywordList").trigger("keywordsAdded", {"disabled": false});
+
+    $("#keywordList").on("change", function(event){
+        $('[id^="keywords_"]').remove();
+        var maxKeywordId = 0;
+        $.each(($("#keywordList").val().split(',')), function(key, value) {
+            var newElement = document.createElement("input");
+            var keywordId = value;
+            newElement.id = `keywords_${maxKeywordId}`;
+            newElement.name = `keywords[${maxKeywordId}]`;
+            newElement.value = keywordId;
+            newElement.type = "hidden";
+            $('[id="keyword-items"]').append(newElement);
+            maxKeywordId++;
+        })
+    });
 
     $("#btnDS").button({
         disabled : true
@@ -464,6 +480,7 @@ function setFormStatus()
         $("#btnSubmit").prop("disabled",true);
         $("#btnSave").prop("disabled",true);
         $("#funderList").trigger("fundersAdded", {"disabled": true});
+        $("#keywordList").trigger("keywordsAdded", {"disabled": true});
         if (Status == "2")
         {
           $("#btnReqUnlock").show();
@@ -802,6 +819,8 @@ function formReset(dontScrollToTop)
         $("#status").val(0).change();
         $("#funderTagBox").data('dxTagBox').reset();
         $("#funderList").trigger("fundersAdded", {"disabled": false});
+        $("#keywordList").trigger("keywordsAdded", {"disabled": false});
+
         //formHash = $("#difForm").serialize();
         formHash = undefined;
         geowizard.cleanMap();
@@ -1082,6 +1101,7 @@ function fillForm(Form, UDI, ID)
             if (json.dataset.funders != null) {
                 var funders = json.dataset.funders;
                 var addedFunders = [];
+                $('[id^="funders_"]').remove();
                 $.each(funders, function(key, value) {
                     var newElement = document.createElement("input");
                     var funderId = value.id;
@@ -1095,6 +1115,11 @@ function fillForm(Form, UDI, ID)
                 })
 
                 $("#funderList").val(addedFunders.toString()).trigger("fundersAdded", {"disabled": false});
+            }
+
+            if (json.keywords != null) {
+                var keywords = json.keywords;
+                $("#keywordList").val(keywords.map(keyword => keyword["id"]).toString()).trigger("keywordsAdded", {"disabled": false}).trigger("change");
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
