@@ -32,7 +32,7 @@ class PelagosImportKeywordsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('action', InputArgument::REQUIRED, 'Action to use. [IMPORT|SORT]')
+            ->addArgument('action', InputArgument::REQUIRED, 'Action to use. [IMPORT|SORT|EXPAND]')
             ->addArgument('type', InputArgument::REQUIRED, 'The type of data to import.')
             ->addArgument('dataURI', InputArgument::OPTIONAL, 'The file, or URI with the data.')
         ;
@@ -42,14 +42,29 @@ class PelagosImportKeywordsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');
-        $type = KeywordType::tryFrom($input->getArgument('type'));
+        $type = $input->getArgument('type');
         $dataURI = $input->getArgument('dataURI');
 
-        if ('IMPORT' == $action) {
+        try {
+            switch (strtoupper($action)) {
+                case 'IMPORT':
+                    $type = KeywordType::tryFrom($type);
             $this->importKeyword($type, $dataURI);
-        } else {
-            $io->note('Sorting, ITS SLOW');
+                    break;
+                case 'SORT':
+                    $type = KeywordType::tryFrom($type);
             $this->sortKeyword($type, $io);
+                    break;
+                case 'EXPAND':
+                    $this->expandKeyword($type, $io);
+                    break;
+                default:
+                    throw new \Exception('No valid action given!');
+                    break;
+            }
+        } catch (\Exception $e) {
+            $io->caution($e->getMessage());
+            return Command::FAILURE;
         }
 
         $this->entityManager->flush();
@@ -59,8 +74,25 @@ class PelagosImportKeywordsCommand extends Command
         return Command::SUCCESS;
     }
 
+    private function expandKeyword($identifier, $io)
+    {
+        $keywordRepository = $this->entityManager->getRepository(Keyword::class);
+        $keyword = $keywordRepository->findOneBy(['identifier' => $identifier]);
+        dump($keyword);
+        if ($keyword instanceof Keyword) {
+            $expanded = $keyword->isExpanded();
+
+            $io->choice('Do you want this node expanded?', ['Yes', 'No'], $expanded ? 'Yes' : 'No');
+        } else {
+            throw new \Exception('Keyword not found!');
+        }
+
+
+    }
+
     private function sortKeyword(KeywordType $keywordType, SymfonyStyle $io): void
     {
+        $io->note('Sorting, ITS SLOW');
         $keywordRepository = $this->entityManager->getRepository(Keyword::class);
         $keywords = $keywordRepository->findBy(['type' => $keywordType->value]);
         $keywordCollection = new ArrayCollection($keywords);

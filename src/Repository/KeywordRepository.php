@@ -46,12 +46,13 @@ class KeywordRepository extends ServiceEntityRepository
 
         $qb
         ->where('k.type = :type')
-        ->andWhere($qb->expr()->notLike('k.displayPath', ':path'))
-        ->orWhere('k.label = :science')
-        ->setParameter('path', '%EARTH SCIENCE SERVICES%')
-        ->setParameter('science', 'Science Keywords')
-        ->setParameter('type', $keywordType)
-        ;
+        ->setParameter('type', $keywordType);
+        if ($keywordType === KeywordType::TYPE_GCMD) {
+            $qb->andWhere($qb->expr()->notLike('k.displayPath', ':path'))
+            ->orWhere('k.label = :science')
+            ->setParameter('path', '%EARTH SCIENCE SERVICES%')
+            ->setParameter('science', 'Science Keywords');
+        }
 
         return $qb->getQuery()
         ->getResult();
