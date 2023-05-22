@@ -19,6 +19,9 @@ class StandardKeywordController extends AbstractController
 
         $keywords = $keywordRepository->getKeywords($type);
 
-        return $jsonSerializer->serialize($keywords, ['id', 'api'])->createJsonResponse();
+        return $jsonSerializer->serialize(
+            data: $keywords,
+            groups: ['id', 'api']
+        )->createJsonResponse();
     }
 }

@@ -812,7 +812,6 @@ function updateDIF(form)
 function formReset(dontScrollToTop)
 {
     $.when(formChanged()).done(function() {
-        console.log('clear?');
         $("#difForm").trigger("reset");
         $("#udi").val("").change();
         $("#spatialExtentGeometry").val("").change();
