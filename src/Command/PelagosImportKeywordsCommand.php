@@ -78,16 +78,19 @@ class PelagosImportKeywordsCommand extends Command
     {
         $keywordRepository = $this->entityManager->getRepository(Keyword::class);
         $keyword = $keywordRepository->findOneBy(['identifier' => $identifier]);
-        dump($keyword);
         if ($keyword instanceof Keyword) {
+            $io->note('Found keyword with label:' . $keyword->getLabel());
             $expanded = $keyword->isExpanded();
 
-            $io->choice('Do you want this node expanded?', ['Yes', 'No'], $expanded ? 'Yes' : 'No');
+            $expanded = $io->choice('Do you want this node expanded?', ['Yes' => 'Yes', 'No' => 'No'], $expanded ? 'Yes' : 'No');
+            $expanded = filter_var($expanded, FILTER_VALIDATE_BOOLEAN);
+
+            $keyword->setExpanded($expanded);
+            $io->note('Keyword set to expanded.');
+
         } else {
             throw new \Exception('Keyword not found!');
         }
-
-
     }
 
     private function sortKeyword(KeywordType $keywordType, SymfonyStyle $io): void
