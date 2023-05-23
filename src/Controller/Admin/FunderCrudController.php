@@ -42,6 +42,7 @@ class FunderCrudController extends AbstractCrudController
             IdField::new('id')
             ->onlyOnIndex(),
             TextField::new('name'),
+            TextField::new('shortName'),
             TextField::new('referenceUri'),
             ChoiceField::new('source')->setChoices(Funder::SOURCES),
         ];

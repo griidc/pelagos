@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\FunderRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,19 +25,25 @@ class Funder extends Entity
     /**
      * Name of the Funder.
      */
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
+
+    /**
+     * The short name of the Funder
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $shortName = null;
 
     /**
      * Reference URI of the Funder.
      */
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $referenceUri = null;
 
     /**
      * The source of the Funder.
      */
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
     private string $source = self::SOURCE_DRPM;
 
     /**
@@ -55,6 +62,24 @@ class Funder extends Entity
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /*
+     * Gets the short name of the Funder.
+     */
+    public function getShortName(): ?string
+    {
+        return $this->shortName;
+    }
+
+    /*
+     * Sets the short name of the Funder.
+     */
+    public function setShortName(?string $shortName): self
+    {
+        $this->shortName = $shortName;
 
         return $this;
     }

@@ -54,7 +54,8 @@ class FunderRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('f')
             ->select('f.id, f.name')
             ->where('LOWER(f.name) like LOWER(:queryString)')
-            ->setParameter('queryString', "%$userQueryString%");
+            ->setParameter('queryString', "%$userQueryString%")
+            ->orderBy('f.name');
 
         return $qb->getQuery()->getArrayResult();
     }
