@@ -54,6 +54,8 @@ class KeywordRepository extends ServiceEntityRepository
             ->setParameter('science', 'Science Keywords');
         }
 
+        $qb->orderBy('k.label');
+
         return $qb->getQuery()
         ->getResult();
     }
