@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Dataset;
+use App\Entity\DIF;
 use App\Entity\DatasetSubmission;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -61,6 +62,9 @@ class GetGoMRIStatisticsCommand extends Command
 
         foreach ($datasets as $dataset) {
             /** @var Dataset $dataset */
+            if ($dataset->getDif()->getStatus() === DIF::STATUS_UNSUBMITTED) {
+                continue;
+            }
             $datasetCount++;
             $udi = $dataset->getUdi();
             $datasetSubmission = $dataset->getDatasetSubmission();
@@ -88,9 +92,9 @@ class GetGoMRIStatisticsCommand extends Command
 
         $io->writeln("Total GRIIDC Dataset Count: $datasetCount");
         $io->writeln("Total number of GoMRI Datasets: $gomriDatasetCount");
-        $io->writeln("Total Size of GoMRI Datasets: " . round(($gomriDatasetTotalSize + $gomriColdStorageDatasetTotalSize)/1000000000000, 1) . ' TB');
+        $io->writeln("Total Size of GoMRI Datasets: " . round(($gomriDatasetTotalSize + $gomriColdStorageDatasetTotalSize) / 1000000000000, 1) . ' TB');
         $io->writeln("Number of GoMRI Datasets in cold storage: $gomriDatasetColdStorageCount");
-        $io->writeln("Total size of GoMRI Datasets in cold storage: " . round($gomriColdStorageDatasetTotalSize/1000000000000, 1) . ' TB');
+        $io->writeln("Total size of GoMRI Datasets in cold storage: " . round($gomriColdStorageDatasetTotalSize / 1000000000000, 1) . ' TB');
         $io->writeln("Total number of GoMRI datasets submitted since 2021-01-01 until current date " . $totalGomriDatasetSubmittedSince2021Count);
         $io->writeln("Total number of datasets (all data including GoMRI) submitted since 2021-01-01 until current date " . $totalDatasetSubmittedSince2021Count);
 
