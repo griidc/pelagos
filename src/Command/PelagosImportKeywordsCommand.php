@@ -49,11 +49,11 @@ class PelagosImportKeywordsCommand extends Command
             switch (strtoupper($action)) {
                 case 'IMPORT':
                     $type = KeywordType::tryFrom($type);
-            $this->importKeyword($type, $dataURI);
+                    $this->importKeyword($type, $dataURI);
                     break;
                 case 'SORT':
                     $type = KeywordType::tryFrom($type);
-            $this->sortKeyword($type, $io);
+                    $this->sortKeyword($type, $io);
                     break;
                 case 'EXPAND':
                     $this->expandKeyword($type, $io);
@@ -64,6 +64,7 @@ class PelagosImportKeywordsCommand extends Command
             }
         } catch (\Exception $e) {
             $io->caution($e->getMessage());
+
             return Command::FAILURE;
         }
 
@@ -87,7 +88,6 @@ class PelagosImportKeywordsCommand extends Command
 
             $keyword->setExpanded($expanded);
             $io->note('Keyword set to expanded.');
-
         } else {
             throw new \Exception('Keyword not found!');
         }
