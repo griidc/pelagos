@@ -16,6 +16,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
@@ -75,7 +76,7 @@ class PelagosImportKeywordsCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function expandKeyword($identifier, $io)
+    private function expandKeyword(string $identifier, StyleInterface $io): void
     {
         $keywordRepository = $this->entityManager->getRepository(Keyword::class);
         $keyword = $keywordRepository->findOneBy(['identifier' => $identifier]);
@@ -93,7 +94,7 @@ class PelagosImportKeywordsCommand extends Command
         }
     }
 
-    private function sortKeyword(KeywordType $keywordType, SymfonyStyle $io): void
+    private function sortKeyword(KeywordType $keywordType, StyleInterface $io): void
     {
         $io->note('Sorting, ITS SLOW');
         $keywordRepository = $this->entityManager->getRepository(Keyword::class);
