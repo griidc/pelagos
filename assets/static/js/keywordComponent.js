@@ -29,8 +29,15 @@ $(() => {
           type: 'default',
           onClick() {
             if (!selectedKeywords.includes(selectedItem)) {
-              selectedKeywords.push(selectedItem);
-              $("#keywordList").val(selectedKeywords.map(keyword => keyword["id"]).toString()).trigger("change");
+              // selectedKeywords.push(selectedItem);
+              var tempArray = $("#keywordList").val().split(',');
+
+              const index = tempArray.indexOf(item.id);
+              if (index > -1) { // only splice array when item is found
+                tempArray.splice(index, 1); // 2nd parameter means remove one item only
+              }
+              $("#keywordList").val(tempArray.toString()).trigger("change");
+              // $("#keywordList").val(selectedKeywords.map(keyword => keyword["id"]).toString()).trigger("change");
             }
 
             keywordList.reload();
@@ -49,11 +56,21 @@ $(() => {
       displayExpr: 'displayPath',
       noDataText: 'Please select some keywords',
       onItemDeleted(item) {
-        $("#keywordList").val(selectedKeywords.map(keyword => keyword["id"]).toString()).trigger("change");
+        console.log('delete');
+        console.log(item.itemData);
+        var tempArray = $("#keywordList").val().split(',');
+
+        const index = tempArray.indexOf(String(item.itemData.id));
+        if (index > -1) { // only splice array when item is found
+          tempArray.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        console.log(tempArray);
+        $("#keywordList").val(tempArray.toString()).trigger('change');
       }
     }).dxList('instance');
 
-    $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
+    $("#keywordList").on('keywordsAdded', function() {
+      console.log('list');
       var value = $("#keywordList").val();
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
       allKeywords.filter(function(keyword) {
@@ -62,8 +79,6 @@ $(() => {
         }
       })
       .forEach(keyword => selectedKeywords.push(keyword));
-
-
       keywordList.reload();
       keywordList.repaint();
     });
