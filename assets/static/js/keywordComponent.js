@@ -29,17 +29,17 @@ $(() => {
           type: 'default',
           onClick() {
             if (!selectedKeywords.includes(selectedItem)) {
-              // selectedKeywords.push(selectedItem);
-              var tempArray = $("#keywordList").val().split(',');
+              selectedKeywords.push(selectedItem);
 
-              const index = tempArray.indexOf(item.id);
-              if (index > -1) { // only splice array when item is found
-                tempArray.splice(index, 1); // 2nd parameter means remove one item only
+              var keywordListArray = [];
+              const keyWordListValue = $("#keywordList").val();
+              if (keyWordListValue !== "") {
+                keywordListArray = keyWordListValue.split(',');
               }
-              $("#keywordList").val(tempArray.toString()).trigger("change");
-              // $("#keywordList").val(selectedKeywords.map(keyword => keyword["id"]).toString()).trigger("change");
-            }
+              keywordListArray.push(selectedItem.id);
 
+              $("#keywordList").val(keywordListArray.toString()).trigger("change");
+            }
             keywordList.reload();
             keywordList.repaint();
           },
@@ -56,21 +56,21 @@ $(() => {
       displayExpr: 'displayPath',
       noDataText: 'Please select some keywords',
       onItemDeleted(item) {
-        console.log('delete');
-        console.log(item.itemData);
-        var tempArray = $("#keywordList").val().split(',');
-
-        const index = tempArray.indexOf(String(item.itemData.id));
-        if (index > -1) { // only splice array when item is found
-          tempArray.splice(index, 1); // 2nd parameter means remove one item only
+        var keywordListArray = [];
+        const keyWordListValue = $("#keywordList").val();
+        if (keyWordListValue !== "") {
+          keywordListArray = keyWordListValue.split(',');
         }
-        console.log(tempArray);
-        $("#keywordList").val(tempArray.toString()).trigger('change');
+
+        const index = keywordListArray.indexOf(String(item.itemData.id));
+        if (index > -1) {
+          keywordListArray.splice(index, 1);
+        }
+        $("#keywordList").val(keywordListArray.toString()).trigger('change');
       }
     }).dxList('instance');
 
     $("#keywordList").on('keywordsAdded', function() {
-      console.log('list');
       var value = $("#keywordList").val();
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
       allKeywords.filter(function(keyword) {
