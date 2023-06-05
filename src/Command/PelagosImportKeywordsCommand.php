@@ -48,14 +48,14 @@ class PelagosImportKeywordsCommand extends Command
         $action = $input->getArgument('action');
         $type = $input->getOption('type');
         $dataURI = $input->getOption('dataURI');
-        $keywordIdentifier = $input->getOption('dataURI');
+        $keywordIdentifier = $input->getOption('keyword');
 
         try {
             switch (strtoupper($action)) {
                 case 'IMPORT':
                     $type = KeywordType::tryFrom($type);
                     if (empty($type) or empty($dataURI)) {
-                        throw new \Exception('No type/keyword identifier given!');
+                        throw new \Exception('No type/uri identifier given!');
                     } else {
                         $this->importKeyword($type, $dataURI);
                     }
