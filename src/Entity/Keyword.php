@@ -63,6 +63,13 @@ class Keyword extends Entity
     private ?string $displayPath = null;
 
     /**
+     * Property if this keyword node expanded by default.
+     */
+    #[ORM\Column(nullable: false)]
+    #[Serializer\Groups(["api"])]
+    private bool $expanded = false;
+
+    /**
      * Does the item have and parents?
      */
     #[Serializer\VirtualProperty]
@@ -212,6 +219,27 @@ class Keyword extends Entity
         return $this;
     }
 
+    /**
+     * If the keyword is expanded.
+     */
+    public function isExpanded(): bool
+    {
+        return $this->expanded;
+    }
+
+    /**
+     * Set keyword node to expanded.
+     */
+    public function setExpanded(bool $expanded): self
+    {
+        $this->expanded = $expanded;
+
+        return $this;
+    }
+
+    /**
+     * Stringifier, show label.
+     */
     public function __toString(): string
     {
         return $this->getLabel() ?? '';

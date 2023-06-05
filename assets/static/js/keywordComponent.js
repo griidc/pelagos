@@ -3,7 +3,7 @@ $(() => {
   var allKeywords = [];
 
   $.ajax({
-    url: Routing.generate("app_api_standard_keyword") + "?type=gcmd",
+    url: Routing.generate("app_api_standard_keyword") + "?type=anzsrc",
     dataType: 'json',
   }).then((result) => {
     allKeywords = result;
