@@ -159,10 +159,6 @@ class MultiSearch
             $postBoolQuery->addMust($this->addResearchGroupFilter($searchOptions));
         }
 
-        if ($searchOptions->isFundingOrgFilterSet()) {
-            $postBoolQuery->addMust($this->addFundingOrgFilter($searchOptions));
-        }
-
         if ($searchOptions->isFunderFilterSet()) {
             $postBoolQuery->addMust($this->addFunderFilter($searchOptions));
         }
@@ -215,38 +211,6 @@ class MultiSearch
         $researchFilterBoolQuery->addShould($fundingOrgsNameQuery);
 
         return $researchFilterBoolQuery;
-    }
-
-    /**
-     * Returns the query for funding org filtering.
-     *
-     * @param SearchOptions $searchOptions
-     *
-     * @return BoolQuery
-     */
-    private function addFundingOrgFilter(SearchOptions $searchOptions): BoolQuery
-    {
-        $fundingOrgFilterBoolQuery = new Query\BoolQuery();
-
-        // Dataset Funding Org Filter
-        $datasetFundingOrgNameQuery = new Query\Nested();
-        $datasetFundingOrgNameQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
-        $datasetFundingOrgQueryTerm = new Query\Terms('researchGroup.fundingCycle.fundingOrganization.id');
-        $datasetFundingOrgQueryTerm->setTerms($searchOptions->getFundingOrgFilter());
-        $datasetFundingOrgNameQuery->setQuery($datasetFundingOrgQueryTerm);
-        $datasetFundingOrgNameQuery->setParam('ignore_unmapped', true);
-        $fundingOrgFilterBoolQuery->addShould($datasetFundingOrgNameQuery);
-
-        // Information Product Funding Org Filter
-        $fundingOrgsNameQuery = new Query\Nested();
-        $fundingOrgsNameQuery->setPath('researchGroups.fundingCycle.fundingOrganization');
-        $fundingOrgsQueryTerm = new Query\Terms('researchGroups.fundingCycle.fundingOrganization.id');
-        $fundingOrgsQueryTerm->setTerms($searchOptions->getFundingOrgFilter());
-        $fundingOrgsNameQuery->setQuery($fundingOrgsQueryTerm);
-        $fundingOrgsNameQuery->setParam('ignore_unmapped', true);
-        $fundingOrgFilterBoolQuery->addShould($fundingOrgsNameQuery);
-
-        return $fundingOrgFilterBoolQuery;
     }
 
     /**
@@ -305,20 +269,6 @@ class MultiSearch
         $researchGroupsAggregation->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $researchGroupNestedAggregationa->addAggregation($researchGroupsAggregation);
         $query->addAggregation($researchGroupNestedAggregationa);
-
-        $nestedFoAgg = new AggregationNested('fundingOrgAgg', 'researchGroup.fundingCycle.fundingOrganization');
-        $fundingOrgAgg = new AggregationTerms('funding_organization_aggregation');
-        $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
-        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
-        $nestedFoAgg->addAggregation($fundingOrgAgg);
-        $query->addAggregation($nestedFoAgg);
-
-        $nestedFoAgg = new AggregationNested('fundingOrgsAgg', 'researchGroups.fundingCycle.fundingOrganization');
-        $fundingOrgAgg = new AggregationTerms('funding_organizations_aggregation');
-        $fundingOrgAgg->setField('researchGroups.fundingCycle.fundingOrganization.id');
-        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
-        $nestedFoAgg->addAggregation($fundingOrgAgg);
-        $query->addAggregation($nestedFoAgg);
 
         $nestedFundersAgg = new AggregationNested('fundersAgg', 'funders');
         $fundersAgg = new AggregationTerms('funders_aggregation');

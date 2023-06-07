@@ -50,13 +50,6 @@ class SearchOptions
     private $researchGroupFilter;
 
     /**
-     * Funding Organization Filter.
-     *
-     * @var array|null
-     */
-    private $fundingOrganizationFilter;
-
-    /**
      * Funder Filter.
      *
      * @var array|null
@@ -312,28 +305,6 @@ class SearchOptions
     }
 
     /**
-     * Sets the Funding Organizations to be filtered.
-     *
-     * @param string|null $fundingOrganizations the comma delimited list of Funding Organizations
-     */
-    public function setFundingOrgFilter(?string $fundingOrganizations): self
-    {
-        if (!empty($fundingOrganizations)) {
-            $this->fundingOrganizationFilter = explode(',', $fundingOrganizations);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Return the list of Funding Organizations to be filtered on.
-     */
-    public function getFundingOrgFilter(): array
-    {
-        return $this->fundingOrganizationFilter;
-    }
-
-    /**
      * Sets the Funders to be filtered.
      *
      * @param string|null $funders A comma delimited list of Funders
@@ -353,14 +324,6 @@ class SearchOptions
     public function getFunderFilter(): array
     {
         return $this->funderFilter;
-    }
-
-    /**
-     * Is the Funding Organization filter set.
-     */
-    public function isFundingOrgFilterSet(): bool
-    {
-        return isset($this->fundingOrganizationFilter);
     }
 
     /**

@@ -2,19 +2,18 @@
 
 namespace App\Search;
 
-use App\Entity\DatasetSubmission;
-use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
-use App\Entity\FundingOrganization;
-use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
-use App\Repository\DigitalResourceTypeDescriptorRepository;
-use App\Repository\FundingOrganizationRepository;
-use App\Repository\ProductTypeDescriptorRepository;
-use App\Repository\ResearchGroupRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Annotation as Serializer;
+use App\Entity\DatasetSubmission;
 use Pagerfanta\PagerfantaInterface;
+use App\Repository\FunderRepository;
+use App\Entity\ProductTypeDescriptor;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ResearchGroupRepository;
+use JMS\Serializer\Annotation as Serializer;
+use App\Entity\DigitalResourceTypeDescriptor;
+use App\Repository\ProductTypeDescriptorRepository;
+use App\Repository\DigitalResourceTypeDescriptorRepository;
 
 /**
  * Search Results Class.
@@ -112,15 +111,6 @@ class SearchResults
     private $researchGroupRepository;
 
     /**
-     * Instance of the FundingOrganizationRepository.
-     *
-     * @var FundingOrganizationRepository
-     *
-     * @Serializer\Exclude
-     */
-    private $fundingOrganizationRepository;
-
-    /**
      * Instance of the FunderRepository.
      *
      * @var FunderRepository
@@ -163,7 +153,6 @@ class SearchResults
         $this->researchGroupRepository = $this->entityManager->getRepository(ResearchGroup::class);
         $this->digitalResourceTypeDescriptorRepository = $this->entityManager->getRepository(DigitalResourceTypeDescriptor::class);
         $this->productTypeDescriptorRepository = $this->entityManager->getRepository(ProductTypeDescriptor::class);
-        $this->fundingOrganizationRepository = $this->entityManager->getRepository(FundingOrganization::class);
         $this->funderRepository = $this->entityManager->getRepository(Funder::class);
 
         $this->processResults();
@@ -231,10 +220,8 @@ class SearchResults
         }
 
         $researchGroupBucket = $this->combineBuckets($aggregations, 'research_group_aggregation', 'research_groups_aggregation');
-        $fundingOrgBucket = $this->combineBuckets($aggregations, 'funding_organization_aggregation', 'funding_organizations_aggregation');
 
         $this->facetInfo['researchGroupInfo'] = $this->researchGroupRepository->getResearchGroupsInfo($researchGroupBucket);
-        $this->facetInfo['fundingOrgInfo'] = $this->fundingOrganizationRepository->getFundingOrgInfo($fundingOrgBucket);
 
         // Tags info aggregation
         $tagsAggregations = $this->findKey($aggregations, 'tags_agg');
