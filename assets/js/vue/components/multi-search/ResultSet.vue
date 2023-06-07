@@ -118,9 +118,9 @@ export default {
           queryParam: 'researchGroup',
           expanded: templateSwitch.getProperty('researchGroupExpanded'),
         },
-        fundingOrgInfo: {
-          label: templateSwitch.getProperty('fundingOrg'),
-          queryParam: 'fundingOrg',
+        fundersInfo: {
+          label: templateSwitch.getProperty('funder'),
+          queryParam: 'funder',
           expanded: templateSwitch.getProperty('fundingOrgExpanded'),
         },
         dataTypeInfo: {

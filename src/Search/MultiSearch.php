@@ -262,8 +262,8 @@ class MultiSearch
 
         // Dataset Funder Filter
         $datasetFunderNameQuery = new Query\Nested();
-        $datasetFunderNameQuery->setPath('funder');
-        $datasetFunderQueryTerm = new Query\Terms('funder.id');
+        $datasetFunderNameQuery->setPath('funders');
+        $datasetFunderQueryTerm = new Query\Terms('funders.id');
         $datasetFunderQueryTerm->setTerms($searchOptions->getFunderFilter());
         $datasetFunderNameQuery->setQuery($datasetFunderQueryTerm);
         $datasetFunderNameQuery->setParam('ignore_unmapped', true);
@@ -320,9 +320,9 @@ class MultiSearch
         $nestedFoAgg->addAggregation($fundingOrgAgg);
         $query->addAggregation($nestedFoAgg);
 
-        $nestedFundersAgg = new AggregationNested('fundersAgg', 'dataset.datasetSubmission.funders');
+        $nestedFundersAgg = new AggregationNested('fundersAgg', 'funders');
         $fundersAgg = new AggregationTerms('funders_aggregation');
-        $fundersAgg->setField('dataset.datasetSubmission.funders.id');
+        $fundersAgg->setField('funders.id');
         $fundersAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
         $nestedFundersAgg->addAggregation($fundersAgg);
         $query->addAggregation($nestedFundersAgg);

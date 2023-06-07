@@ -248,8 +248,7 @@ class SearchResults
         }
 
         // Funder aggregation
-        $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($fundingOrgBucket);
-        $funderAggregations = $this->findKey($aggregations, 'fundersAgg');
+        $funderAggregations = $this->findKey($aggregations, 'funders_aggregation');
         if (array_key_exists('buckets', $funderAggregations)) {
             $funderBucket = array_column(
                 $funderAggregations['buckets'],
@@ -258,6 +257,7 @@ class SearchResults
             );
             $this->facetInfo['fundersInfo'] = $this->bucketToInfoArray($funderBucket);
         }
+        $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($funderBucket);
     }
 
     /**
