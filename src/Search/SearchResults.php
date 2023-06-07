@@ -255,9 +255,8 @@ class SearchResults
                 'doc_count',
                 'key'
             );
-            $this->facetInfo['fundersInfo'] = $this->bucketToInfoArray($funderBucket);
+            $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($funderBucket);
         }
-        $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($funderBucket);
     }
 
     /**
