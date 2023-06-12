@@ -7,7 +7,7 @@ $(() => {
     dataType: 'json',
   }).then((result) => {
     allKeywords = result;
-    $('#treelist').dxTreeView({
+    const treeList = $('#treelist').dxTreeView({
       items: allKeywords,
       dataStructure: 'plain',
       rootValue: -1,
@@ -46,7 +46,7 @@ $(() => {
         });
       },
       searchPanel: { visible: true },
-    });
+    }).dxTreeView('instance');;
 
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedKeywords,
@@ -71,7 +71,9 @@ $(() => {
     }).dxList('instance');
 
     $("#keywordList").on('keywordsAdded', function() {
-      var value = $("#keywordList").val();
+      treeList.option('searchValue', '');
+      treeList.collapseAll();
+      const value = $("#keywordList").val();
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
       allKeywords.filter(function(keyword) {
         if (value.split(",").includes(String(keyword.id))) {
