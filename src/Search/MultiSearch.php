@@ -233,15 +233,6 @@ class MultiSearch
         $datasetFunderNameQuery->setParam('ignore_unmapped', true);
         $funderFilterBoolQuery->addShould($datasetFunderNameQuery);
 
-        // Information Product Funder Filter
-        $funderNameQuery = new Query\Nested();
-        $funderNameQuery->setPath('researchGroups.fundingCycle.fundingOrganization.defaultFunder');
-        $funderQueryTerm = new Query\Terms('researchGroups.fundingCycle.fundingOrganization.defaultFunder.id');
-        $funderQueryTerm->setTerms($searchOptions->getFunderFilter());
-        $funderNameQuery->setQuery($funderQueryTerm);
-        $funderNameQuery->setParam('ignore_unmapped', true);
-        $funderFilterBoolQuery->addShould($funderNameQuery);
-
         return $funderFilterBoolQuery;
     }
 
