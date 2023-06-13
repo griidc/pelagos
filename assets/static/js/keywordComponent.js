@@ -7,7 +7,7 @@ $(() => {
     dataType: 'json',
   }).then((result) => {
     allKeywords = result;
-    $('#treelist').dxTreeView({
+    const treeList = $('#treelist').dxTreeView({
       items: allKeywords,
       dataStructure: 'plain',
       rootValue: -1,
@@ -30,16 +30,23 @@ $(() => {
           onClick() {
             if (!selectedKeywords.includes(selectedItem)) {
               selectedKeywords.push(selectedItem);
-              $("#keywordList").val(selectedKeywords.map(keyword => keyword["id"]).toString()).trigger("change");
-            }
 
+              var keywordListArray = [];
+              const keyWordListValue = $("#keywordList").val();
+              if (keyWordListValue !== "") {
+                keywordListArray = keyWordListValue.split(',');
+              }
+              keywordListArray.push(selectedItem.id);
+
+              $("#keywordList").val(keywordListArray.toString()).trigger("change");
+            }
             keywordList.reload();
             keywordList.repaint();
           },
         });
       },
       searchPanel: { visible: true },
-    });
+    }).dxTreeView('instance');;
 
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedKeywords,
@@ -49,12 +56,24 @@ $(() => {
       displayExpr: 'displayPath',
       noDataText: 'Please select some keywords',
       onItemDeleted(item) {
-        $("#keywordList").val(selectedKeywords.map(keyword => keyword["id"]).toString()).trigger("change");
+        var keywordListArray = [];
+        const keyWordListValue = $("#keywordList").val();
+        if (keyWordListValue !== "") {
+          keywordListArray = keyWordListValue.split(',');
+        }
+
+        const index = keywordListArray.indexOf(String(item.itemData.id));
+        if (index > -1) {
+          keywordListArray.splice(index, 1);
+        }
+        $("#keywordList").val(keywordListArray.toString()).trigger('change');
       }
     }).dxList('instance');
 
-    $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
-      var value = $("#keywordList").val();
+    $("#keywordList").on('keywordsAdded', function() {
+      treeList.option('searchValue', '');
+      treeList.collapseAll();
+      const value = $("#keywordList").val();
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
       allKeywords.filter(function(keyword) {
         if (value.split(",").includes(String(keyword.id))) {
@@ -62,8 +81,6 @@ $(() => {
         }
       })
       .forEach(keyword => selectedKeywords.push(keyword));
-
-
       keywordList.reload();
       keywordList.repaint();
     });
