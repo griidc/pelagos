@@ -54,7 +54,7 @@ $(() => {
       itemDeleteMode: 'static',
       keyExpr: 'id',
       displayExpr: 'displayPath',
-      noDataText: 'Please select some keywords',
+      noDataText: 'Please select at least one keyword',
       onItemDeleted(item) {
         var keywordListArray = [];
         const keyWordListValue = $("#keywordList").val();

@@ -78,45 +78,6 @@
             <span class="helpSection">
                 <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
-                    <p>Add your keywords here.</p>
-                </div>
-            </span>
-            <div id="keyword-items">
-                <input id="keywordList" name="keywordList" type="hidden"/>
-            </div>
-            <label for="keywordSelected" class="emRequired">Select Keywords</label>
-            <div id="keywordSelected">
-                <div id="selectedList"></div>
-                <div id="keyword-details">
-                    <table style="width:100%">
-                        <tr>
-                            <td style="width:50%">
-                                <div id="treelist" style="height:300px;"></div>
-                            </td>
-                            <td style="width:50%">
-                                <div id="selecteditem" style="height:300px;"></div>
-                                <script type="text/html" id="item-template">
-                                    <div>
-                                        <label>Label:</label>
-                                        <span> <%= label %> </span>
-                                        <label>Definition:</label>
-                                        <div style="height:200px;overflow: auto;white-space:pre-line;"> <%= definition %> </div>
-                                    </div>
-                                    <div id="add-button"></div>
-                                </script>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-
-    <div class="frmSection">
-        <fieldset>
-            <span class="helpSection">
-                <img class="info" src="{{ asset('build/images/info32.png') }}">
-                <div class="tooltiptext">
                     <p>This is a required field. Please provide a descriptive title that briefly explains the contents of your dataset. This will be similar to titles used in publications, and may include location where, and time period when the research was completed. It should be understandable by a user unfamiliar with your methods, site collections or research platforms.</p>
                 </div>
             </span>
@@ -172,55 +133,38 @@
             <span class="helpSection">
                 <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
-                    <p>Datasets may be categorized based on the discipline for which they are collected. Please check all the boxes that categorize the discipline(s) for which your dataset will be created. Note that datasets can be multidisciplinary so select all disciplines that apply. If your field of study is not listed, please specify additional details in the &ldquo;other&rdquo; field.</p>
+                    <p>Add your keywords here.</p>
                 </div>
             </span>
-            <label for="difDatafor"><b>Field of Study:</b></label>
-            <table id="difDatafor" width="100%" class="choice-label">
-                <tr>
-                    <td>
-                        {{ form_widget(form.fieldOfStudyEcologicalBiological) }}
-                        {{ form_label(form.fieldOfStudyEcologicalBiological) }}
-                    </td>
-                    <td>
-                        {{ form_widget(form.fieldOfStudyPhysicalOceanography) }}
-                        {{ form_label(form.fieldOfStudyPhysicalOceanography) }}
-                    </td>
-                    <td>
-                        {{ form_widget(form.fieldOfStudyAtmospheric) }}
-                        {{ form_label(form.fieldOfStudyAtmospheric) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form_widget(form.fieldOfStudyChemical) }}
-                        {{ form_label(form.fieldOfStudyChemical) }}
-                    </td>
-                    <td>
-                        {{ form_widget(form.fieldOfStudyHumanHealth) }}
-                        {{ form_label(form.fieldOfStudyHumanHealth) }}
-                    </td>
-                    <td>
-                        {{ form_widget(form.fieldOfStudySocialCulturalPolitical) }}
-                        {{ form_label(form.fieldOfStudySocialCulturalPolitical) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form_widget(form.fieldOfStudyEconomics) }}
-                        {{ form_label(form.fieldOfStudyEconomics) }}
-                    </td>
-
-                    <td colspan="2">
-                        <table width="100%">
-                            <tr>
-                                 <td>Others:</td>
-                                 <td>{{ form_widget(form.fieldOfStudyOther) }}</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+            <div id="keyword-items">
+                <input id="keywordList" name="keywordList" type="hidden"/>
+            </div>
+            <label for="keywordSelected" class="emRequired">Discipline Keywords</label>
+            <div id="keywordSelected">
+                <div id="selectedList"></div>
+                <hr>
+                <div id="keyword-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:50%">
+                                <div id="treelist" style="height:400px;"></div>
+                            </td>
+                            <td style="width:50%">
+                                <div id="selecteditem" style="height:400px;"></div>
+                                <script type="text/html" id="item-template">
+                                    <div style="padding:10px;">
+                                        <label>Label:</label>
+                                        <span> <%= label %> </span>
+                                        <label>Definition:</label>
+                                        <div style="height:275px;overflow: auto;white-space:pre-line;"> <%= definition %> </div>
+                                    </div>
+                                    <div id="add-button"></div>
+                                </script>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </fieldset>
     </div>
 
