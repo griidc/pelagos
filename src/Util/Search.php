@@ -2,16 +2,18 @@
 
 namespace App\Util;
 
-use App\Entity\DatasetSubmission;
-use App\Entity\Funder;
-use App\Entity\FundingCycle;
-use App\Entity\Person;
-use App\Entity\ResearchGroup;
-use Doctrine\ORM\EntityManagerInterface;
-use Elastica\Aggregation;
 use Elastica\Query;
-use FOS\ElasticaBundle\Finder\TransformedFinder;
+use App\Entity\Funder;
+use App\Entity\Person;
+use Elastica\Aggregation;
 use Pagerfanta\Pagerfanta;
+use App\Entity\FundingCycle;
+use App\Entity\ResearchGroup;
+use RecursiveIteratorIterator;
+use App\Entity\DatasetSubmission;
+use Doctrine\ORM\EntityManagerInterface;
+use FOS\ElasticaBundle\Finder\TransformedFinder;
+use Elastica\Query\SimpleQueryString;
 
 /**
  * Util class for FOS Elastic Search.
@@ -134,6 +136,25 @@ class Search
         $perPage = $requestTerms['perPage'];
         $sortOrder = $requestTerms['sortOrder'];
         $collectionDateRange = [];
+
+        // Is this a default no-parameters search?
+        if (
+            empty($requestTerms['query'])
+            && empty($requestTerms['field'])
+            && ($requestTerms['sortOrder'] == 'default')
+            && empty($requestTerms['collectionStartDate'])
+            && empty($requestTerms['collectionEndDate'])
+            && empty($requestTerms['options']['rgId'])
+            && empty($requestTerms['options']['status'])
+            && empty($requestTerms['options']['fundingCycleId'])
+            && empty($requestTerms['options']['projectDirectorId'])
+            && empty($requestTerms['options']['funderId'])
+        ) {
+            $defaultSearch = true;
+        } else {
+            $defaultSearch = false;
+        }
+
         if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
             $collectionDateRange = [];
             if (!empty($requestTerms['collectionStartDate'])) {
@@ -173,7 +194,9 @@ class Search
         $mainQuery->setQuery($subMainQuery);
 
         // Add sort order
-        if ('default' !== $sortOrder) {
+        if ($defaultSearch) {
+            $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
+        } elseif ('default' !== $sortOrder) {
             $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
         }
 
