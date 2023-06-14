@@ -88,7 +88,7 @@ $(document).ready(function()
     });
 
     $("#funderList").trigger("fundersAdded", {"disabled": false});
-    // $("#keywordList").trigger("keywordsAdded", {"disabled": false});
+    $("#keywordList").trigger("keywordsAdded", {"disabled": false});
 
     $("#keywordList").on("change", function(event){
         $('[id^="keywords_"]').remove();
@@ -820,7 +820,7 @@ function formReset(dontScrollToTop)
         $("#status").val(0).change();
         $("#funderTagBox").data('dxTagBox').reset();
         $("#funderList").trigger("fundersAdded", {"disabled": false});
-        $("#keywordList").val('').trigger("change").trigger('keywordsAdded');
+        $("#keywordList").val('').trigger("change").trigger('keywordsAdded', {"disabled": false});
 
         //formHash = $("#difForm").serialize();
         formHash = undefined;
@@ -1120,7 +1120,7 @@ function fillForm(Form, UDI, ID)
 
             if (json.keywords != null) {
                 var keywords = json.keywords;
-                $("#keywordList").val(keywords.map(keyword => keyword["id"]).toString()).trigger("change").trigger("keywordsAdded");
+                $("#keywordList").val(keywords.map(keyword => keyword["id"]).toString()).trigger("change").trigger("keywordsAdded", {"disabled": false});
             }
 
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
