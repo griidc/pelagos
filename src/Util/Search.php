@@ -11,9 +11,9 @@ use App\Entity\FundingCycle;
 use App\Entity\ResearchGroup;
 use RecursiveIteratorIterator;
 use App\Entity\DatasetSubmission;
+use Elastica\Query\SimpleQueryString;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
-use Elastica\Query\SimpleQueryString;
 
 /**
  * Util class for FOS Elastic Search.
@@ -195,7 +195,9 @@ class Search
 
         // Add sort order
         if ($defaultSearch) {
-            $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
+            // Show accepted datasets first. The 'accepted' is a boolean set where datasetSubmission
+            // status == 'Accepted' by the DatasetIndexSubscriber.
+            $mainQuery->addSort(['accepted' => ['order' => 'desc'], self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => 'desc']]);
         } elseif ('default' !== $sortOrder) {
             $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
         }

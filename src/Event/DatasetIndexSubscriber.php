@@ -112,6 +112,12 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('collectionStartDate', $collectionStartDate->format('Y-m-d H:i:s'));
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
+            // set Accepted bool in index.
+            if ($dataset->getDatasetStatus() === 'Accepted') {
+                $document->set('accepted', true);
+            } else {
+                $document->set('accepted', false);
+            }
         } elseif ($dataset->hasDif()) {
             if ($dataset->getDif()->getModificationTimeStamp() instanceof \DateTime) {
                 $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
