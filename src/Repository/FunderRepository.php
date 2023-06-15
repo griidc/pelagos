@@ -82,8 +82,8 @@ class FunderRepository extends ServiceEntityRepository
             );
         }
         // Sort
-        $array_column = array_column($funderInfo, 'shortName');
-        array_multisort($array_column, SORT_ASC, $funderInfo);
+        $array_column = array_column($funderInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $funderInfo);
         return $funderInfo;
     }
 
