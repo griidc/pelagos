@@ -50,11 +50,11 @@ class SearchOptions
     private $researchGroupFilter;
 
     /**
-     * Funding Organization Filter.
+     * Funder Filter.
      *
      * @var array|null
      */
-    private $fundingOrganizationFilter;
+    private $funderFilter;
 
     /**
      * Product type descriptor Filter.
@@ -305,33 +305,33 @@ class SearchOptions
     }
 
     /**
-     * Sets the Funding Organizations to be filtered.
+     * Sets the Funders to be filtered.
      *
-     * @param string|null $fundingOrganizations the comma delimited list of Funding Organizations
+     * @param string|null $funders A comma delimited list of Funders
      */
-    public function setFundingOrgFilter(?string $fundingOrganizations): self
+    public function setFunderFilter(?string $funders): self
     {
-        if (!empty($fundingOrganizations)) {
-            $this->fundingOrganizationFilter = explode(',', $fundingOrganizations);
+        if (!empty($funders)) {
+            $this->funderFilter = explode(',', $funders);
         }
 
         return $this;
     }
 
     /**
-     * Return the list of Funding Organizations to be filtered on.
+     * Return the list of Funders to be filtered on.
      */
-    public function getFundingOrgFilter(): array
+    public function getFunderFilter(): array
     {
-        return $this->fundingOrganizationFilter;
+        return $this->funderFilter;
     }
 
     /**
-     * Is the Funding Organization filter set.
+     * Is the Funder filter set.
      */
-    public function isFundingOrgFilterSet(): bool
+    public function isFunderFilterSet(): bool
     {
-        return isset($this->fundingOrganizationFilter);
+        return isset($this->funderFilter);
     }
 
     /**
