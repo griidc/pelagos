@@ -137,7 +137,7 @@ class Search
         $sortOrder = $requestTerms['sortOrder'];
         $collectionDateRange = [];
 
-        // Is this a default no-parameters search?
+        // Is this the inital datasets display (no user-added parameters) search?
         if (
             empty($requestTerms['query'])
             && empty($requestTerms['field'])
@@ -150,9 +150,9 @@ class Search
             && empty($requestTerms['options']['projectDirectorId'])
             && empty($requestTerms['options']['funderId'])
         ) {
-            $defaultSearch = true;
+            $isInitialSearch = true;
         } else {
-            $defaultSearch = false;
+            $isInitialSearch = false;
         }
 
         if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
@@ -194,10 +194,9 @@ class Search
         $mainQuery->setQuery($subMainQuery);
 
         // Add sort order
-        if ($defaultSearch) {
-            // Show accepted datasets first. The 'accepted' is a boolean set where datasetSubmission
-            // status == 'Accepted' by the DatasetIndexSubscriber.
-            $mainQuery->addSort(['accepted' => ['order' => 'desc'], self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => 'desc']]);
+        if ($isInitialSearch) {
+            // Show accepted datasets first.
+            $mainQuery->addSort(['acceptedDate' => ['order' => 'desc']]);
         } elseif ('default' !== $sortOrder) {
             $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
         }

@@ -138,9 +138,10 @@ fos_elastica:
                 coldStorage:
                     property_path: false
                     type: 'boolean'
-                accepted:
-                    type: 'boolean'
+                acceptedDate:
+                    type: 'date'
                     property_path: false
+                    format: 'yyyy-MM-dd'
                 publications:
                     type: 'nested'
                     properties:
