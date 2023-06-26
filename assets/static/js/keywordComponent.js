@@ -15,6 +15,7 @@ $(() => {
       parentIdExpr: 'parentUri',
       searchEnabled: true,
       displayExpr: 'label',
+      disabled: false,
       onItemClick(item) {
         const selectedItem = item.itemData;
         var compiled = _.template($("#item-template ").html());
@@ -70,8 +71,10 @@ $(() => {
       }
     }).dxList('instance');
 
-    $("#keywordList").on('keywordsAdded', function() {
+    $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
+      keywordList.option('allowItemDeleting', !disabled);
       treeList.option('searchValue', '');
+      treeList.option('disabled', disabled);
       treeList.collapseAll();
       const value = $("#keywordList").val();
       keywordList.getDataSource().items().forEach(item => keywordList.deleteItem(0));
