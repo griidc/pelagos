@@ -185,6 +185,9 @@ $(document).ready(function()
             },
             funderList: {
                 require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
+            },
+            keywordList: {
+                required: "This field is required. Please select at least one keyword."
             }
         },
         submitHandler: function(form) {
