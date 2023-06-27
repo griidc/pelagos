@@ -1,6 +1,7 @@
 $(() => {
   var selectedKeywords = [];
   var allKeywords = [];
+  const defaultTemplate = _.template($("#selecteditem").html());
 
   $.ajax({
     url: Routing.generate("app_api_standard_keyword") + "?type=anzsrc",
@@ -18,7 +19,7 @@ $(() => {
       disabled: false,
       onItemClick(item) {
         const selectedItem = item.itemData;
-        var compiled = _.template($("#item-template ").html());
+        var compiled = _.template($("#item-template").html());
 
         $("#selecteditem").html(compiled(selectedItem));
 
@@ -72,6 +73,7 @@ $(() => {
     }).dxList('instance');
 
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
+      $("#selecteditem").html(defaultTemplate);
       keywordList.option('allowItemDeleting', !disabled);
       treeList.option('searchValue', '');
       treeList.option('disabled', disabled);

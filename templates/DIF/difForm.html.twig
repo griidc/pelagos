@@ -150,9 +150,17 @@
                                 <div id="treelist" style="height:400px;"></div>
                             </td>
                             <td style="width:50%">
-                                <div id="selecteditem" style="height:400px;"></div>
+                                <div id="selecteditem" style="height:400px;">
+                                    <div id="default-template" style="padding-left:20px;padding-right:20px;padding-top:20px;">
+                                        <h1>
+                                            <p>
+                                                Help text here!
+                                            </p>
+                                        </h1>
+                                    </div>
+                                </div>
                                 <script type="text/html" id="item-template">
-                                    <div style="padding:10px;">
+                                    <div style="padding-left:20px;padding-right:20px;padding-top:20px;">
                                         <label>Label:</label>
                                         <span> <%= label %> </span>
                                         <label>Definition:</label>
@@ -246,8 +254,6 @@
             </table>
         </fieldset>
     </div>
-
-
 
     <div class="frmSection">
         <fieldset>
