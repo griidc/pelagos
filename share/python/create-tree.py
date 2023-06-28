@@ -31,7 +31,6 @@ def check_header(filename):
         third = re.match('^## Invoked from: ', third_line) != None
         fourth_line = f.readline().rstrip()
         # This hardcoded offset is safe because of the previous re.match() check.
-        udi = fourth_line[28:]
         path = third_line[17:] + '/' + udi
         forth = re.match('^## \$ hashdeep ', fourth_line) != None
         fifth = f.readline().rstrip() == '##'
@@ -172,4 +171,3 @@ def main(argv, script_name):
 
 if __name__ == "__main__":
     main(sys.argv[1:], sys.argv[0])
-
