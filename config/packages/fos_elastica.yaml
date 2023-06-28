@@ -140,7 +140,6 @@ fos_elastica:
                     type: 'boolean'
                 acceptedDate:
                     type: 'date'
-                    property_path: false
                     format: 'yyyy-MM-dd'
                 publications:
                     type: 'nested'
