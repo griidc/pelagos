@@ -138,6 +138,9 @@ fos_elastica:
                 coldStorage:
                     property_path: false
                     type: 'boolean'
+                acceptedDate:
+                    type: 'date'
+                    format: 'yyyy-MM-dd'
                 publications:
                     type: 'nested'
                     properties:
@@ -155,7 +158,7 @@ fos_elastica:
                 funders:
                     type: 'nested'
                     properties:
-                        id: 
+                        id:
                             type: 'keyword'
         info_products:
             client: default
