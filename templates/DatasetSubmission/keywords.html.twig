@@ -181,7 +181,18 @@
 					</div>
 				</span>
             <div id="keyword-items">
-                <input id="keywordList" name="keywordList" type="hidden"/>
+                 {% set keywords = [] %}
+                {% for keyword in form.keywords %}
+
+                    {% set keywords = keywords|merge([keyword.vars.value]) %}
+                {% endfor %}
+
+                {% dump(keywords) %}
+
+                <input id="keywordList" name="keywordList" type="hidden" value="{{ keywords|join(', ') }}"/>
+                {# {% for keyword in form.keywords %}
+                    <input type="hidden" id="{{keyword.vars.id}}" name="{{keyword.vars.full_name}}" value="{{keyword.vars.value}}">
+                {% endfor %} #}
             </div>
             <label for="keywordSelected" class="emRequired">Discipline Keywords</label>
             <div id="keywordSelected">
