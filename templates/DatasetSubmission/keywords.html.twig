@@ -190,9 +190,9 @@
                 {% dump(keywords) %}
 
                 <input id="keywordList" name="keywordList" type="hidden" value="{{ keywords|join(', ') }}"/>
-                {# {% for keyword in form.keywords %}
+                {% for keyword in form.keywords %}
                     <input type="hidden" id="{{keyword.vars.id}}" name="{{keyword.vars.full_name}}" value="{{keyword.vars.value}}">
-                {% endfor %} #}
+                {% endfor %}
             </div>
             <label for="keywordSelected" class="emRequired">Discipline Keywords</label>
             <div id="keywordSelected">
