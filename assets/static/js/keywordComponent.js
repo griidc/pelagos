@@ -21,6 +21,12 @@ $(() => {
         const selectedItem = item.itemData;
         var compiled = _.template($("#item-template").html());
 
+        if (item.node.expanded) {
+          item.component.collapseItem(item.node.key);
+        } else {
+          item.component.expandItem(item.node.key);
+        }
+
         $("#selecteditem").html(compiled(selectedItem));
 
         $('#add-button').dxButton({
