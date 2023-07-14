@@ -3,9 +3,11 @@
 namespace App\Controller\UI;
 
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\Funder;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -62,15 +64,16 @@ class InformationProductController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function edit(InformationProduct $informationProduct, SerializerInterface $serializer): Response
+    public function edit(InformationProduct $informationProduct, SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
         $context->setSerializeNull(true);
         $researchGroupList = [];
-        $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
-        $productTypeDescriptors = $this->getDoctrine()->getRepository(ProductTypeDescriptor::class)->findAll();
-        $digitalResourceTypeDescriptors = $this->getDoctrine()->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
+        $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findAll();
+        $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findAll();
+        $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
+        $funders = $entityManager->getRepository(Funder::class)->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = array(
                 'id' => $researchGroup->getId(),
@@ -85,6 +88,7 @@ class InformationProductController extends AbstractController
                 'informationProduct' => $serializer->serialize($informationProduct, 'json', $context),
                 'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json'),
                 'digitalResourceTypeDescriptors' => $serializer->serialize($digitalResourceTypeDescriptors, 'json'),
+                'funders' => $serializer->serialize($funders, 'json'),
             )
         );
     }

@@ -96,6 +96,25 @@
         </b-form>
       </b-form-group>
 
+      <input type="hidden" v-model="form.selectedFunders" id="funders"/>
+      <p class="alert alert-warning" v-if="!fundersSelected">
+        Please select at least one funder!
+      </p>
+      <b-form-group
+          id="input-group-funders"
+          label="Funders"
+          label-for="funders"
+          description="Please and one or more funders">
+        <DxTagBox
+            :data-source="digitalResourceTypeOptions"
+            :value="digitalResourceValue"
+            display-expr="description"
+            value-expr="id"
+            :search-enabled="true"
+            @selectionChanged="onDigitalResourceTypeSelection"
+        />
+      </b-form-group>
+
       <b-form-group
           id="input-group-file"
           label="File"
