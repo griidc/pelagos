@@ -32,7 +32,6 @@
                                     <strong>Authors:</strong> {{ dataset.datasetSubmission.authors|default }}
                                 </div>
                                 <div>
-                                {% dump(dataset.acceptedDate ) %}
                                     <strong>Published On:</strong> {{ dataset.acceptedDate is null ? "" : dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
                                 </div>
                             </div>
