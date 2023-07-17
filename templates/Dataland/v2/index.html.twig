@@ -32,7 +32,8 @@
                                     <strong>Authors:</strong> {{ dataset.datasetSubmission.authors|default }}
                                 </div>
                                 <div>
-                                    <strong>Published On:</strong> {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
+                                {% dump(dataset.acceptedDate ) %}
+                                    <strong>Published On:</strong> {{ dataset.acceptedDate is null ? "" : dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
                                 </div>
                             </div>
                             <div>
@@ -48,7 +49,7 @@
                             <div>
                                 <div></div>
                                 <div>
-                                    <strong>Identified On:</strong> {{ dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }}
+                                    <strong>Identified On:</strong> {{ dataset.dif.approveddate is null ? "" : dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }}
                                 </div>
                             </div>
                             <div>
