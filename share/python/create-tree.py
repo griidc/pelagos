@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 import csv
 import argparse
@@ -19,20 +19,20 @@ def check_header(filename):
     # example header:
 
     # %%%% HASHDEEP-1.0
-    # %%%% size,md5,sha256,filename
-    # ## Invoked from: /mnt/LTFS/R1.x137.108.0001
-    # ## $ hashdeep -r .
+    # %%%% size,sha256,filename
+    # ## Invoked from: /scratch-ssd/tempdir/R4.x261.233.0002
+    # ## $ hashdeep -rl -c sha256 .
     # ##
 
     with open(filename) as f:
         first = f.readline().rstrip() == '%%%% HASHDEEP-1.0'
-        second = f.readline().rstrip() == '%%%% size,md5,sha256,filename'
+        second = f.readline().rstrip() == '%%%% size,sha256,filename'
         third_line = f.readline().rstrip()
         third = re.match('^## Invoked from: ', third_line) != None
         fourth_line = f.readline().rstrip()
         # This hardcoded offset is safe because of the previous re.match() check.
-        path = third_line[17:]
-        forth = re.match('^## \$ hashdeep -r ', fourth_line) != None
+        path = third_line[17:] + '/' + udi
+        forth = re.match('^## \$ hashdeep ', fourth_line) != None
         fifth = f.readline().rstrip() == '##'
     if (first and second and third and forth and fifth):
         return path
@@ -73,11 +73,11 @@ def generate_tree(filename, short):
             for row in reader:
                 # skip header
                 if (rownum > 5):
-                    object_filename = re.sub(path + '/', '', row[3])
+                    object_filename = re.sub(path + '/', '', row[2])
                     object_size = row[0]
 
                     # Find file's filetype, add to count by filetype.
-                    filetype = os.path.splitext(row[3])[1]
+                    filetype = os.path.splitext(row[2])[1]
                     try:
                         filetypes[filetype] += 1
                     except KeyError:
@@ -171,4 +171,3 @@ def main(argv, script_name):
 
 if __name__ == "__main__":
     main(sys.argv[1:], sys.argv[0])
-
