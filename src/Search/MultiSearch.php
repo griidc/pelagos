@@ -168,7 +168,7 @@ class MultiSearch
 
         // sort by asc when search term doesn't exist
         if ($queryString === '*') {
-            $query->addSort(array('acceptedDate' => array('order' => 'DESC')));
+            $query->addSort(array('friendlyName' => array('order' => 'ASC')));
         }
 
         // Add sort order
