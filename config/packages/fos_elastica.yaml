@@ -226,8 +226,4 @@ fos_elastica:
                 publishedDate:
                     property_path: false
                     type: 'date'
-                    format: 'yyyy-MM-dd'
-                acceptedDate:
-                    property_path: false
-                    type: 'date'
-                    format: 'yyyy-MM-dd'
+                    format: 'yyyy-MM-dd'                

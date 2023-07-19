@@ -158,7 +158,6 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         $infoProduct = $event->getObject();
 
         $document->set('publishedDate', $infoProduct->getModificationTimeStamp()->format('Y-m-d'));
-        $document->set('acceptedDate', $infoProduct->getModificationTimeStamp()->format('Y-m-d'));
     }
 
 
