@@ -22,9 +22,6 @@
         <div v-if="informationProduct.publisher">
           Publisher: {{ informationProduct.publisher | truncate(100) }}
         </div>
-        <div>
-          Created/Updated: {{ informationProduct.modificationTimeStamp }}
-        </div>
       </div>
       <div>
         <div v-if="informationProduct.externalDoi">
