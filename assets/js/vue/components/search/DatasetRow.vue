@@ -18,7 +18,7 @@
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
-                        Published on {{ datasetRowData.acceptedDate }}
+                        Published on {{ datasetRowData.acceptedDate | momentDate }}
                     </div>
                     <div v-if="datasetRowData.availabilityStatus !== 7 && fileFormat()">
                         File Format: {{ fileFormat() }}
@@ -41,6 +41,7 @@
 
 <script>
 import xbytes from 'xbytes';
+import moment from 'moment';
 
 export default {
   name: 'DatasetRow',
@@ -78,6 +79,11 @@ export default {
       }
       return this.datasetRowData.coldStorage ?? false;
     },
+  },
+  filters: {
+    momentDate: function (date) {
+      return moment(date).format('MMM DD, YYYY');
+    }
   },
 };
 </script>

@@ -44,14 +44,9 @@
 
 <script>
 import xbytes from 'xbytes';
-import moment from "moment";
+import moment from 'moment';
 
 export default {
-  filters: {
-    momentDate: function (date) {
-      return moment(date).format('MMM DD, YYYY');
-    }
-  },
   name: 'InformationProductCard',
   props: {
     informationProduct: Object,
@@ -83,6 +78,11 @@ export default {
       // eslint-disable-next-line no-undef
       downloadUrl: `${Routing.generate('pelagos_api_ip_file_download')}`,
     };
+  },
+  filters: {
+    momentDate: function (date) {
+      return moment(date).format('MMM DD, YYYY');
+    }
   },
 };
 </script>
