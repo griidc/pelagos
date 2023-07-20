@@ -23,7 +23,7 @@
           Publisher: {{ informationProduct.publisher | truncate(100) }}
         </div>
         <div>
-          Created/Updated: {{ informationProduct.modificationTimeStamp }}
+          Created/Updated: {{ informationProduct.modificationTimeStamp | momentDate }}
         </div>
       </div>
       <div>
@@ -44,8 +44,14 @@
 
 <script>
 import xbytes from 'xbytes';
+import moment from "moment";
 
 export default {
+  filters: {
+    momentDate: function (date) {
+      return moment(date).format('MMM DD, YYYY');
+    }
+  },
   name: 'InformationProductCard',
   props: {
     informationProduct: Object,
