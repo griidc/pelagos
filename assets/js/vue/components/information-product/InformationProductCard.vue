@@ -80,7 +80,6 @@ export default {
   },
   filters: {
     localDateTime: function (date) {
-      //return moment(date).format('MMM DD, YYYY');
       return new Date(date).toLocaleTimeString(
         'en-US',
         {
@@ -89,6 +88,8 @@ export default {
           day: 'numeric',
           hour: '2-digit',
           minute: 'numeric',
+          hour12: false,
+          timeZoneName: 'short'
         }
       );
     }

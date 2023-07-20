@@ -18,7 +18,7 @@
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
-                        Published on {{ datasetRowData.acceptedDate | localDateTime }}
+                        Published on: {{ datasetRowData.acceptedDate | localDateTime }}
                     </div>
                     <div v-if="datasetRowData.availabilityStatus !== 7 && fileFormat()">
                         File Format: {{ fileFormat() }}
@@ -89,6 +89,8 @@ export default {
           day: 'numeric',
           hour: '2-digit',
           minute: 'numeric',
+          hour12: false,
+          timeZoneName: 'short'
         }
       );
     }
