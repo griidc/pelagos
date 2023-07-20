@@ -80,17 +80,8 @@ export default {
   },
   filters: {
     localDateTime: function (date) {
-      return new Date(date).toLocaleTimeString(
-        'en-US',
-        {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: 'numeric',
-          hour12: false,
-          timeZoneName: 'short'
-        }
+      return new Date(date).toLocaleDateString(
+        'en-CA',
       );
     }
   },

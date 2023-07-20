@@ -44,7 +44,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         $entity = $event->getObject();
         if ($entity instanceof Dataset) {
             $this->populateDatasetAttributes($event);
-        } else if ($entity instanceof InformationProduct) {
+        } elseif ($entity instanceof InformationProduct) {
             $this->populateInformationProductAttributes($event);
         }
         return;
@@ -158,7 +158,6 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         $infoProduct = $event->getObject();
 
         $document->set('publishedDate', $infoProduct->getModificationTimeStamp()->format('Y-m-d'));
-        $document->set('acceptedDate', $infoProduct->getModificationTimeStamp()->format('Y-m-d'));
     }
 
 

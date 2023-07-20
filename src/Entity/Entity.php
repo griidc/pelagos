@@ -73,7 +73,7 @@ abstract class Entity
      * The last modification time stamp (in UTC) for this Entity.
      *
      * @var \DateTime $modificationTimeStamp;
-     * @Serializer\Groups({"search", "card"})
+     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'datetimetz')]
     protected $modificationTimeStamp;
