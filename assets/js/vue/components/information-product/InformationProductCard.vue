@@ -23,7 +23,7 @@
           Publisher: {{ informationProduct.publisher | truncate(100) }}
         </div>
         <div>
-          Created/Updated: {{ informationProduct.modificationTimeStamp | momentDate }}
+          Created/Updated: {{ informationProduct.modificationTimeStamp | localDateTime }}
         </div>
       </div>
       <div>
@@ -44,7 +44,6 @@
 
 <script>
 import xbytes from 'xbytes';
-import moment from 'moment';
 
 export default {
   name: 'InformationProductCard',
@@ -80,8 +79,18 @@ export default {
     };
   },
   filters: {
-    momentDate: function (date) {
-      return moment(date).format('MMM DD, YYYY');
+    localDateTime: function (date) {
+      //return moment(date).format('MMM DD, YYYY');
+      return new Date(date).toLocaleTimeString(
+        'en-US',
+        {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: 'numeric',
+        }
+      );
     }
   },
 };

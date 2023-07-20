@@ -18,7 +18,7 @@
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
-                        Published on {{ datasetRowData.acceptedDate | momentDate }}
+                        Published on {{ datasetRowData.acceptedDate | localDateTime }}
                     </div>
                     <div v-if="datasetRowData.availabilityStatus !== 7 && fileFormat()">
                         File Format: {{ fileFormat() }}
@@ -41,7 +41,6 @@
 
 <script>
 import xbytes from 'xbytes';
-import moment from 'moment';
 
 export default {
   name: 'DatasetRow',
@@ -81,8 +80,17 @@ export default {
     },
   },
   filters: {
-    momentDate: function (date) {
-      return moment(date).format('MMM DD, YYYY');
+    localDateTime: function (date) {
+      return new Date(date).toLocaleTimeString(
+        'en-US',
+        {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: 'numeric',
+        }
+      );
     }
   },
 };
