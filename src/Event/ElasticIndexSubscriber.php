@@ -44,7 +44,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         $entity = $event->getObject();
         if ($entity instanceof Dataset) {
             $this->populateDatasetAttributes($event);
-        } elseif ($entity instanceof InformationProduct) {
+        } else if ($entity instanceof InformationProduct) {
             $this->populateInformationProductAttributes($event);
         }
         return;

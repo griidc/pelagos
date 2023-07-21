@@ -18,7 +18,7 @@
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
-                        Published on {{ datasetRowData.acceptedDate | localDateTime }}
+                        Published on {{ datasetRowData.acceptedDate | localDate }}
                     </div>
                     <div v-if="datasetRowData.availabilityStatus !== 7 && fileFormat()">
                         File Format: {{ fileFormat() }}
@@ -80,7 +80,7 @@ export default {
     },
   },
   filters: {
-    localDateTime: function (date) {
+    localDate: function (date) {
       return new Date(date).toLocaleDateString(
         'en-CA',
       );

@@ -22,9 +22,6 @@
         <div v-if="informationProduct.publisher">
           Publisher: {{ informationProduct.publisher | truncate(100) }}
         </div>
-        <div>
-          Created/Updated: {{ informationProduct.modificationTimeStamp | localDateTime }}
-        </div>
       </div>
       <div>
         <div v-if="informationProduct.externalDoi">
@@ -77,13 +74,6 @@ export default {
       // eslint-disable-next-line no-undef
       downloadUrl: `${Routing.generate('pelagos_api_ip_file_download')}`,
     };
-  },
-  filters: {
-    localDateTime: function (date) {
-      return new Date(date).toLocaleDateString(
-        'en-CA',
-      );
-    }
   },
 };
 </script>
