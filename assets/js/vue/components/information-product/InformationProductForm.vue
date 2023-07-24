@@ -96,22 +96,22 @@
         </b-form>
       </b-form-group>
 
-      <input type="hidden" v-model="form.selectedFunders" id="funders"/>
+      <input type="hidden" v-model="form.selectedFunders" id="funder"/>
       <p class="alert alert-warning" v-if="!fundersSelected">
         Please select at least one funder!
       </p>
       <b-form-group
           id="input-group-funders"
-          label="Funders"
-          label-for="funders"
+          label="Funder"
+          label-for="funder"
           description="Please and one or more funders">
         <DxTagBox
-            :data-source="digitalResourceTypeOptions"
+            :data-source="funderOptions"
             :value="digitalResourceValue"
-            display-expr="description"
+            display-expr="name"
             value-expr="id"
             :search-enabled="true"
-            @selectionChanged="onDigitalResourceTypeSelection"
+            @saelectionChanged="onDigitalResourceTypeSelection"
         />
       </b-form-group>
 
@@ -338,6 +338,10 @@ export default {
         store: window.digitalResourceTypeDescriptors,
         key: 'id',
       }),
+      funderOptions: new DataSource({
+        store: window.funders,
+        key: 'id',
+      }),
       digitalResourceValue: [],
     };
   },
@@ -361,6 +365,12 @@ export default {
     },
     digitalResourceTypesSelected() {
       return this.digitalResourceValue.length > 0;
+    },
+    selectedFunders() {
+      return 1;
+    },
+    fundersSelected() {
+      return true;
     },
   },
   mounted() {
@@ -587,10 +597,10 @@ export default {
 
     getFunderIds() {
       const funderIds = [];
-      window.informationProduct.digitalResourceTypeDescriptors.forEach((digitalResourceTypeDescriptor) => {
-        digitalResourceTypeDescriptorIds.push(digitalResourceTypeDescriptor.id);
+      window.funders.forEach((funder) => {
+        funderIds.push(funder.id);
       });
-      return digitalResourceTypeDescriptorIds;
+      return funderIds;
     },
   },
 
