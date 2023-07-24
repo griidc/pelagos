@@ -584,6 +584,14 @@ export default {
       });
       return digitalResourceTypeDescriptorIds;
     },
+
+    getFunderIds() {
+      const funderIds = [];
+      window.informationProduct.digitalResourceTypeDescriptors.forEach((digitalResourceTypeDescriptor) => {
+        digitalResourceTypeDescriptorIds.push(digitalResourceTypeDescriptor.id);
+      });
+      return digitalResourceTypeDescriptorIds;
+    },
   },
 
   created() {
