@@ -220,7 +220,7 @@ let myDropzone;
 const getItems = (pathInfo) => new Promise((resolve, reject) => {
   getApi(
     // eslint-disable-next-line no-undef
-    `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`,
+    `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${encodeURIComponent(pathInfo.path)}`,
   ).then((response) => {
     resolve(response.data);
     const filesUploaded = document.getElementById('filesUploaded');
@@ -297,7 +297,7 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
   items.forEach((item, key) => {
     getApi(
       // eslint-disable-next-line no-undef
-      `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`,
+      `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${encodeURIComponent(item.path)}`,
     ).then((response) => {
       progressItems[key] = [];
       const config = {
