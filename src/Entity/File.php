@@ -340,10 +340,10 @@ class File extends Entity
      */
     public function getFilePathParts(string $path = ''): array
     {
-        $firstOccurrence = 1;
         $filepath = $this->getFilePathName();
         if ($path) {
-            $filepath = str_replace($path . '/', '', $filepath, $firstOccurrence);
+            $regex = '/^' . preg_quote($path, '/') . '\//';
+            $filepath = preg_replace($regex, '', $filepath);
         }
         return explode('/', $filepath);
     }
