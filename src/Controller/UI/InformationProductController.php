@@ -29,12 +29,14 @@ class InformationProductController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function index(SerializerInterface $serializer): Response
+    public function index(SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
+        dump('here?>');
         $researchGroupList = [];
-        $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
-        $productTypeDescriptors = $this->getDoctrine()->getRepository(ProductTypeDescriptor::class)->findAll();
-        $digitalResourceTypeDescriptors = $this->getDoctrine()->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
+        $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findAll();
+        $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findAll();
+        $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
+        $funders = $entityManager->getRepository(Funder::class)->findAll();
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
         $context->setSerializeNull(true);
@@ -51,6 +53,7 @@ class InformationProductController extends AbstractController
                 'researchGroups' => $researchGroupList,
                 'productTypeDescriptors' => $serializer->serialize($productTypeDescriptors, 'json', $context),
                 'digitalResourceTypeDescriptors' => $serializer->serialize($digitalResourceTypeDescriptors, 'json'),
+                'funders' => $serializer->serialize($funders, 'json'),
             )
         );
     }
@@ -81,6 +84,8 @@ class InformationProductController extends AbstractController
                 'shortName' => $researchGroup->getShortName(),
             );
         }
+
+        dump($funders);
         return $this->render(
             'InformationProduct/edit.html.twig',
             array(
