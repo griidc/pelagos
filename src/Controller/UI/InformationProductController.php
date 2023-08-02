@@ -31,7 +31,6 @@ class InformationProductController extends AbstractController
      */
     public function index(SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
-        dump('here?>');
         $researchGroupList = [];
         $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findAll();
         $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findAll();
@@ -85,7 +84,6 @@ class InformationProductController extends AbstractController
             );
         }
 
-        dump($funders);
         return $this->render(
             'InformationProduct/edit.html.twig',
             array(

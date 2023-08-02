@@ -530,6 +530,25 @@ class InformationProduct extends Entity
     }
 
     /**
+     * Get the Funder List for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("funders")
+     *
+     * @return array
+     */
+    public function getFunderList(): array
+    {
+        $funderList = [];
+
+        foreach ($this->getFunders() as $funder) {
+            $funderList[] = $funder->getId();
+        }
+
+        return $funderList;
+    }
+
+    /**
      * @return Collection<int, Funder>
      */
     public function getFunders(): Collection

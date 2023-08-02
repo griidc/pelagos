@@ -107,11 +107,11 @@
           description="Please and one or more funders">
         <DxTagBox
             :data-source="funderOptions"
-            :value="digitalResourceValue"
+            :value="fundersValue"
             display-expr="name"
             value-expr="id"
             :search-enabled="true"
-            @saelectionChanged="onDigitalResourceTypeSelection"
+            @selectionChanged="onFunderSelection"
         />
       </b-form-group>
 
@@ -343,6 +343,7 @@ export default {
         key: 'id',
       }),
       digitalResourceValue: [],
+      fundersValue: [],
     };
   },
   computed: {
@@ -353,6 +354,7 @@ export default {
       return this.digitalResourceTypesSelected
           && this.productTypesSelected
           && this.researchGroupsSelected
+          && this.fundersSelected
           && this.form.title !== ''
           && this.form.creators !== ''
           && this.form.publisher !== '';
@@ -366,11 +368,8 @@ export default {
     digitalResourceTypesSelected() {
       return this.digitalResourceValue.length > 0;
     },
-    selectedFunders() {
-      return 1;
-    },
     fundersSelected() {
-      return true;
+      return this.fundersValue.length > 0;
     },
   },
   mounted() {
@@ -384,6 +383,7 @@ export default {
       this.submitBtnText = 'Save Changes';
       this.productValue = this.getProductTypeDescriptorIds();
       this.digitalResourceValue = this.getDigitalResourceTypeDescriptorIds();
+      this.fundersValue = this.getFunderIds();
     }
   },
   methods: {
@@ -391,6 +391,7 @@ export default {
       event.preventDefault();
       this.form.selectedProductTypes = this.productValue;
       this.form.selectedDigitalResourceTypes = this.digitalResourceValue;
+      this.form.selectedFunders = this.fundersValue;
       if (this.editMode) {
         patchApi(
           // eslint-disable-next-line no-undef
@@ -448,6 +449,7 @@ export default {
         remoteUri: '',
         selectedProductTypes: [],
         selectedDigitalResourceTypes: [],
+        selectedFunders: [],
       };
     },
 
@@ -534,6 +536,7 @@ export default {
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
       this.form.selectedProductTypes = this.getProductTypeDescriptorIds();
       this.form.selectedDigitalResourceTypes = this.getDigitalResourceTypeDescriptorIds();
+      this.form.selectedFunders = this.getFunderIds();
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
       this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
@@ -595,9 +598,24 @@ export default {
       return digitalResourceTypeDescriptorIds;
     },
 
+    onFunderSelection(event) {
+      event.addedItems.forEach((value) => {
+        if (!this.fundersValue.includes((value.id))) {
+          this.fundersValue.push(value.id);
+        }
+      });
+
+      event.removedItems.forEach((value) => {
+        const index = this.fundersValue.indexOf(value.id);
+        if (index > -1) {
+          this.fundersValue.splice(index, 1);
+        }
+      });
+    },
+
     getFunderIds() {
       const funderIds = [];
-      window.funders.forEach((funder) => {
+      window.informationProduct.funders.forEach((funder) => {
         funderIds.push(funder.id);
       });
       return funderIds;

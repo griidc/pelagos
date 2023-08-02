@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\File;
+use App\Entity\Funder;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
@@ -70,12 +71,11 @@ class InformationProductController extends AbstractFOSRestController
      *     defaults={"_format"="json"},
      * )
      */
-    public function createInformationProduct(Request $request, MessageBusInterface $messageBus): Response
+    public function createInformationProduct(Request $request, MessageBusInterface $messageBus, EntityManagerInterface $entityManager): Response
     {
         $response = Response::HTTP_BAD_REQUEST;
         $id = null;
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
-        $entityManager = $this->getDoctrine()->getManager();
         $informationProduct = new InformationProduct();
         $form = $this->createForm(InformationProductType::class, $informationProduct);
         $request->request->set($form->getName(), $prefilledRequestDataBag);
@@ -83,6 +83,11 @@ class InformationProductController extends AbstractFOSRestController
         $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findBy(['id' => $researchGroupsIds]);
         foreach ($researchGroups as $researchGroup) {
             $informationProduct->addResearchGroup($researchGroup);
+        }
+        $funderIds = $request->get('selectedFunders');
+        $funders = $entityManager->getRepository(Funder::class)->findBy(['id' => $funderIds]);
+        foreach ($funders as $funder) {
+            $informationProduct->addFunder($funder);
         }
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
         $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
@@ -135,10 +140,9 @@ class InformationProductController extends AbstractFOSRestController
      *     requirements={"id"="\d+"}
      * )
      */
-    public function updateInformationProduct(Request $request, InformationProduct $informationProduct, MessageBusInterface $messageBus): Response
+    public function updateInformationProduct(Request $request, InformationProduct $informationProduct, MessageBusInterface $messageBus, EntityManagerInterface $entityManager): Response
     {
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
-        $entityManager = $this->getDoctrine()->getManager();
         $form = $this->createForm(InformationProductType::class, $informationProduct, ['method' => 'PATCH']);
         $request->request->set($form->getName(), $prefilledRequestDataBag);
         $researchGroupsIds = $request->get('selectedResearchGroups');
@@ -152,6 +156,18 @@ class InformationProductController extends AbstractFOSRestController
         foreach ($researchGroupsToBeAdded as $researchGroup) {
             $informationProduct->addResearchGroup($researchGroup);
         }
+        $funderIds = $request->get('selectedFunders');
+        $fundersToBeDeleted = $entityManager->getRepository(Funder::class)->findBy(['id' => $informationProduct->getFunderList()]);
+        $fundersToBeAdded = $entityManager->getRepository(Funder::class)->findBy(['id' => $funderIds]);
+         // Remove previously added funders
+         foreach ($fundersToBeDeleted as $funder) {
+            $informationProduct->removeFunder($funder);
+        }
+        // Add them from the newly updated Information product
+        foreach ($fundersToBeAdded as $funder) {
+            $informationProduct->addFunder($funder);
+        }
+
         $productTypeDescriptorIds = $request->get('selectedProductTypes');
         $productTypeDescriptorsToBeDeleted = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $informationProduct->getProductTypeDescriptorList()]);
         $productTypeDescriptorsToBeAdded = $entityManager->getRepository(ProductTypeDescriptor::class)->findBy(['id' => $productTypeDescriptorIds]);
@@ -178,7 +194,7 @@ class InformationProductController extends AbstractFOSRestController
         }
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
         }
 
         $messageBus->dispatch(new InformationProductFiler($informationProduct->getId()));
