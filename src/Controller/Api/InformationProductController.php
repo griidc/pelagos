@@ -334,7 +334,7 @@ class InformationProductController extends AbstractFOSRestController
 
         /** @var Account $currentUser */
         $currentUser = $this->getUser();
-        $currentPerson =$currentUser->getPerson();
+        $currentPerson = $currentUser->getPerson();
 
         $newFile = new File();
         $newFile->setFilePathName(trim($fileName));
