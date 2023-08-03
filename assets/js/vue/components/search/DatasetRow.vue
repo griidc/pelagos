@@ -80,11 +80,9 @@ export default {
     },
   },
   filters: {
-    localDate: function (date) {
-      return new Date(date).toLocaleDateString(
-        'en-CA',
-      );
-    }
+    localDate(date) {
+      return new Date(date).toLocaleDateString('en-CA');
+    },
   },
 };
 </script>
