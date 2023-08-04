@@ -152,6 +152,9 @@ class InformationProduct extends Entity
     #[ORM\ManyToMany(targetEntity: DigitalResourceTypeDescriptor::class)]
     private $digitalResourceTypeDescriptors;
 
+    #[ORM\ManyToMany(targetEntity: Funder::class)]
+    private Collection $funders;
+
     /**
      * Constructor.
      *
@@ -162,6 +165,7 @@ class InformationProduct extends Entity
         $this->researchGroups = new ArrayCollection();
         $this->productTypeDescriptors = new ArrayCollection();
         $this->digitalResourceTypeDescriptors = new ArrayCollection();
+        $this->funders = new ArrayCollection();
     }
 
     /**
@@ -570,5 +574,53 @@ class InformationProduct extends Entity
     public function getClassName(): string
     {
         return get_class($this);
+    }
+
+    /* Get the Funder List for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("funders")
+     *
+     * @return array
+     */
+    public function getFunderList(): array
+    {
+        $funderList = [];
+
+        foreach ($this->getFunders() as $funder) {
+            $funderList[] = $funder->getId();
+        }
+
+        return $funderList;
+    }
+
+    /**
+     * @return Collection<int, Funder>
+     */
+    public function getFunders(): Collection
+    {
+        return $this->funders;
+    }
+
+    /**
+     * Add a funder
+     */
+    public function addFunder(Funder $funder): self
+    {
+        if (!$this->funders->contains($funder)) {
+            $this->funders->add($funder);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove a funder
+     */
+    public function removeFunder(Funder $funder): self
+    {
+        $this->funders->removeElement($funder);
+
+        return $this;
     }
 }
