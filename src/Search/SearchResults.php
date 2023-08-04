@@ -197,6 +197,17 @@ class SearchResults
             $this->facetInfo['statusInfo'] = $this->getStatusInfo($datasetStatusBucket);
         }
 
+        // Funder aggregation
+        $funderAggregations = $this->findKey($aggregations, 'funders_aggregation');
+        if (array_key_exists('buckets', $funderAggregations)) {
+            $funderBucket = array_column(
+                $funderAggregations['buckets'],
+                'doc_count',
+                'key'
+            );
+            $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($funderBucket);
+        }
+
         // Product type aggregation
         $productTypeDescriptorAggregations = $this->findKey($aggregations, 'product_type_aggregation');
         if (array_key_exists('buckets', $productTypeDescriptorAggregations)) {
@@ -234,16 +245,6 @@ class SearchResults
             $this->facetInfo['tagsInfo'] = $this->bucketToInfoArray($tagsBucket);
         }
 
-        // Funder aggregation
-        $funderAggregations = $this->findKey($aggregations, 'funders_aggregation');
-        if (array_key_exists('buckets', $funderAggregations)) {
-            $funderBucket = array_column(
-                $funderAggregations['buckets'],
-                'doc_count',
-                'key'
-            );
-            $this->facetInfo['fundersInfo'] = $this->funderRepository->getFunderInfo($funderBucket);
-        }
     }
 
     /**
