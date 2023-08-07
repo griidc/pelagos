@@ -244,7 +244,6 @@ class SearchResults
             );
             $this->facetInfo['tagsInfo'] = $this->bucketToInfoArray($tagsBucket);
         }
-
     }
 
     /**
