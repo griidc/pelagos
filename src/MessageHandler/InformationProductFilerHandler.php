@@ -122,6 +122,8 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
             return;
         }
 
+        @fclose($fileStream);
+
         try {
             unlink($filePath);
             rmdir(dirname($filePath));
