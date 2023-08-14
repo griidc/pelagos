@@ -65,9 +65,11 @@ class InformationProductSearch
         $boolQuery = new BoolQuery();
         $boolQuery->addMust($simpleQuery);
 
-        $publishedQueryTerm = new Term();
-        $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
-        $boolQuery->addFilter($publishedQueryTerm);
+        if ($searchOptions->shouldFilterOnlyPublishedInformationProducts()) {
+            $publishedQueryTerm = new Term();
+            $publishedQueryTerm->setTerm('published', true);
+            $boolQuery->addFilter($publishedQueryTerm);
+        }
 
         $query = new Query();
         $query->setQuery($boolQuery);
@@ -92,9 +94,11 @@ class InformationProductSearch
     {
         $boolQuery = new BoolQuery();
 
-        $publishedQueryTerm = new Term();
-        $publishedQueryTerm->setTerm('published', $searchOptions->shouldFilterOnlyPublishedInformationProducts());
-        $boolQuery->addMust($publishedQueryTerm);
+        if ($searchOptions->shouldFilterOnlyPublishedInformationProducts()) {
+            $publishedQueryTerm = new Term();
+            $publishedQueryTerm->setTerm('published', true);
+            $boolQuery->addFilter($publishedQueryTerm);
+        }
 
         $researchGroupNameQuery = new Query\Nested();
         $researchGroupNameQuery->setPath('researchGroups');

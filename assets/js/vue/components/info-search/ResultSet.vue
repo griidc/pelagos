@@ -44,7 +44,7 @@
         <div class="empty-div"></div>
         <b-pagination
             v-model="currentPage"
-            :total-rows="results.result"
+            :total-rows="results.count"
             :per-page="formValues.perPage"
             class="justify-content-center pr-3 mr-3">
         </b-pagination>
