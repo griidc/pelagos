@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class MultiSearchController extends AbstractController
 {
     /**
-     * @Route("/multi-search")
+     * @Route("/multi-search", name="app_multi_search")
      */
     public function index(): Response
     {
