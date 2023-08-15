@@ -100,17 +100,6 @@ export default {
       this.onSubmit();
     },
   },
-  computed: {
-    resultCount() {
-      let resultCount = 0;
-      this.results.forEach((informationProduct) => {
-        if (informationProduct.published) {
-          resultCount += 1;
-        }
-      });
-      return resultCount;
-    },
-  },
   mounted() {
     this.init();
   },

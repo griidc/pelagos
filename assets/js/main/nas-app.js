@@ -26,6 +26,8 @@ Routing.setRoutingData(routes);
 global.Routing = Routing;
 global.templateSwitch = templateSwitch;
 
+templateSwitch.setTemplate('GRP');
+
 function toggleDropdown(event) {
   const dropdown = $(event.target).closest('.dropdown');
   const menu = $('.dropdown-menu', dropdown);
@@ -55,9 +57,10 @@ function setContentHeight() {
   $('.page-pelagos-full #main-wrapper').height(newheight);
 }
 
-$(document).ready(() => {
+$(() => {
   $('.dropdown').hoverIntent(toggleDropdown);
-  $(window).resize(() => {
+
+  $(window).on('resize', () => {
     setContentHeight();
-  }).resize();
+  }).trigger('resize');
 });
