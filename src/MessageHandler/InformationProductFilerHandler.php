@@ -10,6 +10,7 @@ use App\Repository\InformationProductRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Psr7\Stream;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -81,6 +82,8 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         }
         $fileId = $file->getId();
         $filePath = $file->getPhysicalFilePath();
+        $bla = new Stream(fopen($filePath, 'r'));
+        $bla->
         @$fileStream = fopen($filePath, 'r');
 
         $systemPerson = $this->entityManager->find(Person::class, 0);
@@ -122,7 +125,9 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
             return;
         }
 
-        @fclose($fileStream);
+        if (is_resource($fileStream)) {
+            @fclose($fileStream);
+        }
 
         try {
             unlink($filePath);
