@@ -10,56 +10,134 @@ class SearchOptions
     /**
      * The query string to be searched.
      *
-     * @var string $queryString
+     * @var string
      */
     private $queryString = '*';
 
     /**
      * Only search for published Information Products.
      *
-     * @var boolean
+     * @var bool
      */
-    private $onlyPublishedInformationProducts = true;
+    private $onlyPublishedInformationProducts = false;
 
     /**
      * The current page of results.
      *
-     * @var integer $currentPage
+     * @var int
      */
     private $currentPage = 1;
 
     /**
+     * Sort order of results.
+     *
+     * @var string
+     */
+    private $sortOrder = '';
+
+    /**
      * The maximum results per page.
      *
-     * @var integer $maxPerPage
+     * @var int
      */
     private $maxPerPage = 10;
 
     /**
      * Research Group Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $researchGroupFilter;
 
     /**
+     * Funder Filter.
+     *
+     * @var array|null
+     */
+    private $funderFilter;
+
+    /**
      * Product type descriptor Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $productTypeDescFilter;
 
     /**
      * Digital resource type descriptor Filter.
      *
-     * @var array
+     * @var array|null
      */
     private $digitalTypeDescFilter;
 
     /**
-     * Class Contructor.
+     * List of facets.
      *
-     * @param string|null $queryString
+     * @var array|null
+     */
+    private $facets;
+
+    /**
+     * The datatype.
+     *
+     * @var array|null
+     */
+    private $dataType;
+
+    /**
+     * Dataset availability status.
+     *
+     * @var array|null
+     */
+    private $status;
+
+    /**
+     * Dataset tags filter.
+     *
+     * @var array
+     */
+    private $tags = [];
+
+    /**
+     * Date type filter.
+     *
+     * @var string
+     */
+    private $dateType;
+
+    /**
+     * Start Date range filter.
+     *
+     * @var string
+     */
+    private $rangeStartDate;
+
+    /**
+     * End Date range filter.
+     *
+     * @var string
+     */
+    private $rangeEndDate;
+
+    /**
+     * Specific field to be searched upon.
+     *
+     * @var string
+     */
+    private $field;
+
+    /**
+     * Date type collection date.
+     */
+    public const DATE_TYPE_COLLECTION = 'collectionDate';
+
+    /**
+     * Date type published date.
+     */
+    public const DATE_TYPE_PUBLISHED = 'publishedDate';
+
+    /**
+     * Class Contructor.
      */
     public function __construct(?string $queryString)
     {
@@ -68,10 +146,6 @@ class SearchOptions
 
     /**
      * Set the query string.
-     *
-     * @param string|null $queryString
-     *
-     * @return self
      */
     public function setQueryString(?string $queryString): self
     {
@@ -86,8 +160,6 @@ class SearchOptions
 
     /**
      * Get the query string.
-     *
-     * @return string
      */
     public function getQueryString(): string
     {
@@ -96,8 +168,6 @@ class SearchOptions
 
     /**
      * If only published Information Products should be searched for.
-     *
-     * @return self
      */
     public function onlyPublishedInformationProducts(): self
     {
@@ -108,8 +178,6 @@ class SearchOptions
 
     /**
      * Should I filter only by published Information Products.
-     *
-     * @return boolean
      */
     public function shouldFilterOnlyPublishedInformationProducts(): bool
     {
@@ -118,10 +186,6 @@ class SearchOptions
 
     /**
      * Set the curent page.
-     *
-     * @param integer|null $currentPage
-     *
-     * @return self
      */
     public function setCurrentPage(?int $currentPage): self
     {
@@ -134,8 +198,6 @@ class SearchOptions
 
     /**
      * Get the current page.
-     *
-     * @return integer
      */
     public function getCurrentPage(): int
     {
@@ -145,11 +207,9 @@ class SearchOptions
     /**
      * Sets the max results per page.
      *
-     * @param integer $maxPerPage
+     * @param int $maxPerPage
      *
      * @throws \OutOfRangeException When max page number is 0;
-     *
-     * @return self
      */
     public function setMaxPerPage(?int $maxPerPage): self
     {
@@ -164,8 +224,6 @@ class SearchOptions
 
     /**
      * Get the max number of results per page.
-     *
-     * @return integer
      */
     public function getMaxPerPage(): int
     {
@@ -173,11 +231,53 @@ class SearchOptions
     }
 
     /**
+     * Set the data type.
+     */
+    public function setDataType(?string $dataType): self
+    {
+        if (!empty($dataType)) {
+            $this->dataType = explode(',', $dataType);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the data type.
+     *
+     * @return array
+     */
+    public function getDataType()
+    {
+        return $this->dataType;
+    }
+
+    /**
+     * Set the dataset status.
+     */
+    public function setDatasetStatus(?string $status): self
+    {
+        if (!empty($status)) {
+            $this->status = explode(',', $status);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the dataset status.
+     *
+     * @return array
+     */
+    public function getDatasetStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Sets the research groups to be filtered.
      *
-     * @param string|null $researchGroups The comma delimited list of Research Groups.
-     *
-     * @return self
+     * @param string|null $researchGroups the comma delimited list of Research Groups
      */
     public function setResearchGroupFilter(?string $researchGroups): self
     {
@@ -190,8 +290,6 @@ class SearchOptions
 
     /**
      * Return the list of research groups to be filtered on.
-     *
-     * @return array
      */
     public function getResearchGroupFilter(): array
     {
@@ -200,8 +298,6 @@ class SearchOptions
 
     /**
      * Is the Research Group filter set.
-     *
-     * @return boolean
      */
     public function isResearchGroupFilterSet(): bool
     {
@@ -209,9 +305,37 @@ class SearchOptions
     }
 
     /**
-     * Get the product type descriptor filter.
+     * Sets the Funders to be filtered.
      *
-     * @return array
+     * @param string|null $funders A comma delimited list of Funders
+     */
+    public function setFunderFilter(?string $funders): self
+    {
+        if (!empty($funders)) {
+            $this->funderFilter = explode(',', $funders);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the list of Funders to be filtered on.
+     */
+    public function getFunderFilter(): array
+    {
+        return $this->funderFilter;
+    }
+
+    /**
+     * Is the Funder filter set.
+     */
+    public function isFunderFilterSet(): bool
+    {
+        return isset($this->funderFilter);
+    }
+
+    /**
+     * Get the product type descriptor filter.
      */
     public function getProductTypeDescFilter(): array
     {
@@ -221,9 +345,7 @@ class SearchOptions
     /**
      * Set the product type descriptor filter.
      *
-     * @param string|null $productTypeDescriptors A list of comma delimited product type descriptors.
-     *
-     * @return self
+     * @param string|null $productTypeDescriptors a list of comma delimited product type descriptors
      */
     public function setProductTypeDescFilter(?string $productTypeDescriptors): self
     {
@@ -236,8 +358,6 @@ class SearchOptions
 
     /**
      * Is the Product Type Filter set.
-     *
-     * @return bool
      */
     public function isProductTypeDescFilterSet(): bool
     {
@@ -246,8 +366,6 @@ class SearchOptions
 
     /**
      * Gets the digital resource type filter.
-     *
-     * @return array
      */
     public function getDigitalTypeDescFilter(): array
     {
@@ -257,9 +375,7 @@ class SearchOptions
     /**
      * Sets the digital resource type filter.
      *
-     * @param string|null $digitalResourceTypes A comma delimited list of Digital Resource Type Descriptors.
-     *
-     * @return void
+     * @param string|null $digitalResourceTypes a comma delimited list of Digital Resource Type Descriptors
      */
     public function setDigitalTypeDescFilter(?string $digitalResourceTypes): void
     {
@@ -270,11 +386,125 @@ class SearchOptions
 
     /**
      * If the digital resource type filter is set.
-     *
-     * @return bool
      */
     public function isDigitalTypeDescFilterSet(): bool
     {
         return isset($this->digitalTypeDescFilter);
+    }
+
+    /**
+     * Set a list of facets to use.
+     */
+    public function setFacets(array $facets): self
+    {
+        $this->facets = $facets;
+
+        return $this;
+    }
+
+    /**
+     * Get the list of facets.
+     */
+    public function getFacets(): ?array
+    {
+        return $this->facets;
+    }
+
+    /**
+     * Get the tags.
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set the tag filter.
+     */
+    public function setTags(?string $tags): void
+    {
+        if (!empty($tags)) {
+            $this->tags = explode(',', $tags);
+        }
+    }
+
+    /**
+     * Get the date type filter.
+     */
+    public function getDateType(): string
+    {
+        return $this->dateType;
+    }
+
+    /**
+     * Set the date type filter.
+     */
+    public function setDateType(string $dateType): void
+    {
+        $this->dateType = $dateType;
+    }
+
+    /**
+     * Get the start date range filter.
+     */
+    public function getRangeStartDate(): string
+    {
+        return $this->rangeStartDate;
+    }
+
+    /**
+     * Set the start date range filter.
+     */
+    public function setRangeStartDate(string $rangeStartDate): void
+    {
+        $this->rangeStartDate = $rangeStartDate;
+    }
+
+    /**
+     * Get the end date range filter.
+     */
+    public function getRangeEndDate(): string
+    {
+        return $this->rangeEndDate;
+    }
+
+    /**
+     * Set the end date range filter.
+     */
+    public function setRangeEndDate(string $rangeEndDate): void
+    {
+        $this->rangeEndDate = $rangeEndDate;
+    }
+
+    /**
+     * Get the sort order filter.
+     */
+    public function getSortOrder(): string
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * Set the sort order filter.
+     */
+    public function setSortOrder(string $sortOrder): void
+    {
+        $this->sortOrder = $sortOrder;
+    }
+
+    /**
+     * Get specific field to be searched upon.
+     */
+    public function getField(): ?string
+    {
+        return $this->field;
+    }
+
+    /**
+     * Set specific field to be searched upon.
+     */
+    public function setField(string $field): void
+    {
+        $this->field = $field;
     }
 }

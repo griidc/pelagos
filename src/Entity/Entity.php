@@ -35,6 +35,8 @@ abstract class Entity
      * @Serializer\Groups({"id"})
      *
      *
+     * @Serializer\Groups({"search"})
+     *
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
