@@ -49,6 +49,8 @@ class File extends Entity
      * Filepath name.
      *
      * @var string
+     *
+     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
     protected $filePathName;
@@ -57,6 +59,8 @@ class File extends Entity
      * File size(bytes).
      *
      * @var integer
+     *
+     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'bigint', nullable: true)]
     protected $fileSize;
@@ -107,6 +111,8 @@ class File extends Entity
      * @var string
      *
      * @see FILE_* constants.
+     *
+     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text')]
     protected $status = self::FILE_NEW;
@@ -160,6 +166,7 @@ class File extends Entity
      *
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("fileExtension")
+     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */

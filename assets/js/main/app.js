@@ -27,6 +27,8 @@ Routing.setRoutingData(routes);
 global.Routing = Routing;
 global.templateSwitch = templateSwitch;
 
+templateSwitch.setTemplate('GRIIDC');
+
 function hoverIn() {
   $(this).find('ul').removeClass('sf-hidden');
   $(this).addClass('sfHover');
@@ -56,10 +58,10 @@ function setContentHeight() {
   $('.page-pelagos-full #main-wrapper').height(newheight);
 }
 
-$(document).ready(() => {
+$(() => {
   $('#pelagos-menu-1').hoverIntent(hoverIn, hoverOut, 'li');
 
-  $(window).resize(() => {
+  $(window).on('resize', () => {
     setContentHeight();
-  }).resize();
+  }).trigger('resize');
 });

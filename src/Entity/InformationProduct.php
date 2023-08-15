@@ -6,8 +6,8 @@ use App\Repository\InformationProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Information Product Entity class.
@@ -26,6 +26,8 @@ class InformationProduct extends Entity
      * @var string
      *
      *
+     * @Serializer\Groups({"card"})
+     *
      * @Assert\NotBlank(
      *     message="A title is required."
      * )
@@ -38,6 +40,8 @@ class InformationProduct extends Entity
      *
      * @var string
      *
+     *
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A creator is required."
@@ -52,6 +56,8 @@ class InformationProduct extends Entity
      * @var string
      *
      *
+     * @Serializer\Groups({"card"})
+     *
      * @Assert\NotBlank(
      *     message="A publisher is required."
      * )
@@ -64,6 +70,8 @@ class InformationProduct extends Entity
      * An external DOI for the Information Product.
      *
      * @var string
+     *
+     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
     private $externalDoi;
@@ -72,6 +80,8 @@ class InformationProduct extends Entity
      * Is the Information Product published.
      *
      * @var boolean
+     *
+     * @Serializer\Groups({"search"})
      */
     #[ORM\Column(type: 'boolean')]
     private $published = false;
@@ -80,6 +90,8 @@ class InformationProduct extends Entity
      * Is the Information Product remotely hosted.
      *
      * @var boolean
+     *
+     * @Serializer\Groups({"search", "card"})
      */
     #[ORM\Column(type: 'boolean')]
     private $remoteResource = false;
@@ -92,6 +104,7 @@ class InformationProduct extends Entity
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\SerializedName("researchGroup")
+     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToMany(targetEntity: ResearchGroup::class)]
     private $researchGroups;
@@ -100,6 +113,8 @@ class InformationProduct extends Entity
      * The remote uri for this Information Product.
      *
      * @var string
+     *
+     * @Serializer\Groups({"search", "card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
     private $remoteUri;
@@ -110,6 +125,7 @@ class InformationProduct extends Entity
      * @var File
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search", "card"})
      */
     #[ORM\OneToOne(targetEntity: File::class, cascade: ['persist', 'remove'])]
     private $file;
@@ -120,6 +136,7 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToMany(targetEntity: ProductTypeDescriptor::class)]
     private $productTypeDescriptors;
@@ -130,6 +147,7 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToMany(targetEntity: DigitalResourceTypeDescriptor::class)]
     private $digitalResourceTypeDescriptors;
@@ -381,6 +399,7 @@ class InformationProduct extends Entity
      *
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("remoteUriHostName")
+     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */
@@ -530,7 +549,35 @@ class InformationProduct extends Entity
     }
 
     /**
-     * Get the Funder List for this Information Product.
+     * Show friendly name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("friendlyName")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getFriendlyName(): string
+    {
+        return $this::FRIENDLY_NAME;
+    }
+
+    /**
+     * Show class name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("className")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return get_class($this);
+    }
+
+    /**
+     *Get the Funder List for this Information Product.
      *
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("funders")
@@ -549,6 +596,8 @@ class InformationProduct extends Entity
     }
 
     /**
+     * Get all funders.
+     *
      * @return Collection<int, Funder>
      */
     public function getFunders(): Collection
@@ -556,6 +605,9 @@ class InformationProduct extends Entity
         return $this->funders;
     }
 
+    /**
+     * Add Funder to Information Product.
+     */
     public function addFunder(Funder $funder): self
     {
         if (!$this->funders->contains($funder)) {
@@ -565,6 +617,9 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Remove Funder from Information Product.
+     */
     public function removeFunder(Funder $funder): self
     {
         $this->funders->removeElement($funder);
