@@ -65,6 +65,21 @@
             }
         %}
     </gmd:descriptiveKeywords>
+    <gmd:descriptiveKeywords>
+        {% set anzsrc_keywords = [] %}
+        {% for keyword in dataset.datasetSubmission.keywords %}
+            {% if keyword.type.value == 'anzsrc' %}
+                {% set anzsrc_keywords = anzsrc_keywords|merge([keyword]) %}
+            {% endif %}
+        {% endfor %}
+        {% if anzsrc_keywords %}
+            {% include "MetadataGenerator/ANZSRC_Keywords.xml.twig" with
+                {
+                    "keywords" : anzsrc_keywords,
+                }
+            %}
+        {% endif %}
+    </gmd:descriptiveKeywords>
     <gmd:resourceConstraints xlink:title="Cite As">
         <gmd:MD_Constraints>
             <gmd:useLimitation>
