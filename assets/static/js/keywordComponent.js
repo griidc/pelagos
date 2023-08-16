@@ -1,6 +1,7 @@
 $(() => {
   var selectedKeywords = [];
   var allKeywords = [];
+  const defaultTemplate = _.template($("#selecteditem").html());
 
   $.ajax({
     url: Routing.generate("app_api_standard_keyword") + "?type=anzsrc",
@@ -18,7 +19,13 @@ $(() => {
       disabled: false,
       onItemClick(item) {
         const selectedItem = item.itemData;
-        var compiled = _.template($("#item-template ").html());
+        var compiled = _.template($("#item-template").html());
+
+        if (item.node.expanded) {
+          item.component.collapseItem(item.node.key);
+        } else {
+          item.component.expandItem(item.node.key);
+        }
 
         $("#selecteditem").html(compiled(selectedItem));
 
@@ -55,7 +62,7 @@ $(() => {
       itemDeleteMode: 'static',
       keyExpr: 'id',
       displayExpr: 'displayPath',
-      noDataText: 'Please select at least one keyword',
+      noDataText: 'Please select at least one keyword.',
       onItemDeleted(item) {
         var keywordListArray = [];
         const keyWordListValue = $("#keywordList").val();
@@ -72,6 +79,7 @@ $(() => {
     }).dxList('instance');
 
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
+      $("#selecteditem").html(defaultTemplate);
       keywordList.option('allowItemDeleting', !disabled);
       treeList.option('searchValue', '');
       treeList.option('disabled', disabled);

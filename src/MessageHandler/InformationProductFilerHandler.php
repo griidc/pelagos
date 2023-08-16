@@ -122,7 +122,9 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
             return;
         }
 
-        @fclose($fileStream);
+        if (is_resource($fileStream)) {
+            @fclose($fileStream);
+        }
 
         try {
             unlink($filePath);

@@ -30,8 +30,8 @@ class InformationProductSearchController extends AbstractController
     public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');
-        $page = $request->query->get('page');
-        $numberOfResultsPerPage = $request->query->get('perPage');
+        $page = (int) $request->query->get('page');
+        $numberOfResultsPerPage = (int) $request->query->get('perPage');
 
         $researchGroupFilter = $request->query->get('researchGroup');
         $productTypeDescFilter = $request->query->get('productTypeDesc');
@@ -43,6 +43,7 @@ class InformationProductSearchController extends AbstractController
         $searchOptions->setProductTypeDescFilter($productTypeDescFilter);
         $searchOptions->setDigitalTypeDescFilter($digitalTypeDescFilter);
         $searchOptions->setMaxPerPage($numberOfResultsPerPage);
+        $searchOptions->onlyPublishedInformationProducts();
 
         $searchResults = $informationProductSearch->search($searchOptions);
         return $jsonSerializer->serialize($searchResults)->createJsonResponse();

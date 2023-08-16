@@ -2,16 +2,18 @@
 
 namespace App\Util;
 
-use App\Entity\DatasetSubmission;
-use App\Entity\Funder;
-use App\Entity\FundingCycle;
-use App\Entity\Person;
-use App\Entity\ResearchGroup;
-use Doctrine\ORM\EntityManagerInterface;
-use Elastica\Aggregation;
 use Elastica\Query;
-use FOS\ElasticaBundle\Finder\TransformedFinder;
+use App\Entity\Funder;
+use App\Entity\Person;
+use Elastica\Aggregation;
 use Pagerfanta\Pagerfanta;
+use App\Entity\FundingCycle;
+use App\Entity\ResearchGroup;
+use RecursiveIteratorIterator;
+use App\Entity\DatasetSubmission;
+use Elastica\Query\SimpleQueryString;
+use Doctrine\ORM\EntityManagerInterface;
+use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 /**
  * Util class for FOS Elastic Search.
@@ -65,7 +67,7 @@ class Search
     /**
      * Elastic index mapping for sorting date used for displaying results.
      */
-    public const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'sortingDateForDisplay';
+    public const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'publishedDate';
 
     /**
      * Elastic index mapping for publication dois.
@@ -134,6 +136,25 @@ class Search
         $perPage = $requestTerms['perPage'];
         $sortOrder = $requestTerms['sortOrder'];
         $collectionDateRange = [];
+
+        // Is this the inital datasets display (no user-added parameters) search?
+        if (
+            empty($requestTerms['query'])
+            && empty($requestTerms['field'])
+            && ($requestTerms['sortOrder'] == 'default')
+            && empty($requestTerms['collectionStartDate'])
+            && empty($requestTerms['collectionEndDate'])
+            && empty($requestTerms['options']['rgId'])
+            && empty($requestTerms['options']['status'])
+            && empty($requestTerms['options']['fundingCycleId'])
+            && empty($requestTerms['options']['projectDirectorId'])
+            && empty($requestTerms['options']['funderId'])
+        ) {
+            $isInitialSearch = true;
+        } else {
+            $isInitialSearch = false;
+        }
+
         if ($requestTerms['collectionStartDate'] or $requestTerms['collectionEndDate']) {
             $collectionDateRange = [];
             if (!empty($requestTerms['collectionStartDate'])) {
@@ -173,7 +194,10 @@ class Search
         $mainQuery->setQuery($subMainQuery);
 
         // Add sort order
-        if ('default' !== $sortOrder) {
+        if ($isInitialSearch) {
+            // Show accepted datasets first.
+            $mainQuery->addSort(['acceptedDate' => ['order' => 'desc']]);
+        } elseif ('default' !== $sortOrder) {
             $mainQuery->addSort([self::ELASTIC_INDEX_MAPPING_SORTING_DATE => ['order' => $sortOrder]]);
         }
 

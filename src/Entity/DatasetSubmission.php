@@ -2500,7 +2500,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the (first) erddap url link.
      */
-    public function getErdappDatasetLink(): ?DatasetLink
+    public function getErddapDatasetLink(): ?DatasetLink
     {
         $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
             return $datasetLink->getName() === DatasetLink::LINK_NAME_CODES['erddap']['name'];
@@ -2538,10 +2538,13 @@ class DatasetSubmission extends Entity
 
     /**
      * Getter for the erddap url.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\Groups({"card"})
      */
     public function getErddapUrl(): ?string
     {
-        $erddapLink = $this->getErdappDatasetLink();
+        $erddapLink = $this->getErddapDatasetLink();
 
         if ($erddapLink instanceof DatasetLink) {
             return $erddapLink->getUrl();
@@ -2555,7 +2558,7 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrlProtocol(): ?string
     {
-        $erddapLink = $this->getErdappDatasetLink();
+        $erddapLink = $this->getErddapDatasetLink();
 
         if ($erddapLink instanceof DatasetLink) {
             return $erddapLink->getProtocol();
