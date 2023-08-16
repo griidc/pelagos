@@ -10,6 +10,13 @@ use App\Util\FundingOrgFilter;
 
 /**
  * Research Group Entity Repository class.
+ *
+ * @extends ServiceEntityRepository<ResearchGroup>
+ *
+ * @method ResearchGroup|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ResearchGroup|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ResearchGroup[]    findAll()
+ * @method ResearchGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ResearchGroupRepository extends ServiceEntityRepository
 {

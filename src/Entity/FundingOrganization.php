@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Exception\NotDeletableException;
+use App\Repository\FundingOrganizationRepository;
 use App\Validator\Constraints as CustomAssert;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @UniqueEntity("shortName", message="A Funding Organization with this Short name already exists")
  */
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass:FundingOrganizationRepository::class)]
 class FundingOrganization extends Entity
 {
     /**
