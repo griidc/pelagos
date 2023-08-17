@@ -5,6 +5,8 @@ namespace App\Twig;
 use App\Entity\DIF;
 use App\Util\MaintenanceMode;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Query\Expr\Func;
+use DOMDocument;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
@@ -141,7 +143,27 @@ class Extensions extends AbstractExtension
                 'orTemplateIfNotExists',
                 [$this, 'doesTwigFileExist']
             ),
+            new \Twig\TwigFilter(
+                'asXml',
+                [$this, 'makeXml']
+            ),
         );
+    }
+
+    public function makeXml(string $xml)
+    {
+        $tidyXml = new \tidy();
+            $tidyXml->parseString(
+                $xml,
+                array(
+                    'input-xml' => true,
+                    'output-xml' => true,
+                ),
+                'utf8'
+            );
+        $xml = $tidyXml;
+
+        return $xml;
     }
 
     /**
