@@ -3,7 +3,7 @@
             <gco:CharacterString>{{Person.firstName}} {{Person.lastName}}</gco:CharacterString>
         </gmd:individualName>
         <gmd:organisationName>
-            <gco:CharacterString><![CDATA[{{Person.organization | raw}}]]></gco:CharacterString>
+            <gco:CharacterString>{{Person.organization}}</gco:CharacterString>
         </gmd:organisationName>
         <gmd:positionName>
             <gco:CharacterString>{{Person.position}}</gco:CharacterString>
@@ -23,9 +23,7 @@
             <gmd:address>
                 <gmd:CI_Address>
                         <gmd:deliveryPoint>
-                            <gco:CharacterString>
-                                <![CDATA[{{Person.deliveryPoint | trim | raw}}]]>
-                            </gco:CharacterString>
+                            <gco:CharacterString>{{Person.deliveryPoint | trim | raw}}</gco:CharacterString>
                         </gmd:deliveryPoint>
                         <gmd:city>
                             <gco:CharacterString>{{Person.city}}</gco:CharacterString>
