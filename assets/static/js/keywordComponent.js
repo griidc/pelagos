@@ -56,6 +56,8 @@ $(() => {
       searchPanel: { visible: true },
     }).dxTreeView('instance');;
 
+
+
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedKeywords,
       allowItemDeleting: true,
@@ -79,6 +81,7 @@ $(() => {
     }).dxList('instance');
 
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
+      console.log('pop');
       $("#selecteditem").html(defaultTemplate);
       keywordList.option('allowItemDeleting', !disabled);
       treeList.option('searchValue', '');
@@ -95,5 +98,10 @@ $(() => {
       keywordList.reload();
       keywordList.repaint();
     });
+
+    console.log('loaded');
+    $("#keywordList").trigger("keywordsAdded", {"disabled": false});
   });
+
+  console.log('keyword end');
 });

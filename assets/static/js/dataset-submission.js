@@ -35,10 +35,13 @@ $(function() {
 
     $("html").show();
 
+    console.log('form show');
+
     $("#funderList").trigger("fundersAdded", {"disabled": defaultFunderTagBoxDisabled});
     $("#keywordList").trigger("keywordsAdded", {"disabled": false});
 
     $("#keywordList").on("change", function(event){
+        console.log('this happens');
         $('[id^="keywords_"]').remove();
         var maxKeywordId = 0;
         $.each(($("#keywordList").val().split(',')), function(key, value) {
