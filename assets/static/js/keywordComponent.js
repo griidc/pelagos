@@ -3,12 +3,16 @@ $(() => {
   var allKeywords = [];
   const defaultTemplate = _.template($("#selecteditem").html());
 
-  $.ajax({
-    url: Routing.generate("app_api_standard_keyword") + "?type=anzsrc",
-    dataType: 'json',
-  }).then((result) => {
-    allKeywords = result;
-    const treeList = $('#treelist').dxTreeView({
+  var xhr = new XMLHttpRequest();
+  const url = Routing.generate("app_api_standard_keyword") + "?type=anzsrc";
+  xhr.open('GET', url, false);
+  xhr.send(null);
+
+  if (xhr.status === 200) {
+    allKeywords = JSON.parse(xhr.responseText);
+  }
+
+  const treeList = $('#treelist').dxTreeView({
       items: allKeywords,
       dataStructure: 'plain',
       rootValue: -1,
@@ -56,8 +60,6 @@ $(() => {
       searchPanel: { visible: true },
     }).dxTreeView('instance');;
 
-
-
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedKeywords,
       allowItemDeleting: true,
@@ -100,8 +102,6 @@ $(() => {
     });
 
     console.log('loaded');
-    $("#keywordList").trigger("keywordsAdded", {"disabled": false});
-  });
-
+  // });
   console.log('keyword end');
 });
