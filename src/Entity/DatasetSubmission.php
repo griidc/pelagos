@@ -963,6 +963,7 @@ class DatasetSubmission extends Entity
         $this->metadataContacts = new ArrayCollection();
         $this->distributionPoints = new ArrayCollection();
         $this->datasetLinks = new ArrayCollection();
+        $this->keywords = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
