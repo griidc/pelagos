@@ -5,10 +5,10 @@ namespace App\Twig;
 use App\Entity\DIF;
 use App\Util\MaintenanceMode;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Query\Expr\Func;
 use DOMDocument;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use tidy;
 use Twig\Extension\AbstractExtension;
 use Twig\Environment;
 
@@ -150,7 +150,13 @@ class Extensions extends AbstractExtension
         );
     }
 
-    public function makeXml(string $xml)
+    /**
+     * Return a cleaned-up string representation of a possibly messy string representation of XML input.
+     *
+     * @param string Text representation of XML data, possibly ugly.
+     * @return string A tidyfied cleaned-up string representation of the XML.
+     */
+    public function makeXml(string $xml): string
     {
         $tidyXml = new \tidy();
             $tidyXml->parseString(
@@ -163,7 +169,7 @@ class Extensions extends AbstractExtension
             );
         $xml = $tidyXml;
 
-        return $xml;
+        return tidy_get_output($xml);
     }
 
     /**

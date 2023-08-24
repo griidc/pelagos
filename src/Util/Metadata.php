@@ -49,19 +49,6 @@ class Metadata
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
                 )
             );
-        //     $tidyXml = new \tidy();
-        //     $tidyXml->parseString(
-        //         $xml,
-        //         array(
-        //             'input-xml' => true,
-        //             'output-xml' => true,
-        //         ),
-        //         'utf8'
-        //     );
-        //     $xml = $tidyXml;
-        //     // Remove extra whitespace added around CDATA tags by tidy.
-        //     $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
-        //     $xml = preg_replace('/]]>\s+</', ']]><', $xml);
         }
 
         $dom = new DOMDocument('1.0');
