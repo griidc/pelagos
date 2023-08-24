@@ -17,3 +17,6 @@ for page in $(seq 1 2); do
 done
 echo "Completed with the NASA import. Now sorting."
 bin/console pelagos:import-keywords --type gcmd SORT
+
+echo "Expanding GCMD keyword Earth Science"
+bin/console pelagos:import-keywords expand --keyword e9f67a66-e9fc-435c-b720-ae32a2c3d8f5
