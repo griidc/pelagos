@@ -144,7 +144,7 @@ class Extensions extends AbstractExtension
                 [$this, 'doesTwigFileExist']
             ),
             new \Twig\TwigFilter(
-                'asXml',
+                'xmlStringCleaner',
                 [$this, 'makeXml']
             ),
         );
