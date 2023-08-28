@@ -26,7 +26,7 @@
                                         {% if distPoint.dataCenter.deliveryPoint is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                            <gco:CharacterString>{{distPoint.dataCenter.deliveryPoint}}</gco:CharacterString>
+                                            <gco:CharacterString><![CDATA[{{ distPoint.dataCenter.deliveryPoint }}]]></gco:CharacterString>
                                         {% endif %}
                                     </gmd:deliveryPoint>
                                     <gmd:city>
