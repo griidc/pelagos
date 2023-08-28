@@ -1,6 +1,6 @@
 <gmd:CI_ResponsibleParty>
         <gmd:individualName>
-            <gco:CharacterString>{{Person.firstName}} {{Person.lastName}}</gco:CharacterString>
+            <gco:CharacterString><![CDATA[{{Person.firstName}} {{Person.lastName}}]]></gco:CharacterString>
         </gmd:individualName>
         <gmd:organisationName>
             <gco:CharacterString>{{Person.organization}}</gco:CharacterString>
@@ -23,7 +23,9 @@
             <gmd:address>
                 <gmd:CI_Address>
                         <gmd:deliveryPoint>
-                            <gco:CharacterString>{{Person.deliveryPoint | trim | raw}}</gco:CharacterString>
+                            <gco:CharacterString>
+                                <![CDATA[{{Person.deliveryPoint | trim | raw}}]]>
+                            </gco:CharacterString>
                         </gmd:deliveryPoint>
                         <gmd:city>
                             <gco:CharacterString>{{Person.city}}</gco:CharacterString>
