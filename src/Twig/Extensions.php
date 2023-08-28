@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use DOMDocument;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use tidy;
 use Twig\Extension\AbstractExtension;
 use Twig\Environment;
 
