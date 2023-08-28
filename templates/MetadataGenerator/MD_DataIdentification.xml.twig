@@ -57,6 +57,7 @@
             }
         %}
     </gmd:descriptiveKeywords>
+
     <gmd:descriptiveKeywords>
         {% include "MetadataGenerator/MD_Keywords.xml.twig" with
             {
@@ -65,7 +66,7 @@
             }
         %}
     </gmd:descriptiveKeywords>
-    <gmd:descriptiveKeywords>
+
         {% set anzsrc_keywords = [] %}
         {% for keyword in dataset.datasetSubmission.keywords %}
             {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_ANZSRC') %}
@@ -73,13 +74,14 @@
             {% endif %}
         {% endfor %}
         {% if anzsrc_keywords %}
+            <gmd:descriptiveKeywords>
             {% include "MetadataGenerator/ANZSRC_Keywords.xml.twig" with
                 {
                     "keywords" : anzsrc_keywords,
                 }
             %}
+            </gmd:descriptiveKeywords>
         {% endif %}
-    </gmd:descriptiveKeywords>
     <gmd:resourceConstraints xlink:title="Cite As">
         <gmd:MD_Constraints>
             <gmd:useLimitation>
