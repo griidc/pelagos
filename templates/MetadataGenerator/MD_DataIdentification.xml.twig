@@ -68,7 +68,7 @@
     <gmd:descriptiveKeywords>
         {% set anzsrc_keywords = [] %}
         {% for keyword in dataset.datasetSubmission.keywords %}
-            {% if keyword.type.value == 'anzsrc' %}
+            {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_ANZSRC') %}
                 {% set anzsrc_keywords = anzsrc_keywords|merge([keyword]) %}
             {% endif %}
         {% endfor %}

@@ -1,7 +1,4 @@
 <gmd:MD_Keywords>
-    {% if keywords is empty %}
-    <gmd:keyword gco:nilReason="inapplicable" />
-    {% endif %}
     {% for keyword in keywords %}
     <gmd:keyword>
         <gmx:Anchor xlink:role="uri" xlink:href="{{keyword.referenceUri}}" xlink:show="new">{{keyword.label}}</gmx:Anchor>
@@ -21,7 +18,7 @@
                         <gco:Date>2020</gco:Date>
                     </gmd:date>
                     <gmd:dateType>
-                        <gmd:CI_DateTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision">revision</gmd:CI_DateTypeCode>
+                        <gmd:CI_DateTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision">ANZSRC 2020</gmd:CI_DateTypeCode>
                     </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
