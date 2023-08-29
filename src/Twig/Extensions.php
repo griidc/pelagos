@@ -5,7 +5,6 @@ namespace App\Twig;
 use App\Entity\DIF;
 use App\Util\MaintenanceMode;
 use Doctrine\Common\Collections\Collection;
-use DOMDocument;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
