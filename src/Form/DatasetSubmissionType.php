@@ -7,6 +7,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;
 use App\Entity\Funder;
+use App\Entity\Keyword;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -148,6 +149,18 @@ class DatasetSubmissionType extends AbstractType
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
                 'multiple' => true,
                 'required' => true,
+            ])
+            ->add('keywords', Type\CollectionType::class, [
+                'label' => 'Keywords',
+                'entry_type' => EntityType::class,
+                'entry_options' => [
+                    'class' => Keyword::class,
+                ],
+                'by_reference' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => false,
             ])
             ->add('spatialExtent', Type\HiddenType::class, [
                 'required' => true,
