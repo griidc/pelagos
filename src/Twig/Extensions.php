@@ -153,7 +153,6 @@ class Extensions extends AbstractExtension
      * Return a cleaned-up string representation of a possibly messy string representation of XML input.
      *
      * @param string Text representation of XML data, possibly ugly.
-     * @return string A tidyfied cleaned-up string representation of the XML.
      */
     public function makeXml(string $xml): string
     {
