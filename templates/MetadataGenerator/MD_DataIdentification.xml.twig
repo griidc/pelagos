@@ -21,9 +21,7 @@
                 <gmd:identifier>
                     <gmd:MD_Identifier>
                         <gmd:code>
-                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi.doi}}" xlink:title="DOI" xlink:actuate="onRequest">
-                                {{dataset.doi}}
-                            </gmx:Anchor>
+                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi.doi}}" xlink:title="DOI" xlink:actuate="onRequest">{{dataset.doi }}</gmx:Anchor>
                         </gmd:code>
                     </gmd:MD_Identifier>
                 </gmd:identifier>
@@ -176,7 +174,7 @@
             <gmd:geographicElement>
                 <gmd:EX_BoundingPolygon>
                     <gmd:polygon>
-                        {{dataset.datasetSubmission.spatialExtent | raw}}
+                        {{dataset.datasetSubmission.spatialExtent | xmlStringCleaner | raw }}
                     </gmd:polygon>
                 </gmd:EX_BoundingPolygon>
             </gmd:geographicElement>
