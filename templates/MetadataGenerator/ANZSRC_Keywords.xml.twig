@@ -1,0 +1,31 @@
+<gmd:MD_Keywords>
+    {% for keyword in keywords %}
+    <gmd:keyword>
+        <gmx:Anchor xlink:role="uri" xlink:href="{{keyword.referenceUri}}" xlink:show="new">{{keyword.label}}</gmx:Anchor>
+    </gmd:keyword>
+    {% endfor %}
+    <gmd:type>
+        <gmd:MD_KeywordTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="discipline">discipline</gmd:MD_KeywordTypeCode>
+    </gmd:type>
+    <gmd:thesaurusName>
+        <gmd:CI_Citation>
+            <gmd:title>
+                <gco:CharacterString>ANZSRC Fields of Research</gco:CharacterString>
+            </gmd:title>
+            <gmd:date>
+                <gmd:CI_Date>
+                    <gmd:date>
+                        <gco:Date>2020</gco:Date>
+                    </gmd:date>
+                    <gmd:dateType>
+                        <gmd:CI_DateTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision">ANZSRC 2020</gmd:CI_DateTypeCode>
+                    </gmd:dateType>
+                </gmd:CI_Date>
+            </gmd:date>
+            <gmd:edition gco:nilReason="unknown"/>
+            <gmd:otherCitationDetails>
+                <gco:CharacterString>Australian Bureau of Statistics (2020): Australian and New Zealand Standard Research Classification (ANZSRC). https://www.abs.gov.au</gco:CharacterString>
+            </gmd:otherCitationDetails>
+        </gmd:CI_Citation>
+    </gmd:thesaurusName>
+</gmd:MD_Keywords>
