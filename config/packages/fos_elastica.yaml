@@ -156,6 +156,8 @@ fos_elastica:
                     properties:
                         id:
                             type: 'keyword'
+                published:
+                    type: 'boolean'
                 publishedDate:
                     property_path: false
                     type: 'date'
