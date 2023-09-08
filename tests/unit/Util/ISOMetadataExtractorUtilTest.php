@@ -386,6 +386,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getFileset' => $this->mockFileset,
                 'getRemotelyHostedUrl' => '/path/to',
                 'getAdditionalFunders' => null,
+                'getKeywords' => new ArrayCollection(),
                 'isRemotelyHosted' => false,
             ]
         );
