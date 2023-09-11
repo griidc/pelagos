@@ -48,6 +48,9 @@ $(() => {
           text: "Add Keyword",
           stylingMode: 'contained',
           type: 'default',
+          onClosed(e) {
+            alert('close');
+          },
           onClick() {
             if (!selectedAnzsrcKeywords.includes(selectedItem)) {
               selectedAnzsrcKeywords.push(selectedItem);
