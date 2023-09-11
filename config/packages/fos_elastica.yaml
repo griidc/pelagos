@@ -158,6 +158,7 @@ fos_elastica:
                             type: 'keyword'
                 published:
                     type: 'boolean'
+                    null_value: true
                 publishedDate:
                     property_path: false
                     type: 'date'

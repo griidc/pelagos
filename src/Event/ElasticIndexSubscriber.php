@@ -142,7 +142,6 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         } else {
             $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
         }
-        $document->set('published', true);
     }
 
     /**
