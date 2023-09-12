@@ -56,6 +56,7 @@ class MultiSearchController extends AbstractController
         $searchOptions->setRangeEndDate($rangeEndDate);
         $searchOptions->setSortOrder($sortOrder);
         $searchOptions->setField($field);
+        $searchOptions->onlyPublishedInformationProducts();
 
         $searchResults = $multiSearch->search($searchOptions);
         $groups = array(
