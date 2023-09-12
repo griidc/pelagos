@@ -4,6 +4,7 @@ namespace App\Util;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use DOMDocument;
 use Twig\Environment as TwigEnvironment;
 
 /**
@@ -48,23 +49,14 @@ class Metadata
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
                 )
             );
-            $tidyXml = new \tidy();
-            $tidyXml->parseString(
-                $xml,
-                array(
-                    'input-xml' => true,
-                    'output-xml' => true,
-                    'indent' => true,
-                    'indent-spaces' => 4,
-                    'wrap' => 0,
-                ),
-                'utf8'
-            );
-            $xml = $tidyXml;
-            // Remove extra whitespace added around CDATA tags by tidy.
-            $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
-            $xml = preg_replace('/]]>\s+</', ']]><', $xml);
         }
+
+        $dom = new DOMDocument('1.0');
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        $dom->loadXML($xml);
+        $xml = $dom->saveXML();
+
         return $xml;
     }
 
