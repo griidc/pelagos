@@ -141,7 +141,32 @@ class Extensions extends AbstractExtension
                 'orTemplateIfNotExists',
                 [$this, 'doesTwigFileExist']
             ),
+            new \Twig\TwigFilter(
+                'xmlStringCleaner',
+                [$this, 'makeXml']
+            ),
         );
+    }
+
+    /**
+     * Return a cleaned-up string representation of a possibly messy string representation of XML input.
+     *
+     * @param string Text representation of XML data, possibly ugly.
+     */
+    public function makeXml(string $xml): string
+    {
+        $tidyXml = new \tidy();
+            $tidyXml->parseString(
+                $xml,
+                array(
+                    'input-xml' => true,
+                    'output-xml' => true,
+                ),
+                'utf8'
+            );
+        $xml = $tidyXml;
+
+        return tidy_get_output($xml);
     }
 
     /**
