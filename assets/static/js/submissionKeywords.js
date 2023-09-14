@@ -127,6 +127,9 @@ $(() => {
       keyExpr: 'id',
       displayExpr: 'displayPath',
       noDataText: 'Please select at least one keyword.',
+      onItemRendered(item) {
+        $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+      },
       onItemDeleted(item) {
         var keywordListArray = [];
         const keyWordListValue = $("#keywordList").val();
@@ -139,6 +142,7 @@ $(() => {
           keywordListArray.splice(index, 1);
         }
         $("#keywordList").val(keywordListArray.toString()).trigger('change');
+        $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
       }
     }).dxList('instance');
 
@@ -149,6 +153,9 @@ $(() => {
       keyExpr: 'id',
       displayExpr: 'displayPath',
       noDataText: 'Please select at least one keyword.',
+      onItemRendered(item) {
+        $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+      },
       onItemDeleted(item) {
         var keywordListArray = [];
         const keyWordListValue = $("#keywordList").val();
@@ -161,6 +168,7 @@ $(() => {
           keywordListArray.splice(index, 1);
         }
         $("#keywordList").val(keywordListArray.toString()).trigger('change');
+        $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
       }
     }).dxList('instance');
 
