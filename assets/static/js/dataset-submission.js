@@ -209,8 +209,8 @@ $(function() {
             funderList: {
                 require_from_group: "This field is required. Please select a funder from the dropdown or add it under Additional Funders."
             },
-            keywordListAnzsrc: "Select ANZSRC keyword(s)!",
-            keywordListGcmd: "Select GCMD keyword(s)!",
+            keywordListAnzsrc: "Please select at least one ANZSRC keyword.",
+            keywordListGcmd: "Please select at least one GCMD keyword.",
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
