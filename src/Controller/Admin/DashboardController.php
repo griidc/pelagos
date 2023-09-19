@@ -52,6 +52,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
         yield MenuItem::linkToCrud('Dataset Submission Editor', 'fas fa-list-alt', DatasetSubmission::class);
+        yield MenuItem::linkToUrl('Dataset Picker', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_dataset_keyword_finder'));
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
         yield MenuItem::section('Create New');

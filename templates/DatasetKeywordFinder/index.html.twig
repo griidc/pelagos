@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dataset Picker{% endblock %}
+
+{% block body %}
+<style>
+    .wrapper { margin: 1em auto; max-width: 800px; width: 95% }
+</style>
+
+<div class="wrapper">
+    <h1>Dataset Picker</h1>
+
+    <form>
+    Select an UDI:
+    <select name="udi">
+        {% for dataset in datasets %}
+        <option value="{{ dataset.udi }}">{{ dataset.udi }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}
