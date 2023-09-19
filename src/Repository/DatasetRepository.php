@@ -298,4 +298,13 @@ class DatasetRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function getListOfUDIs(): array
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->select('d.udi')
+            ->orderBy('d.udi');
+
+        return $qb->getQuery()->getArrayResult();
+    }
 }
