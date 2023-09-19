@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\DatasetSubmission;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\FundingOrganization;
@@ -50,6 +51,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
+        yield MenuItem::linkToCrud('Dataset Submission Editor', 'fas fa-list-alt', DatasetSubmission::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
         yield MenuItem::section('Create New');

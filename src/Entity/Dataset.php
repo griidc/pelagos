@@ -1028,4 +1028,15 @@ class Dataset extends Entity
 
         return $tags;
     }
+
+
+    /**
+     * Gets the name of the Data Repository.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getUdi();
+    }
 }
