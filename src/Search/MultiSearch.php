@@ -100,7 +100,15 @@ class MultiSearch
         $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
 
         $boolQuery = new BoolQuery();
-        $boolQuery->addMust($simpleQuery);
+        $boolQuery->addShould($simpleQuery);
+
+        // Nested query for Keywords
+        $keywordQuery = new Query\Nested();
+        $keywordQuery->setPath("datasetSubmission.keywords");
+        $keywordQueryStringQuery = new Query\QueryString($queryString);
+        $keywordQuery->setQuery($keywordQueryStringQuery);
+        $keywordQuery->setParam('ignore_unmapped', true);
+        $boolQuery->addShould($keywordQuery);
 
         $query = new Query();
 
