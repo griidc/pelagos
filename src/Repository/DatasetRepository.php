@@ -12,6 +12,13 @@ use App\Util\FundingOrgFilter;
 
 /**
  * Dataset Entity Repository class.
+ *
+ * @extends ServiceEntityRepository<Dataset>
+ *
+ * @method Dataset|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Dataset|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Dataset[]    findAll()
+ * @method Dataset[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class DatasetRepository extends ServiceEntityRepository
 {
