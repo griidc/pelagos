@@ -4,9 +4,11 @@ namespace App\Controller\UI;
 
 use App\Controller\Admin\DatasetSubmissionCrudController;
 use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
 use App\Repository\DatasetRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Elastica\Exception\NotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,17 +22,25 @@ class DatasetKeywordFinderController extends AbstractController
         $udi = $request->query->get('udi');
 
         if (!empty($udi)) {
-            /** @var Dataset $dataset */
             $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
-            $datasetSubmission = $dataset->getLatestDatasetReview();
 
-            $url = $adminUrlGenerator
-            ->setController(DatasetSubmissionCrudController::class)
-            ->setAction(Action::EDIT)
-            ->setEntityId($datasetSubmission->getId())
-            ->generateUrl();
+            if ($dataset instanceof Dataset)
+            {
+                $datasetSubmission = $dataset->getLatestDatasetReview();
 
-            return $this->redirect($url);
+                if (!$datasetSubmission instanceof DatasetSubmission)
+                {
+                    throw new NotFoundException("This dataset $udi does not have a submission!");
+                } else {
+                    $url = $adminUrlGenerator
+                    ->setController(DatasetSubmissionCrudController::class)
+                    ->setAction(Action::EDIT)
+                    ->setEntityId($datasetSubmission->getId())
+                    ->generateUrl();
+
+                    return $this->redirect($url);
+                }
+            }
         }
 
         $datasets = $datasetRepository->getListOfUDIs();
