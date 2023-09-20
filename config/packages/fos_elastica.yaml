@@ -125,10 +125,9 @@ fos_elastica:
                             type: 'text'
                         keywords:
                             type: nested
+                            include_in_parent: true
                             properties:
-                                id:
-                                    type: 'keyword'
-                                label:
+                                displayPath:
                                     type: 'text'
                 availabilityStatus:
                     type: 'integer'
