@@ -1029,7 +1029,7 @@ class Dataset extends Entity
 
 
     /**
-     * Gets the name of the Data Repository.
+     * Gets the UDI, stringifier.
      *
      * @return string
      */
