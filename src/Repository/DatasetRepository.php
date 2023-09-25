@@ -8,6 +8,7 @@ use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\Funder;
+use App\Entity\Keyword;
 use App\Util\FundingOrgFilter;
 
 /**
@@ -306,11 +307,19 @@ class DatasetRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getListOfUDIs(): array
+    public function getListOfApprovedDatasetWithoutKeywords(): array
     {
-        $qb = $this->createQueryBuilder('d')
-            ->select('d.udi')
-            ->orderBy('d.udi');
+        $qb = $this->createQueryBuilder('d');
+        $qb
+            ->select('d.udi, d.title, d.acceptedDate')
+            ->addSelect($qb->expr()->count('k.id') . ' as keywords')
+            ->join(DatasetSubmission::class, 'ds', 'WITH', 'd.datasetSubmission = ds.id')
+            ->leftJoin('ds.keywords', 'k')
+            ->where('d.datasetStatus = ?1')
+            ->groupBy('d.udi, d.acceptedDate, d.title')
+            ->orderBy('d.acceptedDate', 'DESC')
+            ->setParameter(1, Dataset::DATASET_STATUS_ACCEPTED)
+            ;
 
         return $qb->getQuery()->getArrayResult();
     }
