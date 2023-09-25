@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\DatasetSubmission;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\FundingOrganization;
