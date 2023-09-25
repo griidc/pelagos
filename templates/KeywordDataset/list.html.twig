@@ -1,0 +1,86 @@
+{% extends "template/UI.html.twig" %}
+
+{% block title %}Keyword to Datasets{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
+
+    <style>
+        .wrapper { margin: 1em auto; max-width: 1600px; width: 95%; }
+    </style>
+{%endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
+
+    <script>
+        $(() => {
+            $('#gridContainer').dxDataGrid({
+                dataSource: '/api/KeywordDataset',
+                columns: [
+                    {
+                        type: 'buttons',
+                        width: 110,
+                        buttons: [{
+                        hint: 'Edit',
+                        icon: 'edit',
+                        onClick(e) {
+                            alert(e.row.data.udi);
+                            e.event.preventDefault();
+                        },
+                        }],
+                    },
+                    {
+                        dataField: 'udi',
+                        caption: 'UDI',
+                        width: 200,
+                    },
+                    {
+                        dataField: 'title',
+                        caption: 'Title',
+                    },
+                    {
+                        dataField: 'acceptedDate',
+                        caption: 'Accepted Date',
+                        dataType: 'date',
+                    },
+                    {
+                        dataField: 'keywords',
+                        caption: 'Number of Keywords',
+                        width: 150,
+                    },
+                ],
+                showBorders: true,
+                showColumnLines: true,
+                showRowLines: true,
+                rowAlternationEnabled: true,
+                filterPanel: {
+                   visible: true,
+                },
+                filterRow: {
+                    visible: true,
+                },
+                summary: {
+                    totalItems: [{
+                        column: 'udi',
+                        summaryType: 'count',
+                    }],
+                },
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block body %}
+
+
+<div class="wrapper">
+    <h1>List of Approved Dataset without Keywords</h1>
+    <div id="gridContainer"></div>
+</div>
+{% endblock %}
