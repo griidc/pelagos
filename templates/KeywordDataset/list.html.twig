@@ -20,18 +20,19 @@
     <script>
         $(() => {
             $('#gridContainer').dxDataGrid({
-                dataSource: '/api/KeywordDataset',
+                dataSource: `${Routing.generate('pelagos_app_api_keyword_dataset')}`,
                 columns: [
                     {
                         type: 'buttons',
                         width: 110,
                         buttons: [{
-                        hint: 'Edit',
-                        icon: 'edit',
-                        onClick(e) {
-                            alert(e.row.data.udi);
-                            e.event.preventDefault();
-                        },
+                            hint: 'Edit',
+                            icon: 'edit',
+                            onClick(e) {
+                                const udi = e.row.data.udi;
+                                e.event.preventDefault();
+                                window.open(`${Routing.generate('pelagos_app_ui_edit_keyword_dataset')}/${udi}`);
+                            },
                         }],
                     },
                     {
@@ -75,12 +76,11 @@
     </script>
 {% endblock %}
 
-
 {% block body %}
-
-
-<div class="wrapper">
-    <h1>List of Approved Dataset without Keywords</h1>
-    <div id="gridContainer"></div>
+<div class="bootstrap">
+    <div class="wrapper">
+        <h1 class="text-center">List of Approved Dataset without Keywords</h1>
+        <div id="gridContainer"></div>
+    </div>
 </div>
 {% endblock %}

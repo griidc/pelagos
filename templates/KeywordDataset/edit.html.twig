@@ -1,0 +1,37 @@
+{% extends "template/UI.html.twig" %}
+
+{% block title %}Keyword to Datasets{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
+{%endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
+    <script type="text/javascript" src="{{ asset('build/js/submissionKeywords.js') }}"></script>
+
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="bootstrap">
+    <div class="wrapper">
+        <h1 class="text-center">Edit Dataset</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg">
+                One of Two columns
+                </div>
+                <div class="col-lg">
+                {% dump(form.keywords) %}
+                {% include 'DatasetSubmission/standard-keywords.html.twig' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
