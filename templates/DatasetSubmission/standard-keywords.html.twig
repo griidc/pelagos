@@ -13,21 +13,22 @@
 
     <hr>
     <fieldset>
-        <legend>Discipline Keywords</legend>
+        <legend>Field of Research</legend>
         <table class="tab-table">
         <tr>
             <td>
 				<span class="helpSection">
 					<img class="info" src="{{ asset('build/images/info32.png') }}">
 					<div class="tooltiptext">
-                        Broad theme keywords pre-defined by the ISO 19115-2 metadata standard
-                        used by GRIIDC, select those most applicable to the data. Hover over
-                        the keyword to see a definition.
+                        Please select at least one of the following Australian and New Zealand Standard Research Classification (ANZSRC) Fields of Research (FOR) keywords.
+                        Click on the arrow to the left of the keyword to view more specific keywords within that category.
 					</div>
 				</span>
-            <label for="keywordSelected" class="emRequired">Discipline Keywords</label>
+            <label for="keywordSelected" class="emRequired">Field of Research Keywords</label>
             <div id="keywordSelected">
                 <div id="selectedList"></div>
+                <input id="keywordListAnzsrc" name="keywordListAnzsrc" required="required" type="hidden">
+                <label for="keywordListAnzsrc" class="error"></label>
                 <hr>
                 <div id="keyword-details">
                     <table style="width:100%">
@@ -67,19 +68,22 @@
 
     <hr>
     <fieldset>
-        <legend>Topic Keywords</legend>
+        <legend>Earth Science Keywords</legend>
         <table class="tab-table">
         <tr>
             <td>
 				<span class="helpSection">
 					<img class="info" src="{{ asset('build/images/info32.png') }}">
 					<div class="tooltiptext">
-                        Text Here...
+                        Please select at least one of the following Global Change Master Directory (GCMD) keywords.
+                        Click on the arrow to the left of the keyword to view more specific keywords within that category.
 					</div>
 				</span>
-            <label for="keywordSelected" class="emRequired">Topic Keywords</label>
+            <label for="keywordSelected" class="emRequired">Earth Science Keywords</label>
             <div id="keywordSelected">
                 <div id="selectedList-gcmd"></div>
+                <input id="keywordListGcmd" name="keywordListGcmd" required="required" type="hidden">
+                <label for="keywordListGcmd" class="error"></label>
                 <hr>
                 <div id="keyword-details">
                     <table style="width:100%">
@@ -91,7 +95,11 @@
                                 <div id="selecteditem-gcmd" style="height:400px;">
                                     <div id="default-template-gcmd" style="padding-left:20px;padding-right:20px;padding-top:20px;">
                                         <p>
-                                            Please select at least one of the following GCMD keywords.
+                                            Please select at least one of the following Global Change Master Directory (GCMD) keywords.
+                                            These are standardized keywords used to facilitate dataset discovery.
+                                            Click on the arrow to the left of the keyword to view more specific keywords within that category.
+                                            Please select the most detailed keyword level applicable.
+                                            For definitions and more information on GCMD keywords please visit <a href="https://www.earthdata.nasa.gov/learn/find-data/idn/gcmd-keywords">Global Change Master Directory (GCMD) Keyword.</a>
                                         </p>
                                     </div>
                                 </div>

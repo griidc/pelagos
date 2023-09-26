@@ -123,6 +123,12 @@ fos_elastica:
                             type: 'text'
                         nceiUrl:
                             type: 'text'
+                        keywords:
+                            type: nested
+                            include_in_parent: true
+                            properties:
+                                displayPath:
+                                    type: 'text'
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:
