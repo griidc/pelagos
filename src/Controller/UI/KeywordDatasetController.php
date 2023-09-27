@@ -4,14 +4,17 @@ namespace App\Controller\UI;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Form\DatasetSubmissionType;
+use App\Form\KeywordDatasetType;
 use App\Repository\DatasetRepository;
 use App\Util\JsonSerializer;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\DatasetSubmissionType;
-use Symfony\Component\Form\FormFactoryInterface;
 
 class KeywordDatasetController extends AbstractController
 {
@@ -31,7 +34,7 @@ class KeywordDatasetController extends AbstractController
         )->createJsonResponse();
     }
 
-    #[Route('/keyword-dataset/{udi}', name: 'pelagos_app_ui_edit_keyword_dataset')]
+    #[Route('/keyword-dataset/{udi}', name: 'pelagos_app_ui_edit_keyword_dataset', methods: 'GET')]
     public function editDataset(string $udi, DatasetRepository $datasetRepository, FormFactoryInterface $formFactory): Response
     {
         $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
@@ -46,11 +49,42 @@ class KeywordDatasetController extends AbstractController
             throw new NotFoundHttpException('This Dataset does not have an Submission!');
         }
 
-        $form = $formFactory->create(DatasetSubmissionType::class, $datasetSubmission);
+        $datasetSubmissionId = $datasetSubmission->getId();
+        $url = $this->generateUrl('pelagos_app_ui_update_keyword_dataset', ['datasetSubmission' => $datasetSubmissionId]);
+
+        $form = $formFactory->createNamed(
+            '',
+            DatasetSubmissionType::class,
+            $datasetSubmission,
+            [
+                'action' => $url,
+                'method' => 'PUT',
+                'attr' => [
+                    'datasetSubmission' => $datasetSubmissionId,
+                ],
+            ]
+        );
 
         return $this->render('KeywordDataset/edit.html.twig', [
             'form' => $form->createView(),
+            'dataset' => $dataset,
+            'datasetSubmission' => $datasetSubmission,
         ]);
+    }
 
+    #[Route('/keyword-dataset/{datasetSubmission}', name: 'pelagos_app_ui_update_keyword_dataset', methods: 'POST')]
+    public function updateDataset(
+        DatasetSubmission $datasetSubmission,
+        FormFactoryInterface $formFactory,
+        EntityManagerInterface $entityManager,
+        Request $request
+    ): Response {
+        $form = $formFactory->createNamed('', KeywordDatasetType::class, $datasetSubmission);
+        $form->handleRequest($request);
+
+        $entityManager->persist($datasetSubmission);
+        $entityManager->flush();
+
+        return new Response('OK', Response::HTTP_NO_CONTENT);
     }
 }
