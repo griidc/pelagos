@@ -3,6 +3,10 @@ $(function() {
         alert('updated');
     });
 
+    $("#btnBack").on('click', function(event) {
+        location.href = `${Routing.generate('pelagos_app_ui_list_keyword_dataset')}`;
+    });
+
     $("#keywordList").trigger("keywordsAdded", {"disabled": false});
 
     $("#keywordList").on("change", function(event){
