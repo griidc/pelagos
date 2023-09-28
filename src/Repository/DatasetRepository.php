@@ -8,7 +8,6 @@ use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\Funder;
-use App\Entity\Keyword;
 use App\Util\FundingOrgFilter;
 
 /**
