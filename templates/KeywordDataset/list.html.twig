@@ -2,83 +2,22 @@
 
 {% block title %}Keyword to Datasets{% endblock %}
 
-{%block stylesheets %}
+{% block stylesheets %}
     {{ parent() }}
 
     <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
-
-    <style>
-        .wrapper { margin: 1em auto; max-width: 1600px; width: 95%; }
-    </style>
-{%endblock stylesheets  %}
+{% endblock stylesheets  %}
 
 {% block javascripts %}
     {{ parent() }}
 
     <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
-
-    <script>
-        $(() => {
-            $('#gridContainer').dxDataGrid({
-                dataSource: `${Routing.generate('pelagos_app_api_keyword_dataset')}`,
-                columns: [
-                    {
-                        type: 'buttons',
-                        width: 110,
-                        buttons: [{
-                            hint: 'Edit',
-                            icon: 'edit',
-                            onClick(e) {
-                                const udi = e.row.data.udi;
-                                e.event.preventDefault();
-                                window.open(`${Routing.generate('pelagos_app_ui_edit_keyword_dataset')}/${udi}`);
-                            },
-                        }],
-                    },
-                    {
-                        dataField: 'udi',
-                        caption: 'UDI',
-                        width: 200,
-                    },
-                    {
-                        dataField: 'title',
-                        caption: 'Title',
-                    },
-                    {
-                        dataField: 'acceptedDate',
-                        caption: 'Accepted Date',
-                        dataType: 'date',
-                    },
-                    {
-                        dataField: 'keywords',
-                        caption: 'Number of Keywords',
-                        width: 150,
-                    },
-                ],
-                showBorders: true,
-                showColumnLines: true,
-                showRowLines: true,
-                rowAlternationEnabled: true,
-                filterPanel: {
-                   visible: true,
-                },
-                filterRow: {
-                    visible: true,
-                },
-                summary: {
-                    totalItems: [{
-                        column: 'udi',
-                        summaryType: 'count',
-                    }],
-                },
-            });
-        });
-    </script>
+    <script type="text/javascript" src="{{ asset('build/js/keyword-dataset-list.js') }}"></script>
 {% endblock %}
 
 {% block body %}
 <div class="bootstrap">
-    <div class="wrapper">
+    <div class="container">
         <h1 class="text-center">List of Approved Dataset without Keywords</h1>
         <div id="gridContainer"></div>
     </div>
