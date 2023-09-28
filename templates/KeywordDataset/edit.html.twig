@@ -7,39 +7,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
     <link href="{{ asset('build/css/dataset-submission.css') }}" rel="stylesheet" />
-
-    <style>
-        .left::-webkit-scrollbar, .right::-webkit-scrollbar {
-            width: 0px;
-        }
-        html, body {
-            overflow: hidden;
-        }
-        .main {
-            height: 600px;
-        }
-        .left {
-            float: left;
-            width: 50%;
-
-            height: 100%;
-            overflow-y: scroll;
-        }
-        .right {
-            float: left;
-            width: 50%;
-            height: 100%;
-            overflow-y: scroll;
-            overflow-x: hidden;
-        }
-        .tab-table tr:nth-child(even) {
-            background-color: #FFF
-        }
-
-        .tab-table tr:nth-child(odd) {
-            background-color: #FFF
-        }
-    </style>
+    <link href="{{ asset('build/css/keyword-dataset-edit.css') }}" rel="stylesheet" />
 {%endblock stylesheets  %}
 
 {% block javascripts %}
@@ -48,32 +16,7 @@
     <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
     <script type="text/javascript" src="{{ asset('build/js/submissionKeywords.js') }}"></script>
-
-    <script type="text/javascript">
-        $(function() {
-            $("#btnUpdate").on('click', function(event) {
-                alert('updated');
-            });
-
-            $("#keywordList").trigger("keywordsAdded", {"disabled": false});
-
-            $("#keywordList").on("change", function(event){
-                $('[id^="keywords_"]').remove();
-                var maxKeywordId = 0;
-                $.each(($("#keywordList").val().split(',')), function(key, value) {
-                    if (value === "") { return; }
-                    var newElement = document.createElement("input");
-                    var keywordId = value;
-                    newElement.id = `keywords_${maxKeywordId}`;
-                    newElement.name = `keywords[${maxKeywordId}]`;
-                    newElement.value = keywordId;
-                    newElement.type = "hidden";
-                    $('[id="keyword-items"]').append(newElement);
-                    maxKeywordId++;
-                })
-            });
-        });
-    </script>
+    <script type="text/javascript" src="{{ asset('build/js/keyword-dataset-edit.js') }}"></script>
 {% endblock %}
 
 {% block body %}

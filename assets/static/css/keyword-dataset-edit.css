@@ -1,0 +1,33 @@
+.left::-webkit-scrollbar, .right::-webkit-scrollbar {
+    width: 0px;
+}
+html, body {
+    overflow: hidden;
+}
+.main {
+    height: 600px;
+}
+.left {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow-y: scroll;
+}
+.right {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.tab-table tr:nth-child(even) {
+    background-color: #FFF
+}
+
+.tab-table tr:nth-child(odd) {
+    background-color: #FFF
+}
+
+pre {
+    white-space: pre-wrap;
+}
