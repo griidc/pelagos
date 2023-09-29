@@ -1,11 +1,9 @@
-.left::-webkit-scrollbar, .right::-webkit-scrollbar {
-    width: 0px;
-}
+
 html, body {
     overflow: hidden;
 }
 .main {
-    height: 600px;
+    height: 100%;
 }
 .left {
     float: left;
