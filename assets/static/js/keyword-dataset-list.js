@@ -34,6 +34,7 @@ $(() => {
                 dataField: 'keywords',
                 caption: 'Number of Keywords',
                 width: 150,
+                filterValue: 0,
             },
         ],
         showBorders: true,
