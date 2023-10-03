@@ -104,6 +104,9 @@ services:
         $doiApiPrefix: "%env(DOI_API_PREFIX)%"
         $doiApiUrl: "%env(DOI_API_URL)%"
 
+    App\Util\Metadata:
+        $gcmdRevision: "%env(GCMD_REVISION)%"
+
     App\Util\IngestUtil:
         $ingestApiUrl: "%env(INGEST_API_URL)%"
 

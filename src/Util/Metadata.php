@@ -20,13 +20,21 @@ class Metadata
     protected $twig;
 
     /**
+     * The env variable for GCMD Keyword revision
+     *
+     * @param gcmdRevision
+     */
+    protected $gcmdRevision;
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param TwigEnvironment $twig The twig rendering engine.
      */
-    public function __construct(TwigEnvironment $twig)
+    public function __construct(TwigEnvironment $twig, string $gcmdRevision)
     {
         $this->twig = $twig;
+        $this->gcmdRevision = $gcmdRevision;
     }
 
     /**
@@ -47,6 +55,7 @@ class Metadata
                     'dataset' => $dataset,
                     'boundingBoxArray' => $boundingBoxArray,
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
+                    'gcmdVersion' => $this->gcmdRevision,
                 )
             );
         }
