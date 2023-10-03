@@ -105,7 +105,9 @@ services:
         $doiApiUrl: "%env(DOI_API_URL)%"
 
     App\Util\Metadata:
-        $gcmdRevision: "%env(GCMD_REVISION)%"
+        $gcmdVersion: "%env(GCMD_VERSION)%"
+        $gcmdVersionYear: "%env(GCMD_VERSION_YEAR)%"
+        $anzsrcVersion: "%env(ANZSRC_VERSION)%"
 
     App\Util\IngestUtil:
         $ingestApiUrl: "%env(INGEST_API_URL)%"

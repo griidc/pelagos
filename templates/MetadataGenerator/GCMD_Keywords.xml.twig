@@ -15,15 +15,15 @@
             <gmd:date>
                 <gmd:CI_Date>
                     <gmd:date>
-                        <gco:Date>2022</gco:Date>
+                        <gco:Date>{{gcmdVersionYear}}</gco:Date>
                     </gmd:date>
                     <gmd:dateType>
-                        <gmd:CI_DateTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision">{{gcmdVersion}}</gmd:CI_DateTypeCode>
+                        <gmd:CI_DateTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision">revision</gmd:CI_DateTypeCode>
                     </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
             <gmd:edition>
-                <gco:CharacterString>15</gco:CharacterString>
+                <gco:CharacterString>{{gcmdVersion}}</gco:CharacterString>
             </gmd:edition>
             <gmd:citedResponsibleParty>
                 <gmd:CI_ResponsibleParty>
@@ -54,7 +54,7 @@
                                         <gco:CharacterString>GCMD Keyword Forum Page</gco:CharacterString>
                                     </gmd:name>
                                     <gmd:description>
-                                        <gco:CharacterString>Global Change Master Directory (GCMD). 2022. GCMD Keywords, Version 15. Greenbelt, MD: Earth Science Data and Information System, Earth Science Projects Division, Goddard Space Flight Center (GSFC) National Aeronautics and Space Administration (NASA). URL (GCMD Keyword Forum Page): https://forum.earthdata.nasa.gov/app.php/tag/GCMD+Keywords</gco:CharacterString>
+                                        <gco:CharacterString>Global Change Master Directory (GCMD). {{gcmdVersionYear}}. GCMD Keywords, Version {{gcmdVersion}}. Greenbelt, MD: Earth Science Data and Information System, Earth Science Projects Division, Goddard Space Flight Center (GSFC) National Aeronautics and Space Administration (NASA). URL (GCMD Keyword Forum Page): https://forum.earthdata.nasa.gov/app.php/tag/GCMD+Keywords</gco:CharacterString>
                                     </gmd:description>
                                     <gmd:function>
                                         <gmd:CI_OnLineFunctionCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information">information</gmd:CI_OnLineFunctionCode>
