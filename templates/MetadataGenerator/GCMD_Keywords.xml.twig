@@ -1,7 +1,7 @@
 <gmd:MD_Keywords>
     {% for keyword in keywords %}
     <gmd:keyword>
-        <gmx:Anchor xlink:href="{{keyword.referenceUri}}" xlink:actuate="onRequest">{{keyword.displayPath}}</gmx:Anchor>
+        <gmx:Anchor xlink:href="{{keyword.referenceUri}}" xlink:actuate="onRequest">{{keyword.shortDisplayPath}}</gmx:Anchor>
     </gmd:keyword>
     {% endfor %}
     <gmd:type>
