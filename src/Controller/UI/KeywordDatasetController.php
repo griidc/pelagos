@@ -58,7 +58,6 @@ class KeywordDatasetController extends AbstractController
             $datasetSubmission,
             [
                 'action' => $url,
-                'method' => 'PUT',
                 'attr' => [
                     'datasetSubmission' => $datasetSubmissionId,
                 ],

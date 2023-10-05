@@ -1,6 +1,38 @@
 $(function() {
     $("#btnUpdate").on('click', function(event) {
-        alert('updated');
+
+        var formData = $("form[datasetsubmission]").serialize();
+        var url = $("form[datasetsubmission]").attr("action")
+
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: formData,
+            success: function(data, textStatus, jqXHR) {
+                var n = noty(
+                        {
+                            layout: "top",
+                            theme: "relax",
+                            type: "success",
+                            text: "Your changes have been saved!",
+                            timeout: 4000,
+                            modal: false,
+                        }
+                    );
+                },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR, textStatus, errorThrown);
+                var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "error",
+                        text: textStatus,
+                        modal: true,
+                    }
+                );
+            },
+        });
     });
 
     $("#btnBack").on('click', function(event) {
