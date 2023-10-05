@@ -30,6 +30,14 @@ $(() => {
       searchEnabled: true,
       displayExpr: 'label',
       disabled: false,
+      searchEditorOptions: {
+        onInput(e) {
+          const value = e.component.option('value');
+          if (value === '') {
+            treeList.collapseAll();
+          }
+        },
+      },
       onItemClick(item) {
         const selectedItem = item.itemData;
         var compiled = _.template($("#item-template").html());
@@ -78,6 +86,19 @@ $(() => {
       searchEnabled: true,
       displayExpr: 'label',
       disabled: false,
+      searchEditorOptions: {
+        onInput(e) {
+          const value = e.component.option('value');
+          if (value === '') {
+            treeListGcmd.collapseAll();
+          }
+        },
+      },
+      onItemCollapsed(e) {
+        if (e.itemIndex == 0) {
+          treeListGcmd.expandItem('https://gcmd.earthdata.nasa.gov/kms/concept/e9f67a66-e9fc-435c-b720-ae32a2c3d8f5');
+        }
+      },
       onItemClick(item) {
         const selectedItem = item.itemData;
         var compiled = _.template($("#item-template-gcmd").html());
