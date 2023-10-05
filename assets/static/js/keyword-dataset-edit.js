@@ -1,6 +1,5 @@
 $(function() {
     $("#btnUpdate").on('click', function(event) {
-
         var formData = $("form[datasetsubmission]").serialize();
         var url = $("form[datasetsubmission]").attr("action")
 
