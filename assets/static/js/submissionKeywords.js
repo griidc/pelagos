@@ -9,6 +9,8 @@ $(() => {
     var xhr = new XMLHttpRequest();
     const url = Routing.generate("app_api_standard_keyword");
 
+    DevExpress.ui.setTemplateEngine("underscore");
+
     xhr.open('GET', url + "?type=anzsrc", false);
     xhr.send(null);
     if (xhr.status === 200) {
@@ -140,13 +142,17 @@ $(() => {
 
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedAnzsrcKeywords,
-      allowItemDeleting: true,
+      allowItemDeleting: false,
       itemDeleteMode: 'static',
       keyExpr: 'id',
       displayExpr: 'displayPath',
       noDataText: 'Please select at least one keyword.',
+      itemTemplate: $('#list-item-template'),
       onItemRendered(item) {
         $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+        $(item.element).find('.dx-tag-remove-button').on('click', (e) => {
+          keywordList.deleteItem(item.itemIndex);
+        });
       },
       onItemDeleted(item) {
         var keywordListArray = [];
@@ -166,13 +172,17 @@ $(() => {
 
     const keywordListGcmd = $('#selectedList-gcmd').dxList({
       dataSource: selectedGcmdKeywords,
-      allowItemDeleting: true,
+      allowItemDeleting: false,
       itemDeleteMode: 'static',
       keyExpr: 'id',
       displayExpr: 'displayPath',
       noDataText: 'Please select at least one keyword.',
+      itemTemplate: $('#list-item-template'),
       onItemRendered(item) {
         $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+        $(item.element).find('.dx-tag-remove-button').on('click', () => {
+          keywordListGcmd.deleteItem(item.itemIndex);
+        });
       },
       onItemDeleted(item) {
         var keywordListArray = [];
@@ -193,7 +203,8 @@ $(() => {
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
       $("#selecteditem").html(defaultAnzsrcTemplate);
       $("#selecteditem-gcmd").html(defaultGcmdTemplate);
-      keywordList.option('allowItemDeleting', !disabled);
+      keywordList.option('disabled', disabled);
+      keywordListGcmd.option('disabled', disabled);
       treeList.option('disabled', disabled);
       treeListGcmd.option('disabled', disabled);
       const value = $("#keywordList").val();
