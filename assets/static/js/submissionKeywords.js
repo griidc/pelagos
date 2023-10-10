@@ -149,9 +149,13 @@ $(() => {
       noDataText: 'Please select at least one keyword.',
       itemTemplate: $('#list-item-template'),
       onItemRendered(item) {
-        $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
-        $(item.element).find('.dx-tag-remove-button').on('click', (e) => {
-          keywordList.deleteItem(item.itemIndex);
+        $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => { return item.id }).toString()).trigger('change');
+        $(item.element).find('.dx-tag-remove-button').on('click', (event) => {
+          const itemId = event.currentTarget.attributes.getNamedItem('item').value;
+          selectedAnzsrcKeywords = selectedAnzsrcKeywords.filter(function (item) { return item.id != itemId });
+          keywordList.option('dataSource', selectedAnzsrcKeywords);
+          keywordList.reload();
+          keywordList.repaint();
         });
       },
       onItemDeleted(item) {
@@ -179,9 +183,13 @@ $(() => {
       noDataText: 'Please select at least one keyword.',
       itemTemplate: $('#list-item-template'),
       onItemRendered(item) {
-        $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
-        $(item.element).find('.dx-tag-remove-button').on('click', () => {
-          keywordListGcmd.deleteItem(item.itemIndex);
+        $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => { return item.id }).toString()).trigger("change");
+        $(item.element).find('.dx-tag-remove-button').on('click', (event) => {
+          const itemId = event.currentTarget.attributes.getNamedItem('item').value;
+          selectedGcmdKeywords = selectedGcmdKeywords.filter(function (item) { return item.id != itemId });
+          keywordListGcmd.option('dataSource', selectedGcmdKeywords);
+          keywordListGcmd.reload();
+          keywordListGcmd.repaint();
         });
       },
       onItemDeleted(item) {
