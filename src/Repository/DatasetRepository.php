@@ -12,6 +12,13 @@ use App\Util\FundingOrgFilter;
 
 /**
  * Dataset Entity Repository class.
+ *
+ * @extends ServiceEntityRepository<Dataset>
+ *
+ * @method Dataset|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Dataset|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Dataset[]    findAll()
+ * @method Dataset[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class DatasetRepository extends ServiceEntityRepository
 {
@@ -297,5 +304,22 @@ class DatasetRepository extends ServiceEntityRepository
         $qb->where($qb->expr()->isMemberOf(':funder', 'dataset.funders'));
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getListOfApprovedDatasetWithoutKeywords(): array
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb
+            ->select('d.udi, d.title, d.acceptedDate')
+            ->addSelect($qb->expr()->count('k.id') . ' as keywords')
+            ->join(DatasetSubmission::class, 'ds', 'WITH', 'd.datasetSubmission = ds.id')
+            ->leftJoin('ds.keywords', 'k')
+            ->where('d.datasetStatus = ?1')
+            ->groupBy('d.udi, d.acceptedDate, d.title')
+            ->orderBy('d.acceptedDate', 'DESC')
+            ->setParameter(1, Dataset::DATASET_STATUS_ACCEPTED)
+            ;
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

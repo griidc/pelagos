@@ -893,10 +893,8 @@ class Dataset extends Entity
 
     /**
      * Getter for the latest dataset submission review copy.
-     *
-     * @return DatasetSubmission
      */
-    public function getLatestDatasetReview()
+    public function getLatestDatasetReview(): ?DatasetSubmission
     {
         $datasetSubmission = ($this->getDatasetSubmissionHistory()->first() ? $this->getDatasetSubmissionHistory()->first() : null);
 
@@ -1027,5 +1025,16 @@ class Dataset extends Entity
         }
 
         return $tags;
+    }
+
+
+    /**
+     * Gets the UDI, stringifier.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getUdi();
     }
 }
