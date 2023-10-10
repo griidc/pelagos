@@ -184,7 +184,7 @@ class Keyword extends Entity
     }
 
     /**
-     * Get the parent URI for the Keyword.
+     * Get the full display path for the Keyword.
      */
     public function getDisplayPath(): ?string
     {

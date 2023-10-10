@@ -47,6 +47,23 @@
         %}
     </gmd:pointOfContact>
     {% endfor %}
+
+    {% set gcmd_keywords = [] %}
+    {% for keyword in dataset.datasetSubmission.keywords %}
+        {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_GCMD') %}
+            {% set gcmd_keywords = gcmd_keywords|merge([keyword]) %}
+        {% endif %}
+    {% endfor %}
+    {% if gcmd_keywords %}
+        <gmd:descriptiveKeywords>
+        {% include "MetadataGenerator/GCMD_Keywords.xml.twig" with
+            {
+                "keywords" : gcmd_keywords,
+            }
+        %}
+        </gmd:descriptiveKeywords>
+    {% endif %}
+
     <gmd:descriptiveKeywords>
         {% include "MetadataGenerator/MD_Keywords.xml.twig" with
             {
