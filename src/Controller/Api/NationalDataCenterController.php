@@ -23,18 +23,6 @@ class NationalDataCenterController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"National Data Centers"},
-     *     summary="Get a count of National Data Centers.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="A count of National Data Centers was successfully returned."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -58,29 +46,6 @@ class NationalDataCenterController extends EntityController
      *
      * @param Request $request A Symfony request instance.
      *
-     * @Operation(
-     *     tags={"National Data Center"},
-     *     summary="Validate a value for a property of a National Data center.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -105,33 +70,6 @@ class NationalDataCenterController extends EntityController
      * @param integer $id      The id of the existing National Data center.
      * @param Request $request A Symfony request instance.
      *
-     * @Operation(
-     *     tags={"National Data Center"},
-     *     summary="Validate a value for a property of a existing National Data center.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested National Data center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -155,18 +93,6 @@ class NationalDataCenterController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"National Data Center"},
-     *     summary="Get a collection of National Datacenters.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested collection of National Data Centers was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -190,22 +116,6 @@ class NationalDataCenterController extends EntityController
      *
      * @param integer $id The id of the National Data center.
      *
-     * @Operation(
-     *     tags={"National Data Center"},
-     *     summary="Get a National data center for a given id.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Successfully retrieved the National Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested National Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -229,26 +139,6 @@ class NationalDataCenterController extends EntityController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Operation(
-     *     tags={"National Data Center"},
-     *     summary="Create a new National Data Center.",
-     *     @SWG\Response(
-     *         response="201",
-     *         description="Successfully created a new National Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to create the National Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -272,30 +162,6 @@ class NationalDataCenterController extends EntityController
      * @param integer $id      The id of the National Data Center to replace.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"National Data Centers"},
-     *     summary="Replace a National Data Centerwith the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The National Data Center was successfully replaced."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the National Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested National Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -319,30 +185,6 @@ class NationalDataCenterController extends EntityController
      * @param integer $id      The id of the National Data Center to update.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"National Data Centers"},
-     *     summary="Update a National Data Center with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The National Data Center was successfully updated."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the National Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested National Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -365,22 +207,6 @@ class NationalDataCenterController extends EntityController
      *
      * @param integer $id The id of the National Data Center to delete.
      *
-     * @Operation(
-     *     tags={"National Data Centers"},
-     *     summary="Delete a National Data Center.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The National Data Center was successfully deleted."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested National Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(

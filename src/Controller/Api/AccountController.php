@@ -33,37 +33,6 @@ class AccountController extends EntityController
      * @throws BadRequestHttpException When the requested account is not a POSIX account.
      * @throws BadRequestHttpException When the requested account does not have a home directory.
      *
-     * @Operation(
-     *     tags={"Account"},
-     *     summary="Get a listing of directories and files in an incoming directory or a sub-directory of it.",
-     *     @SWG\Parameter(
-     *         name="subDirectory",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The incoming directory for the requested account was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The incoming directory for the requested account could not be retrieved (see message)."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to browse the incoming directory for the requested account."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The incoming directory for the requested account was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -179,22 +148,6 @@ class AccountController extends EntityController
      * @throws AccessDeniedException   When the user is not logged in.
      * @throws BadRequestHttpException When there was a problem.
      *
-     * @Operation(
-     *     tags={"Account"},
-     *     summary="Request a user to be converted to POSIX.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The user account has been made a POSIX account."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The user can not be made into a POSIX user (see error message for reason)."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(

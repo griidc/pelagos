@@ -23,18 +23,6 @@ class DataCenterController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Get a count of Data Centers.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="A count of Data Centers was successfully returned."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route("/api/data-center/count", name="pelagos_api_data_center_count", methods={"GET"}, defaults={"_format"="json"})
@@ -53,29 +41,6 @@ class DataCenterController extends EntityController
      *
      * @param Request $request A Symfony request instance.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Validate a value for a property of a Data center.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -100,33 +65,6 @@ class DataCenterController extends EntityController
      * @param integer $id      The id of the existing Data center.
      * @param Request $request A Symfony request instance.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Validate a value for a property of a existing Data center.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -150,18 +88,6 @@ class DataCenterController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Get a collection of Datacenters.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested collection of Data Centers was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -185,22 +111,6 @@ class DataCenterController extends EntityController
      *
      * @param integer $id The id of the Data center.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Get a data center for a given id.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Successfully retrieved the Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -224,26 +134,6 @@ class DataCenterController extends EntityController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Create a new Data Center.",
-     *     @SWG\Response(
-     *         response="201",
-     *         description="Successfully created a new Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to create the Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -267,30 +157,6 @@ class DataCenterController extends EntityController
      * @param integer $id      The id of the Data Center to replace.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Replace a Data Center with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Data Center was successfully replaced."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -314,30 +180,6 @@ class DataCenterController extends EntityController
      * @param integer $id      The id of the Data Center to update.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Update a Data Center with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Data Center was successfully updated."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the Data Center."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -360,22 +202,6 @@ class DataCenterController extends EntityController
      *
      * @param integer $id The id of the Data Center to delete.
      *
-     * @Operation(
-     *     tags={"Data Centers"},
-     *     summary="Delete a Data Center.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Data Center was successfully deleted."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Center was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(

@@ -31,18 +31,6 @@ class DatasetPublicationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Publication to Dataset Association"},
-     *     summary="Get a count of Publication to Dataset Associations.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="A count of Publication to Dataset Associations was successfully returned."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -64,25 +52,6 @@ class DatasetPublicationController extends EntityController
    /**
     * Get a collection of PublicationDatasets.
     *
-    * @Operation(
-     *     tags={"Publication to Dataset Association"},
-     *     summary="Get a collection of PublicationDatasets.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="Filter by someProperty",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested collection of PublicationDatasets was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
     *
     * @Route(
@@ -148,37 +117,6 @@ class DatasetPublicationController extends EntityController
      *
      * @return Response A HTTP Response object.
      * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
-     * @Operation(
-     *     tags={"Publication to Dataset Association"},
-     *     summary="Link a Publication to a Dataset by their respective IDs.",
-     *     @SWG\Parameter(
-     *         name="dataset",
-     *         in="body",
-     *         description="Numeric ID of Dataset to be linked.",
-     *         required=false,
-     *         @SWG\Schema(type="integer")
-     *     ),
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Publication has been linked to the Dataset."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed. (see message for reason)"
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The Publication requested could not be found."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to create a Publication to Dataset link."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -238,22 +176,6 @@ class DatasetPublicationController extends EntityController
      * @param MessageBusInterface $messageBus Symfony messenger bus interface.
      *
      * @return Response A response object with an empty body and a "no content" status code.
-     * @Operation(
-     *     tags={"Publication to Dataset Association"},
-     *     summary="Delete a Publication to Dataset Association.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Publication to Dataset Association was successfully deleted."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Publication to Dataset Association was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(

@@ -82,25 +82,6 @@ class TreeController extends EntityController
      * @param DatasetIndex     $datasetIndex     Dataset index object.
      * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
-     * @Operation(
-     *     tags={"Tree"},
-     *     summary="Gets the Funding Organization and Funding Cycle nodes.",
-     *     @SWG\Parameter(
-     *         name="tree",
-     *         in="body",
-     *         description="The tree configuration",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Funding Organization nodes were successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -164,25 +145,6 @@ class TreeController extends EntityController
      * @param integer      $fundingCycle The Funding Cycle to return Research Groups for.
      * @param DatasetIndex $datasetIndex The dataset index.
      *
-     * @Operation(
-     *     tags={"Tree"},
-     *     summary="Gets the Research Group nodes for a Funding Cycle.",
-     *     @SWG\Parameter(
-     *         name="tree",
-     *         in="body",
-     *         description="The tree configuration",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Research Group nodes were successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -237,25 +199,6 @@ class TreeController extends EntityController
      * @param Request          $request          The request object.
      * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
-     * @Operation(
-     *     tags={"Tree"},
-     *     summary="Gets the Researcher letter nodes.",
-     *     @SWG\Parameter(
-     *         name="tree",
-     *         in="body",
-     *         description="The tree configuration",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Funding Organization nodes were successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -312,25 +255,6 @@ class TreeController extends EntityController
      * @param string           $letter           The letter for which to return Researchers whose last name starts with.
      * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
-     * @Operation(
-     *     tags={"Tree"},
-     *     summary="Gets the Researcher nodes whose last name starts with a letter.",
-     *     @SWG\Parameter(
-     *         name="tree",
-     *         in="body",
-     *         description="The tree configuration",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Funding Organization nodes were successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -386,25 +310,6 @@ class TreeController extends EntityController
      * @param Request $request  The request object.
      * @param integer $personId The id of the Person to return Research Groups for.
      *
-     * @Operation(
-     *     tags={"Tree"},
-     *     summary="Gets the Research Group nodes for a person.",
-     *     @SWG\Parameter(
-     *         name="tree",
-     *         in="body",
-     *         description="The tree configuration",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Research Group nodes were successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
