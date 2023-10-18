@@ -166,4 +166,4 @@
     <select hidden readonly required="required" multiple id="topicKeywords" name="topicKeywords[]"></select>
     </fieldset>
 
-    {% include 'DatasetSubmission/standard-keywords.html.twig' %}
+    {% include 'DatasetSubmission/standard-keywords.html.twig' with {'hideKeywords': true} %}
