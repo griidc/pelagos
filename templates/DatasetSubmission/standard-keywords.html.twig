@@ -1,4 +1,4 @@
-<div id="keyword-items">
+    <div id="keyword-items">
         {% set keywords = [] %}
         {% for keyword in form.keywords %}
 
@@ -10,6 +10,15 @@
             <input type="hidden" id="{{keyword.vars.id}}" name="{{keyword.vars.full_name}}" value="{{keyword.vars.value}}">
         {% endfor %}
     </div>
+
+    <script type="text/html" id="list-item-template">
+        <div class="dx-tag">
+            <div class="dx-tag-content text-left mw-100">
+                <span class="d-inline-block text-truncate mw-100"> <%= displayPath %> </span>
+                <div class="dx-tag-remove-button"  item="<%= id %>"></div>
+            </div>
+        </div>
+    </script>
 
     <hr>
     <fieldset>
