@@ -1,0 +1,84 @@
+{% set anzsrc_keywords = [] %}
+{% for keyword in dataset.datasetSubmission.keywords %}
+    {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_ANZSRC') %}
+        {% set anzsrc_keywords = anzsrc_keywords|merge([keyword]) %}
+    {% endif %}
+{% endfor %}
+
+{% if anzsrc_keywords %}
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+            Discipline Keyword
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark text-capitalize">
+                {{ anzsrc_keywords|join(', ') }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% set gcmd_keywords = [] %}
+{% for keyword in dataset.datasetSubmission.keywords %}
+    {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_GCMD') %}
+        {% set gcmd_keywords = gcmd_keywords|merge([keyword|lower]) %}
+    {% endif %}
+{% endfor %}
+
+{% if gcmd_keywords %}
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+            GCMD Science Keywords
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark text-capitalize">
+                {{ gcmd_keywords|join(', ') }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if dataset.datasetSubmission and dataset.datasetSubmission.themeKeywords %}
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+            Theme keywords
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark text-capitalize">
+                {% set keywords = [] %}
+                {% for keyword in dataset.datasetSubmission.themeKeywords|default %}
+                    {% set keywords = keywords|merge([keyword|trim('"')]) %}
+                {% endfor %}
+                {{ keywords|join(', ') }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if dataset.datasetSubmission and dataset.datasetSubmission.placeKeywords %}
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+            Place keywords
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark text-capitalize">
+                {% set keywords = [] %}
+                {% for keyword in dataset.datasetSubmission.placeKeywords|default %}
+                    {% set keywords = keywords|merge([keyword|trim('"')]) %}
+                {% endfor %}
+                {{ keywords|join(', ') }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+
