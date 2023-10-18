@@ -128,7 +128,67 @@
         </fieldset>
     </div>
 
+    {# Temporary Added Remove this when fully deploying Standard Keywords #}
     <div class="frmSection">
+        <fieldset>
+            <span class="helpSection">
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
+                <div class="tooltiptext">
+                    <p>Datasets may be categorized based on the discipline for which they are collected. Please check all the boxes that categorize the discipline(s) for which your dataset will be created. Note that datasets can be multidisciplinary so select all disciplines that apply. If your field of study is not listed, please specify additional details in the &ldquo;other&rdquo; field.</p>
+                </div>
+            </span>
+            <label for="difDatafor"><b>Field of Study:</b></label>
+            <table id="difDatafor" width="100%" class="choice-label">
+                <tr>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyEcologicalBiological) }}
+                        {{ form_label(form.fieldOfStudyEcologicalBiological) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyPhysicalOceanography) }}
+                        {{ form_label(form.fieldOfStudyPhysicalOceanography) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyAtmospheric) }}
+                        {{ form_label(form.fieldOfStudyAtmospheric) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyChemical) }}
+                        {{ form_label(form.fieldOfStudyChemical) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyHumanHealth) }}
+                        {{ form_label(form.fieldOfStudyHumanHealth) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudySocialCulturalPolitical) }}
+                        {{ form_label(form.fieldOfStudySocialCulturalPolitical) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyEconomics) }}
+                        {{ form_label(form.fieldOfStudyEconomics) }}
+                    </td>
+
+                    <td colspan="2">
+                        <table width="100%">
+                            <tr>
+                                 <td>Others:</td>
+                                 <td>{{ form_widget(form.fieldOfStudyOther) }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+    {# Temporary Added Remove this when fully deploying Standard Keywords #}
+
+    {# Temporary Hidden #}
+    <div class="frmSection" style="display:none">
         <fieldset>
             <span class="helpSection">
                 <img class="info" src="{{ asset('build/images/info32.png') }}">
@@ -141,7 +201,7 @@
                 </div>
             </span>
             <div id="keyword-items">
-                <input id="keywordList" name="keywordList" type="hidden" required="required"/>
+                <input id="keywordList" name="keywordList" type="hidden" {# required="required" #}/>
             </div>
             <label for="keywordList" class="error"></label>
             <label for="keywordSelected" class="emRequired">Discipline Keywords</label>
@@ -181,6 +241,7 @@
             </div>
         </fieldset>
     </div>
+    {# Temporary Hidden #}
 
     <div class="frmSection">
         <fieldset >
