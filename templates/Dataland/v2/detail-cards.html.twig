@@ -34,5 +34,31 @@
 </div>
 {% include 'Dataland/v2/point-of-contact.html.twig' %}
 {% include 'Dataland/v2/collection-period-card.html.twig' %}
+
+{# Included for temporary disabling of keywords#}
+{% if dataset.datasetSubmission and dataset.datasetSubmission.themeKeywords %}
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-chart-primary">
+            Theme keywords
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark">
+                {% set keywords = [] %}
+                {% for keyword in dataset.datasetSubmission.themeKeywords|default %}
+                    {% set keywords = keywords|merge([keyword|trim('"')]) %}
+                {% endfor %}
+                {{ keywords|join(', ') }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{# End of temporary disabling of keywords section. #}
+
+{# Disable this include too for temporary disabling of keywords.
 {% include 'Dataland/v2/keyword-card.html.twig' %}
+#}
+
 {% include 'Dataland/v2/metadata-card.html.twig' %}
