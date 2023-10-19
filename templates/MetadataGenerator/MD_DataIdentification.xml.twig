@@ -48,6 +48,7 @@
     </gmd:pointOfContact>
     {% endfor %}
 
+{# Temporarily disable GCMD keywords
     {% set gcmd_keywords = [] %}
     {% for keyword in dataset.datasetSubmission.keywords %}
         {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_GCMD') %}
@@ -63,6 +64,7 @@
         %}
         </gmd:descriptiveKeywords>
     {% endif %}
+#}
 
     <gmd:descriptiveKeywords>
         {% include "MetadataGenerator/MD_Keywords.xml.twig" with
@@ -82,9 +84,10 @@
         %}
     </gmd:descriptiveKeywords>
 
+{# Temporarily disable anzsrc keywords
         {% set anzsrc_keywords = [] %}
         {% for keyword in dataset.datasetSubmission.keywords %}
-            {% if keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_ANZSRC') %}
+            {% if false and keyword.type == constant('\\App\\Enum\\KeywordType::TYPE_ANZSRC') %}
                 {% set anzsrc_keywords = anzsrc_keywords|merge([keyword]) %}
             {% endif %}
         {% endfor %}
@@ -97,6 +100,7 @@
             %}
             </gmd:descriptiveKeywords>
         {% endif %}
+#}
     <gmd:resourceConstraints xlink:title="Cite As">
         <gmd:MD_Constraints>
             <gmd:useLimitation>
