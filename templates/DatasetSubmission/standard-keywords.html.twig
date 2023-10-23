@@ -20,7 +20,7 @@
         </div>
     </script>
 
-    {% if hideKeywords == true %}
+    {% if hideKeywords|default == true %}
     <div style="display:none;">
     {% endif %}
     <hr>
@@ -39,7 +39,7 @@
             <label for="keywordSelected" class="emRequired">Field of Research Keywords</label>
             <div id="keywordSelected">
                 <div id="selectedList"></div>
-                <input id="keywordListAnzsrc" name="keywordListAnzsrc" {% if hideKeywords == false %} required="required" {% endif %} type="hidden">
+                <input id="keywordListAnzsrc" name="keywordListAnzsrc" {% if hideKeywords|default == false %} required="required" {% endif %} type="hidden">
                 <label for="keywordListAnzsrc" class="error"></label>
                 <hr>
                 <div id="keyword-details">
@@ -94,7 +94,7 @@
             <label for="keywordSelected" class="emRequired">Earth Science Keywords</label>
             <div id="keywordSelected">
                 <div id="selectedList-gcmd"></div>
-                <input id="keywordListGcmd" name="keywordListGcmd" {% if hideKeywords == false %} required="required" {% endif %} type="hidden">
+                <input id="keywordListGcmd" name="keywordListGcmd" {% if hideKeywords|default == false %} required="required" {% endif %} type="hidden">
                 <label for="keywordListGcmd" class="error"></label>
                 <hr>
                 <div id="keyword-details">
@@ -133,6 +133,6 @@
         </tr>
         </table>
     </fieldset>
-    {% if hideKeywords == true %}
+    {% if hideKeywords|default == true %}
     </div>
     {% endif %}
