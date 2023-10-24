@@ -16,8 +16,6 @@ use App\Message\DeleteDir;
 use App\Repository\DatasetRepository;
 use App\Util\MdappLogger;
 use FOS\RestBundle\Controller\Annotations\View;
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
