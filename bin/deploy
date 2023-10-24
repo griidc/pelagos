@@ -28,6 +28,10 @@ composer clear-cache
 # Clear symfony cache
 bin/console cache:clear
 
+# Forcefully clear the cache
+sleep 2
+rm -rf var/cache
+
 # Run composer install to make sure all non-dev dependencies are installed and parameters are defined
 composer install --no-dev --optimize-autoloader
 
