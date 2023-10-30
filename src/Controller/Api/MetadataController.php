@@ -3,9 +3,6 @@
 namespace App\Controller\Api;
 
 use FOS\RestBundle\Controller\Annotations\View;
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -30,33 +27,6 @@ class MetadataController extends EntityController
      * @param Geometry $geoUtil         Geometry Utility.
      * @param Metadata $metadataUtility Metadata Utility.
      *
-     * @Operation(
-     *     tags={"Metadata"},
-     *     summary="Get a single Metadata for a given id.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="Filter by someProperty",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Metadata was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="415",
-     *         description="String could not be parsed as XML."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Dataset was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @throws \Exception              When more than one dataset is found.

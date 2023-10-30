@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\View;
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
 use App\Entity\PersonDataRepository;
 use App\Form\PersonDataRepositoryType;
 
@@ -23,18 +20,6 @@ class PersonDataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Get a count of Person to Data Repository Associations.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="A count of Person to Data Repository Associations was successfully returned."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -58,29 +43,6 @@ class PersonDataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Validate a value for a property of a Person to Data Repository Association.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -105,33 +67,6 @@ class PersonDataRepositoryController extends EntityController
      * @param integer $id      The id of the existing Person to Data Repository Association.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Validate a value for a property of an existing Person to Data Repository Association.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Person to Data Repository Association was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -155,18 +90,6 @@ class PersonDataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Get a collection of Person to Data Repository Associations.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested collection of Person to Data Repository Associations was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -190,22 +113,6 @@ class PersonDataRepositoryController extends EntityController
      *
      * @param integer $id The id of the Person to Data Repository Association to return.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Get a single Person to Data Repository Association for a given id.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Person to Data Repository Association was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Person to Data Repository Association was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -229,26 +136,6 @@ class PersonDataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Create a new Person to Data Repository Association from the submitted data.",
-     *     @SWG\Response(
-     *         response="201",
-     *         description="The Person to Data Repository Association was successfully created."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to create the Person to Data Repository Association."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -273,30 +160,6 @@ class PersonDataRepositoryController extends EntityController
      * @param integer $id      The id of the Person to Data Repository Association to replace.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Replace a Person to Data Repository Association with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Person to Data Repository Association was successfully replaced."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the Person to Data Repository Association."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Person to Data Repository Association was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -320,30 +183,6 @@ class PersonDataRepositoryController extends EntityController
      * @param integer $id      The id of the Person to Data Repository Association to update.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Update a Person to Data Repository Association with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Person to Data Repository Association was successfully updated."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the Person to Data Repository Association."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Person to Data Repository Association was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -366,26 +205,6 @@ class PersonDataRepositoryController extends EntityController
      *
      * @param integer $id The id of the Person to Data Repository Association to delete.
      *
-     * @Operation(
-     *     tags={"Person to Data Repository Associations"},
-     *     summary="Delete a Person to Data Repository Association.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Person to Data Repository Association was successfully deleted."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to delete the Person to Data Repository Association."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Person to Data Repository Association was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
