@@ -10,6 +10,7 @@ use App\Repository\InformationProductRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -45,10 +46,17 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
     protected $entityManager;
 
     /**
+     * Instance of Pelagos datastore.
+     *
+     * @var Datastore
+     */
+    private $datastore;
+
+    /**
      * Information Product Filer constructor.
      *
      * @param InformationProductRepository $datasetSubmissionRepository Dataset Submission Repository.
-     * @param LoggerInterface              $ipFileLogger                 Name hinted filer logger.
+     * @param LoggerInterface              $ipFileLogger                Name hinted filer logger.
      * @param EntityManagerInterface       $entityManager               The entity manager.
      * @param string                       $downloadDirectory           Temporary download directory path.
      */
@@ -81,8 +89,6 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         }
         $fileId = $file->getId();
         $filePath = $file->getPhysicalFilePath();
-        @$fileStream = fopen($filePath, 'r');
-
         $systemPerson = $this->entityManager->find(Person::class, 0);
         $file->setModifier($systemPerson);
 
@@ -92,22 +98,22 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
             . DIRECTORY_SEPARATOR .  $informationProductId
             . DIRECTORY_SEPARATOR . $file->getFilePathName();
 
-        if ($fileStream === false) {
-            $lastErrorMessage = error_get_last()['message'];
-            $this->logger->error(sprintf('Unreadable File: "%s"', $lastErrorMessage, $loggingContext));
+        try {
+            $resource = GuzzlePsr7Utils::tryFopen($filePath, 'r');
+            $fileStream = GuzzlePsr7Utils::streamFor($resource);
+        } catch (\Exception $e) {
+            $lastErrorMessage = $e->getMessage();
+            $this->logger->error(sprintf('Unreadable File: "%s"', $lastErrorMessage), $loggingContext);
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
             return;
-        } else {
-            $fileHash = StreamInfo::calculateHash(array('fileStream' => $fileStream));
-            $file->setFileSha256Hash($fileHash);
         }
 
+        $fileHash = StreamInfo::calculateHash($fileStream);
+        $file->setFileSha256Hash($fileHash);
+
         try {
-            $newFileDestination = $this->datastore->addFile(
-                ['fileStream' => $fileStream],
-                $destinationPath
-            );
+            $newFileDestination = $this->datastore->addFile($fileStream, $destinationPath);
             $file->setPhysicalFilePath($newFileDestination);
         } catch (\League\Flysystem\Exception $fileExistException) {
             $this->logger->warning(sprintf('Rejecting: Unable to add file to datastore. Message: "%s"', $fileExistException->getMessage()), $loggingContext);
