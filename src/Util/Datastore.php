@@ -4,6 +4,7 @@ namespace App\Util;
 
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -89,23 +90,24 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param array  $fileStream   File stream resource object.
      * @param string $filePathName File destination path on datastore.
      *
      * @return string
      */
-    public function addFile(array $fileStream, string $filePathName): string
+    public function addFile(StreamInterface $stream, string $filePathName): string
     {
         $newFilePathName = FileNameUtilities::makeFileName($filePathName);
         $newFilePathName = FileNameUtilities::fixFileNameLength($newFilePathName);
+        $resource = $stream->detach();
+
         try {
-            $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
+            $this->datastoreFlysystem->writeStream($newFilePathName, $resource);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
 
-        if (is_resource($fileStream['fileStream'])) {
-            fclose($fileStream['fileStream']);
+        if (is_resource($resource)) {
+            fclose($resource);
         }
         return $newFilePathName;
     }
