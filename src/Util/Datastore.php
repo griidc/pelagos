@@ -2,6 +2,8 @@
 
 namespace App\Util;
 
+use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\StreamInterface;
@@ -48,19 +50,14 @@ class Datastore
      *
      * @param string $filePath The retrieve file path.
      *
-     * @throws \Exception Exception thrown when read stream fails.
-     *
-     * @return array
+     * @return StreamInterface
      */
-    public function getFile(string $filePath): array
+    public function getFile(string $filePath): StreamInterface
     {
-        $resource['fileStream'] = $this->datastoreFlysystem->readStream($filePath);
+        $resource = $this->datastoreFlysystem->readStream($filePath);
+        $stream = GuzzlePsr7Utils::streamFor($resource);
 
-        if ($resource['fileStream'] === false) {
-            throw new \Exception(sprintf('Error opening stream for "%s"', $filePath));
-        }
-
-        return $resource;
+        return $stream;
     }
 
     /**
@@ -143,7 +140,7 @@ class Datastore
             $deleteDir = $this->deleteFile($path, true);
         }
 
-        return $deleteFile & $deleteDir;
+        return $deleteFile && $deleteDir;
     }
 
     /**
