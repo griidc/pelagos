@@ -2,57 +2,65 @@
 
 namespace App\Util;
 
-use ZipStream\Option\Archive;
-use ZipStream\Option\File;
-use ZipStream\Option\Method;
+use Exception;
+use Psr\Http\Message\StreamInterface;
+use ZipStream\CompressionMethod;
 use ZipStream\ZipStream;
 
 class ZipFiles
 {
-    /**
-     * @var ZipStream
-     */
-    private $zip;
+    private ?ZipStream $zip = null;
 
     /**
      * Start the file zip.
      *
-     * @param array  $outputFileStream Zip output file stream.
-     * @param string $zipFileName      Zip file name.
+     * @param StreamInterface  $outputFileStream Zip output file stream.
+     * @param string           $zipFileName      Zip file name.
      *
      * @return void
      */
-    public function start(array $outputFileStream, string $zipFileName): void
+    public function start(StreamInterface $outputFileStream, string $zipFileName): void
     {
-        $options = new Archive();
-        $options->setOutputStream($outputFileStream['fileStream']);
-        $this->zip = new ZipStream($zipFileName, $options);
+        $this->zip = new ZipStream(
+            outputName: $zipFileName,
+            outputStream: $outputFileStream,
+        );
     }
 
     /**
      * Add file to the zip.
      *
-     * @param string $fileName   File name of the file that needs to be zipped.
-     * @param array  $fileStream File stream of the file that needs to be zipped.
+     * @param string           $fileName   File name of the file that needs to be added to the zip.
+     * @param StreamInterface  $fileStream File stream of the file that needs to be added to the zip.
      *
-     * @return void
+     * @throws \Exception If ZipStream has not been started first.
      */
-    public function addFile(string $fileName, array $fileStream): void
+    public function addFile(string $fileName, StreamInterface $fileStream): void
     {
-        if (!empty($fileStream) and is_resource($fileStream['fileStream'])) {
-            $options = new File();
-            $options->setMethod(Method::STORE());
-            $this->zip->addFileFromStream($fileName, $fileStream['fileStream'], $options);
+        if (!$this->zip instanceof ZipStream) {
+            throw new \Exception('You must start a new ZipStream first!');
+        }
+
+        if ($fileStream->isReadable()) {
+            $this->zip->addFileFromPsr7Stream(
+                fileName: $fileName,
+                stream: $fileStream,
+                compressionMethod: CompressionMethod::STORE,
+            );
         }
     }
 
     /**
      * Finish zipping the file.
      *
-     * @return void
+     * @throws Exception If ZipStream has not been started first.
      */
     public function finish(): void
     {
+        if (!$this->zip instanceof ZipStream) {
+            throw new \Exception('You must start a new zipStream first!');
+        }
+
         $this->zip->finish();
     }
 }

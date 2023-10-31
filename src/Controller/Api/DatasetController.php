@@ -18,6 +18,7 @@ use App\Util\Datastore;
 use App\Util\MdappLogger;
 use App\Util\ZipFiles;
 use FOS\RestBundle\Controller\Annotations\View;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -254,16 +255,18 @@ class DatasetController extends EntityController
     /**
      * Ouput zip file.
      *
-     * @Route("/api/datasets/zip/{dataset}")
+     * @Route("/api/datasets/zip/{dataset}", name="pelagos_api_download_zip")
      *
      * @param Dataset $dataset
      * @return Response
      */
     public function getZipSteam(Dataset $dataset, ZipFiles $zipFiles, Datastore $datastore): Response
     {
+        $zipFileName = str_replace(':', '.', $dataset->getUdi()) . '.zip';
+
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            'zipfile.zip',
+            $zipFileName,
         );
 
         $headers = array(
@@ -271,28 +274,19 @@ class DatasetController extends EntityController
             'Content-type' => 'application/zip',
         );
 
-        return new StreamedResponse(function () use ($dataset, $zipFiles, $datastore) {
-            $fileStream = fopen('php://output', 'wb');
-            $outputStream = array('fileStream' => $fileStream);
-            $zipFiles->start($outputStream, 'zipout.zip');
+        return new StreamedResponse(function () use ($dataset, $zipFiles, $datastore, $zipFileName) {
+            $outputStream=  GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+            $zipFiles->start($outputStream, $zipFileName);
 
             $fileset = $dataset->getDatasetSubmission()->getFileset();
 
-            $filesInfo = array();
             foreach ($fileset->getProcessedFiles() as $file) {
-                $filesInfo[$file->getId()]['filePathName'] = $file->getFilePathName();
-                $filesInfo[$file->getId()]['physicalFilePath'] = $file->getPhysicalFilePath();
-            }
-
-            foreach ($filesInfo as $fileItemInfo) {
-                for ($i = 1; $i <= 100000; ++$i) {
-                    $zipFiles->addFile($fileItemInfo['filePathName'] . $i, $datastore->getFile($fileItemInfo['physicalFilePath']));
-                }
+                $filePathName = $file->getFilePathName();
+                $fileStream = $datastore->getFile($file->getPhysicalFilePath());
+                $zipFiles->addFile($filePathName, $fileStream);
             }
 
             $zipFiles->finish();
-
-            // return $fileStream;
         }, 200, $headers);
     }
 }

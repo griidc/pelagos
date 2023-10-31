@@ -18,6 +18,7 @@ use App\Util\Datastore;
 use App\Util\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
@@ -379,17 +380,18 @@ class InformationProductController extends AbstractFOSRestController
         $filePhysicalPath = $file->getPhysicalFilePath();
         $filename = $file->getFilePathName();
         $response = new StreamedResponse(function () use ($file, $datastore) {
-            $outputStream = fopen('php://output', 'wb');
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
             if (File::FILE_DONE === $file->getStatus()) {
                 try {
-                    $fileStream = $datastore->getFile($file->getPhysicalFilePath())['fileStream'];
+                    $fileStream = $datastore->getFile($file->getPhysicalFilePath());
                 } catch (\Exception $exception) {
                     throw new BadRequestHttpException($exception->getMessage());
                 }
             } else {
-                $fileStream = fopen($file->getPhysicalFilePath(), 'r');
+                $resource = GuzzlePsr7Utils::tryFopen($file->getPhysicalFilePath(), 'r');
+                $fileStream = GuzzlePsr7Utils::streamFor($resource);
             }
-            stream_copy_to_stream($fileStream, $outputStream);
+            GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
         });
 
         $mimeType = $datastore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';

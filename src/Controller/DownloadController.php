@@ -16,6 +16,7 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 
 /**
  * The Dataset download controller.
@@ -122,8 +123,8 @@ class DownloadController extends AbstractController
                     }
                     $response = new StreamedResponse();
                     $response->setCallback(function () use ($fileStream) {
-                        $outputStream = fopen('php://output', 'wb');
-                        stream_copy_to_stream($fileStream['fileStream'], $outputStream);
+                        $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+                        GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
                     });
                     $filename = $datasetSubmission->getDatasetFileName();
                     $mimeType = $dataStore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';
