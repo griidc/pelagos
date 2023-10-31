@@ -29,7 +29,7 @@
         "friendsofsymfony/elastica-bundle": "^6.1.0",
         "friendsofsymfony/jsrouting-bundle": "^2.1",
         "friendsofsymfony/rest-bundle": "^3.0",
-        "guzzlehttp/guzzle": "~7.0",
+        "guzzlehttp/guzzle": "^7.6",
         "hidehalo/nanoid-php": "^1.1",
         "jms/serializer-bundle": "^3.0",
         "maennchen/zipstream-php": "^2.1",
