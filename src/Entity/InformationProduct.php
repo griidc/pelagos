@@ -6,14 +6,13 @@ use App\Repository\InformationProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Information Product Entity class.
- *
- * @ORM\Entity(repositoryClass=InformationProductRepository::class)
  */
+#[ORM\Entity(repositoryClass: InformationProductRepository::class)]
 class InformationProduct extends Entity
 {
     /**
@@ -26,12 +25,14 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     *
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A title is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     private $title;
 
     /**
@@ -39,12 +40,14 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     *
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A creator is required."
      * )
      */
+    #[ORM\Column(type: 'text')]
     private $creators;
 
     /**
@@ -52,13 +55,15 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     *
+     * @Serializer\Groups({"card"})
      *
      * @Assert\NotBlank(
      *     message="A publisher is required."
      * )
      *
      */
+    #[ORM\Column(type: 'text')]
     private $publisher;
 
     /**
@@ -66,8 +71,9 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Groups({"card"})
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $externalDoi;
 
     /**
@@ -75,8 +81,9 @@ class InformationProduct extends Entity
      *
      * @var boolean
      *
-     * @ORM\Column(type="boolean")
+     * @Serializer\Groups({"search"})
      */
+    #[ORM\Column(type: 'boolean')]
     private $published = false;
 
     /**
@@ -84,8 +91,9 @@ class InformationProduct extends Entity
      *
      * @var boolean
      *
-     * @ORM\Column(type="boolean")
+     * @Serializer\Groups({"search", "card"})
      */
+    #[ORM\Column(type: 'boolean')]
     private $remoteResource = false;
 
     /**
@@ -93,11 +101,12 @@ class InformationProduct extends Entity
      *
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity=ResearchGroup::class)
      *
      * @Serializer\MaxDepth(1)
      * @Serializer\SerializedName("researchGroup")
+     * @Serializer\Groups({"search"})
      */
+    #[ORM\ManyToMany(targetEntity: ResearchGroup::class)]
     private $researchGroups;
 
     /**
@@ -105,8 +114,9 @@ class InformationProduct extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Groups({"search", "card"})
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $remoteUri;
 
     /**
@@ -115,9 +125,9 @@ class InformationProduct extends Entity
      * @var File
      *
      * @Serializer\MaxDepth(1)
-     *
-     * @ORM\OneToOne(targetEntity=File::class, cascade={"persist", "remove"})
+     * @Serializer\Groups({"search", "card"})
      */
+    #[ORM\OneToOne(targetEntity: File::class, cascade: ['persist', 'remove'])]
     private $file;
 
     /**
@@ -126,9 +136,9 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
-     *
-     * @ORM\ManyToMany(targetEntity=ProductTypeDescriptor::class)
+     * @Serializer\Groups({"search"})
      */
+    #[ORM\ManyToMany(targetEntity: ProductTypeDescriptor::class)]
     private $productTypeDescriptors;
 
     /**
@@ -137,10 +147,13 @@ class InformationProduct extends Entity
      * @var Collection
      *
      * @Serializer\MaxDepth(1)
-     *
-     * @ORM\ManyToMany(targetEntity=DigitalResourceTypeDescriptor::class)
+     * @Serializer\Groups({"search"})
      */
+    #[ORM\ManyToMany(targetEntity: DigitalResourceTypeDescriptor::class)]
     private $digitalResourceTypeDescriptors;
+
+    #[ORM\ManyToMany(targetEntity: Funder::class)]
+    private Collection $funders;
 
     /**
      * Constructor.
@@ -152,6 +165,7 @@ class InformationProduct extends Entity
         $this->researchGroups = new ArrayCollection();
         $this->productTypeDescriptors = new ArrayCollection();
         $this->digitalResourceTypeDescriptors = new ArrayCollection();
+        $this->funders = new ArrayCollection();
     }
 
     /**
@@ -385,6 +399,7 @@ class InformationProduct extends Entity
      *
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("remoteUriHostName")
+     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */
@@ -531,5 +546,84 @@ class InformationProduct extends Entity
             $digitalResourceTypeDescriptorList[] = $digitalResourceTypeDescriptor->getId();
         }
         return $digitalResourceTypeDescriptorList;
+    }
+
+    /**
+     * Show friendly name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("friendlyName")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getFriendlyName(): string
+    {
+        return $this::FRIENDLY_NAME;
+    }
+
+    /**
+     * Show class name of this entity.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("className")
+     * @Serializer\Groups({"search"})
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return get_class($this);
+    }
+
+    /**
+     *Get the Funder List for this Information Product.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("funders")
+     *
+     * @return array
+     */
+    public function getFunderList(): array
+    {
+        $funderList = [];
+
+        foreach ($this->getFunders() as $funder) {
+            $funderList[] = $funder->getId();
+        }
+
+        return $funderList;
+    }
+
+    /**
+     * Get all funders.
+     *
+     * @return Collection<int, Funder>
+     */
+    public function getFunders(): Collection
+    {
+        return $this->funders;
+    }
+
+    /**
+     * Add Funder to Information Product.
+     */
+    public function addFunder(Funder $funder): self
+    {
+        if (!$this->funders->contains($funder)) {
+            $this->funders->add($funder);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove Funder from Information Product.
+     */
+    public function removeFunder(Funder $funder): self
+    {
+        $this->funders->removeElement($funder);
+
+        return $this;
     }
 }

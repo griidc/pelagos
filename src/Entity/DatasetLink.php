@@ -6,9 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Dataset Links Entity class.
- *
- * @ORM\Entity(repositoryClass="App\Repository\DatasetLinksRepository")
  */
+#[ORM\Entity(repositoryClass: 'App\Repository\DatasetLinksRepository')]
 class DatasetLink extends Entity
 {
     /**
@@ -62,27 +61,24 @@ class DatasetLink extends Entity
      * Url for the Dataset Link.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
     /**
      * Name for the Dataset Link.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $name;
 
     /**
      * Description for the Dataset Link.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
     /**
@@ -91,28 +87,25 @@ class DatasetLink extends Entity
      * @var string
      *
      * @see ONLINE_FUNCTION_CODES
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $functionCode;
 
     /**
      * Protocol for the Dataset Link.
      *
      * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $protocol;
 
     /**
      * Protocol for the Dataset Link.
      *
      * @var string
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\DatasetSubmission", inversedBy="datasetLinks")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\DatasetSubmission', inversedBy: 'datasetLinks')]
+    #[ORM\JoinColumn(nullable: false)]
     protected $datasetSubmission;
 
     /**

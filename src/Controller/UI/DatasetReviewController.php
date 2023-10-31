@@ -2,32 +2,30 @@
 
 namespace App\Controller\UI;
 
-use App\Entity\File;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Form\DatasetSubmissionType;
-use App\Handler\EntityHandler;
-use App\Event\EntityEventDispatcher;
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetLink;
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
+use App\Entity\File;
 use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Event\EntityEventDispatcher;
+use App\Form\DatasetSubmissionType;
+use App\Handler\EntityHandler;
 use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -39,7 +37,7 @@ class DatasetReviewController extends AbstractController
      *
      * @var array
      */
-    protected $messages = array();
+    protected $messages = [];
 
     /**
      * The mode in which the dataset-review is opened.
@@ -71,9 +69,6 @@ class DatasetReviewController extends AbstractController
 
     /**
      * Constructor for this Controller, to set up default services.
-     *
-     * @param EntityHandler         $entityHandler         The entity handler.
-     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, FormFactoryInterface $formFactory)
     {
@@ -84,12 +79,10 @@ class DatasetReviewController extends AbstractController
 
     /**
      * The default action for Dataset Review.
-     *
-     * @param Request $request The Symfony request object.
-     *
+
      * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default", methods={"GET"})
      *
-     * @return Response A Response instance.
+     * @return Response a Response instance
      */
     public function defaultAction(Request $request)
     {
@@ -102,11 +95,10 @@ class DatasetReviewController extends AbstractController
 
         $dataset = null;
         $datasetSubmission = null;
-        $reviewModes = array('view', 'review');
+        $reviewModes = ['view', 'review'];
 
         $udi = $request->query->get('udiReview');
         $mode = $request->query->get('mode');
-
 
         if (null !== $udi) {
             if (!empty($mode) and in_array($mode, $reviewModes)) {
@@ -125,18 +117,18 @@ class DatasetReviewController extends AbstractController
 
         return $this->render(
             'DatasetReview/index.html.twig',
-            array(
+            [
                 'udi' => $udi,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
-            )
+            ]
         );
     }
 
     /**
      * Checks authorization for the user roles to view/review.
      *
-     * @return boolean
+     * @return bool
      */
     private function authForReview()
     {
@@ -156,18 +148,15 @@ class DatasetReviewController extends AbstractController
     /**
      * Checks dataset-submissions whether they are eligible for review.
      *
-     * @param string  $udi     The UDI entered by the user.
-     * @param Request $request The Symfony request object.
-     *
-     * @return Response A Response instance.
+     * @param string  $udi     the UDI entered by the user
+
      */
     protected function eligibiltyForReview(string $udi, Request $request)
     {
         $dataset = null;
         $datasetSubmission = null;
         $datasets = $this->entityHandler
-            ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
-
+            ->getBy(Dataset::class, ['udi' => substr($udi, 0, 16)]);
 
         if (!empty($datasets)) {
             $dataset = $datasets[0];
@@ -176,16 +165,13 @@ class DatasetReviewController extends AbstractController
         } else {
             $this->addToFlashDisplayQueue($request, $udi, 'notFound');
         }
+
         return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
     }
 
     /**
      * Gets Latest dataset submission and checks for errors to add in the flash bag.
-     *
-     * @param Request $request The Symfony request object.
-     * @param Dataset $dataset A dataset instance..
-     *
-     * @return DatasetSubmission  A dataset submission instance.
+
      */
     private function latestDatasetSubmissionForReview(Request $request, Dataset $dataset)
     {
@@ -193,14 +179,14 @@ class DatasetReviewController extends AbstractController
         $datasetStatus = $dataset->getDatasetStatus();
         $datasetSubmission = $dataset->getLatestDatasetReview();
 
-        if ($datasetStatus === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER) {
+        if (Dataset::DATASET_STATUS_BACK_TO_SUBMITTER === $datasetStatus) {
             if ('view' === $this->mode) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 $this->addToFlashDisplayQueue($request, $udi, 'backToSub');
             } else {
                 $this->addToFlashDisplayQueue($request, $udi, 'requestRevision');
             }
-        } elseif ($datasetStatus === Dataset::DATASET_STATUS_NONE) {
+        } elseif (Dataset::DATASET_STATUS_NONE === $datasetStatus) {
             $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
         } else {
             if ($datasetSubmission instanceof DatasetSubmission) {
@@ -210,11 +196,11 @@ class DatasetReviewController extends AbstractController
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
                     if ('review' === $this->mode) {
                         switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
-                            case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
+                            case empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime():
                                 $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                                 break;
-                            case (empty($datasetSubmissionReview->getReviewEndDateTime())
-                                and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                            case empty($datasetSubmissionReview->getReviewEndDateTime())
+                                and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson():
                                 $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
                                 $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
                                 break;
@@ -232,10 +218,9 @@ class DatasetReviewController extends AbstractController
     /**
      * Add warning messages to flash bag to show it to the user.
      *
-     * @param Request $request          The Symfony request object.
-     * @param string  $udi              The UDI entered by the user.
-     * @param string  $noticeCode       The type of Notice/Error generated, non-numeric.
-     * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
+     * @param string  $udi              the UDI entered by the user
+     * @param string  $noticeCode       the type of Notice/Error generated, non-numeric
+     * @param string  $reviewerUserName reviewer Username for the Dataset submission review
      *
      * @return void
      */
@@ -269,11 +254,8 @@ class DatasetReviewController extends AbstractController
     /**
      * Make the submission form and return it.
      *
-     * @param string            $udi               The UDI entered by the user.
-     * @param Dataset           $dataset           The Dataset.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission.
-     *
-     * @return Response A Response instance.
+     * @param string            $udi               the UDI entered by the user
+
      */
     protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
@@ -293,16 +275,16 @@ class DatasetReviewController extends AbstractController
             $researchGroupId = $dataset->getResearchGroup()->getId();
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
 
-            //Tidy GML.
+            // Tidy GML.
             $gml = tidy_parse_string(
                 $datasetSubmission->getSpatialExtent(),
-                array(
+                [
                     'input-xml' => true,
                     'output-xml' => true,
                     'indent' => true,
                     'indent-spaces' => 4,
                     'wrap' => 0,
-                ),
+                ],
                 'utf8'
             );
 
@@ -313,30 +295,30 @@ class DatasetReviewController extends AbstractController
             '',
             DatasetSubmissionType::class,
             $datasetSubmission,
-            array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', array('id' => $datasetSubmissionId)),
+            [
+                'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', ['id' => $datasetSubmissionId]),
                 'method' => 'POST',
-                'attr' => array(
+                'attr' => [
                     'udi' => $udi,
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
                     'datasetSubmissionStatus' => $datasetSubmissionStatus,
                     'mode' => $this->mode,
-                ),
-            )
+                ],
+            ]
         );
 
         // Overwrite the spatial extent field which is normally a hidden type.
-        $form->add('spatialExtent', TextareaType::class, array(
+        $form->add('spatialExtent', TextareaType::class, [
             'label' => 'Spatial Extent GML',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'rows' => '10',
-                'readonly' => 'true'
-            ),
-        ));
+                'readonly' => 'true',
+            ],
+        ]);
 
-        $researchGroupList = array();
+        $researchGroupList = [];
         $account = $this->getUser();
         if (null !== $account) {
             $user = $account->getPerson();
@@ -354,13 +336,13 @@ class DatasetReviewController extends AbstractController
         // If there are no research groups, substitute in '!*'
         // to ensure the query sent by datatables does not try and
         // search for a blank parameter.
-        if (count($researchGroupList) === 0) {
-            $researchGroupList = array('!*');
+        if (0 === count($researchGroupList)) {
+            $researchGroupList = ['!*'];
         }
 
         return $this->render(
             'DatasetReview/index.html.twig',
-            array(
+            [
                 'form' => $form->createView(),
                 'udi' => $udi,
                 'dataset' => $dataset,
@@ -368,14 +350,14 @@ class DatasetReviewController extends AbstractController
                 'researchGroupList' => $researchGroupList,
                 'mode' => $this->mode,
                 'linkoptions' => DatasetLink::getLinkNameCodeChoices(),
-            )
+            ]
         );
     }
 
     /**
      * Create a new dataset submission in review mode.
      *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission.
+     * @param DatasetSubmission $datasetSubmission the Dataset Submission
      *
      * @return DatasetSubmission
      */
@@ -413,7 +395,7 @@ class DatasetReviewController extends AbstractController
     /**
      * Create an entity for each new review.
      *
-     * @param Entity $entity A DatasetSubmission or DatasetSubmissionReview to base this DatasetSubmission on.
+     * @param Entity $entity a DatasetSubmission or DatasetSubmissionReview to base this DatasetSubmission on
      *
      * @return void
      */
@@ -429,19 +411,16 @@ class DatasetReviewController extends AbstractController
     /**
      * The post action for Dataset Review.
      *
-     * @param Request             $request    The Symfony request object.
-     * @param integer|null        $id         The id of the Dataset Submission to load.
-     * @param MessageBusInterface $messageBus Message bus interface to dispatch messages.
+     * @param int|null $id the id of the Dataset Submission to load
      *
-     * @throws BadRequestHttpException When dataset submission has already been submitted.
-     * @throws BadRequestHttpException When DIF has not yet been approved.
+     * @throws BadRequestHttpException when dataset submission has already been submitted
+     * @throws BadRequestHttpException when DIF has not yet been approved
      *
      * @Route("/dataset-review/{id}", name="pelagos_app_ui_datasetreview_post", methods={"POST"})
-     *
-     * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null, EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function postAction(Request $request, EntityManagerInterface $entityManager, MessageBusInterface $messageBus, int $id = null): Response
     {
+        /** @var DatasetSubmission $datasetSubmission */
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
 
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -463,15 +442,15 @@ class DatasetReviewController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             switch (true) {
-                case ($form->get('endReviewBtn')->isClicked()):
+                case $form->get('endReviewBtn')->isClicked():
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
                     $eventName = 'end_review';
                     break;
-                case ($form->get('acceptDatasetBtn')->isClicked()):
+                case $form->get('acceptDatasetBtn')->isClicked():
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
                     $eventName = 'accept_review';
                     break;
-                case ($form->get('requestRevisionsBtn')->isClicked()):
+                case $form->get('requestRevisionsBtn')->isClicked():
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
                     $eventName = 'request_revisions';
                     break;
@@ -486,9 +465,9 @@ class DatasetReviewController extends AbstractController
 
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
-            //when request revisions is clicked, do not display the changes made in review for the dataset-submission
+            // when request revisions is clicked, do not display the changes made in review for the dataset-submission
             // and get the dataset-submissions which is submitted by the user.
-            if ($eventName === 'request_revisions') {
+            if ('request_revisions' === $eventName) {
                 $fileset = $datasetSubmission->getFileset();
                 if ($fileset instanceof Fileset) {
                     // Copy the fileSet
@@ -531,10 +510,10 @@ class DatasetReviewController extends AbstractController
 
             return $this->render(
                 'DatasetReview/submit.html.twig',
-                array(
+                [
                     'DatasetSubmission' => $datasetSubmission,
-                    'reviewedBy' => $reviewedBy
-                )
+                    'reviewedBy' => $reviewedBy,
+                ]
             );
         }
         // This should not normally happen.
@@ -542,11 +521,11 @@ class DatasetReviewController extends AbstractController
     }
 
     /**
-     * To check the if files are being processed
+     * To check the if files are being processed.
      *
-     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     * @param DatasetSubmission $datasetSubmission a dataset submission instance
      *
-     * @return boolean
+     * @return bool
      */
     private function isDatasetBeingProcessed(DatasetSubmission $datasetSubmission)
     {
@@ -556,9 +535,9 @@ class DatasetReviewController extends AbstractController
         if (
             in_array($datasetSubmission->getStatus(), $statuses)
             and $datasetSubmission->getFileset() instanceof Fileset
-            and $datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED
+            and DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED === $datasetSubmission->getDatasetFileTransferStatus()
         ) {
-                return true;
+            return true;
         }
 
         return false;

@@ -96,6 +96,25 @@
         </b-form>
       </b-form-group>
 
+      <input type="hidden" v-model="form.selectedFunders" id="funder"/>
+      <p class="alert alert-warning" v-if="!fundersSelected">
+        Please select at least one funder!
+      </p>
+      <b-form-group
+          id="input-group-funders"
+          label="Funder"
+          label-for="funder"
+          description="Please and one or more funders">
+        <DxTagBox
+            :data-source="funderOptions"
+            :value="fundersValue"
+            display-expr="name"
+            value-expr="id"
+            :search-enabled="true"
+            @selectionChanged="onFunderSelection"
+        />
+      </b-form-group>
+
       <b-form-group
           id="input-group-file"
           label="File"
@@ -319,7 +338,12 @@ export default {
         store: window.digitalResourceTypeDescriptors,
         key: 'id',
       }),
+      funderOptions: new DataSource({
+        store: window.funders,
+        key: 'id',
+      }),
       digitalResourceValue: [],
+      fundersValue: [],
     };
   },
   computed: {
@@ -330,6 +354,7 @@ export default {
       return this.digitalResourceTypesSelected
           && this.productTypesSelected
           && this.researchGroupsSelected
+          && this.fundersSelected
           && this.form.title !== ''
           && this.form.creators !== ''
           && this.form.publisher !== '';
@@ -343,6 +368,9 @@ export default {
     digitalResourceTypesSelected() {
       return this.digitalResourceValue.length > 0;
     },
+    fundersSelected() {
+      return this.fundersValue.length > 0;
+    },
   },
   mounted() {
     thisComponent = this;
@@ -355,6 +383,7 @@ export default {
       this.submitBtnText = 'Save Changes';
       this.productValue = this.getProductTypeDescriptorIds();
       this.digitalResourceValue = this.getDigitalResourceTypeDescriptorIds();
+      this.fundersValue = this.getFunderIds();
     }
   },
   methods: {
@@ -362,6 +391,7 @@ export default {
       event.preventDefault();
       this.form.selectedProductTypes = this.productValue;
       this.form.selectedDigitalResourceTypes = this.digitalResourceValue;
+      this.form.selectedFunders = this.fundersValue;
       if (this.editMode) {
         patchApi(
           // eslint-disable-next-line no-undef
@@ -419,6 +449,7 @@ export default {
         remoteUri: '',
         selectedProductTypes: [],
         selectedDigitalResourceTypes: [],
+        selectedFunders: [],
       };
     },
 
@@ -505,6 +536,7 @@ export default {
       this.form.selectedResearchGroups = window.informationProduct.researchGroups;
       this.form.selectedProductTypes = this.getProductTypeDescriptorIds();
       this.form.selectedDigitalResourceTypes = this.getDigitalResourceTypeDescriptorIds();
+      this.form.selectedFunders = this.getFunderIds();
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
       this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
@@ -564,6 +596,29 @@ export default {
         digitalResourceTypeDescriptorIds.push(digitalResourceTypeDescriptor.id);
       });
       return digitalResourceTypeDescriptorIds;
+    },
+
+    onFunderSelection(event) {
+      event.addedItems.forEach((value) => {
+        if (!this.fundersValue.includes((value.id))) {
+          this.fundersValue.push(value.id);
+        }
+      });
+
+      event.removedItems.forEach((value) => {
+        const index = this.fundersValue.indexOf(value.id);
+        if (index > -1) {
+          this.fundersValue.splice(index, 1);
+        }
+      });
+    },
+
+    getFunderIds() {
+      const funderIds = [];
+      window.informationProduct.funders.forEach((funder) => {
+        funderIds.push(funder.id);
+      });
+      return funderIds;
     },
   },
 

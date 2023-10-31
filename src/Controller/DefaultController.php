@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\UI\StatsController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
 use App\Entity\PersonResearchGroup;
 use App\Util\FundingOrgFilter;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This is the default controller.
@@ -69,7 +71,7 @@ class DefaultController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function index(FundingOrgFilter $fundingOrgFilter)
+    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController)
     {
         $customTemplate = $this->getParameter('custom_template');
 
@@ -95,10 +97,17 @@ class DefaultController extends AbstractController
                     'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
                 );
             }
+            $stats = json_decode($statsController->getStatisticsJson(new Request())->getContent(), true);
 
             return $this->render("Default/$customTemplate", array(
                 'fundingCycles' => $fundingCycleList,
-                'projectDirectors' => $projectDirectorList
+                'projectDirectors' => $projectDirectorList,
+                'stats' => [
+                    'datasetCount' => $stats['totalDatasets'],
+                    'datasetsTotalFileSize' => preg_replace('/[^0-9], ./', "", $stats['totalSize']),
+                    'researchGroupCount' => $stats['researchGroupCount'],
+                    'peopleCount' => $stats['peopleCount'],
+                ],
             ));
         }
 

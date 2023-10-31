@@ -83,12 +83,17 @@ fos_elastica:
                     logger: true
                 finder: ~
             properties:
+                friendlyName:
+                    type: 'keyword'
                 udi:
                     type: 'text'
                 title:
                     type: 'text'
                 abstract:
                     type: 'text'
+                tags:
+                    type: 'keyword'
+                    property_path: false
                 researchGroup:
                     type: 'nested'
                     properties:
@@ -138,6 +143,9 @@ fos_elastica:
                 coldStorage:
                     property_path: false
                     type: 'boolean'
+                acceptedDate:
+                    type: 'date'
+                    format: 'yyyy-MM-dd'
                 publications:
                     type: 'nested'
                     properties:
@@ -148,10 +156,18 @@ fos_elastica:
                     properties:
                         id:
                             type: 'keyword'
-                sortingDateForDisplay:
+                published:
+                    type: 'boolean'
+                    null_value: true
+                publishedDate:
                     property_path: false
                     type: 'date'
                     format: 'yyyy-MM-dd'
+                funders:
+                    type: 'nested'
+                    properties:
+                        id:
+                            type: 'keyword'
         info_products:
             client: default
             index_name: "%env(INFO_PRODUCT_INDEX)%"
@@ -164,6 +180,8 @@ fos_elastica:
                     logger: true
                 finder: ~
             properties:
+                friendlyName:
+                    type: 'keyword'
                 title:
                     type: 'text'
                 creators:
@@ -208,3 +226,11 @@ fos_elastica:
                     properties:
                         id:
                             type: 'keyword'
+                publishedDate:
+                    property_path: false
+                    type: 'date'
+                    format: 'yyyy-MM-dd'
+                acceptedDate:
+                    property_path: false
+                    type: 'date'
+                    format: 'yyyy-MM-dd'
