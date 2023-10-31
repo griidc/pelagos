@@ -108,7 +108,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     {
         $datasetSubmissionId = $datasetSubmissionFiler->getDatasetSubmissionId();
         $datasetSubmission = $this->datasetSubmissionRepository->find($datasetSubmissionId);
-        if ($datasetSubmission instanceof DatasetSubmission) {
+        if (!$datasetSubmission instanceof DatasetSubmission) {
             $this->logger->error(sprintf('Can not find submission with ID: "%d"', $datasetSubmissionId));
             return;
         }
@@ -215,6 +215,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
          // File virus Scan
          $localLogContext = array_merge($loggingContext, array('fileId' => $fileId, 'filePathName' => $file->getFilePathName()));
          $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
-         $this->logger->info('Dispatched ScanFileForVirus message for async processing.', $localLogContext);
+         $this->logger->info('Done processing file.', $localLogContext);
     }
 }
