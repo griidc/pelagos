@@ -166,7 +166,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
-    App\Util\VirusScanUtil:
+    App\MessageHandler\VirusScanHandler:
         bind:
             string $clamdSock: "%env(CLAMD_SOCKET)%"
 

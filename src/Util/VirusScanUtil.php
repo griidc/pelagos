@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use Psr\Http\Message\StreamInterface;
 use Socket\Raw\Factory as SocketFactory;
 use Xenolope\Quahog\Client as QuahogClient;
 
@@ -37,32 +38,25 @@ class VirusScanUtil
     /**
      * Scan a filestream for viruses.
      *
-     * @param array $fileHandle A filesystem resource to scan.
-     *
-     * @throws \Exception Exception thrown when stream is not of type resource.
-     *
      * @return array
      */
-    public function scanResourceStream(array $fileHandle): array
+    public function scanResourceStream(StreamInterface $stream): array
     {
         $result = array();
-        if (is_resource($fileHandle['fileStream'])) {
-            $stat = fstat($fileHandle['fileStream']);
-            if ($stat['size'] > 104857600) {
-                $result['status'] = self::RESULT_STATUS_FAILED;
-                $result['reason'] = self::RESULT_REASON_OVERSIZE;
-            } else {
-                try {
-                    $socket = (new SocketFactory())->createClient($this->clamdSock);
-                    $quahog = new QuahogClient($socket);
-                    $result = $quahog->scanResourceStream($fileHandle['fileStream'], 1024000);
-                } catch (\Exception $e) {
-                    $result['status'] = self::RESULT_STATUS_FAILED;
-                    $result['reason'] = $e->getMessage();
-                }
-            }
+        $fileSize = $stream->getSize();
+        if ($fileSize > 104857600) {
+            $result['status'] = self::RESULT_STATUS_FAILED;
+            $result['reason'] = self::RESULT_REASON_OVERSIZE;
         } else {
-            throw new \Exception('stream not a resource');
+            try {
+                $socket = (new SocketFactory())->createClient($this->clamdSock);
+                $quahog = new QuahogClient($socket);
+                $resource = $stream->detach();
+                $result = $quahog->scanResourceStream($resource, 1024000);
+            } catch (\Exception $e) {
+                $result['status'] = self::RESULT_STATUS_FAILED;
+                $result['reason'] = $e->getMessage();
+            }
         }
         return $result;
     }
