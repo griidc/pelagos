@@ -275,7 +275,7 @@ class DatasetController extends EntityController
         );
 
         return new StreamedResponse(function () use ($dataset, $zipFiles, $datastore, $zipFileName) {
-            $outputStream=  GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
             $zipFiles->start($outputStream, $zipFileName);
 
             $fileset = $dataset->getDatasetSubmission()->getFileset();
