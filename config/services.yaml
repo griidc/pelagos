@@ -119,6 +119,10 @@ services:
         autowire: false
         arguments: ["@fos_elastica.index.pelagos"]
 
+    App\Command\PelagosVirusScanTesterCommand:
+        bind:
+            string $clamdSock: "%env(CLAMD_SOCKET)%"
+
     App\Handler\UploadHandler:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
@@ -132,6 +136,10 @@ services:
     App\Util\Search:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos"
+
+    App\Util\VirusScanUtil:
+        bind:
+            string $clamdSock: "%env(CLAMD_SOCKET)%"
 
     App\Search\InformationProductSearch:
         bind:
