@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
+use Elastica\Query\Term;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Range;
 use Elastica\Query\SimpleQueryString;
@@ -105,6 +106,12 @@ class MultiSearch
         $query = new Query();
 
         $postBoolQuery = new BoolQuery();
+
+        if ($searchOptions->shouldFilterOnlyPublishedInformationProducts()) {
+            $publishedQueryTerm = new Term();
+            $publishedQueryTerm->setTerm('published', true);
+            $boolQuery->addFilter($publishedQueryTerm);
+        }
 
         // Collection Date Filter
         if ($searchOptions->getDateType() === SearchOptions::DATE_TYPE_COLLECTION) {

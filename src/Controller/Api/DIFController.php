@@ -11,9 +11,7 @@ use App\Util\Udi;
 use FOS\RestBundle\Controller\Annotations\View;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
-use Nelmio\ApiDocBundle\Annotation\Operation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -30,18 +28,6 @@ class DIFController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Get a count of DIFs.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="A count of DIFs was successfully returned."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @View()
@@ -60,25 +46,6 @@ class DIFController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Get a collection of DIFs.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="Filter by someProperty",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested collection of DIFs was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route("/api/difs", name="pelagos_api_difs_get_collection", methods={"GET"}, defaults={"_format"="json"})
@@ -97,22 +64,6 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to return.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Get a single DIF for a given id.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested DIF was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @View(serializerEnableMaxDepthChecks = true)
@@ -137,264 +88,6 @@ class DIFController extends EntityController
      * @param EntityEventDispatcher $entityEventDispatcher The event Dispatcher.
      * @param Udi                   $udiUtil               Instance of UDI Utility.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Create a new DIF from the submitted data.",
-     *     @SWG\Parameter(
-     *         name="title",
-     *         in="formData",
-     *         description="Dataset Title:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="primaryPointOfContact",
-     *         in="formData",
-     *         description="Primary Data Point of Contact:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="secondaryPointOfContact",
-     *         in="formData",
-     *         description="Additional Data Point of Contact:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="abstract",
-     *         in="formData",
-     *         description="Dataset Abstract:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyEcologicalBiological",
-     *         in="formData",
-     *         description="Ecological/Biological",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyPhysicalOceanography",
-     *         in="formData",
-     *         description="Physical Oceanography",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyAtmospheric",
-     *         in="formData",
-     *         description="Atmospheric",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyChemical",
-     *         in="formData",
-     *         description="Chemical",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyHumanHealth",
-     *         in="formData",
-     *         description="Human Health",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudySocialCulturalPolitical",
-     *         in="formData",
-     *         description="Social/Cultural/Political",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyEconomics",
-     *         in="formData",
-     *         description="Economics",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fieldOfStudyOther",
-     *         in="formData",
-     *         description="Other Field of Study:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="dataSize",
-     *         in="formData",
-     *         description="Approximate Dataset Size:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="variablesObserved",
-     *         in="formData",
-     *         description="Data Parameters and Units:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="collectionMethodFieldSampling",
-     *         in="formData",
-     *         description="Field Sampling",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="collectionMethodSimulatedGenerated",
-     *         in="formData",
-     *         description="Simulated/Generated",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="collectionMethodLaboratory",
-     *         in="formData",
-     *         description="Laboratory",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="collectionMethodLiteratureBased",
-     *         in="formData",
-     *         description="Literature Based",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="collectionMethodRemoteSensing",
-     *         in="formData",
-     *         description="Remote Sensing",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="collectionMethodOther",
-     *         in="formData",
-     *         description="Other Collection Method:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="estimatedStartDate",
-     *         in="formData",
-     *         description="Start Date:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="estimatedEndDate",
-     *         in="formData",
-     *         description="End Date:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="spatialExtentDescription",
-     *         in="formData",
-     *         description="Description:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="spatialExtentGeometry",
-     *         in="formData",
-     *         description="",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="nationalDataArchiveNODC",
-     *         in="formData",
-     *         description="National Centers for Environmental Information",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="nationalDataArchiveStoret",
-     *         in="formData",
-     *         description="US EPA Storet",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="nationalDataArchiveGBIF",
-     *         in="formData",
-     *         description="Global Biodiversity Information Facility",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="nationalDataArchiveNCBI",
-     *         in="formData",
-     *         description="National Center for Biotechnology Information",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="nationalDataArchiveDataGov",
-     *         in="formData",
-     *         description="Data.gov Dataset Management System",
-     *         required=false,
-     *         type="boolean"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="nationalDataArchiveOther",
-     *         in="formData",
-     *         description="Other National Data Archive:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="ethicalIssues",
-     *         in="formData",
-     *         description="",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="ethicalIssuesExplanation",
-     *         in="formData",
-     *         description="If yes or uncertain, please explain:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="remarks",
-     *         in="formData",
-     *         description="Remarks:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Parameter(
-     *         name="researchGroup",
-     *         in="formData",
-     *         description="Project Title:",
-     *         required=false,
-     *         type="string"
-     *     ),
-     *     @SWG\Response(
-     *         response="201",
-     *         description="The DIF was successfully created."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to create the DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -432,30 +125,6 @@ class DIFController extends EntityController
      * @param integer $id      The id of the DIF to replace.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Replace a DIF with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully replaced."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -479,30 +148,6 @@ class DIFController extends EntityController
      * @param integer $id      The id of the DIF to update.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Update a DIF with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully updated."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -528,30 +173,6 @@ class DIFController extends EntityController
      * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to submit the DIF.
      * @throws BadRequestHttpException When the DIF could not be submitted.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Submit a DIF.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully submitted."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The DIF could not be submitted (see error message for reason)."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="You do not have sufficient privileges to submit this DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -593,30 +214,6 @@ class DIFController extends EntityController
      * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to approve the DIF.
      * @throws BadRequestHttpException When the DIF could not be approved.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Approve a DIF.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully approved."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The DIF could not be approved (see error message for reason)."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="You do not have sufficient privileges to approve this DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -662,30 +259,6 @@ class DIFController extends EntityController
      * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to reject the DIF.
      * @throws BadRequestHttpException When the DIF could not be rejected.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Reject a DIF.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully rejected."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The DIF could not be rejected (see error message for reason)."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="You do not have sufficient privileges to reject this DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -727,30 +300,6 @@ class DIFController extends EntityController
      * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to unlock the DIF.
      * @throws BadRequestHttpException When the DIF could not be unlocked.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Unlock a DIF.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully unlocked."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The DIF could not be unlocked (see error message for reason)."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="You do not have sufficient privileges to unlock this DIF."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
@@ -790,26 +339,6 @@ class DIFController extends EntityController
      * @param integer               $id                    The id of the DIF to request unlock for.
      * @param EntityEventDispatcher $entityEventDispatcher The event dispatcher.
      *
-     * @Operation(
-     *     tags={"DIFs"},
-     *     summary="Request a DIF be unlocked.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The DIF was successfully requested to be unlocked."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The DIF cannot be requested to be unlocked (see error message for reason)."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested DIF was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @throws AccessDeniedHttpException When you do not have the permissions to unlock.
