@@ -98,7 +98,6 @@ class DownloadController extends AbstractController
      */
     public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
     {
-        dump('count download');
         $currentUser = $this->getUser();
         if ($currentUser instanceof Account) {
             $type = 'GoMRI';
@@ -118,11 +117,11 @@ class DownloadController extends AbstractController
             'file_download'
         );
 
-        $downloadPage = $this->generateUrl('pelagos_api_download_zip', [
+        $downloadZip = $this->generateUrl('pelagos_api_download_zip', [
             'dataset' => $dataset->getId(),
         ]);
 
-        return new RedirectResponse($downloadPage);
+        return new RedirectResponse($downloadZip);
     }
 
     /**
