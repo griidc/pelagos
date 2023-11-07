@@ -17,6 +17,7 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * The Dataset download controller.
@@ -88,6 +89,40 @@ class DownloadController extends AbstractController
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    /**
+     * Download dataset, count and forward to zip stream.
+     *
+     * @Route("/download/dataset/{id}", name="pelagos_app_download_dataset")
+     */
+    public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
+    {
+        dump('count download');
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof Account) {
+            $type = 'GoMRI';
+            $typeId = $currentUser->getUserId();
+        } else {
+            $type = 'Non-GoMRI';
+            $typeId = 'anonymous';
+        }
+
+        $logActionItemEventDispatcher->dispatch(
+            array(
+                'actionName' => 'File Download',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId),
+            ),
+            'file_download'
+        );
+
+        $downloadPage = $this->generateUrl('pelagos_api_download_zip', [
+            'dataset' => $dataset->getId(),
+        ]);
+
+        return new RedirectResponse($downloadPage);
     }
 
     /**
