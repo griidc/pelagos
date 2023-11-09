@@ -3,22 +3,17 @@
 namespace App\Controller\UI;
 
 use App\Handler\EntityHandler;
-use App\Util\DataStore;
 use App\Util\Geometry;
 use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
 use App\Util\GmlUtil;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * The Dataset Monitoring controller.
@@ -28,7 +23,7 @@ class DatalandController extends AbstractController
     /**
      * Geometry.
      *
-     * @var geoUtil
+     * @var Geometry
      */
     protected $geoUtil;
 
@@ -214,7 +209,7 @@ class DatalandController extends AbstractController
      *
      * @return Response
      */
-    public function indexPage(string $udi)
+    public function indexPage(string $udi, EntityManagerInterface $entityManager)
     {
         $dataset = $this->getDataset($udi);
 
@@ -235,20 +230,37 @@ class DatalandController extends AbstractController
         }
 
         $downloadCount = null;
+        $downloads = [];
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
         if ($dataset->isAvailable()) {
-            $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
-            $qb->select($qb->expr()->count('a'))
+            $qb = $entityManager->createQueryBuilder();
+            $qb->select('a.creationTimeStamp')
                 ->from('\App\Entity\LogActionItem', 'a')
                 ->where('a.subjectEntityId = ?1')
                 ->andwhere('a.subjectEntityName = ?2')
                 ->andwhere('a.actionName = ?3')
+                ->orderBy('a.creationTimeStamp', 'ASC')
                 ->setParameter(1, $dataset->getId())
                 ->setParameter(2, 'Pelagos\Entity\Dataset')
                 ->setParameter(3, 'File Download');
             $query = $qb->getQuery();
-            $downloadCount = $query->getSingleScalarResult();
+            $downloads = $query->getResult();
         }
+
+        // Setup variable to exist.
+        $currentTimeStamp = 0;
+        $downloadCount = 0;
+        foreach ($downloads as $key => $timeStamp)
+        {
+            $dateTime = $timeStamp['creationTimeStamp'];
+            $epochTime = (int) $dateTime->format('U');
+
+            if ($key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30) {
+                $currentTimeStamp = $epochTime;
+                $downloadCount++;
+            }
+        }
+
         return $this->render(
             'Dataland/v2/index.html.twig',
             array(
