@@ -42,9 +42,11 @@ class LogActionItemRepository extends ServiceEntityRepository
     public function countDownloads(): int
     {
         $qb = $this->createQueryBuilder('log')
-            ->select('COUNT(log.id)')
+            ->select('log.creationTimeStamp, log.subjectEntityId')
             ->where('log.subjectEntityName = ?1')
             ->andWhere('log.actionName = ?2')
+            ->orderBy('log.subjectEntityId', 'ASC')
+            ->addOrderBy('log.creationTimeStamp', 'ASC')
             ->setParameter(1, 'Pelagos\Entity\Dataset')
             ->setParameter(2, 'File Download');
 
@@ -58,8 +60,26 @@ class LogActionItemRepository extends ServiceEntityRepository
             ->setParameter('rgs', $researchGroupIds);
         }
 
-        return $qb
-            ->getQuery()
-            ->getSingleScalarResult();
+        $query = $qb->getQuery();
+        $downloads = $query->getResult();
+
+        // Setup variable to exist.
+        $currentTimeStamp = 0;
+        $downloadCount = 0;
+        $currentId = 0;
+        foreach ($downloads as $key => $timeStamp) {
+            $id = $timeStamp['subjectEntityId'];
+            $dateTime = $timeStamp['creationTimeStamp'];
+            $epochTime = (int) $dateTime->format('U');
+
+            if ($key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId <> $id) {
+                $currentTimeStamp = $epochTime;
+                $downloadCount++;
+            }
+
+            $currentId = $id;
+        }
+
+        return $downloadCount;
     }
 }
