@@ -115,7 +115,7 @@ export default {
         text: 'Download',
         onClick: () => {
           // eslint-disable-next-line no-undef
-          const url = `${Routing.generate('pelagos_app_download_http', { id: this.id })}`;
+          const url = `${Routing.generate('pelagos_api_download_zip')}/${this.id}`;
           const link = document.createElement('a');
           link.href = url;
           document.body.appendChild(link);
@@ -125,14 +125,14 @@ export default {
           }, 0);
           link.click();
           // eslint-disable-next-line no-undef
-          notify({
-            // eslint-disable-next-line no-undef
-            message,
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 3000);
+          // notify({
+          //   // eslint-disable-next-line no-undef
+          //   message,
+          //   position: {
+          //     my: 'center top',
+          //     at: 'center top',
+          //   },
+          // }, 'success', 3000);
         },
       },
       estimatedDownloadTime: 'Calculating...',

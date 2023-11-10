@@ -14,11 +14,16 @@ use App\Form\DatasetType;
 use App\Message\DeleteFile;
 use App\Message\DeleteDir;
 use App\Repository\DatasetRepository;
+use App\Util\Datastore;
 use App\Util\MdappLogger;
+use App\Util\ZipFiles;
 use FOS\RestBundle\Controller\Annotations\View;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -245,5 +250,43 @@ class DatasetController extends EntityController
         }
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * Ouput zip file.
+     *
+     * @Route("/api/datasets/zip/{dataset}", name="pelagos_api_download_zip")
+     *
+     * @param Dataset $dataset
+     * @return Response
+     */
+    public function getZipSteam(Dataset $dataset, ZipFiles $zipFiles, Datastore $datastore): Response
+    {
+        $zipFileName = str_replace(':', '.', $dataset->getUdi()) . '.zip';
+
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $zipFileName,
+        );
+
+        $headers = array(
+            'Content-Disposition' => $disposition,
+            'Content-type' => 'application/zip',
+        );
+
+        return new StreamedResponse(function () use ($dataset, $zipFiles, $datastore, $zipFileName) {
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+            $zipFiles->start($outputStream, $zipFileName);
+
+            $fileset = $dataset->getDatasetSubmission()->getFileset();
+
+            foreach ($fileset->getProcessedFiles() as $file) {
+                $filePathName = $file->getFilePathName();
+                $fileStream = $datastore->getFile($file->getPhysicalFilePath());
+                $zipFiles->addFile($filePathName, $fileStream);
+            }
+
+            $zipFiles->finish();
+        }, 200, $headers);
     }
 }
