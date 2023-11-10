@@ -115,7 +115,7 @@ export default {
         text: 'Download',
         onClick: () => {
           // eslint-disable-next-line no-undef
-          const url = `${Routing.generate('pelagos_api_download_zip')}/${this.id}`;
+          const url = `${Routing.generate('pelagos_app_download_dataset')}/${this.id}`;
           const link = document.createElement('a');
           link.href = url;
           document.body.appendChild(link);

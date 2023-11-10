@@ -260,7 +260,7 @@ class DatasetController extends EntityController
      * @param Dataset $dataset
      * @return Response
      */
-    public function getZipSteam(Dataset $dataset, ZipFiles $zipFiles, Datastore $datastore): Response
+    public function getZipStream(Dataset $dataset, ZipFiles $zipFiles, Datastore $datastore): Response
     {
         $zipFileName = str_replace(':', '.', $dataset->getUdi()) . '.zip';
 
