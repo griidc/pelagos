@@ -250,8 +250,7 @@ class DatalandController extends AbstractController
         // Setup variable to exist.
         $currentTimeStamp = 0;
         $downloadCount = 0;
-        foreach ($downloads as $key => $timeStamp)
-        {
+        foreach ($downloads as $key => $timeStamp) {
             $dateTime = $timeStamp['creationTimeStamp'];
             $epochTime = (int) $dateTime->format('U');
 
