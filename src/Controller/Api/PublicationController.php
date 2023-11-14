@@ -11,9 +11,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\View;
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
 use App\Entity\Publication;
 
 /**
@@ -26,17 +23,6 @@ class PublicationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *   tags={"Publications"},
-     *   summary="Get a count of Publications.",
-     * @SWG\Response(
-     *   response="200",
-     *   description="A count of Publications was successfully returned."
-     * ),
-     * @SWG\Response(
-     *   response="500",
-     *   description="An internal error has occurred."
-     * )
      *)
      *
      * @Route(
@@ -60,17 +46,6 @@ class PublicationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     * tags={"Publications"},
-     * summary="Get a collection of Publications.",
-     * @SWG\Response(
-     *   response="200",
-     *   description="The requested collection of Publications was successfully retrieved."
-     * ),
-     * @SWG\Response(
-     *   response="500",
-     *   description="An internal error has occurred."
-     * )
      * )
      *
      * @Route(
@@ -95,21 +70,6 @@ class PublicationController extends EntityController
      * @param Request     $request     A Symfony http request object, data includes the doi.
      * @param PubLinkUtil $pubLinkUtil The publication link utility.
      *
-     * @Operation(
-     * tags={"Publications"},
-     * summary="Fetch and cache a citation for a given DOI.",
-     * @SWG\Response(
-     *   response="200",
-     *   description="The requested Dataset was successfully retrieved."
-     * ),
-     * @SWG\Response(
-         response="404",
-         description="The requested Dataset was not found."
-     * ),
-     * @SWG\Response(
-     *   response="500",
-     *   description="An internal error has occurred."
-     * )
      * )
      *
      * @throws BadRequestHttpException If DOI in request is missing or not 10.something format.
@@ -202,21 +162,6 @@ class PublicationController extends EntityController
      *
      * @param Request $request A Symfony http request object, data includes the doi.
      *
-     * @Operation(
-     * tags={"Publications"},
-     * summary="Retrieve a cached citation for a given DOI.",
-     * @SWG\Response(
-     *   response="200",
-     *   description="The requested cached Publication citation was successfully retrieved."
-     * ),
-     * @SWG\Response(
-     *   response="404",
-     *   description="The requested cached Publication citation was not found."
-     * ),
-     * @SWG\Response(
-     *   response="500",
-     *   description="An internal error has occurred."
-     * )
      * )
      *
      * @throws \Exception            Upon internal unexpected result.

@@ -8,9 +8,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\View;
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
 use App\Entity\DataRepository;
 use App\Form\DataRepositoryType;
 
@@ -24,18 +21,6 @@ class DataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Get a count of Data Repositories.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="A count of Data Repositories was successfully returned."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -59,29 +44,6 @@ class DataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Validate a value for a property of a Data Repository.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -106,33 +68,6 @@ class DataRepositoryController extends EntityController
      * @param integer $id      The id of the existing Data Repository.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Validate a value for a property of an existing Data Repository.",
-     *     @SWG\Parameter(
-     *         name="someProperty",
-     *         in="body",
-     *         description="todo",
-     *         required=false,
-     *         @SWG\Schema(type="string")
-     *     ),
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Validation was performed successfully (regardless of validity)."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="Bad parameters were passed in the query string."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Repository was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -156,18 +91,6 @@ class DataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Get a collection of Data Repositories.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested collection of Data Repositories was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -191,22 +114,6 @@ class DataRepositoryController extends EntityController
      *
      * @param integer $id The id of the Data Repository to return.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Get a single Data Repository for a given id.",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="The requested Data Repository was successfully retrieved."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Repository was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -231,30 +138,6 @@ class DataRepositoryController extends EntityController
      * @param integer $id      The id of the Data Repository to replace.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Replace a Data Repository with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Data Repository was successfully replaced."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the Data Repository."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Repository was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
@@ -278,30 +161,6 @@ class DataRepositoryController extends EntityController
      * @param integer $id      The id of the Data Repository to update.
      * @param Request $request The request object.
      *
-     * @Operation(
-     *     tags={"Data Repositories"},
-     *     summary="Update a Data Repository with the submitted data.",
-     *     @SWG\Response(
-     *         response="204",
-     *         description="The Data Repository was successfully updated."
-     *     ),
-     *     @SWG\Response(
-     *         response="400",
-     *         description="The request could not be processed due to validation or other errors."
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="The authenticated user was not authorized to edit the Data Repository."
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="The requested Data Repository was not found."
-     *     ),
-     *     @SWG\Response(
-     *         response="500",
-     *         description="An internal error has occurred."
-     *     )
-     * )
      *
      *
      * @Route(
