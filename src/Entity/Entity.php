@@ -48,6 +48,7 @@ abstract class Entity
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    #[Serializer\Groups(["id"])]
     protected $id;
 
     /**

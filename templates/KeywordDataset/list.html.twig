@@ -1,0 +1,25 @@
+{% extends "template/UI.html.twig" %}
+
+{% block title %}Keyword to Datasets{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
+{% endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
+    <script type="text/javascript" src="{{ asset('build/js/keyword-dataset-list.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="bootstrap">
+    <div class="container">
+        <h1 class="text-center">List of Approved Dataset without Keywords</h1>
+        <div id="gridContainer"></div>
+    </div>
+</div>
+{% endblock %}

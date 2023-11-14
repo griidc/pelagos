@@ -119,6 +119,7 @@ class DatasetSubmissionTest extends TestCase
                 'getPrimaryPointOfContact' => $this->mockPerson,
                 'getSecondaryPointOfContact' => null,
                 'getAdditionalFunders' => null,
+                'getKeywords' => new ArrayCollection(),
             ]
         );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(

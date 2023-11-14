@@ -764,6 +764,14 @@ class DatasetSubmission extends Entity
     protected $placeKeywords = array();
 
     /**
+     * Keywords associated with this Dataset Submission.
+     *
+     * @var Collection
+     */
+    #[ORM\ManyToMany(targetEntity: Keyword::class)]
+    protected $keywords;
+
+    /**
      * Topic keywords describing this dataset.
      *
      * @var array
@@ -955,6 +963,7 @@ class DatasetSubmission extends Entity
         $this->metadataContacts = new ArrayCollection();
         $this->distributionPoints = new ArrayCollection();
         $this->datasetLinks = new ArrayCollection();
+        $this->keywords = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
@@ -988,6 +997,11 @@ class DatasetSubmission extends Entity
             $this->setAdditionalFunders($entity->getAdditionalFunders());
 
             $this->addDistributionPoint(new DistributionPoint());
+
+            /** @var Keyword $keyword */
+            foreach ($entity->getKeywords() as $keyword) {
+                $this->addKeyword($keyword);
+            }
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1033,6 +1047,10 @@ class DatasetSubmission extends Entity
             $this->setColdStorageTotalUnpackedCount($entity->getColdStorageTotalUnpackedCount());
             $this->setColdStorageTotalUnpackedSize($entity->getColdStorageTotalUnpackedSize());
             $this->setAdditionalFunders($entity->getAdditionalFunders());
+            /** @var Keyword $keyword */
+            foreach ($entity->getKeywords() as $keyword) {
+                $this->addKeyword($keyword);
+            }
 
             // Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -2124,6 +2142,36 @@ class DatasetSubmission extends Entity
     public function getTopicKeywords(): array
     {
         return $this->topicKeywords;
+    }
+
+    /**
+     * Add a Keyword to this Dataset Submission.
+     */
+    public function addKeyword(Keyword $keyword): self
+    {
+        if (!empty($this->keywords) and false === $this->keywords->contains($keyword)) {
+            $this->keywords->add($keyword);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove a Keyword from this Dataset Submission.
+     */
+    public function removeKeyword(Keyword $keyword): self
+    {
+        $this->keywords->removeElement($keyword);
+
+        return $this;
+    }
+
+    /**
+     * Get the keywords for this Dataset Submission.
+     */
+    public function getKeywords(): ?Collection
+    {
+        return $this->keywords;
     }
 
     /**

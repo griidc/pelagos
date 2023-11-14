@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\Funder;
+use App\Entity\Keyword;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
@@ -209,6 +210,18 @@ class DIFType extends AbstractType
                 'attr' => [
                     'placeholder' => 'yyyy-mm-dd',
                 ],
+            ])
+            ->add('keywords', CollectionType::class, [
+                'label' => 'Keywords',
+                'entry_type' => EntityType::class,
+                'entry_options' => [
+                    'class' => Keyword::class,
+                ],
+                'by_reference' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => false,
             ])
             ->add('funders', CollectionType::class, [
                 'label' => 'Funders',

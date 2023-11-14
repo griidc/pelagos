@@ -1,0 +1,138 @@
+    <div id="keyword-items">
+        {% set keywords = [] %}
+        {% for keyword in form.keywords %}
+
+            {% set keywords = keywords|merge([keyword.vars.value]) %}
+        {% endfor %}
+
+        <input id="keywordList" name="keywordList" type="hidden" value="{{ keywords|join(',') }}"/>
+        {% for keyword in form.keywords %}
+            <input type="hidden" id="{{keyword.vars.id}}" name="{{keyword.vars.full_name}}" value="{{keyword.vars.value}}">
+        {% endfor %}
+    </div>
+
+    <script type="text/html" id="list-item-template">
+        <div class="dx-tag">
+            <div class="dx-tag-content text-left mw-100">
+                <span class="d-inline-block text-truncate mw-100"> <%= displayPath %> </span>
+                <div class="dx-tag-remove-button"  item="<%= id %>"></div>
+            </div>
+        </div>
+    </script>
+
+    {% if hideKeywords|default == true %}
+    <div style="display:none;">
+    {% endif %}
+    <hr>
+    <fieldset>
+        <legend>Field of Research</legend>
+        <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					<img class="info" src="{{ asset('build/images/info32.png') }}">
+					<div class="tooltiptext">
+                        Please select at least one of the following Australian and New Zealand Standard Research Classification (ANZSRC) Fields of Research (FOR) keywords.
+                        Click on the arrow to the left of the keyword to view more specific keywords within that category.
+					</div>
+				</span>
+            <label for="keywordSelected" class="emRequired">Field of Research Keywords</label>
+            <div id="keywordSelected">
+                <div id="selectedList"></div>
+                <input id="keywordListAnzsrc" name="keywordListAnzsrc" {% if hideKeywords|default == false %} required="required" {% endif %} type="hidden">
+                <label for="keywordListAnzsrc" class="error"></label>
+                <hr>
+                <div id="keyword-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:50%">
+                                <div id="treelist" style="height:400px;"></div>
+                            </td>
+                            <td style="width:50%">
+                                <div id="selecteditem" style="height:400px;">
+                                    <div id="default-template" style="padding-left:20px;padding-right:20px;padding-top:20px;">
+                                        <p>
+                                            Please select at least one of the following Australian and New Zealand Standard Research Classification (ANZSRC) Fields of Research (FOR) discipline keywords.
+                                            These are standardized keywords used to facilitate dataset discovery.  Click on the arrow to the left of the keyword to view more specific keywords within that category.
+                                            Please select the most detailed keyword level applicable.
+                                            For definitions and more information on ANZSRC FOR discipline keywords please visit <a href="https://vocabs.ardc.edu.au/viewById/316" target="_blank">Australian and New Zealand Standard Research Classification 2020: Fields of Research.</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <script type="text/html" id="item-template">
+                                    <div style="padding:10px;">
+                                        <label>Label:</label>
+                                        <span> <%= label %> </span>
+                                        <label>Definition:</label>
+                                        <div style="height:275px;overflow: auto;white-space:pre-line;"> <%= definition %> </div>
+                                    </div>
+                                    <div id="add-button"></div>
+                                </script>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </td>
+        </tr>
+        </table>
+    </fieldset>
+
+    <hr>
+    <fieldset>
+        <legend>Earth Science Keywords</legend>
+        <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					<img class="info" src="{{ asset('build/images/info32.png') }}">
+					<div class="tooltiptext">
+                        Please select at least one of the following Global Change Master Directory (GCMD) keywords.
+                        Click on the arrow to the left of the keyword to view more specific keywords within that category.
+					</div>
+				</span>
+            <label for="keywordSelected" class="emRequired">Earth Science Keywords</label>
+            <div id="keywordSelected">
+                <div id="selectedList-gcmd"></div>
+                <input id="keywordListGcmd" name="keywordListGcmd" {% if hideKeywords|default == false %} required="required" {% endif %} type="hidden">
+                <label for="keywordListGcmd" class="error"></label>
+                <hr>
+                <div id="keyword-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:50%">
+                                <div id="treelist-gcmd" style="height:400px;"></div>
+                            </td>
+                            <td style="width:50%">
+                                <div id="selecteditem-gcmd" style="height:400px;">
+                                    <div id="default-template-gcmd" style="padding-left:20px;padding-right:20px;padding-top:20px;">
+                                        <p>
+                                            Please select at least one of the following Global Change Master Directory (GCMD) keywords.
+                                            These are standardized keywords used to facilitate dataset discovery.
+                                            Click on the arrow to the left of the keyword to view more specific keywords within that category.
+                                            Please select the most detailed keyword level applicable.
+                                            For definitions and more information on GCMD keywords please visit <a href="https://www.earthdata.nasa.gov/learn/find-data/idn/gcmd-keywords">Global Change Master Directory (GCMD) Keyword.</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <script type="text/html" id="item-template-gcmd">
+                                    <div style="padding:10px;">
+                                        <label>Label:</label>
+                                        <span> <%= label %> </span>
+                                        <label>Definition:</label>
+                                        <div style="height:275px;overflow: auto;white-space:pre-line;"> <%= definition %> </div>
+                                    </div>
+                                    <div id="add-button-gcmd"></div>
+                                </script>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </td>
+        </tr>
+        </table>
+    </fieldset>
+    {% if hideKeywords|default == true %}
+    </div>
+    {% endif %}

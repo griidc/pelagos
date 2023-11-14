@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -376,6 +377,14 @@ class DIF extends Entity
     protected $additionalFunders;
 
     /**
+     * Keywords associated with this DIF.
+     *
+     * @var Collection
+     */
+    #[ORM\ManyToMany(targetEntity: Keyword::class)]
+    protected $keywords;
+
+    /**
      * Constructor.
      *
      * Initializes status to unsubmitted.
@@ -387,6 +396,7 @@ class DIF extends Entity
         if (null !== $dataset) {
             $this->setDataset($dataset);
         }
+        $this->keywords = new ArrayCollection();
     }
 
     /**
@@ -1464,5 +1474,35 @@ class DIF extends Entity
     public function getAdditionalFunders(): ?string
     {
         return $this->additionalFunders;
+    }
+
+    /**
+     * Add a Keyword to this DIF.
+     */
+    public function addKeyword(Keyword $keyword): self
+    {
+        if (!empty($this->keywords) and false === $this->keywords->contains($keyword)) {
+            $this->keywords->add($keyword);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove a Keyword from this DIF.
+     */
+    public function removeKeyword(Keyword $keyword): self
+    {
+        $this->keywords->removeElement($keyword);
+
+        return $this;
+    }
+
+    /**
+     * Get the keywords for this DIF.
+     */
+    public function getKeywords(): ?Collection
+    {
+        return $this->keywords;
     }
 }
