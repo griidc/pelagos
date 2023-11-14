@@ -38,12 +38,12 @@ class JsonSerializer
     /**
      * Serialize an Object into JSON.
      *
-     * @param object $object An object to be serialized.
-     * @param array  $groups The serializer groups to use.
+     * @param mixed $object An object to be serialized.
+     * @param array $groups The serializer groups to use.
      *
      * @return self
      */
-    public function serialize(object $object, array $groups = null): self
+    public function serialize(mixed $data, array $groups = null): self
     {
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
@@ -52,7 +52,7 @@ class JsonSerializer
             $context->setGroups($groups);
         }
 
-        $this->json = $this->serializer->serialize($object, 'json', $context);
+        $this->json = $this->serializer->serialize($data, 'json', $context);
 
         return $this;
     }

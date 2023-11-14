@@ -1,0 +1,42 @@
+html, body {
+    overflow: hidden;
+}
+.main {
+    height: 100%;
+}
+.left {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow-y: scroll;
+    position: absolute;
+    top: 300px;
+    bottom: 0;
+    left: 0;
+    padding-inline: 20px;
+    padding-bottom: 300px;
+  }
+.right {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    top: 300px;
+    bottom: 0;
+    right: 0;
+    padding-inline: 20px;
+    padding-bottom: 300px;
+}
+.tab-table tr:nth-child(even) {
+    background-color: #FFF
+}
+
+.tab-table tr:nth-child(odd) {
+    background-color: #FFF
+}
+
+pre {
+    white-space: pre-wrap;
+}

@@ -20,13 +20,38 @@ class Metadata
     protected $twig;
 
     /**
+     * The env variable for GCMD Keyword version.
+     *
+     * @param gcmdVersion
+     */
+    protected $gcmdVersion;
+
+    /**
+     * The env variable for GCMD Keyword version year.
+     *
+     * @param gcmdVersionYear
+     */
+    protected $gcmdVersionYear;
+
+    /**
+     * The env variable for ANZSRC Keyword version.
+     *
+     * @param aszsrcRevision
+     */
+    protected $anzsrcVersion;
+
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param TwigEnvironment $twig The twig rendering engine.
      */
-    public function __construct(TwigEnvironment $twig)
+    public function __construct(TwigEnvironment $twig, string $gcmdVersion, string $anzsrcVersion, string $gcmdVersionYear)
     {
         $this->twig = $twig;
+        $this->gcmdVersion = $gcmdVersion;
+        $this->gcmdVersionYear = $gcmdVersionYear;
+        $this->anzsrcVersion = $anzsrcVersion;
     }
 
     /**
@@ -47,6 +72,9 @@ class Metadata
                     'dataset' => $dataset,
                     'boundingBoxArray' => $boundingBoxArray,
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
+                    'gcmdVersion' => $this->gcmdVersion,
+                    'gcmdVersionYear' => $this->gcmdVersionYear,
+                    'anzsrcVersion' => $this->anzsrcVersion,
                 )
             );
         }
