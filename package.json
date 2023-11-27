@@ -33,7 +33,7 @@
     },
     "dependencies": {
         "@babel/preset-env": "7.9.0",
-        "axios": "^0.21.2",
+        "axios": "^1.6.0",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
         "devextreme": "^21.1.6",
