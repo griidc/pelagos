@@ -68,7 +68,6 @@
                         <strong>UDI:</strong> {{ datasetInfo.dataset.udi }}<br>
                         <strong>File name:</strong> {{ datasetInfo.dataset.filename }}<br>
                         <strong>File size:</strong> {{ datasetInfo.dataset.fileSize }}<br>
-                        <strong>SHA256 Checksum:</strong> {{ datasetInfo.dataset.checksum }}<br>
                         <strong>Estimated Download Time:</strong> {{ estimatedDownloadTime }}<br>
                     </div>
                 </div>

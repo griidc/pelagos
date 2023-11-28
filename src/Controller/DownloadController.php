@@ -227,7 +227,7 @@ class DownloadController extends AbstractController
         );
 
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $datasetInfo['filename'] = $datasetSubmission->getDatasetFileName();
+            $datasetInfo['filename'] = str_replace(':', '.', $dataset->getUdi()) . '.zip';
             $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);
             $datasetInfo['fileSizeRaw'] = $datasetSubmission->getDatasetFileSize();
             $datasetInfo['checksum'] = $datasetSubmission->getDatasetFileSha256Hash();
