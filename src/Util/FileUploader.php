@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use GuzzleHttp\Psr7\Utils;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -98,7 +99,8 @@ class FileUploader
             unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
         @rmdir($chunksFolder);
-        $targetFileSize = StreamInfo::getFileSize(array('fileStream' => $targetFile));
+        $stream = Utils::streamFor($targetFile);
+        $targetFileSize = StreamInfo::getFileSize($stream);
         fclose($targetFile);
         if ($targetFileSize !== $fileSize) {
             unlink($targetFileName);

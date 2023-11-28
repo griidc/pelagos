@@ -10,6 +10,7 @@ use App\Util\Datastore;
 use App\Util\StreamInfo;
 use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -113,8 +114,8 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
         try {
             $this->logger->info('Zipfile opened.', $loggingContext);
-            $fileStream = fopen($destinationPath, 'w+');
-            $outputStream = array('fileStream' => $fileStream);
+            $resource = Utils::tryFopen($destinationPath, 'w+');
+            $outputStream = Utils::streamFor($resource);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
                 $this->logger->info("adding file: " . $fileItemInfo['filePathName'] . '.', $loggingContext);
@@ -122,12 +123,11 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             }
             $this->zipFiles->finish();
             $this->logger->info('Zipfile closed. ', $loggingContext);
-            rewind($fileStream);
             $fileset = $datasetSubmission->getFileset();
             $fileset->setZipFilePath($destinationPath);
             $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
             $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));
-            fclose($fileStream);
+            fclose($resource);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()), $loggingContext);

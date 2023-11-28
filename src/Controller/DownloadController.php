@@ -11,12 +11,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * The Dataset download controller.
@@ -91,6 +92,39 @@ class DownloadController extends AbstractController
     }
 
     /**
+     * Download dataset, count and forward to zip stream.
+     *
+     * @Route("/download/dataset/{id}", name="pelagos_app_download_dataset")
+     */
+    public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
+    {
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof Account) {
+            $type = 'GoMRI';
+            $typeId = $currentUser->getUserId();
+        } else {
+            $type = 'Non-GoMRI';
+            $typeId = 'anonymous';
+        }
+
+        $logActionItemEventDispatcher->dispatch(
+            array(
+                'actionName' => 'File Download',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId),
+            ),
+            'file_download'
+        );
+
+        $downloadZip = $this->generateUrl('pelagos_api_download_zip', [
+            'dataset' => $dataset->getId(),
+        ]);
+
+        return new RedirectResponse($downloadZip);
+    }
+
+    /**
      * Set up direct download via HTTP and produce html for direct download splash screen.
      *
      * @param Dataset                      $dataset                      The id of the dataset to download.
@@ -123,8 +157,8 @@ class DownloadController extends AbstractController
                     }
                     $response = new StreamedResponse();
                     $response->setCallback(function () use ($fileStream) {
-                        $outputStream = fopen('php://output', 'wb');
-                        stream_copy_to_stream($fileStream['fileStream'], $outputStream);
+                        $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+                        GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
                     });
                     $filename = $datasetSubmission->getDatasetFileName();
                     $mimeType = $dataStore->getMimeType($filePhysicalPath) ?: 'application/octet-stream';
@@ -193,7 +227,7 @@ class DownloadController extends AbstractController
         );
 
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $datasetInfo['filename'] = $datasetSubmission->getDatasetFileName();
+            $datasetInfo['filename'] = str_replace(':', '.', $dataset->getUdi()) . '.zip';
             $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);
             $datasetInfo['fileSizeRaw'] = $datasetSubmission->getDatasetFileSize();
             $datasetInfo['checksum'] = $datasetSubmission->getDatasetFileSha256Hash();
