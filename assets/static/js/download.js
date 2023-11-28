@@ -12,7 +12,7 @@ function startDownload(id)
                 $.extend({}, vex.dialog.buttons.YES, {
                     text: "Download", click: function ($vexContent, event) {
                         if (!data.remotelyHosted) {
-                            window.location.href = Routing.generate("pelagos_app_download_http", {"id": id});
+                            window.location.href = `${Routing.generate('pelagos_api_download_zip')}/${id}`;
                         }
                     }
                 }),
