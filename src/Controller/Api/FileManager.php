@@ -297,7 +297,6 @@ class FileManager extends AbstractFOSRestController
         $udi = $dataset->getUdi();
 
         if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
-
             $currentUser = $this->getUser();
             if ($currentUser instanceof Account) {
                 $type = 'GoMRI';
