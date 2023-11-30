@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client';
 import '../../scss/griidc.scss';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-import GriidcMenu from '../react/components/GriidcMenu.jsx';
+import GriidcMenu from '../react/components/GriidcMenu';
 
 const $ = require('jquery');
 
