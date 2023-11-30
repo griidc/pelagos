@@ -12,8 +12,9 @@ function avoidFocusOnClick() {
 }
 
 export default class GriidcMenu extends Component {
-    render () {
-        return (
+  // eslint-disable-next-line
+  render() {
+    return (
           <Popover.Group className="hidden lg:flex">
             <Popover className="relative">
               <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600" href="/">Home</a>
@@ -107,6 +108,6 @@ export default class GriidcMenu extends Component {
               <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600" href="/contact">Contact Us</a>
             </Popover>
           </Popover.Group>
-      );
-    }
+    );
+  }
 }
