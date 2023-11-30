@@ -54,9 +54,9 @@ export default class GriidcMenu extends Component {
                       static
                       className="absolute left-8 top-full z-10 mt-3 w-56 rounded bg-white shadow-md ring-1 ring-gray-100"
                     >
-                     <a class="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/faq">Frequently Asked Questions</a>
-                     <a class="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/training-and-user-guides">Training and User Guides</a>
-                     <a class="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/webinar-recordings">Webinar Recordings</a>
+                     <a className="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/faq">Frequently Asked Questions</a>
+                     <a className="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/training-and-user-guides">Training and User Guides</a>
+                     <a className="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/webinar-recordings">Webinar Recordings</a>
                     </Popover.Panel>
                   </Transition>
                 </Fragment>
@@ -95,9 +95,9 @@ export default class GriidcMenu extends Component {
                       static
                       className="absolute left-8 top-full z-10 mt-3 w-56 rounded bg-white shadow-md ring-1 ring-gray-100"
                     >
-                      <a class="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/submit-data">Submit Data</a>
-                      <a class="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/search-data">Search Data</a>
-                      <a class="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/monitor-data">Monitor Data</a>
+                      <a className="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/submit-data">Submit Data</a>
+                      <a className="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/search-data">Search Data</a>
+                      <a className="m-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500" href="/monitor-data">Monitor Data</a>
                     </Popover.Panel>
                   </Transition>
                 </Fragment>
