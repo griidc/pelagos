@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
@@ -24,6 +25,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+
+use function Amp\Promise\wait;
 
 /**
  * FileManager API used by File Manager app.
@@ -290,15 +293,30 @@ class FileManager extends AbstractFOSRestController
             throw new AccessDeniedHttpException('File unavailable for download');
         }
 
-        $logActionItemEventDispatcher->dispatch(
-            array(
-            'actionName' => 'Single File Download',
-            'subjectEntityName' => 'Pelagos\Entity\Dataset',
-            'subjectEntityId' => $file->getFileset()->getDatasetSubmission()->getDataset()->getId(),
-            'payLoad' => array('userType' => 'myusertype', 'userId' => 'myuserid', 'filename' => $file->getFilePathName()),
-            ),
-            'single_file_download'
-        );
+        $dataset = $file->getFileset()->getDatasetSubmission()->getDataset();
+        $udi = $dataset->getUdi();
+
+        if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
+
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof Account) {
+                $type = 'GoMRI';
+                $typeId = $currentUser->getUserId();
+            } else {
+                $type = 'Non-GoMRI';
+                $typeId = 'anonymous';
+            }
+
+            $logActionItemEventDispatcher->dispatch(
+                array(
+                'actionName' => 'Single File Download',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                'subjectEntityId' => $file->getFileset()->getDatasetSubmission()->getDataset()->getId(),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId, 'filename' => $file->getFilePathName()),
+                ),
+                'single_file_download'
+            );
+        }
 
         $response = new StreamedResponse(function () use ($file, $datastore) {
             $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
