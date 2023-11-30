@@ -12,9 +12,8 @@ use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use PHPUnit\Util\Json;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -289,17 +288,19 @@ class FileManager extends AbstractFOSRestController
             throw new AccessDeniedHttpException('File unavailable for download');
         }
         $response = new StreamedResponse(function () use ($file, $datastore) {
-            $outputStream = fopen('php://output', 'wb');
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+
             if ($file->getStatus() === File::FILE_DONE) {
                 try {
-                    $fileStream = $datastore->getFile($file->getPhysicalFilePath())['fileStream'];
+                    $fileStream = $datastore->getFile($file->getPhysicalFilePath());
                 } catch (\Exception $exception) {
                     throw new BadRequestHttpException($exception->getMessage());
                 }
             } else {
-                $fileStream = fopen($file->getPhysicalFilePath(), 'r');
+                $resource = GuzzlePsr7Utils::tryFopen($file->getPhysicalFilePath(), 'r');
+                $fileStream = GuzzlePsr7Utils::streamFor($resource);
             }
-            stream_copy_to_stream($fileStream, $outputStream);
+            GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
         });
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
