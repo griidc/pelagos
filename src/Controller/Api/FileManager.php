@@ -293,8 +293,7 @@ class FileManager extends AbstractFOSRestController
             throw new AccessDeniedHttpException('File unavailable for download');
         }
 
-        $dataset = $file->getFileset()->getDatasetSubmission()->getDataset();
-        $udi = $dataset->getUdi();
+        $udi = $file->getFileset()->getDatasetSubmission()->getDataset()->getUdi();
 
         if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
             $currentUser = $this->getUser();
