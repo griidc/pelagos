@@ -317,12 +317,7 @@ class FileManager extends AbstractFOSRestController
     /**
      * Download zip for all files in a dataset.
      *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     *
      * @Route("/api/file_zip_download_all/{id}", name="pelagos_api_file_zip_download_all", defaults={"_format"="json"})
-     *
-     * @throws BadRequestHttpException When no zip file is found.
-     * @throws AccessDeniedHttpException Error thrown when file not available for download.
      *
      * @return Response
      */
@@ -331,7 +326,8 @@ class FileManager extends AbstractFOSRestController
         $dataset = $datasetSubmission->getDataset();
         $udi = $dataset->getUdi();
         // Only log if this is downloaded from dataland. We don't log review downloads.
-        if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
+        $referer = $request->headers->get('referer');
+        if (!empty($referer) and preg_match("/^.*\/data\/$udi$/", $referer)) {
             $currentUser = $this->getUser();
             if ($currentUser instanceof Account) {
                 $type = 'GoMRI';
