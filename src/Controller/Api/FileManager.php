@@ -332,7 +332,6 @@ class FileManager extends AbstractFOSRestController
         $udi = $dataset->getUdi();
         // Only log if this is downloaded from dataland. We don't log review downloads.
         if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
-
             $currentUser = $this->getUser();
             if ($currentUser instanceof Account) {
                 $type = 'GoMRI';
