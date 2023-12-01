@@ -387,7 +387,7 @@ class FileManager extends AbstractFOSRestController
     public function doesZipFileExist(DatasetSubmission $datasetSubmission): Response
     {
         return new Response(
-            json_encode($datasetSubmission?->getFileset()?->getAllFiles()?->count() > 0),
+            json_encode($datasetSubmission?->getFileset()?->getProcessedFiles()?->count() > 0),
             Response::HTTP_OK,
             array(
                 'Content-Type' => 'application/json',
