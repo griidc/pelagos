@@ -2,9 +2,11 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
+use App\Event\LogActionItemEventDispatcher;
 use App\Message\RenameFile;
 use App\Util\Datastore;
 use App\Util\FileNameUtilities;
@@ -16,6 +18,7 @@ use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -323,70 +326,36 @@ class FileManager extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function downloadZipAllFiles(DatasetSubmission $datasetSubmission): Response
+    public function downloadZipAllFiles(DatasetSubmission $datasetSubmission, LogActionItemEventDispatcher $logActionItemEventDispatcher, Request $request): Response
     {
-        if (
-            $datasetSubmission->getDataset()->getAvailabilityStatus() !==
-            DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
-            and
-            !$this->isGranted('CAN_EDIT', $datasetSubmission)
-        ) {
-            throw new AccessDeniedHttpException('File unavailable for download');
-        }
+        $dataset = $datasetSubmission->getDataset();
+        $udi = $dataset->getUdi();
+        // Only log if this is downloaded from dataland. We don't log review downloads.
+        if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
 
-        $zipFilePath = $this->getZipFilePath($datasetSubmission);
-        if ($zipFilePath) {
-            $response = new StreamedResponse(function () use ($zipFilePath) {
-                $outputStream = fopen('php://output', 'wb');
-                $fileStream = fopen($zipFilePath, 'r');
-                stream_copy_to_stream($fileStream, $outputStream);
-            });
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                basename($zipFilePath)
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof Account) {
+                $type = 'GoMRI';
+                $typeId = $currentUser->getUserId();
+            } else {
+                $type = 'Non-GoMRI';
+                $typeId = 'anonymous';
+            }
+            $logActionItemEventDispatcher->dispatch(
+                array(
+                    'actionName' => 'File Download',
+                    'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                    'subjectEntityId' => $dataset->getId(),
+                    'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                ),
+                'file_download'
             );
-            $response->headers->set('Content-Disposition', $disposition);
-            return $response;
-        } else {
-            throw new BadRequestHttpException('No Zip file found');
         }
-    }
 
-    /**
-     * Checks if the zip file exists for the dataset.
-     *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     *
-     * @Route("/api/check_zip_exists/{id}", name="pelagos_api_check_zip_exists", defaults={"_format"="json"})
-     *
-     * @return Response
-     */
-    public function doesZipFileExist(DatasetSubmission $datasetSubmission): Response
-    {
-        $zipFilePath = $this->getZipFilePath($datasetSubmission);
-        return new Response(
-            json_encode($zipFilePath ? true : false),
-            Response::HTTP_OK,
-            array(
-                'Content-Type' => 'application/json',
-            )
-        );
-    }
+        $downloadZip = $this->generateUrl('pelagos_api_download_zip', [
+            'dataset' => $dataset->getId(),
+        ]);
 
-    /**
-     * Get the zip file path for the dataset.
-     *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     *
-     * @return string
-     */
-    private function getZipFilePath(DatasetSubmission $datasetSubmission): string
-    {
-        $fileset = $datasetSubmission->getFileset();
-        $zipFilePath = '';
-        if ($fileset instanceof Fileset and $fileset->isDone() and $fileset->doesZipFileExist()) {
-            $zipFilePath = $fileset->getZipFilePath();
-        }
-        return $zipFilePath;
+        return new RedirectResponse($downloadZip);
     }
 }
