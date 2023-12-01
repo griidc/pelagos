@@ -12,6 +12,7 @@ use App\Util\Datastore;
 use App\Util\FileNameUtilities;
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
@@ -318,11 +319,14 @@ class FileManager extends AbstractFOSRestController
      * Download zip for all files in a dataset.
      *
      * @Route("/api/file_zip_download_all/{id}", name="pelagos_api_file_zip_download_all", defaults={"_format"="json"})
-     *
-     * @return Response
      */
-    public function downloadZipAllFiles(DatasetSubmission $datasetSubmission, LogActionItemEventDispatcher $logActionItemEventDispatcher, Request $request): Response
-    {
+    public function downloadZipAllFiles(
+        DatasetSubmission $datasetSubmission,
+        LogActionItemEventDispatcher $logActionItemEventDispatcher,
+        ZipFiles $zipFiles,
+        Request $request,
+        Datastore $datastore
+    ): Response {
         $dataset = $datasetSubmission->getDataset();
         $udi = $dataset->getUdi();
         // Only log if this is downloaded from dataland. We don't log review downloads.
@@ -347,10 +351,47 @@ class FileManager extends AbstractFOSRestController
             );
         }
 
-        $downloadZip = $this->generateUrl('pelagos_api_download_zip', [
-            'dataset' => $dataset->getId(),
-        ]);
+        $zipFileName = str_replace(':', '.', $dataset->getUdi()) . '.zip';
 
-        return new RedirectResponse($downloadZip);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $zipFileName,
+        );
+
+        $headers = array(
+            'Content-Disposition' => $disposition,
+            'Content-type' => 'application/zip',
+        );
+
+        return new StreamedResponse(function () use ($datasetSubmission, $zipFiles, $datastore, $zipFileName) {
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+            $zipFiles->start($outputStream, $zipFileName);
+
+            $fileset = $datasetSubmission->getFileset();
+
+            foreach ($fileset->getProcessedFiles() as $file) {
+                $filePathName = $file->getFilePathName();
+                $fileStream = $datastore->getFile($file->getPhysicalFilePath());
+                $zipFiles->addFile($filePathName, $fileStream);
+            }
+
+            $zipFiles->finish();
+        }, 200, $headers);
+    }
+
+    /**
+     * Checks if the zip file exists for the dataset.
+     *
+     * @Route("/api/check_zip_exists/{id}", name="pelagos_api_check_zip_exists", defaults={"_format"="json"})
+     */
+    public function doesZipFileExist(DatasetSubmission $datasetSubmission): Response
+    {
+        return new Response (
+            json_encode($datasetSubmission?->getFileset()?->getAllFiles()?->count() > 0),
+            Response::HTTP_OK,
+            array(
+                'Content-Type' => 'application/json',
+            )
+        );
     }
 }
