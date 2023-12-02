@@ -115,6 +115,7 @@ function MapWizard(json)
         $("#geowizBtn").button().click(function()
         {
             showSpatialDialog();
+            $(divSmallMap).find('.olMapViewport').css('display', 'none');
         });
 
         var containerWidth = $("#"+json.divSmallMap).closest("tbody").width();
@@ -615,6 +616,7 @@ function MapWizard(json)
 
     function saveFeature()
     {
+        $(divSmallMap).find('.olMapViewport').css('display', 'block');
         var myWKTid = wizGeoViz.getSingleFeature();
         if (typeof myWKTid !== "undefined") {
             if (wizGeoViz.hasMultiFeatures() === true)
