@@ -1,5 +1,6 @@
 {
     "devDependencies": {
+        "@babel/preset-react": "^7.0.0",
         "@fortawesome/fontawesome-free": "^5.11.1",
         "@hotwired/stimulus": "^3.0.0",
         "@symfony/stimulus-bridge": "^3.0.0",
@@ -12,8 +13,11 @@
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-react": "^7.33.2",
         "eslint-plugin-vue": "^7.11.1",
         "file-loader": "^6.0.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "regenerator-runtime": "^0.13.2",
         "sass-embedded": "^1.56.2",
         "sass-loader": "^13.0.0",
@@ -33,9 +37,12 @@
     },
     "dependencies": {
         "@babel/preset-env": "7.9.0",
+        "@headlessui/react": "^1.7.17",
+        "@heroicons/react": "^2.0.18",
         "axios": "^1.6.0",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
+        "clsx": "^2.0.0",
         "devextreme": "^21.1.6",
         "devextreme-vue": "^21.1.6",
         "dropzone": "^5.7.2",

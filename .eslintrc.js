@@ -6,6 +6,7 @@ module.exports = {
   extends: [
     'plugin:vue/essential',
     'airbnb-base',
+    'plugin:react/recommended',
   ],
   parserOptions: {
     ecmaVersion: 12,
@@ -30,6 +31,9 @@ module.exports = {
     ],
   },
   settings: {
+    "react": {
+      "version": "detect", // React version. "detect" automatically picks the version you have installed.
+    },
     'import/resolver': {
       alias: {
         map: [['@', './assets/js']],
