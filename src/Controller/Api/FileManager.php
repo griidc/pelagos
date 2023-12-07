@@ -26,8 +26,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-use function Amp\Promise\wait;
-
 /**
  * FileManager API used by File Manager app.
  */
@@ -271,14 +269,10 @@ class FileManager extends AbstractFOSRestController
     /**
      * Download a file from disk.
      *
-     * @param File                         $file                         File entity instance.
-     * @param Datastore                    $datastore                    Datastore to manipulate the file on disk.
-     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
-     *
      * @Route("/api/file/download/{id}", name="pelagos_api_file_download", defaults={"_format"="json"})
      *
-     * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
      * @throws AccessDeniedHttpException Error thrown when file not available for download.
+     * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
      *
      * @return Response
      */
