@@ -128,6 +128,7 @@
         </fieldset>
     </div>
 
+    {# Temporary Added Remove this when fully deploying Standard Keywords #}
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
@@ -184,6 +185,63 @@
             </table>
         </fieldset>
     </div>
+    {# Temporary Added Remove this when fully deploying Standard Keywords #}
+
+    {# Temporary Hidden #}
+    <div class="frmSection" style="display:none">
+        <fieldset>
+            <span class="helpSection">
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
+                <div class="tooltiptext">
+                    <p>
+                        Please select at least one of the following Australian and New Zealand Standard Research Classification (ANZSRC) Fields of Research (FOR) discipline keywords.
+                        These are standardized keywords used to facilitate dataset discovery.
+                        Please select the most detailed keyword level applicable.
+                    </p>
+                </div>
+            </span>
+            <div id="keyword-items">
+                <input id="keywordList" name="keywordList" type="hidden" {# required="required" #}/>
+            </div>
+            <label for="keywordList" class="error"></label>
+            <label for="keywordSelected" class="emRequired">Discipline Keywords</label>
+            <div id="keywordSelected">
+                <div id="selectedList"></div>
+                <hr>
+                <div id="keyword-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:50%">
+                                <div id="treelist" style="height:400px;"></div>
+                            </td>
+                            <td style="width:50%">
+                                <div id="selecteditem" style="height:400px;">
+                                    <div id="default-template" style="padding-left:20px;padding-right:20px;padding-top:20px;">
+                                        <p>
+                                            Please select at least one of the following Australian and New Zealand Standard Research Classification (ANZSRC) Fields of Research (FOR) discipline keywords.
+                                            These are standardized keywords used to facilitate dataset discovery.  Click on the arrow to the left of the keyword to view more specific keywords within that category.
+                                            Please select the most detailed keyword level applicable.
+                                            For definitions and more information on ANZSRC FOR discipline keywords please visit <a href="https://vocabs.ardc.edu.au/viewById/316" target="_blank">Australian and New Zealand Standard Research Classification 2020: Fields of Research.</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <script type="text/html" id="item-template">
+                                    <div style="padding-left:20px;padding-right:20px;padding-top:20px;">
+                                        <label>Label:</label>
+                                        <span> <%= label %> </span>
+                                        <label>Definition:</label>
+                                        <div style="height:275px;overflow: auto;white-space:pre-line;"> <%= definition %> </div>
+                                    </div>
+                                    <div id="add-button"></div>
+                                </script>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    {# Temporary Hidden #}
 
     <div class="frmSection">
         <fieldset >
@@ -263,8 +321,6 @@
             </table>
         </fieldset>
     </div>
-
-
 
     <div class="frmSection">
         <fieldset>

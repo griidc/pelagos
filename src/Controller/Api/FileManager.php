@@ -2,21 +2,24 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
+use App\Event\LogActionItemEventDispatcher;
 use App\Message\RenameFile;
 use App\Util\Datastore;
 use App\Util\FileNameUtilities;
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use PHPUnit\Util\Json;
+use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -289,17 +292,19 @@ class FileManager extends AbstractFOSRestController
             throw new AccessDeniedHttpException('File unavailable for download');
         }
         $response = new StreamedResponse(function () use ($file, $datastore) {
-            $outputStream = fopen('php://output', 'wb');
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+
             if ($file->getStatus() === File::FILE_DONE) {
                 try {
-                    $fileStream = $datastore->getFile($file->getPhysicalFilePath())['fileStream'];
+                    $fileStream = $datastore->getFile($file->getPhysicalFilePath());
                 } catch (\Exception $exception) {
                     throw new BadRequestHttpException($exception->getMessage());
                 }
             } else {
-                $fileStream = fopen($file->getPhysicalFilePath(), 'r');
+                $resource = GuzzlePsr7Utils::tryFopen($file->getPhysicalFilePath(), 'r');
+                $fileStream = GuzzlePsr7Utils::streamFor($resource);
             }
-            stream_copy_to_stream($fileStream, $outputStream);
+            GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
         });
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
@@ -313,79 +318,80 @@ class FileManager extends AbstractFOSRestController
     /**
      * Download zip for all files in a dataset.
      *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     *
      * @Route("/api/file_zip_download_all/{id}", name="pelagos_api_file_zip_download_all", defaults={"_format"="json"})
-     *
-     * @throws BadRequestHttpException When no zip file is found.
-     * @throws AccessDeniedHttpException Error thrown when file not available for download.
-     *
-     * @return Response
      */
-    public function downloadZipAllFiles(DatasetSubmission $datasetSubmission): Response
-    {
-        if (
-            $datasetSubmission->getDataset()->getAvailabilityStatus() !==
-            DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
-            and
-            !$this->isGranted('CAN_EDIT', $datasetSubmission)
-        ) {
-            throw new AccessDeniedHttpException('File unavailable for download');
+    public function downloadZipAllFiles(
+        DatasetSubmission $datasetSubmission,
+        LogActionItemEventDispatcher $logActionItemEventDispatcher,
+        ZipFiles $zipFiles,
+        Request $request,
+        Datastore $datastore
+    ): Response {
+        $dataset = $datasetSubmission->getDataset();
+        $udi = $dataset->getUdi();
+        // Only log if this is downloaded from dataland. We don't log review downloads.
+        $referer = $request->headers->get('referer');
+        if (!empty($referer) and preg_match("/^.*\/data\/$udi$/", $referer)) {
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof Account) {
+                $type = 'GoMRI';
+                $typeId = $currentUser->getUserId();
+            } else {
+                $type = 'Non-GoMRI';
+                $typeId = 'anonymous';
+            }
+            $logActionItemEventDispatcher->dispatch(
+                array(
+                    'actionName' => 'File Download',
+                    'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                    'subjectEntityId' => $dataset->getId(),
+                    'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                ),
+                'file_download'
+            );
         }
 
-        $zipFilePath = $this->getZipFilePath($datasetSubmission);
-        if ($zipFilePath) {
-            $response = new StreamedResponse(function () use ($zipFilePath) {
-                $outputStream = fopen('php://output', 'wb');
-                $fileStream = fopen($zipFilePath, 'r');
-                stream_copy_to_stream($fileStream, $outputStream);
-            });
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                basename($zipFilePath)
-            );
-            $response->headers->set('Content-Disposition', $disposition);
-            return $response;
-        } else {
-            throw new BadRequestHttpException('No Zip file found');
-        }
+        $zipFileName = str_replace(':', '.', $dataset->getUdi()) . '.zip';
+
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $zipFileName,
+        );
+
+        $headers = array(
+            'Content-Disposition' => $disposition,
+            'Content-type' => 'application/zip',
+        );
+
+        return new StreamedResponse(function () use ($datasetSubmission, $zipFiles, $datastore, $zipFileName) {
+            $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
+            $zipFiles->start($outputStream, $zipFileName);
+
+            $fileset = $datasetSubmission->getFileset();
+
+            foreach ($fileset->getProcessedFiles() as $file) {
+                $filePathName = $file->getFilePathName();
+                $fileStream = $datastore->getFile($file->getPhysicalFilePath());
+                $zipFiles->addFile($filePathName, $fileStream);
+            }
+
+            $zipFiles->finish();
+        }, 200, $headers);
     }
 
     /**
      * Checks if the zip file exists for the dataset.
      *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     *
      * @Route("/api/check_zip_exists/{id}", name="pelagos_api_check_zip_exists", defaults={"_format"="json"})
-     *
-     * @return Response
      */
     public function doesZipFileExist(DatasetSubmission $datasetSubmission): Response
     {
-        $zipFilePath = $this->getZipFilePath($datasetSubmission);
         return new Response(
-            json_encode($zipFilePath ? true : false),
+            json_encode($datasetSubmission?->getFileset()?->getProcessedFiles()?->count() > 0),
             Response::HTTP_OK,
             array(
                 'Content-Type' => 'application/json',
             )
         );
-    }
-
-    /**
-     * Get the zip file path for the dataset.
-     *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     *
-     * @return string
-     */
-    private function getZipFilePath(DatasetSubmission $datasetSubmission): string
-    {
-        $fileset = $datasetSubmission->getFileset();
-        $zipFilePath = '';
-        if ($fileset instanceof Fileset and $fileset->isDone() and $fileset->doesZipFileExist()) {
-            $zipFilePath = $fileset->getZipFilePath();
-        }
-        return $zipFilePath;
     }
 }

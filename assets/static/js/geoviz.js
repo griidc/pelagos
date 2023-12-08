@@ -65,9 +65,22 @@ function GeoViz()
             displayInLayerSwitcher: true
         });
 
+        var usgsTopoBaseMap = new OpenLayers.Layer.XYZ(
+            'test',
+            'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/${z}/${y}/${x}',
+            {
+                maxZoom: 20,
+                sphericalMercator: true,
+                isBaseLayer: true,
+                attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+            }
+        );
+
+        var osm = new OpenLayers.Layer.OSM();
+
         map = new OpenLayers.Map(
         {
-            layers: [google_sat, google_hybrid],
+            layers: [usgsTopoBaseMap],
             center: new OpenLayers.LonLat(lon, lat).transform("EPSG:4326", "EPSG:900913"),
             zoom: zoom,
             div: DIV,
@@ -326,18 +339,18 @@ function GeoViz()
             }
         });
 
-        google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
-            google.maps.event.clearListeners(google_hybrid.mapObject, "tilesloaded");
-            google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
-                setTimeout(function () {
-                    // Hotfix to allow Hybrid map being loaded with New Google API (15 Feb 2016)
-                    map.setBaseLayer(google_hybrid);
+        // google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
+        //     google.maps.event.clearListeners(google_hybrid.mapObject, "tilesloaded");
+        //     google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
+        //         setTimeout(function () {
+        //             // Hotfix to allow Hybrid map being loaded with New Google API (15 Feb 2016)
+        //             map.setBaseLayer(google_hybrid);
                     jQuery(mapDiv).trigger("imready",mapDiv);
-                    }
-                , 100);
-                google.maps.event.clearListeners(google_hybrid.mapObject, "idle");
-            });
-        });
+        //             }
+        //         , 100);
+        //         google.maps.event.clearListeners(google_hybrid.mapObject, "idle");
+        //     });
+        // });
 
         //Add map selector for highlighting
         mapOptions.allowModify
@@ -348,13 +361,13 @@ function GeoViz()
 
     this.flashMap = function ()
     {
-        setTimeout(function () {
-            map.removeLayer(google_hybrid);
-            map.updateSize();
-            map.addLayer(google_hybrid);
-            map.updateSize();
-        }
-        , 100)
+        // setTimeout(function () {
+        //     map.removeLayer(google_hybrid);
+        //     map.updateSize();
+        //     map.addLayer(google_hybrid);
+        //     map.updateSize();
+        // }
+        // , 100)
     }
 
     this.setDrawMode = function(handlerType)

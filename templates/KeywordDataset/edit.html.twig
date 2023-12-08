@@ -1,0 +1,41 @@
+{% extends "template/UI.html.twig" %}
+
+{% block title %}Keyword to Datasets{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
+    <link href="{{ asset('build/css/dataset-submission.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/keyword-dataset-edit.css') }}" rel="stylesheet" />
+{%endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
+    <script type="text/javascript" src="{{ asset('build/js/submissionKeywords.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/keyword-dataset-edit.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="bootstrap">
+    <div class="container-fluid">
+        <button class="btn btn-dark float-right" type="button" id="btnBack">Return to List</button>
+        <h1 class="text-center">Edit Dataset</h1>
+         {{ form_start(form, {'method': 'PATCH'}) }}
+        <button type="button" id="btnUpdate" class="float-right btn btn-primary">Update Dataset</button>
+        <div class="main">
+            <div class="left">
+                    {% include 'KeywordDataset/submissionForm.html.twig' %}
+            </div>
+            <div class="right">
+
+                {% include 'DatasetSubmission/standard-keywords.html.twig' %}
+                {{ form_end(form, {render_rest: false}) }}
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
