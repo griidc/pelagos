@@ -89,6 +89,7 @@ services:
     App\Event\LogActionItemEventListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.single_file_download, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.remotelyhosted_update_log, method: onNewLogCreated }
