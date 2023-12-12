@@ -278,11 +278,15 @@ div#header #griidc-logo-wrapper {
     /* layout */
     /* main area */
 }
+
+.page-pelagos-full div#main-wrapper {
+    /* height: 100% */
+}
+
 .page-pelagos-full div#content-main,
 .page-pelagos-full div#content-main .section,
 .page-pelagos-full div#content-wrapper,
 .page-pelagos-full div#main,
-.page-pelagos-full div#main-wrapper,
 .page-pelagos-full div#page,
 .page-pelagos-full div#page-wrapper {
     height: 100%;
