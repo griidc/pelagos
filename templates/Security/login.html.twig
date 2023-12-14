@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block body %}
-<div width="80%">
+<div class="bootstrap">
 <!-- form action="{{ path('security_login') }}" method="post" -->
 {{ form_start(form) }}
     <div class="container" id="login">
@@ -22,22 +22,33 @@
             <div>
                 {{ form_row(form._password) }}
             </div>
-        <div>
-            <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit">
-            <input name="reset" accesskey="c" value="CLEAR" type="reset">
         </div>
+        <br />
         <div>
-            <a href="{{ path('pelagos_app_ui_account_password') }}">Forgot/Expired Password</a><br />
-            <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Forgot Your Username?</a>
+            <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit" class="btn btn-primary">
+            <input name="reset" accesskey="c" value="CLEAR" type="reset" class="btn btn-primary">
         </div>
+        <br />
         <div>
-            You are accessing a Texas A&amp;M University-Corpus Christi information system.<br />
-            <br />
-            Unauthorized use is prohibited.<br />
-            Usage may be subject to security testing and monitoring.<br />
-            Misuse is subject to criminal prosecution.<br/ >
-            Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
-            By logging in, you are agreeing to the <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_blank">rules and conditions</a> set forth by Texas A&amp;M University-Corpus Christi.<br />
+            <a href="{{ path('pelagos_app_ui_account_password') }}">Reset Forgot/Expired Password</a><br />
+            <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Look up Username</a>
+        </div>
+        <br />
+        <div class="card" style="width: 80%;">
+            <div class="card-header">
+                You are accessing a Texas A&amp;M University-Corpus Christi information system.
+            </div>
+            <div class="card body">
+                <p style="margin-left: 10px; margin-top: 10px">
+                    Unauthorized use is prohibited.<br />
+                    Usage may be subject to security testing and monitoring.<br />
+                    Misuse is subject to criminal prosecution.<br />
+                    Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
+                </p>
+                <div class="card-footer">
+                    By logging in, you are agreeing to the <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_blank">rules and conditions</a> set forth by Texas A&amp;M University-Corpus Christi.
+                </div>
+            </div>
         </div>
     </div>
 </form>
