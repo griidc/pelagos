@@ -83,9 +83,6 @@
         "preferred-install": {
             "*": "dist"
         },
-        "platform": {
-            "php": "8.3.1"
-        },
         "sort-packages": true,
         "allow-plugins": {
             "symfony/flex": true,
