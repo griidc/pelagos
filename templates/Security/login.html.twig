@@ -9,48 +9,53 @@
 {% endblock %}
 
 {% block body %}
+
+{% if error %}
+    <div role="alert">
+        <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+            <p>Oops! {{ error.message }}</p>
+        </div>
+    </div>
+{% endif %}
+
 <div>
 <!-- form action="{{ path('security_login') }}" method="post" -->
 {{ form_start(form) }}
-    <div id="login">
-        <div>
-            <div>
-                {{ form_row(form._username) }}
-            </div>
-        </div>
-        <div>
-            <div>
-                {{ form_row(form._password) }}
-            </div>
-        </div>
-        <br />
-        <div>
-            <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit">
-            <input name="reset" accesskey="c" value="CLEAR" type="reset" >
-        </div>
-        <br />
-        <div>
-            <a href="{{ path('pelagos_app_ui_account_password') }}">Reset Forgot/Expired Password</a><br />
-            <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Look up Username</a>
-        </div>
-        <br />
-        <div>
-            <div>
-                You are accessing a Texas A&amp;M University-Corpus Christi information system.
-            </div>
-            <div>
-                <p>
-                    Unauthorized use is prohibited.<br />
-                    Usage may be subject to security testing and monitoring.<br />
-                    Misuse is subject to criminal prosecution.<br />
-                    Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
-                </p>
-                <div>
-                    By logging in, you are agreeing to the <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_blank">rules and conditions</a> set forth by Texas A&amp;M University-Corpus Christi.
-                </div>
-            </div>
-        </div>
-    </div>
+    You are accessing a Texas A&amp;M University-Corpus Christi information system.</td>
+
+    Unauthorized use is prohibited.<br />
+    Usage may be subject to security testing and monitoring.<br />
+    Misuse is subject to criminal prosecution.<br />
+    Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
+    <br />
+    By logging in, you are agreeing to the <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_blank">rules and conditions</a> set forth by Texas A&amp;M University-Corpus Christi.
+    <br />
+    <br />
+    <table class="table-auto">
+        <tbody>
+            <tr>
+                <td>{{ form_row(form._username) }}</td>
+                <td>{{ form_row(form._password) }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">&nbsp;
+                    <input name="reset" accesskey="c" value="CLEAR" type="reset" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table>
+        <tbody>
+            <tr>
+                <td><a href="{{ path('pelagos_app_ui_account_password') }}">Reset Forgot/Expired Password</a></td>
+            </tr>
+            <tr>
+                <td><a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Look up Username</a></td>
+            </tr>
+        </tbody>
+    </table>
 </form>
 
 
