@@ -9,10 +9,10 @@
 {% endblock %}
 
 {% block body %}
-<div class="bootstrap">
+<div>
 <!-- form action="{{ path('security_login') }}" method="post" -->
 {{ form_start(form) }}
-    <div class="container" id="login">
+    <div id="login">
         <div>
             <div>
                 {{ form_row(form._username) }}
@@ -25,8 +25,8 @@
         </div>
         <br />
         <div>
-            <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit" class="btn btn-primary">
-            <input name="reset" accesskey="c" value="CLEAR" type="reset" class="btn btn-primary">
+            <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit">
+            <input name="reset" accesskey="c" value="CLEAR" type="reset" >
         </div>
         <br />
         <div>
@@ -34,18 +34,18 @@
             <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Look up Username</a>
         </div>
         <br />
-        <div class="card" style="width: 80%;">
-            <div class="card-header">
+        <div>
+            <div>
                 You are accessing a Texas A&amp;M University-Corpus Christi information system.
             </div>
-            <div class="card body">
-                <p style="margin-left: 10px; margin-top: 10px">
+            <div>
+                <p>
                     Unauthorized use is prohibited.<br />
                     Usage may be subject to security testing and monitoring.<br />
                     Misuse is subject to criminal prosecution.<br />
                     Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
                 </p>
-                <div class="card-footer">
+                <div>
                     By logging in, you are agreeing to the <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_blank">rules and conditions</a> set forth by Texas A&amp;M University-Corpus Christi.
                 </div>
             </div>
