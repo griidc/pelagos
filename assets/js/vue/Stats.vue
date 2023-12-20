@@ -1,6 +1,6 @@
 <template>
     <div class="dx-viewport">
-        <div class="row">
+        <div class="row w-75 mx-auto">
             <div class="col-xl-12">
                 <repository-summary />
             </div>
