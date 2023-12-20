@@ -79,7 +79,6 @@ export default {
 
 .summaryLabel {
     font-size: 28px;
-    font-weight: 200;
     cursor: default;
     padding: 20px;
 }
@@ -93,6 +92,5 @@ export default {
 #program-resources .label {
     font-size: 18px;
     text-transform: uppercase;
-
 }
 </style>
