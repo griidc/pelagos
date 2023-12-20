@@ -106,13 +106,12 @@
         </div>
         <div class="flex md:hidden">
             <div class="flex w-full justify-end md:py-3.5 md:px-3 0">
-
             {% if app.user %}
-                Logged in as: {{ app.user.username }} | <a href="/logout" class="flex items-center text-gray-600">
-                <span class="block md:ml-2 text-[0.875rem] leading-[1.25]">Logout</span>
+                <span class="block md:ml-2 text-[0.875rem] leading-[1.25]">
+                    Logged in as: {{ app.user.username }} | <a href="/logout" class="flex items-center text-gray-600">Log out</a>
+                </span>
             {% else %}
                 <a href="/login" class="flex items-center text-gray-600">Login</a>
-            </a>
             {% endif %}
             </div>
             <button type="button" class="inline-flex items-center justify-center rounded-md text-gray-700 ml-5 sm:ml-7 cursor-pointer">
