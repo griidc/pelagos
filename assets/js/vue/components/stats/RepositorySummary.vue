@@ -3,27 +3,27 @@
         <div class="summaryLabel text-center">Repository Summary</div>
         <div class="row">
             <div class="col-sm">
-                <img src="~images/icon-datasets.png">
+                <img src="~images/icon-datasets.png" class="inline-block">
                 <div class="count">{{ (datasets == 0) ? '-' : datasets }}</div>
                 <div class="label">Datasets</div>
             </div>
             <div class="col-sm">
-                <img src="~images/icon-filesize.png">
+                <img src="~images/icon-filesize.png" class="inline-block">
                 <div class="count">{{ (totalsize == 0) ? '-' : totalsize }}</div>
                 <div class="label"> {{sizeUnit}} Of Data</div>
             </div>
             <div class="col-sm">
-                <img src="~images/icon-downloads.png">
+                <img src="~images/icon-downloads.png" class="inline-block">
                 <div class="count">{{ (totalDownloads == 0) ? '-' : totalDownloads }}</div>
                 <div class="label">Total Downloads</div>
             </div>
             <div class="col-sm">
-                <img src="~images/icon-projects.png">
+                <img src="~images/icon-projects.png" class="inline-block">
                 <div class="count">{{ (researchGroups == 0) ? '-' : researchGroups }}</div>
                 <div class="label">{{ getRGLabel() }}</div>
             </div>
             <div class="col-sm">
-                <img src="~images/icon-researchers.png">
+                <img src="~images/icon-researchers.png" class="inline-block">
                 <div class="count">{{ (people == 0) ? '-' : people }}</div>
                 <div class="label">People</div>
             </div>
