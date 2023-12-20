@@ -49,3 +49,7 @@
 .awesome-icon {
     cursor: pointer;
 }
+
+img.bobble-img {
+    display:inline-block;
+}

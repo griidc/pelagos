@@ -7,7 +7,7 @@
 {% for ResearchGroup in researchGroups %}
 <div class="project" project="{{ResearchGroup.id}}">
     <div class="project-title">
-        <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'id': ResearchGroup.id }) }}" target="_blank">{{ResearchGroup.name}}</a>
+        <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'id': ResearchGroup.id }) }}" target="_blank" class="hover:text-blue-600">{{ResearchGroup.name}}</a>
 
         <span class="awesome-icon awesome-icon-csv" data-url="{{ vanityurl('pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport', { id : ResearchGroup.id}) }}">
             <i class="fas fa-file-csv" style="color: green; margin-left:1em"></i>
@@ -41,15 +41,15 @@
                     <td>
                         <div class="dotchart_legend" style="position: relative;">
                             <span><strong>Dataset with status:</strong>
-                                <img src="{{ asset('build/images/green-circle.png') }}"> Available:
+                                <img src="{{ asset('build/images/green-circle.png') }}" class="bobble-img"> Available:
                                 <span id="a"></span>
                             </span>
                             <span>
-                                <img src="{{ asset('build/images/yellow-circle.png') }}"> Submitted:
+                                <img src="{{ asset('build/images/yellow-circle.png') }}" class="bobble-img"> Submitted:
                                 <span id="r"></span>
                             </span>
                             <span>
-                                <img src="{{ asset('build/images/empty-circle.png') }}"> Identified:
+                                <img src="{{ asset('build/images/empty-circle.png') }}" class="bobble-img"> Identified:
                                 <span id="i"></span>
                             </span>
                             <div style="position:absolute; right:0; bottom:0;">
