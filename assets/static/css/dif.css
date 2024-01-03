@@ -141,6 +141,11 @@ label:not(.button)
   padding-bottom:20px;
 }
 
+.diftree ul,li
+{
+    font-size: 12px;
+}
+
 #noresults
 {
     display:hidden;
@@ -158,3 +163,25 @@ fieldset {
 select, input{
     height: auto;
 }
+
+img {
+    display: inline-block;
+}
+
+.legacy-h1 {
+    font-size:2em;
+}
+
+.legacy-h3 {
+    font-size:1.17em;
+}
+
+#pelagos-content {
+    font-size: 12px;
+    padding:20px;
+}
+
+#pelagos-content button,input,optgroup,select,textarea {
+    font-size: unset;
+}
+
