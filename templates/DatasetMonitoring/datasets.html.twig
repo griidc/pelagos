@@ -144,7 +144,9 @@
                 {% else %}
                 <td></td>
                 {% endif %}
-                <td class="details"><a href="{{ vanitypath('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
+                <td style="details"><a href="{{ vanitypath('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">
+                    <span class="dataset-title">{{dataset.title}}</span>
+                </a></td>
                 {% endif %}
                 <td class="status" title="{{ identified_title | default }}">
                     <span style="display:none;">
