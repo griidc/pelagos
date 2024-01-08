@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block body %}
+    <div class="w-75 mx-auto" style="width:66%">
     <table width="100%" border="0">
         <tr>
             <td width="50%">
@@ -20,22 +21,23 @@
                         <input type="email" size="100" name="emailAddress" id="emailAddress" required>
                         <label style="display:inline;" for="emailAddress" class="error"></label>
                         <p>
-                            <button type="submit">Submit</button>
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Submit</button>
                         </p>
                     </form>
             </td>
         </tr>
         <tr>
             <td width="50%">
-                Accounts are governed by rules of Texas A&M University–Corpus Christi. Accounts are issued to individuals and shall not be shared.</br>
-                <ul>
-                    <li>Unauthorized use is prohibited.</li>
-                    <li>Usage may be subject to security testing and monitoring.</li>
-                    <li>Misuse is subject to criminal prosecution.</li>
-                    <li>Users have no expectation of privacy except as otherwise provided by applicable privacy laws.</li>
-                </ul>
+                Accounts are governed by rules of Texas A&amp;M University–Corpus Christi. Accounts are issued to individuals and shall not be shared.</br>
+                <p>
+                    Unauthorized use is prohibited.< br/>
+                    Usage may be subject to security testing and monitoring.< br/>
+                    Misuse is subject to criminal prosecution.<br />
+                    Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
+                </p>
             </td>
         </tr>
         </p>
     </table>
+    <div class="w-75 mx-auto" style="width:66%">
 {% endblock %}
