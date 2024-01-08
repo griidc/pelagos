@@ -49,7 +49,7 @@ class ElasticaToModelTransformerCollection implements ElasticaToModelTransformer
     /**
      * {@inheritdoc}
      */
-    public function transform(array $elasticaObjects): array
+    public function transform(array $elasticaObjects)
     {
         $sorted = [];
         foreach ($elasticaObjects as $object) {
@@ -84,7 +84,7 @@ class ElasticaToModelTransformerCollection implements ElasticaToModelTransformer
     /**
      * {@inheritdoc}
      */
-    public function hybridTransform(array $elasticaObjects): array
+    public function hybridTransform(array $elasticaObjects)
     {
         $objects = $this->transform($elasticaObjects);
 
