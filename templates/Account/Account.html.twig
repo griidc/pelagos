@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block body %}
+    <div class="w-75 mx-auto" style="width:66%">
     <table width="100%" border="0">
         <tr>
             <td width="50%">
@@ -20,7 +21,7 @@
                         <input type="email" size="100" name="emailAddress" id="emailAddress" required>
                         <label style="display:inline;" for="emailAddress" class="error"></label>
                         <p>
-                            <button type="submit">Submit</button>
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Submit</button>
                         </p>
                     </form>
             </td>
@@ -38,4 +39,5 @@
         </tr>
         </p>
     </table>
+    <div class="w-75 mx-auto" style="width:66%">
 {% endblock %}
