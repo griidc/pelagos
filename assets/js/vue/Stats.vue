@@ -1,13 +1,13 @@
 <template>
     <div class="dx-viewport">
         <div class="row w-75 mx-auto">
-            <div class="col-xl-12">
+            <div class="col-xl-12 pb-5 pt-3">
                 <repository-summary />
             </div>
-            <div class="col-xl-12">
+            <div class="col-xl-12 pb-5">
                 <dataset-over-time />
             </div>
-            <div class="col-xl-12">
+            <div class="col-xl-12 pb-5">
                 <dataset-size-ranges />
             </div>
         </div>
