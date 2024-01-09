@@ -177,11 +177,5 @@ img {
 }
 
 #pelagos-content {
-    font-size: 12px;
     padding:20px;
 }
-
-#pelagos-content button,input,optgroup,select,textarea {
-    font-size: unset;
-}
-
