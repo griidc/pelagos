@@ -10,7 +10,9 @@
             </svg>
             {% if app.user %}
                 <span class="block md:ml-2 text-[0.875rem] text-gray-600 leading-[1.25]">
-                    Logged in as: {{ app.user.username }} |<a href="/logout" class="md:ml-2">Log out</a>
+                    <span>Logged in as: {{ app.user.username }}</span>
+                    <span class="p-2">|</span>
+                    <a href="/logout" class="">Log out</a>
                 </span>
             {% else %}
                 <a href="/login" class="flex items-center text-gray-600">
@@ -108,7 +110,9 @@
             <div class="flex w-full justify-end md:py-3.5 md:px-3 0">
             {% if app.user %}
                 <span class="block md:ml-2 text-[0.875rem] leading-[1.25]">
-                    Logged in as: {{ app.user.username }} | <a href="/logout" class="flex items-center text-gray-600">Log out</a>
+                    <span>Logged in as: {{ app.user.username }}</span>
+                    <span class="p-2">|</span>
+                    <a href="/logout" class="flex items-center text-gray-600">Log out</a>
                 </span>
             {% else %}
                 <a href="/login" class="flex items-center text-gray-600">Login</a>
