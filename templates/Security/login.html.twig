@@ -2,82 +2,66 @@
 
 {% block stylesheets %}
     {{ parent() }}
-
-    <link href="{{ asset('build/css/login.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
-
-    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $(".pelagosNoty").pelagosNoty({timeout: 10000, showOnTop:false});
-        });
-    </script>
 {% endblock %}
 
 {% block body %}
-    {% if error %}
-        <div class="pelagosNoty" text="{{ error.message }}" type="error"></div>
-    {% endif %}
-    <div id="main-wrapper">
-        <div id="main" class="clearfix">
-            <!-- CONTENT -->
-            <div class="row">
-            <!-- form action="{{ path('security_login') }}" method="post" -->
-            {{ form_start(form) }}
-                <div class="box fl-panel" id="login">
-                    <h2>Enter your Username/Email and Password</h2>
-                    <div class="row fl-controls-left">
-                        <div class="login-page-text form-item">
-                            {{ form_row(form._username) }}
-                            <div class="description">Enter your GRIIDC username/Email.</div>
-                        </div>
-                    </div>
-                    <div class="row fl-controls-left">
-                        <div class="login-page-text form-item">
-                            {{ form_row(form._password) }}
-                            <div class="description">Enter the password that accompanies your username/Email.</div>
-                        </div>
 
-                        <div>
-                            <label class="login-page-text" style="display:inline; float:none; vertical-align:15%;">
-                                <a href="{{ path('pelagos_app_ui_account_password') }}">Forgot Your Password or Password Expired?</a>
-                            </label>
-                        </div>
-                        <div>
-                            <label class="login-page-text" style="display:inline; float:none; vertical-align:15%;">
-                                <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Forgot Your Username?</a>
-                            </label>
-                        </div>
-                    </div>
-                    {# <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"> #}
-                    <div class="row btn-row">
-                    <input class="btn-submit form-submit" id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit">
-                    <input class="btn-reset" name="reset" accesskey="c" value="CLEAR" type="reset">
-                    </div>
-                </form>
-                </div>
-                <div id="sidebar">
-                    <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">You have reached the GRIIDC site.</p>
-                    <p>Accounts are governed by rules of Texas A&M University–Corpus Christi. Accounts are issued to individuals and shall not be shared.</p>
-                    <p>User authentication is required to access these pages.</p>
-                    <p>If you need to access GRIIDC pages and are not a registered user, please <a href="{{ path('pelagos_app_ui_account_default') }}">request an account</a>.</p>
-                    <p>Texas A&amp;M University–Corpus Christi</p>
-                    <ul>
-                        <li>Unauthorized use is prohibited.</li>
-                        <li>Usage may be subject to security testing and monitoring.</li>
-                        <li>Abuse is subject to criminal prosecution.</li>
-                        <li>No expectation of privacy except as otherwise provided by applicable privacy laws.</li>
-                    </ul>
-                    <p>These warnings are required in accordance with Texas Administrative Code 202 as administered by the Texas Department of Information Resources.  Reference Chapter 33, Texas Penal Code.</p>
-                    <p></p>
-                </div>
-            </div>
-        </div> <!-- main table -->
+{% if error %}
+    <div role="alert" class="w-75 mx-auto" style="width: 66%;">
+        <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+            Sorry, login not accepted due to {{ error.message }}.
+        </div>
     </div>
+{% endif %}
+
+<div class="w-75 mx-auto" style="width: 66%;">
+<!-- form action="{{ path('security_login') }}" method="post" -->
+{{ form_start(form) }}
+    <br />
+    <h3>You are accessing a Texas A&amp;M University-Corpus Christi information system.</h3>
+    <br />
+    <ul class="list-disc">
+    <li>Unauthorized use is prohibited.</li>
+    <li>Usage may be subject to security testing and monitoring.</li>
+    <li>Misuse is subject to criminal prosecution.</li>
+    <li>Users have no expectation of privacy except as otherwise provided by applicable privacy laws.</li>
+    </ul>
+    <br />
+    By logging in, you are agreeing to the <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_blank">rules and conditions</a> set forth by Texas A&amp;M University-Corpus Christi.
+    <br />
+    <br />
+    <table class="table-auto">
+        <tbody>
+            <tr>
+                <td>{{ form_row(form._username) }}</td>
+                <td>{{ form_row(form._password) }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">&nbsp;
+                    <input name="reset" accesskey="c" value="CLEAR" type="reset" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table>
+        <tbody>
+            <tr>
+                <td><a href="{{ path('pelagos_app_ui_account_password') }}">Reset Forgot/Expired Password</a></td>
+            </tr>
+            <tr>
+                <td><a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Look up Username</a></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+
+</div>
+
 {% endblock %}
