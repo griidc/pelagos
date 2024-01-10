@@ -1,0 +1,53 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic);
+
+@import 'gomri-colors.scss';
+@import 'bootstrap.scss';
+
+:root {
+    --body-fonts: "Lato", Arial, sans-serif;
+    --main-fonts: "Lato", Arial, sans-serif;
+
+    --baseFontSize:          15px;
+    --baseFontFamily:        var(--body-fonts);
+    --baseLineHeight:        1.533em;
+    --altFontFamily:         var(--main-fonts);
+
+    --headingsFontFamily:    inherit;
+    --headingsFontWeight:    bold;
+    --headingsColor:         inherit;
+    --altHeadingsFontFamily: var(--altFontFamily);
+
+    --weightRegular: 400;
+    --weightBold: 700;
+
+    --headerHeight: 110px;
+    --color-header: #fff;
+
+    --color-teal: #004250;
+    --color-lightBlue: #c2deea;
+    --color-dark-cyan: #3f626a;
+    --color-light-cyan: #becacd;
+    --color-dark-green: #002d38;
+
+    --color-pink: #ffbdaf;
+    --color-grey: #ebebeb;
+    --color-darkGrey: #252525;
+    --color-white: #fff;
+    --color-black:#000;
+    --color-gradientStart: #022f3a;
+    --color-gradientEnd: #4f6e74;
+
+    --color-error: #8c2e0b;
+
+    --color-headerTop: var(--color-light-cyan);
+    --color-headerMiddle: var(--color-dark-cyan);
+    --color-headerBottom: var(--color-dark-green);
+
+    --color-main: var(--color-teal);
+    --color-menu: var(--color-lightBlue);
+
+    --atlassion-button-main: var(--color-teal);
+    --atlassion-button-bg: var(--color-dark-cyan);
+    --color-table-striped:  var(--color-light-cyan);
+}

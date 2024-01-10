@@ -19,7 +19,7 @@
         </script>
 
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('gomri') }}
     <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
         {% if isMaintenanceMode() %}
@@ -115,7 +115,7 @@
 {% endblock htmlbody %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('gomri') }}
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
 
@@ -147,7 +147,7 @@
     </script>
 
     <script>
-        window.PELAGOS_TEMPLATE_PROPS = {"BaseTemplateName": "GRIIDC"};
+        window.PELAGOS_TEMPLATE_PROPS = {"BaseTemplateName": "GOMRI"};
     </script>
 
     {% endblock %}
