@@ -141,11 +141,6 @@ label:not(.button)
   padding-bottom:20px;
 }
 
-.diftree ul,li
-{
-    font-size: 12px;
-}
-
 #noresults
 {
     display:hidden;
@@ -166,14 +161,6 @@ select, input{
 
 img {
     display: inline-block;
-}
-
-.legacy-h1 {
-    font-size:2em;
-}
-
-.legacy-h3 {
-    font-size:1.17em;
 }
 
 #pelagos-content {

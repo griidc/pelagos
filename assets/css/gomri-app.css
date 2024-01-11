@@ -3,6 +3,8 @@
     position:relative;
     text-align: left;
     width:90%;
+    font-family: sans-serif, Tahoma, Geneva;
+    font-size: 12px;
     line-height: 24px;
     background: #f1f7fb;
     color: #40626b;
@@ -34,10 +36,5 @@
 }
 
 .legacy-h3 {
-    font-size:1em;
-}
-
-.diftree ul,li
-{
-    font-size: 16px;
+    font-size:1.17em;
 }

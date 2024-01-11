@@ -29,6 +29,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
   .addEntry('app', './assets/js/main/app.js')
+  .addEntry('gomri', './assets/js/main/gomri.js')
   .addEntry('layout', './assets/js/layout.js')
   .addEntry('downloadBox', './assets/js/downloadBox.js')
   .addEntry('search-app', './assets/js/search.js')
