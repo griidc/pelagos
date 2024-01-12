@@ -30,14 +30,21 @@
 }
 
 .legacy-h1 {
-    font-size:2em;
+    font-size: 2em;
 }
 
 .legacy-h3 {
-    font-size:1em;
+    font-size: 1em;
 }
 
-.diftree ul,li
-{
+.diftree ul,li {
     font-size: 16px;
+}
+
+.diftree tr {
+    display: initial;
+}
+
+td.otherfield input{
+    height: 24px;
 }
