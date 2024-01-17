@@ -54,6 +54,3 @@ img {
     display:inline-block;
 }
 
-.treecontainer select, input{
-    height: unset;
- }
