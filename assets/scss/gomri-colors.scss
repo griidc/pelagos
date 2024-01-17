@@ -1,0 +1,132 @@
+@import '~bootstrap/scss/functions';
+
+// Brand Colors;
+$teal:   #004250;
+$teal-75: #40717b;
+$teal-50: #7fa0a7;
+$teal-25: #bfcfd3;
+
+$lightBlue:    #c2deea;
+$lightBlue-50: #e0eef4;
+$lightBlue-25: #eff6f9;
+
+$dark-cyan:  #3f626a;
+$light-cyan: #becacd;
+$dark-green: #002d38;
+
+$pink:     #ffbdaf;
+$grey:     #ebebeb;
+$darkGrey: #252525;
+
+$olive-drab: #6E7645;
+$red-brown:  #6E3219;
+
+$boston:   #3a85b3;
+$blueBird: #043751;
+
+$error: #8c2e0b;
+
+// Default Colors
+$blue:    #007bff;
+$indigo:  #6610f2;
+$purple:  #6f42c1;
+$pink:    #e83e8c;
+$red:     #dc3545;
+$orange:  #fd7e14;
+$yellow:  #ffc107;
+$green:   #28a745;
+$cyan:    #17a2b8;
+$iceBlue: #dcf3ff;
+
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black:    #000;
+$noaa1:    #0085CA;
+
+$gradientStart: #022f3a;
+$gradientEnd:   #4f6e74;
+
+$theme-colors: (
+    "primary":       $boston,
+    "secondary":     $blueBird,
+    "header":        $teal,
+    "alternate":     $boston,
+    "available":     $green,
+    "submitted":     $blue,
+    "identified":    $yellow,
+    "restricted":    $red,
+    "remotlyhosted": $yellow,
+    "coldstorage":   $iceBlue,
+    "erddap":        $orange,
+    "ncei":          $noaa1,
+    "chart-primary":   $teal,
+    "chart-secondary":   $light-cyan,
+    "chart-alternate":   $dark-green,
+    "itemtype":          $gray-600,
+);
+
+$colors: (
+    "blue":      $blue,
+    "indigo":    $indigo,
+    "red":       $red,
+    "yellow":    $yellow,
+    "green":     $green,
+    "black":     $black,
+    "white":     $white,
+    "gray":      $gray-600,
+    "gray-dark": $gray-800
+);
+
+$grays: (
+    100: $gray-100,
+    200: $gray-200,
+    300: $gray-300,
+    400: $gray-400,
+    500: $gray-500,
+    600: $gray-600,
+    700: $gray-700,
+    800: $gray-800,
+    900: $gray-900
+);
+
+$theme-color-interval: 8%;
+
+$font-family-sans-serif: "Lato", Arial, serif;
+
+$font-family-base: $font-family-sans-serif;
+
+$navbar-light-color: color('black');
+
+$navbar-light-active-color: color('black');
+
+$navbar-light-hover-color: theme-color('primary');
+
+$dropdown-link-hover-color: theme-color('primary');
+
+$additional-width-default: 25px;
+$additional-width-sm: $additional-width-default * 1;
+$additional-width-md: $additional-width-default * 2;
+$additional-width-lg: $additional-width-default * 4;
+$additional-width-xl: $additional-width-default * 8;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px + $additional-width-sm,
+  md: 768px + $additional-width-md,
+  lg: 992px + $additional-width-lg,
+  xl: 1200px + $additional-width-xl
+  );
+$container-max-widths: (
+  sm: 540px + $additional-width-sm,
+  md: 720px + $additional-width-md,
+  lg: 960px + $additional-width-lg,
+  xl: 1140px + $additional-width-xl
+);

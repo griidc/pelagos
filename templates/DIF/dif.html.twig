@@ -32,7 +32,7 @@
 
 {% block body %}
 
-<h1>Dataset Information Form (DIF)</h1>
+<span class="legacy-h1">Dataset Information Form (DIF)</span>
 
 <table width="100%" height="100%">
     <tr>
@@ -57,7 +57,9 @@
                 <table width="100%">
                 <tr>
                     <td>
-                        <label>Show Projects Without Datasets</label><input type="radio" value="1" name="showempty" checked>Yes<input type="radio" value="0" name="showempty">No
+                        <label>Show Projects Without Datasets</label>
+                        <input class="m-1" type="radio" value="1" name="showempty" checked>Yes
+                        <input class="m-1" type="radio" value="0" name="showempty">No
                     </td>
                     <td>
                         <label>Filter by Status:</label>
@@ -87,8 +89,8 @@
             <td height="100%">
                 <table height="100%" width="100%">
                     <tr>
-                        <td>
-                            <h3>Legend:&nbsp;
+                        <td style="padding-bottom: 1rem;">
+                            <span class="legacy-h3 pb-3">Legend:&nbsp;
                                 <span class="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
                                     <img id="imgcross" src="{{ asset('build/images/cross.png') }}">
                                     &nbsp;Open
@@ -109,8 +111,12 @@
                                     <img id="imgfoldergray" src="{{ asset('build/images/folder_gray.png') }}">
                                     &nbsp;Project Without Datasets
                                 </span>
-                            </h3>
-                            <h1>Datasets</h1>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="legacy-h1">Datasets</span>
                             <hr width="100%">
                         </td>
                     </tr>

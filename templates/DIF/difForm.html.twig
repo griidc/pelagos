@@ -18,7 +18,7 @@
     <input type="hidden" id="isadmin" name="isadmin" value="{{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') }}">
     {% endif %}
     <div id="udidiv" style="display:none;">
-        <h1>Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span></h1>
+        <span class="legacy-h1">Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span>
     </div>
     <div id="imgwarning" src="{{ asset('build/images/warning.png') }}"></div>
     <div class="frmSection">
@@ -177,7 +177,7 @@
                         <table width="100%">
                             <tr>
                                  <td>Others:</td>
-                                 <td>{{ form_widget(form.fieldOfStudyOther) }}</td>
+                                 <td class="otherfield">{{ form_widget(form.fieldOfStudyOther) }}</td>
                             </tr>
                         </table>
                     </td>
@@ -313,7 +313,7 @@
                         <table width="100%">
                             <tr>
                                 <td>Others:</td>
-                                <td>{{ form_widget(form.collectionMethodOther) }}</td>
+                                <td class="otherfield">{{ form_widget(form.collectionMethodOther) }}</td>
                             </tr>
                         </table>
                     </td>
@@ -402,7 +402,7 @@
                 <table width="100%">
                     <tr>
                         <td>Others:</td>
-                        <td width="100%">{{ form_widget(form.nationalDataArchiveOther) }}</td>
+                        <td width="100%" class="otherfield">{{ form_widget(form.nationalDataArchiveOther) }}</td>
                     </tr>
                 </table>
             </div>
