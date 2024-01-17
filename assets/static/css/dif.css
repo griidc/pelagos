@@ -166,3 +166,7 @@ img {
 #pelagos-content {
     padding:20px;
 }
+
+#difFilterTools td {
+    padding-bottom: 1rem;
+}

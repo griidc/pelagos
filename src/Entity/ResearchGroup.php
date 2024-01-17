@@ -57,10 +57,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @Serializer\Groups({"overview"})
-     *
-     *
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"overview", "search"})
      *
      * @Assert\NotBlank(
      *     message="Name is required"

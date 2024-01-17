@@ -427,6 +427,12 @@ $(document).ready(function(){
     });
     buildKeywordLists();
 
+    $("form input").not("input.keywordinput").on('keydown', function(event) {
+        if (event.which == 13) {
+            return false;
+        }
+    });
+
     $(".keywordbutton").click(function (event) {
         var source = $(event.currentTarget).closest("table.keywords").find("input[keyword=source],select[keyword=source]");
         var target = $(event.currentTarget).closest("table.keywords").find("select[keyword=target]");
