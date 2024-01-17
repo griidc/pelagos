@@ -52,7 +52,7 @@
 {% block body %}
 {% include 'DatasetSubmission/uploader-template.html.twig' %}
 
-<h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
+<span class="legacy-h1">Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</span>
 
 {% if udi is null %}
     {% include 'DatasetSubmission/form.html.twig' %}

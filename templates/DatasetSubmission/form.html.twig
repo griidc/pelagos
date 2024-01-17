@@ -6,9 +6,9 @@
     </fieldset>
 
     <fieldset>
-        <p>
+        <span>
             Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset. You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form.
-        </p>
+        </span>
         <form id="regidform">
             <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
             <input minlength="16" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
