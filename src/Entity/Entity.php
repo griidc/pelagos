@@ -32,11 +32,6 @@ abstract class Entity
      *
      * @var int
      *
-     * @Serializer\Groups({"id"})
-     *
-     *
-     * @Serializer\Groups({"search"})
-     *
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
@@ -48,7 +43,7 @@ abstract class Entity
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[Serializer\Groups(["id"])]
+    #[Serializer\Groups(["id", "search"])]
     protected $id;
 
     /**
