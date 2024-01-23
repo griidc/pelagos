@@ -71,7 +71,7 @@ class GRPDownloadReportCommand extends Command
         foreach ($results as $result) {
             $id = $result['id'];
             $timestamp = $result['creationTimeStamp']->format('Y-m-d H:i:s');
-            if($this->isGRP($id)) {
+            if ($this->isGRP($id)) {
                 $dataset = $this->getDataset($id);
                 $title = $dataset?->getTitle(); // Is never null because of isGRP success.
                 $rg = $dataset?->getResearchGroup(); // Likewise can not be null.
