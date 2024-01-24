@@ -71,7 +71,7 @@ class DefaultController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController)
+    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request)
     {
         $customTemplate = $this->getParameter('custom_template');
 
@@ -111,8 +111,13 @@ class DefaultController extends AbstractController
             ));
         }
 
+        $mainsite = $this->getParameter('main_site');
+        $mainsite = is_string($mainsite) ? $mainsite : '/';
+
         if ($this->getParameter('kernel.debug')) {
             return $this->render('Default/index.html.twig');
+        } elseif ($request->getHost() == "data.griidc.org") {
+            return $this->redirect($mainsite, 302);
         } else {
             return $this->redirect('/', 302);
         }
