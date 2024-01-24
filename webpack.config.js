@@ -23,7 +23,7 @@ Encore
     runtimeCompilerBuild: false,
   })
 
-  .addPlugin(new Dotenv({ path: './.env.local' }))
+  .addPlugin(new Dotenv({ path: './.env.local', defaults: '.env' }))
 
 /*
      * ENTRY CONFIG
