@@ -114,12 +114,10 @@ class DefaultController extends AbstractController
         $mainsite = $this->getParameter('main_site');
         $mainsite = is_string($mainsite) ? $mainsite : '/';
 
-        if ($this->getParameter('kernel.debug')) {
-            return $this->render('Default/index.html.twig');
-        } elseif ($request->getHost() == "data.griidc.org") {
+        if ($request->getHost() == "data.griidc.org") {
             return $this->redirect($mainsite, 302);
         } else {
-            return $this->redirect('/', 302);
+            return $this->render('Default/index.html.twig');
         }
     }
 
