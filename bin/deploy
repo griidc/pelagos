@@ -3,21 +3,15 @@
 args=("$@")
 
 case ${args[0]} in
-GRIIDC)
-    echo 'Setting Encore PublicPath to GRIIDC'
+DRUPALGRIIDC)
+    echo 'Setting Encore PublicPath to special pelagos-symfony path for drupal-coexistence'
     export publicpath="/pelagos-symfony/build"
     ;;
-GRP)
-    echo 'Setting Encore PublicPath to GRP'
+*)
+    echo 'Setting Encore PublicPath to /build'
     export publicpath="/build"
     ;;
-*)
-    echo 'Please specify a Build Environment!'
-    echo 'Options: [GRIIDC, GRP]'
-    exit;
-    ;;
 esac
-
 
 # Stop MessageMQ
 bin/console messenger:stop-workers

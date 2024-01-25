@@ -22,7 +22,9 @@ require('../../css/messages.css');
 require('../../css/griidc-app.css');
 const axios = require('axios');
 
-createRoot(document.getElementById('griidc-menu')).render(<GriidcMenu/>);
+const mainsite = process.env.MAINSITE;
+
+createRoot(document.getElementById('griidc-menu')).render(<GriidcMenu mainsite={mainsite}/>);
 
 global.axios = axios;
 
