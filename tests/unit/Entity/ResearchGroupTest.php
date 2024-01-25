@@ -101,7 +101,7 @@ class ResearchGroupTest extends TestCase
      *
      * @var string $testEmailAddress
      */
-    protected static $testEmailAddress = 'griidc@gomri.org';
+    protected static $testEmailAddress = 'help@griidc.org';
 
     /**
      * Property to hold a funding cycle to use in testing.
