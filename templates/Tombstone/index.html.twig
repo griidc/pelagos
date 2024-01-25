@@ -7,9 +7,10 @@
 
 {% block body %}
     {% if dataset %}
-        <h2>
+    <div class="w-66 mx-auto block" style="width:66%">
+        <span class="legacy-h1">
             The dataset {{ dataset.udi }} is not available yet for download.
-        </h2>
+        </span>
         <table border="0">
             <tr>
                 <td>Title:</td>
@@ -28,5 +29,6 @@
         </table>
         <br />
         For more information, please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.
+    </div>
     {% endif %}
 {% endblock %}
