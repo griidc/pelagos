@@ -35,13 +35,27 @@ class LogActionItemRepository extends ServiceEntityRepository
     }
 
     /**
-     * Sum of all dataset file sizes.
+     * Count of downloads, optional date range and also filter aware.
      *
-     * @return integer Size of data in bytes.
+     * @return integer The count of the datasets downloaded, per FAIR guidelines.
      */
-    public function countDownloads(): int
+    public function countDownloads(string $start = '', string $stop = ''): int
     {
-        $qb = $this->createQueryBuilder('log')
+        if ($start != '' and $stop != '') {
+            $qb = $this->createQueryBuilder('log')
+            ->select('log.creationTimeStamp, log.subjectEntityId')
+            ->where('log.subjectEntityName = ?1')
+            ->andWhere('log.actionName = ?2')
+            ->andWhere('log.creationTimeStamp >= ?3')
+            ->andWhere('log.creationTimeStamp <= ?4')
+            ->orderBy('log.subjectEntityId', 'ASC')
+            ->addOrderBy('log.creationTimeStamp', 'ASC')
+            ->setParameter(1, 'Pelagos\Entity\Dataset')
+            ->setParameter(2, 'File Download')
+            ->setParameter(3, $start)
+            ->setParameter(4, $stop);
+        } else {
+            $qb = $this->createQueryBuilder('log')
             ->select('log.creationTimeStamp, log.subjectEntityId')
             ->where('log.subjectEntityName = ?1')
             ->andWhere('log.actionName = ?2')
@@ -49,6 +63,7 @@ class LogActionItemRepository extends ServiceEntityRepository
             ->addOrderBy('log.creationTimeStamp', 'ASC')
             ->setParameter(1, 'Pelagos\Entity\Dataset')
             ->setParameter(2, 'File Download');
+        }
 
         if ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();

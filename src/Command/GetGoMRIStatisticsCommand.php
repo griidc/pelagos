@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Entity\DatasetSubmission;
+use App\Repository\LogActionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,14 +29,23 @@ class GetGoMRIStatisticsCommand extends Command
     protected $entityManager;
 
     /**
+     * The LogActionItemRepository Repository, for it's filtered count methods.
+     *
+     * @var LogActionItemRepository $logActionItemRepository
+     */
+    protected $logActionItemRepository;
+
+    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
+        LogActionItemRepository $logActionItemRepository,
     ) {
         $this->entityManager = $entityManager;
+        $this->logActionItemRepository = $logActionItemRepository;
         parent::__construct();
     }
 
@@ -43,12 +53,16 @@ class GetGoMRIStatisticsCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
+            ->addArgument('start', InputArgument::OPTIONAL, 'Starting date for DL count')
+            ->addArgument('end', InputArgument::OPTIONAL, 'Ending date for DL count')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $start = $input->getArgument('start');
+        $end = $input->getArgument('end');
 
         $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
@@ -97,6 +111,13 @@ class GetGoMRIStatisticsCommand extends Command
         $io->writeln("Total size of GoMRI Datasets in cold storage: " . round($gomriColdStorageDatasetTotalSize / 1000000000000, 1) . ' TB');
         $io->writeln("Total number of GoMRI datasets submitted since 2021-01-01 until current date " . $totalGomriDatasetSubmittedSince2021Count);
         $io->writeln("Total number of datasets (all data including GoMRI) submitted since 2021-01-01 until current date " . $totalDatasetSubmittedSince2021Count);
+
+        if ($start != '' and $end != '') {
+            $io->writeln("Total GoMRI Downloads from $start to $end: " . $this->logActionItemRepository->countDownloads($start, $end));
+        } else {
+            $io->writeln("Total GoMRI Downloads: " . $this->logActionItemRepository->countDownloads());
+        }
+
 
         return 0;
     }
