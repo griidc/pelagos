@@ -52,8 +52,6 @@
 {% block body %}
 {% include 'DatasetSubmission/uploader-template.html.twig' %}
 
-<h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
-
 {% if udi is null %}
     {% include 'DatasetSubmission/form.html.twig' %}
 {% else %}
