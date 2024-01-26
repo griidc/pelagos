@@ -61,8 +61,10 @@ class GetGoMRIStatisticsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $start = $input->getArgument('start');
-        $end = $input->getArgument('end');
+
+        $startEpoch = strtotime($input->getArgument('start'));
+        $endEpoch = strtotime($input->getArgument('end'));
+
 
         $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
@@ -112,13 +114,27 @@ class GetGoMRIStatisticsCommand extends Command
         $io->writeln("Total number of GoMRI datasets submitted since 2021-01-01 until current date " . $totalGomriDatasetSubmittedSince2021Count);
         $io->writeln("Total number of datasets (all data including GoMRI) submitted since 2021-01-01 until current date " . $totalDatasetSubmittedSince2021Count);
 
-        if ($start != '' and $end != '') {
-            $io->writeln("Total GoMRI Downloads from $start to $end: " . $this->logActionItemRepository->countDownloads($start, $end));
+        if ($startEpoch != false and $endEpoch != false) { // false on strtotime fail
+            $startDateTime = new \Datetime();
+            $startDateTime->setTimestamp($startEpoch);
+            // will assume DST-aware central time if not specified.
+            $startDateTime->setTimezone(new \DateTimeZone('America/Chicago'));
+            // will include tz in DB string
+            $dbFormatStartTime = $startDateTime->format('Y-m-d H:i:sO');
+
+            $endDateTime = new \Datetime();
+            $endDateTime->setTimestamp($endEpoch);
+            $endDateTime->setTimezone(new \DateTimeZone('America/Chicago'));
+            $dbFormatEndTime = $endDateTime->format('Y-m-d H:i:sO');
+
+            $io->writeln("Total GoMRI Downloads from $dbFormatStartTime to $dbFormatEndTime: "
+                . $this->logActionItemRepository->countDownloads(
+                    $dbFormatStartTime,
+                    $dbFormatEndTime
+                ));
         } else {
             $io->writeln("Total GoMRI Downloads: " . $this->logActionItemRepository->countDownloads());
         }
-
-
         return 0;
     }
 }
