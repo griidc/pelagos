@@ -116,15 +116,15 @@ class GetGoMRIStatisticsCommand extends Command
 
         if ($startEpoch != false and $endEpoch != false) { // false on strtotime fail
             $startDateTime = new \Datetime();
-            $startDateTime->setTimestamp($startEpoch);
             // will assume DST-aware central time if not specified.
             $startDateTime->setTimezone(new \DateTimeZone('America/Chicago'));
+            $startDateTime->setTimestamp($startEpoch);
             // will include tz in DB string
             $dbFormatStartTime = $startDateTime->format('Y-m-d H:i:sO');
 
             $endDateTime = new \Datetime();
-            $endDateTime->setTimestamp($endEpoch);
             $endDateTime->setTimezone(new \DateTimeZone('America/Chicago'));
+            $endDateTime->setTimestamp($endEpoch);
             $dbFormatEndTime = $endDateTime->format('Y-m-d H:i:sO');
 
             $io->writeln("Total GoMRI Downloads from $dbFormatStartTime to $dbFormatEndTime: "
