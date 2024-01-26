@@ -459,7 +459,7 @@ function GeoViz()
         if (vlayer.features.length > 0)
         {
             var featureZoomLevel = map.getZoomForExtent(vlayer.getDataExtent());
-            if (featureZoomLevel >= 11) {featureZoomLevel = 11;}
+            if (featureZoomLevel >= 8) {featureZoomLevel = 8;}
             featureZoomLevel = map.adjustZoom(featureZoomLevel);
             map.zoomToExtent(vlayer.getDataExtent());
             map.zoomTo(featureZoomLevel);
@@ -470,7 +470,7 @@ function GeoViz()
     {
         var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
         var featureZoomLevel = map.getZoomForExtent(myFeature.geometry.getBounds());
-        if (featureZoomLevel >= 11) {featureZoomLevel = 11;}
+        if (featureZoomLevel >= 8) {featureZoomLevel = 8;}
         featureZoomLevel = map.adjustZoom(featureZoomLevel);
         map.zoomToExtent(myFeature.geometry.getBounds())
         map.zoomTo(featureZoomLevel);
