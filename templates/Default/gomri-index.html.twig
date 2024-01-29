@@ -58,6 +58,10 @@
             font-size: 30px;
             line-height: 1.33em;
         }
+
+        body {
+            margin: unset;
+        }
     </style>
 
 {% endblock %}
@@ -151,19 +155,17 @@
 
             <div class="p-2 text-white" style="background-color: black;">
                 <div class="row align-items-center">
-                    <div class="logo col-sm-2"><img src="{{ asset("build/images/griidc-logo-white.png") }}" alt="GRIIDC"></div>
+                    <div class="logo col-sm-4"><img src="{{ asset("build/images/griidc-logo-white.png") }}" alt="GRIIDC"></div>
                     <div class="address col-sm-1 text-center"><img src="{{ asset("build/images/icon-location.png") }}"></div>
-                    <div class="address col-sm-2 text-center">6300 Ocean Drive<br>Corpus Christi, TX 78412</div>
-                    <div class="telephone col-sm-1"><img src="{{ asset("build/images/icon-phone.png") }}"></div>
-                    <div class="telephone col-sm-2"><a href="tel:3618253604">(361) 825-3719</a></div>
+                    <div class="address col-sm-3 text-center">6300 Ocean Drive<br>Corpus Christi, TX 78412</div>
                     <div class="mail col-sm-1"><img src="{{ asset("build/images/icon-mail.png") }}"></div>
-                    <div class="mail col-sm-1"><a href="mailto:help@griidc.org">help@griidc.org</a></div>
+                    <div class="mail col-sm-3"><a href="mailto:help@griidc.org">help@griidc.org</a></div>
                 </div>
             </div>
         </div>
         <footer class="py-5 bg-dark">
             <div class="container">
-                <p class="m-0 text-center text-white">Copyright &copy; HRI - GRIIDC 2022</p>
+                <p class="m-0 text-center text-white">Copyright &copy; Harte Research Institute for Gulf of Mexico Studies 2024</p>
             </div>
         </footer>
     </div>

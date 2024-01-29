@@ -56,15 +56,6 @@
                     <div class="region region-header">
                         <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
                             <div class="content">
-                                {% if is_granted('ROLE_USER') %}
-                                    <a style="text-decoration: underline;">
-                                        Logged in as: {{ app.session.get('_security.last_username') }}
-                                    </a>
-                                    |
-                                    <a href="{{ path('security_logout') }}">  Log out</a>
-                                {% else %}
-                                    <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
