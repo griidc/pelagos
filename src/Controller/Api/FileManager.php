@@ -271,17 +271,14 @@ class FileManager extends AbstractFOSRestController
     /**
      * Download a file from disk.
      *
-     * @param File                   $file          File entity instance.
-     * @param Datastore              $datastore     Datastore to manipulate the file on disk.
-     *
      * @Route("/api/file/download/{id}", name="pelagos_api_file_download", defaults={"_format"="json"})
      *
-     * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
      * @throws AccessDeniedHttpException Error thrown when file not available for download.
+     * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
      *
      * @return Response
      */
-    public function downloadFile(File $file, Datastore $datastore): Response
+    public function downloadFile(File $file, Datastore $datastore, Request $request, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
     {
         if (
             $file->getFileset()->getDatasetSubmission()->getDataset()->getAvailabilityStatus() !==
@@ -291,6 +288,30 @@ class FileManager extends AbstractFOSRestController
         ) {
             throw new AccessDeniedHttpException('File unavailable for download');
         }
+
+        $udi = $file->getFileset()->getDatasetSubmission()->getDataset()->getUdi();
+
+        if ($request->headers->get('referer') and preg_match("/^.*\/data\/$udi$/", $request->headers->get('referer'))) {
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof Account) {
+                $type = 'GoMRI';
+                $typeId = $currentUser->getUserId();
+            } else {
+                $type = 'Non-GoMRI';
+                $typeId = 'anonymous';
+            }
+
+            $logActionItemEventDispatcher->dispatch(
+                array(
+                'actionName' => 'Single File Download',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                'subjectEntityId' => $file->getFileset()->getDatasetSubmission()->getDataset()->getId(),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId, 'filename' => $file->getFilePathName()),
+                ),
+                'single_file_download'
+            );
+        }
+
         $response = new StreamedResponse(function () use ($file, $datastore) {
             $outputStream = GuzzlePsr7Utils::streamFor(fopen('php://output', 'wb'));
 
@@ -304,6 +325,7 @@ class FileManager extends AbstractFOSRestController
                 $resource = GuzzlePsr7Utils::tryFopen($file->getPhysicalFilePath(), 'r');
                 $fileStream = GuzzlePsr7Utils::streamFor($resource);
             }
+
             GuzzlePsr7Utils::copyToStream($fileStream, $outputStream);
         });
         $disposition = HeaderUtils::makeDisposition(

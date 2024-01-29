@@ -419,13 +419,19 @@ $(document).ready(function(){
         }
     });
 
-    $("input.keywordinput").keypress(function(event) {
+    $("input.keywordinput").on("keypress", function(event) {
         if (event.which == 13) {
             event.preventDefault();
-            $(event.currentTarget).closest("table.keywords").find("button:contains(add)").click()
+            $(event.currentTarget).closest("table.keywords").find("button:contains(add)").trigger("click");
         }
     });
     buildKeywordLists();
+
+    $("form :input").not("input.keywordinput").on('keydown', function(event) {
+        if (event.which == 13) {
+            return false;
+        }
+    });
 
     $(".keywordbutton").click(function (event) {
         var source = $(event.currentTarget).closest("table.keywords").find("input[keyword=source],select[keyword=source]");
