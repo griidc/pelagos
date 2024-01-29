@@ -42,6 +42,8 @@ class Publication extends Entity
      * DOI.
      *
      * @var string
+     *
+     * @Serializer\Groups({"citation"})
      */
     #[ORM\Column(type: 'citext')]
     protected $doi;

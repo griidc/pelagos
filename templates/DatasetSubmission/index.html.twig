@@ -52,27 +52,25 @@
 {% block body %}
 {% include 'DatasetSubmission/uploader-template.html.twig' %}
 
-<h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
-
 {% if udi is null %}
     {% include 'DatasetSubmission/form.html.twig' %}
 {% else %}
     {% if dataset is null %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
-            Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
+            Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:help@griidc.org?subject=REG Form">help@griidc.org</a> if you have any questions.
         </div>
         {% include 'DatasetSubmission/form.html.twig' %}
     {% elseif dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
-            The DIF has not yet been approved for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
+            The DIF has not yet been approved for dataset: {{ udi }}. Please email <a href="mailto:help@griidc.org?subject=REG Form">help@griidc.org</a> if you have any questions.
         </div>
         {% include 'DatasetSubmission/form.html.twig' %}
     {% elseif dataset.dif.status == constant('App\\Entity\\DIF::STATUS_UNSUBMITTED') %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
-            The DIF has not yet been submitted for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
+            The DIF has not yet been submitted for dataset: {{ udi }}. Please email <a href="mailto:help@griidc.org?subject=REG Form">help@griidc.org</a> if you have any questions.
         </div>
         {% include 'DatasetSubmission/form.html.twig' %}
     {% elseif not dataset.researchgroup.islocked and not is_granted('CAN_CREATE', datasetSubmission) and not is_granted('CAN_EDIT', datasetSubmission) %}
@@ -108,10 +106,10 @@
             <h2 class="element-invisible">Status message</h2>
             {% if dataset.researchgroup.islocked %}
             Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
-            A Dataset cannot be submitted for this research group because the grant has been closed out. Please contact GRIIDC at griidc@gomri.org if you would like to submit a dataset or have any questions.
+            A Dataset cannot be submitted for this research group because the grant has been closed out. Please contact GRIIDC at help@griidc.org if you would like to submit a dataset or have any questions.
             {% else %}
             Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
-            This dataset is locked. Please contact griidc@gomri.org if revisions are required.
+            This dataset is locked. Please contact help@griidc.org if revisions are required.
             {% endif %}
         </div>
         {% elseif xmlStatus.success is null %}
