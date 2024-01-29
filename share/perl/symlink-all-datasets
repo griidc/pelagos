@@ -28,7 +28,7 @@ unless (-d $dest) {
     exit;
 }
 
-my $apiUrl = 'https://data.gulfresearchinitiative.org/api/datasets?_properties=id,udi,datasetSubmission.datasetFileName';
+my $apiUrl = 'https://data.griidc.org/api/datasets?_properties=id,udi,datasetSubmission.datasetFileName';
 
 if (@ARGV > 1) {
     $apiUrl .= "&$ARGV[1]";

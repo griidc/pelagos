@@ -45,7 +45,7 @@ function getHtmlForDownload(data)
                             <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
                                 <p style="margin-top:0; margin-bottom: 0">
                                 All materials on this website are made available to GRIIDC and in turn to you "as-is."
-                                By downloading files, you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of Service</a>.
+                                By downloading files, you agree to the <a href=https://griidc.org/terms-and-conditions>GRIIDC Terms of Service</a>.
                                 </p>
                                 <p style="margin-top:0">
                                 This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions may be
@@ -66,7 +66,7 @@ function getHtmlForDownload(data)
                              <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
                                  <p style="margin-top:0; margin-bottom: 0">
                                  All materials on this website are made available to GRIIDC and in turn to you "as-is."
-                                 By downloading files, you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of Service</a>.
+                                 By downloading files, you agree to the <a href=http://griidc.org/terms-and-conditions>GRIIDC Terms of Service</a>.
                                  </p>
                              </div>
 
