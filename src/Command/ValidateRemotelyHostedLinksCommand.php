@@ -132,7 +132,7 @@ class ValidateRemotelyHostedLinksCommand extends Command
             $this->mailer->sendEmailMessage(
                 $this->twig->load('Email/data-repository-managers.error-remotely-hosted.email.twig'),
                 array('errors' => $errors),
-                array(new Address('griidc@gomri.org', 'GRIIDC')),
+                array(new Address('help@griidc.org', 'GRIIDC')),
             );
         }
 

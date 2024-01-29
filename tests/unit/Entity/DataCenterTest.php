@@ -170,7 +170,7 @@ class DataCenterTest extends TestCase
      */
     public function testCanSetAndGetEmail()
     {
-        $mockEmailAddress = 'griidc@gomri.org';
+        $mockEmailAddress = 'help@griidc.org';
 
         $this->dataCenter->setEmailAddress($mockEmailAddress);
 

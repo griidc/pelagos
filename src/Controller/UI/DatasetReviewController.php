@@ -231,7 +231,7 @@ class DatasetReviewController extends AbstractController
         $listOfErrors = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
                 $udi . ' could not be found. Please email
-                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
+                        <a href="mailto:help@griidc.org?subject=REG Form">help@griidc.org</a>
                         if you have any questions.',
             'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted.',
             'processing' => "The dataset $udi cannot be loaded in review mode at this time because it is still being processed.",

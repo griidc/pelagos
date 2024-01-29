@@ -48,7 +48,7 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Name of the default distribution contact.
      */
-    const DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL = 'griidc@gomri.org';
+    const DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL = 'help@griidc.org';
 
     /**
      * Name of the default distribution contact.
