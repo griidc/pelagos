@@ -75,7 +75,7 @@ var dlmap = new GeoViz();
         $("#downloaddsdenrestricted").button().click(function() {
             $("#download_dialog").dialog('option', 'title', 'Restricted Access Dataset');
             $("#download_dialog").html('The author has restricted access of this dataset. ' +
-                'Please contact the author to request the dataset. Please contact griidc@gomri.org with any questions.');
+                'Please contact the author to request the dataset. Please contact help@griidc.org with any questions.');
             $("#download_dialog").dialog('open');
         });
 

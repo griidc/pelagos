@@ -106,7 +106,7 @@ function testDownload(fileSize) {
             $('#dl_time').html(Math.round(time) + " " + unit + " (based on your current connection speed)");
             if (fileSize > 5000000000 && unit == "hours" && time >= 24) {
                 showDialog(`Notice: This dataset will take approximately  ${Math.round(time)} hours to download.
-                            Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>)
+                            Please contact GRIIDC (<a href=mailto:help@griidc.org>help@griidc.org</a>)
                             if you would like to arrange alternative data delivery.`);
             }
         },

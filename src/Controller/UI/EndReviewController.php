@@ -147,7 +147,7 @@ class EndReviewController extends AbstractController
         $warning = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
                 $udi . ' could not be found. Please email
-                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
+                        <a href="mailto:help@griidc.org?subject=REG Form">help@griidc.org</a>
                         if you have any questions.',
             'notInReview' => 'The dataset ' . $udi . ' was not in review.',
         ];
