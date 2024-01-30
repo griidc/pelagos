@@ -92,7 +92,6 @@ class Dataset extends Entity
      * @var string
      *
      * @Serializer\Groups({"card", "search"})
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
@@ -102,8 +101,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"card"})
-     * @Serializer\Groups({"search"})
+     * @Serializer\Groups({"card", "search"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
     protected $title;

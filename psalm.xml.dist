@@ -12,38 +12,9 @@
         </ignoreFiles>
     </projectFiles>
 
-    <extraFiles>
-        <directory name="var/cache/dev/Symfony/Config"/> <!-- https://github.com/psalm/psalm-plugin-symfony/issues/201 -->
-    </extraFiles>
-
     <fileExtensions>
         <extension name=".php"/>
     </fileExtensions>
-
-    <issueHandlers>
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <!-- These classes have been added in PHP 8.1 -->
-                <referencedClass name="BackedEnum"/>
-                <referencedClass name="ReflectionIntersectionType"/>
-                <referencedClass name="UnitEnum"/>
-            </errorLevel>
-        </UndefinedClass>
-        <UndefinedDocblockClass>
-            <errorLevel type="suppress">
-                <!-- These classes have been added in PHP 8.1 -->
-                <referencedClass name="BackedEnum"/>
-                <referencedClass name="ReflectionIntersectionType"/>
-                <referencedClass name="UnitEnum"/>
-            </errorLevel>
-        </UndefinedDocblockClass>
-        <UndefinedAttributeClass>
-            <errorLevel type="suppress">
-                <!-- These classes have been added in PHP 8.2 -->
-                <referencedClass name="SensitiveParameter"/>
-            </errorLevel>
-        </UndefinedAttributeClass>
-    </issueHandlers>
 
     <plugins>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
