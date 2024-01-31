@@ -54,7 +54,7 @@ function prefill_{{instanceName}}(what)
 		addHiddenElement_{{instanceName}}("CIAD4_{{instanceName}}","78412-5869");
 		addHiddenElement_{{instanceName}}("CIAD5_{{instanceName}}","USA");
 		addHiddenElement_{{instanceName}}("CIAD6_{{instanceName}}","help@griidc.org");
-		addHiddenElement_{{instanceName}}("OLR1_{{instanceName}}","http://data.gulfresearchinitiative.org");
+		addHiddenElement_{{instanceName}}("OLR1_{{instanceName}}","http://data.griidc.org");
 
 		document.getElementById("lastdata_{{instanceName}}").value = lastdata{{instanceName}};
 	}
