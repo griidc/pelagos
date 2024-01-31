@@ -271,6 +271,7 @@ class TreeController extends EntityController
 
         $qb
             ->select('person')
+            ->distinct()
             ->where(
                 $qb->expr()->eq(
                     // First letter of Last Name.
