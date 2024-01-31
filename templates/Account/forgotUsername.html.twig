@@ -1,24 +1,25 @@
 {% extends "template/UI.html.twig" %}
 
 {% block body %}
-    <h2> Forgot Username</h2>
-
     {% if emailId is null %}
     <div class="w-75 mx-auto" style="width:66%">
-        <p style="font-size: 18px; line-height: 25px;"> Please provide the email address associated with your funding agreement to retrieve your username.</p>
+    <h3>Look up Username</h3>
+        Please provide the email address associated with your funding agreement to retrieve your username.
         <form id="forgotUsernameForm" method="get" action="{{ path('pelagos_app_ui_account_forgotusername') }}">
             <label for="emailAddress">E-mail Address:</label>
-            <input type="email" size="100" name="emailAddress" id="emailAddress" required>
-            <p>
-                <button type="submit" style="margin-bottom: auto">Submit</button>
-            </p>
+            <input type="email" size="50" name="emailAddress" id="emailAddress" required class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300s focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <div class="py-2">
+                <button type="submit" class="flex w-small justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Retrieve Username</button>
+            </div>
         </form>
     </div>
     {% else %}
-        <div class="messages status">
-            <h2 class="element-invisible">Success message</h2>
-            If that email address is found in our system, we will send the associated username
-            to the found email address. For any additional help please contact <a href="mailto:help@griidc.org">help@griidc.org</a>.
+        <div class="w-75 mx-auto" style="width:66%">
+            <div class="messages status" >
+                <h2 class="element-invisible">Success message</h2>
+                If that email address is found in our system, we will send the associated username
+                to the found email address. For any additional help please contact <a href="mailto:help@griidc.org">help@griidc.org</a>.
+            </div>
         </div>
     {% endif %}
 {% endblock %}
