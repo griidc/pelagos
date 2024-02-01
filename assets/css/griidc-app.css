@@ -52,3 +52,7 @@ td.otherfield input{
 .ui-datepicker-month, .ui-datepicker-year {
     padding: initial;
 }
+
+#ui-datepicker-div {
+    z-index: 800 !important;
+}
