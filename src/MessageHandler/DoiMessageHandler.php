@@ -117,7 +117,7 @@ class DoiMessageHandler implements MessageHandlerInterface
         try {
             $this->doiUtil->createDOI(
                 $generatedDOI,
-                'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
+                'https://data.griidc.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
                 $pubYear,
@@ -157,10 +157,10 @@ class DoiMessageHandler implements MessageHandlerInterface
                 ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
                 ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
             ) {
-                $doiUrl = 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi();
+                $doiUrl = 'https://data.griidc.org/data/' . $dataset->getUdi();
                 $doi->setPublicDate(new \DateTime());
             } else {
-                $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
+                $doiUrl = 'https://data.griidc.org/tombstone/' . $dataset->getUdi();
             }
 
             $loggingContext['availabilitystatus'] = $dataset->getAvailabilityStatus();

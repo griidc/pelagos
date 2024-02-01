@@ -13,7 +13,7 @@ use Data::Dumper;
 while(<>) {
     chomp($_);
     my $udi = $_;
-    my $statusJSON = `curl -s "https://data.gulfresearchinitiative.org/pelagos-symfony/api/datasets?udi=$udi&_properties=datasetStatus"`;
+    my $statusJSON = `curl -s "https://data.griidc.org/api/datasets?udi=$udi&_properties=datasetStatus"`;
     my $status= parse_json($statusJSON);
     my $hashref = @$status[0];
     my %hash = %$hashref;
