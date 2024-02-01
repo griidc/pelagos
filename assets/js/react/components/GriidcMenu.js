@@ -151,10 +151,16 @@ const GriidcMenu = ({ mainsite }) => (
                 static
                 className="absolute left-8 top-full z-10 mt-3 w-56 rounded bg-white shadow-md ring-1 ring-gray-100"
               >
-               <a className={clsx(
-                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
-               )}
-               href={`${mainsite}/faq`}>
+              <a className={clsx(
+                'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
+              )}
+                href="/account">
+                Account Request
+              </a>
+              <a className={clsx(
+                'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
+              )}
+                href={`${mainsite}/faq`}>
                 Frequently Asked Questions
               </a>
               <a className={clsx(
