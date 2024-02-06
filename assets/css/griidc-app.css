@@ -53,6 +53,3 @@ td.otherfield input{
     padding: initial;
 }
 
-#ui-datepicker-div {
-    z-index: 800 !important;
-}
