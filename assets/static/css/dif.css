@@ -170,7 +170,3 @@ img {
 #difFilterTools td {
     padding-bottom: 1rem;
 }
-
-#ui-datepicker-div {
-    z-index: 800 !important;
-}
