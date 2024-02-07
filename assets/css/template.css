@@ -515,3 +515,11 @@ table.datasets td {
 .dx-header-filter-empty{
     color: rgba(149,149,149,.5)!important;
 }
+
+#ui-datepicker-div {
+    z-index: 100 !important;
+}
+
+.olMapViewport {
+    z-index: 99 !important;
+}
