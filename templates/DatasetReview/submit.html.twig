@@ -7,17 +7,15 @@
     </div>
 
     <fieldset>
-        <table border="1" width="100%" style="background-color:white; color:black;">
+        <table border="1" width="100%" style="background-color:white; color:black;" class="mx-auto px-2">
             <tr>
                 <td width="200px" align="top">
                     <b>Dataset UDI:</b>
                 </td>
                 <td>
-                    <h2>
-                        <a href="{{ vanitypath('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
-                            {{ DatasetSubmission.dataset.udi }}
-                        </a>
-                    </h2>
+                    <a href="{{ vanitypath('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
+                        <strong>{{ DatasetSubmission.dataset.udi }}</strong>
+                    </a>
                 </td>
             </tr>
             <tr rowspan=2>
@@ -84,10 +82,13 @@
                     {{ DatasetSubmission.getSubmissionTimeStamp.format('c') }}
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <button class="button button-regular" type="button" onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}';">
+                        Review another Dataset-submission
+                    </button>
+                </td>
+            </tr>
         </table>
-        <br>
-        <button type="button" onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}';">
-            Review another Dataset-submission
-        </button>
     </fieldset>
 {% endblock %}
