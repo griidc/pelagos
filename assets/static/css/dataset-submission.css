@@ -70,7 +70,6 @@ textarea{
 legend
 	{
 		text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
-		font-family:Verdana, Geneva, sans-serif;
 		font-size:1.4em;
 		padding: 3px;
 		border-top: 1px solid #000;
@@ -162,4 +161,20 @@ table.dataTable.stripe tbody tr:hover {
 .dx-list-item-content {
     padding-top: 0px;
     padding-bottom: 0px;
+}
+
+input[type="text"], textarea, select {
+    margin: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+input[type="radio"] {
+    height: initial;
+    width: initial;
+    appearance: revert;
+}
+
+.ui-widget {
+    font-family: inherit;
 }
