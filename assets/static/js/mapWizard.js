@@ -84,7 +84,7 @@ function MapWizard(json)
         smlGeoViz = new GeoViz();
         smlGeoViz.initMap(json.divSmallMap,{"onlyOneFeature":false,"allowModify":false,"allowDelete":false,"staticMap":true});
 
-        $(divSpatialWizard).html('<fieldset><div class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="geowizBtn" type="button">Define Spatial Extent</button></div><p>'+buttonText+"</p></fieldset>").show();
+        $(divSpatialWizard).html('<fieldset><div class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="geowizBtn" type="button">Define Spatial Extent</button></div><span>'+buttonText+"</span></fieldset>").show();
 
         $(divNonSpatial).hide();
         $("#"+json.descField).hide();
