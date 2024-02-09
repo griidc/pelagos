@@ -109,7 +109,12 @@ class AccountController extends AbstractController
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
 
-        $people = $this->entityHandler->getBy(Person::class, array('emailAddress' => $emailAddress));
+        // Don't trust the public untrusted form to not send nulls/empties. EH doesn't like nulls.
+        if (empty($emailAddress)) {
+            $people = [];
+        } else {
+            $people = $this->entityHandler->getBy(Person::class, array('emailAddress' => $emailAddress));
+        }
 
         if (count($people) === 0) {
             return $this->render('Account/EmailNotFound.html.twig');

@@ -19,7 +19,7 @@
                     <span>To request a GRIIDC account, please provide your email address associated with your funding agreement.</span>
                         <form id="accountForm" method="post" action="{{ path('pelagos_app_ui_account_sendverificationemail') }}">
                             <label for="emailAddress">Email Address:</label>
-                            <input type="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input type="email" name="emailAddress" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             <label style="display:inline;" for="emailAddress" class="error"></label>
                             <div class="py-2">
                                 <button type="submit" class="flex w-small justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Submit</button>
