@@ -45,7 +45,7 @@
                         server using Globus or SFTP and then the folder selected below.  See your
     <a href="{{ path('pelagos_app_ui_person_profile_page', {'id': app.user.id}) }}" TARGET="_NEW">user profile page</a>
                         to enable griidc-ingest access.  For further instructions on using Globus or SFTP, see the
-                        <a href="https://griidc.org/data-file-transfer-methods#SFTP" TARGET="_NEW">Data File
+                        <a href="https://griidc.org/data-file-transfer-methods" TARGET="_NEW">Data File
                             Transfer Methods</a> help page. </p>
                     <div>
                         <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
@@ -55,7 +55,7 @@
                             <p>
                                 Your account has not been configured for SFTP/Ingest access.
                                 If you wish to use SFTP/Ingest, please request SFTP/Ingest access from profile page:
-                                <a href='{{ path('pelagos_app_ui_person_profile_page', {'id': app.user.id}) }}' TARGET="_NEW">Go to Profile Page</a>
+                                <a href='{{ path('pelagos_app_ui_person_profile_page', {'id': app.user.id}) }}' TARGET="_NEW">Go to Profile Page.</a>
                             </p>
                         </div>
                     </div>

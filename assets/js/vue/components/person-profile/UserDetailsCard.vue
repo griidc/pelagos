@@ -61,8 +61,7 @@
                 </div>
                 <div class="col-sm-9 text-secondary">
                     If enabled, this option enables use of griidc-ingest.griidc.org globus or SFTP endpoint
-                    to upload large files (including multi TB files) to GRIIDC. For more information on
-                    Globus GridFTP and SFTP transfers, please see <a href="/bulk-transfers">about bulk-transfers</a>.
+                    to upload large files (including multi TB files) to GRIIDC.
                 </div>
             </div>
         </b-card-body>
