@@ -155,7 +155,7 @@ table.dataTable.stripe tbody tr:hover {
 }
 
 #clearLargeFilePath {
-    margin-left: 30px;
+    margin-left: 0.5rem;
 }
 
 .dx-list-item-content {
@@ -165,14 +165,18 @@ table.dataTable.stripe tbody tr:hover {
 
 input[type="text"], textarea, select {
     margin: 0.5rem;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    padding-top: inherit;
+    padding-bottom: inherit;
+    padding-left: inherit;
 }
 
 input[type="radio"] {
     height: initial;
     width: initial;
     appearance: revert;
+    margin: revert;
+    margin-top: -1px;
+    vertical-align: middle;
 }
 
 .ui-widget {
