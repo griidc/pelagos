@@ -186,3 +186,9 @@ input[type="radio"] {
 .qtip-tipped {
     font-family: inherit;
 }
+
+.dx-treeview li {
+    margin-bottom: revert;
+    font-size: 14px;
+    line-height: 0.5rem;
+}
