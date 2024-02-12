@@ -1,3 +1,4 @@
+<span class="legacy-h1">Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</span>
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
 <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton" style="text-align: center">
     {{ form_widget(form.acceptDatasetBtn, {'label':'Accept Review'} ) }}
@@ -70,7 +71,7 @@
             <div id="ds-distribution" class="ds-metadata">
                 {% include 'DatasetReview/distribution-info.html.twig' %}
             </div>
-            
+
             <div id="ds-datasetlinks" class="ds-metadata">
                 {% include 'DatasetReview/dataset-links.html.twig' %}
             </div>
