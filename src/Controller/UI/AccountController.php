@@ -2,24 +2,24 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Account;
 use App\Entity\Entity;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
-use App\Exception\PasswordException;
 use App\Event\EntityEventDispatcher;
+use App\Exception\PasswordException;
 use App\Handler\EntityHandler;
 use App\Repository\PersonRepository;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;
 use App\Util\MailSender;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * The account controller.
