@@ -70,7 +70,6 @@ textarea{
 legend
 	{
 		text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
-		font-family:Verdana, Geneva, sans-serif;
 		font-size:1.4em;
 		padding: 3px;
 		border-top: 1px solid #000;
@@ -156,10 +155,40 @@ table.dataTable.stripe tbody tr:hover {
 }
 
 #clearLargeFilePath {
-    margin-left: 30px;
+    margin-left: 0.5rem;
 }
 
 .dx-list-item-content {
     padding-top: 0px;
     padding-bottom: 0px;
+}
+
+input[type="text"], textarea, select {
+    margin: 0.5rem;
+    padding-top: inherit;
+    padding-bottom: inherit;
+    padding-left: 0.25rem;
+}
+
+input[type="radio"] {
+    height: initial;
+    width: initial;
+    appearance: revert;
+    margin: revert;
+    margin-top: -1px;
+    vertical-align: middle;
+}
+
+.ui-widget {
+    font-family: inherit;
+}
+
+.qtip-tipped {
+    font-family: inherit;
+}
+
+.dx-treeview li {
+    margin-bottom: revert;
+    font-size: 14px;
+    line-height: 0.5rem;
 }
