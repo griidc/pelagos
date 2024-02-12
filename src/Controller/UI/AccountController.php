@@ -109,7 +109,7 @@ class AccountController extends AbstractController
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
 
-        // Don't trust the public untrusted form to not send nulls/empties. EH doesn't like nulls.
+        // Don't allow null/empty field.
         if (empty($emailAddress)) {
             $people = [];
         } else {
