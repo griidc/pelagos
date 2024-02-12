@@ -12,7 +12,7 @@ function avoidFocusOnClick() {
   });
 }
 
-const GriidcMenu = ({ mainsite }) => (
+const GriidcMenu = (props) => (
     <Popover.Group className="hidden lg:flex">
       <Popover className="relative">
         <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600" href="/">Home</a>
@@ -21,7 +21,7 @@ const GriidcMenu = ({ mainsite }) => (
         <a className={clsx(
           'text-base font-medium text-gray-600 ml-8 hover:text-blue-600 font-bold text-blue-200',
         )}
-        href={`${mainsite}/about`}>
+        href={`${props.mainsite}/about`}>
           About Us
         </a>
       </Popover>
@@ -82,7 +82,7 @@ const GriidcMenu = ({ mainsite }) => (
                         <a className={clsx(
                           'block p-2 pl-5 text-sm leading-[1.25rem] text-gray-500 hover:text-blue-600',
                         )}
-                        href={`${mainsite}/how-to-submit-data`}>
+                        href={`${props.mainsite}/how-to-submit-data`}>
                           How to Submit Data
                         </a>
                         <a className={clsx(
@@ -160,19 +160,19 @@ const GriidcMenu = ({ mainsite }) => (
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-                href={`${mainsite}/faq`}>
+                href={`${props.mainsite}/faq`}>
                 Frequently Asked Questions
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${mainsite}/training-and-user-guides`}>
+               href={`${props.mainsite}/training-and-user-guides`}>
                 Training and User Guides
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${mainsite}/webinar-recordings`}>
+               href={`${props.mainsite}/webinar-recordings`}>
                 Webinar Recordings
               </a>
               </Popover.Panel>
@@ -182,13 +182,24 @@ const GriidcMenu = ({ mainsite }) => (
       </Popover>
       <Popover className="relative">
         <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600"
-          href={`${mainsite}/contact`}>Contact Us</a>
+          href={`${props.mainsite}/contact`}>Contact Us</a>
       </Popover>
+      { props.showAdmin
+        && <Popover className="relative">
+          <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600"
+            href="/admin">Admin</a>
+        </Popover>
+      }
     </Popover.Group>
 );
 
+GriidcMenu.defaultProps = {
+  showAdmin: false,
+};
+
 GriidcMenu.propTypes = {
   mainsite: PropTypes.string,
+  showAdmin: PropTypes.bool,
 };
 
 export default GriidcMenu;
