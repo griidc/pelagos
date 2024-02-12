@@ -11,8 +11,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 * [Redhat Linux 8](https://www.redhat.com/) - Redhat Linux or compatible
 * [ClamAV](https://www.clamav.net) - ClamAV® open source antivirus engine
-* [PHP 8.0+](http://php.net/docs.php) - General-purpose scripting language
-* [PostgreSQL 11+](https://www.postgresql.org) - ORDBMS
+* [PHP 8.1+](http://php.net/docs.php) - General-purpose scripting language
+* [PostgreSQL 13+](https://www.postgresql.org) - ORDBMS
 * [Elasticsearch 7.17+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
 * [Composer 2.5.1+](https://getcomposer.org/) - Dependency Manager for PHP
 * [Yarn 1.22.19+](https://yarnpkg.com/en/) - Package Manager
@@ -31,7 +31,7 @@ To install fullfill prerequisites then run:
 See the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
 
 ## License
-Copyright © 2023 Texas A&M University-Corpus Christi
+Copyright © 2024 Texas A&M University-Corpus Christi
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
