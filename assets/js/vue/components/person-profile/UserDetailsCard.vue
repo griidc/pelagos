@@ -45,7 +45,7 @@
                     <h6 class="mb-0">GridFTP</h6>
                 </div>
                 <div class="col-sm-9 text-secondary" v-if="personDetails.isPosix">
-                    This account has Globus/SFTP enabled. Your username is <i>{{ personDetails.posixUsername }}</i>
+                    This account has Globus/SFTP enabled. Your username is <i>{{ personDetails.posixUsername }}</i>.
                 </div>
                 <div class="col-sm-9 text-secondary" v-else>
                     Globus/SFTP is not currently enabled on this account.
