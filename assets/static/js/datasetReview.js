@@ -50,7 +50,7 @@ $(document).ready(function(){
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
-    $("button").button();
+    $("#pelagos-content button").button();
 
     jQuery.validator.addMethod("trueISODate", function(value, element) {
         var regPattern = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/
