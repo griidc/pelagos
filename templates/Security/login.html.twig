@@ -20,8 +20,8 @@
     </div>
 {% endif %}
 
-<div class="w-75 mx-auto prose" style="width:50%">
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+<div class="flex items-center justify-center h-screen">
+<div class="py-6">
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
      <img class="mx-auto h-10 w-auto" src="{{ asset('build/images/user-profile-pic.png') }}" alt="generic profile image of user" >
     <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">GRIIDC Sign-In</h2>
@@ -56,17 +56,18 @@
         <button type="submit" class="flex w-full justify-center button button-regular text-sm font-medium text-center text-white inline-block mt-6">Sign in</button>
       </div>
     </form>
-
   </div>
 </div>
 
-<div class="text-sm">
-You are accessing a Texas A&amp;M University-Corpus Christi information system.<br />
-Unauthorized use is prohibited.<br />
-Usage may be subject to security testing and monitoring.<br />
-Misuse is subject to criminal prosecution.<br />
-Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
-</div>
 
 </div>
+
+  <span class="text-sm flex items-left justify-center h-screen">
+    You are accessing a Texas A&amp;M University-Corpus Christi information system.<br/ >
+    Unauthorized use is prohibited.<br />
+    Usage may be subject to security testing and monitoring.<br />
+    Misuse is subject to criminal prosecution.<br />
+    Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
+  </span>
+
 {% endblock %}
