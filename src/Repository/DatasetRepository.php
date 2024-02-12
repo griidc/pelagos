@@ -336,6 +336,6 @@ class DatasetRepository extends ServiceEntityRepository
             ->where($queryBuilder->expr()->isNotNull('d.doi'))
             ->getQuery()
             ->getResult()
-       ;
+        ;
     }
 }
