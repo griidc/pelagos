@@ -1,3 +1,8 @@
 .dz-preview, .dz-file-preview {
     display: none;
 }
+
+.dx-filemanager-dirs-tree-item-text {
+    padding-bottom: 0.25rem;
+    padding-top: 0.25rem;
+}

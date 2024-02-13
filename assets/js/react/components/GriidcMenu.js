@@ -175,6 +175,12 @@ const GriidcMenu = (props) => (
                href={`${props.mainsite}/webinar-recordings`}>
                 Webinar Recordings
               </a>
+              <a className={clsx(
+                'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
+              )}
+               href={`${props.mainsite}/data-file-transfer-methods`}>
+                Data File Transfer Methods
+              </a>
               </Popover.Panel>
             </Transition>
           </Fragment>
