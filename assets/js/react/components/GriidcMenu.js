@@ -135,7 +135,7 @@ const GriidcMenu = (props) => (
                         <a className={clsx(
                           'block p-2 pl-5 text-sm leading-[1.25rem] text-gray-500 hover:text-blue-600',
                         )}
-                        href={`${props.mainsite}/how-to-submit-data`}>
+                        href={`${props.mainsite}/how-submit-data`}>
                           How to Submit Data
                         </a>
                         <a className={clsx(
@@ -219,7 +219,7 @@ const GriidcMenu = (props) => (
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${props.mainsite}/training-and-user-guides`}>
+               href={`${props.mainsite}/training-user-guides`}>
                 Training and User Guides
               </a>
               <a className={clsx(
