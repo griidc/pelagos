@@ -3,8 +3,6 @@
     position:relative;
     text-align: left;
     width:90%;
-    font-family: sans-serif, Tahoma, Geneva;
-    font-size: 12px;
     line-height: 24px;
     background: #f1f7fb;
     color: #40626b;
@@ -30,3 +28,28 @@
     -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
+
+.legacy-h1 {
+    font-size: 1.66rem;
+}
+
+.legacy-h3 {
+    font-size: 1rem;
+}
+
+a.jstree-anchor {
+    font-size: initial;
+}
+
+.diftree tr {
+    display: initial;
+}
+
+td.otherfield input{
+    height: 24px;
+}
+
+.ui-datepicker-month, .ui-datepicker-year {
+    padding: initial;
+}
+

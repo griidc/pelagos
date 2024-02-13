@@ -58,6 +58,7 @@
         <DxTitle text="Dataset Size Ranges">
             <DxFont
                 :family="this.getThemeProperty('main-fonts')"
+                :weight="this.getThemeProperty('weightRegular')"
             />
         </DxTitle>
         <DxLegend

@@ -38,7 +38,7 @@ class DatasetCitationUtil
         if ($doi instanceof DOI) {
             $citationString .= 'doi:' . $doi->getDoi();
         } else {
-            $citationString .= "Available from: https://data.gulfresearchinitiative.org/data/$udi";
+            $citationString .= "Available from: https://data.griidc.org/data/$udi";
         }
         return $citationString;
     }

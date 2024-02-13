@@ -72,6 +72,7 @@
         <DxTitle text="Total Datasets Over Time">
             <DxFont
                 :family="this.getThemeProperty('main-fonts')"
+                :weight="this.getThemeProperty('weightRegular')"
             />
         </DxTitle>
         <DxLegend

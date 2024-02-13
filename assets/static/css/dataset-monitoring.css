@@ -49,3 +49,11 @@
 .awesome-icon {
     cursor: pointer;
 }
+
+img {
+    display:inline-block;
+}
+
+.qtip-tipped {
+    font-family: inherit;
+}

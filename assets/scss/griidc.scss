@@ -1,12 +1,49 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
-@import url(https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic);
+/* Font face - Weight: 100 */
+@font-face {
+    font-family: 'dm-sans';
+    font-style: normal;
+    font-weight: 100;
+    font-display: swap;
+    src: url('../fonts/DMSans-Thin.woff') format('woff');
+    src: url('../fonts/DMSans-Thin.woff2') format('woff2');
+}
+
+/* Font face - Weight: 400 */
+@font-face {
+    font-family: 'dm-sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/DMSans-Regular.woff') format('woff');
+    src: url('../fonts/DMSans-Regular.woff2') format('woff2');
+}
+
+/* Font face - Weight: 500 */
+@font-face {
+    font-family: 'dm-sans';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../fonts/DMSans-Medium.woff') format('woff');
+    src: url('../fonts/DMSans-Medium.woff2') format('woff2');
+}
+
+/* Font face - Weight: 700 */
+@font-face {
+    font-family: 'dm-sans';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../fonts/DMSans-Bold.woff') format('woff');
+    src: url('../fonts/DMSans-Bold.woff2') format('woff2');
+}
 
 @import 'griidc-colors.scss';
 @import 'bootstrap.scss';
 
 :root {
-    --body-fonts: "Lato", Arial, sans-serif;
-    --main-fonts: "Lato", Arial, sans-serif;
+    --body-fonts: 'dm-sans', 'Helvetica', sans-serif;
+    --main-fonts: 'dm-sans', 'Helvetica', sans-serif;
 
     --baseFontSize:          15px;
     --baseFontFamily:        var(--body-fonts);

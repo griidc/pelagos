@@ -37,10 +37,6 @@
     display:none;
 }
 
-select, input{
-   height: 20px;
-}
-
 .entityForm input[type="text"],
 .entityForm input[type="email"],
 .entityForm textarea {
