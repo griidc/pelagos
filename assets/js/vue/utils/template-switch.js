@@ -37,6 +37,8 @@ const templateVariables = {
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
   },
+  GOMRI: {
+  },
 };
 
 export default {

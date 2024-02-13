@@ -35,6 +35,6 @@ var $ = jQuery.noConflict();
             }
         });
 
-        $("form button").button();
+        // $("form button").button();
     });
 }(jQuery));

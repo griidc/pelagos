@@ -30,7 +30,7 @@ class DataRepositoryTest extends TestCase
      *
      * @var string $testEmailAddress
      */
-    protected static $testEmailAddress = 'griidc@gomri.org';
+    protected static $testEmailAddress = 'help@griidc.org';
 
     /**
      * Static class variable containing a description to use for testing.

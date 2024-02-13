@@ -322,4 +322,20 @@ class DatasetRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getArrayResult();
     }
+
+    /**
+     * Get a list of datasets that have a DOI.
+     *
+     * @return Dataset[]
+     */
+    public function getDatasetWithDoiSet(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('d');
+        return
+            $queryBuilder
+            ->where($queryBuilder->expr()->isNotNull('d.doi'))
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

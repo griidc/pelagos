@@ -19,7 +19,7 @@
         </script>
 
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('gomri') }}
     <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
         {% if isMaintenanceMode() %}
@@ -30,18 +30,6 @@
 </head>
 <body class="html page-pelagos-full">
 {% block htmlbody %}
-    <ul class="atlassian-btns">
-        <li>
-            <a href="#" id="atlwdg-issue" class="atlwdg-trigger">
-                Report Issue
-            </a>
-        </li>
-        <li>
-            <a href="#" id="atlwdg-suggest" class="atlwdg-trigger">
-                Suggest Improvement
-            </a>
-        </li>
-    </ul>
     <div id="page-wrapper">
         <div id="page">
             {% if isMaintenanceMode() %}
@@ -56,22 +44,13 @@
                     <div class="region region-header">
                         <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
                             <div class="content">
-                                {% if is_granted('ROLE_USER') %}
-                                    <a style="text-decoration: underline;">
-                                        Logged in as: {{ app.session.get('_security.last_username') }}
-                                    </a>
-                                    |
-                                    <a href="{{ path('security_logout') }}">  Log out</a>
-                                {% else %}
-                                    <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
 
                     <div id="branding" class="container">
                         <div id="logo-wrapper">
-                            <a href="http://gulfresearchinitiative.org" title="Gulf of Mexico Research Initiative" rel="home" id="logo">
+                            <a href="https://gulfresearchinitiative.org" title="Gulf of Mexico Research Initiative" rel="home" id="logo">
                                 <img src="{{asset('build/images/logo.png')}}" alt="Home">
                             </a>
                         </div>
@@ -82,8 +61,8 @@
                         </div>
 
                         <div id="griidc-logo-wrapper">
-                            <a href="/" title="Home" rel="home" id="logo">
-                                <img src="{{asset('build/images/griidc-logo.png')}}" alt="GRIIDC">
+                            <a href="https://griidc.org" title="Home" rel="home" id="logo">
+                                <img src="{{asset('build/images/griidc-logo.svg')}}" alt="GRIIDC">
                             </a>
                         </div>
                     </div>
@@ -115,39 +94,12 @@
 {% endblock htmlbody %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('gomri') }}
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
 
-    <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
-
-    <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=a5e3f887"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            window.ATL_JQ_PAGE_PROPS =  {
-                "8b54034b" : {
-                    "triggerFunction": function(showCollectorDialog) {
-                        $("#atlwdg-issue").click(function(e) {
-                            e.preventDefault();
-                            showCollectorDialog();
-                        });
-                    }
-                },
-                "a5e3f887" : {
-                    "triggerFunction": function(showCollectorDialog) {
-                        $("#atlwdg-suggest").click(function(e) {
-                            e.preventDefault();
-                            showCollectorDialog();
-                        });
-                    }
-                },
-            };
-        });
-    </script>
-
     <script>
-        window.PELAGOS_TEMPLATE_PROPS = {"BaseTemplateName": "GRIIDC"};
+        window.PELAGOS_TEMPLATE_PROPS = {"BaseTemplateName": "GOMRI"};
     </script>
 
     {% endblock %}

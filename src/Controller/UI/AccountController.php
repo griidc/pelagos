@@ -2,22 +2,24 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Entity\Account;
 use App\Entity\Entity;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
-use App\Exception\PasswordException;
 use App\Event\EntityEventDispatcher;
+use App\Exception\PasswordException;
 use App\Handler\EntityHandler;
+use App\Repository\PersonRepository;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;
 use App\Util\MailSender;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * The account controller.
@@ -34,7 +36,7 @@ class AccountController extends AbstractController
     /**
      * Protected validator value instance of Symfony Validator.
      *
-     * @var validator
+     * @var ValidatorInterface
      */
     protected $validator;
 
@@ -104,12 +106,12 @@ class AccountController extends AbstractController
      *
      * @return Response A Symfony Response instance.
      */
-    public function sendVerificationEmail(Request $request, MailSender $mailer)
+    public function sendVerificationEmail(Request $request, MailSender $mailer, PersonRepository $personRepository)
     {
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
 
-        $people = $this->entityHandler->getBy(Person::class, array('emailAddress' => $emailAddress));
+        $people = $personRepository->findBy(['emailAddress' => $emailAddress]);
 
         if (count($people) === 0) {
             return $this->render('Account/EmailNotFound.html.twig');

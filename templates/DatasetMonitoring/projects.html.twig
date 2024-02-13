@@ -7,7 +7,7 @@
 {% for ResearchGroup in researchGroups %}
 <div class="project" project="{{ResearchGroup.id}}">
     <div class="project-title">
-        <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'id': ResearchGroup.id }) }}" target="_blank">{{ResearchGroup.name}}</a>
+        <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'id': ResearchGroup.id }) }}" target="_blank" class="hover:text-blue-600">{{ResearchGroup.name}}</a>
 
         <span class="awesome-icon awesome-icon-csv" data-url="{{ vanityurl('pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport', { id : ResearchGroup.id}) }}">
             <i class="fas fa-file-csv" style="color: green; margin-left:1em"></i>
