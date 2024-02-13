@@ -55,7 +55,7 @@
                                 <gco:CharacterString>USA</gco:CharacterString>
                             </gmd:country>
                             <gmd:electronicMailAddress>
-                                <gco:CharacterString>griidc@gomri.org</gco:CharacterString>
+                                <gco:CharacterString>help@griidc.org</gco:CharacterString>
                             </gmd:electronicMailAddress>
                         </gmd:CI_Address>
                     </gmd:address>
@@ -149,7 +149,7 @@
                                         <gco:CharacterString>USA</gco:CharacterString>
                                     </gmd:country>
                                     <gmd:electronicMailAddress>
-                                        <gco:CharacterString>griidc@gomri.org</gco:CharacterString>
+                                        <gco:CharacterString>help@griidc.org</gco:CharacterString>
                                     </gmd:electronicMailAddress>
                                 </gmd:CI_Address>
                             </gmd:address>
@@ -276,14 +276,14 @@ Unit 5869]]>
                                                 <gco:CharacterString>USA</gco:CharacterString>
                                             </gmd:country>
                                             <gmd:electronicMailAddress>
-                                                <gco:CharacterString>griidc@gomri.org</gco:CharacterString>
+                                                <gco:CharacterString>help@griidc.org</gco:CharacterString>
                                             </gmd:electronicMailAddress>
                                         </gmd:CI_Address>
                                     </gmd:address>
                                     <gmd:onlineResource>
                                         <gmd:CI_OnlineResource>
                                             <gmd:linkage>
-                                                <gmd:URL>http://data.gulfresearchinitiative.org</gmd:URL>
+                                                <gmd:URL>https://data.griidc.org</gmd:URL>
                                             </gmd:linkage>
                                             <gmd:protocol>
                                                 <gco:CharacterString />

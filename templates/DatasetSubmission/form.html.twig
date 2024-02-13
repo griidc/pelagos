@@ -1,26 +1,33 @@
 <div class="cleair">
+    <span class="legacy-h1 pb-4 block">Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</span>
     <fieldset>
-        <strong>NOTE:
-           By submitting content to GRIIDC you warrant that you have sufficient rights to make this content available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0 license</a>.
+        <strong class="px-2 block">NOTE:
+            By submitting content to GRIIDC you warrant that you have sufficient rights to make this content available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank"><strong>CC0 license</strong></a>.
         </strong>
     </fieldset>
 
     <fieldset>
-        <p>
+        <span class="px-2 py-4 block">
             Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset. You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form.
-        </p>
-        <form id="regidform">
-            <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
-            <input minlength="16" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
-            <button disabled
-            onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
-            document.getElementById('regid').value.trim();"
-            name="regbutton" id="regbutton"
-            type="button">Load Dataset</button>
-            <label class="error" for="regid"></label>
-        </form>
+        </span>
+        <div class="px-2 block">
+            <form id="regidform">
+                <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
+                <input minlength="16" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
+                <button disabled
+                    class="ml-2"
+                    onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
+                    document.getElementById('regid').value.trim();"
+                    name="regbutton" id="regbutton"
+                    type="button">Load Dataset
+                </button>
+                <label class="error" for="regid"></label>
+            </form>
+        </div>
         <br>
-        <b>Approved Dataset Information Forms</b>
-        {% include "DatasetSubmission/datasets-approved-difs.html.twig" %}
+        <div class="px-2">
+            <b>Approved Dataset Information Forms</b>
+            {% include "DatasetSubmission/datasets-approved-difs.html.twig" %}
+        </div>
     </fieldset>
 </div>
