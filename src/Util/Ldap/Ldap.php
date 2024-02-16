@@ -69,12 +69,18 @@ class Ldap
      *
      * @return void
      */
-    public function updatePerson(Person $person)
+    public function updatePerson(Person $person, bool $recreate = true)
     {
         $uidNumber = $person->getAccount()->getUidNumber();
         if ($this->checkIfUidNumberAvailable($uidNumber, $person->getAccount()->getUserName())) {
             $ldapPerson = $this->buildLdapPerson($person);
-            $this->ldapClient->modify($ldapPerson['dn'], $ldapPerson['entry']);
+            if ($recreate) {
+                $this->ldapClient->delete($ldapPerson['dn']);
+                $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
+            } else {
+                $this->ldapClient->modify($ldapPerson['dn'], $ldapPerson['entry']);
+            }
+
         } else {
             throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
         }
