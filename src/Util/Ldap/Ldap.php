@@ -80,7 +80,6 @@ class Ldap
             } else {
                 $this->ldapClient->modify($ldapPerson['dn'], $ldapPerson['entry']);
             }
-
         } else {
             throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
         }
