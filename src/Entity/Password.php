@@ -242,4 +242,12 @@ class Password extends Entity
     {
         return $this->passwordHashAlgorithm;
     }
+
+    /**
+     * Return base64 encoded salted password hash.
+     */
+    public function getSSHAPassword(): string
+    {
+        return "{SSHA}" . base64_encode(pack('H*', bin2hex($this->getPasswordHash()) . bin2hex($this->getSalt())));
+    }
 }
