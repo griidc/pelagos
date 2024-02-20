@@ -429,7 +429,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return boolean
      */
-    public function isPosix()
+public function isPosix()
     {
         return $this->posix;
     }

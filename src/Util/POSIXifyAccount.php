@@ -102,10 +102,7 @@ class POSIXifyAccount
         $account->makePosix($uidNumber, $this->posixGidNumber, $this->homedirPrefix);
 
         // Update LDAP with this modified Account (via Person).
-        $this->ldap->updatePerson(
-            person: $account->getPerson(),
-            recreate: false
-        );
+        $this->ldap->updatePerson($account->getPerson());
         // Persist changes.
         $this->entityHandler->update($account);
     }
