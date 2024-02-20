@@ -29,6 +29,7 @@
     position: absolute;
     right: 3px;
     top: 1px;
+    z-index: 100;
 }
 
 .map_button_container {
