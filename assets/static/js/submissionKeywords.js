@@ -157,6 +157,9 @@ $(() => {
           keywordList.reload();
           keywordList.repaint();
         });
+        $(item.element).find('.dx-tag-remove-button').parent('div').children('span').on('dxdblclick', function(e) {
+          navigator.clipboard.writeText(this.textContent.trim());
+        });
       },
       onItemDeleted(item) {
         var keywordListArray = [];
