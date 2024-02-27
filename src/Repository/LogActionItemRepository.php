@@ -2,12 +2,12 @@
 
 namespace App\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\LogActionItem;
 use App\Util\FundingOrgFilter;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * LogActionItem Entity Repository class.
@@ -23,9 +23,6 @@ class LogActionItemRepository extends ServiceEntityRepository
 
     /**
      * Constructor.
-     *
-     * @param ManagerRegistry  $registry         The Registry Manager.
-     * @param FundingOrgFilter $fundingOrgFilter Utility to filter by funding organization.
      */
     public function __construct(ManagerRegistry $registry, FundingOrgFilter $fundingOrgFilter)
     {
@@ -37,7 +34,7 @@ class LogActionItemRepository extends ServiceEntityRepository
     /**
      * Count of downloads, optional date range and also filter aware.
      *
-     * @return integer The count of the datasets downloaded, per FAIR guidelines.
+     * @return int the count of the datasets downloaded, per FAIR guidelines
      */
     public function countDownloads(\DateTime $start = null, \DateTime $stop = null): int
     {
@@ -83,9 +80,9 @@ class LogActionItemRepository extends ServiceEntityRepository
             $dateTime = $timeStamp['creationTimeStamp'];
             $epochTime = (int) $dateTime->format('U');
 
-            if ($key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId <> $id) {
+            if ($key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
                 $currentTimeStamp = $epochTime;
-                $downloadCount++;
+                ++$downloadCount;
             }
 
             $currentId = $id;
