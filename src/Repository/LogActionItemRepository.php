@@ -39,30 +39,26 @@ class LogActionItemRepository extends ServiceEntityRepository
      *
      * @return integer The count of the datasets downloaded, per FAIR guidelines.
      */
-    public function countDownloads(string $start = '', string $stop = ''): int
+    public function countDownloads(\DateTime $start = null, \DateTime $stop = null): int
     {
-        if ($start != '' and $stop != '') {
-            $qb = $this->createQueryBuilder('log')
-            ->select('log.creationTimeStamp, log.subjectEntityId')
-            ->where('log.subjectEntityName = ?1')
-            ->andWhere('log.actionName = ?2')
-            ->andWhere('log.creationTimeStamp >= ?3')
-            ->andWhere('log.creationTimeStamp <= ?4')
-            ->orderBy('log.subjectEntityId', 'ASC')
-            ->addOrderBy('log.creationTimeStamp', 'ASC')
-            ->setParameter(1, 'Pelagos\Entity\Dataset')
-            ->setParameter(2, 'File Download')
-            ->setParameter(3, $start)
-            ->setParameter(4, $stop);
-        } else {
-            $qb = $this->createQueryBuilder('log')
-            ->select('log.creationTimeStamp, log.subjectEntityId')
-            ->where('log.subjectEntityName = ?1')
-            ->andWhere('log.actionName = ?2')
-            ->orderBy('log.subjectEntityId', 'ASC')
-            ->addOrderBy('log.creationTimeStamp', 'ASC')
-            ->setParameter(1, 'Pelagos\Entity\Dataset')
-            ->setParameter(2, 'File Download');
+        $qb = $this->createQueryBuilder('log')
+        ->select('log.creationTimeStamp, log.subjectEntityId')
+        ->where('log.subjectEntityName = :entityName')
+        ->andWhere('log.actionName = :actionName')
+        ->orderBy('log.subjectEntityId', 'ASC')
+        ->addOrderBy('log.creationTimeStamp', 'ASC')
+        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
+        ->setParameter('actionName', 'File Download');
+
+        if ($start instanceof \DateTime and $stop instanceof \DateTime) {
+            $dbFormatStartTime = $start->format('Y-m-d H:i:sO');
+            $dbFormatEndTime = $stop->format('Y-m-d H:i:sO');
+
+            $qb
+            ->andWhere('log.creationTimeStamp >= :start')
+            ->andWhere('log.creationTimeStamp <= :stop')
+            ->setParameter('start', $dbFormatStartTime)
+            ->setParameter('stop', $dbFormatEndTime);
         }
 
         if ($this->fundingOrgFilter->isActive()) {
