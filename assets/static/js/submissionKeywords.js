@@ -140,6 +140,24 @@ $(() => {
       searchPanel: { visible: true },
     }).dxTreeView('instance');
 
+    function copyToClipboard(text)
+    {
+      navigator.clipboard.writeText(text);
+      noty(
+        {
+          layout: "top",
+          theme: "relax",
+          type: "success",
+          text: "Keyword copied to clipboard!",
+          timeout: 4000,
+          modal: false,
+          animation: {
+            open: "animated fadeIn",
+            close: "animated fadeOut",
+          }
+        });
+    }
+
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedAnzsrcKeywords,
       allowItemDeleting: false,
@@ -157,9 +175,11 @@ $(() => {
           keywordList.reload();
           keywordList.repaint();
         });
-        $(item.element).find('.dx-tag-remove-button').parent('div').children('span').on('dxdblclick', function(e) {
-          navigator.clipboard.writeText(this.textContent.trim());
-        });
+        $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
+          .parents('.dx-list-item')
+          .on('dblclick', (event) => {
+            copyToClipboard(item.itemData.displayPath);
+          });
       },
       onItemDeleted(item) {
         var keywordListArray = [];
@@ -194,9 +214,11 @@ $(() => {
           keywordListGcmd.reload();
           keywordListGcmd.repaint();
         });
-        $(item.element).find('.dx-tag-remove-button').parent('div').children('span').on('dxdblclick', function(e) {
-          navigator.clipboard.writeText(this.textContent.trim());
-        });
+        $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
+          .parents('.dx-list-item')
+          .on('dblclick', (event) => {
+            copyToClipboard(item.itemData.displayPath);
+          });
       },
       onItemDeleted(item) {
         var keywordListArray = [];
