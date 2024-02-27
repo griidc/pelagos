@@ -23,6 +23,8 @@ $(() => {
       gcmdKeywords = JSON.parse(xhr.responseText);
     }
 
+    const toast = $('#toast').dxToast({}).dxToast('instance');
+
     const treeList = $('#treelist').dxTreeView({
       items: anzsrcKeywords,
       dataStructure: 'plain',
@@ -143,19 +145,12 @@ $(() => {
     function copyToClipboard(text)
     {
       navigator.clipboard.writeText(text);
-      noty(
-        {
-          layout: "top",
-          theme: "relax",
-          type: "success",
-          text: "Keyword copied to clipboard!",
-          timeout: 4000,
-          modal: false,
-          animation: {
-            open: "animated fadeIn",
-            close: "animated fadeOut",
-          }
-        });
+      toast.option({
+        message: "Keyword copied to clipboard!",
+        type: "info",
+        displayTime: 3000,
+      });
+      toast.show();
     }
 
     const keywordList = $('#selectedList').dxList({
