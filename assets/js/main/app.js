@@ -2,9 +2,12 @@
  * App.js the main app for the base template.
  */
 
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import '../../scss/griidc.scss';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+import GriidcMenu from '../react/components/GriidcMenu';
 
 const $ = require('jquery');
 
@@ -18,6 +21,12 @@ require('../../css/pelagos-module.css');
 require('../../css/messages.css');
 require('../../css/griidc-app.css');
 const axios = require('axios');
+
+const mainsite = process.env.MAINSITE;
+const griidcMenuElement = document.getElementById('griidc-menu');
+const showAdmin = griidcMenuElement.hasAttribute('show-admin') && griidcMenuElement.getAttribute('show-admin') === 'true';
+
+createRoot(griidcMenuElement).render(<GriidcMenu mainsite={mainsite} showAdmin={ showAdmin }/>);
 
 global.axios = axios;
 

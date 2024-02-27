@@ -73,11 +73,11 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 button-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
+                                <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
                                     <i class="fa fa-search pl-2"></i></button>
-                                <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                                <button type="reset" id="search-clear" class="btn btn-primary clear-button">Clear</button>
                                 <div class="mt-3 pt-3 empty-button-div"></div>
-                                <button type="button" id="map-search" class="btn btn-dark map-search-button"
+                                <button type="button" id="map-search" class="btn btn-primary map-search-button"
                                         @click="dataDiscovery()">Map Search
                                 </button>
                             </div>

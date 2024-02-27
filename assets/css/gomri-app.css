@@ -1,0 +1,40 @@
+.cleair {
+    margin:auto;
+    position:relative;
+    text-align: left;
+    width:90%;
+    font-family: sans-serif, Tahoma, Geneva;
+    font-size: 12px;
+    line-height: 24px;
+    background: #f1f7fb;
+    color: #40626b;
+    vertical-align: middle;
+    text-decoration: none;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    padding:50px;
+    -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dif-cleair {
+    background: #f1f7fb;
+    color: #40626b;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    padding:10px;
+    -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.legacy-h1 {
+    font-size:2em;
+}
+
+.legacy-h3 {
+    font-size:1.17em;
+}

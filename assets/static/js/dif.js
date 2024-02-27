@@ -246,7 +246,7 @@ $(document).ready(function()
         $("#btnDS").button("option", "disabled", true);
         if ($(this).val() == "closedout") {
             var html = '<fieldset><img src="' + imgCross +'">&nbsp;Research Group (locked)';
-            html += '<div class="substatus"><i>A DIF cannot be submitted for this research group because the grant has been closed out.<br>Please contact GRIIDC at <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> if you would like to submit a DIF or have any questions.</i></div>';
+            html += '<div class="substatus"><i>A DIF cannot be submitted for this research group because the grant has been closed out.<br>Please contact GRIIDC at <a href="mailto:help@griidc.org">help@griidc.org</a> if you would like to submit a DIF or have any questions.</i></div>';
             html += '</fieldset>';
             $("#statustext").html(html);
             formHash = $("#difForm").serialize();
@@ -600,7 +600,7 @@ function createDIF(form)
             confirmDialog.message = '<div><img src="' + imgInfo + '">' +
                 "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
                 "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
-                "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
+                "<br>to your DIF, please email GRIIDC at help@griidc.org with the UDI for your dataset." +
                 "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
         }
 
@@ -778,7 +778,7 @@ function updateDIF(form)
                 var message = '<div><img src="' + imgInfo + '">' +
                   "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
                   "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
-                  "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
+                  "<br>to your DIF, please email GRIIDC at help@griidc.org with the UDI for your dataset." +
                   "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
             } else if (buttonValue === "approve") {
                 var title = "DIF Updated and Approved";

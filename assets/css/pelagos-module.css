@@ -27,8 +27,8 @@
 
 #pelagos-content {
     display: table-cell;
-    height: 100%;
-    font-family: "Times New Roman", Times, serif;
+    height: 100vh;
+    /* font-family: "Times New Roman", Times, serif; */
 }
 
 #pelagos-content table {

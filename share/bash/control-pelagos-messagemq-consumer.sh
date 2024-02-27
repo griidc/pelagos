@@ -7,42 +7,56 @@
 #
 # This script is called by the pelagos-messagemq-consumer.service service with either a
 # start or stop argument.
+###############################################################################
+# Configuration: #uncomment and modify as needed for your deployment
+#
+# Location of the supervisord.conf file
+#supervisord_conf=/opt/pelagos/config/supervisor/supervisord.conf
+# supervisord identifier
+#identifier=pelagos
+# user to run as
+#runuser=pelagos
+# Pelagos dir
+#pelagos_dir=/opt/pelagos
+#
+# MUST EDIT $pelagos_dir/config/supervisor/supervisord.conf
+# AND ALSO $pelagos_dir/config/supervisor/messenger-worker.ini
+###############################################################################
 
 # Get function from functions library
 . /etc/init.d/functions
 
 prog="pelagos-messagemq-consumer-supervisor"
-runuser=pelagos
 
 success=true;
 
 # Start the service
 start() {
     echo -n $"Starting $prog: "
-	cd /opt/pelagos
+	cd $pelagos_dir
 
-    if su - $runuser -c "supervisord --configuration=/opt/pelagos/config/supervisor/supervisord.conf --identifier=pelagos" ; then
+    if su - $runuser -c "supervisord --configuration=$supervisord_conf --identifier=$identifier" ; then
         echo "started supervisord"
     else
         echo "failed to start supervisord"
         success=false
     fi
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock update" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix://$pelagos_dir/var/supervisor/supervisor.sock update" ; then
         echo "updated supervisor"
     else
         echo "failed to update supervisor"
         success=false
     fi
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock reload" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix://$pelagos_dir/var/supervisor/supervisor.sock reload" ; then
         echo "reloaded supervisor"
     else
         echo "failed to reload supervisord"
         success=false
     fi
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock start pelagos:*" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix://$pelagos_dir/var/supervisor/supervisor.sock start pelagos:*" ; then
         echo "started messenger consumer"
     else
         echo "failed to start the actual messenger consumer"
@@ -60,9 +74,9 @@ start() {
 
 # Stop the service
 stop() {
-	cd /opt/pelagos
+	cd $pelagos_dir
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock stop pelagos:*" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix://$pelagos_dir/var/supervisor/supervisor.sock stop pelagos:*" ; then
         echo "stopped consumer"
     else
         success=false

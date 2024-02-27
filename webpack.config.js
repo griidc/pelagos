@@ -1,5 +1,6 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -22,6 +23,8 @@ Encore
     runtimeCompilerBuild: false,
   })
 
+  .addPlugin(new Dotenv({ path: './.env.local', defaults: '.env' }))
+
 /*
      * ENTRY CONFIG
      *
@@ -29,6 +32,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
   .addEntry('app', './assets/js/main/app.js')
+  .addEntry('gomri', './assets/js/main/gomri.js')
   .addEntry('layout', './assets/js/layout.js')
   .addEntry('downloadBox', './assets/js/downloadBox.js')
   .addEntry('search-app', './assets/js/search.js')
@@ -94,7 +98,7 @@ Encore
 // .enableTypeScriptLoader()
 
 // uncomment if you use React
-// .enableReactPreset()
+  .enableReactPreset()
 
 // uncomment to get integrity="..." attributes on your script & link tags
 // requires WebpackEncoreBundle 1.4 or higher
