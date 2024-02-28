@@ -6,7 +6,7 @@
 	{% if forContact == true %}
 		<pre>Organization URL. Should be formatted 'protocol://domain', e.g., http://gomri.org</pre></td></tr>
 	{% else %}
-		<pre>URL which points to a Internet location where the dataset can be obtained. If your dataset has been submitted to GRIIDC, the URL should be http://data.gulfresearchinitiative.org/data/&lt;UDI&gt;, where &lt;UDI&gt; is the GRIIDC UDI for your dataset</pre></td></tr>
+		<pre>URL which points to a Internet location where the dataset can be obtained. If your dataset has been submitted to GRIIDC, the URL should be http://data.griidc.org/data/&lt;UDI&gt;, where &lt;UDI&gt; is the GRIIDC UDI for your dataset</pre></td></tr>
 	{% endif %}
 
 	<input type="hidden" size=80" id="OLR2_{{instanceName}}" name="{{instanceType}}-gmd:protocol-gco:CharacterString"/></td>
@@ -39,6 +39,3 @@
 	</td>
 	<td><pre>URL Role</pre></td></tr>
 {% endif %}
-
-
-

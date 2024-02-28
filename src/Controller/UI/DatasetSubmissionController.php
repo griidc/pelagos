@@ -48,7 +48,7 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Name of the default distribution contact.
      */
-    const DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL = 'griidc@gomri.org';
+    const DEFAULT_DISTRIBUTION_POINT_ID = 1;
 
     /**
      * Name of the default distribution contact.
@@ -490,7 +490,7 @@ class DatasetSubmissionController extends AbstractController
     {
         $defaultDistributionContacts = $this->entityHandler->getBy(
             DataCenter::class,
-            array('emailAddress' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL)
+            array('id' => self::DEFAULT_DISTRIBUTION_POINT_ID)
         );
 
         if (count($defaultDistributionContacts) === 1) {

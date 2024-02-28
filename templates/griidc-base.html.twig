@@ -4,7 +4,8 @@
     {% block head %}
         <title>GRIIDC | {% block title %}Pelagos{% endblock %}</title>
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}" />
+        <link rel="icon" type="image/svg+xml" href="{{ asset('build/images/griidc_fav.svg') }}" />
+        <link rel="icon" type="image/png" href="{{ asset('build/images/griidc_fav-32x32.png') }}" />
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{google_analytics_id}}"></script>
@@ -22,129 +23,57 @@
         {{ encore_entry_link_tags('app') }}
     <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
-        {% if isMaintenanceMode() %}
-    <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/griidc-tailwind.css') }}" rel="stylesheet" />
+
+    {% if isMaintenanceMode() %}
+        <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
         {% endif %}
     {% endblock stylesheets  %}
+
     {% endblock %}
 </head>
 <body class="html page-pelagos-full">
+
+{% if isMaintenanceMode() %}
+    <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top p-8" style="background-color:{{ getMaintenanceModeColor() }}">
+        {{ getMaintenanceModeText()}}
+    </div>
+    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+        {{ getMaintenanceModeText()}}.
+    </div>
+{% endif %}
+
+{% include "components/griidc-header.html.twig" %}
+
 {% block htmlbody %}
-    <ul class="atlassian-btns">
-        <li>
-            <a href="#" id="atlwdg-issue" class="atlwdg-trigger">
-                Report Issue
-            </a>
-        </li>
-        <li>
-            <a href="#" id="atlwdg-suggest" class="atlwdg-trigger">
-                Suggest Improvement
-            </a>
-        </li>
-    </ul>
-    <div id="page-wrapper">
-        <div id="page">
-            {% if isMaintenanceMode() %}
-                <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
-                    {{ getMaintenanceModeText()}}
-                </div>
-                <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
-                    {{ getMaintenanceModeText()}}.</div>
-            {% endif %}
-            <div id="header"><div class="section clearfix">
-
-                    <div class="region region-header">
-                        <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
-                            <div class="content">
-                                {% if is_granted('ROLE_USER') %}
-                                    <a style="text-decoration: underline;">
-                                        Logged in as: {{ app.session.get('_security.last_username') }}
-                                    </a>
-                                    |
-                                    <a href="{{ path('security_logout') }}">  Log out</a>
-                                {% else %}
-                                    <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="branding" class="container">
-                        <div id="logo-wrapper">
-                            <a href="http://gulfresearchinitiative.org" title="Gulf of Mexico Research Initiative" rel="home" id="logo">
-                                <img src="{{asset('build/images/logo.png')}}" alt="Home">
-                            </a>
-                        </div>
-
-                        <div id="name-and-slogan">
-
-                            <div id="site-slogan">Investigating the effect of oil spills <br> on the environment and public health.</div>
-                        </div>
-
-                        <div id="griidc-logo-wrapper">
-                            <a href="/" title="Home" rel="home" id="logo">
-                                <img src="{{asset('build/images/griidc-logo.png')}}" alt="GRIIDC">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% block menu %}
-                {% include "Menus/griidc-main.html.twig" %}
-            {% endblock menu %}
-            <div id="main-wrapper">
-                <div id="pelagos-container">
-                    <div id="pelagos-container-row">
-                        <div id="pelagos-container-cell">
-                            <div id="pelagos-wrapper">
-                                <div id="pelagos-wrapper-row">
-                                    <div id="pelagos-content">
-                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
-                                        {% block body %}{% endblock %}
-                                    </div>
-                                </div>
-                            </div>
+    <div id="main-wrapper">
+        <div id="pelagos-container" >
+            <div id="pelagos-container-row">
+                <div id="pelagos-wrapper">
+                    <div id="pelagos-wrapper-row">
+                        <div id="pelagos-content" class="prose pb-8">
+                            <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                            {% block body %}{% endblock %}
                         </div>
                     </div>
                 </div>
             </div>
 
-            {#END Main Content #}
-        </div>{#End div page#}
-    </div> {#End div wrapper#}
+        </div>
+    </div>
+    {% include "components/griidc-footer.html.twig" %}
 {% endblock htmlbody %}
-</body>
 
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
 
-    <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
-
-    <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=a5e3f887"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            window.ATL_JQ_PAGE_PROPS =  {
-                "8b54034b" : {
-                    "triggerFunction": function(showCollectorDialog) {
-                        $("#atlwdg-issue").click(function(e) {
-                            e.preventDefault();
-                            showCollectorDialog();
-                        });
-                    }
-                },
-                "a5e3f887" : {
-                    "triggerFunction": function(showCollectorDialog) {
-                        $("#atlwdg-suggest").click(function(e) {
-                            e.preventDefault();
-                            showCollectorDialog();
-                        });
-                    }
-                },
-            };
-        });
+    <script>
+        window.PELAGOS_TEMPLATE_PROPS = {"BaseTemplateName": "GRIIDC"};
     </script>
-{% endblock javascripts %}
+
+    {% endblock %}
+
+</body>
 </html>

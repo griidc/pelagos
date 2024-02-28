@@ -18,7 +18,7 @@
     <input type="hidden" id="isadmin" name="isadmin" value="{{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') }}">
     {% endif %}
     <div id="udidiv" style="display:none;">
-        <h1>Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span></h1>
+        <span class="legacy-h1">Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span>
     </div>
     <div id="imgwarning" src="{{ asset('build/images/warning.png') }}"></div>
     <div class="frmSection">
@@ -177,7 +177,7 @@
                         <table width="100%">
                             <tr>
                                  <td>Others:</td>
-                                 <td>{{ form_widget(form.fieldOfStudyOther) }}</td>
+                                 <td class="otherfield">{{ form_widget(form.fieldOfStudyOther) }}</td>
                             </tr>
                         </table>
                     </td>
@@ -209,7 +209,7 @@
                 <div id="selectedList"></div>
                 <hr>
                 <div id="keyword-details">
-                    <table style="width:100%">
+                    <table style="width:100%;margin-bottom:1rem;">
                         <tr>
                             <td style="width:50%">
                                 <div id="treelist" style="height:400px;"></div>
@@ -221,7 +221,7 @@
                                             Please select at least one of the following Australian and New Zealand Standard Research Classification (ANZSRC) Fields of Research (FOR) discipline keywords.
                                             These are standardized keywords used to facilitate dataset discovery.  Click on the arrow to the left of the keyword to view more specific keywords within that category.
                                             Please select the most detailed keyword level applicable.
-                                            For definitions and more information on ANZSRC FOR discipline keywords please visit <a href="https://vocabs.ardc.edu.au/viewById/316" target="_blank">Australian and New Zealand Standard Research Classification 2020: Fields of Research.</a>
+                                            For definitions and more information on ANZSRC FOR discipline keywords please visit <a style="color:revert;" href="https://vocabs.ardc.edu.au/viewById/316" target="_blank">Australian and New Zealand Standard Research Classification 2020: Fields of Research.</a>
                                         </p>
                                     </div>
                                 </div>
@@ -313,7 +313,7 @@
                         <table width="100%">
                             <tr>
                                 <td>Others:</td>
-                                <td>{{ form_widget(form.collectionMethodOther) }}</td>
+                                <td class="otherfield">{{ form_widget(form.collectionMethodOther) }}</td>
                             </tr>
                         </table>
                     </td>
@@ -402,7 +402,7 @@
                 <table width="100%">
                     <tr>
                         <td>Others:</td>
-                        <td width="100%">{{ form_widget(form.nationalDataArchiveOther) }}</td>
+                        <td width="100%" class="otherfield">{{ form_widget(form.nationalDataArchiveOther) }}</td>
                     </tr>
                 </table>
             </div>

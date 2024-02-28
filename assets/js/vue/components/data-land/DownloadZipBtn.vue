@@ -19,7 +19,7 @@
                         <p>
                             All materials on this website are made available to
                             GRIIDC and in turn to you "as-is." By downloading files,
-                            you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of
+                            you agree to the <a href=https://griidc.org/terms-and-conditions>GRIIDC Terms of
                             Service</a>.
                         </p>
                         <p>
@@ -50,7 +50,7 @@
                         <p>
                             All materials on this website are made available to GRIIDC and in turn
                             to you "as-is." By downloading files, you agree to the
-                            <a href="https://data.gulfresearchinitiative.org/terms-and-conditions" target="_blank">
+                            <a href="https://griidc.org/terms-and-conditions" target="_blank">
                                 GRIIDC Terms of Service
                             </a>
                         </p>

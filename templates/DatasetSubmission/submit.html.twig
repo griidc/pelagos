@@ -3,21 +3,19 @@
 {% block body %}
 <div class="messages status">
 <h2 class="element-invisible">Status message</h2>
-Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?subject=Submission Form">griidc@gomri.org</a> if you have any questions.
+Thank you for your submission. Please email <a href="mailto:help@griidc.org?subject=Submission Form">help@griidc.org</a> if you have any questions.
 </div>
 
 <fieldset>
-    <table border="1" width="100%" style="background-color:white; color:black;" border="0">
+    <table border="1" width="100%" style="background-color:white; color:black;" border="0" class="mx-auto px-2">
         <tr>
             <td width="200px" align="top">
                 <b>Dataset UDI:</b>
             </td>
             <td>
-                <h2>
-                    <a href="{{ vanitypath('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
-                        {{ DatasetSubmission.dataset.udi }}
-                    </a>
-                </h2>
+                <a href="{{ vanitypath('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
+                    <strong>{{ DatasetSubmission.dataset.udi }}</strong>
+                </a>
             </td>
         </tr>
         <tr rowspan=2>
@@ -84,11 +82,13 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 {{ DatasetSubmission.getSubmissionTimeStamp.format('c') }}
             </td>
         </tr>
+        <tr>
+            <td>
+                <button class="button button-regular" type="button" onclick="window.location.href='{{ vanitypath('pelagos_app_ui_datasetsubmission_default') }}';">
+                    Fill out another Submission Form
+                </button>
+            </td>
+        </tr>
     </table>
-    <p/>
-    <br>
-    <button type="button" onclick="window.location.href='{{ vanitypath('pelagos_app_ui_datasetsubmission_default') }}';">
-        Fill out another Submission Form
-    </button>
 </fieldset>
 {% endblock %}

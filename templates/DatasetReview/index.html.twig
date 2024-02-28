@@ -52,7 +52,6 @@
 {% block body %}
 {% include 'DatasetReview/uploader-template.html.twig' %}
 {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') or is_granted('ROLE_SUBJECT_MATTER_EXPERT')%}
-    <h1>Dataset Review</h1>
         {% if udi is null %}
             {% include 'DatasetReview/form.html.twig' %}
         {% elseif app.session.flashbag.has('warning') %}

@@ -245,7 +245,7 @@ $(function() {
             break;
     }
 
-    $("button").button();
+    $("#pelagos-content button").button();
 
     $("#btn-upload").qtip();
     $("#btn-save").qtip();

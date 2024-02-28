@@ -1,12 +1,14 @@
 {% extends "template/UI.html.twig" %}
 
 {% block body %}
-    <div class="messages status">
-        <h2 class="element-invisible">Status message</h2>
-        You have successfully created a GRIIDC account.
+    <div class="w-75 mx-auto" style="width:66%">
+        <div class="messages status">
+            <h2 class="element-invisible">Status message</h2>
+            You have successfully created a GRIIDC account.
+        </div>
+        Your user name is: <strong>{{Account.getUserId}}</strong><br>
+        <p>
+            Please log in to the GRIIDC system in order to access data submission webpages.
+        </p>
     </div>
-    Your user name is: <strong>{{Account.getUserId}}</strong><br>
-    <p>
-        Please log in to the GRIIDC system in order to access data submission webpages.
-    </p>
 {% endblock %}

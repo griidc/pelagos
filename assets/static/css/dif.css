@@ -158,3 +158,15 @@ fieldset {
 select, input{
     height: auto;
 }
+
+img {
+    display: inline-block;
+}
+
+#pelagos-content {
+    padding:20px;
+}
+
+#difFilterTools td {
+    padding-bottom: 1rem;
+}

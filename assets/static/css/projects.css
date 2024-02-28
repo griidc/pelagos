@@ -124,6 +124,10 @@ table.datasets .sorter-false {
     cursor: default;
 }
 
+table.datasets .dataset-title {
+    white-space: break-spaces;
+}
+
 table.datasets thead .tablesorter-headerAsc {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gIZEyEdQsj4mQAAAFJJREFUOMtjYBgFQwrs37+/fP/+/eWk6GEiwfAGBgaGDgYGhg4omyjASILh9WjCjY6Ojg0UW4DDcKItYaTAcKIsYaTQcIKWMFLBcJLiZBQMQwAAHF8k+vk2dOoAAAAASUVORK5CYII=');
     background-repeat: no-repeat;

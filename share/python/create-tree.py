@@ -108,7 +108,7 @@ def generate_tree(filename, short):
 
                 This dataset is greater than 25 GB and therefore too large to be downloaded
                 through direct download. In order to obtain this dataset, please email
-                griidc@gomri.org to make arrangements. If you would like a subset of the
+                help@griidc.org to make arrangements. If you would like a subset of the
                 dataset files, please indicate which directories and/or files.
 
                 """)
