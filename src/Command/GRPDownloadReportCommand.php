@@ -1,44 +1,33 @@
 <?php
-
 namespace App\Command;
 
 use App\Entity\Dataset;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\ORM\Query\Expr\Join;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(
+    name: 'pelagos:grp-download-report',
+    description: 'CSV of timestamp, udi, title, FC, RG, Size (mb)',
+)]
 class GRPDownloadReportCommand extends Command
 {
     public const GRP_FUNDING_ORG_ID = 15;
-    protected static $defaultName = 'pelagos:grp-download-report';
-    protected static $defaultDescription = 'CSV of timestamp, udi, title, FC, RG, Size (mb)';
-
-    /**
-     * A Doctrine ORM EntityManager instance.
-     *
-     * @var EntityManagerInterface $entityManager
-     */
-    protected $entityManager;
 
     /**
      * Class constructor for dependency injection.
-     *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
     ) {
         $this->entityManager = $entityManager;
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription)
-        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -73,25 +62,27 @@ class GRPDownloadReportCommand extends Command
             $timestamp = $result['creationTimeStamp']->format('Y-m-d H:i:s');
             if ($this->isGRP($id)) {
                 $dataset = $this->getDataset($id);
-                $title = $dataset?->getTitle(); // Is never null because of isGRP success.
-                $rg = $dataset?->getResearchGroup(); // Likewise can not be null.
-                $fc = $rg?->getFundingCycle(); // Same here.
-                $sizeMB = round((($dataset->getDatasetSubmission()->getFileset()->getFileSize()) / 1000000), 1);
+                if ($dataset instanceof Dataset) {
+                    $title = $dataset->getTitle(); // Is never null because of isGRP success.
+                    $rg = $dataset->getResearchGroup(); // Likewise can not be null.
+                    $fc = $rg->getFundingCycle(); // Same here.
+                    $sizeMB = round((($dataset->getDatasetSubmission()->getFileset()->getFileSize()) / 1000000), 1);
 
-                $fields = [
-                            $timestamp,
-                            $dataset->getUdi(),
-                            $title,
-                            $fc?->getName(),
-                            $rg?->getName(),
-                            $sizeMB
-                        ];
+                    $fields = [
+                                $timestamp,
+                                $dataset->getUdi(),
+                                $title,
+                                $fc->getName(),
+                                $rg->getName(),
+                                $sizeMB
+                            ];
 
-                fputcsv($outfile, $fields);
+                    fputcsv($outfile, $fields);
+                }
             }
         }
         fclose($outfile);
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
