@@ -170,3 +170,8 @@ img {
 #difFilterTools td {
     padding-bottom: 1rem;
 }
+
+input.dx-texteditor-input:focus-visible {
+    outline-style: none !important;
+    --tw-ring-shadow: 0 0 #000 !important;
+}
