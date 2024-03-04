@@ -197,6 +197,7 @@ export default {
       });
     },
     onReset() {
+      window.location.hash = '';
       this.form = initialFormValues();
       this.showResults = false;
       this.noResults = false;
@@ -205,7 +206,6 @@ export default {
       this.$refs[collectionStartDateRef].instance.reset();
       this.$refs[collectionEndDateRef].instance.reset();
       this.init();
-      window.location.hash = '';
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
