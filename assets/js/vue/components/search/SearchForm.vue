@@ -148,6 +148,7 @@ export default {
       resultSet: Object,
       route: window.location.hash,
       submitted: false,
+      requestActive: false,
       dateBoxAttributes: {
         class: 'datebox-font-family',
       },
@@ -184,6 +185,10 @@ export default {
     },
     onSubmit() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
+      if (this.requestActive) {
+        this.$nextTick();
+      }
+      this.requestActive = true;
       getApi(
         // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_app_ui_searchpage_results')}?${searchQuery}`,
@@ -194,6 +199,7 @@ export default {
         window.location.hash = searchQuery;
         this.route = window.location.hash;
         this.submitted = true;
+        this.requestActive = false;
       });
     },
     onReset() {
@@ -245,7 +251,8 @@ export default {
           this.form = Object.fromEntries(urlHashSplit);
           this.onSubmit();
         } else {
-          // this.onReset();
+          this.clearForm = false;
+          this.onReset();
         }
       }
     },
