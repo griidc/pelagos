@@ -197,12 +197,12 @@ export default {
       });
     },
     onReset() {
-      window.location.hash = '';
       this.form = initialFormValues();
       this.showResults = false;
       this.noResults = false;
       this.startDate = '';
       this.endDate = '';
+      window.location.hash = '';
       this.$refs[collectionStartDateRef].instance.reset();
       this.$refs[collectionEndDateRef].instance.reset();
       this.init();
@@ -245,7 +245,7 @@ export default {
           this.form = Object.fromEntries(urlHashSplit);
           this.onSubmit();
         } else {
-          this.onReset();
+          // this.onReset();
         }
       }
     },
