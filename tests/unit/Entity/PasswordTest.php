@@ -137,6 +137,16 @@ class PasswordTest extends TestCase
     }
 
     /**
+     * Test that the SSHA hash can be returned.
+     *
+     * @return void
+     */
+    public function testGetSSHAHash()
+    {
+        $this->assertNotNull($this->password->getSSHAPassword());
+    }
+
+    /**
      * Test that the hash alrorithm can be retrieved from the Password entity.
      *
      * @return void

@@ -103,7 +103,6 @@ class POSIXifyAccount
 
         // Update LDAP with this modified Account (via Person).
         $this->ldap->updatePerson($account->getPerson());
-
         // Persist changes.
         $this->entityHandler->update($account);
     }
