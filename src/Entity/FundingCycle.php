@@ -143,6 +143,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
+     * @CustomAssert\UniqueUdiPrefix()
      *
      * @Assert\NotBlank(
      *     message="UDI Prefix is required"
