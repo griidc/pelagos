@@ -12,7 +12,8 @@ use Symfony\Component\Validator\ConstraintValidator;
 class UniqueUdiPrefixValidator extends ConstraintValidator
 {
     public function __construct(private FundingCycleRepository $fundingCycleRepository)
-    {}
+    {
+    }
 
     /**
      * Check to see if this UDI prefix is already used.
