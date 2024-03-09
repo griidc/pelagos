@@ -19,10 +19,16 @@ use App\Exception\NotDeletableException;
  *     "FundingCycle",
  *     "Entity",
  * })
+ *
  * @UniqueEntity(
  *     fields={"fundingOrganization","name"},
  *     errorPath="name",
  *     message="Name must be unique within a FundingOrganization"
+ * )
+ *
+ * @UniqueEntity(
+ *     fields={"udiPrefix"},
+ *     message="This UDI prefix is already used."
  * )
  */
 #[ORM\Entity]
@@ -142,8 +148,6 @@ class FundingCycle extends Entity
      * @var string $udiPrefix
      *
      * @access protected
-     *
-     * @CustomAssert\UniqueUdiPrefix()
      *
      * @Assert\NotBlank(
      *     message="UDI Prefix is required"
