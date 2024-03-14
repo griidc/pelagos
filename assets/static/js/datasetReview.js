@@ -427,7 +427,7 @@ $(document).ready(function(){
     });
     buildKeywordLists();
 
-    $("form :input").not("input.keywordinput").on('keydown', function(event) {
+    $("form :input").not("input.keywordinput,textarea").on('keydown', function(event) {
         if (event.which == 13) {
             return false;
         }

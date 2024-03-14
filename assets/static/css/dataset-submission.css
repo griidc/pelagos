@@ -192,3 +192,18 @@ input[type="radio"] {
     font-size: 14px;
     line-height: 0.5rem;
 }
+
+input.dx-texteditor-input:focus-visible {
+    outline-style: none !important;
+    --tw-ring-shadow: 0 0 #000 !important;
+}
+
+#funderTagBox.dx-texteditor.dx-state-focused.dx-editor-outlined {
+    border-color: #2563eb !important;
+    border-width: 2px !important;
+    border-radius: 0px;
+    outline-style: solid !important;
+    outline-width: 2px !important;
+    outline-offset: 4px !important;
+    outline-color: #2563eb !important;
+}
