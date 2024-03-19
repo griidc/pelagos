@@ -7,9 +7,15 @@
 
     <br>
     <br>
+    {% if person.getAccount is null %}
+
+    We were unable to find an account in our system, please create one here: <a href="{{ url('pelagos_app_ui_account_default') }}">Create Account</a>.
+
+    {% else %}
     <b>
         username:  {{ person.getAccount.getUserId }}
     </b>
+    {% endif %}
 
     <br>
     <br>
@@ -26,8 +32,13 @@
 
     You have recently requested to retrieve your username using the Forgot Username form on our system.
 
-    username: {{ person.getAccount.getUserId }}
+    {% if person.getAccount is null %}
 
+    We were unable to find an account in our system, please create one here: {{ url('pelagos_app_ui_account_default') }}
+
+    {% else %}
+    username:  {{ person.getAccount.getUserId }}
+    {% endif %}
 
     Thank you,
 
