@@ -94,7 +94,5 @@ class AccountListener extends EventListener
                 array($person)
             );
         }
-
-
     }
 }
