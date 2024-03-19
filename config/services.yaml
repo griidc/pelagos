@@ -52,7 +52,7 @@ services:
 
     App\Event\AccountListener:
         tags:
-            - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
+            - { name: kernel.event_listener, event: pelagos.entity.person.forgot_username, method: onForgotUsername }
 
     App\Event\DIFListener:
         tags:
