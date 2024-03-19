@@ -202,6 +202,7 @@ export default {
       this.noResults = false;
       this.startDate = '';
       this.endDate = '';
+      this.route = '';
       window.location.hash = '';
       this.$refs[collectionStartDateRef].instance.reset();
       this.$refs[collectionEndDateRef].instance.reset();
