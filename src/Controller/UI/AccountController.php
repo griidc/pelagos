@@ -469,7 +469,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function forgotUsernameAction(Request $request, EntityEventDispatcher $entityEventDispatcher)
+    public function forgotUsernameAction(Request $request, EntityEventDispatcher $entityEventDispatcher, PersonRepository $personRepository)
     {
         // If the user is already authenticated.
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -479,11 +479,11 @@ class AccountController extends AbstractController
         $userEmailAddr = $request->query->get('emailAddress');
 
         if ($userEmailAddr) {
-            $person = $this->entityHandler->getBy(Person::class, array('emailAddress' => $userEmailAddr));
+            $person = $personRepository->findOneBy(['emailAddress' => $userEmailAddr]);
 
-            if (!empty($person[0])) {
+            if ($person instanceof Person) {
                 $entityEventDispatcher->dispatch(
-                    $person[0]->getAccount(),
+                    $person,
                     'forgot_username'
                 );
             }
