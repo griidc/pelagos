@@ -3,6 +3,7 @@
 namespace App\Event;
 
 use App\Entity\Account;
+use App\Entity\Person;
 use App\Entity\ResearchGroupRole;
 
 /**
@@ -83,13 +84,15 @@ class AccountListener extends EventListener
      */
     public function onForgotUsername(EntityEvent $event)
     {
-        $account = $this->getAccount($event);
+        $person = $event->getEntity();
 
-        // email User
-        $this->sendMailMsg(
-            $this->twig->load('Email/Account/UsernameRetrieval.email.twig'),
-            array('person' => $account->getPerson()),
-            array($account->getPerson())
-        );
+        if ($person instanceof Person) {
+            // email User
+            $this->sendMailMsg(
+                $this->twig->load('Email/Account/UsernameRetrieval.email.twig'),
+                array('person' => $person),
+                array($person)
+            );
+        }
     }
 }
