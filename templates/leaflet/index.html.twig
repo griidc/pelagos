@@ -34,7 +34,8 @@
         };
 
         const map = L.map('map', {
-            preferCanvas: true
+            preferCanvas: true,
+            zoomSnap: 0.1,
         });
 
         const basemapEnum = "ArcGIS:Imagery";
@@ -62,7 +63,7 @@
                     {permanent: true, className: 'label'};
                 }
             }).addTo(map);
-            map.fitBounds(geojsonLayer.getBounds());
+            map.fitBounds(geojsonLayer.getBounds(), {padding: [20, 20]});
         })
 </script>
 {% endblock %}
