@@ -8,6 +8,7 @@ twig:
         custom_base_template: "%env(CUSTOM_BASE_TEMPLATE)%"
         largefile_tab: "%env(LARGEFILE_TAB)%"
         mainsite: '%env(MAINSITE)%'
+        esri_api_key: '%env(ESRI_API_KEY)%'
 
 when@dev:
     twig:
