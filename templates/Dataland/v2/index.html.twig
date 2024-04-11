@@ -95,6 +95,7 @@
                                  description= {{ (dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED')) ? dataset.datasetSubmission.spatialExtentDescription : "" }}
                                  labimage="{{ asset('build/images/labonly.png') }}">
                             </div>
+                            <a href="/leaflet/{{ dataset.udi }}" target="_NEW">View in Leaflet</a>
                         </div>
                         <hr>
                     {% endif %}
