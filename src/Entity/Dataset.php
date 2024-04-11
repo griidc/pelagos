@@ -349,10 +349,8 @@ class Dataset extends Entity
 
     /**
      * Get the latest Dataset Submission.
-     *
-     * @return DatasetSubmission
      */
-    public function getDatasetSubmission()
+    public function getDatasetSubmission(): ?DatasetSubmission
     {
         return $this->datasetSubmission;
     }
