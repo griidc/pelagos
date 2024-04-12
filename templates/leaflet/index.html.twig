@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
+    <script src='https://openlayers.org/api/OpenLayers.js'></script>
 {% endblock %}
 
 {% block javascripts %}
@@ -68,8 +69,17 @@
       });
 
         map.on("pm:create", function (e) {
-            var queryGeoJson = geoQueryLayer.toGeoJSON();
-            console.log(queryGeoJson);
+            geoJSONQuery = geoQueryLayer.toGeoJSON();
+            console.log(geoJSONQuery);
+            alert("GEOJSON:\r\n" + JSON.stringify(geoJSONQuery));
+
+            // reference: https://dev.to/itsmestevieg/leafletjs-capture-geojson-wkt-sql-spatial-format-12lb
+            var wkt_options = {};
+            var geojson_format = new OpenLayers.Format.GeoJSON();
+            var testFeature = geojson_format.read(geoJSONQuery);
+            var wkt = new OpenLayers.Format.WKT(wkt_options);
+            var out = wkt.write(testFeature);
+            alert("WKT FORMAT\r\n" + out);
         });
 
         const url = '/leaflet/json/{{ udi }}';
