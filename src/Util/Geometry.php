@@ -133,7 +133,7 @@ class Geometry
      * @param string $udi Dataset UDI.
      * @param string $id  Identifier for feature.
      */
-    public function convertGmlToGeoJSON(string $gml, string $udi='unknown', string $id='A'): mixed
+    public function convertGmlToGeoJSON(string $gml, string $udi = 'unknown', string $id = 'A'): mixed
     {
         $sql = "SELECT ST_AsGeoJSON(t.*) FROM (VALUES(:id, :name, ST_GeomFromGML(:gml))) AS t(id, name, geom)";
         $connection = $this->entityManager->getConnection();
