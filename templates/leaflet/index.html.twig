@@ -23,6 +23,14 @@
     <!-- Load Esri Leaflet Vector from CDN -->
     <script src="https://unpkg.com/esri-leaflet-vector@4.2.3/dist/esri-leaflet-vector.js" crossorigin=""></script>
 
+    <!-- Load Leaflet Geoman from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+
+    <!-- Load Additional Leaflet packages for drag/path/edit -->
+    <script src="https://unpkg.com/leaflet.path.drag@0.0.6/src/Path.Drag.js"></script>
+    <script src="https://unpkg.com/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
+
     <script type="text/javascript">
         const esri_api_key = "{{ esri_api_key }}";
 
@@ -36,12 +44,23 @@
         const map = L.map('map', {
             preferCanvas: true,
             zoomSnap: 0.1,
+            editable: true,
         });
 
         const basemapEnum = "ArcGIS:Imagery";
         L.esri.Vector.vectorBasemapLayer(basemapEnum, {
             apiKey: esri_api_key
         }).addTo(map)
+
+        // This leaves box and polygon tool enabled, which is probably what we want.
+        map.pm.addControls({
+            editControls: false,
+            drawMarker:false,
+            drawPolyline: false,
+            drawCircle:false,
+            drawText:false,
+            drawCircleMarker:false,
+      });
 
         const url = '/leaflet/json/{{ udi }}';
 
