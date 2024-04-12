@@ -52,6 +52,11 @@
             apiKey: esri_api_key
         }).addTo(map)
 
+        const geoQueryLayer = L.featureGroup().addTo(map);
+        map.pm.setGlobalOptions({
+            layerGroup: geoQueryLayer,
+        });
+
         // This leaves box and polygon tool enabled, which is probably what we want.
         map.pm.addControls({
             editControls: false,
@@ -61,6 +66,11 @@
             drawText:false,
             drawCircleMarker:false,
       });
+
+        map.on("pm:create", function (e) {
+            var queryGeoJson = geoQueryLayer.toGeoJSON();
+            console.log(queryGeoJson);
+        });
 
         const url = '/leaflet/json/{{ udi }}';
 
