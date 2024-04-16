@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Font face - Weight: 100 */
 @font-face {
     font-family: 'dm-sans';
@@ -39,7 +43,7 @@
 }
 
 @import 'griidc-colors.scss';
-@import 'bootstrap.scss';
+// @import 'bootstrap.scss';
 
 :root {
     --body-fonts: 'dm-sans', 'Helvetica', sans-serif;
