@@ -33,9 +33,6 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"organization"})
-     *
-     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -43,6 +40,7 @@ class FundingOrganization extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[Serializer\Groups(["organization", "monitoring"])]
     #[ORM\Column(type: 'citext', unique: true)]
     protected $name;
 
@@ -56,6 +54,7 @@ class FundingOrganization extends Entity
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
      */
+    #[Serializer\Groups(["monitoring"])]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
     protected $shortName;
 
@@ -196,11 +195,22 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
-     *
      */
+    #[Serializer\Groups(["monitoring"])]
     #[ORM\OneToMany(targetEntity: 'FundingCycle', mappedBy: 'fundingOrganization')]
     #[ORM\OrderBy(['sortOrder' => 'ASC', 'name' => 'ASC'])]
     protected $fundingCycles;
+
+    /**
+     * Does the item have and parents?
+     */
+    #[Serializer\VirtualProperty]
+    #[Serializer\Groups(['monitoring'])]
+    #[Serializer\SerializedName('hasItems')]
+    public function hasItems(): bool
+    {
+        return !(empty($this->fundingCycles));
+    }
 
     /**
      * Funding Organization's PersonFundingOrganizations.

@@ -12,6 +12,8 @@ use App\Entity\Dataset;
 use App\Entity\FundingCycle;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use App\Repository\FundingOrganizationRepository;
+use App\Util\JsonSerializer;
 
 /**
  * The Dataset Monitoring controller.
@@ -45,6 +47,17 @@ class DatasetMonitoringController extends AbstractController
     public function defaultAction()
     {
         return $this->render('DatasetMonitoring/index.html.twig');
+    }
+
+    #[Route('/api/groups', name: 'app_api_dataset_monitoring_groups')]
+    public function index(FundingOrganizationRepository $fundingOrganizationRepository, JsonSerializer $jsonSerializer): Response
+    {
+        $fundingOrganizations = $fundingOrganizationRepository->findAll();
+
+        return $jsonSerializer->serialize(
+            data: $fundingOrganizations,
+            groups: ['id', 'monitoring']
+        )->createJsonResponse();
     }
 
     /**
