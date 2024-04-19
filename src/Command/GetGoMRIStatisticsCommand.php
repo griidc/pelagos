@@ -101,10 +101,13 @@ class GetGoMRIStatisticsCommand extends Command
         $maxYear = $years[sizeof($years) - 1];
         for ($i = $minYear; $i <= $maxYear; $i++) {
             if (in_array($i, $years)) {
-                $io->writeln("Number of GoMRI datasets submitted $i-Q1: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]);
-                $io->writeln("Number of GoMRI datasets submitted $i-Q2: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]);
-                $io->writeln("Number of GoMRI datasets submitted $i-Q3: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][2]);
-                $io->writeln("Number of GoMRI datasets submitted $i-Q4: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][3]);
+                $io->writeln("Number of GoMRI datasets submitted $i"
+                . ' Q1:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]
+                . ' Q2:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
+                . ' Q3:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
+                . ' Q4:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
+            );
+
             }
         }
 
