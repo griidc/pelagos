@@ -53,6 +53,7 @@ class GetGoMRIStatisticsCommand extends Command
         $gomriColdStorageDatasetTotalSize = 0;
         $totalGomriDatasetSubmittedSince2021Count = 0;
         $totalDatasetSubmittedSince2021Count = 0;
+        $totalPostGomriDatasetsSubmittedByQuarter = [];
 
         foreach ($datasets as $dataset) {
             if (DIF::STATUS_UNSUBMITTED === $dataset->getDif()->getStatus()) {
@@ -64,9 +65,13 @@ class GetGoMRIStatisticsCommand extends Command
             if ('GoMRI' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
                 ++$gomriDatasetCount;
                 if ($datasetSubmission instanceof DatasetSubmission) {
+
+                    $this->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGomriDatasetsSubmittedByQuarter);
+
                     if ($datasetSubmission->getSubmissionTimeStamp()->format('U') >= \DateTime::createFromFormat('d/m/Y', '01/01/2021', new \DateTimeZone('America/Chicago'))->format('U')) {
                         ++$totalGomriDatasetSubmittedSince2021Count;
                     }
+
                     if ($datasetSubmission->isDatasetFileInColdStorage()) {
                         ++$gomriDatasetColdStorageCount;
                         $gomriColdStorageDatasetTotalSize += $datasetSubmission->getColdStorageTotalUnpackedSize() ?? 0;
@@ -83,13 +88,27 @@ class GetGoMRIStatisticsCommand extends Command
             }
         }
 
-        $io->writeln("Total GRIIDC Dataset Count: $datasetCount");
+        //$io->writeln("Total GRIIDC Dataset Count: $datasetCount");
         $io->writeln("Total number of GoMRI Datasets: $gomriDatasetCount");
         $io->writeln('Total Size of GoMRI Datasets: ' . round(($gomriDatasetTotalSize + $gomriColdStorageDatasetTotalSize) / 1000000000000, 1) . ' TB');
         $io->writeln("Number of GoMRI Datasets in cold storage: $gomriDatasetColdStorageCount");
         $io->writeln('Total size of GoMRI Datasets in cold storage: ' . round($gomriColdStorageDatasetTotalSize / 1000000000000, 1) . ' TB');
         $io->writeln('Total number of GoMRI datasets submitted since 2021-01-01 until current date ' . $totalGomriDatasetSubmittedSince2021Count);
         $io->writeln('Total number of datasets (all data including GoMRI) submitted since 2021-01-01 until current date ' . $totalDatasetSubmittedSince2021Count);
+        // GoMRI submissions by quarter:
+        //$io->writeln('Number of GoMRI datasets submitted 01/01/2024 – 03/31/2024: ' . $totalDatasetsSubmittedInQuarter );
+        $years = array_keys($totalPostGomriDatasetsSubmittedByQuarter);
+        sort($years);
+        $minYear = $years[0];
+        $maxYear = $years[sizeof($years)-1];
+        for ($i = $minYear; $i<=$maxYear; $i++) {
+            if (in_array($i, $years)) {
+                $io->writeln("Number of GoMRI datasets submitted $i-Q1: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]);
+                $io->writeln("Number of GoMRI datasets submitted $i-Q2: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]);
+                $io->writeln("Number of GoMRI datasets submitted $i-Q3: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][2]);
+                $io->writeln("Number of GoMRI datasets submitted $i-Q4: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][3]);
+            }
+        }
 
         if (false != $startEpoch and false != $endEpoch) { // false on strtotime fail
             $startDateTime = new \DateTime();
@@ -112,6 +131,38 @@ class GetGoMRIStatisticsCommand extends Command
             $io->writeln('Total GoMRI Downloads: ' . $this->logActionItemRepository->countDownloads());
         }
 
+
+
         return 0;
+    }
+    /**
+     * Maintains array of quarter counts.
+     *
+     * @param \DateTime $timestamp
+     * @param array $quarterCounts
+     */
+    protected function quarterize(\DateTime $timestamp, array &$quarterCounts): void
+    {
+        // Quarters are strict calendar quarters.
+        // Q1: Jan 1 - Mar 31
+        // Q2: Apr 1 - Jun 30
+        // Q3: Jul 1 - Sep 30
+        // Q4: Oct 1 - Dec 31
+        $year = $timestamp->format('Y');   // returns 4 digit year
+        $month = $timestamp->format('n');  // returns 1-12
+
+        $quarter = ceil($month/3);
+
+        // SMFH at PHP...hope this is fixed in PHP 9.
+        if (!array_key_exists($year, $quarterCounts)) {
+            $quarterCounts[$year] = [];
+            $quarterCounts[$year][0] = 0; // Q1
+            $quarterCounts[$year][1] = 0;
+            $quarterCounts[$year][2] = 0;
+            $quarterCounts[$year][3] = 0;
+
+        }
+
+        $quarterCounts[$year][$quarter-1] += 1;
     }
 }
