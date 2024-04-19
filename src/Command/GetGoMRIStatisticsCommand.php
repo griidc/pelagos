@@ -65,7 +65,6 @@ class GetGoMRIStatisticsCommand extends Command
             if ('GoMRI' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
                 ++$gomriDatasetCount;
                 if ($datasetSubmission instanceof DatasetSubmission) {
-
                     $this->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGomriDatasetsSubmittedByQuarter);
 
                     if ($datasetSubmission->getSubmissionTimeStamp()->format('U') >= \DateTime::createFromFormat('d/m/Y', '01/01/2021', new \DateTimeZone('America/Chicago'))->format('U')) {
@@ -100,8 +99,8 @@ class GetGoMRIStatisticsCommand extends Command
         $years = array_keys($totalPostGomriDatasetsSubmittedByQuarter);
         sort($years);
         $minYear = $years[0];
-        $maxYear = $years[sizeof($years)-1];
-        for ($i = $minYear; $i<=$maxYear; $i++) {
+        $maxYear = $years[sizeof($years) - 1];
+        for ($i = $minYear; $i <= $maxYear; $i++) {
             if (in_array($i, $years)) {
                 $io->writeln("Number of GoMRI datasets submitted $i-Q1: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]);
                 $io->writeln("Number of GoMRI datasets submitted $i-Q2: " . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]);
@@ -148,7 +147,7 @@ class GetGoMRIStatisticsCommand extends Command
         $year = $timestamp->format('Y');   // returns 4 digit year
         $month = $timestamp->format('n');  // returns 1-12
 
-        $quarter = ceil($month/3);
+        $quarter = ceil($month / 3);
 
         // Initialize
         if (!array_key_exists($year, $quarterCounts)) {
@@ -157,9 +156,8 @@ class GetGoMRIStatisticsCommand extends Command
             $quarterCounts[$year][1] = 0;
             $quarterCounts[$year][2] = 0;
             $quarterCounts[$year][3] = 0;
-
         }
 
-        $quarterCounts[$year][$quarter-1] += 1;
+        $quarterCounts[$year][$quarter - 1] += 1;
     }
 }
