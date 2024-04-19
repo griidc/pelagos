@@ -105,9 +105,7 @@ class GetGoMRIStatisticsCommand extends Command
                 . ' Q1:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]
                 . ' Q2:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
                 . ' Q3:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
-                . ' Q4:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
-            );
-
+                . ' Q4:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]);
             }
         }
 
