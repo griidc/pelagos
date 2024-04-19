@@ -95,7 +95,6 @@ class GetGoMRIStatisticsCommand extends Command
         $io->writeln('Total number of GoMRI datasets submitted since 2021-01-01 until current date ' . $totalGomriDatasetSubmittedSince2021Count);
         $io->writeln('Total number of datasets (all data including GoMRI) submitted since 2021-01-01 until current date ' . $totalDatasetSubmittedSince2021Count);
         // GoMRI submissions by quarter:
-        //$io->writeln('Number of GoMRI datasets submitted 01/01/2024 – 03/31/2024: ' . $totalDatasetsSubmittedInQuarter );
         $years = array_keys($totalPostGomriDatasetsSubmittedByQuarter);
         sort($years);
         $minYear = $years[0];
@@ -146,7 +145,6 @@ class GetGoMRIStatisticsCommand extends Command
         // Q4: Oct 1 - Dec 31
         $year = $timestamp->format('Y');   // returns 4 digit year
         $month = $timestamp->format('n');  // returns 1-12
-
         $quarter = ceil($month / 3);
 
         // Initialize
