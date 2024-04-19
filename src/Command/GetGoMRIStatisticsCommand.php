@@ -130,9 +130,6 @@ class GetGoMRIStatisticsCommand extends Command
         } else {
             $io->writeln('Total GoMRI Downloads: ' . $this->logActionItemRepository->countDownloads());
         }
-
-
-
         return 0;
     }
     /**
@@ -153,7 +150,7 @@ class GetGoMRIStatisticsCommand extends Command
 
         $quarter = ceil($month/3);
 
-        // SMFH at PHP...hope this is fixed in PHP 9.
+        // Initialize
         if (!array_key_exists($year, $quarterCounts)) {
             $quarterCounts[$year] = [];
             $quarterCounts[$year][0] = 0; // Q1
