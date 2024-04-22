@@ -104,8 +104,8 @@ class GetGoMRIStatisticsCommand extends Command
                 $io->writeln("Number of GoMRI datasets submitted $i"
                 . ' Q1:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]
                 . ' Q2:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
-                . ' Q3:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
-                . ' Q4:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]);
+                . ' Q3:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][2]
+                . ' Q4:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][3]);
             }
         }
 
