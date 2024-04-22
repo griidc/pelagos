@@ -46,6 +46,9 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
+     * @Serializer\Groups({"organization"})
+     *
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -53,7 +56,6 @@ class FundingCycle extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
-    #[Serializer\Groups(["organization", "monitoring"])]
     #[ORM\Column(type: 'citext')]
     protected $name;
 
@@ -131,9 +133,11 @@ class FundingCycle extends Entity
      * @var \Doctrine\Common\Collections\Collection
      *
      * @access protected
+     *
+     *
+     *
+     * @Serializer\MaxDepth(2)
      */
-    #[Serializer\Groups(["monitoring"])]
-    #[Serializer\MaxDepth(2)]
     #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
     #[ORM\OrderBy(['name' => 'ASC'])]
     protected $researchGroups;

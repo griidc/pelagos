@@ -57,6 +57,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @Serializer\Groups({"overview", "search"})
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -64,7 +66,6 @@ class ResearchGroup extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
-    #[Serializer\Groups(["overview", "search", "monitoring"])]
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     protected $name;
 
@@ -72,6 +73,7 @@ class ResearchGroup extends Entity
      * Short Name of a research group.
      *
      * @var string $shortName
+     *
      *
      * @Assert\NotBlank(
      *     message="Short Name is required"
