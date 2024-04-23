@@ -48,8 +48,11 @@ class DatasetMonitoringController extends AbstractController
         return $this->render('DatasetMonitoring/index.html.twig');
     }
 
+    /**
+     * This will return a plain item list with FOs, FCs, RGs as JSON.
+     */
     #[Route('/api/groups', name: 'app_api_dataset_monitoring_groups')]
-    public function index(FundingOrganizationRepository $fundingOrganizationRepository, JsonSerializer $jsonSerializer): Response
+    public function index(FundingOrganizationRepository $fundingOrganizationRepository): Response
     {
         $fundingOrganizations = $fundingOrganizationRepository->findAll();
 
@@ -65,7 +68,6 @@ class DatasetMonitoringController extends AbstractController
                     'fundingOrganization' => $fundingOrganization->getId(),
                 ];
             foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-                /** @var FundingCycle $fundingCycle */
                 $fundingCycleName = $fundingCycle->getName();
                 $fundingCycleId = 'fundingCycle' . $fundingCycle->getId();
                 $list[] = [
