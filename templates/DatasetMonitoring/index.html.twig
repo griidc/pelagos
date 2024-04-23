@@ -1,66 +1,28 @@
-{% extends "template/UI.html.twig" %}
+{% extends "base.html.twig" %}
 {% block title %}Dataset Monitoring{% endblock title %}
 
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" rel="stylesheet" />
-
-    <link href="{{ asset('build/css/dataset-monitoring.css') }}" rel="stylesheet" />
-    <link href="{{ asset('build/css/scrollbars.css') }}" rel="stylesheet" />
-    <link href="{{ asset('build/css/projects.css') }}" rel="stylesheet" />
-{% endblock stylesheets %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.material.blue.light.css" rel="stylesheet">
+{% endblock stylesheets  %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.5/js/jquery.tablesorter.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/js/dx.all.js"></script>
 
-    <script type="text/javascript" src="{{ asset('build/js/dataset-monitoring.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/tree.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/dotgraph.js') }}"></script>
-
-
+    <script type="text/javascript" src="{{ asset('build/js/datasetMonitoring.js') }}"></script>
 {% endblock javascripts %}
 
 {% block body %}
-    <div class="display-table" style="padding: 20px;">
-
-        <div class="display-table-row">
-            <div class="display-table-cell" style="font-size:2em;">
-                Dataset Monitoring
-            </div>
-        </div>
-
-        <div class="display-table-row">
-            <div class="display-table-cell" style="height:100%">
-                <div id="container">
-                    <div id="left">
-                        <div id="menu">
-                            <div class="viewport" style="padding-right: 25px;" >
-                                <div class="overview">
-                                    <div id="ds-treecontainer" class="treecontainer">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="right">
-                        <div id="content">
-                            <div class="viewport">
-                                <div class="overview"></div>
-                                <div class="spinner">
-                                    <div>
-                                        <img src="{{ asset('build/images/spinner.gif') }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+   <div class="grid grid-cols-[20%_80%] h-screen m-4 gap-2">
+  <div class="border-solid border-4">
+    Block one
+    <div id="simple-treeview"></div>
     </div>
+    <div class="border-solid border-4">
+    Block Two
+    </div>
+  </div>
 {% endblock %}
