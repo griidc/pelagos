@@ -4,7 +4,14 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.material.blue.light.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.light.css" rel="stylesheet">
+
+    <style>
+      .dx-treeview li {
+        margin-bottom: revert;
+        line-height: 1rem;
+      }
+    </style>
 {% endblock stylesheets  %}
 
 {% block javascripts %}
@@ -17,12 +24,11 @@
 
 {% block body %}
    <div class="grid grid-cols-[20%_80%] h-screen m-4 gap-2">
-  <div class="border-solid border-4">
-    Block one
+  <div class="border-solid border-4 overflow-y-auto">
     <div id="simple-treeview"></div>
     </div>
     <div class="border-solid border-4">
-    Block Two
+    Datasets
     </div>
   </div>
 {% endblock %}

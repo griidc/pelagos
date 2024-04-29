@@ -192,7 +192,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's Funding Cycle's.
      *
-     * @var FundingCycle
+     * @var FundingCycle[]
      *
      * @access protected
      *
@@ -255,7 +255,7 @@ class FundingOrganization extends Entity
     /**
      * Getter for fundingCycles.
      *
-     * @return string string containing fundingCycles of funding organization
+     * @return FundingCycle[] containing fundingCycles of funding organization
      */
     public function getFundingCycles()
     {
