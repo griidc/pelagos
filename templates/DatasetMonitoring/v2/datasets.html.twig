@@ -1,0 +1,36 @@
+<script>
+    var data = [];
+    {% for dataset in datasets %}
+
+    data.push({
+        'id': '{{ dataset.id }}',
+        'title': '{{ dataset.title }}',
+        'udi': '{{ dataset.udi }}',
+    });
+    {% endfor %}
+
+    $(() => {
+    $('#gridContainer').dxDataGrid({
+        dataSource: data,
+        keyExpr: 'id',
+        columns: [{
+            dataField: 'udi',
+            caption: 'UDI',
+            width: 200,
+        }, {
+            dataField: 'title',
+            caption: 'Title',
+        }],
+        showBorders: true,
+        paging: {
+          pageSize: -1,
+        },
+        pager: {
+            visible: false,
+        },
+    });
+    });
+
+</script>
+
+<div id="gridContainer"></div>

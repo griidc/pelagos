@@ -7,16 +7,17 @@ use App\Entity\FundingCycle;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Handler\EntityHandler;
+use App\Repository\DatasetRepository;
 use App\Repository\FundingOrganizationRepository;
-use App\Util\JsonSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset Monitoring controller.
- */
+  */
 class DatasetMonitoringController extends AbstractController
 {
     /**
@@ -38,12 +39,9 @@ class DatasetMonitoringController extends AbstractController
 
     /**
      * The default action.
-     *
-     * @Route("/dataset-monitoring", name="pelagos_app_ui_datasetmonitoring_default", methods={"GET"})
-     *
-     * @return Response a Symfony Response instance
      */
-    public function defaultAction()
+    #[Route('//dataset-monitoring', name: 'pelagos_app_ui_datasetmonitoring_default')]
+    public function index(): Response
     {
         return $this->render('DatasetMonitoring/index.html.twig');
     }
@@ -52,7 +50,7 @@ class DatasetMonitoringController extends AbstractController
      * This will return a plain item list with FOs, FCs, RGs as JSON.
      */
     #[Route('/api/groups', name: 'app_api_dataset_monitoring_groups')]
-    public function index(FundingOrganizationRepository $fundingOrganizationRepository): Response
+    public function getGroups(FundingOrganizationRepository $fundingOrganizationRepository): Response
     {
         $fundingOrganizations = $fundingOrganizationRepository->findAll();
 
@@ -90,6 +88,32 @@ class DatasetMonitoringController extends AbstractController
         }
 
         return new JsonResponse($list);
+    }
+
+    /**
+     * Returns HTML results of datasets for requested FO/FC/RG
+     */
+    #[Route('/dataset-monitoring/datasets', name: 'app_api_dataset_monitoring_datasets')]
+    public function getDatasets(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $fundingOrganizationId = $request->query->get('fundingOrganization');
+        $fundingCycleId = $request->query->get('fundingCycle');
+        $researchGroupId = $request->query->get('researchGroup');
+
+        // dd($fundingOrganizationId, $fundingCycleId, $researchGroupId);
+
+        $datasets = $datasetRepository->getDatasetsBy(
+            $fundingOrganizationId,
+            $fundingCycleId,
+            $researchGroupId
+        );
+
+        return $this->render(
+            'DatasetMonitoring/v2/datasets.html.twig',
+            [
+                'datasets' => $datasets,
+            ]
+        );
     }
 
     /**

@@ -338,4 +338,17 @@ class DatasetRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function getDatasetsBy(string $fundingCycle = null, string $fundingOrganization = null, string $researchGroup = null)
+    {
+        $queryBuilder = $this->createQueryBuilder('d');
+        return
+            $queryBuilder
+            ->where('d.researchGroup = ?1')
+            ->setParameter(1, $researchGroup)
+            ->getQuery()
+            ->getResult()
+        ;
+
+    }
 }
