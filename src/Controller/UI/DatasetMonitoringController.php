@@ -100,13 +100,13 @@ class DatasetMonitoringController extends AbstractController
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
 
-        // dd($fundingOrganizationId, $fundingCycleId, $researchGroupId);
-
         $datasets = $datasetRepository->getDatasetsBy(
             $fundingOrganizationId,
             $fundingCycleId,
             $researchGroupId
         );
+
+        // dd($datasets);
 
         return $this->render(
             'DatasetMonitoring/v2/datasets.html.twig',

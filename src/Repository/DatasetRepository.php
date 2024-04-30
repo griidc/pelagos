@@ -7,7 +7,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Entity\DOI;
 use App\Entity\Funder;
+use App\Entity\FundingCycle;
+use App\Entity\FundingOrganization;
+use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
 
 /**
@@ -339,13 +343,37 @@ class DatasetRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getDatasetsBy(string $fundingCycle = null, string $fundingOrganization = null, string $researchGroup = null)
+    public function getDatasetsBy(string $fundingOrganization = null, string $fundingCycle = null, string $researchGroup = null)
     {
         $queryBuilder = $this->createQueryBuilder('d');
+
+        $queryBuilder
+        ->select('d.id, d.udi, doi.doi, d.title, d.datasetStatus, rg.name as researchGroup, fc.name as fundingCycle, fo.name fundingOrganization')
+        ->join(DOI::class, 'doi', 'WITH', 'd.doi = doi.id')
+        ->join(ResearchGroup::class, 'rg', 'WITH', 'd.researchGroup = rg.id')
+        ->join(FundingCycle::class, 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+        ->join(FundingOrganization::class, 'fo', 'WITH', 'fc.fundingOrganization = fo.id');
+
+        if (!empty($fundingCycle)) {
+            $queryBuilder
+            ->where('fc.id = ?1')
+            ->setParameter(1, $fundingCycle);
+        }
+
+        if (!empty($researchGroup)) {
+            $queryBuilder
+            ->where('rg.id = ?1')
+            ->setParameter(1, $researchGroup);
+        }
+
+        if (!empty($fundingOrganization)) {
+            $queryBuilder
+            ->where('fo.id = ?1')
+            ->setParameter(1, $fundingOrganization);
+        }
+
         return
             $queryBuilder
-            ->where('d.researchGroup = ?1')
-            ->setParameter(1, $researchGroup)
             ->getQuery()
             ->getResult()
         ;

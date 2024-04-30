@@ -6,6 +6,11 @@
         'id': '{{ dataset.id }}',
         'title': '{{ dataset.title }}',
         'udi': '{{ dataset.udi }}',
+        'doi': '{{ dataset.doi }}',
+        'status': '{{ dataset.datasetStatus }}',
+        'researchGroup': '{{ dataset.researchGroup }}',
+        'fundingCycle': '{{ dataset.fundingCycle }}',
+        'fundingOrganization': '{{ dataset.fundingOrganization }}',
     });
     {% endfor %}
 
@@ -17,19 +22,59 @@
             dataField: 'udi',
             caption: 'UDI',
             width: 200,
-        }, {
+        },{
+            dataField: 'doi',
+            caption: 'DOI',
+            width: 300,
+        },{
             dataField: 'title',
             caption: 'Title',
-        }],
+        },{
+            dataField: 'status',
+            caption: 'Status',
+            width: 100,
+        }, {
+            dataField: 'researchGroup',
+            groupIndex: 2,
+        },{
+            dataField: 'fundingCycle',
+            groupIndex: 1,
+        }, {
+            dataField: 'fundingOrganization',
+            groupIndex: 0,
+        }
+        ],
         showBorders: true,
         paging: {
-          pageSize: -1,
+            pageSize: 0,
         },
         pager: {
             visible: false,
         },
+        selection: {
+            mode: 'single',
+        },
+        groupPanel: {
+            visible: false,
+        },
+        grouping: {
+            autoExpandAll: true,
+        },
+        allowColumnReordering: false,
+        rowAlternationEnabled: false,
+        sortByGroupSummaryInfo: [{
+            summaryItem: 'count',
+        }],
+        summary: {
+            groupItems: [{
+                column: 'id',
+                summaryType: 'count',
+                displayFormat: '{0} datasets',
+            },
+            ],
+        },
     });
-    });
+});
 
 </script>
 
