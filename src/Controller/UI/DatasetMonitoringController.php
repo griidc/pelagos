@@ -3,12 +3,14 @@
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
+use App\Entity\DIF;
 use App\Entity\FundingCycle;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Handler\EntityHandler;
 use App\Repository\DatasetRepository;
 use App\Repository\FundingOrganizationRepository;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +22,15 @@ use Symfony\Component\Routing\Annotation\Route;
   */
 class DatasetMonitoringController extends AbstractController
 {
+    /**
+     * Dataset Life Cycle Statuses
+     */
+    public const DATASET_LIFECYCLE_STATUS_NONE = 'none';
+    public const DATASET_LIFECYCLE_STATUS_IDENTIFIED = 'identified';
+    public const DATASET_LIFECYCLE_STATUS_SUBMITTED = 'submitted';
+    public const DATASET_LIFECYCLE_STATUS_ACCEPTED = 'accepted';
+    public const DATASET_LIFECYCLE_STATUS_RESTRICTED = 'restricted';
+
     /**
      * Protected entityHandler value instance of entityHandler.
      *
@@ -254,5 +265,38 @@ class DatasetMonitoringController extends AbstractController
                 'datasets' => $datasets,
                 ]
         );
+    }
+
+    /**
+     * Get the Dataset's Lifecycle Status
+     */
+    #[Route('/api/dataset/{udi}/lifecyclestatus', name: 'app_api_dataset_lifecycle_status')]
+    public function getDatasetLifecycleStatus(string $udi): JsonResponse
+    {
+        # Lifecycle Status Definitions:
+        # None - Dataset has no approved DIF, although UDI has been internally established.
+        # Identified - Dataset has approved DIF, but no submission
+        # Submitted - Dataset has a submission, not a draft. Does not have to be approved, nor in-review, etc.
+        # Accepted - Dataset has a submission, and submission is excepted, and acceptance has not been revoked back to "in review"
+        # Restricted (subset of Accepted) - Criterial for accepted, but also has the restricted flag set.
+
+        $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+
+        if ($dataset instanceof Dataset) {
+            if (($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) and ($dataset->isRestricted() === false)) {
+                $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_ACCEPTED;
+            } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
+                $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_RESTRICTED;
+            } elseif ($dataset->hasDatasetSubmission()) {
+                $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_SUBMITTED;
+            } elseif ($dataset->hasDif() and $dataset->getDif()->getStatus() == DIF::STATUS_APPROVED) {
+                $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_IDENTIFIED;
+            } else {
+                $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_NONE;
+            }
+            return new JsonResponse($datasetLifeCycleStatus);
+        } else {
+            return new JsonResponse("Dataset not found", 404);
+        }
     }
 }
