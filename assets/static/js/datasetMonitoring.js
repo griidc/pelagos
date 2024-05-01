@@ -12,11 +12,28 @@ $(() => {
       keyExpr: 'id',
       displayExpr: 'name',
       searchEnabled: true,
-      // showCheckBoxesMode: 'normal',
-      // selectionMode: 'multiple',
       onItemClick(item) {
         const selectedItem = item.itemData;
-        console.log(selectedItem);
+        var parameters = {};
+        if (selectedItem["fundingOrganization"] !== undefined) {
+          parameters = Object.assign(parameters,{fundingOrganization : selectedItem.fundingOrganization});
+        }
+        if (selectedItem["fundingCycle"] !== undefined) {
+          parameters = Object.assign(parameters,{fundingCycle : selectedItem.fundingCycle});
+        }
+        if (selectedItem["researchGroup"] !== undefined) {
+          parameters = Object.assign(parameters,{researchGroup : selectedItem.researchGroup});
+        }
+
+        $.ajax({
+          url: Routing.generate("app_api_dataset_monitoring_datasets",
+            parameters
+          ),
+          method: "GET",
+          accept: "text/html",
+        }).then(function(html) {
+          $("#datasets-here").html(html);
+        });
       },
     });
   });
