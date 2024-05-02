@@ -1,0 +1,75 @@
+<script>
+    $(() => {
+    $('#gridContainer{{researchGroup.id}}').dxDataGrid({
+        dataSource: Routing.generate('app_api_dataset_monitoring_datasets_json', {'researchGroup': {{researchGroup.id}}}),
+        columns: [{
+            dataField: 'udi',
+            caption: 'UDI',
+            width: 200,
+        },{
+            dataField: 'doi',
+            caption: 'DOI',
+            width: 300,
+        },{
+            dataField: 'title',
+            caption: 'Title',
+        },{
+            dataField: 'datasetStatus',
+            caption: 'Status',
+            width: 100,
+        },
+        ],
+        showBorders: true,
+        paging: {
+            pageSize: 0,
+        },
+        pager: {
+            visible: false,
+        },
+        selection: {
+            mode: 'single',
+        },
+        groupPanel: {
+            visible: false,
+        },
+        grouping: {
+            autoExpandAll: true,
+        },
+        allowColumnReordering: false,
+        rowAlternationEnabled: false,
+        summary: {
+             totalItems: [{
+                column: 'udi',
+                summaryType: 'count',
+                displayFormat: '{0} dataset(s)',
+            }],
+        },
+        showColumnLines: true,
+        showRowLines: true,
+    });
+});
+</script>
+
+<div class="p-2 m-0">
+    <div class="block">
+        <span class="font-bold">Research Group:</span>{{ researchGroup.name }}
+    </div>
+    <div class="block">
+        <span class="font-bold">Funding Source:</span> {{ researchGroup.fundingCycle.name }}
+    </div>
+    <div class="block">
+    <span class="font-bold">Leadership:</span>
+    {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
+    {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
+        {{ prg.person.firstName }} {{ prg.person.lastName }}
+        {% if not loop.last %}, {% endif %}
+    {% endfor %}
+    </div>
+    <div class="block">
+        <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|length }}
+    </div>
+
+
+<div id="gridContainer{{researchGroup.id}}"></div>
+</div>
+<div class="p-4"><hr></div>

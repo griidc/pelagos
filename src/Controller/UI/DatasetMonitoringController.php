@@ -8,7 +8,9 @@ use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Handler\EntityHandler;
 use App\Repository\DatasetRepository;
+use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
+use App\Repository\ResearchGroupRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,26 +96,43 @@ class DatasetMonitoringController extends AbstractController
      * Returns HTML results of datasets for requested FO/FC/RG
      */
     #[Route('/dataset-monitoring/datasets', name: 'app_api_dataset_monitoring_datasets')]
-    public function getDatasets(Request $request, DatasetRepository $datasetRepository): Response
-    {
+    public function getDatasets(
+        Request $request,
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        FundingCycleRepository $fundingCycleRepository,
+        ResearchGroupRepository $researchGroupRepository
+    ): Response {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
 
-        $datasets = $datasetRepository->getDatasetsBy(
-            $fundingOrganizationId,
-            $fundingCycleId,
-            $researchGroupId
-        );
-
-        // dd($datasets);
+        $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
+        $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
+        $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
 
         return $this->render(
             'DatasetMonitoring/v2/datasets.html.twig',
             [
-                'datasets' => $datasets,
+                'fundingOrganization' => $fundingOrganization,
+                'fundingCycle' => $fundingCycle,
+                'researchGroup' => $researchGroup,
             ]
         );
+    }
+
+    /**
+     * Returns HTML results of datasets for requested FO/FC/RG
+     */
+    #[Route('/dataset-monitoring/datasets/json', name: 'app_api_dataset_monitoring_datasets_json')]
+    public function getDatasetsAsJson(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $researchGroupId = $request->query->get('researchGroup');
+
+        $datasets = $datasetRepository->getDatasetsBy(
+            $researchGroupId
+        );
+
+        return new JsonResponse($datasets);
     }
 
     /**

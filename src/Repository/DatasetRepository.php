@@ -343,40 +343,26 @@ class DatasetRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getDatasetsBy(string $fundingOrganization = null, string $fundingCycle = null, string $researchGroup = null)
+    /**
+     * Return datasets by research group for dataset monitoring
+     *
+     * @param string|null $researchGroup The string ID for the research group
+     */
+    public function getDatasetsBy(string $researchGroup = null): array
     {
         $queryBuilder = $this->createQueryBuilder('d');
 
         $queryBuilder
-        ->select('d.id, d.udi, doi.doi, d.title, d.datasetStatus, rg.name as researchGroup, fc.name as fundingCycle, fo.name fundingOrganization')
+        ->select('d.id, d.udi, doi.doi, d.title, d.datasetStatus, rg.name as researchGroup')
         ->join(DOI::class, 'doi', 'WITH', 'd.doi = doi.id')
         ->join(ResearchGroup::class, 'rg', 'WITH', 'd.researchGroup = rg.id')
-        ->join(FundingCycle::class, 'fc', 'WITH', 'rg.fundingCycle = fc.id')
-        ->join(FundingOrganization::class, 'fo', 'WITH', 'fc.fundingOrganization = fo.id');
-
-        if (!empty($fundingCycle)) {
-            $queryBuilder
-            ->where('fc.id = ?1')
-            ->setParameter(1, $fundingCycle);
-        }
-
-        if (!empty($researchGroup)) {
-            $queryBuilder
-            ->where('rg.id = ?1')
-            ->setParameter(1, $researchGroup);
-        }
-
-        if (!empty($fundingOrganization)) {
-            $queryBuilder
-            ->where('fo.id = ?1')
-            ->setParameter(1, $fundingOrganization);
-        }
+        ->where('rg.id = ?1')
+        ->setParameter(1, $researchGroup);
 
         return
             $queryBuilder
             ->getQuery()
-            ->getResult()
+            ->getArrayResult()
         ;
-
     }
 }
