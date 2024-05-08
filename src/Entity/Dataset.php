@@ -58,11 +58,11 @@ class Dataset extends Entity
     /**
      * Valid values for DatasetLifeCycleStatus.
      */
-        public const DATASET_LIFECYCLE_STATUS_ACCEPTED = 'accepted';
-        public const DATASET_LIFECYCLE_STATUS_RESTRICTED = 'restricted';
-        public const DATASET_LIFECYCLE_STATUS_SUBMITTED = 'submitted';
-        public const DATASET_LIFECYCLE_STATUS_IDENTIFIED = 'identified';
-        public const DATASET_LIFECYCLE_STATUS_NONE = 'none';
+    public const DATASET_LIFECYCLE_STATUS_ACCEPTED = 'accepted';
+    public const DATASET_LIFECYCLE_STATUS_RESTRICTED = 'restricted';
+    public const DATASET_LIFECYCLE_STATUS_SUBMITTED = 'submitted';
+    public const DATASET_LIFECYCLE_STATUS_IDENTIFIED = 'identified';
+    public const DATASET_LIFECYCLE_STATUS_NONE = 'none';
 
     /**
      * Cold Storage Tag
