@@ -56,6 +56,15 @@ class Dataset extends Entity
     ];
 
     /**
+     * Valid values for DatasetLifeCycleStatus.
+     */
+        public const DATASET_LIFECYCLE_STATUS_ACCEPTED = 'accepted';
+        public const DATASET_LIFECYCLE_STATUS_RESTRICTED = 'restricted';
+        public const DATASET_LIFECYCLE_STATUS_SUBMITTED = 'submitted';
+        public const DATASET_LIFECYCLE_STATUS_IDENTIFIED = 'identified';
+        public const DATASET_LIFECYCLE_STATUS_NONE = 'none';
+
+    /**
      * Cold Storage Tag
      */
     const TAG_COLD_STORAGE = 'Cold Storage';
@@ -1034,5 +1043,31 @@ class Dataset extends Entity
     public function __toString(): string
     {
         return $this->getUdi();
+    }
+
+     /**
+     * Get the Dataset's Lifecycle Status
+     *
+     *  Lifecycle Status Definitions:
+     *  None - Dataset has no approved DIF, although UDI has been internally established.
+     *  Identified - Dataset has approved DIF, but no submission
+     *  Submitted - Dataset has a submission, not a draft. Does not have to be approved, nor in-review, etc.
+     *  Accepted - Dataset has a submission, and submission is excepted, and acceptance has not been revoked back to "in review"
+     *  Restricted (subset of Accepted) - Criterial for accepted, but also has the restricted flag set.
+     */
+    public function getDatasetLifecycleStatus(string $udi): string
+    {
+        if (($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) and ($this->isRestricted() === false)) {
+            $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_ACCEPTED;
+        } elseif ($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
+            $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_RESTRICTED;
+        } elseif ($this->hasDatasetSubmission()) {
+            $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_SUBMITTED;
+        } elseif ($this->hasDif() and $this->getDif()->getStatus() == DIF::STATUS_APPROVED) {
+            $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_IDENTIFIED;
+        } else {
+            $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_NONE;
+        }
+        return $datasetLifeCycleStatus;
     }
 }
