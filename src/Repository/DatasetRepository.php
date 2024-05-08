@@ -377,6 +377,5 @@ class DatasetRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-
     }
 }
