@@ -127,9 +127,13 @@ class DatasetMonitoringController extends AbstractController
     public function getDatasetsAsJson(Request $request, DatasetRepository $datasetRepository): Response
     {
         $researchGroupId = $request->query->get('researchGroup');
+        $fundingCycleId = $request->query->get('fundingCycle');
+        $fundingOrganizationId = $request->query->get('fundingOrganization');
 
         $datasets = $datasetRepository->getDatasetsBy(
-            $researchGroupId
+            researchGroup: $researchGroupId,
+            fundingCycle: $fundingCycleId,
+            fundingOrganization: $fundingOrganizationId
         );
 
         return new JsonResponse($datasets);

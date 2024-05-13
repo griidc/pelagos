@@ -5,7 +5,7 @@
         <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
 
         {% for researchGroup in fundingCycle.researchGroups %}
-            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'researchGroup': researchGroup} %}
+            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle } %}
         {% endfor %}
     {% endfor %}
 {% endif %}
@@ -14,7 +14,7 @@
     <span class="font-bold block">Datasets for: {{ fundingCycle.name }}</span>
 
     {% for researchGroup in fundingCycle.researchGroups %}
-        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'reseachGroup': researchGroup} %}
+        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle } %}
     {% endfor %}
 {% endif %}
 
