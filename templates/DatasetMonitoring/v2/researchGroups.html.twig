@@ -8,7 +8,7 @@
             'title': '{{ dataset.title }}',
             'udi': '{{ dataset.udi }}',
             'doi': '{{ (dataset.doi) ? dataset.doi.doi : "" }}',
-            'status': '{{ dataset.datasetStatus }}',
+            'status': '{{ dataset.getDatasetLifecycleStatus.value }}',
             'researchGroup': '{{ dataset.researchGroup.name }}',
         });
     {% endfor %}
