@@ -127,10 +127,21 @@ class GetGoMRIStatisticsCommand extends Command
                     $endDateTime
                 ));
         } else {
-            $io->writeln('Total GoMRI Downloads: ' . $this->logActionItemRepository->countDownloads());
+            $io->writeln("Total GoMRI Downloads:");
+            foreach ($this->logActionItemRepository->getDownloads() as $ds) {
+                $id = $ds[0];
+                $ts = $ds[1];
+                $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
+                $size = $dataset->getTotalFileSize();
+                $udi = $dataset->getUdi();
+
+                print "$ts,$id,$udi,$size\n";
+
+            }
         }
         return 0;
     }
+
     /**
      * Maintains array of quarter counts.
      *
