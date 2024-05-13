@@ -103,13 +103,18 @@ class GetGoMRIStatisticsCommand extends Command
             $endDateTime->setTimestamp($endEpoch);
             $dbFormatEndTime = $endDateTime->format('Y-m-d H:i:sO');
 
-            $io->writeln("Total GoMRI Downloads from $dbFormatStartTime to $dbFormatEndTime: "
-                . $this->logActionItemRepository->countDownloads(
-                    $startDateTime,
-                    $endDateTime
-                ));
+            $io->writeln("Total GoMRI Downloads from $dbFormatStartTime to $dbFormatEndTime:");
+            foreach ($this->logActionItemRepository->getDownloads($startDateTime, $endDateTime) as $ds) {
+                $dataset = $this->entityManager->find('\App\Entity\Dataset', $ds['subjectEntityId']);
+                print $dataset->getTotalFileSize();
+            }
         } else {
-            $io->writeln('Total GoMRI Downloads: ' . $this->logActionItemRepository->countDownloads());
+            $io->writeln("Total GoMRI Downloads:");
+            foreach ($this->logActionItemRepository->getDownloads() as $ds) {
+                var_dump($ds['subjectEntityId']); die();
+                $dataset = $this->entityManager->find('\App\Entity\Dataset', $ds['subjectEntityId']);
+                print $dataset->getTotalFileSize();
+            }
         }
 
         return 0;

@@ -34,6 +34,20 @@ class DatasetTest extends TestCase
     protected $mockDatasetSubmissionComplete;
 
     /**
+     * Class variable containing a complete DatasetSubmission used for testing, restricted.
+     *
+     * @var mixed datasetSubmission
+     */
+    protected $mockDatasetSubmissionCompleteRestricted;
+
+    /**
+     * Class variable containing a complete, but in-review DatasetSubmission used for testing.
+     *
+     * @var mixed datasetSubmission
+     */
+    protected $mockDatasetSubmissionCompleteUnapproved;
+
+    /**
      * Class variable containing a draft (incomplete) DatasetSubmission used for testing.
      *
      * @var mixed datasetSubmission
@@ -94,6 +108,78 @@ class DatasetTest extends TestCase
                 'getStatus' => DatasetSubmission::STATUS_COMPLETE,
                 'setDataset' => null,
                 'getDatasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
+                'getDatasetFileTransferStatus' => null,
+                'getRestrictions' => null,
+                'getDatasetContacts' => new ArrayCollection(
+                    array(
+                        \Mockery::mock(
+                            PersonDatasetSubmissionDatasetContact::class,
+                            array(
+                                'getPerson' => \Mockery::mock(
+                                    Person::class,
+                                    array(
+                                        'getLastName' => 'Person',
+                                        'getFirstName' => 'Complete-Submission',
+                                        'getEmailAddress' => 'complete-submission.person@test.null',
+                                    )
+                                ),
+                            )
+                        ),
+                    )
+                ),
+                'getSpatialExtent' => $this->auxMockSpatialExtensionDatasetSubmission,
+                'isRemotelyHosted' => false,
+                'getFileset' => \Mockery::mock(
+                    Fileset::class,
+                    array(
+                        'isDone' => true
+                    )
+                ),
+            )
+        );
+
+        $this->mockDatasetSubmissionCompleteRestricted = \Mockery::mock(
+            DatasetSubmission::class,
+            array(
+                'getStatus' => DatasetSubmission::STATUS_COMPLETE,
+                'setDataset' => null,
+                'getDatasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
+                'getDatasetFileTransferStatus' => null,
+                'getRestrictions' => DatasetSubmission::RESTRICTION_RESTRICTED,
+                'getDatasetContacts' => new ArrayCollection(
+                    array(
+                        \Mockery::mock(
+                            PersonDatasetSubmissionDatasetContact::class,
+                            array(
+                                'getPerson' => \Mockery::mock(
+                                    Person::class,
+                                    array(
+                                        'getLastName' => 'Person',
+                                        'getFirstName' => 'Complete-Submission',
+                                        'getEmailAddress' => 'complete-submission.person@test.null',
+                                    )
+                                ),
+                            )
+                        ),
+                    )
+                ),
+                'getSpatialExtent' => $this->auxMockSpatialExtensionDatasetSubmission,
+                'isRemotelyHosted' => false,
+                'getFileset' => \Mockery::mock(
+                    Fileset::class,
+                    array(
+                        'isDone' => true
+                    )
+                ),
+            )
+        );
+
+        $this->mockDatasetSubmissionCompleteUnapproved = \Mockery::mock(
+            DatasetSubmission::class,
+            array(
+                'getStatus' => DatasetSubmission::STATUS_COMPLETE,
+                'setDataset' => null,
+                'getDatasetStatus' => Dataset::DATASET_STATUS_IN_REVIEW,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(
@@ -290,6 +376,60 @@ class DatasetTest extends TestCase
         );
 
     }
+
+    /**
+     * Test the Dataset getDatasetLifecycleStatus method.
+     */
+    public function testGetDatasetLifecycleStatus()
+    {
+        /*
+        // Case: Unapproved DIF
+        $this->dataset->setDif($this->mockDifNStatusUnsubmitted);
+        $this->assertEquals(
+            Dataset::DATASET_LIFECYCLE_STATUS_NONE,
+            $this->dataset->getDatasetLifecycleStatus()
+        );
+
+        // Case: Dif is approved, no submission
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->assertEquals(
+            Dataset::DATASET_LIFECYCLE_STATUS_IDENTIFIED,
+            $this->dataset->getDatasetLifecycleStatus()
+        );
+*/
+        // Case: draft submission (we don't consider it a submission at this point)
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionIncomplete);
+        $this->assertEquals(
+            Dataset::DATASET_LIFECYCLE_STATUS_IDENTIFIED,
+            $this->dataset->getDatasetLifecycleStatus()
+        );
+
+        // Case: unapproved (but submitted) submission
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteUnapproved);
+        $this->assertEquals(
+            Dataset::DATASET_LIFECYCLE_STATUS_SUBMITTED,
+            $this->dataset->getDatasetLifecycleStatus()
+        );
+
+        // Case: approved submission, non-restricted
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionComplete);
+        $this->assertEquals(
+            Dataset::DATASET_LIFECYCLE_STATUS_ACCEPTED,
+            $this->dataset->getDatasetLifecycleStatus()
+        );
+
+        // Case: approved submission, restricted
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteRestricted);
+        $this->assertEquals(
+            Dataset::DATASET_LIFECYCLE_STATUS_RESTRICTED,
+            $this->dataset->getDatasetLifecycleStatus()
+        );
+
+}
 
     /**
      * Test the Dataset getStatus() function.

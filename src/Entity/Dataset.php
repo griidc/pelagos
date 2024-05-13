@@ -1055,7 +1055,7 @@ class Dataset extends Entity
      *  Accepted - Dataset has a submission, and submission is excepted, and acceptance has not been revoked back to "in review"
      *  Restricted (subset of Accepted) - Criterial for accepted, but also has the restricted flag set.
      */
-    public function getDatasetLifecycleStatus(string $udi): string
+    public function getDatasetLifecycleStatus(): string
     {
         if (($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) and ($this->isRestricted() === false)) {
             $datasetLifeCycleStatus = self::DATASET_LIFECYCLE_STATUS_ACCEPTED;
