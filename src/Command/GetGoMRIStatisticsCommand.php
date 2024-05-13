@@ -128,7 +128,7 @@ class GetGoMRIStatisticsCommand extends Command
         $lastYear = max(array_keys($downloadCountByYear));
 
         for ($i = $firstYear; $i <= $lastYear; $i++) {
-            $io->writeln($i . ' Download: ' . $downloadCountByYear[$i] . ', ' . 'Total Size: ' . round($downloadSizeByYear[$i]));
+            $io->writeln($i . ' Download Count: ' . $downloadCountByYear[$i] . ', ' . 'Total Size (GB): ' . round($downloadSizeByYear[$i]));
         }
 
         return 0;
