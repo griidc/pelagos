@@ -9,6 +9,7 @@ use App\Entity\Fileset;
 use App\Entity\Funder;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Enum\DatasetLifecycleStatus;
 use PHPUnit\Framework\TestCase;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -80,14 +81,24 @@ class DatasetTest extends TestCase
      *
      * @var mixed auxMockSpatialExtentDif
      */
-    protected $auxMockSpatialExtentDif;
+    protected $auxMockSpatialExtensionDif;
 
     /**
      * Class variable holding WKT to test with.
      *
      * @var mixed auxMockSpatialExtentDatasetSubmission
      */
-    protected $auxMockSpatialExtentDatasetSubmission;
+    protected $auxMockSpatialExtensionDatasetSubmission;
+
+    /**
+     * Variable to hold Dataset Submission with missing contact.
+     */
+    protected $mockDatasetSubmissionCompleteMissingContact;
+
+    /**
+     * Variable for DIF that is not submitted.
+     */
+    protected $mockDifNStatusUnsubmitted;
 
     /**
      * Setup for PHPUnit tests.
@@ -215,7 +226,7 @@ class DatasetTest extends TestCase
             array(
                 'getStatus' => DatasetSubmission::STATUS_INCOMPLETE,
                 'setDataset' => null,
-                'getDatasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
+                'getDatasetStatus' => Dataset::DATASET_STATUS_NONE,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(
@@ -382,26 +393,25 @@ class DatasetTest extends TestCase
      */
     public function testGetDatasetLifecycleStatus()
     {
-        /*
         // Case: Unapproved DIF
         $this->dataset->setDif($this->mockDifNStatusUnsubmitted);
         $this->assertEquals(
-            Dataset::DATASET_LIFECYCLE_STATUS_NONE,
+            DatasetLifecycleStatus::NONE,
             $this->dataset->getDatasetLifecycleStatus()
         );
 
         // Case: Dif is approved, no submission
         $this->dataset->setDif($this->mockApprovedDif);
         $this->assertEquals(
-            Dataset::DATASET_LIFECYCLE_STATUS_IDENTIFIED,
+            DatasetLifecycleStatus::IDENTIFIED,
             $this->dataset->getDatasetLifecycleStatus()
         );
-*/
+
         // Case: draft submission (we don't consider it a submission at this point)
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionIncomplete);
         $this->assertEquals(
-            Dataset::DATASET_LIFECYCLE_STATUS_IDENTIFIED,
+            DatasetLifecycleStatus::IDENTIFIED,
             $this->dataset->getDatasetLifecycleStatus()
         );
 
@@ -409,7 +419,7 @@ class DatasetTest extends TestCase
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteUnapproved);
         $this->assertEquals(
-            Dataset::DATASET_LIFECYCLE_STATUS_SUBMITTED,
+            DatasetLifecycleStatus::SUBMITTED,
             $this->dataset->getDatasetLifecycleStatus()
         );
 
@@ -417,7 +427,7 @@ class DatasetTest extends TestCase
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionComplete);
         $this->assertEquals(
-            Dataset::DATASET_LIFECYCLE_STATUS_ACCEPTED,
+            DatasetLifecycleStatus::AVAILABLE,
             $this->dataset->getDatasetLifecycleStatus()
         );
 
@@ -425,10 +435,9 @@ class DatasetTest extends TestCase
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteRestricted);
         $this->assertEquals(
-            Dataset::DATASET_LIFECYCLE_STATUS_RESTRICTED,
+            DatasetLifecycleStatus::RESTRICTED,
             $this->dataset->getDatasetLifecycleStatus()
         );
-
 }
 
     /**
