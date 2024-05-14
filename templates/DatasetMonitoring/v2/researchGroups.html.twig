@@ -9,11 +9,18 @@
             'udi': '{{ dataset.udi }}',
             'doi': '{{ (dataset.doi) ? dataset.doi.doi : "" }}',
             'status': '{{ dataset.getDatasetLifecycleStatus.value }}',
+            'statusTooltip': '{{ dataset.getDatasetLifecycleStatus.description }}',
             'researchGroup': '{{ dataset.researchGroup.name }}',
         });
     {% endfor %}
 
-    $(() => {
+$(() => {
+
+    var tooltipInstance = $("#tooltipContainer").dxTooltip({
+        position: "right"
+    }).dxTooltip("instance");
+
+
     $('#{{divContainer}}').dxDataGrid({
         dataSource: data,
         columnAutoWidth: true,
@@ -85,6 +92,21 @@
         showColumnLines: true,
         showRowLines: true,
         wordWrapEnabled: true,
+        onCellPrepared: function (e) {
+            if (e.rowType === "data" && e.column.dataField === "status") {
+                e.cellElement.mouseover(function (arg) {
+                    tooltipInstance.option("contentTemplate", function (contentElement) {
+                        contentElement.html(`<div class='tooltipContent'><div>${e.data.statusTooltip}</div>`);
+                    });
+
+                    tooltipInstance.show(arg.target);
+                });
+
+                e.cellElement.mouseout(function (arg) {
+                    tooltipInstance.hide();
+                });
+            }
+        }
     });
 });
 </script>
