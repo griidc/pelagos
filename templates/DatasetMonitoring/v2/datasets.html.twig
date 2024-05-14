@@ -2,25 +2,25 @@
 {% if fundingOrganization %}
     <span class="font-bold block text-lg">Datasets for: {{ fundingOrganization.name }}</span>
 
-    {% for fundingCycle in fundingOrganization.fundingCycles %}
+    {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
 
-        {% for researchGroup in fundingCycle.researchGroups %}
-            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle } %}
+        {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup  } %}
         {% endfor %}
     {% endfor %}
 {% endif %}
 
 {% if fundingCycle %}
-    <span class="font-bold block">Datasets for: {{ fundingCycle.name }}</span>
+    <span class="font-bold block text-lg">Datasets for: {{ fundingCycle.name }}</span>
 
-    {% for researchGroup in fundingCycle.researchGroups %}
-        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle } %}
+    {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup } %}
     {% endfor %}
 {% endif %}
 
 {% if researchGroup %}
-    <span class="font-bold block">Datasets for: {{ researchGroup.name }}</span>
+    <span class="font-bold block text-lg">Datasets for: {{ researchGroup.name }}</span>
 
-    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'reseachGroup': researchGroup} %}
+    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'researchGroup': researchGroup} %}
 {% endif %}

@@ -14,12 +14,9 @@
         });
     {% endfor %}
 
-$(() => {
-
     var tooltipInstance = $("#tooltipContainer").dxTooltip({
         position: "right"
     }).dxTooltip("instance");
-
 
     $('#{{divContainer}}').dxDataGrid({
         dataSource: data,
@@ -75,19 +72,19 @@ $(() => {
         allowColumnReordering: false,
         rowAlternationEnabled: false,
         sortByGroupSummaryInfo: [{
-            summaryItem: 'count',
+            //summaryItem: 'count',
         }],
         summary: {
-            groupItems: [{
-                column: 'udi',
-                summaryType: 'count',
-                displayFormat: '<br>{0} Datasets',
-            }],
-            totalItems: [{
-                column: 'udi',
-                summaryType: 'count',
-                displayFormat: 'Total Datasets {0}',
-            }],
+            //groupItems: [{
+            //    column: 'udi',
+            //    summaryType: 'count',
+            //    displayFormat: '<br>{0} Datasets',
+            //}],
+            //totalItems: [{
+            //    column: 'udi',
+            //    summaryType: 'count',
+            //    displayFormat: 'Total Datasets {0}',
+            //}],
         },
         showColumnLines: true,
         showRowLines: true,
@@ -107,8 +104,7 @@ $(() => {
                 });
             }
         }
-    });
-});
+    }).dxDataGrid("instance");
 </script>
 
 <div class="p-2 m-0">
@@ -132,6 +128,6 @@ $(() => {
     <div class="block">
         <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|length }}
     </div>
-    <div id="{{divContainer}}"></div>
+    <div id="{{divContainer}}" class="overflow-hidden"></div>
 </div>
 <div class="p-4"><hr></div>
