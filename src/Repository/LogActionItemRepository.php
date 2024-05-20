@@ -84,57 +84,8 @@ class LogActionItemRepository extends ServiceEntityRepository
                 $currentTimeStamp = $epochTime;
                 ++$downloadCount;
             }
-
             $currentId = $id;
         }
-
         return $downloadCount;
-    }
-
-    /**
-     * Array downloads, optional date range and also filter aware.
-     *
-     * @return array the count of the datasets downloaded, per FAIR guidelines
-     */
-    public function getDownloads(): array
-    {
-        $qb = $this->createQueryBuilder('log')
-        ->select('log.creationTimeStamp, log.subjectEntityId')
-        ->where('log.subjectEntityName = :entityName')
-        ->andWhere('log.actionName = :actionName')
-        ->orderBy('log.subjectEntityId', 'ASC')
-        ->addOrderBy('log.creationTimeStamp', 'ASC')
-        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
-        ->setParameter('actionName', 'File Download');
-
-        if ($this->fundingOrgFilter->isActive()) {
-            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
-
-            $qb
-            ->join(Dataset::class, 'dataset', Query\Expr\Join::WITH, 'log.subjectEntityId = dataset.id')
-            ->innerJoin('dataset.researchGroup', 'rg')
-            ->andWhere('rg.id IN (:rgs)')
-            ->setParameter('rgs', $researchGroupIds);
-        }
-
-        $query = $qb->getQuery();
-        $downloads = $query->getResult();
-
-        $currentTimeStamp = 0;
-        $downloadArray = [];
-        $currentId = 0;
-        foreach ($downloads as $key => $timeStamp) {
-            $id = $timeStamp['subjectEntityId'];
-            $dateTime = $timeStamp['creationTimeStamp'];
-            $epochTime = (int) $dateTime->format('U');
-            $displayTime = $dateTime->format('Y-m-d');
-
-            if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
-                $currentTimeStamp = $epochTime;
-                $downloadArray[] = array($id, $displayTime);
-            }
-            $currentId = $id;
-        }
-        return $downloadArray;
     }
 }

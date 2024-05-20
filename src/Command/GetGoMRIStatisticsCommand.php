@@ -5,8 +5,11 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Entity\LogActionItem;
 use App\Repository\LogActionItemRepository;
+use App\Util\FundingOrgFilter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,6 +27,7 @@ class GetGoMRIStatisticsCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LogActionItemRepository $logActionItemRepository,
+        private FundingOrgFilter $fundingOrgFilter,
     ) {
         parent::__construct();
     }
@@ -47,6 +51,7 @@ class GetGoMRIStatisticsCommand extends Command
         $totalGomriDatasetSubmittedSince2021Count = 0;
         $totalDatasetSubmittedSince2021Count = 0;
         $totalPostGomriDatasetsSubmittedByQuarter = [];
+        $skipCount = 0;
 
         foreach ($datasets as $dataset) {
             if (DIF::STATUS_UNSUBMITTED === $dataset->getDif()->getStatus()) {
@@ -104,7 +109,7 @@ class GetGoMRIStatisticsCommand extends Command
         $io->writeln("Total GoMRI Downloads:");
         $downloadSizeByYear = [];
         $downloadCountByYear = [];
-        foreach ($this->logActionItemRepository->getDownloads() as $datasetDownload) {
+        foreach ($this->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
             $year = substr($timestamp, 0, 4);
@@ -116,8 +121,13 @@ class GetGoMRIStatisticsCommand extends Command
             }
 
             $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
-            $size = $dataset->getTotalFileSize();
-            $udi = $dataset->getUdi();
+            if ($dataset instanceof Dataset) {
+                $size = $dataset->getTotalFileSize();
+            } else {
+                $size = 0;
+                $skipCount++;
+            }
+
 
             $downloadCountByYear[$year]++;
             $downloadSizeByYear[$year] += $size / 1000000000;
@@ -129,6 +139,9 @@ class GetGoMRIStatisticsCommand extends Command
 
         for ($i = $firstYear; $i <= $lastYear; $i++) {
             $io->writeln($i . ' Download Count: ' . $downloadCountByYear[$i] . ', ' . 'Total Size (GB): ' . round($downloadSizeByYear[$i]));
+        }
+        if ($skipCount > 0) {
+            $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
         return 0;
@@ -161,5 +174,52 @@ class GetGoMRIStatisticsCommand extends Command
         }
 
         $quarterCounts[$year][$quarter - 1] += 1;
+    }
+
+    /**
+     * Generates array of funding-org filter-aware download events.
+     *
+     * @return array of dataset download events, per FAIR guidelines
+     */
+    public function getDownloads(): array
+    {
+        $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
+        ->select('log.creationTimeStamp, log.subjectEntityId')
+        ->where('log.subjectEntityName = :entityName')
+        ->andWhere('log.actionName = :actionName')
+        ->orderBy('log.subjectEntityId', 'ASC')
+        ->addOrderBy('log.creationTimeStamp', 'ASC')
+        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
+        ->setParameter('actionName', 'File Download');
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->join(Dataset::class, 'dataset', Query\Expr\Join::WITH, 'log.subjectEntityId = dataset.id')
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+
+        $query = $qb->getQuery();
+        $downloads = $query->getResult();
+
+        $currentTimeStamp = 0;
+        $downloadArray = [];
+        $currentId = 0;
+        foreach ($downloads as $key => $timeStamp) {
+            $id = $timeStamp['subjectEntityId'];
+            $dateTime = $timeStamp['creationTimeStamp'];
+            $epochTime = (int) $dateTime->format('U');
+            $displayTime = $dateTime->format('Y-m-d');
+
+            if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
+                $currentTimeStamp = $epochTime;
+                $downloadArray[] = array($id, $displayTime);
+            }
+            $currentId = $id;
+        }
+        return $downloadArray;
     }
 }
