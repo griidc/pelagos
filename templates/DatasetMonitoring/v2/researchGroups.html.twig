@@ -5,12 +5,12 @@
     {% for dataset in researchGroup.datasets %}
         data.push({
             'id': '{{ dataset.id }}',
-            'title': '{{ dataset.title }}',
+            'title': '{{ dataset.title|e('js') }}',
             'udi': '{{ dataset.udi }}',
             'doi': '{{ (dataset.doi) ? dataset.doi.doi : "" }}',
             'status': '{{ dataset.getDatasetLifecycleStatus.value }}',
             'statusTooltip': '{{ dataset.getDatasetLifecycleStatus.description }}',
-            'researchGroup': '{{ dataset.researchGroup.name }}',
+            'researchGroup': '{{ dataset.researchGroup.name|e('js') }}',
         });
     {% endfor %}
 

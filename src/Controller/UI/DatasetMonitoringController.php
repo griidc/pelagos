@@ -66,15 +66,18 @@ class DatasetMonitoringController extends AbstractController
                     'id' => $fundingOrganizationId,
                     'name' => $fundingOrganizationName,
                     'fundingOrganization' => $fundingOrganization->getId(),
+                    'datasets' => $fundingOrganization->getDatasets()->count(),
                 ];
             foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
                 $fundingCycleName = $fundingCycle->getName();
                 $fundingCycleId = 'fundingCycle' . $fundingCycle->getId();
+
                 $list[] = [
                     'id' => $fundingCycleId,
                     'name' => $fundingCycleName,
                     'parent' => $fundingOrganizationId,
                     'fundingCycle' => $fundingCycle->getId(),
+                    'datasets' => $fundingCycle->getDatasets()->count(),
                 ];
                 foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
                     $researchGroupId = 'researchGroup' . $researchGroup->getId();
@@ -84,6 +87,7 @@ class DatasetMonitoringController extends AbstractController
                         'name' => $researchGroupName,
                         'parent' => $fundingCycleId,
                         'researchGroup' => $researchGroup->getId(),
+                        'datasets' => $researchGroup->getDatasets()->count(),
                     ];
                 }
             }
@@ -105,6 +109,7 @@ class DatasetMonitoringController extends AbstractController
         $fundingOrganizationId = $request->query->get('fundingOrganization');
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
+        $loadOnlyGroupsWithDatasets = $request->query->get('loadOnlyGroupsWithDatasets');
 
         $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
         $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
@@ -116,6 +121,7 @@ class DatasetMonitoringController extends AbstractController
                 'fundingOrganization' => $fundingOrganization,
                 'fundingCycle' => $fundingCycle,
                 'researchGroup' => $researchGroup,
+                'loadOnlyGroupsWithDatasets' => $loadOnlyGroupsWithDatasets,
             ]
         );
     }

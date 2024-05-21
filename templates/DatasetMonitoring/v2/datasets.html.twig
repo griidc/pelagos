@@ -2,12 +2,21 @@
 {% if fundingOrganization %}
     <span class="font-bold block text-lg">Datasets for: {{ fundingOrganization.name }}</span>
 
-    {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
-        <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
 
-        {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
-            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup  } %}
-        {% endfor %}
+    {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
+        {% if loadOnlyGroupsWithDatasets == "true" and fundingCycle.datasets|length == 0 %}
+            {# NOTHING #}
+        {% else %}
+            <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+
+            {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+                {% if loadOnlyGroupsWithDatasets == "true" and researchGroup.datasets|length == 0 %}
+                    {# NOTHING #}
+                {% else %}
+                    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup  } %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     {% endfor %}
 {% endif %}
 
@@ -15,7 +24,11 @@
     <span class="font-bold block text-lg">Datasets for: {{ fundingCycle.name }}</span>
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
-        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup } %}
+        {% if loadOnlyGroupsWithDatasets == "true" and researchGroup.datasets|length == 0 %}
+            {# NOTHING #}
+        {% else %}
+            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup } %}
+        {% endif %}
     {% endfor %}
 {% endif %}
 
