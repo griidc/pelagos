@@ -351,7 +351,7 @@ class FundingCycle extends Entity
      */
     public function getDatasets(): Collection
     {
-        $datasets = New ArrayCollection();
+        $datasets = new ArrayCollection();
         foreach ($this->getResearchGroups() as $researchGroup) {
             /** @var ResearchGroup $researchGroup */
             foreach ($researchGroup->getDatasets() as $dataset) {
