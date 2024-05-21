@@ -5,11 +5,16 @@
     {{ parent() }}
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.light.css" rel="stylesheet">
+    <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
 
     <style>
       .dx-treeview li {
         margin-bottom: revert;
         line-height: 1rem;
+      }
+
+      input.dx-texteditor-input:focus-visible {
+        outline-style: none!important;
       }
     </style>
 {% endblock stylesheets  %}
@@ -23,14 +28,20 @@
 {% endblock javascripts %}
 
 {% block body %}
-   <div class="grid grid-cols-[20%_80%] h-screen m-4 gap-2">
-  <div class="border-solid border-4 overflow-y-auto">
-    <div id="simple-treeview"></div>
-    </div>
-    <div class="border-solid border-4 overflow-y-auto">
-    <div id="datasets-here">
-      Dataset monitoring can be used to view the status of a dataset in the data package review process.
-      Use the search bar or dropdown to find a funding organization, funding cycle, or research group.
+  <div class="max-w-screen-xl mx-auto py-6">
+    <div class="grid grid-cols-[20%_80%] m-4 gap-2">
+      <div class="overflow-y-auto">
+        <div id="dsm-side-picker">
+          Groups with Datasets<div class="ml-1" id="dsm-filter"></div>
+          <div id="simple-treeview"></div>
+        </div>
+      </div>
+        <div>
+          <div id="datasets-here" class="m-2 h-full overflow-y-auto">
+            Dataset monitoring can be used to view the status of a dataset in the data package review process.
+            Use the search bar or dropdown to find a funding organization, funding cycle, or research group.
+        </div>
     </div>
   </div>
+<div class="dsm-loadpanel"></div>
 {% endblock %}

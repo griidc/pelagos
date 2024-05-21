@@ -1,81 +1,39 @@
-<script>
-    var data = [];
-    {% for dataset in datasets %}
+<div id="tooltipContainer"></div>
+{% if fundingOrganization %}
+    <span class="font-bold block text-lg">Datasets for: {{ fundingOrganization.name }}</span>
 
-    data.push({
-        'id': '{{ dataset.id }}',
-        'title': '{{ dataset.title }}',
-        'udi': '{{ dataset.udi }}',
-        'doi': '{{ dataset.doi }}',
-        'status': '{{ dataset.datasetStatus }}',
-        'researchGroup': '{{ dataset.researchGroup }}',
-        'fundingCycle': '{{ dataset.fundingCycle }}',
-        'fundingOrganization': '{{ dataset.fundingOrganization }}',
-    });
+
+    {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
+        {% if loadOnlyGroupsWithDatasets == "true" and fundingCycle.datasets|length == 0 %}
+            {# NOTHING #}
+        {% else %}
+            <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+
+            {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+                {% if loadOnlyGroupsWithDatasets == "true" and researchGroup.datasets|length == 0 %}
+                    {# NOTHING #}
+                {% else %}
+                    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup  } %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     {% endfor %}
+{% endif %}
 
-    $(() => {
-    $('#gridContainer').dxDataGrid({
-        dataSource: data,
-        keyExpr: 'id',
-        columns: [{
-            dataField: 'udi',
-            caption: 'UDI',
-            width: 200,
-        },{
-            dataField: 'doi',
-            caption: 'DOI',
-            width: 300,
-        },{
-            dataField: 'title',
-            caption: 'Title',
-        },{
-            dataField: 'status',
-            caption: 'Status',
-            width: 100,
-        }, {
-            dataField: 'researchGroup',
-            groupIndex: 2,
-        },{
-            dataField: 'fundingCycle',
-            groupIndex: 1,
-        }, {
-            dataField: 'fundingOrganization',
-            groupIndex: 0,
-        }
-        ],
-        showBorders: true,
-        paging: {
-            pageSize: 0,
-        },
-        pager: {
-            visible: false,
-        },
-        selection: {
-            mode: 'single',
-        },
-        groupPanel: {
-            visible: false,
-        },
-        grouping: {
-            autoExpandAll: true,
-        },
-        allowColumnReordering: false,
-        rowAlternationEnabled: false,
-        sortByGroupSummaryInfo: [{
-            summaryItem: 'count',
-        }],
-        summary: {
-            groupItems: [{
-                column: 'id',
-                summaryType: 'count',
-                displayFormat: '{0} datasets',
-            },
-            ],
-        },
-    });
-});
+{% if fundingCycle %}
+    <span class="font-bold block text-lg">Datasets for: {{ fundingCycle.name }}</span>
 
-</script>
+    {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+        {% if loadOnlyGroupsWithDatasets == "true" and researchGroup.datasets|length == 0 %}
+            {# NOTHING #}
+        {% else %}
+            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup } %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
-<div id="gridContainer"></div>
+{% if researchGroup %}
+    <span class="font-bold block text-lg">Datasets for: {{ researchGroup.name }}</span>
+
+    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'researchGroup': researchGroup} %}
+{% endif %}

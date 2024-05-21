@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Exception\NotDeletableException;
 use App\Repository\FundingOrganizationRepository;
 use App\Validator\Constraints as CustomAssert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -260,6 +262,23 @@ class FundingOrganization extends Entity
     public function getFundingCycles()
     {
         return $this->fundingCycles;
+    }
+
+    /**
+     * Return a collection of all Datasets for the Funding Organization.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = New ArrayCollection();
+        foreach ($this->getFundingCycles() as $fundingCycle) {
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                /** @var ResearchGroup $researchGroup */
+                foreach ($researchGroup->getDatasets() as $dataset) {
+                    $datasets->add($dataset);
+                }
+            }
+        }
+        return $datasets;
     }
 
     /**

@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use App\Exception\NotDeletableException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Entity class to represent a Funding Cycle.
@@ -342,6 +344,21 @@ class FundingCycle extends Entity
     public function getResearchGroups()
     {
         return $this->researchGroups;
+    }
+
+    /**
+     * Return a collection of all Datasets for the Funding Cycle.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = New ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            /** @var ResearchGroup $researchGroup */
+            foreach ($researchGroup->getDatasets() as $dataset) {
+                $datasets->add($dataset);
+            }
+        }
+        return $datasets;
     }
 
     /**
