@@ -21,6 +21,12 @@ class GetGoMRIStatisticsCommand extends Command
     protected static $defaultName = 'pelagos:get-gomri-statistics';
     protected static $defaultDescription = 'Produce GoMRI report artifacts.';
 
+    // These values were derived from studying the sequence of downloads
+    // and determing the range of dates where the harvesting seemed to have
+    // occurred.
+    public const HARVEST2019COUNT = 7100; // count
+    public const HARVEST2019DATA = 3600; // GB
+
     /**
      * Class constructor for dependency injection.
      */
@@ -137,6 +143,16 @@ class GetGoMRIStatisticsCommand extends Command
         $firstYear = min(array_keys($downloadCountByYear));
         $lastYear = max(array_keys($downloadCountByYear));
 
+        // Deal with the data harvest of 2019.
+        if (array_key_exists(2019, $downloadCountByYear)) {
+            $downloadCountByYear[2019] -= self::HARVEST2019COUNT;
+        }
+        if (array_key_exists(2019, $downloadCountByYear)) {
+            $downloadSizeByYear[2019] -= self::HARVEST2019DATA;
+        }
+
+
+
         for ($i = $firstYear; $i <= $lastYear; $i++) {
             $io->writeln($i . ' Download Count: ' . $downloadCountByYear[$i] . ', ' . 'Total Size (GB): ' . round($downloadSizeByYear[$i]));
         }
@@ -144,7 +160,7 @@ class GetGoMRIStatisticsCommand extends Command
             $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
-        $io->note('2019 download count includes roughly 7100 auto-harvested downloads (3600 GB)');
+        $io->note('Removed 7100 / 3600GB from 2019 downloads - data harvest occurred');
 
         return 0;
     }
