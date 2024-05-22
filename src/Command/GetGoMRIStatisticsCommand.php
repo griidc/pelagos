@@ -144,6 +144,8 @@ class GetGoMRIStatisticsCommand extends Command
             $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
+        $io->note('2019 download count includes roughly 7100 auto-harvested downloads (3600 GB)');
+
         return 0;
     }
 
