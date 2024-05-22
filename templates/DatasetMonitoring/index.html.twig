@@ -16,6 +16,10 @@
       input.dx-texteditor-input:focus-visible {
         outline-style: none!important;
       }
+
+      input[type='text'].dx-texteditor-input:focus {
+        box-shadow: none!important;
+      }
     </style>
 {% endblock stylesheets  %}
 
@@ -32,7 +36,10 @@
     <div class="grid grid-cols-[20%_80%] m-4 gap-2">
       <div class="overflow-y-auto">
         <div id="dsm-side-picker">
-          Groups with Datasets<div class="ml-1" id="dsm-filter"></div>
+          <div class="hidden">
+            Groups with Datasets<div class="ml-1" id="dsm-filter"></div>
+          </div>
+          <div id="dsm-toolbar"></div>
           <div id="simple-treeview"></div>
         </div>
       </div>

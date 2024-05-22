@@ -2,7 +2,7 @@
 <script>
     var data = [];
 
-    {% for dataset in researchGroup.datasets %}
+    {% for dataset in researchGroup.datasets|submittedDIFs %}
         data.push({
             'id': '{{ dataset.id }}',
             'title': '{{ dataset.title|e('js') }}',
@@ -29,29 +29,19 @@
             dataField: 'udi',
             caption: 'UDI',
             width: '10rem',
-        },{
-            dataField: 'doi',
-            caption: 'DOI',
-            width: '12rem',
-        },{
-            dataField: 'title',
-            caption: 'Title',
-        },
-        {
-            dataField: 'status',
-            caption: 'Status',
-            width: 100,
-        },
-        {% if groupByResearchGroup|default(false) %}
-        {
-            dataField: 'researchGroup',
-            sortOrder: 'asc',
-            groupIndex: 0,
-            groupCellTemplate: function(element, options) {
-                // Make sure these arrays exist.
-                element.html(options.value + "<br>Leadership: " + options.data.items[0].leaderShip + "<br>Datasets:" + options.summaryItems[0].value);
-            }
-        },{% endif %}
+            },{
+                dataField: 'doi',
+                caption: 'DOI',
+                width: '12rem',
+            },{
+                dataField: 'title',
+                caption: 'Title',
+            },
+            {
+                dataField: 'status',
+                caption: 'Status',
+                width: 100,
+            },
         ],
         showBorders: true,
         paging: {
@@ -62,29 +52,6 @@
         },
         selection: {
             mode: 'single',
-        },
-        groupPanel: {
-            visible: false,
-        },
-        grouping: {
-            autoExpandAll: true,
-        },
-        allowColumnReordering: false,
-        rowAlternationEnabled: false,
-        sortByGroupSummaryInfo: [{
-            //summaryItem: 'count',
-        }],
-        summary: {
-            //groupItems: [{
-            //    column: 'udi',
-            //    summaryType: 'count',
-            //    displayFormat: '<br>{0} Datasets',
-            //}],
-            //totalItems: [{
-            //    column: 'udi',
-            //    summaryType: 'count',
-            //    displayFormat: 'Total Datasets {0}',
-            //}],
         },
         showColumnLines: true,
         showRowLines: true,
