@@ -1,7 +1,18 @@
 $(() => {
-  var loadOnlyGroupsWithDatasets = false;
-  var filterIcon = "filter";
   var selectedItem;
+
+  const datasetFilters = [{
+    id: 'all',
+    text: 'Show All Datasets',
+  }, {
+    id: 'only',
+    text: 'Only that have Datasets',
+  }, {
+    id: 'without',
+    text: 'Those Without Datasets',
+  }];
+
+  var datasetFilter = datasetFilters[0].id;
 
   var groups = [{
     id: -1,
@@ -26,22 +37,34 @@ $(() => {
           data: response
         },
       });
-      filterGroups(loadOnlyGroupsWithDatasets);
+      filterGroups(datasetFilter);
     }).always(function() {
       dsmTreeview.option("disabled", false);
     });
   }
 
-  const filterGroups = (loadOnlyGroupsWithDatasets) =>
+  const filterGroups = (datasetFilter) =>
   {
-    if (loadOnlyGroupsWithDatasets) {
-      groupStore.filter(["datasets", ">", 0]);
-    } else {
-      groupStore.filter(null);
+    switch (datasetFilter) {
+      case 'only':
+        groupStore.filter(["datasets", ">", 0]);
+        break;
+      case 'without':
+        groupStore.filter([
+          [ "fundingOrganization", ">", 0 ],
+          "or",
+          [ "fundingCycle", ">", 0 ],
+          "or",
+          [ ["researchGroup", ">", 0] , "and",  ["datasets", "=", 0] ],
+      ]
+    );
+        break;
+      default:
+        groupStore.filter(null);
+        break;
     }
 
     groupStore.load().done(function (data) {
-      // console.log(data.length);
       groups = data;
     });
     dsmTreeview.option("dataSource", groups);
@@ -51,17 +74,43 @@ $(() => {
     }
   }
 
-  $('#dsm-filter').dxSwitch({
-    value: loadOnlyGroupsWithDatasets,
-    onValueChanged(e) {
-      loadOnlyGroupsWithDatasets = e.value;
-      filterGroups(loadOnlyGroupsWithDatasets);
-    },
-  });
+  const dsmToolbar = $('#dsm-toolbar').dxToolbar({
+    items:
+      [
+      {
+        location: 'before',
+        widget: 'dxSelectBox',
+        locateInMenu: 'never',
+        options: {
+          width: 'auto',
+          items: datasetFilters,
+          valueExpr: 'id',
+          displayExpr: 'text',
+          value: datasetFilters[0].id,
+          onValueChanged(e) {
+            datasetFilter = e.value;
+            filterGroups(datasetFilter);
+          },
+        },
+      },
+      {
+        location: 'after',
+        widget: 'dxButton',
+        locateInMenu: 'never',
+        options: {
+          hint: 'Collape All',
+          icon: 'collapse',
+          onClick() {
+            dsmTreeview.unselectAll();
+            dsmTreeview.collapseAll();
+            dsmTreeview.repaint();
+          },
+        },
+      },
+    ]
+  }).dxToolbar('instance');
 
   const dsmLoadPanel = $('.dsm-loadpanel').dxLoadPanel({
-    // shadingColor: 'rgba(0,0,0,0.4)',
-    // position: { of: '#dsm-side-picker' },
     visible: false,
     showIndicator: true,
     showPane: true,
@@ -78,30 +127,11 @@ $(() => {
     searchEnabled: true,
     searchExpr: ["name"],
     disabled: true,
-    searchEditorOptions: {
+    SearchEditorOptions: {
       placeholder: "Search",
       showClearButton: true,
       buttons: [
         "clear",
-        {
-          name: 'filter',
-          location: 'after',
-          options: {
-            visible: false,
-            icon: filterIcon,
-            type: "normal",
-            hint: "Show only groups that have datasets",
-            onClick(e) {
-              if (!loadOnlyGroupsWithDatasets) {
-                loadOnlyGroupsWithDatasets = true;
-              } else {
-                loadOnlyGroupsWithDatasets = false;
-              }
-
-              filterGroups(loadOnlyGroupsWithDatasets);
-            },
-          },
-        },
         {
           name: 'collapse',
           location: 'after',
@@ -131,7 +161,7 @@ $(() => {
   const loadGroupHtml = (selectedItem) => {
     dsmLoadPanel.toggle(true);
     dsmTreeview.option("disabled", true);
-    var parameters = {"loadOnlyGroupsWithDatasets": loadOnlyGroupsWithDatasets};
+    var parameters = {"datasetFilter": datasetFilter};
       if (selectedItem["fundingOrganization"] !== undefined) {
         parameters = Object.assign(parameters,{fundingOrganization : selectedItem.fundingOrganization});
       }

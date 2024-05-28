@@ -42,7 +42,7 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The default action.
      */
-    #[Route('//dataset-monitoring', name: 'pelagos_app_ui_datasetmonitoring_default')]
+    #[Route('/dataset-monitoring', name: 'pelagos_app_ui_datasetmonitoring_default')]
     public function index(): Response
     {
         return $this->render('DatasetMonitoring/index.html.twig');
@@ -109,7 +109,7 @@ class DatasetMonitoringController extends AbstractController
         $fundingOrganizationId = $request->query->get('fundingOrganization');
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
-        $loadOnlyGroupsWithDatasets = $request->query->get('loadOnlyGroupsWithDatasets');
+        $datasetFilter = $request->query->get('datasetFilter');
 
         $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
         $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
@@ -121,7 +121,7 @@ class DatasetMonitoringController extends AbstractController
                 'fundingOrganization' => $fundingOrganization,
                 'fundingCycle' => $fundingCycle,
                 'researchGroup' => $researchGroup,
-                'loadOnlyGroupsWithDatasets' => $loadOnlyGroupsWithDatasets,
+                'datasetFilter' => $datasetFilter,
             ]
         );
     }
