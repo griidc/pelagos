@@ -1,6 +1,7 @@
 $(() => {
   var loadOnlyGroupsWithDatasets = false;
   var filterIcon = "filter";
+  var selectedItem;
 
   var groups = [{
     id: -1,
@@ -45,6 +46,9 @@ $(() => {
     });
     dsmTreeview.option("dataSource", groups);
     dsmTreeview.repaint();
+    if (typeof selectedItem !== 'undefined') {
+      loadGroupHtml(selectedItem);
+    }
   }
 
   $('#dsm-filter').dxSwitch({
@@ -119,10 +123,15 @@ $(() => {
       loadGroups();
     },
     onItemClick(item) {
-      dsmLoadPanel.toggle(true);
-      dsmTreeview.option("disabled", true);
-      const selectedItem = item.itemData;
-      var parameters = {"loadOnlyGroupsWithDatasets": loadOnlyGroupsWithDatasets};
+      selectedItem = item.itemData;
+      loadGroupHtml(selectedItem);
+    },
+  }).dxTreeView('instance');
+
+  const loadGroupHtml = (selectedItem) => {
+    dsmLoadPanel.toggle(true);
+    dsmTreeview.option("disabled", true);
+    var parameters = {"loadOnlyGroupsWithDatasets": loadOnlyGroupsWithDatasets};
       if (selectedItem["fundingOrganization"] !== undefined) {
         parameters = Object.assign(parameters,{fundingOrganization : selectedItem.fundingOrganization});
       }
@@ -141,13 +150,9 @@ $(() => {
         accept: "text/html",
       }).then(function(html) {
         $("#datasets-here").html(html);
-        // console.log('update');
-      }).then(function (){
-        // console.log('then');
       }).done(function(){
         dsmLoadPanel.toggle(false);
         dsmTreeview.option("disabled", false);
       });
-    },
-  }).dxTreeView('instance');
+  }
 });
