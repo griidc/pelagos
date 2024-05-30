@@ -84,8 +84,10 @@ class LogActionItemRepository extends ServiceEntityRepository
                 $currentTimeStamp = $epochTime;
                 ++$downloadCount;
             }
+
             $currentId = $id;
         }
+
         return $downloadCount;
     }
 }

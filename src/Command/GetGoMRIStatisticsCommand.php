@@ -127,6 +127,8 @@ class GetGoMRIStatisticsCommand extends Command
             }
 
             $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
+            // We may also need to consider using the right size for the external-logged download requests
+            // that also get counted here, but end up getting the stub sizes. There aren't many though.
             if ($dataset instanceof Dataset) {
                 $size = $dataset->getTotalFileSize();
             } else {
