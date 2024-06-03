@@ -131,6 +131,8 @@ $(() => {
       dataField: 'name',
       caption: 'Name',
       dataType: "string",
+      filterOperations: ["reset"],
+      selectedFilterOperation: "contains"
     },
     {
       dataType: "number",
@@ -150,9 +152,6 @@ $(() => {
     },
     onInitialized() {
       loadGroups();
-    },
-    onEditorPrepared(event) {
-      event.editorOptions.showClearButton = true;
     },
     onSelectionChanged(event) {
       selectedItem = event.selectedRowsData[0];
@@ -186,5 +185,5 @@ $(() => {
       dsmLoadPanel.toggle(false);
       dsmTreeList.option("disabled", false);
     });
-  }
+  };
 });
