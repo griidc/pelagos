@@ -4,15 +4,21 @@
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
-            {# NOTHING #}
+            {# DOT NOT SHOW #}
         {% else %}
-            <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+            {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
+                <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+            {% endif %}
 
             {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
                 {% if datasetFilter == "only" and researchGroup.datasets|submittedDIFs|length == 0 %}
-                    {# NOTHING #}
+                    {# DOT NOT SHOW #}
                 {% else %}
-                    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup  } %}
+                    {% if datasetFilter == "without" and researchGroup.datasets|submittedDIFs|length > 0 %}
+                        {# DOT NOT SHOW #}
+                    {% else %}
+                        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         {% endif %}
@@ -20,13 +26,19 @@
 {% endif %}
 
 {% if fundingCycle %}
-    <span class="font-bold block text-lg">Datasets for: {{ fundingCycle.name }}</span>
+    {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
+        <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+    {% endif %}
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
         {% if datasetFilter == "only" and researchGroup.datasets|submittedDIFs|length == 0 %}
-            {# NOTHING #}
+            {# DOT NOT SHOW #}
         {% else %}
-            {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'groupByResearchGroup': false, 'fundingCycle': fundingCycle, 'researchGroup': researchGroup } %}
+            {% if datasetFilter == "without" and researchGroup.datasets|submittedDIFs|length > 0 %}
+                {# DOT NOT SHOW #}
+            {% else %}
+                {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
+            {% endif %}
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -34,5 +46,5 @@
 {% if researchGroup %}
     <span class="font-bold block text-lg">Datasets for: {{ researchGroup.name }}</span>
 
-    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' with {'researchGroup': researchGroup} %}
+    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
 {% endif %}

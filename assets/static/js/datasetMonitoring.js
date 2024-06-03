@@ -47,17 +47,30 @@ $(() => {
   }
 
   const filterGroups = (datasetFilter) => {
+    var filterArray = null;
     switch (datasetFilter) {
       case 'only':
-        dsmTreeList.filter(["datasets", ">", 0]);
+        filterArray = [["datasets", ">", 0]];
         break;
       case 'without':
-        dsmTreeList.filter(["datasets", "=", 0]);
+        filterArray = [["datasets", "=", 0]];
         break;
       default:
-        dsmTreeList.filter(null);
         break;
     }
+
+    const searchValue = dsmSearch.option("value");
+    if (searchValue.length > 0) {
+      var searchArray = ['name', 'contains', searchValue];
+      if (filterArray !== null) {
+        filterArray.push("and");
+        filterArray.push(searchArray);
+      } else {
+        filterArray = searchArray;
+      }
+    }
+
+    dsmTreeList.filter(filterArray);
 
     if (typeof selectedItem !== 'undefined') {
       loadGroupHtml(selectedItem);
@@ -106,6 +119,16 @@ $(() => {
       ]
   }).dxToolbar('instance');
 
+  const dsmSearch = $('#dsm-search').dxTextBox({
+    placeholder: 'Search Groups',
+    showClearButton: true,
+    mode: 'search',
+    valueChangeEvent: ["keyup", "blur", "change", "input"],
+    onValueChanged() {
+      filterGroups(datasetFilter);
+    },
+  }).dxTextBox('instance');
+
   const dsmLoadPanel = $('.dsm-loadpanel').dxLoadPanel({
     visible: false,
     showIndicator: true,
@@ -119,7 +142,7 @@ $(() => {
     keyExpr: 'id',
     parentIdExpr: 'parent',
     filterRow: {
-      visible: true
+      visible: false
     },
     headerFilter: {
       visible: false,
@@ -150,9 +173,6 @@ $(() => {
     },
     onInitialized() {
       loadGroups();
-    },
-    onEditorPrepared(event) {
-      event.editorOptions.showClearButton = true;
     },
     onSelectionChanged(event) {
       selectedItem = event.selectedRowsData[0];
@@ -186,5 +206,5 @@ $(() => {
       dsmLoadPanel.toggle(false);
       dsmTreeList.option("disabled", false);
     });
-  }
+  };
 });
