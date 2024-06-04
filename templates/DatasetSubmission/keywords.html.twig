@@ -14,16 +14,16 @@
 				</span>
                 <table width="80%" class="keywords">
                     <tr>
-                        <td width="40%">
+                        <td width="45%">
                             <label for="theme-keyword-input">Keyword</label>
                             <input class="keywordinput" type="text" keyword="source" id="theme-keyword-input">
                         </td>
-                        <td width="20%">
+                        <td width="10%">
                             <button class="keywordbutton" type="button">add</button>
                             <br>
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
-                        <td width="30%">
+                        <td width="45%">
                             <table>
                                 <tr>
                                     <td>
@@ -67,16 +67,16 @@
 					</span>
                     <table width="80%" class="keywords">
                         <tr>
-                            <td width="40%">
+                            <td width="45%">
                                 <label for="place-keyword-input">Keyword</label>
                                 <input class="keywordinput"  keyword="source" type="text" id="place-keyword-input">
                             </td>
-                            <td width="20%">
+                            <td width="10%">
                                 <button class="keywordbutton" type="button">add</button>
                                 <br>
                                 <button class="keywordbutton" type="button">remove</button>
                             </td>
-                            <td width="30%">
+                            <td width="45%">
                                 <table>
                                     <tr>
                                         <td>
@@ -121,7 +121,7 @@
 				</span>
                 <table width="80%" class="keywords">
                     <tr>
-                        <td width="40%">
+                        <td width="45%">
                             <label>Topic Category Keyword List</label>
                             <select class="keywordinput" size="10" id="topic-keyword-select" keyword="source">
                                 {% set order = 0 %}
@@ -139,11 +139,11 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td  width="20%">
+                        <td  width="10%">
                             <button class="keywordbutton" type="button">add</button><br>
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
-                        <td  width="40%">
+                        <td  width="45%">
                             <label><span class="emRequired">Selected Topic Category Keywords</span></label>
                             <select class="keywordinput" keyword="target" size="10" id="topic-keywords">
                             {% for keywordValue in form.topicKeywords.vars.value %}
