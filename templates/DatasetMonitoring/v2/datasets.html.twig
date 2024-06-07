@@ -1,6 +1,10 @@
 <div id="tooltipContainer"></div>
 {% if fundingOrganization %}
-    <span class="font-bold block text-lg">Datasets for: {{ fundingOrganization.name }}</span>
+    <h2 class="">
+        <span class="m-2 p-2 shadow-lg text-black bg-gradient-to-r to-blue-200 from-blue-400 text-4xl font-bold block text-lg">
+            Datasets for: {{ fundingOrganization.name }}
+        </span>
+    </h2>
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
