@@ -8,9 +8,14 @@
     <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
 
     <style>
+      .dx-widget {
+        font-size: 1rem!important;
+      }
+
       .dx-treeview li {
         margin-bottom: revert;
         line-height: 1rem;
+        font-size: 1rem!important;
       }
 
       input.dx-texteditor-input:focus-visible {
@@ -47,15 +52,13 @@
     <div class="grid grid-cols-[20%_80%] m-4 gap-2">
       <div class="overflow-y-auto">
         <div id="dsm-side-picker">
-          <div class="hidden">
-            Groups with Datasets<div class="ml-1" id="dsm-filter"></div>
-          </div>
           <div id="dsm-toolbar"></div>
-          <div id="simple-treeview"></div>
+          <div id="dsm-search"></div>
+          <div id="dsm-treelist"></div>
         </div>
       </div>
         <div>
-          <div id="datasets-here" class="m-2 h-full overflow-y-auto">
+          <div id="dsm-datasets" class="m-2 h-full overflow-y-auto">
             Dataset monitoring can be used to view the status of a dataset in the data package review process.
             Use the search bar or dropdown to find a funding organization, funding cycle, or research group.
         </div>

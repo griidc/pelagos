@@ -22,12 +22,11 @@ $(() => {
 
   var groupStore;
 
-  const loadGroups = () =>
-  {
+  const loadGroups = () => {
     $.ajax({
       url: Routing.generate('app_api_dataset_monitoring_groups'),
       method: 'GET',
-      dataType : 'json',
+      dataType: 'json',
     }).then(function (response) {
       groupStore = new DevExpress.data.DataSource({
         paginate: false,
@@ -37,78 +36,98 @@ $(() => {
           data: response
         },
       });
-      filterGroups(datasetFilter);
-    }).always(function() {
-      dsmTreeview.option("disabled", false);
+      groupStore.load().done(function (data) {
+        groups = data;
+      });
+      dsmTreeList.option("dataSource", groups);
+      dsmTreeList.repaint();
+    }).always(function () {
+      dsmTreeList.option("disabled", false);
     });
   }
 
-  const filterGroups = (datasetFilter) =>
-  {
+  const filterGroups = (datasetFilter) => {
+    var filterArray = null;
     switch (datasetFilter) {
       case 'only':
-        groupStore.filter(["datasets", ">", 0]);
+        filterArray = [["datasets", ">", 0]];
         break;
       case 'without':
-        groupStore.filter([
-          [ "fundingOrganization", ">", 0 ],
-          "or",
-          [ "fundingCycle", ">", 0 ],
-          "or",
-          [ ["researchGroup", ">", 0] , "and",  ["datasets", "=", 0] ],
-      ]
-    );
+        filterArray = [["datasets", "=", 0]];
         break;
       default:
-        groupStore.filter(null);
         break;
     }
 
-    groupStore.load().done(function (data) {
-      groups = data;
-    });
-    dsmTreeview.option("dataSource", groups);
-    dsmTreeview.repaint();
+    const searchValue = dsmSearch.option("value");
+    if (searchValue.length > 0) {
+      var searchArray = ['name', 'contains', searchValue];
+      if (filterArray !== null) {
+        filterArray.push("and");
+        filterArray.push(searchArray);
+      } else {
+        filterArray = searchArray;
+      }
+    }
+
+    dsmTreeList.filter(filterArray);
+
     if (typeof selectedItem !== 'undefined') {
       loadGroupHtml(selectedItem);
     }
   }
 
+  const collapseAll = () => {
+    dsmTreeList.beginUpdate();
+    dsmTreeList.forEachNode((node) => {
+      dsmTreeList.collapseRow(node.key);
+    })
+    dsmTreeList.endUpdate();
+  }
+
   const dsmToolbar = $('#dsm-toolbar').dxToolbar({
     items:
       [
-      {
-        location: 'before',
-        widget: 'dxSelectBox',
-        locateInMenu: 'never',
-        options: {
-          width: 'auto',
-          items: datasetFilters,
-          valueExpr: 'id',
-          displayExpr: 'text',
-          value: datasetFilters[0].id,
-          onValueChanged(e) {
-            datasetFilter = e.value;
-            filterGroups(datasetFilter);
+        {
+          location: 'before',
+          widget: 'dxSelectBox',
+          locateInMenu: 'never',
+          options: {
+            width: 'auto',
+            items: datasetFilters,
+            valueExpr: 'id',
+            displayExpr: 'text',
+            value: datasetFilters[0].id,
+            onValueChanged(e) {
+              datasetFilter = e.value;
+              filterGroups(datasetFilter);
+            },
           },
         },
-      },
-      {
-        location: 'after',
-        widget: 'dxButton',
-        locateInMenu: 'never',
-        options: {
-          hint: 'Collape All',
-          icon: 'collapse',
-          onClick() {
-            dsmTreeview.unselectAll();
-            dsmTreeview.collapseAll();
-            dsmTreeview.repaint();
+        {
+          location: 'after',
+          widget: 'dxButton',
+          locateInMenu: 'never',
+          options: {
+            hint: 'Collape All',
+            icon: 'collapse',
+            onClick() {
+              collapseAll();
+            },
           },
         },
-      },
-    ]
+      ]
   }).dxToolbar('instance');
+
+  const dsmSearch = $('#dsm-search').dxTextBox({
+    placeholder: 'Search Groups',
+    showClearButton: true,
+    mode: 'search',
+    valueChangeEvent: ["keyup", "blur", "change", "input"],
+    onValueChanged() {
+      filterGroups(datasetFilter);
+    },
+  }).dxTextBox('instance');
 
   const dsmLoadPanel = $('.dsm-loadpanel').dxLoadPanel({
     visible: false,
@@ -118,71 +137,74 @@ $(() => {
     hideOnOutsideClick: false,
   }).dxLoadPanel('instance');
 
-  const dsmTreeview = $('#simple-treeview').dxTreeView({
-    dataStructure: 'plain',
-    items: groups,
-    parentIdExpr: 'parent',
+  const dsmTreeList = $('#dsm-treelist').dxTreeList({
+    dataSource: groups,
     keyExpr: 'id',
-    displayExpr: 'name',
-    searchEnabled: true,
-    searchExpr: ["name"],
+    parentIdExpr: 'parent',
+    filterRow: {
+      visible: false
+    },
+    headerFilter: {
+      visible: false,
+    },
+    searchPanel: {
+      visible: false,
+    },
+    columns: [{
+      dataField: 'name',
+      caption: 'Name',
+      dataType: "string",
+    },
+    {
+      dataType: "number",
+      dataField: 'datasets',
+      visible: false,
+      allowSearch: false,
+    }
+    ],
     disabled: true,
-    SearchEditorOptions: {
-      placeholder: "Search",
-      showClearButton: true,
-      buttons: [
-        "clear",
-        {
-          name: 'collapse',
-          location: 'after',
-          options: {
-            icon: 'revert',
-            stylingMode: 'contained',
-            hint: 'Collape All',
-            onClick() {
-              dsmTreeview.option("searchValue", "");
-              dsmTreeview.unselectAll();
-              dsmTreeview.collapseAll();
-              dsmTreeview.repaint();
-            },
-          },
-        },
-      ],
+    showRowLines: false,
+    showBorders: false,
+    showColumnHeaders: false,
+    columnAutoWidth: false,
+    wordWrapEnabled: true,
+    selection: {
+      mode: 'single',
     },
     onInitialized() {
       loadGroups();
     },
-    onItemClick(item) {
-      selectedItem = item.itemData;
+    onSelectionChanged(event) {
+      selectedItem = event.selectedRowsData[0];
       loadGroupHtml(selectedItem);
     },
-  }).dxTreeView('instance');
+  }).dxTreeList('instance');
 
   const loadGroupHtml = (selectedItem) => {
     dsmLoadPanel.toggle(true);
-    dsmTreeview.option("disabled", true);
-    var parameters = {"datasetFilter": datasetFilter};
-      if (selectedItem["fundingOrganization"] !== undefined) {
-        parameters = Object.assign(parameters,{fundingOrganization : selectedItem.fundingOrganization});
-      }
-      if (selectedItem["fundingCycle"] !== undefined) {
-        parameters = Object.assign(parameters,{fundingCycle : selectedItem.fundingCycle});
-      }
-      if (selectedItem["researchGroup"] !== undefined) {
-        parameters = Object.assign(parameters,{researchGroup : selectedItem.researchGroup});
-      }
+    dsmTreeList.option("disabled", true);
+    var parameters = { "datasetFilter": datasetFilter };
+    if (selectedItem.fundingOrganization !== undefined) {
+      parameters = Object.assign(parameters, { fundingOrganization: selectedItem.fundingOrganization });
+    }
+    if (selectedItem.fundingCycle !== undefined) {
+      parameters = Object.assign(parameters, { fundingCycle: selectedItem.fundingCycle });
+    }
+    if (selectedItem.researchGroup !== undefined) {
+      parameters = Object.assign(parameters, { researchGroup: selectedItem.researchGroup });
+    }
 
-      $.ajax({
-        url: Routing.generate("app_api_dataset_monitoring_datasets",
-          parameters
-        ),
-        method: "GET",
-        accept: "text/html",
-      }).then(function(html) {
-        $("#datasets-here").html(html);
-      }).done(function(){
-        dsmLoadPanel.toggle(false);
-        dsmTreeview.option("disabled", false);
-      });
-  }
+    $.ajax({
+      url: Routing.generate("app_api_dataset_monitoring_datasets",
+        parameters
+      ),
+      method: "GET",
+      accept: "text/html",
+    }).then(function (html) {
+      $("#dsm-datasets").html(html);
+    }).done(function () {
+      dsmLoadPanel.toggle(false);
+      dsmTreeList.option("disabled", false);
+    });
+  };
 });
