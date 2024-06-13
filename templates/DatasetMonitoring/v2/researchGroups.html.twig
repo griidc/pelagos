@@ -1,4 +1,10 @@
 {% set divContainer = "gridContainer#{random()}" %}
+
+{% set acceptedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE'))|length %}
+{% set restrictedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED'))|length %}
+{% set submittedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED'))|length %}
+{% set identifiedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED'))|length %}
+
 <script>
     var data = [];
 
@@ -92,6 +98,14 @@
             {% if not loop.last %}, {% endif %}
         {% endfor %}
     </div>
+
+    <div class="block">
+        <span class="font-bold">Approved Datasets:</span> {{ acceptedDatasets }}
+        <span class="font-bold">Restricted Datasets:</span> {{ restrictedDatasets }}
+        <span class="font-bold">Submitted Datasets:</span> {{ submittedDatasets }}
+        <span class="font-bold">Identified Datasets:</span> {{ identifiedDatasets }}
+    </div>
+
     <div class="block">
         <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|length }}
     </div>
