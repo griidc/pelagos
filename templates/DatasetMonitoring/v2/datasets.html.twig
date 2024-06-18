@@ -1,6 +1,8 @@
 <div id="tooltipContainer"></div>
 {% if fundingOrganization %}
-    <span class="font-bold block text-lg">Datasets for: {{ fundingOrganization.name }}</span>
+    <span class="m-2 p-2 shadow-lg text-black bg-gradient-to-r to-blue-200 from-blue-400 font-bold block text-lg">
+        Datasets for: {{ fundingOrganization.name }}
+    </span>
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
@@ -27,7 +29,9 @@
 
 {% if fundingCycle %}
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
-        <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+    <span class="m-2 p-2 shadow-lg text-black bg-gradient-to-r to-blue-200 from-blue-400 font-bold block text-lg">
+        Datasets for: {{ fundingCycle.name }}
+    </span>
     {% endif %}
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
@@ -44,7 +48,9 @@
 {% endif %}
 
 {% if researchGroup %}
-    <span class="font-bold block text-lg">Datasets for: {{ researchGroup.name }}</span>
+    <span class="m-2 p-2 shadow-lg text-black bg-gradient-to-r to-blue-200 from-blue-400 font-bold block text-lg">
+        Datasets for: {{ researchGroup.name }}
+    </span>
 
     {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
 {% endif %}
