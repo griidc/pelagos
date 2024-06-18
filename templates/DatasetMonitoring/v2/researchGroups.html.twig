@@ -97,8 +97,18 @@
         animation: true,
         legend: {
             visible: true,
+            itemTextPosition: "right",
             horizontalAlignment: "center",
             verticalAlignment: "top",
+            paddingLeftRight: 0,
+            paddingTopBottom: 0,
+            margin: 0,
+            font: {
+                weight: 700,
+                color: "black",
+                family: "dm-sans",
+                size: 16,
+            },
         },
         argumentAxis: [{
             visible: false,
@@ -166,7 +176,7 @@
         },
         rotated : true,
         size : {
-            height: 135,
+            height: 140,
         }
     }).dxChart("instance");
 </script>
