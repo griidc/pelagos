@@ -72,7 +72,7 @@
             }
         },
         onRowClick: function(e) {
-            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`);
+            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         }
     }).dxDataGrid("instance");
 </script>
