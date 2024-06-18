@@ -35,11 +35,11 @@
         columns: [{
             dataField: 'udi',
             caption: 'UDI',
-            width: 180,
+            columnAutoWidth: true,
             },{
                 dataField: 'doi',
                 caption: 'DOI',
-                width: 252,
+                width: 201,
                 cssClass: 'dsmonitoringcols',
             },{
                 dataField: 'title',
@@ -80,7 +80,7 @@
             }
         },
         onRowClick: function(e) {
-            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`);
+            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         }
     }).dxDataGrid("instance");
 
