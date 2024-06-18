@@ -96,7 +96,9 @@
         ],
         animation: true,
         legend: {
-            visible: false,
+            visible: true,
+            horizontalAlignment: "center",
+            verticalAlignment: "top",
         },
         argumentAxis: [{
             visible: false,
@@ -124,25 +126,26 @@
         series: [
             {
                 valueField: "done",
-                name: "Available",
+                name: "Available ({{acceptedDatasets}})",
             },
             {
                 valueField: 'not',
-                name: 'Submitted',
+                name: 'Submitted ({{submittedDatasets}})',
             },
             {
                 valueField: 'limbo',
-                name: 'Identified',
+                name: 'Identified ({{identifiedDatasets}})',
             },
             {
                 valueField: 'restricted',
-                name: 'Restricted',
+                name: 'Restricted ({{restrictedDatasets}})',
             },
         ],
         commonSeriesSettings: {
             type: "stackedBar",
+            barWidth: 50,
             border: {
-                visible: true,
+                visible: false,
                 color: "black",
                 dashStyle: "solid",
                 width: 1,
@@ -163,7 +166,7 @@
         },
         rotated : true,
         size : {
-            height: 75,
+            height: 135,
         }
     }).dxChart("instance");
 </script>
@@ -188,17 +191,10 @@
     </div>
 
     <div class="block">
-        <span class="font-bold">Approved Datasets:</span> {{ acceptedDatasets }}
-        <span class="font-bold">Restricted Datasets:</span> {{ restrictedDatasets }}
-        <span class="font-bold">Submitted Datasets:</span> {{ submittedDatasets }}
-        <span class="font-bold">Identified Datasets:</span> {{ identifiedDatasets }}
+        <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
     </div>
 
-    <div class="block">
-        <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|length }}
-    </div>
-
-    <div class="block">
+    <div class="block h-min">
         <div id="{{divChartContainer}}"></div>
     </div>
 
