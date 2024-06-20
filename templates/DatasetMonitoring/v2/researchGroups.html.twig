@@ -1,4 +1,5 @@
 {% set divContainer = "gridContainer#{random()}" %}
+{% set divChartContainer = "chartContainer#{random()}" %}
 
 {% set acceptedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE'))|length %}
 {% set restrictedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED'))|length %}
@@ -82,6 +83,89 @@
             window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         }
     }).dxDataGrid("instance");
+
+    $('#{{divChartContainer}}').dxChart({
+        dataSource: [
+        {
+            "arg": "Datasets",
+            "done": {{ acceptedDatasets }},
+            "not": {{ submittedDatasets }},
+            "limbo": {{ identifiedDatasets }},
+            "restricted": {{ restrictedDatasets }},
+        },
+        ],
+        animation: true,
+        legend: {
+            visible: false,
+        },
+        argumentAxis: [{
+            visible: false,
+            label: {
+                visible: false,
+            }
+        }],
+        valueAxis : [{
+            name: "Datasets",
+            visualRange: {
+                startValue: 0,
+                endValue: 200
+            },
+            visible: false,
+            grid: {
+                visible: false,
+            },
+            label: {
+                visible: false,
+            },
+            tick: {
+                visible: false,
+            },
+        }],
+        series: [
+            {
+                valueField: "done",
+                name: "Available",
+            },
+            {
+                valueField: 'not',
+                name: 'Submitted',
+            },
+            {
+                valueField: 'limbo',
+                name: 'Identified',
+            },
+            {
+                valueField: 'restricted',
+                name: 'Restricted',
+            },
+        ],
+        commonSeriesSettings: {
+            type: "stackedBar",
+            border: {
+                visible: true,
+                color: "black",
+                dashStyle: "solid",
+                width: 1,
+            },
+            label: {
+                visible: false,
+                rotationAngle: 90,
+                connector: { visible: true },
+                customizeText: function (dataInfo) {
+                    if (dataInfo.value > 0) {
+                        return dataInfo.seriesName + ': ' + dataInfo.value;
+                    } else {
+                        return false;
+                    }
+
+                }
+            }
+        },
+        rotated : true,
+        size : {
+            height: 75,
+        }
+    }).dxChart("instance");
 </script>
 
 <div class="p-2 m-0">
@@ -113,6 +197,11 @@
     <div class="block">
         <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|length }}
     </div>
+
+    <div class="block">
+        <div id="{{divChartContainer}}"></div>
+    </div>
+
     <div id="{{divContainer}}" class="overflow-hidden"></div>
 </div>
 <div class="p-4"><hr></div>
