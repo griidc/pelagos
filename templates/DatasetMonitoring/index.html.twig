@@ -8,9 +8,14 @@
     <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
 
     <style>
+      .dx-widget {
+        font-size: 1rem!important;
+      }
+
       .dx-treeview li {
         margin-bottom: revert;
         line-height: 1rem;
+        font-size: 1rem!important;
       }
 
       input.dx-texteditor-input:focus-visible {
@@ -19,6 +24,17 @@
 
       input[type='text'].dx-texteditor-input:focus {
         box-shadow: none!important;
+      }
+
+      .dsmonitoringcols {
+        white-space: nowrap;
+      }
+
+      .dx-treelist [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+      .dx-datagrid [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
       }
     </style>
 {% endblock stylesheets  %}
