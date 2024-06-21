@@ -194,13 +194,6 @@
         </div>
         {% endif %}
 
-
-    <div class="block h-min">
-
-    <div class="h-min">
-        <div id="{{divChartContainer}}"></div>
-    </div>
-
         <div class="block px-2">
             <span class="font-bold">Leadership:</span>
             {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
