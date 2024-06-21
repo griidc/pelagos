@@ -1,6 +1,6 @@
 <div id="tooltipContainer"></div>
 {% if fundingOrganization %}
-    <span class="m-2 p-2 shadow-lg text-black bg-gradient-to-r to-blue-200 from-blue-400 font-bold block text-lg">
+    <span class="p-2 font-bold block text-2xl">
         Datasets for: {{ fundingOrganization.name }}
     </span>
 
@@ -9,7 +9,7 @@
             {# DOT NOT SHOW #}
         {% else %}
             {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
-                <span class="font-bold block">Funding Cycle: {{fundingCycle.name}}</span>
+                <span class="font-bold block px-2 text-xl">Funding Cycle: {{fundingCycle.name}}</span>
             {% endif %}
 
             {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
@@ -29,7 +29,7 @@
 
 {% if fundingCycle %}
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
-    <span class="m-2 p-2 shadow-lg text-black bg-gradient-to-r to-blue-200 from-blue-400 font-bold block text-lg">
+    <span class="p-2 font-bold block text-2xl">
         Datasets for: {{ fundingCycle.name }}
     </span>
     {% endif %}
