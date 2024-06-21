@@ -8,6 +8,7 @@
 
 <script>
     var data = [];
+    var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
     {% for dataset in researchGroup.datasets|submittedDIFs %}
         data.push({
@@ -96,6 +97,10 @@
         ],
         animation: true,
         legend: {
+<<<<<<< HEAD
+=======
+            visible: false,
+>>>>>>> epic/PELAGOS-4099-create-v2-dataset-monitoring-page
             visible: true,
             itemTextPosition: "right",
             horizontalAlignment: "center",
@@ -106,7 +111,11 @@
             font: {
                 weight: 700,
                 color: "black",
+<<<<<<< HEAD
                 family: "dm-sans",
+=======
+                family: baseFontFamily,
+>>>>>>> epic/PELAGOS-4099-create-v2-dataset-monitoring-page
                 size: 16,
             },
         },
@@ -153,7 +162,7 @@
         ],
         commonSeriesSettings: {
             type: "stackedBar",
-            barWidth: 50,
+            barWidth: 40,
             border: {
                 visible: false,
                 color: "black",
@@ -204,7 +213,11 @@
         <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
     </div>
 
+<<<<<<< HEAD
     <div class="block h-min">
+=======
+    <div class="h-min">
+>>>>>>> epic/PELAGOS-4099-create-v2-dataset-monitoring-page
         <div id="{{divChartContainer}}"></div>
     </div>
 
