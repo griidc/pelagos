@@ -8,6 +8,7 @@
 
 <script>
     var data = [];
+    var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
     {% for dataset in researchGroup.datasets|submittedDIFs %}
         data.push({
@@ -93,6 +94,19 @@
         animation: true,
         legend: {
             visible: false,
+            visible: true,
+            itemTextPosition: "right",
+            horizontalAlignment: "center",
+            verticalAlignment: "top",
+            paddingLeftRight: 0,
+            paddingTopBottom: 0,
+            margin: 0,
+            font: {
+                weight: 700,
+                color: "black",
+                family: baseFontFamily,
+                size: 16,
+            },
         },
         argumentAxis: [{
             visible: false,
@@ -121,24 +135,29 @@
             {
                 valueField: "done",
                 name: "Available",
+                name: "Available ({{acceptedDatasets}})",
             },
             {
                 valueField: 'not',
                 name: 'Submitted',
+                name: 'Submitted ({{submittedDatasets}})',
             },
             {
                 valueField: 'limbo',
                 name: 'Identified',
+                name: 'Identified ({{identifiedDatasets}})',
             },
             {
                 valueField: 'restricted',
                 name: 'Restricted',
+                name: 'Restricted ({{restrictedDatasets}})',
             },
         ],
         commonSeriesSettings: {
             type: "stackedBar",
+            barWidth: 40,
             border: {
-                visible: true,
+                visible: false,
                 color: "black",
                 dashStyle: "solid",
                 width: 1,
@@ -159,7 +178,7 @@
         },
         rotated : true,
         size : {
-            height: 75,
+            height: 105,
         }
     }).dxChart("instance");
 </script>
@@ -184,17 +203,10 @@
     </div>
 
     <div class="block">
-        <span class="font-bold">Approved Datasets:</span> {{ acceptedDatasets }}
-        <span class="font-bold">Restricted Datasets:</span> {{ restrictedDatasets }}
-        <span class="font-bold">Submitted Datasets:</span> {{ submittedDatasets }}
-        <span class="font-bold">Identified Datasets:</span> {{ identifiedDatasets }}
+        <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
     </div>
 
-    <div class="block">
-        <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|length }}
-    </div>
-
-    <div class="block">
+    <div class="h-min">
         <div id="{{divChartContainer}}"></div>
     </div>
 
