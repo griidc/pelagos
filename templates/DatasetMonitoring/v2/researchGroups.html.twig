@@ -188,32 +188,45 @@
 </script>
 
 <div class="p-2 m-0">
-    {% if not fundingCycle|default %}
-    <div class="block">
-        <span class="font-bold">Funding Source:</span> {{ researchGroup.fundingCycle.name }}
-    </div>
-    {% else %}
-    <div class="block">
-        <span class="font-bold">Research Group:</span> {{ researchGroup.name }}
-    </div>
-    {% endif %}
-    <div class="block">
-        <span class="font-bold">Leadership:</span>
-        {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
-        {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
-            {{ prg.person.firstName }} {{ prg.person.lastName }}
-            {% if not loop.last %}, {% endif %}
-        {% endfor %}
-    </div>
+    <div class="shadow-lg border rounded">
+        <span class="p-2 text-black bg-blue-400 font-bold block text-lg">
+            {% if not fundingCycle|default %}
+            <div class="block">
+                <span class="font-bold">Funding Source:</span> {{ researchGroup.fundingCycle.name }}
+            </div>
+            {% else %}
+            <div class="block">
+                <span class="font-bold">Research Group:</span> {{ researchGroup.name }}
+            </div>
+            {% endif %}
+        </span>
 
-    <div class="block">
-        <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
-    </div>
+        <div class="block px-2">
+            <span class="font-bold">Leadership:</span>
+            {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
+            {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
+                {{ prg.person.firstName }} {{ prg.person.lastName }}
+                {% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </div>
 
-    <div class="h-min">
-        <div id="{{divChartContainer}}"></div>
-    </div>
+        <div class="block px-2">
+            <span class="font-bold">Approved Datasets:</span> {{ acceptedDatasets }}
+            <span class="font-bold">Restricted Datasets:</span> {{ restrictedDatasets }}
+            <span class="font-bold">Submitted Datasets:</span> {{ submittedDatasets }}
+            <span class="font-bold">Identified Datasets:</span> {{ identifiedDatasets }}
+        </div>
 
-    <div id="{{divContainer}}" class="overflow-hidden"></div>
+        <div class="block px-2">
+            <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
+        </div>
+
+        <div class="h-min px-2">
+            <div id="{{divChartContainer}}"></div>
+        </div>
+
+        <div class="p-2">
+            <div id="{{divContainer}}" class="overflow-hidden"></div>
+        </div>
+    </div>
 </div>
-<div class="p-4"><hr></div>
