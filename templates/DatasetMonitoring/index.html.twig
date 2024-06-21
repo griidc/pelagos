@@ -36,6 +36,10 @@
       .dx-datagrid [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
         outline: none;
       }
+
+      .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) {
+        cursor: pointer;
+      }
     </style>
 {% endblock stylesheets  %}
 
