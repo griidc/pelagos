@@ -115,10 +115,12 @@ class GetGoMRIStatisticsCommand extends Command
         $io->writeln("Total GoMRI Downloads:");
         $downloadSizeByYear = [];
         $downloadCountByYear = [];
+        //$downloadsByYearAndQuarter = [];
         foreach ($this->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
             $year = substr($timestamp, 0, 4);
+            //$this->quarterize($timestamp, $downloadsByQuarter);
             if (!array_key_exists($year, $downloadCountByYear)) {
                 $downloadCountByYear[$year] = 0;
             }
@@ -168,6 +170,22 @@ class GetGoMRIStatisticsCommand extends Command
     }
 
     /**
+     * Returns Year and Quarter given a timestamp.
+     *
+     * @param \DateTime $timestamp
+     * @return array $yearQuarter
+     */
+    protected function determineQuarter(\DateTime $timestamp): array
+    {
+        // Quarters are normal calendar quarters (Jan-Mar, Apr-Jun, Jul-Sep, Oct-Dec)
+        $year = $timestamp->format('Y');   // returns 4 digit year
+        $month = $timestamp->format('n');  // returns 1-12
+        $quarter = ceil($month / 3);
+
+        return array("year" => $year, "quarter" => $quarter);
+    }
+
+    /**
      * Maintains array of quarter counts.
      *
      * @param \DateTime $timestamp
@@ -175,14 +193,9 @@ class GetGoMRIStatisticsCommand extends Command
      */
     protected function quarterize(\DateTime $timestamp, array &$quarterCounts): void
     {
-        // Quarters are strict calendar quarters.
-        // Q1: Jan 1 - Mar 31
-        // Q2: Apr 1 - Jun 30
-        // Q3: Jul 1 - Sep 30
-        // Q4: Oct 1 - Dec 31
-        $year = $timestamp->format('Y');   // returns 4 digit year
-        $month = $timestamp->format('n');  // returns 1-12
-        $quarter = ceil($month / 3);
+        $yearAndQuarter = $this->determineQuarter($timestamp);
+        $year = $yearAndQuarter['year'];
+        $quarter = $yearAndQuarter['quarter'];
 
         // Initialize
         if (!array_key_exists($year, $quarterCounts)) {
