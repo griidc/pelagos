@@ -102,6 +102,7 @@ class GetGoMRIStatisticsCommand extends Command
         sort($years);
         $minYear = $years[0];
         $maxYear = $years[sizeof($years) - 1];
+        $io->writeln("\nGomri Uploads (submissions)\n");
         for ($i = $minYear; $i <= $maxYear; $i++) {
             if (in_array($i, $years)) {
                 $io->writeln("Number of GoMRI datasets submitted $i"
@@ -112,20 +113,32 @@ class GetGoMRIStatisticsCommand extends Command
             }
         }
 
-        $io->writeln("Total GoMRI Downloads:");
-        $downloadSizeByYear = [];
-        $downloadCountByYear = [];
-        //$downloadsByYearAndQuarter = [];
+        $io->writeln("\nGoMRI Downloads:\n");
+        $downloadSizeByYearAndQuarter = [];
+        $downloadCountByYearAndQuarter = [];
         foreach ($this->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
-            $year = substr($timestamp, 0, 4);
+
+            $yearQuarter = $this->determineQuarter($timestamp);
+            $year = $yearQuarter['year'];
+            $quarter = $yearQuarter['quarter'];
+
+            //$year = substr($timestamp, 0, 4);
             //$this->quarterize($timestamp, $downloadsByQuarter);
-            if (!array_key_exists($year, $downloadCountByYear)) {
-                $downloadCountByYear[$year] = 0;
+            if (!array_key_exists($year, $downloadCountByYearAndQuarter)) {
+                $downloadCountByYearAndQuarter[$year][0] = 0;
+                $downloadCountByYearAndQuarter[$year][1] = 0;
+                $downloadCountByYearAndQuarter[$year][2] = 0;
+                $downloadCountByYearAndQuarter[$year][3] = 0;
+                $downloadCountByYearAndQuarter[$year][4] = 0;
             }
-            if (!array_key_exists($year, $downloadSizeByYear)) {
-                $downloadSizeByYear[$year] = 0;
+            if (!array_key_exists($year, $downloadSizeByYearAndQuarter)) {
+                $downloadSizeByYearAndQuarter[$year][0] = 0;
+                $downloadSizeByYearAndQuarter[$year][1] = 0;
+                $downloadSizeByYearAndQuarter[$year][2] = 0;
+                $downloadSizeByYearAndQuarter[$year][3] = 0;
+                $downloadSizeByYearAndQuarter[$year][4] = 0;
             }
 
             $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
@@ -138,33 +151,31 @@ class GetGoMRIStatisticsCommand extends Command
                 $skipCount++;
             }
 
-
-            $downloadCountByYear[$year]++;
-            $downloadSizeByYear[$year] += $size / 1000000000;
-            //print "$timestamp,$id,$udi,$size\n";
+            $downloadCountByYearAndQuarter[$year][$quarter]++;
+            $downloadSizeByYearAndQuarter[$year][$quarter] += $size / 1000000000;
         }
 
-        $firstYear = min(array_keys($downloadCountByYear));
-        $lastYear = max(array_keys($downloadCountByYear));
+        // array_keys still onlys dump first level, years, for $array[year][quarter].
+        $firstYear = min(array_keys($downloadCountByYearAndQuarter));
+        $lastYear = max(array_keys($downloadCountByYearAndQuarter));
 
-        // Deal with the data harvest of 2019.
-        if (array_key_exists(2019, $downloadCountByYear)) {
-            $downloadCountByYear[2019] -= self::HARVEST2019COUNT;
-        }
-        if (array_key_exists(2019, $downloadCountByYear)) {
-            $downloadSizeByYear[2019] -= self::HARVEST2019DATA;
-        }
-
-
+        // Deal with the data harvest of 2019Q2.
+        $downloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
+        $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
 
         for ($i = $firstYear; $i <= $lastYear; $i++) {
-            $io->writeln($i . ' Download Count: ' . $downloadCountByYear[$i] . ', ' . 'Total Size (GB): ' . round($downloadSizeByYear[$i]));
+            for ($j = 1; $j <= 4; $j++) {
+                $io->writeln($i . '/Q' . $j . ' Download Count: ' . $downloadCountByYearAndQuarter[$i][$j]
+                . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$i][$j]));
+            }
+            $io->newLine();
         }
+
         if ($skipCount > 0) {
             $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
-        $io->note('Removed 7100 / 3600GB from 2019 downloads - data harvest occurred');
+        $io->note('Removed 7100 / 3600GB from 2019Q2 downloads - data harvest occurred');
 
         return 0;
     }
@@ -249,7 +260,7 @@ class GetGoMRIStatisticsCommand extends Command
 
             if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
                 $currentTimeStamp = $epochTime;
-                $downloadArray[] = array($id, $displayTime);
+                $downloadArray[] = array($id, $dateTime);
             }
             $currentId = $id;
         }
