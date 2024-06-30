@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class ReportDatasetMonitoring extends ReportController
 {
-    #[Route('/research-group-report')]
+    #[Route('/dataset-monitoring-report', name: 'pelagos_app_ui_report_dataset_monitoring_csv')]
     public function researchGroupReport(Request $request, DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
     {
         $researchGroupId = $request->query->get('researchGroup');
