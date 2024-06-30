@@ -357,7 +357,7 @@ class DatasetRepository extends ServiceEntityRepository
         ->join(DOI::class, 'doi', 'WITH', 'd.doi = doi.id')
         ->join(ResearchGroup::class, 'rg', 'WITH', 'd.researchGroup = rg.id')
         ->join(FundingCycle::class, 'fc', 'WITH', 'rg.fundingCycle = fc.id')
-        ->join(FundingOrganization::class, 'fo', 'WITH', 'fcg.fundingOrganization = fo.id')
+        ->join(FundingOrganization::class, 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
         ;
 
         if (!empty($fundingCycle)) {
@@ -381,7 +381,7 @@ class DatasetRepository extends ServiceEntityRepository
         return
             $queryBuilder
             ->getQuery()
-            ->getArrayResult()
+            ->getResult()
         ;
     }
 }
