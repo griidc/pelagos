@@ -23,4 +23,15 @@ enum DatasetLifecycleStatus: string
             DatasetLifecycleStatus::NONE => 'The dataset is in an unknown state.',
         };
     }
+
+    public function color(): string
+    {
+        return match ($this) {
+            DatasetLifecycleStatus::AVAILABLE => 'green',
+            DatasetLifecycleStatus::RESTRICTED => 'red',
+            DatasetLifecycleStatus::SUBMITTED => 'blue',
+            DatasetLifecycleStatus::IDENTIFIED => 'yellow',
+            DatasetLifecycleStatus::NONE => 'black',
+        };
+    }
 }
