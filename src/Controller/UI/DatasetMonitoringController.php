@@ -2,20 +2,24 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Handler\EntityHandler;
 use App\Entity\Dataset;
 use App\Entity\FundingCycle;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use App\Handler\EntityHandler;
+use App\Repository\DatasetRepository;
+use App\Repository\FundingCycleRepository;
+use App\Repository\FundingOrganizationRepository;
+use App\Repository\ResearchGroupRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset Monitoring controller.
- */
+  */
 class DatasetMonitoringController extends AbstractController
 {
     /**
@@ -28,7 +32,7 @@ class DatasetMonitoringController extends AbstractController
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler $entityHandler The entity handler.
+     * @param EntityHandler $entityHandler the entity handler
      */
     public function __construct(EntityHandler $entityHandler)
     {
@@ -37,25 +41,119 @@ class DatasetMonitoringController extends AbstractController
 
     /**
      * The default action.
-     *
-     * @Route("/dataset-monitoring", name="pelagos_app_ui_datasetmonitoring_default", methods={"GET"})
-     *
-     * @return Response A Symfony Response instance.
      */
-    public function defaultAction()
+    #[Route('/dataset-monitoring', name: 'pelagos_app_ui_datasetmonitoring_default')]
+    public function index(): Response
     {
         return $this->render('DatasetMonitoring/index.html.twig');
     }
 
     /**
+     * This will return a plain item list with FOs, FCs, RGs as JSON.
+     */
+    #[Route('/api/groups', name: 'app_api_dataset_monitoring_groups')]
+    public function getGroups(FundingOrganizationRepository $fundingOrganizationRepository): Response
+    {
+        $fundingOrganizations = $fundingOrganizationRepository->findAll();
+
+        $list = [];
+
+        foreach ($fundingOrganizations as $fundingOrganization) {
+            $fundingOrganizationName = $fundingOrganization->getName();
+            $fundingOrganizationId = 'fundingOrganization' . $fundingOrganization->getId();
+            $list[] =
+                [
+                    'id' => $fundingOrganizationId,
+                    'name' => $fundingOrganizationName,
+                    'fundingOrganization' => $fundingOrganization->getId(),
+                    'datasets' => $fundingOrganization->getDatasets()->count(),
+                ];
+            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+                $fundingCycleName = $fundingCycle->getName();
+                $fundingCycleId = 'fundingCycle' . $fundingCycle->getId();
+
+                $list[] = [
+                    'id' => $fundingCycleId,
+                    'name' => $fundingCycleName,
+                    'parent' => $fundingOrganizationId,
+                    'fundingCycle' => $fundingCycle->getId(),
+                    'datasets' => $fundingCycle->getDatasets()->count(),
+                ];
+                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                    $researchGroupId = 'researchGroup' . $researchGroup->getId();
+                    $researchGroupName = $researchGroup->getName();
+                    $list[] = [
+                        'id' => $researchGroupId,
+                        'name' => $researchGroupName,
+                        'parent' => $fundingCycleId,
+                        'researchGroup' => $researchGroup->getId(),
+                        'datasets' => $researchGroup->getDatasets()->count(),
+                    ];
+                }
+            }
+        }
+
+        return new JsonResponse($list);
+    }
+
+    /**
+     * Returns HTML results of datasets for requested FO/FC/RG
+     */
+    #[Route('/dataset-monitoring/datasets', name: 'app_api_dataset_monitoring_datasets')]
+    public function getDatasets(
+        Request $request,
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        FundingCycleRepository $fundingCycleRepository,
+        ResearchGroupRepository $researchGroupRepository
+    ): Response {
+        $fundingOrganizationId = $request->query->get('fundingOrganization');
+        $fundingCycleId = $request->query->get('fundingCycle');
+        $researchGroupId = $request->query->get('researchGroup');
+        $datasetFilter = $request->query->get('datasetFilter');
+
+        $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
+        $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
+        $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
+
+        return $this->render(
+            'DatasetMonitoring/v2/datasets.html.twig',
+            [
+                'fundingOrganization' => $fundingOrganization,
+                'fundingCycle' => $fundingCycle,
+                'researchGroup' => $researchGroup,
+                'datasetFilter' => $datasetFilter,
+            ]
+        );
+    }
+
+    /**
+     * Returns HTML results of datasets for requested FO/FC/RG
+     */
+    #[Route('/dataset-monitoring/datasets/json', name: 'app_api_dataset_monitoring_datasets_json')]
+    public function getDatasetsAsJson(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $researchGroupId = $request->query->get('researchGroup');
+        $fundingCycleId = $request->query->get('fundingCycle');
+        $fundingOrganizationId = $request->query->get('fundingOrganization');
+
+        $datasets = $datasetRepository->getDatasetsBy(
+            researchGroup: $researchGroupId,
+            fundingCycle: $fundingCycleId,
+            fundingOrganization: $fundingOrganizationId
+        );
+
+        return new JsonResponse($datasets);
+    }
+
+    /**
      * The Dataset Monitoring display all research groups of a Funding Cycle.
      *
-     * @param integer $id       A Pelagos Funding Cycle entity id.
-     * @param string  $renderer Either 'browser' or 'html2pdf'.
+     * @param int    $id       a Pelagos Funding Cycle entity id
+     * @param string $renderer either 'browser' or 'html2pdf'
      *
      * @Route("/dataset-monitoring/funding-cycle/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_allresearchgroup", defaults={"renderer" = "browser"})
      *
-     * @return Response A Response instance.
+     * @return Response a Response instance
      */
     public function allResearchGroupAction(int $id, string $renderer = 'browser')
     {
@@ -67,21 +165,21 @@ class DatasetMonitoringController extends AbstractController
         if ('html2pdf' == $renderer) {
             return $this->render(
                 'DatasetMonitoring/pdf.html.twig',
-                array(
+                [
                     'researchGroups' => $researchGroups,
                     'header' => $title,
                     'pdfFilename' => $pdfFilename,
-                )
+                ]
             );
         } else {
             return $this->render(
                 'DatasetMonitoring/projects.html.twig',
-                array(
+                [
                     'researchGroups' => $researchGroups,
                     'header' => $title,
                     'pdfFilename' => $pdfFilename,
                     'id' => $id,
-                )
+                ]
             );
         }
     }
@@ -89,12 +187,12 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The Dataset Monitoring display by research group.
      *
-     * @param integer $id       A Pelagos Research Group entity id.
-     * @param string  $renderer Either 'browser' or 'html2pdf'.
+     * @param int    $id       a Pelagos Research Group entity id
+     * @param string $renderer either 'browser' or 'html2pdf'
      *
      * @Route("/dataset-monitoring/research-group/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_researchgroup")
      *
-     * @return Response A Response instance.
+     * @return Response a Response instance
      */
     public function researchGroupAction(int $id, string $renderer = 'browser')
     {
@@ -104,21 +202,21 @@ class DatasetMonitoringController extends AbstractController
         if ('html2pdf' == $renderer) {
             return $this->render(
                 'DatasetMonitoring/pdf.html.twig',
-                array(
-                    'researchGroups' => array($researchGroup),
+                [
+                    'researchGroups' => [$researchGroup],
                     'header' => $title,
                     'pdfFilename' => $pdfFilename,
-                )
+                ]
             );
         } else {
             return $this->render(
                 'DatasetMonitoring/projects.html.twig',
-                array(
-                    'researchGroups' => array($researchGroup),
+                [
+                    'researchGroups' => [$researchGroup],
                     'header' => $title,
                     'pdfFilename' => $pdfFilename,
                     'id' => $id,
-                )
+                ]
             );
         }
     }
@@ -126,12 +224,12 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The Dataset Monitoring display by a researcher.
      *
-     * @param integer $id       A Pelagos Person entity id of a researcher.
-     * @param string  $renderer Either 'browser' or 'html2pdf'.
+     * @param int    $id       a Pelagos Person entity id of a researcher
+     * @param string $renderer either 'browser' or 'html2pdf'
      *
      * @Route("/dataset-monitoring/researcher/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_researcher")
      *
-     * @return Response A Response instance.
+     * @return Response a Response instance
      */
     public function researcherAction(int $id, string $renderer = 'browser')
     {
@@ -141,19 +239,19 @@ class DatasetMonitoringController extends AbstractController
         if ('html2pdf' == $renderer) {
             return $this->render(
                 'DatasetMonitoring/pdf.html.twig',
-                array(
+                [
                     'researchGroups' => $researchGroups,
                     'header' => $title,
                     'pdfFilename' => 'Dataset Monitoring - ' .
                         $researcher->getLastName() .
                         ' ' .
-                        $researcher->getFirstName()
-                )
+                        $researcher->getFirstName(),
+                ]
             );
         } else {
             return $this->render(
                 'DatasetMonitoring/projects.html.twig',
-                array(
+                [
                     'researchGroups' => $researchGroups,
                     'header' => $title,
                     'pdfFilename' => 'Dataset Monitoring - ' .
@@ -161,7 +259,7 @@ class DatasetMonitoringController extends AbstractController
                         ' ' .
                         $researcher->getFirstName(),
                     'id' => $id,
-                )
+                ]
             );
         }
     }
@@ -169,21 +267,21 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The Dataset Monitoring details per UDI.
      *
-     * @param string $udi A UDI.
+     * @param string $udi a UDI
      *
      * @Route("/dataset-monitoring/dataset_details/{udi}", name="pelagos_app_ui_datasetmonitoring_datasetdetails")
      *
-     * @return Response A Response instance.
+     * @return Response a Response instance
      */
     public function datasetDetailsAction(string $udi)
     {
-        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+        $datasets = $this->entityHandler->getBy(Dataset::class, ['udi' => $udi]);
 
         return $this->render(
             'DatasetMonitoring/dataset_details.html.twig',
-            array(
+            [
                 'datasets' => $datasets,
-                )
+                ]
         );
     }
 }

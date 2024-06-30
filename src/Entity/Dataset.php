@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\DatasetLifecycleStatus;
 use App\Util\DatasetCitationUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -1034,5 +1035,25 @@ class Dataset extends Entity
     public function __toString(): string
     {
         return $this->getUdi();
+    }
+
+     /**
+     * Get the Dataset's Lifecycle Status
+     */
+    public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
+    {
+        $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
+
+        if (($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) and ($this->isRestricted() === true)) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::RESTRICTED;
+        } elseif ($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::AVAILABLE;
+        } elseif ($this->hasDatasetSubmission()) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::SUBMITTED;
+        } elseif ($this->hasDif() and $this->getDif()->getStatus() == DIF::STATUS_APPROVED) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::IDENTIFIED;
+        }
+
+        return $datasetLifeCycleStatus;
     }
 }

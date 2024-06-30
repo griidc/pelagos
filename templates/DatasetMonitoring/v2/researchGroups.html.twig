@@ -1,0 +1,223 @@
+{% set divContainer = "gridContainer#{random()}" %}
+{% set divChartContainer = "chartContainer#{random()}" %}
+
+{% set acceptedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE'))|length %}
+{% set restrictedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED'))|length %}
+{% set submittedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED'))|length %}
+{% set identifiedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED'))|length %}
+
+<script>
+    var data = [];
+    var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
+
+    {% for dataset in researchGroup.datasets|submittedDIFs %}
+        data.push({
+            'id': '{{ dataset.id }}',
+            'title': '{{ dataset.title|e('js') }}',
+            'udi': '{{ dataset.udi }}',
+            'doi': '{{ (dataset.doi) ? dataset.doi.doi : "" }}',
+            'status': '{{ dataset.getDatasetLifecycleStatus.value }}',
+            'statusTooltip': '{{ dataset.getDatasetLifecycleStatus.description }}',
+            'researchGroup': '{{ dataset.researchGroup.name|e('js') }}',
+        });
+    {% endfor %}
+
+    var tooltipInstance = $("#tooltipContainer").dxTooltip({
+        position: "right"
+    }).dxTooltip("instance");
+
+    $('#{{divContainer}}').dxDataGrid({
+        dataSource: data,
+        columnAutoWidth: true,
+        sortOrder: 'asc',
+        searchPanel: {
+            visible: false,
+        },
+        columns: [{
+            dataField: 'udi',
+            caption: 'UDI',
+            columnAutoWidth: true,
+            },{
+                dataField: 'doi',
+                caption: 'DOI',
+                width: 201,
+                cssClass: 'dsmonitoringcols',
+            },{
+                dataField: 'title',
+                caption: 'Title',
+            },
+            {
+                dataField: 'status',
+                caption: 'Status',
+                width: 100,
+            },
+        ],
+        showBorders: true,
+        paging: {
+            pageSize: 0,
+        },
+        pager: {
+            visible: false,
+        },
+        selection: {
+            mode: 'single',
+        },
+        showColumnLines: true,
+        showRowLines: true,
+        wordWrapEnabled: true,
+        onCellPrepared: function (e) {
+            if (e.rowType === "data" && e.column.dataField === "status") {
+                e.cellElement.mouseover(function (arg) {
+                    tooltipInstance.option("contentTemplate", function (contentElement) {
+                        contentElement.html(`<div class='tooltipContent'><div>${e.data.statusTooltip}</div>`);
+                    });
+
+                    tooltipInstance.show(arg.target);
+                });
+
+                e.cellElement.mouseout(function (arg) {
+                    tooltipInstance.hide();
+                });
+            }
+        },
+        onRowClick: function(e) {
+            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
+        }
+    }).dxDataGrid("instance");
+
+    $('#{{divChartContainer}}').dxChart({
+        dataSource: [
+        {
+            "arg": "Datasets",
+            "done": {{ acceptedDatasets }},
+            "not": {{ submittedDatasets }},
+            "limbo": {{ identifiedDatasets }},
+            "restricted": {{ restrictedDatasets }},
+        },
+        ],
+        animation: true,
+        legend: {
+            visible: false,
+            visible: true,
+            itemTextPosition: "right",
+            horizontalAlignment: "center",
+            verticalAlignment: "top",
+            paddingLeftRight: 0,
+            paddingTopBottom: 0,
+            margin: 0,
+            font: {
+                weight: 700,
+                color: "black",
+                family: baseFontFamily,
+                size: 16,
+            },
+        },
+        argumentAxis: [{
+            visible: false,
+            label: {
+                visible: false,
+            }
+        }],
+        valueAxis : [{
+            name: "Datasets",
+            visualRange: {
+                startValue: 0,
+                endValue: 200
+            },
+            visible: false,
+            grid: {
+                visible: false,
+            },
+            label: {
+                visible: false,
+            },
+            tick: {
+                visible: false,
+            },
+        }],
+        series: [
+            {
+                valueField: "done",
+                name: "Available",
+                name: "Available ({{acceptedDatasets}})",
+            },
+            {
+                valueField: 'not',
+                name: 'Submitted',
+                name: 'Submitted ({{submittedDatasets}})',
+            },
+            {
+                valueField: 'limbo',
+                name: 'Identified',
+                name: 'Identified ({{identifiedDatasets}})',
+            },
+            {
+                valueField: 'restricted',
+                name: 'Restricted',
+                name: 'Restricted ({{restrictedDatasets}})',
+            },
+        ],
+        commonSeriesSettings: {
+            type: "stackedBar",
+            barWidth: 40,
+            border: {
+                visible: false,
+                color: "black",
+                dashStyle: "solid",
+                width: 1,
+            },
+            label: {
+                visible: false,
+                rotationAngle: 90,
+                connector: { visible: true },
+                customizeText: function (dataInfo) {
+                    if (dataInfo.value > 0) {
+                        return dataInfo.seriesName + ': ' + dataInfo.value;
+                    } else {
+                        return false;
+                    }
+
+                }
+            }
+        },
+        rotated : true,
+        size : {
+            height: 105,
+        }
+    }).dxChart("instance");
+</script>
+
+<div class="p-2 m-0">
+    <div class="shadow-lg border rounded">
+        <div class="block">
+            <span class="p-2 text-black bg-blue-400 font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>
+        </div>
+
+        {% if not fundingCycle|default %}
+        <div class="block px-2">
+            <span class="font-bold">Funding Source:</span> {{ researchGroup.fundingCycle.name }}
+        </div>
+        {% endif %}
+
+        <div class="block px-2">
+            <span class="font-bold">Leadership:</span>
+            {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
+            {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
+                {{ prg.person.firstName }} {{ prg.person.lastName }}
+                {% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="block px-2">
+            <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
+        </div>
+
+        <div class="h-min px-2">
+            <div id="{{divChartContainer}}"></div>
+        </div>
+
+        <div class="p-2">
+            <div id="{{divContainer}}" class="overflow-hidden"></div>
+        </div>
+    </div>
+</div>
