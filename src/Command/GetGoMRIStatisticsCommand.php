@@ -10,6 +10,7 @@ use App\Repository\LogActionItemRepository;
 use App\Util\FundingOrgFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -233,6 +234,8 @@ class GetGoMRIStatisticsCommand extends Command
      * @param  int   $year            The year to get top downloads from.
      * @param  int   $quarter         The quarter to get top downloads from.
      * @return array $topDownloadUdis An associative array of top UDIs with counts as value.
+     *
+     * @throws Exception If quarter value used other than (1, 2, 3, 4)
      */
     public function getTopDatasetsDownloadedByYearAndQuarter(int $year, int $quarter, int $count): array
     {
@@ -249,6 +252,8 @@ class GetGoMRIStatisticsCommand extends Command
         } elseif ($quarter == 4) {
             $from = "$year-10-01";
             $to = "$year-12-31";
+        } else {
+            throw new Exception("Bad quarter specified, use 1-4.");
         }
 
         $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
