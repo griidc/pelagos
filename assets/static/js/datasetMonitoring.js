@@ -6,10 +6,10 @@ $(() => {
     text: 'Show All Datasets',
   }, {
     id: 'only',
-    text: 'Only that have Datasets',
+    text: 'Show Groups With Datasets',
   }, {
     id: 'without',
-    text: 'Those Without Datasets',
+    text: 'Show Groups Without Datasets',
   }];
 
   var datasetFilter = datasetFilters[0].id;
@@ -98,6 +98,9 @@ $(() => {
             valueExpr: 'id',
             displayExpr: 'text',
             value: datasetFilters[0].id,
+            dropDownOptions: {
+              minWidth: '16rem',
+            },
             onValueChanged(e) {
               datasetFilter = e.value;
               filterGroups(datasetFilter);
