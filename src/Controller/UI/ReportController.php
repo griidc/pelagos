@@ -25,7 +25,7 @@ abstract class ReportController extends AbstractController
      * @param array       $data           Data rows.
      * @param string|NULL $customFileName Non-generic csv output filename if needed.
      *
-     * @return \StreamedResponse The csv response.
+     * @return StreamedResponse The csv response.
      */
     protected function writeCsvResponse(
         array $data,

@@ -353,11 +353,11 @@ class DatasetRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('d');
 
         $queryBuilder
-        ->select('d.id, d.udi, doi.doi, d.title, d.datasetStatus, rg.name as researchGroup')
+        ->select('d.udi, doi.doi, d.title, d.datasetStatus, rg.name as researchGroup, fc.name as fundingCycle, fo.name as fundingOrganization')
         ->join(DOI::class, 'doi', 'WITH', 'd.doi = doi.id')
         ->join(ResearchGroup::class, 'rg', 'WITH', 'd.researchGroup = rg.id')
         ->join(FundingCycle::class, 'fc', 'WITH', 'rg.fundingCycle = fc.id')
-        ->join(FundingOrganization::class, 'fo', 'WITH', 'fcg.fundingOrganization = fo.id')
+        ->join(FundingOrganization::class, 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
         ;
 
         if (!empty($fundingCycle)) {
@@ -380,8 +380,9 @@ class DatasetRepository extends ServiceEntityRepository
 
         return
             $queryBuilder
+            ->orderBy('d.udi', 'ASC')
             ->getQuery()
-            ->getArrayResult()
+            ->getResult()
         ;
     }
 }
