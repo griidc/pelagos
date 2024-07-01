@@ -124,8 +124,6 @@ class GetGoMRIStatisticsCommand extends Command
             $year = $yearQuarter['year'];
             $quarter = $yearQuarter['quarter'];
 
-            //$year = substr($timestamp, 0, 4);
-            //$this->quarterize($timestamp, $downloadsByQuarter);
             if (!array_key_exists($year, $downloadCountByYearAndQuarter)) {
                 $downloadCountByYearAndQuarter[$year][0] = 0;
                 $downloadCountByYearAndQuarter[$year][1] = 0;
@@ -133,6 +131,7 @@ class GetGoMRIStatisticsCommand extends Command
                 $downloadCountByYearAndQuarter[$year][3] = 0;
                 $downloadCountByYearAndQuarter[$year][4] = 0;
             }
+
             if (!array_key_exists($year, $downloadSizeByYearAndQuarter)) {
                 $downloadSizeByYearAndQuarter[$year][0] = 0;
                 $downloadSizeByYearAndQuarter[$year][1] = 0;
@@ -163,11 +162,19 @@ class GetGoMRIStatisticsCommand extends Command
         $downloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
         $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
 
-        for ($i = $firstYear; $i <= $lastYear; $i++) {
-            for ($j = 1; $j <= 4; $j++) {
-                $io->writeln($i . '/Q' . $j . ' Download Count: ' . $downloadCountByYearAndQuarter[$i][$j]
-                . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$i][$j]));
+        for ($year = $firstYear; $year <= $lastYear; $year++) {
+            for ($quarter = 1; $quarter <= 4; $quarter++) {
+                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter($year, $quarter, 10);
+                $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
+                . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
+                $popular = "Top: ";
+                foreach ($popularDownloads as $udi => $count) {
+                    $popular .= "$udi:$count, ";
+                }
+                $popular = substr($popular, 0, strlen($popular)-2);
+                $io->writeln($popular);
             }
+
             $io->newLine();
         }
 
@@ -218,6 +225,70 @@ class GetGoMRIStatisticsCommand extends Command
         }
 
         $quarterCounts[$year][$quarter - 1] += 1;
+    }
+
+    /**
+     * Returns array of UDIs of top downloads in date range.
+     *
+     * @param  int   $year            The year to get top downloads from.
+     * @param  int   $quarter         The quarter to get top downloads from.
+     * @return array $topDownloadUdis An associative array of top UDIs with counts as value.
+     */
+    public function getTopDatasetsDownloadedByYearAndQuarter(int $year, int $quarter, int $count): array
+    {
+        // Create DB compatible strings from DateTime objects.
+        if ($quarter == 1) {
+            $from = "$year-01-01";
+            $to = "$year-03-31";
+        } elseif ($quarter == 2) {
+            $from = "$year-04-01";
+            $to = "$year-06-30";
+        } elseif ($quarter == 3) {
+            $from = "$year-07-01";
+            $to = "$year-09-30";
+        } elseif ($quarter == 4) {
+            $from = "$year-10-01";
+            $to = "$year-12-31";
+        }
+
+        $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
+        ->select('count(log.subjectEntityId), log.subjectEntityId')
+        ->where('log.subjectEntityName = :entityName')
+        ->andWhere('log.actionName = :actionName')
+        ->andWhere('log.creationTimeStamp >= :from')
+        ->andWhere('log.creationTimeStamp <= :to')
+        ->orderBy('count(log.subjectEntityId)', 'DESC')
+        ->groupBy('log.subjectEntityId')
+        ->setMaxResults($count)
+        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
+        ->setParameter('actionName', 'File Download')
+        ->setParameter('from', $from)
+        ->setParameter('to', $to);
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->join(Dataset::class, 'dataset', Query\Expr\Join::WITH, 'log.subjectEntityId = dataset.id')
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+
+        $query = $qb->getQuery();
+        $results = $query->getResult();
+
+        $topDownloadUdis = [];
+        foreach ($results as $row) {
+            $count = $row[1];
+            $id = $row['subjectEntityId'];
+            $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
+            if ($dataset instanceof Dataset) {
+                $udi = $dataset->getUdi();
+                $topDownloadUdis[$udi]=$count;
+            }
+       }
+        return $topDownloadUdis;
     }
 
     /**
