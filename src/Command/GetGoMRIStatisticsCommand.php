@@ -171,7 +171,7 @@ class GetGoMRIStatisticsCommand extends Command
                 foreach ($popularDownloads as $udi => $count) {
                     $popular .= "$udi:$count, ";
                 }
-                $popular = substr($popular, 0, strlen($popular)-2);
+                $popular = substr($popular, 0, strlen($popular) - 2);
                 $io->writeln($popular);
             }
 
@@ -285,9 +285,9 @@ class GetGoMRIStatisticsCommand extends Command
             $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
             if ($dataset instanceof Dataset) {
                 $udi = $dataset->getUdi();
-                $topDownloadUdis[$udi]=$count;
+                $topDownloadUdis[$udi] = $count;
             }
-       }
+        }
         return $topDownloadUdis;
     }
 
