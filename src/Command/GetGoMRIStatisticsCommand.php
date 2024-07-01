@@ -28,6 +28,8 @@ class GetGoMRIStatisticsCommand extends Command
     public const HARVEST2019COUNT = 7100; // count
     public const HARVEST2019DATA = 3600; // GB
 
+    public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
+
     /**
      * Class constructor for dependency injection.
      */
@@ -165,7 +167,7 @@ class GetGoMRIStatisticsCommand extends Command
 
         for ($year = $firstYear; $year <= $lastYear; $year++) {
             for ($quarter = 1; $quarter <= 4; $quarter++) {
-                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter($year, $quarter, 10);
+                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter($year, $quarter, self::NUMBEROFTOPDOWNLOADSTOSHOW);
                 $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
                 . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
                 $popular = "Top: ";
