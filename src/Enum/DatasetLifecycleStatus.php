@@ -13,6 +13,9 @@ enum DatasetLifecycleStatus: string
     case IDENTIFIED = 'Identified';
     case NONE = 'None';
 
+    /**
+     * Returns the description of the Dataset Lifecycle Status.
+     */
     public function description(): string
     {
         return match ($this) {
@@ -24,14 +27,31 @@ enum DatasetLifecycleStatus: string
         };
     }
 
+    /**
+     * Returns the color for the Dataset Lifecycle Status.
+     */
     public function color(): string
     {
         return match ($this) {
-            DatasetLifecycleStatus::AVAILABLE => 'green',
-            DatasetLifecycleStatus::RESTRICTED => 'red',
-            DatasetLifecycleStatus::SUBMITTED => 'blue',
-            DatasetLifecycleStatus::IDENTIFIED => 'yellow',
+            DatasetLifecycleStatus::AVAILABLE => '#337133',
+            DatasetLifecycleStatus::RESTRICTED => '#C7434E',
+            DatasetLifecycleStatus::SUBMITTED => '#3A86FF',
+            DatasetLifecycleStatus::IDENTIFIED => '#FFC720',
             DatasetLifecycleStatus::NONE => 'black',
+        };
+    }
+
+    /**
+     * Returns the sort order for the Dataset Lifecycle Status.
+     */
+    public function sortOrder(): int
+    {
+        return match ($this) {
+            DatasetLifecycleStatus::AVAILABLE => 1,
+            DatasetLifecycleStatus::RESTRICTED => 2,
+            DatasetLifecycleStatus::SUBMITTED => 3,
+            DatasetLifecycleStatus::IDENTIFIED => 4,
+            DatasetLifecycleStatus::NONE => 0,
         };
     }
 }

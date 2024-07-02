@@ -4,6 +4,8 @@
         Datasets for: {{ fundingOrganization.name }}
     </span>
 
+    {% include 'DatasetMonitoring/v2/pobbles2.html.twig' with {'group': fundingOrganization} only %}
+
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
             {# DOT NOT SHOW #}
@@ -33,6 +35,8 @@
         Datasets for: {{ fundingCycle.name }}
     </span>
     {% endif %}
+
+    {% include 'DatasetMonitoring/v2/pobbles2.html.twig' with {'group': fundingCycle} only %}
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
         {% if datasetFilter == "only" and researchGroup.datasets|submittedDIFs|length == 0 %}
