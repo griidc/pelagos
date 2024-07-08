@@ -167,7 +167,7 @@ class GetGoMRIStatisticsCommand extends Command
 
         for ($year = $firstYear; $year <= $lastYear; $year++) {
             for ($quarter = 1; $quarter <= 4; $quarter++) {
-                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter($year, $quarter, self::NUMBEROFTOPDOWNLOADSTOSHOW);
+                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
                 $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
                 . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
                 $popular = "Top: ";
@@ -181,11 +181,23 @@ class GetGoMRIStatisticsCommand extends Command
             $io->newLine();
         }
 
+        // Show most popular downloads of all time.
+        $popularDownloadsOfAllTime = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
+        $allTimePopular = '';
+        $io->writeln('Top ' . self::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
+        foreach ($popularDownloadsOfAllTime as $udi => $count) {
+            $allTimePopular .= "$udi:$count, ";
+        }
+        $allTimePopular = substr($allTimePopular, 0, strlen($allTimePopular) - 2);
+        $io->writeln($allTimePopular);
+
+        // Add disclaimer if any datasets had been deleted. (This doesn't apply to gomri currently, but other FOs)
         if ($skipCount > 0) {
             $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
-        $io->note('Removed 7100 / 3600GB from 2019Q2 downloads - data harvest occurred');
+        // Add disclaimer for data cleanup for big data harvest event.
+        $io->note('Removed ' . self::HARVEST2019COUNT . ' / ' . self::HARVEST2019DATA . 'GB from 2019Q2 downloads - data harvest occurred');
 
         return 0;
     }
@@ -233,44 +245,58 @@ class GetGoMRIStatisticsCommand extends Command
     /**
      * Returns array of UDIs of top downloads in date range.
      *
-     * @param  int   $year            The year to get top downloads from.
-     * @param  int   $quarter         The quarter to get top downloads from.
-     * @return array $topDownloadUdis An associative array of top UDIs with counts as value.
+     * @param  int|null   $year            The year to get top downloads from.
+     * @param  int|null   $quarter         The quarter to get top downloads from.
+     * @return array      $topDownloadUdis An associative array of top UDIs with counts as value.
      *
      * @throws Exception If quarter value used other than (1, 2, 3, 4)
      */
-    public function getTopDatasetsDownloadedByYearAndQuarter(int $year, int $quarter, int $count): array
+    public function getTopDatasetsDownloadedByYearAndQuarter(int $count, int $year = null, int $quarter = null): array
     {
+        if ($quarter !== null && !(in_array($quarter, array(1, 2, 3, 4)))) {
+            throw new Exception("Bad quarter specified, use 1-4.");
+        }
+
+        if ($year === null && $quarter !== null) {
+            throw new Exception("If quarter is specified, year must be too.");
+        }
+
         // Create DB compatible strings from DateTime objects.
-        if ($quarter == 1) {
+        if ($year !== null && $quarter == 1) {
             $from = "$year-01-01";
             $to = "$year-03-31";
-        } elseif ($quarter == 2) {
+        } elseif ($year !== null && $quarter == 2) {
             $from = "$year-04-01";
             $to = "$year-06-30";
-        } elseif ($quarter == 3) {
+        } elseif ($year !== null && $quarter == 3) {
             $from = "$year-07-01";
             $to = "$year-09-30";
-        } elseif ($quarter == 4) {
+        } elseif ($year !== null && $quarter == 4) {
             $from = "$year-10-01";
             $to = "$year-12-31";
-        } else {
-            throw new Exception("Bad quarter specified, use 1-4.");
+        } elseif ($year !== null && $quarter === null) {
+            // entire year
+            $from = "$year-01-01";
+            $to = "$year-12-31";
         }
 
         $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
         ->select('count(log.subjectEntityId), log.subjectEntityId')
         ->where('log.subjectEntityName = :entityName')
         ->andWhere('log.actionName = :actionName')
-        ->andWhere('log.creationTimeStamp >= :from')
-        ->andWhere('log.creationTimeStamp <= :to')
         ->orderBy('count(log.subjectEntityId)', 'DESC')
         ->groupBy('log.subjectEntityId')
         ->setMaxResults($count)
         ->setParameter('entityName', 'Pelagos\Entity\Dataset')
-        ->setParameter('actionName', 'File Download')
-        ->setParameter('from', $from)
-        ->setParameter('to', $to);
+        ->setParameter('actionName', 'File Download');
+
+        if ($year !== null) {
+            $qb
+            ->andWhere('log.creationTimeStamp >= :from')
+            ->andWhere('log.creationTimeStamp <= :to')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to);
+        }
 
         if ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
