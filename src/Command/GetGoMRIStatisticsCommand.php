@@ -166,10 +166,14 @@ class GetGoMRIStatisticsCommand extends Command
         $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
 
         for ($year = $firstYear; $year <= $lastYear; $year++) {
+            $yearCountTotal = 0;
+            $yearSizeTotal = 0;
             for ($quarter = 1; $quarter <= 4; $quarter++) {
                 $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
                 $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
                 . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
+                $yearCountTotal += $downloadCountByYearAndQuarter[$year][$quarter];
+                $yearSizeTotal += $downloadSizeByYearAndQuarter[$year][$quarter];
                 $popular = "Top: ";
                 foreach ($popularDownloads as $udi => $count) {
                     $popular .= "$udi:$count, ";
@@ -177,6 +181,12 @@ class GetGoMRIStatisticsCommand extends Command
                 $popular = substr($popular, 0, strlen($popular) - 2);
                 $io->writeln($popular);
             }
+            $io->newLine();
+
+            $io->writeln('Totals for: ' . $year . ':');
+            $io->writeln('Downloads: ' . $yearCountTotal);
+            $io->writeln('Data Downloaded: ' . round($yearSizeTotal));
+            $io->writeln('--------------------------------------------------------------------------------');
 
             $io->newLine();
         }
