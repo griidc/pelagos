@@ -13,6 +13,7 @@ monolog:
         - rename_file
         - delete_folder
         - ip_filer
+        - dataset_deletion
 
     handlers:
         mailer:
@@ -86,6 +87,12 @@ monolog:
             path: "%kernel.logs_dir%/ip_filer.log"
             level: info
             channels: [ip_filer]
+
+        dataset_deletion:
+            type: stream
+            path: "%kernel.logs_dir%/dataset_deletion.log"
+            level: info
+            channels: [ dataset_deletion ]
 
 
 when@dev:
