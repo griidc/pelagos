@@ -165,6 +165,8 @@ class GetGoMRIStatisticsCommand extends Command
         $downloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
         $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
 
+        $totalDownloads = 0;
+        $totalDownloadSize = 0;
         for ($year = $firstYear; $year <= $lastYear; $year++) {
             $yearCountTotal = 0;
             $yearSizeTotal = 0;
@@ -173,7 +175,9 @@ class GetGoMRIStatisticsCommand extends Command
                 $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
                 . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
                 $yearCountTotal += $downloadCountByYearAndQuarter[$year][$quarter];
+                $totalDownloads += $downloadCountByYearAndQuarter[$year][$quarter];
                 $yearSizeTotal += $downloadSizeByYearAndQuarter[$year][$quarter];
+                $totalDownloadSize += $downloadSizeByYearAndQuarter[$year][$quarter];
                 $popular = "Top: ";
                 foreach ($popularDownloads as $udi => $count) {
                     $popular .= "$udi:$count, ";
@@ -184,12 +188,17 @@ class GetGoMRIStatisticsCommand extends Command
             $io->newLine();
 
             $io->writeln('Totals for: ' . $year . ':');
-            $io->writeln('Downloads: ' . $yearCountTotal);
-            $io->writeln('Data Downloaded: ' . round($yearSizeTotal));
+            $io->writeln('Download count: ' . $yearCountTotal);
+            $io->writeln('Data Downloaded: ' . round($yearSizeTotal) . ' GB');
             $io->writeln('--------------------------------------------------------------------------------');
 
             $io->newLine();
         }
+
+        // Total Download stats:
+        $io->writeln('All Time Stats:');
+        $io->writeln('Download count: ' . $totalDownloads);
+        $io->writeln('Data Downloaded: ' . round($totalDownloadSize) . ' GB');
 
         // Show most popular downloads of all time.
         $popularDownloadsOfAllTime = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
