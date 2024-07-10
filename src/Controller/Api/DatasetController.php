@@ -125,7 +125,7 @@ class DatasetController extends EntityController
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
             $mdappLogger->writeLog(
-                $this->getUser()->getUserName() .
+                $this->getUser()->getUserIdentifier() .
                 ' set Jira Link for udi: ' .
                 $this->entityHandler->get(Dataset::class, $id)->getUdi() .
                 ' to ' .
@@ -190,7 +190,7 @@ class DatasetController extends EntityController
                 'actionName' => 'Dataset Deletion',
                 'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
-                'payLoad' => array('UDI' => $udi, 'userId' => $this->getUser()->getUsername())
+                'payLoad' => array('UDI' => $udi, 'userId' => $this->getUser()->getUserIdentifier())
             ),
             'dataset_deletion'
         );
