@@ -183,17 +183,18 @@ class DatasetController extends EntityController
         $entityEventDispatcher->dispatch($dataset, 'delete_doi');
 
         $udi = $dataset->getUdi();
-        $this->handleDelete(Dataset::class, $id);
 
         $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'Dataset Deletion',
                 'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
-                'payLoad' => array('UDI' => $udi, 'userId' => $this->getUser()->getUserIdentifier())
+                'payLoad' => array('UDI' => $udi, 'userId' => $this->getUser()->getUserIdentifier()),
             ),
             'dataset_deletion'
         );
+
+        $this->handleDelete(Dataset::class, $id);
 
         if ($dif instanceof DIF) {
             $this->handleDelete(DIF::class, $dif->getId());
@@ -252,7 +253,7 @@ class DatasetController extends EntityController
         $data = [];
 
         foreach ($datasets as $dataset) {
-            $datasetArray = array (
+            $datasetArray = array(
                 "udi" => $dataset->getUdi(),
                 "numberOfFiles" => $dataset->getNumberOfFiles(),
                 "totalFileSize" => $dataset->getTotalFileSize(),
