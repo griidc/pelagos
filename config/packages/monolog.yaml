@@ -87,6 +87,7 @@ monolog:
             level: info
             channels: [ip_filer]
 
+
 when@dev:
     monolog:
         handlers:
