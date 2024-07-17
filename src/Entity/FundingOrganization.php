@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
 use App\Repository\FundingOrganizationRepository;
 use App\Validator\Constraints as CustomAssert;
@@ -279,6 +280,16 @@ class FundingOrganization extends Entity
             }
         }
         return $datasets;
+    }
+
+    /**
+     * Returns datasets by Dataset Lifecycle Status.
+     */
+    public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection
+    {
+        return $this->getDatasets()->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
+            return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
+        });
     }
 
     /**

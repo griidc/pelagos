@@ -33,10 +33,10 @@ enum DatasetLifecycleStatus: string
     public function color(): string
     {
         return match ($this) {
-            DatasetLifecycleStatus::AVAILABLE => '#09EC41',
-            DatasetLifecycleStatus::RESTRICTED => '#C7434E',
-            DatasetLifecycleStatus::SUBMITTED => '#3A86FF',
-            DatasetLifecycleStatus::IDENTIFIED => '#FFC720',
+            DatasetLifecycleStatus::AVAILABLE => '#28a745',
+            DatasetLifecycleStatus::RESTRICTED => '#dc3545',
+            DatasetLifecycleStatus::SUBMITTED => '#007bff',
+            DatasetLifecycleStatus::IDENTIFIED => '#ffc107',
             DatasetLifecycleStatus::NONE => 'black',
         };
     }
