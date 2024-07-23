@@ -2,7 +2,7 @@
 
 {% if fundingOrganization %}
     <span class="p-2 font-bold block text-2xl">
-        Datasets for: {{ fundingOrganization.name }}
+        {{ fundingOrganization.name }} Datasets
         <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) }}">
             <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
         </a>
@@ -34,7 +34,7 @@
 {% if fundingCycle %}
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
     <span class="p-2 font-bold block text-2xl">
-        Datasets for: {{ fundingCycle.name }}
+        {{ fundingCycle.name }} Datasets
         <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
             <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
         </a>
@@ -56,7 +56,7 @@
 
 {% if researchGroup %}
     <span class="p-2 font-bold block text-2xl">
-        Datasets for: {{ researchGroup.name }}
+        {{ researchGroup.name }} Datasets
         <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
             <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
         </a>
