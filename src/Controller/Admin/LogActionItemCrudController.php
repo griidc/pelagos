@@ -61,5 +61,4 @@ class LogActionItemCrudController extends AbstractCrudController
             ->setDefaultSort(['creationTimeStamp' => 'DESC'])
             ->showEntityActionsInlined();
     }
-
 }
