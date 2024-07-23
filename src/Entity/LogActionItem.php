@@ -196,4 +196,56 @@ class LogActionItem extends Entity
     {
         return $this->payLoad;
     }
+
+    /**
+     * Virtual function that returns a stringified payload, making sense per json type.
+     *
+     */
+    public function getPayloadDetails(): string
+    {
+        $json = $this->payLoad;
+        $action = $this->getActionName();
+
+        if ($action === 'New Search') {
+            $userType = $json['clientInfo']['userType'];
+            $userId = $json['clientInfo']['userId'];
+            $terms = $json['searchQueryParams']['inputFormTerms']['searchTerms'];
+            $subsite = $json['subSite'];
+            $text = "The $userType user $userId searched for \"$terms\" on subsite $subsite.";
+        } elseif ($action === 'Search') {
+            $terms = $json['filters']['textFilter'];
+            $geo = $json['filters']['geoFilter'];
+            $text = "Data discovery search with text \"$terms\"";
+            if (!empty($geo)) {
+                $text .= " and used a map search";
+            }
+            $text .= '.';
+        } elseif ($action === 'Mark as Remotely Hosted') {
+            $userId = $json['userId'];
+            $submissionId = $json['datasetSubmissionId'];
+            $text = "User $userId set remotely hosted on submission id $submissionId";
+        } elseif ($action === 'File Download') {
+            $userType = $json['userType'];
+            $userId = $json['userId'];
+            $text = "The $userType user $userId downloaded an archive.";
+        } elseif ($action === 'Single File Download') {
+            $userType = $json['userType'];
+            $userId = $json['userId'];
+            $filename = $json['filename'];
+            $text = "The $userType user $userId downloaded the single file $filename.";
+        } elseif ($action === 'Dataset Deletion') {
+            $udi = $json['UDI'];
+            $user = $json['userId'];
+            $text = "$user deleted dataset $udi.";
+        } elseif ($action === 'Restriction Change') {
+            $userId = $json['userId'];
+            $from = $json['previousRestriction'];
+            $to = $json['newRestriction'];
+            $text = "$userId changed dataset restriction flag from $from to $to.";
+        } else {
+            $text = 'Warning: Unknown JSON. Extend getPayloadDetails method in LogActionItemCrudController class.';
+        }
+
+        return $text;
+    }
 }

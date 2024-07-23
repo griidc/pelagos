@@ -45,7 +45,9 @@ class LogActionItemCrudController extends AbstractCrudController
             ->onlyOnIndex(),
             TextField::new('actionName', 'What Happened'),
             TextField::new('subjectEntityName', 'Happened To'),
+            IdField::new('subjectEntityId', 'Which One'),
             DateTimeField::new('creationTimeStamp', 'Happened When'),
+            TextField::new('payloadDetails'),
         ];
     }
 
@@ -58,7 +60,6 @@ class LogActionItemCrudController extends AbstractCrudController
     {
         return parent::configureCrud($crud)
             ->setPageTitle(Crud::PAGE_INDEX, 'Logged Actions')
-            ->setDefaultSort(['creationTimeStamp' => 'DESC'])
-            ->showEntityActionsInlined();
+            ->setDefaultSort(['creationTimeStamp' => 'DESC']);
     }
 }
