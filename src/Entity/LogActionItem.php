@@ -227,12 +227,24 @@ class LogActionItem extends Entity
         } elseif ($action === 'File Download') {
             $userType = $json['userType'];
             $userId = $json['userId'];
-            $text = "The $userType user $userId downloaded an archive.";
+            $udi = $json['udi'] ?? null;
+            $text = "The $userType user $userId downloaded a complete zip";
+            if (!empty($udi)) {
+                $text .= " of dataset $udi";
+            } else {
+                $text .= '.';
+            }
         } elseif ($action === 'Single File Download') {
             $userType = $json['userType'];
             $userId = $json['userId'];
             $filename = $json['filename'];
-            $text = "The $userType user $userId downloaded the single file $filename.";
+            $udi = $json['udi'] ?? null;
+             $text = "The $userType user $userId downloaded the single file $filename";
+            if (!empty($udi)) {
+                $text .= " from dataset $udi";
+            } else {
+                $text .= '.';
+            }
         } elseif ($action === 'Dataset Deletion') {
             $udi = $json['UDI'];
             $user = $json['userId'];
