@@ -7,33 +7,46 @@
     <table>
         <tr>
             <td>
+            {% if showGraphics|default('true') == 'true' %}
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                     <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE').color  }}" opacity="1">
                     </rect>
                 </svg>
             </td>
-            <td><b>Available ({{acceptedDatasets}})</b></td>
             <td>
+            {% endif %}
+            <b>Available: {{acceptedDatasets}}</b></td>
+
+            <td class="pl-4">
+            {% if showGraphics|default('true') == 'true' %}
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                     <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED').color  }}" opacity="1">
                     </rect>
                 </svg>
             </td>
-            <td><b>Restricted ({{restrictedDatasets}})</b></td>
             <td>
+            {% endif %}
+            <b>Restricted: {{restrictedDatasets}}</b></td>
+            <td class="pl-4">
+            {% if showGraphics|default('true') == 'true' %}
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                     <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED').color  }}" opacity="1">
                     </rect>
                 </svg>
             </td>
-            <td><b>Submitted ({{submittedDatasets}})</b></td>
             <td>
+            {% endif %}
+            <b>Submitted: {{submittedDatasets}}</b></td>
+            <td class="pl-4">
+            {% if showGraphics|default('true') == 'true' %}
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                     <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED').color  }}" opacity="1">
                     </rect>
                 </svg>
             </td>
-            <td><b>Identified ({{identifiedDatasets}})</b></td>
+            <td>
+            {% endif %}
+            <b>Identified: {{identifiedDatasets}}</b></td>
         </tr>
     </table>
 </div>

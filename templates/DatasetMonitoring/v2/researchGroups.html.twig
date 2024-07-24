@@ -81,18 +81,18 @@
 </script>
 
 <div class="p-2 m-0">
-    <div class="shadow-lg border rounded">
+    <div class="shadow-lg border rounded-lg">
         <div class="block">
-            <span class="p-2 text-white bg-[#2E3E90] font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>
+            <span class="p-2 text-white bg-[#3975B7] font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>
         </div>
 
         {% if not fundingCycle|default %}
-        <div class="block px-2">
+        <div class="block px-2 py-1">
             <span class="font-bold">Funding Source:</span> {{ researchGroup.fundingCycle.name }}
         </div>
         {% endif %}
 
-        <div class="block px-2">
+        <div class="block px-2 py-1">
             <span class="font-bold">Leadership:</span>
             {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
             {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
@@ -101,15 +101,15 @@
             {% endfor %}
         </div>
 
-        <div class="block px-2">
+        <div class="block px-2 py-1">
             <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
         </div>
 
-        <div class="px-2">
+        <div class="px-2 py-1">
             {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': researchGroup} only %}
         </div>
 
-        <div class="px-2">
+        <div class="px-2 py-1">
             {% include 'DatasetMonitoring/v2/pobbles2.html.twig' with {'group': researchGroup} only %}
         </div>
 
