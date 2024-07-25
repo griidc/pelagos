@@ -207,27 +207,27 @@ class LogActionItem extends Entity
         $action = $this->getActionName();
 
         if ($action === 'New Search') {
-            $userType = $json['clientInfo']['userType'];
-            $userId = $json['clientInfo']['userId'];
-            $terms = $json['searchQueryParams']['inputFormTerms']['searchTerms'];
-            $subsite = $json['subSite'];
+            $userType = $json['clientInfo']['userType'] ?? '';
+            $userId = $json['clientInfo']['userId'] ?? '';
+            $terms = $json['searchQueryParams']['inputFormTerms']['searchTerms'] ?? '';
+            $subsite = $json['subSite'] ?? '';
             $text = "The $userType user $userId searched for \"$terms\" on subsite $subsite.";
         } elseif ($action === 'Search') {
-            $terms = $json['filters']['textFilter'];
-            $geo = $json['filters']['geoFilter'];
+            $terms = $json['filters']['textFilter'] ?? '';
+            $geo = $json['filters']['geoFilter'] ?? '';
             $text = "Data discovery search with text \"$terms\"";
             if (!empty($geo)) {
                 $text .= " and used a map search";
             }
             $text .= '.';
         } elseif ($action === 'Mark as Remotely Hosted') {
-            $userId = $json['userId'];
-            $submissionId = $json['datasetSubmissionId'];
+            $userId = $json['userId'] ?? '';
+            $submissionId = $json['datasetSubmissionId'] ?? '';
             $text = "User $userId set remotely hosted on submission id $submissionId";
         } elseif ($action === 'File Download') {
-            $userType = $json['userType'];
-            $userId = $json['userId'];
-            $udi = $json['udi'] ?? null;
+            $userType = $json['userType'] ?? '';
+            $userId = $json['userId'] ?? '';
+            $udi = $json['udi'] ?? '';
             $text = "The $userType user $userId downloaded a complete zip";
             if (!empty($udi)) {
                 $text .= " of dataset $udi";
@@ -235,10 +235,10 @@ class LogActionItem extends Entity
                 $text .= '.';
             }
         } elseif ($action === 'Single File Download') {
-            $userType = $json['userType'];
-            $userId = $json['userId'];
-            $filename = $json['filename'];
-            $udi = $json['udi'] ?? null;
+            $userType = $json['userType'] ?? '';
+            $userId = $json['userId'] ?? '';
+            $filename = $json['filename'] ?? '';
+            $udi = $json['udi'] ?? '';
              $text = "The $userType user $userId downloaded the single file $filename";
             if (!empty($udi)) {
                 $text .= " from dataset $udi";
@@ -246,13 +246,13 @@ class LogActionItem extends Entity
                 $text .= '.';
             }
         } elseif ($action === 'Dataset Deletion') {
-            $udi = $json['UDI'];
-            $user = $json['userId'];
+            $udi = $json['UDI'] ?? '';
+            $user = $json['userId'] ?? '';
             $text = "$user deleted dataset $udi.";
         } elseif ($action === 'Restriction Change') {
-            $userId = $json['userId'];
-            $from = $json['previousRestriction'];
-            $to = $json['newRestriction'];
+            $userId = $json['userId'] ?? '';
+            $from = $json['previousRestriction'] ?? '';
+            $to = $json['newRestriction'] ?? '';
             $text = "$userId changed dataset restriction flag from $from to $to.";
         } else {
             $text = 'Warning: Unknown JSON. Extend getPayloadDetails method in LogActionItemCrudController class.';
