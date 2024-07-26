@@ -11,6 +11,7 @@ use App\Repository\DatasetRepository;
 use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\ResearchGroupRepository;
+use Eckinox\PdfBundle\Pdf\PdfGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,24 +105,27 @@ class DatasetMonitoringController extends AbstractController
         Request $request,
         FundingOrganizationRepository $fundingOrganizationRepository,
         FundingCycleRepository $fundingCycleRepository,
-        ResearchGroupRepository $researchGroupRepository
+        ResearchGroupRepository $researchGroupRepository,
+        PdfGeneratorInterface $pdfGenerator
     ): Response {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
         $datasetFilter = $request->query->get('datasetFilter');
+        $makePdf = $request->query->get('makePdf');
 
         $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
         $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
         $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
 
         return $this->render(
-            'DatasetMonitoring/v2/datasets.html.twig',
+            'DatasetMonitoring/v2/pdf.html.twig',
             [
                 'fundingOrganization' => $fundingOrganization,
                 'fundingCycle' => $fundingCycle,
                 'researchGroup' => $researchGroup,
                 'datasetFilter' => $datasetFilter,
+                'makePdf' => true,
             ]
         );
     }

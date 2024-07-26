@@ -7,6 +7,10 @@
 {% set identifiedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED'))|length %}
 
 <script>
+{% if makePdf %}
+// Only execute when document is loaded.
+document.addEventListener("DOMContentLoaded", () => {
+{% endif %}
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
@@ -185,6 +189,9 @@
             height: 105,
         }
     }).dxChart("instance");
+{% if makePdf %}
+});
+{% endif %}
 </script>
 
 <div class="p-2 m-0">

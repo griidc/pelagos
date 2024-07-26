@@ -1,0 +1,55 @@
+{% extends "base.html.twig" %}
+{% block title %}Dataset Monitoring{% endblock title %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.light.css" rel="stylesheet">
+    <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+      .dx-widget {
+        font-size: 1rem!important;
+      }
+
+      .dx-treeview li {
+        margin-bottom: revert;
+        line-height: 1rem;
+        font-size: 1rem!important;
+      }
+
+      input.dx-texteditor-input:focus-visible {
+        outline-style: none!important;
+      }
+
+      input[type='text'].dx-texteditor-input:focus {
+        box-shadow: none!important;
+      }
+
+      .dsmonitoringcols {
+        white-space: nowrap;
+      }
+
+      .dx-treelist [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+      .dx-datagrid [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+    </style>
+{% endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/js/dx.all.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/datasetMonitoring.js') }}"></script>
+
+{% endblock javascripts %}
+
+{% block body %}
+    {% include 'DatasetMonitoring/v2/datasets.html.twig' %}
+{% endblock %}
