@@ -199,7 +199,6 @@ class LogActionItem extends Entity
 
     /**
      * Virtual function that returns a stringified payload, making sense per json type.
-     *
      */
     public function getPayloadDetails(): string
     {
