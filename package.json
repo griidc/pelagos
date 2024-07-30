@@ -43,6 +43,7 @@
         "axios": "^1.7.2",
         "bootstrap": "^4.6.2",
         "bootstrap-vue": "^2.23.1",
+        "caniuse-lite": "^1.0.30001644",
         "clsx": "^2.1.1",
         "devextreme": "^21.2.15",
         "devextreme-vue": "^21.2.15",
