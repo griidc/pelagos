@@ -7,6 +7,7 @@ use App\Event\LogActionItemEventDispatcher;
 use App\Util\Search;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -54,8 +55,10 @@ class SearchPageController extends AbstractController
      *
      * @return Response
      */
-    public function defaultAction()
+    public function defaultAction(RequestStack $requestStack)
     {
+        $session = $requestStack->getSession();
+        $session->set('last_visit', new \DateTime());
         return $this->render('Search/index.html.twig');
     }
 

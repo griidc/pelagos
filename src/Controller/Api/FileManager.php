@@ -21,7 +21,9 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -278,8 +280,10 @@ class FileManager extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function downloadFile(File $file, Datastore $datastore, Request $request, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
+    public function downloadFile(File $file, Datastore $datastore, Request $request, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack): Response
     {
+        $session = $requestStack->getSession()->getId() ?? '';
+
         if (
             $file->getFileset()->getDatasetSubmission()->getDataset()->getAvailabilityStatus() !==
             DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
@@ -306,7 +310,7 @@ class FileManager extends AbstractFOSRestController
                 'actionName' => 'Single File Download',
                 'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $file->getFileset()->getDatasetSubmission()->getDataset()->getId(),
-                'payLoad' => array('userType' => $type, 'userId' => $typeId, 'filename' => $file->getFilePathName()),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId, 'filename' => $file->getFilePathName(), 'udi' => $file->getFileset()->getDatasetSubmission()->getDataset()->getUdi(), 'sessionId' => $session),
                 ),
                 'single_file_download'
             );
@@ -347,7 +351,8 @@ class FileManager extends AbstractFOSRestController
         LogActionItemEventDispatcher $logActionItemEventDispatcher,
         ZipFiles $zipFiles,
         Request $request,
-        Datastore $datastore
+        Datastore $datastore,
+        RequestStack $requestStack,
     ): Response {
         $dataset = $datasetSubmission->getDataset();
         $udi = $dataset->getUdi();
@@ -362,12 +367,14 @@ class FileManager extends AbstractFOSRestController
                 $type = 'Non-GoMRI';
                 $typeId = 'anonymous';
             }
+
+            $session = $requestStack->getSession()->getId();
             $logActionItemEventDispatcher->dispatch(
                 array(
                     'actionName' => 'File Download',
                     'subjectEntityName' => 'Pelagos\Entity\Dataset',
                     'subjectEntityId' => $dataset->getId(),
-                    'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                    'payLoad' => array('userType' => $type, 'userId' => $typeId, 'udi' => $dataset->getUdi(), 'sessionId' => $session),
                 ),
                 'file_download'
             );
