@@ -6,6 +6,9 @@
         <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) }}">
             <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
         </a>
+        <a href="{{ url('app_api_dataset_monitoring_datasets', { fundingOrganization : fundingOrganization.id, makePdf: true}) }}">
+            <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
+        </a>
     </span>
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
@@ -38,6 +41,9 @@
         <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
             <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
         </a>
+        <a href="{{ url('app_api_dataset_monitoring_datasets', { fundingCycle : fundingCycle.id, makePdf: true}) }}">
+            <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
+        </a>
     </span>
     {% endif %}
 
@@ -59,6 +65,9 @@
         Datasets for: {{ researchGroup.name }}
         <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
             <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
+        </a>
+        <a href="{{ url('app_api_dataset_monitoring_datasets', { researchGroup : researchGroup.id, makePdf: true}) }}">
+            <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
         </a>
     </span>
 

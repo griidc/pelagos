@@ -112,20 +112,38 @@ class DatasetMonitoringController extends AbstractController
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
         $datasetFilter = $request->query->get('datasetFilter');
-        $makePdf = $request->query->get('makePdf');
-
+        $makePdf = (bool) $request->query->get('makePdf');
         $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
         $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
         $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
 
+        if ($makePdf) {
+            $pdf = $pdfGenerator->renderPdf(
+                'DatasetMonitoring/v2/pdf.html.twig',
+                [
+                    'fundingOrganization' => $fundingOrganization,
+                    'fundingCycle' => $fundingCycle,
+                    'researchGroup' => $researchGroup,
+                    'datasetFilter' => $datasetFilter,
+                    'makePdf' => $makePdf,
+                ]
+            );
+
+            $pdfFilename = 'DatasetMonitoringReport-' .
+            (new \DateTime('now'))->format('Y-m-d') .
+            '.pdf';
+
+            return $pdf->output($pdfFilename);
+        }
+
         return $this->render(
-            'DatasetMonitoring/v2/pdf.html.twig',
+            'DatasetMonitoring/v2/datasets.html.twig',
             [
                 'fundingOrganization' => $fundingOrganization,
                 'fundingCycle' => $fundingCycle,
                 'researchGroup' => $researchGroup,
                 'datasetFilter' => $datasetFilter,
-                'makePdf' => true,
+                'makePdf' => $makePdf,
             ]
         );
     }
