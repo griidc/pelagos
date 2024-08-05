@@ -1,0 +1,18 @@
+<div class="p-2 m-0">
+    <div class="shadow-lg border rounded">
+        <h2 class="block">
+            <span class="p-2 text-white bg-[#2E3E90] block">
+                {{ fundingOrganization.name }} Datasets
+            </span>
+            <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) }}">
+            <div class="float-end px-2">
+                <i class="fa-solid fa-file-csv" style="color: green;"></i>
+            </div>
+        </a>
+        </h2>
+
+        <div class="px-2">
+            {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, 'showGraphics': 'false'} only %}
+        </div>
+    </div>
+</div>
