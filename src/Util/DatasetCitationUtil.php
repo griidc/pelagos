@@ -33,7 +33,7 @@ class DatasetCitationUtil
         $citationString .= (!empty($author) ? "$author. " : '');
         $citationString .= (!empty($year) ? "$year. " : '');
         $citationString .= "$title. ";
-        $citationString .= 'Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC), Harte Research Institute, Texas A&M University–Corpus Christi. ';
+        $citationString .= 'Distributed by: GRIIDC, Harte Research Institute, Texas A&M University–Corpus Christi. ';
 
         if ($doi instanceof DOI) {
             $citationString .= 'doi:' . $doi->getDoi();
