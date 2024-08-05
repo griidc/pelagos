@@ -1,15 +1,7 @@
 <div id="tooltipContainer"></div>
 
 {% if fundingOrganization %}
-    <span class="p-2 font-bold block text-2xl">
-        Datasets for: {{ fundingOrganization.name }}
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) }}">
-            <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
-        </a>
-        <a href="{{ url('app_api_dataset_monitoring_datasets', { fundingOrganization : fundingOrganization.id, makePdf: true}) }}">
-            <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
-        </a>
-    </span>
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
@@ -35,17 +27,25 @@
 {% endif %}
 
 {% if fundingCycle %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization} only %}
+
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
     <span class="p-2 font-bold block text-2xl">
-        Datasets for: {{ fundingCycle.name }}
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
-            <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
-        </a>
-        <a href="{{ url('app_api_dataset_monitoring_datasets', { fundingCycle : fundingCycle.id, makePdf: true}) }}">
-            <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
-        </a>
+        {{ fundingCycle.name }} Datasets
+        <div class="float-end px-2">
+            <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
+                <i class="fa-solid fa-file-csv" style="color: green;"></i>
+            </a>
+            <a href="{{ url('app_api_dataset_monitoring_datasets', { fundingCycle : fundingCycle.id, makePdf: true}) }}">
+                <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
+            </a>
+        </div>
     </span>
     {% endif %}
+
+    <div class="px-2">
+        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, 'showGraphics': 'false'} only %}
+    </div>
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
         {% if datasetFilter == "only" and researchGroup.datasets|submittedDIFs|length == 0 %}
@@ -61,14 +61,18 @@
 {% endif %}
 
 {% if researchGroup %}
-    <span class="p-2 font-bold block text-2xl">
-        Datasets for: {{ researchGroup.name }}
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
-            <i class="fa-solid fa-file-csv" style="color: green; margin-left:1em"></i>
-        </a>
-        <a href="{{ url('app_api_dataset_monitoring_datasets', { researchGroup : researchGroup.id, makePdf: true}) }}">
-            <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
-        </a>
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization} only %}
+
+    <span class="p-3 font-bold block text-2xl">
+        {{ researchGroup.name }} Datasets
+        <div class="float-end px-2">
+            <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
+                <i class="fa-solid fa-file-csv" style="color: green;"></i>
+            </a>
+            <a href="{{ url('app_api_dataset_monitoring_datasets', { researchGroup : researchGroup.id, makePdf: true}) }}">
+                <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
+            </a>
+        </div>
     </span>
 
     {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}

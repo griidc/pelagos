@@ -1,10 +1,4 @@
 {% set divContainer = "gridContainer#{random()}" %}
-{% set divChartContainer = "chartContainer#{random()}" %}
-
-{% set acceptedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE'))|length %}
-{% set restrictedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED'))|length %}
-{% set submittedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED'))|length %}
-{% set identifiedDatasets = researchGroup.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED'))|length %}
 
 <script>
 {% if makePdf %}
@@ -88,125 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
             window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         }
     }).dxDataGrid("instance");
-
-    $('#{{divChartContainer}}').dxChart({
-        dataSource: [
-        {
-            "arg": "Datasets",
-            "done": {{ acceptedDatasets }},
-            "not": {{ submittedDatasets }},
-            "limbo": {{ identifiedDatasets }},
-            "restricted": {{ restrictedDatasets }},
-        },
-        ],
-        animation: true,
-        legend: {
-            visible: false,
-            visible: true,
-            itemTextPosition: "right",
-            horizontalAlignment: "center",
-            verticalAlignment: "top",
-            paddingLeftRight: 0,
-            paddingTopBottom: 0,
-            margin: 0,
-            font: {
-                weight: 700,
-                color: "black",
-                family: baseFontFamily,
-                size: 16,
-            },
-        },
-        argumentAxis: [{
-            visible: false,
-            label: {
-                visible: false,
-            }
-        }],
-        valueAxis : [{
-            name: "Datasets",
-            visualRange: {
-                startValue: 0,
-                endValue: 200
-            },
-            visible: false,
-            grid: {
-                visible: false,
-            },
-            label: {
-                visible: false,
-            },
-            tick: {
-                visible: false,
-            },
-        }],
-        series: [
-            {
-                valueField: "done",
-                name: "Available",
-                name: "Available ({{acceptedDatasets}})",
-            },
-            {
-                valueField: 'not',
-                name: 'Submitted',
-                name: 'Submitted ({{submittedDatasets}})',
-            },
-            {
-                valueField: 'limbo',
-                name: 'Identified',
-                name: 'Identified ({{identifiedDatasets}})',
-            },
-            {
-                valueField: 'restricted',
-                name: 'Restricted',
-                name: 'Restricted ({{restrictedDatasets}})',
-            },
-        ],
-        commonSeriesSettings: {
-            type: "stackedBar",
-            barWidth: 40,
-            border: {
-                visible: false,
-                color: "black",
-                dashStyle: "solid",
-                width: 1,
-            },
-            label: {
-                visible: false,
-                rotationAngle: 90,
-                connector: { visible: true },
-                customizeText: function (dataInfo) {
-                    if (dataInfo.value > 0) {
-                        return dataInfo.seriesName + ': ' + dataInfo.value;
-                    } else {
-                        return false;
-                    }
-
-                }
-            }
-        },
-        rotated : true,
-        size : {
-            height: 105,
-        }
-    }).dxChart("instance");
 {% if makePdf %}
 });
 {% endif %}
 </script>
 
 <div class="p-2 m-0" style="page-break-inside: auto">
-    <div class="shadow-lg border rounded">
+    <div class="shadow-lg border rounded-lg">
         <div class="block">
-            <span class="p-2 text-white bg-[#2E3E90] font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>
+            <span class="p-2 text-white bg-[#3975B7] font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>
         </div>
 
         {% if not fundingCycle|default %}
-        <div class="block px-2">
+        <div class="block px-2 py-1">
             <span class="font-bold">Funding Source:</span> {{ researchGroup.fundingCycle.name }}
         </div>
         {% endif %}
 
-        <div class="block px-2">
+        <div class="block px-2 py-1">
             <span class="font-bold">Leadership:</span>
             {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
             {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
@@ -215,12 +108,16 @@ document.addEventListener("DOMContentLoaded", () => {
             {% endfor %}
         </div>
 
-        <div class="block px-2">
+        <div class="block px-2 py-1">
             <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
         </div>
 
-        <div class="h-min px-2">
-            <div id="{{divChartContainer}}"></div>
+        <div class="px-2 py-1">
+            {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': researchGroup} only %}
+        </div>
+
+        <div class="px-2 py-1">
+            {% include 'DatasetMonitoring/v2/pobbles2.html.twig' with {'group': researchGroup} only %}
         </div>
 
         <div class="p-2">
