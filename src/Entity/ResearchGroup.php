@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\DatasetLifecycleStatus;
 use App\Twig\Extensions as TwigExtentions;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -834,5 +835,15 @@ class ResearchGroup extends Entity
             }
         }
         return $projectDirectors;
+    }
+
+    /**
+     * Returns datasets by Dataset Lifecycle Status.
+     */
+    public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection
+    {
+        return $this->datasets->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
+            return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
+        });
     }
 }

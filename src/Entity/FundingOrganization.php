@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
 use App\Repository\FundingOrganizationRepository;
 use App\Validator\Constraints as CustomAssert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -192,7 +195,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's Funding Cycle's.
      *
-     * @var FundingCycle
+     * @var FundingCycle[]
      *
      * @access protected
      *
@@ -255,11 +258,38 @@ class FundingOrganization extends Entity
     /**
      * Getter for fundingCycles.
      *
-     * @return string string containing fundingCycles of funding organization
+     * @return FundingCycle[] containing fundingCycles of funding organization
      */
     public function getFundingCycles()
     {
         return $this->fundingCycles;
+    }
+
+    /**
+     * Return a collection of all Datasets for the Funding Organization.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = new ArrayCollection();
+        foreach ($this->getFundingCycles() as $fundingCycle) {
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                /** @var ResearchGroup $researchGroup */
+                foreach ($researchGroup->getDatasets() as $dataset) {
+                    $datasets->add($dataset);
+                }
+            }
+        }
+        return $datasets;
+    }
+
+    /**
+     * Returns datasets by Dataset Lifecycle Status.
+     */
+    public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection
+    {
+        return $this->getDatasets()->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
+            return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
+        });
     }
 
     /**

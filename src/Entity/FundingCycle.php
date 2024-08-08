@@ -2,12 +2,15 @@
 
 namespace App\Entity;
 
+use App\Enum\DatasetLifecycleStatus;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use App\Exception\NotDeletableException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Entity class to represent a Funding Cycle.
@@ -342,6 +345,31 @@ class FundingCycle extends Entity
     public function getResearchGroups()
     {
         return $this->researchGroups;
+    }
+
+    /**
+     * Return a collection of all Datasets for the Funding Cycle.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = new ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            /** @var ResearchGroup $researchGroup */
+            foreach ($researchGroup->getDatasets() as $dataset) {
+                $datasets->add($dataset);
+            }
+        }
+        return $datasets;
+    }
+
+    /**
+     * Returns datasets by Dataset Lifecycle Status.
+     */
+    public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection
+    {
+        return $this->getDatasets()->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
+            return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
+        });
     }
 
     /**

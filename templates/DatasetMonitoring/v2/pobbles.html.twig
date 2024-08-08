@@ -1,0 +1,8 @@
+{% for dataset in researchGroup.datasets|submittedDIFs %}
+<div style="display: inline-block;">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="10" height="40">
+        <rect width="10" height="40" fill="{{dataset.getDatasetLifecycleStatus.color}}" />
+    </svg>
+</div>
+{% endfor %}
+

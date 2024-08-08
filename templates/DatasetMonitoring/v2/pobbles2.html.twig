@@ -1,0 +1,16 @@
+<table>
+    <tbody>
+        <tr style="height: 12px">
+
+        {% for dataset in group.datasets|submittedDIFs|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
+            <td style="width: 12px; background-color:{{dataset.getDatasetLifecycleStatus.color}}"></td>
+
+            {% if (loop.index % 80) == 0 %}
+        </tr>
+        <tr style="height: 12px">
+            {% endif %}
+
+        {% endfor %}
+        </tr>
+    </tbody>
+</table>
