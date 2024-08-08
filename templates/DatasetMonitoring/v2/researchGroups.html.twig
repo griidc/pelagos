@@ -1,6 +1,10 @@
 {% set divContainer = "gridContainer#{random()}" %}
 
 <script>
+{% if makePdf %}
+// Only execute when document is loaded.
+document.addEventListener("DOMContentLoaded", () => {
+{% endif %}
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
@@ -78,9 +82,12 @@
             window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         }
     }).dxDataGrid("instance");
+{% if makePdf %}
+});
+{% endif %}
 </script>
 
-<div class="p-2 m-0">
+<div class="p-2 m-0" style="page-break-inside: auto">
     <div class="shadow-lg border rounded-lg">
         <div class="block">
             <span class="p-2 text-white bg-[#3975B7] font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>

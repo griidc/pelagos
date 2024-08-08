@@ -1,7 +1,6 @@
 <div id="tooltipContainer"></div>
 
 {% if fundingOrganization %}
-
     {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
@@ -33,11 +32,14 @@
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
     <span class="p-2 font-bold block text-2xl">
         {{ fundingCycle.name }} Datasets
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
-            <div class="float-end px-2">
+        <div class="float-end px-2">
+            <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
                 <i class="fa-solid fa-file-csv" style="color: green;"></i>
-            </div>
-        </a>
+            </a>
+            <a href="{{ url('app_api_dataset_monitoring_datasets', { fundingCycle : fundingCycle.id, makePdf: true}) }}">
+                <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
+            </a>
+        </div>
     </span>
     {% endif %}
 
@@ -63,11 +65,14 @@
 
     <span class="p-3 font-bold block text-2xl">
         {{ researchGroup.name }} Datasets
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
-            <div class="float-end px-2">
+        <div class="float-end px-2">
+            <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
                 <i class="fa-solid fa-file-csv" style="color: green;"></i>
-            </div>
-        </a>
+            </a>
+            <a href="{{ url('app_api_dataset_monitoring_datasets', { researchGroup : researchGroup.id, makePdf: true}) }}">
+                <i class="fa-solid fa-file-pdf" style="color: red; margin-left:1em"></i>
+            </a>
+        </div>
     </span>
 
     {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
