@@ -10,6 +10,7 @@ use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Event\EntityEventDispatcher;
+use App\Event\LogActionItemEventDispatcher;
 use App\Form\DatasetType;
 use App\Message\DeleteFile;
 use App\Message\DeleteDir;
@@ -124,7 +125,7 @@ class DatasetController extends EntityController
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
             $mdappLogger->writeLog(
-                $this->getUser()->getUserName() .
+                $this->getUser()->getUserIdentifier() .
                 ' set Jira Link for udi: ' .
                 $this->entityHandler->get(Dataset::class, $id)->getUdi() .
                 ' to ' .
@@ -139,17 +140,16 @@ class DatasetController extends EntityController
     /**
      * Delete a Dataset and associated Metadata and Difs.
      *
-     * @param integer               $id                    The id of the Dataset to delete.
-     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
-     * @param MessageBusInterface   $messageBus            Symfony messenger message bus interface.
-     *
-     *
+     * @param integer                      $id                            The id of the Dataset to delete.
+     * @param EntityEventDispatcher        $entityEventDispatcher         The entity event dispatcher.
+     * @param MessageBusInterface          $messageBus                    Symfony messenger message bus interface.
+     * @param LogActionItemEventDispatcher $logActionItemEventDistpatcher The Log action item event dispatcher.
      *
      * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher, MessageBusInterface $messageBus)
+    public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher, MessageBusInterface $messageBus, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
@@ -181,6 +181,18 @@ class DatasetController extends EntityController
         }
 
         $entityEventDispatcher->dispatch($dataset, 'delete_doi');
+
+        $udi = $dataset->getUdi();
+
+        $logActionItemEventDispatcher->dispatch(
+            array(
+                'actionName' => 'Dataset Deletion',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array('UDI' => $udi, 'userId' => $this->getUser()->getUserIdentifier()),
+            ),
+            'dataset_deletion'
+        );
 
         $this->handleDelete(Dataset::class, $id);
 
@@ -241,7 +253,7 @@ class DatasetController extends EntityController
         $data = [];
 
         foreach ($datasets as $dataset) {
-            $datasetArray = array (
+            $datasetArray = array(
                 "udi" => $dataset->getUdi(),
                 "numberOfFiles" => $dataset->getNumberOfFiles(),
                 "totalFileSize" => $dataset->getTotalFileSize(),
