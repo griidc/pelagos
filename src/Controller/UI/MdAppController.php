@@ -100,7 +100,7 @@ class MdAppController extends AbstractController
                     $datasetSubmission->setDatasetStatus($to);
                     $this->entityHandler->update($datasetSubmission);
                     $this->entityHandler->update($dataset);
-                    $mdappLogger->writeLog($this->getUser()->getUserIdentifier() . ' changed status for ' .
+                    $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
                         $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
                     $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
                         ' to ' . $this->getFlashBagStatus($to);
