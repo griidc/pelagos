@@ -10,7 +10,6 @@ use App\Repository\LogActionItemRepository;
 use App\Util\FundingOrgFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
-use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,8 +26,6 @@ class GetGoMRIStatisticsCommand extends Command
     // occurred.
     public const HARVEST2019COUNT = 7100; // count
     public const HARVEST2019DATA = 3600; // GB
-
-    public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
 
     /**
      * Class constructor for dependency injection.
@@ -105,7 +102,6 @@ class GetGoMRIStatisticsCommand extends Command
         sort($years);
         $minYear = $years[0];
         $maxYear = $years[sizeof($years) - 1];
-        $io->writeln("\nGomri Uploads (submissions)\n");
         for ($i = $minYear; $i <= $maxYear; $i++) {
             if (in_array($i, $years)) {
                 $io->writeln("Number of GoMRI datasets submitted $i"
@@ -116,31 +112,18 @@ class GetGoMRIStatisticsCommand extends Command
             }
         }
 
-        $io->writeln("\nGoMRI Downloads:\n");
-        $downloadSizeByYearAndQuarter = [];
-        $downloadCountByYearAndQuarter = [];
+        $io->writeln("Total GoMRI Downloads:");
+        $downloadSizeByYear = [];
+        $downloadCountByYear = [];
         foreach ($this->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
-
-            $yearQuarter = $this->determineQuarter($timestamp);
-            $year = $yearQuarter['year'];
-            $quarter = $yearQuarter['quarter'];
-
-            if (!array_key_exists($year, $downloadCountByYearAndQuarter)) {
-                $downloadCountByYearAndQuarter[$year][0] = 0;
-                $downloadCountByYearAndQuarter[$year][1] = 0;
-                $downloadCountByYearAndQuarter[$year][2] = 0;
-                $downloadCountByYearAndQuarter[$year][3] = 0;
-                $downloadCountByYearAndQuarter[$year][4] = 0;
+            $year = substr($timestamp, 0, 4);
+            if (!array_key_exists($year, $downloadCountByYear)) {
+                $downloadCountByYear[$year] = 0;
             }
-
-            if (!array_key_exists($year, $downloadSizeByYearAndQuarter)) {
-                $downloadSizeByYearAndQuarter[$year][0] = 0;
-                $downloadSizeByYearAndQuarter[$year][1] = 0;
-                $downloadSizeByYearAndQuarter[$year][2] = 0;
-                $downloadSizeByYearAndQuarter[$year][3] = 0;
-                $downloadSizeByYearAndQuarter[$year][4] = 0;
+            if (!array_key_exists($year, $downloadSizeByYear)) {
+                $downloadSizeByYear[$year] = 0;
             }
 
             $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
@@ -153,88 +136,35 @@ class GetGoMRIStatisticsCommand extends Command
                 $skipCount++;
             }
 
-            $downloadCountByYearAndQuarter[$year][$quarter]++;
-            $downloadSizeByYearAndQuarter[$year][$quarter] += $size / 1000000000;
+
+            $downloadCountByYear[$year]++;
+            $downloadSizeByYear[$year] += $size / 1000000000;
+            //print "$timestamp,$id,$udi,$size\n";
         }
 
-        // array_keys still onlys dump first level, years, for $array[year][quarter].
-        $firstYear = min(array_keys($downloadCountByYearAndQuarter));
-        $lastYear = max(array_keys($downloadCountByYearAndQuarter));
+        $firstYear = min(array_keys($downloadCountByYear));
+        $lastYear = max(array_keys($downloadCountByYear));
 
-        // Deal with the data harvest of 2019Q2.
-        $downloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
-        $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
-
-        $totalDownloads = 0;
-        $totalDownloadSize = 0;
-        for ($year = $firstYear; $year <= $lastYear; $year++) {
-            $yearCountTotal = 0;
-            $yearSizeTotal = 0;
-            for ($quarter = 1; $quarter <= 4; $quarter++) {
-                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
-                $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
-                . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
-                $yearCountTotal += $downloadCountByYearAndQuarter[$year][$quarter];
-                $totalDownloads += $downloadCountByYearAndQuarter[$year][$quarter];
-                $yearSizeTotal += $downloadSizeByYearAndQuarter[$year][$quarter];
-                $totalDownloadSize += $downloadSizeByYearAndQuarter[$year][$quarter];
-                $popular = "Top: ";
-                foreach ($popularDownloads as $udi => $count) {
-                    $popular .= "$udi:$count, ";
-                }
-                $popular = substr($popular, 0, strlen($popular) - 2);
-                $io->writeln($popular);
-            }
-            $io->newLine();
-
-            $io->writeln('Totals for: ' . $year . ':');
-            $io->writeln('Download count: ' . $yearCountTotal);
-            $io->writeln('Data Downloaded: ' . round($yearSizeTotal) . ' GB');
-            $io->writeln('--------------------------------------------------------------------------------');
-
-            $io->newLine();
+        // Deal with the data harvest of 2019.
+        if (array_key_exists(2019, $downloadCountByYear)) {
+            $downloadCountByYear[2019] -= self::HARVEST2019COUNT;
+        }
+        if (array_key_exists(2019, $downloadCountByYear)) {
+            $downloadSizeByYear[2019] -= self::HARVEST2019DATA;
         }
 
-        // Total Download stats:
-        $io->writeln('All Time Stats:');
-        $io->writeln('Download count: ' . $totalDownloads);
-        $io->writeln('Data Downloaded: ' . round($totalDownloadSize) . ' GB');
 
-        // Show most popular downloads of all time.
-        $popularDownloadsOfAllTime = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
-        $allTimePopular = '';
-        $io->writeln('Top ' . self::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
-        foreach ($popularDownloadsOfAllTime as $udi => $count) {
-            $allTimePopular .= "$udi:$count, ";
+
+        for ($i = $firstYear; $i <= $lastYear; $i++) {
+            $io->writeln($i . ' Download Count: ' . $downloadCountByYear[$i] . ', ' . 'Total Size (GB): ' . round($downloadSizeByYear[$i]));
         }
-        $allTimePopular = substr($allTimePopular, 0, strlen($allTimePopular) - 2);
-        $io->writeln($allTimePopular);
-
-        // Add disclaimer if any datasets had been deleted. (This doesn't apply to gomri currently, but other FOs)
         if ($skipCount > 0) {
             $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
-        // Add disclaimer for data cleanup for big data harvest event.
-        $io->note('Removed ' . self::HARVEST2019COUNT . ' / ' . self::HARVEST2019DATA . 'GB from 2019Q2 downloads - data harvest occurred');
+        $io->note('Removed 7100 / 3600GB from 2019 downloads - data harvest occurred');
 
         return 0;
-    }
-
-    /**
-     * Returns Year and Quarter given a timestamp.
-     *
-     * @param \DateTime $timestamp
-     * @return array $yearQuarter
-     */
-    protected function determineQuarter(\DateTime $timestamp): array
-    {
-        // Quarters are normal calendar quarters (Jan-Mar, Apr-Jun, Jul-Sep, Oct-Dec)
-        $year = $timestamp->format('Y');   // returns 4 digit year
-        $month = $timestamp->format('n');  // returns 1-12
-        $quarter = ceil($month / 3);
-
-        return array("year" => $year, "quarter" => $quarter);
     }
 
     /**
@@ -245,9 +175,14 @@ class GetGoMRIStatisticsCommand extends Command
      */
     protected function quarterize(\DateTime $timestamp, array &$quarterCounts): void
     {
-        $yearAndQuarter = $this->determineQuarter($timestamp);
-        $year = $yearAndQuarter['year'];
-        $quarter = $yearAndQuarter['quarter'];
+        // Quarters are strict calendar quarters.
+        // Q1: Jan 1 - Mar 31
+        // Q2: Apr 1 - Jun 30
+        // Q3: Jul 1 - Sep 30
+        // Q4: Oct 1 - Dec 31
+        $year = $timestamp->format('Y');   // returns 4 digit year
+        $month = $timestamp->format('n');  // returns 1-12
+        $quarter = ceil($month / 3);
 
         // Initialize
         if (!array_key_exists($year, $quarterCounts)) {
@@ -259,88 +194,6 @@ class GetGoMRIStatisticsCommand extends Command
         }
 
         $quarterCounts[$year][$quarter - 1] += 1;
-    }
-
-    /**
-     * Returns array of UDIs of top downloads in date range.
-     *
-     * @param  int|null   $year            The year to get top downloads from.
-     * @param  int|null   $quarter         The quarter to get top downloads from.
-     * @return array      $topDownloadUdis An associative array of top UDIs with counts as value.
-     *
-     * @throws Exception If quarter value used other than (1, 2, 3, 4)
-     */
-    public function getTopDatasetsDownloadedByYearAndQuarter(int $count, int $year = null, int $quarter = null): array
-    {
-        if ($quarter !== null && !(in_array($quarter, array(1, 2, 3, 4)))) {
-            throw new Exception("Bad quarter specified, use 1-4.");
-        }
-
-        if ($year === null && $quarter !== null) {
-            throw new Exception("If quarter is specified, year must be too.");
-        }
-
-        // Create DB compatible strings from DateTime objects.
-        if ($year !== null && $quarter == 1) {
-            $from = "$year-01-01";
-            $to = "$year-03-31";
-        } elseif ($year !== null && $quarter == 2) {
-            $from = "$year-04-01";
-            $to = "$year-06-30";
-        } elseif ($year !== null && $quarter == 3) {
-            $from = "$year-07-01";
-            $to = "$year-09-30";
-        } elseif ($year !== null && $quarter == 4) {
-            $from = "$year-10-01";
-            $to = "$year-12-31";
-        } elseif ($year !== null && $quarter === null) {
-            // entire year
-            $from = "$year-01-01";
-            $to = "$year-12-31";
-        }
-
-        $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
-        ->select('count(log.subjectEntityId), log.subjectEntityId')
-        ->where('log.subjectEntityName = :entityName')
-        ->andWhere('log.actionName = :actionName')
-        ->orderBy('count(log.subjectEntityId)', 'DESC')
-        ->groupBy('log.subjectEntityId')
-        ->setMaxResults($count)
-        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
-        ->setParameter('actionName', 'File Download');
-
-        if ($year !== null) {
-            $qb
-            ->andWhere('log.creationTimeStamp >= :from')
-            ->andWhere('log.creationTimeStamp <= :to')
-            ->setParameter('from', $from)
-            ->setParameter('to', $to);
-        }
-
-        if ($this->fundingOrgFilter->isActive()) {
-            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
-
-            $qb
-            ->join(Dataset::class, 'dataset', Query\Expr\Join::WITH, 'log.subjectEntityId = dataset.id')
-            ->innerJoin('dataset.researchGroup', 'rg')
-            ->andWhere('rg.id IN (:rgs)')
-            ->setParameter('rgs', $researchGroupIds);
-        }
-
-        $query = $qb->getQuery();
-        $results = $query->getResult();
-
-        $topDownloadUdis = [];
-        foreach ($results as $row) {
-            $count = $row[1];
-            $id = $row['subjectEntityId'];
-            $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
-            if ($dataset instanceof Dataset) {
-                $udi = $dataset->getUdi();
-                $topDownloadUdis[$udi] = $count;
-            }
-        }
-        return $topDownloadUdis;
     }
 
     /**
@@ -383,7 +236,7 @@ class GetGoMRIStatisticsCommand extends Command
 
             if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
                 $currentTimeStamp = $epochTime;
-                $downloadArray[] = array($id, $dateTime);
+                $downloadArray[] = array($id, $displayTime);
             }
             $currentId = $id;
         }

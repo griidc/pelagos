@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\FundingOrganization;
-use App\Entity\LogActionItem;
 use App\Entity\ProductTypeDescriptor;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -46,8 +45,6 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Admin Links', 'fa fa-link');
-        yield MenuItem::section('Viewers');
-        yield MenuItem::linkToCrud('Logged Actions', 'fas fa-search', LogActionItem::class);
         yield MenuItem::section('Editors');
         yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', ProductTypeDescriptor::class);
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);

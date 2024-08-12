@@ -188,7 +188,7 @@ class DownloadController extends AbstractController
                         $typeId = $this->getUser()->getUserId();
                     } else {
                         $type = 'Non-GoMRI';
-                        $typeId = $this->getUser()->getUserIdentifier();
+                        $typeId = $this->getUser()->getUsername();
                     }
                 } else {
                     $type = 'Non-GoMRI';
