@@ -289,7 +289,7 @@ class DataDiscoveryController extends AbstractController
                     break;
                 case 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser':
                     $clientInfo['userType'] = 'Non-GoMRI';
-                    $clientInfo['userId'] = $this->getUser()->getUsername();
+                    $clientInfo['userId'] = $this->getUser()->getUserIdentifier();
                     break;
                 default:
                     break;
