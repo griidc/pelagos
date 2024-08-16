@@ -8,6 +8,13 @@ import '../../scss/griidc.scss';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import GriidcMenu from '../react/components/GriidcMenu';
+import Alpine from 'alpinejs';
+import collapse from '@alpinejs/collapse'
+
+window.Alpine = Alpine;
+
+Alpine.plugin(collapse);
+Alpine.start();
 
 const $ = require('jquery');
 
