@@ -89,7 +89,7 @@
             window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         },
         onFocusedRowChanged: function(e) {
-            e.rowElement[0].scrollIntoView();
+            e.rowElement[0].scrollIntoView({ behavior: "auto", block: "center", inline: "center" });
         },
     }).dxDataGrid("instance");
 </script>
