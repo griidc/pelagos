@@ -16,17 +16,28 @@
         });
     {% endfor %}
 
+    var store = new DevExpress.data.ArrayStore({
+        key: "id",
+        data: data,
+    });
+
+    tippy('[data-tippy-content]', {
+        //options
+    });
+
     var tooltipInstance = $("#tooltipContainer").dxTooltip({
         position: "right"
     }).dxTooltip("instance");
 
     $('#{{divContainer}}').dxDataGrid({
-        dataSource: data,
+        dataSource: store,
         columnAutoWidth: true,
         sortOrder: 'asc',
         searchPanel: {
             visible: false,
         },
+        focusedRowEnabled: true,
+        autoNavigateToFocusedRow: true,
         columns: [{
             dataField: 'udi',
             caption: 'UDI',
@@ -76,7 +87,10 @@
         },
         onRowClick: function(e) {
             window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
-        }
+        },
+        onFocusedRowChanged: function(e) {
+            e.rowElement[0].scrollIntoView();
+        },
     }).dxDataGrid("instance");
 </script>
 
@@ -116,8 +130,29 @@
                 {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': researchGroup} only %}
             </div>
 
+            {# Pobbles #}
             <div class="px-2 py-1">
-                {% include 'DatasetMonitoring/v2/pobbles2.html.twig' with {'group': researchGroup} only %}
+                <table>
+                    <tbody>
+                        <tr style="height: 12px">
+
+                        {% for dataset in researchGroup.datasets|submittedDIFs|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
+                            <td
+                                data-tippy-content="{{dataset.udi}}"
+                                style="width: 12px; background-color:{{dataset.getDatasetLifecycleStatus.color}}"
+                                @click="$('#{{divContainer}}').dxDataGrid('option', 'focusedRowKey', '{{dataset.id}}')"
+                            >
+                            </td>
+
+                            {% if (loop.index % 80) == 0 %}
+                        </tr>
+                        <tr style="height: 12px">
+                            {% endif %}
+
+                        {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="p-2">
