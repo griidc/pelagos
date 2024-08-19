@@ -3,15 +3,15 @@
  */
 
 import React from 'react';
+import Alpine from 'alpinejs';
+import collapse from '@alpinejs/collapse';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
 import { createRoot } from 'react-dom/client';
 import '../../scss/griidc.scss';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import GriidcMenu from '../react/components/GriidcMenu';
-import Alpine from 'alpinejs';
-import collapse from '@alpinejs/collapse';
-import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css';
 
 window.Alpine = Alpine;
 window.tippy = tippy;
