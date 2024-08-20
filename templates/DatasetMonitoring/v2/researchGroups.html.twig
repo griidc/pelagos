@@ -16,17 +16,28 @@
         });
     {% endfor %}
 
+    var store = new DevExpress.data.ArrayStore({
+        key: "id",
+        data: data,
+    });
+
+    tippy('[data-tippy-content]', {
+        //options
+    });
+
     var tooltipInstance = $("#tooltipContainer").dxTooltip({
         position: "right"
     }).dxTooltip("instance");
 
     $('#{{divContainer}}').dxDataGrid({
-        dataSource: data,
+        dataSource: store,
         columnAutoWidth: true,
         sortOrder: 'asc',
         searchPanel: {
             visible: false,
         },
+        focusedRowEnabled: true,
+        autoNavigateToFocusedRow: true,
         columns: [{
             dataField: 'udi',
             caption: 'UDI',
@@ -76,45 +87,77 @@
         },
         onRowClick: function(e) {
             window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
-        }
+        },
+        onFocusedRowChanged: function(e) {
+            e.rowElement[0].scrollIntoView({ behavior: "auto", block: "center", inline: "center" });
+        },
     }).dxDataGrid("instance");
 </script>
 
 <div class="p-2 m-0">
     <div class="shadow-lg border rounded-lg">
-        <div class="block">
-            <span class="p-2 text-white bg-[#3975B7] font-bold block text-lg">Research Group: {{ researchGroup.name }}</span>
+        <div class="block" >
+            <span class="p-2 text-white bg-[#3975B7] font-bold block text-lg" @click="expanded = ! expanded">
+                Research Group: {{ researchGroup.name }}
+                <div class="float-end px-2">
+                    <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: white;"></i>
+                </div>
+            </span>
         </div>
 
-        {% if not fundingCycle|default %}
-        <div class="block px-2 py-1">
-            <span class="font-bold">Funding Cycle:</span> {{ researchGroup.fundingCycle.name }}
-        </div>
-        {% endif %}
+        <div x-show="expanded" x-collapse>
 
-        <div class="block px-2 py-1">
-            <span class="font-bold">Leadership:</span>
-            {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
-            {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
-                {{ prg.person.firstName }} {{ prg.person.lastName }}
-                {% if not loop.last %}, {% endif %}
-            {% endfor %}
-        </div>
+            {% if not fundingCycle|default %}
+            <div class="block px-2 py-1">
+                <span class="font-bold">Funding Cycle:</span> {{ researchGroup.fundingCycle.name }}
+            </div>
+            {% endif %}
 
-        <div class="block px-2 py-1">
-            <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
-        </div>
+            <div class="block px-2 py-1">
+                <span class="font-bold">Leadership:</span>
+                {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
+                {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
+                    {{ prg.person.firstName }} {{ prg.person.lastName }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
 
-        <div class="px-2 py-1">
-            {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': researchGroup} only %}
-        </div>
+            <div class="block px-2 py-1">
+                <span class="font-bold">Datasets:</span> {{ researchGroup.datasets|submittedDIFs|length }}
+            </div>
 
-        <div class="px-2 py-1">
-            {% include 'DatasetMonitoring/v2/pobbles2.html.twig' with {'group': researchGroup} only %}
-        </div>
+            <div class="px-2 py-1">
+                {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': researchGroup} only %}
+            </div>
 
-        <div class="p-2">
-            <div id="{{divContainer}}" class="overflow-hidden"></div>
+            {# Pobbles #}
+            <div class="px-2 py-1">
+                <table>
+                    <tbody>
+                        <tr style="height: 12px">
+
+                        {% for dataset in researchGroup.datasets|submittedDIFs|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
+                            <td
+                                data-tippy-content="{{dataset.udi}}"
+                                style="width: 12px; background-color:{{dataset.getDatasetLifecycleStatus.color}}"
+                                @click="$('#{{divContainer}}').dxDataGrid('option', 'focusedRowKey', '{{dataset.id}}')"
+                            >
+                            </td>
+
+                            {% if (loop.index % 80) == 0 %}
+                        </tr>
+                        <tr style="height: 12px">
+                            {% endif %}
+
+                        {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-2">
+                <div id="{{divContainer}}" class="overflow-hidden"></div>
+            </div>
         </div>
     </div>
 </div>
