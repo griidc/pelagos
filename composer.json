@@ -27,7 +27,6 @@
         "doctrine/orm": "^2.11",
         "easycorp/easyadmin-bundle": "^3.5",
         "easyrdf/easyrdf": "^1.1",
-        "eckinox/pdf-bundle": "^5.0",
         "friendsofsymfony/elastica-bundle": "^6.1.0",
         "friendsofsymfony/jsrouting-bundle": "^2.1",
         "friendsofsymfony/rest-bundle": "^3.0",

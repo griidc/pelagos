@@ -24,12 +24,9 @@ const axios = require('axios');
 
 const mainsite = process.env.MAINSITE;
 const griidcMenuElement = document.getElementById('griidc-menu');
+const showAdmin = griidcMenuElement.hasAttribute('show-admin') && griidcMenuElement.getAttribute('show-admin') === 'true';
 
-if (typeof (griidcMenuElement) !== 'undefined' && griidcMenuElement != null) {
-  const showAdmin = griidcMenuElement.hasAttribute('show-admin') && griidcMenuElement.getAttribute('show-admin') === 'true';
-
-  createRoot(griidcMenuElement).render(<GriidcMenu mainsite={mainsite} showAdmin={ showAdmin }/>);
-}
+createRoot(griidcMenuElement).render(<GriidcMenu mainsite={mainsite} showAdmin={ showAdmin }/>);
 
 global.axios = axios;
 

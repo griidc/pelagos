@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23a83daadc871d7563a1ee5322b40a34",
+    "content-hash": "9fb2ed30cde661b9f5d75d334b1489b3",
     "packages": [
         {
             "name": "brick/math",
@@ -1867,103 +1867,6 @@
                 "source": "https://github.com/easyrdf/easyrdf/tree/1.1.1"
             },
             "time": "2020-12-02T08:47:31+00:00"
-        },
-        {
-            "name": "eckinox/pdf-bundle",
-            "version": "v5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/eckinox/pdf-bundle.git",
-                "reference": "e2c275a646379f0985a01b00ae5f61e2f86a0028"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/eckinox/pdf-bundle/zipball/e2c275a646379f0985a01b00ae5f61e2f86a0028",
-                "reference": "e2c275a646379f0985a01b00ae5f61e2f86a0028",
-                "shasum": ""
-            },
-            "require": {
-                "eckinox/php-puppeteer": "^1.0",
-                "php": ">=8.1.10",
-                "symfony/http-foundation": "^5.4|^6.0",
-                "symfony/http-kernel": "^5.4|^6.0",
-                "symfony/string": "^5.4|^6.0",
-                "twig/twig": "^3.8"
-            },
-            "require-dev": {
-                "eckinox/eckinox-cs": "^3.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Eckinox\\PdfBundle\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Émile Perron",
-                    "email": "contact@emileperron.com"
-                }
-            ],
-            "description": "A Symfony bundle to generate PDFs from Twig templates.",
-            "support": {
-                "issues": "https://github.com/eckinox/pdf-bundle/issues",
-                "source": "https://github.com/eckinox/pdf-bundle/tree/v5.0.0"
-            },
-            "time": "2024-04-25T19:08:14+00:00"
-        },
-        {
-            "name": "eckinox/php-puppeteer",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/eckinox/php-puppeteer.git",
-                "reference": "f74b3db05f69d8a5faf6d52b0beae13334851a22"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/eckinox/php-puppeteer/zipball/f74b3db05f69d8a5faf6d52b0beae13334851a22",
-                "reference": "f74b3db05f69d8a5faf6d52b0beae13334851a22",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "php-wrapper",
-            "autoload": {
-                "psr-4": {
-                    "Eckinox\\PhpPuppeteer\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "its404",
-                    "email": "benwk424@gmail.com",
-                    "role": "Original developer"
-                },
-                {
-                    "name": "Émile Perron",
-                    "email": "contact@emileperron.com",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "PHP Wrapper for Google Chrome Puppeteer",
-            "homepage": "http://github.com/eckinox/php-puppeteer",
-            "keywords": [
-                "pdf",
-                "php",
-                "puppeteer",
-                "screenshot"
-            ],
-            "support": {
-                "source": "https://github.com/eckinox/php-puppeteer/tree/v1.0.0"
-            },
-            "time": "2022-04-11T19:22:15+00:00"
         },
         {
             "name": "egulias/email-validator",

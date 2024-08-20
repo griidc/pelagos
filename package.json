@@ -59,7 +59,6 @@
         "jquery.cookie": "^1.4.1",
         "postcss-loader": "^7.0.0",
         "prop-types": "^15.8.1",
-        "puppeteer": "^22.13.1",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
         "spin.js": "^4.1.1",
