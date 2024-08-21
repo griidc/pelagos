@@ -9,7 +9,8 @@
 {% if fundingOrganization %}
 
     {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) %}
-    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization, url: url} only %}
+    {% set toolTipText = "This report contains dataset status totals for #{fundingOrganization.name}." %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization, url: url, toolTipText: toolTipText} only %}
     {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, 'showGraphics': 'false'} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
@@ -38,7 +39,8 @@
 
 {% if fundingCycle %}
     {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) %}
-    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization, url: url} only %}
+    {% set toolTipText = "This report contains dataset status totals for #{fundingCycle.name}." %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization, url: url, toolTipText:toolTipText} only %}
 
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
     <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]">
@@ -69,7 +71,8 @@
 
 {% if researchGroup %}
     {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) %}
-    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization, url: url} only %}
+    {% set toolTipText = "This report contains dataset status totals for #{researchGroup.name}." %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization, url: url, toolTipText:toolTipText} only %}
 
     <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]">
         <h3>Funding Cycle: {{ researchGroup.fundingCycle.name }}</h3>
