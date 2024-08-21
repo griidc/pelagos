@@ -1,10 +1,12 @@
 <div id="tooltipContainer"></div>
 
+{% if not makePdf %}
 <script>
     tippy('[data-tippy-content]', {
         //options
     });
 </script>
+{% endif %}
 
 {% if fundingOrganization %}
 

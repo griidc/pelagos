@@ -11,7 +11,6 @@ use App\Repository\DatasetRepository;
 use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\ResearchGroupRepository;
-use Eckinox\PdfBundle\Pdf\PdfGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,8 +104,7 @@ class DatasetMonitoringController extends AbstractController
         Request $request,
         FundingOrganizationRepository $fundingOrganizationRepository,
         FundingCycleRepository $fundingCycleRepository,
-        ResearchGroupRepository $researchGroupRepository,
-        PdfGeneratorInterface $pdfGenerator
+        ResearchGroupRepository $researchGroupRepository
     ): Response {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
         $fundingCycleId = $request->query->get('fundingCycle');
@@ -118,7 +116,7 @@ class DatasetMonitoringController extends AbstractController
         $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
 
         if ($makePdf) {
-            $pdf = $pdfGenerator->renderPdf(
+            return $this->render(
                 'DatasetMonitoring/v2/pdf.html.twig',
                 [
                     'fundingOrganization' => $fundingOrganization,
@@ -128,12 +126,6 @@ class DatasetMonitoringController extends AbstractController
                     'makePdf' => $makePdf,
                 ]
             );
-
-            $pdfFilename = 'DatasetMonitoringReport-' .
-            (new \DateTime('now'))->format('Y-m-d') .
-            '.pdf';
-
-            return $pdf->output($pdfFilename);
         }
 
         return $this->render(

@@ -1,5 +1,6 @@
 {% set divContainer = "gridContainer#{random()}" %}
 
+{% if not makePdf %}
 <script>
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
@@ -89,8 +90,8 @@
         },
     }).dxDataGrid("instance");
 </script>
-
-<div class="p-2 m-0">
+{% endif %}
+<div class="p-2 m-0" style="page-break-inside: auto">
     <div class="shadow-lg border rounded-lg">
         <div class="block" >
             <span class="p-2 text-white bg-[#53AAD8] font-bold block text-lg" @click="expanded = ! expanded">
@@ -127,17 +128,21 @@
             </div>
 
             {# Pobbles #}
-            <div class="px-2 py-1">
-                <table>
+            <div class="px-2 py-1 block">
+                <table style="border: 0px; border-collapse: collapse;">
                     <tbody>
                         <tr style="height: 12px">
 
                         {% for dataset in researchGroup.datasets|submittedDIFs|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
                             <td
                                 data-tippy-content="{{dataset.udi}}"
-                                style="width: 12px; background-color:{{dataset.getDatasetLifecycleStatus.color}}"
+                                style="width: 12px;"
                                 @click="$('#{{divContainer}}').dxDataGrid('option', 'focusedRowKey', '{{dataset.id}}')"
                             >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                                    <rect x="0" y="0" width="12" height="12" fill="{{dataset.getDatasetLifecycleStatus.color}}" opacity="1">
+                                    </rect>
+                                </svg>
                             </td>
 
                             {% if (loop.index % 80) == 0 %}
@@ -152,7 +157,13 @@
             </div>
 
             <div class="p-2">
+                {% if not makePdf %}
                 <div id="{{divContainer}}" class="overflow-hidden"></div>
+                {% else %}
+                <div class="overflow-hidden">
+                    {% include 'DatasetMonitoring/v2/researchGroupAltGrid.html.twig' %}
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

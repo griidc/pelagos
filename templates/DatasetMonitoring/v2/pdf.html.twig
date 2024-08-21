@@ -38,16 +38,15 @@
       .dx-datagrid [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
         outline: none;
       }
+
+      @media print
+      {
+        .noPrint{display:none;}
+      }
     </style>
 {% endblock stylesheets  %}
 
 {% block javascripts %}
-    {{ parent() }}
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/js/dx.all.js"></script>
-
-    <script type="text/javascript" src="{{ asset('build/js/datasetMonitoring.js') }}"></script>
-
 {% endblock javascripts %}
 
 {% block body %}
