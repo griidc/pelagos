@@ -11,7 +11,9 @@
     {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) %}
     {% set toolTipText = "This report contains dataset status totals for #{fundingOrganization.name}." %}
     {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization, url: url, toolTipText: toolTipText} only %}
-    {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, 'showGraphics': 'false'} only %}
+
+    {% set prefixText = 'Funding Organization Dataset Status Totals:' %}
+    {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, prefixText:prefixText, 'showGraphics': 'false'} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
@@ -49,7 +51,8 @@
     {% endif %}
 
     <div class="">
-        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, 'showGraphics': 'false'} only %}
+        {% set prefixText = 'Funding Cycle Dataset Status Totals:' %}
+        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, prefixText: prefixText, 'showGraphics': 'false'} only %}
     </div>
 
 

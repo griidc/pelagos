@@ -5,6 +5,13 @@
 
 <div style="display: inline-block;white-space: nowrap;">
     <table>
+        {% if prefixText|default %}
+        <tr>
+            <td colspan="8">
+                <b class="text-xl">{{ prefixText }}</b>
+            </td>
+        </tr>
+        {% endif %}
         <tr>
             <td>
             {% if showGraphics|default('true') == 'true' %}
