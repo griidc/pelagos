@@ -13,7 +13,7 @@
     {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization, url: url, toolTipText: toolTipText} only %}
 
     {% set prefixText = 'Funding Organization Dataset Status Totals:' %}
-    {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, prefixText:prefixText, 'showGraphics': 'false'} only %}
+    {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, prefixText:prefixText, 'showGraphics': 'false', showTotal: true} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
@@ -52,7 +52,7 @@
 
     <div class="">
         {% set prefixText = 'Funding Cycle Dataset Status Totals:' %}
-        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, prefixText: prefixText, 'showGraphics': 'false'} only %}
+        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, prefixText: prefixText, 'showGraphics': 'false', showTotal: true} only %}
     </div>
 
 
