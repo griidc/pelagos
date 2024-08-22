@@ -16,7 +16,6 @@ use Symfony\Component\Serializer\SerializerInterface as SerializerInterface;
  */
 class GRPMetadataExportController extends ReportController
 {
-
     /**
      * Var to hold serializer.
      */
@@ -68,7 +67,5 @@ class GRPMetadataExportController extends ReportController
         ]);
 
         dd($serializedData);
-
     }
-
 }
