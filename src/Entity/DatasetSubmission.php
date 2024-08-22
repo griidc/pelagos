@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Serializer\Annotation\Groups as SGroups;
 
 /**
  * Dataset Submission Entity class.
@@ -694,12 +695,11 @@ class DatasetSubmission extends Entity
      * Supplemental information - parameters.
      *
      * @var string
-     *
-     *
      * @Assert\NotBlank(
      *     message="The dataset submission data parameters/units field is required."
      * )
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $suppParams;
 
@@ -766,6 +766,7 @@ class DatasetSubmission extends Entity
     /**
      * Keywords associated with this Dataset Submission.
      *
+     * @Sgroups({"export"})
      * @var Collection
      */
     #[ORM\ManyToMany(targetEntity: Keyword::class)]
@@ -776,11 +777,11 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     *
      * @Assert\NotBlank(
      *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'json', nullable: true)]
     protected $topicKeywords = array();
 
@@ -789,6 +790,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtent;
 
@@ -815,6 +817,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'date', nullable: true)]
     protected $temporalExtentBeginPosition;
 
@@ -823,6 +826,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'date', nullable: true)]
     protected $temporalExtentEndPosition;
 
@@ -843,6 +847,7 @@ class DatasetSubmission extends Entity
      *
      * @Serializer\Groups({"card"})
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $distributionFormatName;
 
@@ -917,6 +922,7 @@ class DatasetSubmission extends Entity
      *
      * @var Fileset
      */
+    #[SGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'Fileset', inversedBy: 'datasetSubmission', cascade: ['persist', 'remove'])]
     protected $fileset;
 

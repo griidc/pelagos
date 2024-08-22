@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Annotation\Groups as SGroups;
 
 /**
  * Dataset Entity class.
@@ -93,6 +94,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
+    #[SGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 
@@ -103,6 +105,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
+    #[SGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $title;
 
@@ -121,6 +124,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card"})
      */
+    #[SGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
     protected $doi;
 
@@ -133,6 +137,7 @@ class Dataset extends Entity
      * @Serializer\Groups({"search"})
      *
      */
+    #[SGroups(['export'])]
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     protected $researchGroup;
 
@@ -153,6 +158,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card"})
      */
+    #[SGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
     protected $datasetSubmission;
 
@@ -932,6 +938,7 @@ class Dataset extends Entity
      *
      * @Serializer\SerializedName("totalFileSize")
      */
+    #[SGroups(['export'])]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -952,6 +959,7 @@ class Dataset extends Entity
      *
      * @Serializer\SerializedName("numberOfFiles")
      */
+    #[SGroups(['export'])]
     public function getNumberOfFiles(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();

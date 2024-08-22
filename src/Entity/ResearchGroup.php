@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use App\Exception\NotDeletableException;
+use Symfony\Component\Serializer\Annotation\Groups as SGroups;
 
 /**
  * Entity class to represent a Research Group.
@@ -66,6 +67,7 @@ class ResearchGroup extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[SGroups(['export'])]
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     protected $name;
 
@@ -82,6 +84,7 @@ class ResearchGroup extends Entity
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
      */
+    #[SGroups(['export'])]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
     protected $shortName;
 
@@ -100,6 +103,7 @@ class ResearchGroup extends Entity
      * @Serializer\MaxDepth(2)
      * @Serializer\Groups({"overview"})
      */
+    #[SGroups(['export'])]
     #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
     protected $fundingCycle;
 
@@ -825,6 +829,7 @@ class ResearchGroup extends Entity
      *
      * @return Collection
      */
+    #[SGroups(["export"])]
     public function getProjectDirectors(): Collection
     {
         $projectDirectors = new ArrayCollection();
