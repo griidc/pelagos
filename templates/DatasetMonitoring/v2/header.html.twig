@@ -1,5 +1,5 @@
-<div class="m-0 block">
-    <div class="relative min-h-24">
+<div class="pb-2 m-0 block">
+    <div class="relative min-h-28">
         <span class="block">
             <h2 class="block">
                 {{ fundingOrganization.name }} Datasets
@@ -7,9 +7,14 @@
         </span>
 
         <div class="absolute bottom-0 right-0 float-right">
-            <a href="{{ url }}">
+            <a href="{{ csvUrl }}">
                 <button class="button button-regular text-white noPrint" data-tippy-content="{{toolTipText}}">
                     <i class="fa-solid fa-file-csv mr-2"></i>Download Report
+                </button>
+            </a>
+            <a href="{{ pdfUrl }}">
+                <button class="button button-regular text-white noPrint" data-tippy-content="{{toolTipText}}">
+                    <i class="fa-solid fa-file-pdf mr-2"></i>Download Report
                 </button>
             </a>
         </div>

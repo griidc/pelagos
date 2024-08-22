@@ -33,6 +33,7 @@
         "guzzlehttp/guzzle": "^7.6",
         "hidehalo/nanoid-php": "^1.1",
         "jms/serializer-bundle": "^5.0",
+        "knplabs/knp-snappy-bundle": "^1.10",
         "maennchen/zipstream-php": "^3.0",
         "oneup/flysystem-bundle": "^3.5",
         "opensoft/doctrine-postgres-types": "^1.2",
