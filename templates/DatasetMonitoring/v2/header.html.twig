@@ -1,3 +1,6 @@
+{% set csvUrl = url('pelagos_app_ui_report_dataset_monitoring_csv', urlParameters) %}
+{% set pdfUrl = url('pelagos_app_ui_report_dataset_monitoring_pdf', urlParameters) %}
+
 <div class="pb-2 m-0 block">
     <div class="relative min-h-28">
         <span class="block">
@@ -8,14 +11,16 @@
 
         <div class="absolute bottom-0 right-0 float-right">
             <a href="{{ csvUrl }}">
-                <button class="button button-regular text-white noPrint" data-tippy-content="{{toolTipText}}">
-                    <i class="fa-solid fa-file-csv mr-2"></i>Download Report
-                </button>
+                <i
+                    class="fa-solid fa-file-csv mr-2 text-4xl text-green-600"
+                    data-tippy-content="{{"This report contains dataset status totals for #{group.name} as CSV."}}"
+                ></i>
             </a>
             <a href="{{ pdfUrl }}">
-                <button class="button button-regular text-white noPrint" data-tippy-content="{{toolTipText}}">
-                    <i class="fa-solid fa-file-pdf mr-2"></i>Download Report
-                </button>
+                <i
+                    class="fa-solid fa-file-pdf mr-2 text-4xl text-red-600"
+                    data-tippy-content="{{"This report contains dataset status totals for #{group.name} as PDF."}}"
+                ></i>
             </a>
         </div>
     </div>
