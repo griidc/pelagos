@@ -39,6 +39,7 @@ class DOI extends Entity
      *
      * @Serializer\Groups({"doi"})
      */
+    #[SGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: false)]
     protected $doi;
 
@@ -91,7 +92,6 @@ class DOI extends Entity
     /**
      * Gets the DOI.
      *
-     * @Sgroups({"export"})
      * @return string The DOI.
      */
     public function getDoi()

@@ -66,6 +66,12 @@ class GRPMetadataExportController extends ReportController
             'groups' => ['export'],
         ]);
 
-        dd($serializedData);
+        $response = new Response($serializedData);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', "attachment; filename=$fileName");
+
+        //dd($serializedData);
+
+        return $response;
     }
 }
