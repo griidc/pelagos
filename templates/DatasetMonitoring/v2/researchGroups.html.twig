@@ -21,10 +21,6 @@
         data: data,
     });
 
-    tippy('[data-tippy-content]', {
-        //options
-    });
-
     var tooltipInstance = $("#tooltipContainer").dxTooltip({
         position: "right"
     }).dxTooltip("instance");
@@ -97,7 +93,7 @@
 <div class="p-2 m-0">
     <div class="shadow-lg border rounded-lg">
         <div class="block" >
-            <span class="p-2 text-white bg-[#3975B7] font-bold block text-lg" @click="expanded = ! expanded">
+            <span class="p-2 text-white bg-[#53AAD8] font-bold block text-lg" @click="expanded = ! expanded">
                 Research Group: {{ researchGroup.name }}
                 <div class="float-end px-2">
                     <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: white;"></i>

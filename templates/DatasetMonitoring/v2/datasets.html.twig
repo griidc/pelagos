@@ -1,17 +1,25 @@
 <div id="tooltipContainer"></div>
 
+<script>
+    tippy('[data-tippy-content]', {
+        //options
+    });
+</script>
+
 {% if fundingOrganization %}
 
-    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization} only %}
+    {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingOrganization : fundingOrganization.id}) %}
+    {% set toolTipText = "This report contains dataset status totals for #{fundingOrganization.name}." %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization, url: url, toolTipText: toolTipText} only %}
+
+    {% set prefixText = 'Funding Organization Dataset Status Totals:' %}
+    {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, prefixText:prefixText, 'showGraphics': 'false', showTotal: true} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
             {# DOT NOT SHOW #}
         {% else %}
-            {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
-                <span class="font-bold block px-2 text-xl">Funding Cycle: {{fundingCycle.name}}</span>
-            {% endif %}
-
+            <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]"><h3>Funding Cycle: {{fundingCycle.name}}</h3></span>
 
             {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
             <div x-data="{ expanded: false }">
@@ -32,21 +40,19 @@
 {% endif %}
 
 {% if fundingCycle %}
-    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization} only %}
+    {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) %}
+    {% set toolTipText = "This report contains dataset status totals for #{fundingCycle.name}." %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization, url: url, toolTipText:toolTipText} only %}
 
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
-    <span class="p-2 font-bold block text-2xl">
-        {{ fundingCycle.name }} Datasets
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { fundingCycle : fundingCycle.id}) }}">
-            <div class="float-end px-2">
-                <i class="fa-solid fa-file-csv" style="color: green;"></i>
-            </div>
-        </a>
+    <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]">
+        <h3>Funding Cycle: {{ fundingCycle.name }}</h3>
     </span>
     {% endif %}
 
-    <div class="px-2">
-        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, 'showGraphics': 'false'} only %}
+    <div class="">
+        {% set prefixText = 'Funding Cycle Dataset Status Totals:' %}
+        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, prefixText: prefixText, 'showGraphics': 'false', showTotal: true} only %}
     </div>
 
 
@@ -67,15 +73,12 @@
 {% endif %}
 
 {% if researchGroup %}
-    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization} only %}
+    {% set url = url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) %}
+    {% set toolTipText = "This report contains dataset status totals for #{researchGroup.name}." %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization, url: url, toolTipText:toolTipText} only %}
 
-    <span class="p-3 font-bold block text-2xl">
-        {{ researchGroup.name }} Datasets
-        <a href="{{ url('pelagos_app_ui_report_dataset_monitoring_csv', { researchGroup : researchGroup.id}) }}">
-            <div class="float-end px-2">
-                <i class="fa-solid fa-file-csv" style="color: green;"></i>
-            </div>
-        </a>
+    <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]">
+        <h3>Funding Cycle: {{ researchGroup.fundingCycle.name }}</h3>
     </span>
 
     <div x-data="{ expanded: true }">
