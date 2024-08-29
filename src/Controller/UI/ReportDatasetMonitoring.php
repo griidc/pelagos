@@ -3,11 +3,14 @@
 namespace App\Controller\UI;
 
 use App\Repository\DatasetRepository;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use Knp\Snappy\Pdf as KnpSnappyPdf;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -15,7 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class ReportDatasetMonitoring extends ReportController
 {
-    #[Route('/dataset-monitoring-report', name: 'pelagos_app_ui_report_dataset_monitoring_csv')]
+    #[Route('/dataset-monitoring-report-csv', name: 'pelagos_app_ui_report_dataset_monitoring_csv')]
     public function researchGroupReport(Request $request, DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
     {
         $researchGroupId = $request->query->get('researchGroup');
@@ -42,5 +45,25 @@ class ReportDatasetMonitoring extends ReportController
         $response->headers->set('Content-Encoding', 'UTF-8');
 
         return $response;
+    }
+
+    /**
+     * Returns PDF results of datasets for requested FO/FC/RG
+     */
+    #[Route('/dataset-monitoring-report-pdf', name: 'pelagos_app_ui_report_dataset_monitoring_pdf')]
+    public function getDatasetsAsPdf(Request $request, KnpSnappyPdf $knpSnappyPdf): Response
+    {
+        $request->query->add(['makePdf'=> true]);
+
+        $pageUrl = $this->generateUrl('app_api_dataset_monitoring_datasets', $request->query->all(), UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $pdfFilename = 'DatasetMonitoringReport' . '-' .
+            (new \DateTime('now'))->format('Y-m-d') .
+            '.pdf';
+
+        return new PdfResponse(
+            $knpSnappyPdf->getOutput($pageUrl),
+            $pdfFilename
+        );
     }
 }

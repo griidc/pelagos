@@ -110,10 +110,23 @@ class DatasetMonitoringController extends AbstractController
         $fundingCycleId = $request->query->get('fundingCycle');
         $researchGroupId = $request->query->get('researchGroup');
         $datasetFilter = $request->query->get('datasetFilter');
-
+        $makePdf = (bool) $request->query->get('makePdf');
         $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
         $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
         $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
+
+        if ($makePdf) {
+            return $this->render(
+                'DatasetMonitoring/v2/pdf.html.twig',
+                [
+                    'fundingOrganization' => $fundingOrganization,
+                    'fundingCycle' => $fundingCycle,
+                    'researchGroup' => $researchGroup,
+                    'datasetFilter' => $datasetFilter,
+                    'makePdf' => $makePdf,
+                ]
+            );
+        }
 
         return $this->render(
             'DatasetMonitoring/v2/datasets.html.twig',
@@ -122,6 +135,7 @@ class DatasetMonitoringController extends AbstractController
                 'fundingCycle' => $fundingCycle,
                 'researchGroup' => $researchGroup,
                 'datasetFilter' => $datasetFilter,
+                'makePdf' => $makePdf,
             ]
         );
     }
