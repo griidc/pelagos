@@ -53,7 +53,7 @@ class ReportDatasetMonitoring extends ReportController
     #[Route('/dataset-monitoring-report-pdf', name: 'pelagos_app_ui_report_dataset_monitoring_pdf')]
     public function getDatasetsAsPdf(Request $request, KnpSnappyPdf $knpSnappyPdf): Response
     {
-        $request->query->add(['makePdf'=> true]);
+        $request->query->add(['makePdf' => true]);
 
         $pageUrl = $this->generateUrl('app_api_dataset_monitoring_datasets', $request->query->all(), UrlGeneratorInterface::ABSOLUTE_URL);
 
