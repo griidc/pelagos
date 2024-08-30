@@ -27,6 +27,8 @@
             {{ encore_entry_link_tags('nas-app') }}
             <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet"/>
 
+            <link href="{{ asset('build/css/griidc-tailwind.css') }}" rel="stylesheet" />
+
             {% if isMaintenanceMode() %}
                 <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet"/>
             {% endif %}
@@ -74,6 +76,8 @@
             </div>
         </div>
     </div>
+
+    {% include "components/griidc-header.html.twig" %}
 
     <!--::Navigation Menu::-->
     <div class="bootstrap">
