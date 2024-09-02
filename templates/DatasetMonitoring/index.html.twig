@@ -2,7 +2,11 @@
 {% block title %}Dataset Monitoring{% endblock title %}
 
 {% block stylesheets %}
-    {{ parent() }}
+
+  {{ parent() }}
+
+
+  {{ encore_entry_link_tags('dataset-monitoring') }}
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.light.css" rel="stylesheet">
     <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
@@ -48,6 +52,8 @@
 {% block javascripts %}
     {{ parent() }}
 
+    {{ encore_entry_script_tags('dataset-monitoring') }}
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/js/dx.all.js"></script>
 
     <script type="text/javascript" src="{{ asset('build/js/datasetMonitoring.js') }}"></script>
@@ -63,7 +69,7 @@
           <div id="dsm-treelist"></div>
         </div>
       </div>
-        <div>
+        <div class="prose">
           <div id="dsm-datasets" class="m-2 h-full overflow-y-auto ">
             <div class="px-32 content-center text-center">
               <h2>Dataset Monitoring</h2>
