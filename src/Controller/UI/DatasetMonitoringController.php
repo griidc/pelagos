@@ -62,6 +62,8 @@ class DatasetMonitoringController extends AbstractController
 
         $fundingOrganizations = $fundingOrganizationRepository->findBy($filter, array('name' => 'ASC'));
 
+        $list = [];
+
         foreach ($fundingOrganizations as $fundingOrganization) {
             $fundingOrganizationName = $fundingOrganization->getName();
             $fundingOrganizationId = 'fundingOrganization' . $fundingOrganization->getId();
