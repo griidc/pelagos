@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Groups as SGroups;
+use Symfony\Component\Serializer\Annotation\SerializedName as SName;
 
 /**
  * Dataset Entity class.
@@ -94,7 +95,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
-    #[SGroups(['export'])]
+    #[SGroups(['export', 'export2'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 
@@ -959,7 +960,6 @@ class Dataset extends Entity
      *
      * @Serializer\SerializedName("numberOfFiles")
      */
-    #[SGroups(['export'])]
     public function getNumberOfFiles(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -972,6 +972,40 @@ class Dataset extends Entity
 
         return null;
     }
+
+    /**
+     * Return string list of filetypes in this dataset's fileset's files.
+     *
+     * @Serializer\VirtualProperty
+     *
+     * @SName("detectedFileExtensions")
+     */
+    #[SGroups(["export"])]
+    public function getFileTypes(): ?string
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileSet = $datasetSubmission->getFileset();
+            if ($fileSet instanceof Fileset) {
+                $fileTypes = [];
+                foreach ($fileSet->getAllFiles() as $file) {
+                    $type = pathinfo($file->getFilePathName(), PATHINFO_EXTENSION);
+                    if (array_key_exists($type, $fileTypes)) {
+                        $fileTypes[$type]++;
+                    } else {
+                        $fileTypes[$type] = 1;
+                    }
+                }
+                $fileList = '';
+                foreach ($fileTypes as $key => $value) {
+                    $fileList .= $key . '(' . $value . '),';
+                }
+                return $fileList;
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Show friendly name of this entity.

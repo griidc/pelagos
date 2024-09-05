@@ -84,7 +84,6 @@ class ResearchGroup extends Entity
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SGroups(['export'])]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
     protected $shortName;
 

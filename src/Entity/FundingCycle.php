@@ -57,6 +57,7 @@ class FundingCycle extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'citext')]
     protected $name;
 
@@ -186,7 +187,6 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    #[SGroups(["export"])]
     public function setName(string $name)
     {
         $this->name = $name;

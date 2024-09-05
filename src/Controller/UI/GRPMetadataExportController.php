@@ -58,19 +58,24 @@ class GRPMetadataExportController extends ReportController
 
         $fileName = 'GRP-Metadata.csv' . (new DateTime('now'))->format('Ymd') . '.csv';
 
-        $udi = 'B1.x126.000:0001';
         $datasetRepository = $entityManager->getRepository(Dataset::class);
-        $dataset = $datasetRepository->findBy(['udi' => $udi]);
+        $dataset = $datasetRepository->findAllFiltered();
+
+        /*
+        $serializedData = $this->serializer->serialize($dataset, 'json', [
+            'groups' => ['export'],
+            'json_encode_options' => JSON_PRETTY_PRINT
+        ]);
+        dd($serializedData);
+        */
 
         $serializedData = $this->serializer->serialize($dataset, 'csv', [
-            'groups' => ['export'],
+            'groups' => ['export']
         ]);
 
         $response = new Response($serializedData);
         $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Disposition', "attachment; filename=$fileName");
-
-        //dd($serializedData);
 
         return $response;
     }

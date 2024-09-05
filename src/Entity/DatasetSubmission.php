@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Serializer\Annotation\Groups as SGroups;
 
 /**
  * Dataset Submission Entity class.
@@ -691,6 +692,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission data parameters/units field is required."
      * )
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $suppParams;
 
@@ -751,6 +753,7 @@ class DatasetSubmission extends Entity
      *
      * @var array
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'json', nullable: true)]
     protected $placeKeywords = array();
 
@@ -759,6 +762,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      */
+    #[SGroups(["export"])]
     #[ORM\ManyToMany(targetEntity: Keyword::class)]
     protected $keywords;
 
@@ -771,6 +775,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'json', nullable: true)]
     protected $topicKeywords = array();
 
@@ -779,6 +784,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtent;
 
@@ -788,6 +794,7 @@ class DatasetSubmission extends Entity
      * @var string
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[SGroups(["export"])]
     protected $spatialExtentDescription;
 
     /**
@@ -797,6 +804,7 @@ class DatasetSubmission extends Entity
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $temporalExtentDesc;
 
@@ -833,6 +841,7 @@ class DatasetSubmission extends Entity
      *
      * @Serializer\Groups({"card"})
      */
+    #[SGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $distributionFormatName;
 
