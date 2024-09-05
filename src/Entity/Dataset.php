@@ -95,7 +95,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
-    #[SGroups(['export', 'export2'])]
+    #[SGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 

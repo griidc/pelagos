@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\KeywordType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -753,7 +754,6 @@ class DatasetSubmission extends Entity
      *
      * @var array
      */
-    #[SGroups(["export"])]
     #[ORM\Column(type: 'json', nullable: true)]
     protected $placeKeywords = array();
 
@@ -762,7 +762,6 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      */
-    #[SGroups(["export"])]
     #[ORM\ManyToMany(targetEntity: Keyword::class)]
     protected $keywords;
 
@@ -775,7 +774,6 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
-    #[SGroups(["export"])]
     #[ORM\Column(type: 'json', nullable: true)]
     protected $topicKeywords = array();
 
@@ -2115,6 +2113,15 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Stringified getter for place keywords
+     */
+    #[SGroups(['export'])]
+    public function getPlaceKeywordsString(): string
+    {
+        return implode(',', $this->placeKeywords);
+    }
+
+    /**
      * Setter for topic keywords.
      *
      * @param array $topicKeywords array of keywords
@@ -2141,6 +2148,15 @@ class DatasetSubmission extends Entity
     public function getTopicKeywords(): array
     {
         return $this->topicKeywords;
+    }
+
+    /**
+     * Stringified getter for topic keywords
+     */
+    #[SGroups(['export'])]
+    public function getTopicKeywordsString(): string
+    {
+        return implode(',', $this->topicKeywords);
     }
 
     /**
@@ -2171,6 +2187,27 @@ class DatasetSubmission extends Entity
     public function getKeywords(): ?Collection
     {
         return $this->keywords;
+    }
+
+    /**
+     * Stringified getter for Keywords
+     */
+    #[SGroups(['export'])]
+    public function getKeywordsString(): string
+    {
+        $keywordArray = [];
+        foreach ($this->keywords as $keyword) {
+            $label = $keyword->getLabel();
+            if ($keyword->getType() == KeywordType::TYPE_ANZSRC) {
+                $type = 'anzsrc';
+            } elseif ($keyword->getType() == KeywordType::TYPE_GCMD) {
+                $type = 'gcmd';
+            } else {
+                $type = 'unknown';
+            }
+            $keywordArray[] = "$type:$label";
+        }
+        return implode(',', $keywordArray);
     }
 
     /**
