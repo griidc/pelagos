@@ -2198,13 +2198,7 @@ class DatasetSubmission extends Entity
         $keywordArray = [];
         foreach ($this->keywords as $keyword) {
             $label = $keyword->getLabel();
-            if ($keyword->getType() == KeywordType::TYPE_ANZSRC) {
-                $type = KeywordType::TYPE_ANZSRC->value;
-            } elseif ($keyword->getType() == KeywordType::TYPE_GCMD) {
-                $type = KeywordType::TYPE_GCMD->value;
-            } else {
-                $type = 'unknown';
-            }
+            $type = $keyword->getType()?->value ?? 'unset';
             $keywordArray[] = "$type:$label";
         }
         return implode(',', $keywordArray);
