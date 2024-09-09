@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Serializer\Annotation\Groups as SGroups;
+use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
 
 /**
  * Dataset Submission Entity class.
@@ -693,7 +693,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission data parameters/units field is required."
      * )
      */
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $suppParams;
 
@@ -782,7 +782,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      */
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtent;
 
@@ -792,7 +792,7 @@ class DatasetSubmission extends Entity
      * @var string
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     protected $spatialExtentDescription;
 
     /**
@@ -802,7 +802,7 @@ class DatasetSubmission extends Entity
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      */
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $temporalExtentDesc;
 
@@ -839,7 +839,7 @@ class DatasetSubmission extends Entity
      *
      * @Serializer\Groups({"card"})
      */
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $distributionFormatName;
 
@@ -2115,7 +2115,7 @@ class DatasetSubmission extends Entity
     /**
      * Stringified getter for place keywords
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     public function getPlaceKeywordsString(): string
     {
         return implode(',', $this->placeKeywords);
@@ -2153,7 +2153,7 @@ class DatasetSubmission extends Entity
     /**
      * Stringified getter for topic keywords
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     public function getTopicKeywordsString(): string
     {
         return implode(',', $this->topicKeywords);
@@ -2192,7 +2192,7 @@ class DatasetSubmission extends Entity
     /**
      * Stringified getter for Keywords
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     public function getKeywordsString(): string
     {
         $keywordArray = [];

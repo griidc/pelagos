@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Groups as SGroups;
+use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
 use Symfony\Component\Serializer\Annotation\SerializedName as SName;
 
 /**
@@ -60,28 +60,28 @@ class Dataset extends Entity
     /**
      * Cold Storage Tag
      */
-    const TAG_COLD_STORAGE = 'Cold Storage';
+    public const TAG_COLD_STORAGE = 'Cold Storage';
 
     /**
      * Remotely Hosted Tag
      */
-    const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
+    public const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
 
     /**
      * ERDDAP Tag
      */
-    const TAG_ERDDAP = 'ERDDAP';
+    public const TAG_ERDDAP = 'ERDDAP';
 
 
     /**
      * NCEI Tag
      */
-    const TAG_NCEI = 'NCEI';
+    public const TAG_NCEI = 'NCEI';
 
     /**
      * Valid Tags for a dataset.
      */
-    const TAGS = [
+    public const TAGS = [
         self::TAG_COLD_STORAGE => 'Cold Storage',
         self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
         self::TAG_ERDDAP => 'ERDDAP',
@@ -95,7 +95,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 
@@ -106,7 +106,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $title;
 
@@ -125,7 +125,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card"})
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
     protected $doi;
 
@@ -138,7 +138,7 @@ class Dataset extends Entity
      * @Serializer\Groups({"search"})
      *
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     protected $researchGroup;
 
@@ -159,7 +159,7 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card"})
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
     protected $datasetSubmission;
 
@@ -939,7 +939,7 @@ class Dataset extends Entity
      *
      * @Serializer\SerializedName("totalFileSize")
      */
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -980,7 +980,7 @@ class Dataset extends Entity
      *
      * @SName("detectedFileExtensions")
      */
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     public function getFileTypes(): ?string
     {
         $datasetSubmission = $this->getDatasetSubmission();

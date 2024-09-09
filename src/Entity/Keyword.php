@@ -7,7 +7,7 @@ use App\Repository\KeywordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Groups as SGroups;
+use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
 
 /**
  * Keywords class for Standardized keywords.
@@ -40,7 +40,7 @@ class Keyword extends Entity
      * Display label for the Keyword.
      */
     #[ORM\Column(type: Types::TEXT)]
-    #[SGroups(['export'])]
+    #[SerializerGroups(['export'])]
     #[Serializer\Groups(['api'])]
     private ?string $label = null;
 
@@ -98,7 +98,7 @@ class Keyword extends Entity
     /**
      * Get the Type for this Keyword.
      */
-    #[SGroups(["export"])]
+    #[SerializerGroups(["export"])]
     public function getType(): ?KeywordType
     {
         return $this->type;

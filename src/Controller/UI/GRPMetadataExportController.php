@@ -23,7 +23,7 @@ class GRPMetadataExportController extends ReportController
     #[Route('/grp/export')]
     public function defaultAction(EntityManagerInterface $entityManager, SerializerInterface $serializer, FundingOrgFilter $fundingOrgFilter)
     {
-        $fileName = 'GRP-Metadata.csv' . (new DateTime('now'))->format('Ymd\THis') . '.csv';
+        $fileName = 'GRP-Metadata-' . (new DateTime('now'))->format('Ymd\THis') . '.csv';
 
         $researchGroupIDs = [];
         if ($fundingOrgFilter->isActive()) {
