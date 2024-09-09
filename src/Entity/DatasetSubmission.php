@@ -2199,9 +2199,9 @@ class DatasetSubmission extends Entity
         foreach ($this->keywords as $keyword) {
             $label = $keyword->getLabel();
             if ($keyword->getType() == KeywordType::TYPE_ANZSRC) {
-                $type = 'anzsrc';
+                $type = KeywordType::TYPE_ANZSRC->value;
             } elseif ($keyword->getType() == KeywordType::TYPE_GCMD) {
-                $type = 'gcmd';
+                $type = KeywordType::TYPE_GCMD->value;
             } else {
                 $type = 'unknown';
             }

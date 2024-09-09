@@ -338,25 +338,4 @@ class DatasetRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-    /**
-     * Get all datasets, filter aware
-     *
-     * @return Dataset[]
-     */
-    public function findAllFiltered(): array
-    {
-        $qb = $this->createQueryBuilder('dataset');
-        $qb->select('dataset');
-
-        if ($this->fundingOrgFilter->isActive()) {
-            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
-
-            $qb
-            ->innerJoin('dataset.researchGroup', 'rg')
-            ->andWhere('rg.id IN (:rgs)')
-            ->setParameter('rgs', $researchGroupIds);
-        }
-        return $qb->getQuery()->getResult();
-    }
 }

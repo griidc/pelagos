@@ -3,12 +3,11 @@
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
+use App\Util\FundingOrgFilter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface as SerializerInterface;
 
 /**
@@ -17,59 +16,24 @@ use Symfony\Component\Serializer\SerializerInterface as SerializerInterface;
 class GRPMetadataExportController extends ReportController
 {
     /**
-     * Var to hold serializer.
-     */
-    private $serializer;
-
-    /**
-     * Var to hold normalizer.
-     */
-    private $normalizer;
-
-    /**
-     * Var to hold encoder, needed for csv creation.
-     */
-    private $encoder;
-
-    /**
-     * Class constructor
-     *
-     */
-    public function __construct(SerializerInterface $serializer, NormalizerInterface $normalizer, EncoderInterface $encoder)
-    {
-        $this->serializer = $serializer;
-        $this->normalizer = $normalizer;
-        $this->encoder = $encoder;
-    }
-
-    /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @Route("/grp/export", name="pelagos_app_ui_grpexport_default")
-     *
      * @return Response A Response instance.
-     *
      */
-    public function defaultAction(EntityManagerInterface $entityManager)
+    #[Route('/grp/export')]
+    public function defaultAction(EntityManagerInterface $entityManager, SerializerInterface $serializer, FundingOrgFilter $fundingOrgFilter)
     {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('template/AdminOnly.html.twig');
+        $fileName = 'GRP-Metadata.csv' . (new DateTime('now'))->format('Ymd\THis') . '.csv';
+
+        $researchGroupIDs = [];
+        if ($fundingOrgFilter->isActive()) {
+            $researchGroupIDs = $fundingOrgFilter->getResearchGroupsIdArray();
         }
 
-        $fileName = 'GRP-Metadata.csv' . (new DateTime('now'))->format('Ymd') . '.csv';
-
         $datasetRepository = $entityManager->getRepository(Dataset::class);
-        $dataset = $datasetRepository->findAllFiltered();
+        $dataset = $datasetRepository->findBy(array('researchGroup' => $researchGroupIDs));
 
-        /*
-        $serializedData = $this->serializer->serialize($dataset, 'json', [
-            'groups' => ['export'],
-            'json_encode_options' => JSON_PRETTY_PRINT
-        ]);
-        dd($serializedData);
-        */
-
-        $serializedData = $this->serializer->serialize($dataset, 'csv', [
+        $serializedData = $serializer->serialize($dataset, 'csv', [
             'groups' => ['export']
         ]);
 
