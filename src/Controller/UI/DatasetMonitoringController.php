@@ -11,6 +11,7 @@ use App\Repository\DatasetRepository;
 use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\ResearchGroupRepository;
+use App\Util\FundingOrgFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,9 +53,14 @@ class DatasetMonitoringController extends AbstractController
      * This will return a plain item list with FOs, FCs, RGs as JSON.
      */
     #[Route('/api/groups', name: 'app_api_dataset_monitoring_groups')]
-    public function getGroups(FundingOrganizationRepository $fundingOrganizationRepository): Response
+    public function getGroups(FundingOrganizationRepository $fundingOrganizationRepository, FundingOrgFilter $fundingOrgFilter): Response
     {
-        $fundingOrganizations = $fundingOrganizationRepository->findAll();
+        $filter = array();
+        if ($fundingOrgFilter->isActive()) {
+            $filter = array('id' => $fundingOrgFilter->getFilterIdArray());
+        }
+
+        $fundingOrganizations = $fundingOrganizationRepository->findBy($filter, array('name' => 'ASC'));
 
         $list = [];
 

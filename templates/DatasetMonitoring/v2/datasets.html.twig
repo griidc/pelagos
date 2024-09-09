@@ -19,7 +19,7 @@
         {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
             {# DOT NOT SHOW #}
         {% else %}
-            <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]"><h3>Funding Cycle: {{fundingCycle.name}}</h3></span>
+            <span class="font-bold block px-2 shadow-lg border rounded text-white main-header"><h3>Funding Cycle: {{fundingCycle.name}}</h3></span>
 
             {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
             <div x-data="{ expanded: false }">
@@ -44,7 +44,7 @@
     {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization, urlParameters: urlParameters, group: fundingCycle} only %}
 
     {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
-    <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]">
+    <span class="font-bold block px-2 shadow-lg border rounded text-white main-header">
         <h3>Funding Cycle: {{ fundingCycle.name }}</h3>
     </span>
     {% endif %}
@@ -75,7 +75,7 @@
     {% set urlParameters = { researchGroup : researchGroup.id} %}
     {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization, urlParameters: urlParameters, group: researchGroup} only %}
 
-    <span class="font-bold block px-2 shadow-lg border rounded text-white bg-[#2E3E90]">
+    <span class="font-bold block px-2 shadow-lg border rounded text-white main-header">
         <h3>Funding Cycle: {{ researchGroup.fundingCycle.name }}</h3>
     </span>
 

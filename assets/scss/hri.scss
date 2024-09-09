@@ -7,6 +7,8 @@
 @import 'bootstrap.scss';
 
 :root {
+  --color-blue--harte-main:#2e384b;
+  --color-blue--harte-highlight:#007ac2;;
   --color-blue--geyser:#dce4e8;
   --color-blue--bali-hai:#869eaa;
   --color-blue--surf:#00b7c6;
@@ -83,6 +85,8 @@
   --color-headerBottom:var(--color-blue--blueBird);
   --color-main:var(--color-blue--blueBird);
   --color-menu:var(--color-blue--boston);
+  --color-primary: var(--color-blue--harte-main);
+  --color-secondary: var(--color-blue--harte-highlight);
   --color-table-striped:var(--color-brown--tan);
   --atlassion-button-main:var(--color-blue--blueBird);
   --atlassion-button-bg:var(--color-blue--boston);

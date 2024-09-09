@@ -35,10 +35,11 @@
         },
         focusedRowEnabled: true,
         autoNavigateToFocusedRow: true,
-        columns: [{
-            dataField: 'udi',
-            caption: 'UDI',
-            columnAutoWidth: true,
+        columns: [
+            {
+                dataField: 'udi',
+                caption: 'UDI',
+                width: 162,
             },{
                 dataField: 'doi',
                 caption: 'DOI',
@@ -93,11 +94,13 @@
 {% endif %}
 <div class="p-2 m-0" style="page-break-inside: auto">
     <div class="shadow-lg border rounded-lg">
-        <div class="block" >
-            <span class="p-2 text-white bg-[#53AAD8] font-bold block text-lg" @click="expanded = ! expanded">
-                Research Group: {{ researchGroup.name }}
+        <div class="block second-header">
+            <span class="p-2 text-white font-bold block text-lg" @click="expanded = ! expanded">
                 <div class="float-end px-2">
                     <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: white;"></i>
+                </div>
+                <div class="mr-10">
+                    Research Group: {{ researchGroup.name }}
                 </div>
             </span>
         </div>
