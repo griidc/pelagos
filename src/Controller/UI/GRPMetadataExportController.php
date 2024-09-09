@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
+use App\Repository\DatasetRepository;
 use App\Util\FundingOrgFilter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,12 +17,23 @@ use Symfony\Component\Serializer\SerializerInterface as SerializerInterface;
 class GRPMetadataExportController extends ReportController
 {
     /**
+     * Holds DatasetRepository used to look up datasets.
+     */
+    private DatasetRepository $datasetRepository;
+
+    /**
+     * Class constructor for dependency injection.
+     */
+    public function __construct(entityManagerInterface $entityManager)
+    {
+        $this->datasetRepository = $entityManager->getRepository(Dataset::class);
+    }
+
+    /**
      * This is a parameterless report, so all is in the default action.
-     *
-     * @return Response A Response instance.
      */
     #[Route('/grp/export')]
-    public function defaultAction(EntityManagerInterface $entityManager, SerializerInterface $serializer, FundingOrgFilter $fundingOrgFilter)
+    public function defaultAction(DatasetRepository $datasetRepository, SerializerInterface $serializer, FundingOrgFilter $fundingOrgFilter): Response
     {
         $fileName = 'GRP-Metadata-' . (new DateTime('now'))->format('Ymd\THis') . '.csv';
 
@@ -30,9 +42,7 @@ class GRPMetadataExportController extends ReportController
             $researchGroupIDs = $fundingOrgFilter->getResearchGroupsIdArray();
         }
 
-        $datasetRepository = $entityManager->getRepository(Dataset::class);
         $dataset = $datasetRepository->findBy(array('researchGroup' => $researchGroupIDs));
-
         $serializedData = $serializer->serialize($dataset, 'csv', [
             'groups' => ['export']
         ]);
