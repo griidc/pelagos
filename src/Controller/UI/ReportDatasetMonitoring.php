@@ -32,7 +32,7 @@ class ReportDatasetMonitoring extends ReportController
         );
 
         $csvFilename = 'DatasetMonitoringReport' . '-' .
-            (new \DateTime('now'))->format('Y-m-d') .
+            (new \DateTime('now'))->format('Ymd\THis') .
             '.csv';
 
         $response = new Response($serializer->serialize($datasets, 'csv', ["output_utf8_bom" => true]));
@@ -58,7 +58,7 @@ class ReportDatasetMonitoring extends ReportController
         $pageUrl = $this->generateUrl('app_api_dataset_monitoring_datasets', $request->query->all(), UrlGeneratorInterface::ABSOLUTE_URL);
 
         $pdfFilename = 'DatasetMonitoringReport' . '-' .
-            (new \DateTime('now'))->format('Y-m-d') .
+            (new \DateTime('now'))->format('Ymd\THis') .
             '.pdf';
 
         return new PdfResponse(
