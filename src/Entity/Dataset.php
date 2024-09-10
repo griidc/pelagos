@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
-use Symfony\Component\Serializer\Annotation\SerializedName as SName;
+use Symfony\Component\Serializer\Annotation\SerializedName as SerializedName;
 
 /**
  * Dataset Entity class.
@@ -977,10 +977,9 @@ class Dataset extends Entity
      * Return string list of filetypes in this dataset's fileset's files.
      *
      * @Serializer\VirtualProperty
-     *
-     * @SName("detectedFileExtensions")
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
+    #[SerializedName('detectedFileExtensions')]
     public function getFileTypes(): ?string
     {
         $datasetSubmission = $this->getDatasetSubmission();
