@@ -828,7 +828,7 @@ class ResearchGroup extends Entity
      *
      * @return Collection
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     public function getProjectDirectors(): Collection
     {
         $projectDirectors = new ArrayCollection();

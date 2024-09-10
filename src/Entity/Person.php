@@ -53,7 +53,7 @@ class Person extends Entity
      *     message="First name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text')]
     protected $firstName;
 
@@ -72,7 +72,7 @@ class Person extends Entity
      *     message="Last name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'citext')]
     protected $lastName;
 
@@ -95,7 +95,7 @@ class Person extends Entity
      *     mode="strict"
      * )
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'citext', unique: true)]
     protected $emailAddress;
 

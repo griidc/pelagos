@@ -98,7 +98,7 @@ class Keyword extends Entity
     /**
      * Get the Type for this Keyword.
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     public function getType(): ?KeywordType
     {
         return $this->type;

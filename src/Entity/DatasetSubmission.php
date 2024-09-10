@@ -693,7 +693,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission data parameters/units field is required."
      * )
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $suppParams;
 
@@ -782,7 +782,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $spatialExtent;
 
@@ -792,7 +792,7 @@ class DatasetSubmission extends Entity
      * @var string
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     protected $spatialExtentDescription;
 
     /**
@@ -802,7 +802,7 @@ class DatasetSubmission extends Entity
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $temporalExtentDesc;
 
@@ -839,7 +839,7 @@ class DatasetSubmission extends Entity
      *
      * @Serializer\Groups({"card"})
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $distributionFormatName;
 

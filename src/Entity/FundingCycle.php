@@ -57,7 +57,7 @@ class FundingCycle extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SerializerGroups(["export"])]
+    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'citext')]
     protected $name;
 
