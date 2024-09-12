@@ -43,17 +43,14 @@
     {% set urlParameters = { fundingCycle : fundingCycle.id} %}
     {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization, urlParameters: urlParameters, group: fundingCycle} only %}
 
-    {% if datasetFilter != "without" and fundingCycle.datasets|submittedDIFs|length > 0 %}
     <span class="font-bold block px-2 shadow-lg border rounded text-white main-header">
         <h3>Funding Cycle: {{ fundingCycle.name }}</h3>
     </span>
-    {% endif %}
 
     <div class="">
         {% set prefixText = 'Funding Cycle Dataset Status Totals:' %}
         {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, prefixText: prefixText, 'showGraphics': 'false', showTotal: true} only %}
     </div>
-
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
     <div x-data="{ expanded: false }">
