@@ -373,6 +373,22 @@ class FundingCycle extends Entity
     }
 
     /**
+     * Check the see if this Funding Cycle has any Research Groups without Datasets.
+     *
+     * @return boolean
+     */
+    public function hasResearchGroupsWithoutDatasets() : bool
+    {
+        $result = false;
+
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            if (count($researchGroup->getDatasets()) == 0) {$result = true;};
+        }
+
+        return $result;
+    }
+
+    /**
      * Setter for udiPrefix.
      *
      * @param string|null $udiPrefix The prefix of the UDI for this Funding Cycle.
