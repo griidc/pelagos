@@ -12,6 +12,7 @@ use App\Exception\NotDeletableException;
 /**
  * Entity class to represent a Funding Cycle.
  *
+ *
  * @Assert\GroupSequence({
  *     "id",
  *     "unique_id",

@@ -383,6 +383,8 @@ class DatasetSubmission extends Entity
      * The Dataset this Dataset Submission is attached to.
      *
      * @var Dataset
+     *
+     *
      */
     #[ORM\ManyToOne(targetEntity: 'Dataset', inversedBy: 'datasetSubmissionHistory', cascade: ['persist'])]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
@@ -415,6 +417,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
+     *
      * @Assert\NotBlank(
      *     message="The dataset submission title is required."
      * )
@@ -437,6 +440,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
+     *
      * @Assert\NotBlank(
      *     message="The dataset submission abstract is required."
      * )
@@ -452,6 +456,7 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @Serializer\Groups({"authors"})
+     *
      *
      * @Assert\NotBlank(
      *     message="The dataset submission author list is required."
@@ -488,6 +493,8 @@ class DatasetSubmission extends Entity
      * The Point of Contact for this Dataset Submission.
      *
      * @var Collection
+     *
+     *
      *
      * @Assert\Count(
      *      min = "1",
@@ -675,6 +682,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
+     *
      * @Assert\NotBlank(
      *     message="The dataset submission purpose field is required."
      * )
@@ -686,6 +694,7 @@ class DatasetSubmission extends Entity
      * Supplemental information - parameters.
      *
      * @var string
+     *
      *
      * @Assert\NotBlank(
      *     message="The dataset submission data parameters/units field is required."
@@ -766,6 +775,7 @@ class DatasetSubmission extends Entity
      * Topic keywords describing this dataset.
      *
      * @var array
+     *
      *
      * @Assert\NotBlank(
      *     message="The dataset submission topic keyword(s) field is required."

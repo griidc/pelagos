@@ -58,28 +58,28 @@ class Dataset extends Entity
     /**
      * Cold Storage Tag
      */
-    public const TAG_COLD_STORAGE = 'Cold Storage';
+    const TAG_COLD_STORAGE = 'Cold Storage';
 
     /**
      * Remotely Hosted Tag
      */
-    public const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
+    const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
 
     /**
      * ERDDAP Tag
      */
-    public const TAG_ERDDAP = 'ERDDAP';
+    const TAG_ERDDAP = 'ERDDAP';
 
 
     /**
      * NCEI Tag
      */
-    public const TAG_NCEI = 'NCEI';
+    const TAG_NCEI = 'NCEI';
 
     /**
      * Valid Tags for a dataset.
      */
-    public const TAGS = [
+    const TAGS = [
         self::TAG_COLD_STORAGE => 'Cold Storage',
         self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
         self::TAG_ERDDAP => 'ERDDAP',
@@ -1024,6 +1024,7 @@ class Dataset extends Entity
 
         return $tags;
     }
+
 
     /**
      * Gets the UDI, stringifier.
