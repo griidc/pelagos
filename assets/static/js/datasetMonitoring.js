@@ -43,6 +43,8 @@ $(() => {
       dsmTreeList.repaint();
     }).always(function () {
       dsmTreeList.option("disabled", false);
+      const expandedKeys = groupStore.items().filter(({ expanded }) => expanded === true).map(key => key.id);
+      dsmTreeList.option("expandedRowKeys", expandedKeys);
     });
   }
 
