@@ -8,9 +8,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use App\Exception\NotDeletableException;
+
 /**
  * Entity class to represent a Funding Cycle.
- *
  *
  * @Assert\GroupSequence({
  *     "id",
