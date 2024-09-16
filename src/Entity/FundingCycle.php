@@ -374,15 +374,15 @@ class FundingCycle extends Entity
 
     /**
      * Check the see if this Funding Cycle has any Research Groups without Datasets.
-     *
-     * @return boolean
      */
-    public function hasResearchGroupsWithoutDatasets() : bool
+    public function hasResearchGroupsWithoutDatasets(): bool
     {
         $result = false;
 
         foreach ($this->getResearchGroups() as $researchGroup) {
-            if (count($researchGroup->getDatasets()) == 0) {$result = true;};
+            if (count($researchGroup->getDatasets()) == 0) {
+                $result = true;
+            }
         }
 
         return $result;
