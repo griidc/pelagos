@@ -10,7 +10,6 @@ use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Exception\NotDeletableException;
-use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
 
 /**
  * Entity class to represent a Person.
@@ -53,7 +52,6 @@ class Person extends Entity
      *     message="First name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text')]
     protected $firstName;
 
@@ -72,7 +70,6 @@ class Person extends Entity
      *     message="Last name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'citext')]
     protected $lastName;
 
@@ -95,7 +92,6 @@ class Person extends Entity
      *     mode="strict"
      * )
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'citext', unique: true)]
     protected $emailAddress;
 

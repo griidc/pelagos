@@ -8,8 +8,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use App\Exception\NotDeletableException;
-use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
-
 /**
  * Entity class to represent a Funding Cycle.
  *
@@ -57,7 +55,6 @@ class FundingCycle extends Entity
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'citext')]
     protected $name;
 

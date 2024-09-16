@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
 
 /**
  * DOI Entity class.
@@ -39,7 +38,6 @@ class DOI extends Entity
      *
      * @Serializer\Groups({"doi"})
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: false)]
     protected $doi;
 

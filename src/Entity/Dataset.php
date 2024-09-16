@@ -7,8 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Groups as SerializerGroups;
-use Symfony\Component\Serializer\Annotation\SerializedName as SerializedName;
 
 /**
  * Dataset Entity class.
@@ -95,7 +93,6 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $udi;
 
@@ -106,7 +103,6 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card", "search"})
      */
-    #[SerializerGroups(['export'])]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $title;
 
@@ -125,7 +121,6 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card"})
      */
-    #[SerializerGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
     protected $doi;
 
@@ -138,7 +133,6 @@ class Dataset extends Entity
      * @Serializer\Groups({"search"})
      *
      */
-    #[SerializerGroups(['export'])]
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     protected $researchGroup;
 
@@ -159,7 +153,6 @@ class Dataset extends Entity
      *
      * @Serializer\Groups({"card"})
      */
-    #[SerializerGroups(['export'])]
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
     protected $datasetSubmission;
 
@@ -939,7 +932,6 @@ class Dataset extends Entity
      *
      * @Serializer\SerializedName("totalFileSize")
      */
-    #[SerializerGroups(['export'])]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -972,39 +964,6 @@ class Dataset extends Entity
 
         return null;
     }
-
-    /**
-     * Return string list of filetypes in this dataset's fileset's files.
-     *
-     * @Serializer\VirtualProperty
-     */
-    #[SerializerGroups(['export'])]
-    #[SerializedName('detectedFileExtensions')]
-    public function getFileTypes(): ?string
-    {
-        $datasetSubmission = $this->getDatasetSubmission();
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $fileSet = $datasetSubmission->getFileset();
-            if ($fileSet instanceof Fileset) {
-                $fileTypes = [];
-                foreach ($fileSet->getAllFiles() as $file) {
-                    $type = pathinfo($file->getFilePathName(), PATHINFO_EXTENSION);
-                    if (array_key_exists($type, $fileTypes)) {
-                        $fileTypes[$type]++;
-                    } else {
-                        $fileTypes[$type] = 1;
-                    }
-                }
-                $fileList = '';
-                foreach ($fileTypes as $key => $value) {
-                    $fileList .= $key . '(' . $value . '),';
-                }
-                return $fileList;
-            }
-        }
-        return null;
-    }
-
 
     /**
      * Show friendly name of this entity.
@@ -1065,7 +1024,6 @@ class Dataset extends Entity
 
         return $tags;
     }
-
 
     /**
      * Gets the UDI, stringifier.
