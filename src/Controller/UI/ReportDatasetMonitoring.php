@@ -18,6 +18,9 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class ReportDatasetMonitoring extends ReportController
 {
+    /**
+     * Returns a Dataset Monitoring Report in CSV.
+     */
     #[Route('/dataset-monitoring-report-csv', name: 'pelagos_app_ui_report_dataset_monitoring_csv')]
     public function researchGroupReport(Request $request, DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
     {
@@ -31,11 +34,11 @@ class ReportDatasetMonitoring extends ReportController
             fundingOrganization: $fundingOrganizationId
         );
 
-        $csvFilename = 'DatasetMonitoringReport' . '-' .
+        $csvFilename = 'DatasetMonitoringReport-' .
             (new \DateTime('now'))->format('Ymd\THis') .
             '.csv';
 
-        $response = new Response($serializer->serialize($datasets, 'csv', ["output_utf8_bom" => true]));
+        $response = new Response($serializer->serialize($datasets, 'csv', ['output_utf8_bom' => true]));
 
         $response->headers->set(
             'Content-disposition',
@@ -48,7 +51,7 @@ class ReportDatasetMonitoring extends ReportController
     }
 
     /**
-     * Returns PDF results of datasets for requested FO/FC/RG
+     * Returns PDF results of datasets for requested FO/FC/RG.
      */
     #[Route('/dataset-monitoring-report-pdf', name: 'pelagos_app_ui_report_dataset_monitoring_pdf')]
     public function getDatasetsAsPdf(Request $request, KnpSnappyPdf $knpSnappyPdf): Response
@@ -57,7 +60,7 @@ class ReportDatasetMonitoring extends ReportController
 
         $pageUrl = $this->generateUrl('app_api_dataset_monitoring_datasets', $request->query->all(), UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $pdfFilename = 'DatasetMonitoringReport' . '-' .
+        $pdfFilename = 'DatasetMonitoringReport-' .
             (new \DateTime('now'))->format('Ymd\THis') .
             '.pdf';
 
