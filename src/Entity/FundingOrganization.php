@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @UniqueEntity("shortName", message="A Funding Organization with this Short name already exists")
  */
-#[ORM\Entity(repositoryClass:FundingOrganizationRepository::class)]
+#[ORM\Entity(repositoryClass: FundingOrganizationRepository::class)]
 class FundingOrganization extends Entity
 {
     /**
@@ -38,10 +38,10 @@ class FundingOrganization extends Entity
      *
      * @Serializer\Groups({"organization"})
      *
-     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
+     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
@@ -54,7 +54,6 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
@@ -66,8 +65,6 @@ class FundingOrganization extends Entity
      * Funding organization's logo.
      *
      * @var string|resource $logo
-     *
-     * @access protected
      */
     #[ORM\Column(type: 'blob', nullable: true)]
     protected $logo;
@@ -77,10 +74,10 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
+     *
      * @Assert\Email(
      *     message="Email address is invalid"
      * )
@@ -92,7 +89,6 @@ class FundingOrganization extends Entity
      * Description of a funding organization.
      *
      * @var string
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
@@ -108,7 +104,6 @@ class FundingOrganization extends Entity
      *
      * @Serializer\Groups({"organization"})
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
@@ -121,7 +116,6 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
@@ -133,7 +127,6 @@ class FundingOrganization extends Entity
      * Funding organization's delivery point (street address).
      *
      * @var string
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -159,7 +152,6 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
@@ -171,7 +163,6 @@ class FundingOrganization extends Entity
      * Funding organization's postal code (zipcode).
      *
      * @var string
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
@@ -196,10 +187,6 @@ class FundingOrganization extends Entity
      * Funding organization's Funding Cycle's.
      *
      * @var FundingCycle[]
-     *
-     * @access protected
-     *
-     *
      */
     #[ORM\OneToMany(targetEntity: 'FundingCycle', mappedBy: 'fundingOrganization')]
     #[ORM\OrderBy(['sortOrder' => 'ASC', 'name' => 'ASC'])]
@@ -209,8 +196,6 @@ class FundingOrganization extends Entity
      * Funding Organization's PersonFundingOrganizations.
      *
      * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
-     *
-     * @access protected
      */
     #[ORM\OneToMany(targetEntity: 'PersonFundingOrganization', mappedBy: 'fundingOrganization')]
     protected $personFundingOrganizations;
@@ -231,7 +216,6 @@ class FundingOrganization extends Entity
      * This holds the position in the sort order of this Entity.
      *
      * @var int
-     *
      *
      * @Assert\Range(
      *     min = 1,
@@ -279,6 +263,7 @@ class FundingOrganization extends Entity
                 }
             }
         }
+
         return $datasets;
     }
 
