@@ -5,6 +5,7 @@ namespace App\Controller\UI;
 use App\Entity\DOI;
 use App\Repository\DatasetRepository;
 use App\Util\FundingOrgFilter;
+use App\Util\Geometry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -66,6 +67,9 @@ class DatasetExportController extends ReportController
         $dataArray = [];
         //process result query into an array with organized data
         $currentIndex = 0;
+        // used to calculate bounding-box envelope from too-complex for CSV GML.
+        $geometryUtil = new Geometry($entityManager);
+
         foreach ($results as $result) {
             //initialize array with key  = udi
             if (isset($dataArray[$currentIndex]['udi']) && $result['udi'] != $dataArray[$currentIndex]['udi']) {
@@ -104,8 +108,10 @@ class DatasetExportController extends ReportController
                 $dataArray[$currentIndex]['totalFileSizeMB'] = ($dataset->getTotalFileSize()) / 1000 ** 2;
                 $dataArray[$currentIndex]['parameters.units'] = $dataset->getDatasetSubmission()?->getSuppParams();
                 $dataArray[$currentIndex]['locationDescription'] = $dataset->getDatasetSubmission()?->getSpatialExtentDescription();
-                $dataArray[$currentIndex]['spatialExtent'] = $dataset?->getSpatialExtentGeometry(); // too big for excel, still valid csv.
-                $dataArray[$currentIndex]['fileFormat'] = $dataset->getDatasetSubmission()?->getFileDecompressionTechnique();
+                if ($dataset?->getSpatialExtentGeometry() !== null) {
+                    $dataArray[$currentIndex]['spatialExtent'] = $geometryUtil->calculateEnvelopeFromGml($dataset->getSpatialExtentGeometry());
+                };
+                $dataArray[$currentIndex]['fileFormat'] = $dataset->getDatasetSubmission()?->getDistributionFormatName();
                 $dataArray[$currentIndex]['timePeriodDescription'] = $dataset->getDatasetSubmission()?->getTemporalExtentDesc();
                 $dataArray[$currentIndex]['temporalExtent.start'] = $dataset->getDatasetSubmission()?->getTemporalExtentBeginPosition()?->format(self::INREPORT_DATETIMEFORMAT);
                 $dataArray[$currentIndex]['temporalExtent.end'] = $dataset->getDatasetSubmission()?->getTemporalExtentEndPosition()?->format(self::INREPORT_DATETIMEFORMAT);
@@ -137,7 +143,7 @@ class DatasetExportController extends ReportController
             'totalFileSizeMB',
             'parameters.units',
             'locationDescription',
-            'spatialExtent',
+            'spatialExtentEnvelope',
             'fileFormat',
             'timePeriodDescription',
             'temporalExtent.start',
