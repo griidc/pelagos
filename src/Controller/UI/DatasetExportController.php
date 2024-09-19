@@ -4,6 +4,7 @@ namespace App\Controller\UI;
 
 use App\Entity\Dataset;
 use App\Entity\DOI;
+use App\Enum\DatasetLifecycleStatus;
 use App\Repository\DatasetRepository;
 use App\Util\FundingOrgFilter;
 use App\Util\Geometry;
@@ -61,7 +62,6 @@ class DatasetExportController extends ReportController
             $qb->andWhere('fo.id IN (:fundingOrg)');
             $qb->setParameter('fundingOrg', $fundingOrgFilter->getFilterIdArray());
         }
-
         $query = $qb->getQuery();
         $results = $query->getResult();
 
@@ -73,9 +73,13 @@ class DatasetExportController extends ReportController
 
         foreach ($results as $result) {
             $dataset = $datasetRepository->findOneBy(array('udi' => $result['udi']));
-            if ($dataset instanceof Dataset) {
-                $datasetLifeCycleStatus = $dataset->getDatasetLifecycleStatus();
+
+            /** @psalm-suppress PossiblyNullReference, guaranteed by DQL query above. */
+            $datasetLifeCycleStatus = $dataset->getDatasetLifecycleStatus();
+            if ($datasetLifeCycleStatus === DatasetLifecycleStatus::NONE) {
+                continue;
             }
+
             //initialize array with key  = udi
             if (isset($dataArray[$currentIndex]['udi']) && $result['udi'] != $dataArray[$currentIndex]['udi']) {
                 $currentIndex++;
@@ -99,7 +103,7 @@ class DatasetExportController extends ReportController
                     'themeKeywords' => null,
                     'placeKeywords' => null,
                     'topicKeywords' => null,
-                    'LifecycleStatus' => $datasetLifeCycleStatus,
+                    'LifecycleStatus' => $datasetLifeCycleStatus->value,
                 );
 
                 $dataArray[$currentIndex]['fundingOrg.name'] = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getName();
