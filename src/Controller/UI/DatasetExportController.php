@@ -50,11 +50,12 @@ class DatasetExportController extends ReportController
         //Query for datasets, filtered as appropriate.
         $qb = $entityManager->createQueryBuilder();
         $qb
-            ->select('d.udi')
+            ->select('d.udi, d.id')
             ->from('\App\Entity\Dataset', 'd')
             ->join('\App\Entity\ResearchGroup', 'rg', Join::WITH, 'rg.id = d.researchGroup')
             ->join('\App\Entity\FundingCycle', 'fc', Join::WITH, 'fc.id = rg.fundingCycle')
-            ->join('\App\Entity\FundingOrganization', 'fo', Join::WITH, 'fo.id = fc.fundingOrganization');
+            ->join('\App\Entity\FundingOrganization', 'fo', Join::WITH, 'fo.id = fc.fundingOrganization')
+            ->orderBy('d.id', 'DESC');
 
         $researchGroupIDs = [];
         if ($fundingOrgFilter->isActive()) {
