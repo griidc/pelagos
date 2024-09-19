@@ -3,20 +3,18 @@
 namespace App\Entity;
 
 use App\Enum\DatasetLifecycleStatus;
+use App\Exception\NotDeletableException;
 use App\Twig\Extensions as TwigExtentions;
+use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
-use JMS\Serializer\Annotation as Serializer;
-use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Research Group.
- *
- *
  *
  * @Assert\GroupSequence({
  *     "id",
@@ -30,7 +28,6 @@ use App\Exception\NotDeletableException;
  *     errorPath="name",
  *     message="A Research Group with this name already exists"
  * )
- *
  * @UniqueEntity("shortName", message="A Research Group with this Short name already exists")
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\ResearchGroupRepository')]
@@ -39,7 +36,7 @@ class ResearchGroup extends Entity
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'Research Group';
+    public const FRIENDLY_NAME = 'Research Group';
 
     /**
      * Highest acceptable ID number.
@@ -56,13 +53,12 @@ class ResearchGroup extends Entity
      *
      * @var string $name
      *
-     * @access protected
-     *
      * @Serializer\Groups({"overview", "search"})
      *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
+     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
@@ -75,10 +71,10 @@ class ResearchGroup extends Entity
      *
      * @var string $shortName
      *
-     *
      * @Assert\NotBlank(
      *     message="Short Name is required"
      * )
+     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
@@ -91,14 +87,12 @@ class ResearchGroup extends Entity
      *
      * @var FundingCycle $fundingCycle
      *
-     * @access protected
-     *
-     *
      * @Assert\NotBlank(
      *     message="Funding Cycle is required"
      * )
      *
      * @Serializer\MaxDepth(2)
+     *
      * @Serializer\Groups({"overview"})
      */
     #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
@@ -108,9 +102,6 @@ class ResearchGroup extends Entity
      * Research group's Website url.
      *
      * @var string $url
-     *
-     * @access protected
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
@@ -124,9 +115,6 @@ class ResearchGroup extends Entity
      *
      * @var string $phoneNumber
      *
-     * @access protected
-     *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
@@ -138,9 +126,6 @@ class ResearchGroup extends Entity
      * Research group's delivery point (street address).
      *
      * @var string $deliveryPoint
-     *
-     * @access protected
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -154,9 +139,6 @@ class ResearchGroup extends Entity
      *
      * @var string $city
      *
-     * @access protected
-     *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
@@ -168,9 +150,6 @@ class ResearchGroup extends Entity
      * Research group's administrative area (state).
      *
      * @var string $administrativeArea
-     *
-     * @access protected
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
@@ -184,9 +163,6 @@ class ResearchGroup extends Entity
      *
      * @var string $postalCode
      *
-     * @access protected
-     *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
@@ -198,9 +174,6 @@ class ResearchGroup extends Entity
      * Research group's country.
      *
      * @var string $country
-     *
-     * @access protected
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
@@ -214,10 +187,7 @@ class ResearchGroup extends Entity
      *
      * @var string $description
      *
-     * @access protected
-     *
      * @Serializer\Groups({"overview"})
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
@@ -230,8 +200,6 @@ class ResearchGroup extends Entity
      * Research group's logo.
      *
      * @var string|resource $logo
-     *
-     * @access protected
      */
     #[ORM\Column(type: 'blob', nullable: true)]
     protected $logo;
@@ -241,13 +209,10 @@ class ResearchGroup extends Entity
      *
      * @var string $emailAddress
      *
-     * @access protected
-     *
-     *
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
+     *
      * @Assert\Email(
      *     message="Email address is invalid"
      * )
@@ -260,9 +225,6 @@ class ResearchGroup extends Entity
      *
      * @var \Doctrine\Common\Collections\Collection $personResearchGroups
      *
-     * @access protected
-     *
-     *
      * @Serializer\Groups({"overview"})
      */
     #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
@@ -273,8 +235,6 @@ class ResearchGroup extends Entity
      *
      * @var Collection $datasets
      *
-     *
-     *
      * @Serializer\Groups({"overview"})
      */
     #[ORM\OneToMany(targetEntity: 'Dataset', mappedBy: 'researchGroup')]
@@ -284,9 +244,7 @@ class ResearchGroup extends Entity
     /**
      * Lock flag for Research Group, defaults to false for new Research Groups.
      *
-     * @var boolean $locked
-     *
-     * @access public
+     * @var bool $locked
      *
      * @Serializer\Groups({"data"})
      *
@@ -300,7 +258,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for Datasets.
      *
-     * @return Collection A Collection of Datasets.
+     * @return Collection a Collection of Datasets
      */
     public function getDatasets()
     {
@@ -311,38 +269,39 @@ class ResearchGroup extends Entity
      * Serializer for the datasets virtual property.
      *
      * @Serializer\VirtualProperty
+     *
      * @Serializer\SerializedName("datasets")
      *
      * @return array
      */
     public function serializeDatasets()
     {
-        $datasets = array();
+        $datasets = [];
         foreach ($this->datasets as $dataset) {
-            $datasetArray = array(
+            $datasetArray = [
                 'id' => $dataset->getId(),
                 'title' => $dataset->getTitle(),
                 'udi' => $dataset->getUdi(),
                 'availabilityStatus' => $dataset->getAvailabilityStatus(),
-                'doi' => array(
-                    'doi' => ($dataset->getDoi()) ? $dataset->getDoi()->getDoi() : ''
-                ),
-                'acceptedDate' => ($dataset->getAcceptedDate()) ? $dataset->getAcceptedDate()->format('Y-m-d') : ''
-            );
+                'doi' => [
+                    'doi' => ($dataset->getDoi()) ? $dataset->getDoi()->getDoi() : '',
+                ],
+                'acceptedDate' => ($dataset->getAcceptedDate()) ? $dataset->getAcceptedDate()->format('Y-m-d') : '',
+            ];
             if (null !== $dataset->getDif()) {
-                $datasetArray['dif'] = array(
+                $datasetArray['dif'] = [
                     'id' => $dataset->getDif()->getId(),
                     'status' => $dataset->getDif()->getStatus(),
                     'title' => $dataset->getDif()->getTitle(),
-                );
+                ];
             } else {
                 $datasetArray['dif'] = null;
             }
             if ($dataset->hasDatasetSubmission()) {
-                $datasetArray['datasetSubmission'] = array(
-                    'authors' =>  $dataset->getDatasetSubmission()->getAuthors(),
-                    'themeKeywords' => $dataset->getDatasetSubmission()->getThemeKeywords()
-                );
+                $datasetArray['datasetSubmission'] = [
+                    'authors' => $dataset->getDatasetSubmission()->getAuthors(),
+                    'themeKeywords' => $dataset->getDatasetSubmission()->getThemeKeywords(),
+                ];
                 $datasetArray['fileFormat'] = $dataset->getDatasetSubmission()->getDistributionFormatName();
                 if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
                     $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2);
@@ -352,7 +311,7 @@ class ResearchGroup extends Entity
             } else {
                 $datasetArray['datasetSubmission'] = null;
             }
-            $datasetArray['publications'] = array();
+            $datasetArray['publications'] = [];
             foreach ($dataset->getDatasetPublications() as $datasetPublication) {
                 array_push($datasetArray['publications'], $datasetPublication->getPublication());
             }
@@ -368,9 +327,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for name.
      *
-     * @param string $name Textual name of research group.
-     *
-     * @access public
+     * @param string $name textual name of research group
      *
      * @return void
      */
@@ -382,9 +339,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for name.
      *
-     * @access public
-     *
-     * @return string String containing name of research group.
+     * @return string string containing name of research group
      */
     public function getName()
     {
@@ -394,9 +349,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for fundingCycle.
      *
-     * @param FundingCycle $fundingCycle The FundingCycle to associate this ResearchGroup with.
-     *
-     * @access public
+     * @param FundingCycle $fundingCycle the FundingCycle to associate this ResearchGroup with
      *
      * @return void
      */
@@ -408,9 +361,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for fundingCycles.
      *
-     * @access public
-     *
-     * @return FundingCycle String containing fundingCycles of research group.
+     * @return FundingCycle string containing fundingCycles of research group
      */
     public function getFundingCycle()
     {
@@ -420,9 +371,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for url.
      *
-     * @param string|null $url Research group's Website URL.
-     *
-     * @access public
+     * @param string|null $url research group's Website URL
      *
      * @return void
      */
@@ -434,9 +383,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for url.
      *
-     * @access public
-     *
-     * @return string URL of research group's Website.
+     * @return string URL of research group's Website
      */
     public function getUrl()
     {
@@ -446,9 +393,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string|null $phoneNumber Research group's phone number.
-     *
-     * @access public
+     * @param string|null $phoneNumber research group's phone number
      *
      * @return void
      */
@@ -460,9 +405,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for phoneNumber.
      *
-     * @access public
-     *
-     * @return string Phone number of research group.
+     * @return string phone number of research group
      */
     public function getPhoneNumber()
     {
@@ -472,9 +415,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string|null $deliveryPoint Street address of research group.
-     *
-     * @access public
+     * @param string|null $deliveryPoint street address of research group
      *
      * @return void
      */
@@ -486,9 +427,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for deliveryPoint.
      *
-     * @access public
-     *
-     * @return string Street address of research group.
+     * @return string street address of research group
      */
     public function getDeliveryPoint()
     {
@@ -498,9 +437,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for city.
      *
-     * @param string|null $city City of research group.
-     *
-     * @access public
+     * @param string|null $city city of research group
      *
      * @return void
      */
@@ -512,9 +449,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for city.
      *
-     * @access public
-     *
-     * @return string City of research group.
+     * @return string city of research group
      */
     public function getCity()
     {
@@ -524,9 +459,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string|null $administrativeArea Research group's administrative area (state).
-     *
-     * @access public
+     * @param string|null $administrativeArea research group's administrative area (state)
      *
      * @return void
      */
@@ -538,9 +471,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for administrativeArea.
      *
-     * @access public
-     *
-     * @return string Research group's administrative area (state).
+     * @return string research group's administrative area (state)
      */
     public function getAdministrativeArea()
     {
@@ -550,9 +481,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string|null $postalCode Postal (zip) code.
-     *
-     * @access public
+     * @param string|null $postalCode postal (zip) code
      *
      * @return void
      */
@@ -564,9 +493,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for postalCode.
      *
-     * @access public
-     *
-     * @return string Containing postal (zip) code.
+     * @return string containing postal (zip) code
      */
     public function getPostalCode()
     {
@@ -576,9 +503,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for country.
      *
-     * @param string|null $country Research group's country.
-     *
-     * @access public
+     * @param string|null $country research group's country
      *
      * @return void
      */
@@ -590,9 +515,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for country.
      *
-     * @access public
-     *
-     * @return string Research group's country.
+     * @return string research group's country
      */
     public function getCountry()
     {
@@ -602,9 +525,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for description.
      *
-     * @param string|null $description Description of research group.
-     *
-     * @access public
+     * @param string|null $description description of research group
      *
      * @return void
      */
@@ -616,9 +537,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for description.
      *
-     * @access public
-     *
-     * @return string Description of research group.
+     * @return string description of research group
      */
     public function getDescription()
     {
@@ -628,9 +547,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for logo.
      *
-     * @param string|resource $logo Containing byte string of logo.
-     *
-     * @access public
+     * @param string|resource $logo containing byte string of logo
      *
      * @return void
      */
@@ -642,34 +559,32 @@ class ResearchGroup extends Entity
     /**
      * Getter for logo.
      *
-     * @param boolean $asStream Whether to return the logo as a stream.
+     * @param bool $asStream whether to return the logo as a stream
      *
-     * @access public
-     *
-     * @return string|resource Binary string containing the logo or a stream resource pointing to it.
+     * @return string|resource binary string containing the logo or a stream resource pointing to it
      */
     public function getLogo(bool $asStream = false)
     {
         if ($asStream) {
-            if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
+            if (is_resource($this->logo) and 'stream' == get_resource_type($this->logo)) {
                 return $this->logo;
             } else {
                 return null;
             }
         }
-        if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
+        if (is_resource($this->logo) and 'stream' == get_resource_type($this->logo)) {
             rewind($this->logo);
+
             return stream_get_contents($this->logo);
         }
+
         return $this->logo;
     }
 
     /**
      * Setter for emailAddress.
      *
-     * @param string|null $emailAddress Containing email address of research group.
-     *
-     * @access public
+     * @param string|null $emailAddress containing email address of research group
      *
      * @return void
      */
@@ -681,9 +596,7 @@ class ResearchGroup extends Entity
     /**
      * Getter for emailAddress.
      *
-     * @access public
-     *
-     * @return string Containing emailAddress.
+     * @return string containing emailAddress
      */
     public function getEmailAddress()
     {
@@ -693,9 +606,7 @@ class ResearchGroup extends Entity
     /**
      * Method to check if Research Group is locked.
      *
-     * @access public
-     *
-     * @return boolean Set to true if this Research Group is locked, false otherwise.
+     * @return bool set to true if this Research Group is locked, false otherwise
      */
     public function isLocked()
     {
@@ -705,9 +616,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for locked.
      *
-     * @param boolean $locked Containing desired state of lock.
-     *
-     * @access public
+     * @param bool $locked containing desired state of lock
      *
      * @return void
      */
@@ -719,14 +628,12 @@ class ResearchGroup extends Entity
     /**
      * Setter for personResearchGroups.
      *
-     * @param array|\Traversable $personResearchGroups Set of PersonResearchGroup objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-PersonResearchGroup found in $personResearchGroups.
-     * @throws \Exception When $personResearchGroups is not an array or traversable object.
+     * @param array|\Traversable $personResearchGroups set of PersonResearchGroup objects
      *
      * @return void
+     *
+     * @throws \Exception when Non-PersonResearchGroup found in $personResearchGroups
+     * @throws \Exception when $personResearchGroups is not an array or traversable object
      */
     public function setPersonResearchGroups($personResearchGroups)
     {
@@ -746,10 +653,8 @@ class ResearchGroup extends Entity
     /**
      * Getter for personResearchGroups.
      *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection Collection containing personResearchGroups
-     *                                                 listings for this research group.
+     * @return \Doctrine\Common\Collections\Collection collection containing personResearchGroups
+     *                                                 listings for this research group
      */
     public function getPersonResearchGroups()
     {
@@ -763,13 +668,13 @@ class ResearchGroup extends Entity
      * Persons. The NotDeletableException will have its reasons set to a list of
      * reasons the ResearchGroup is not deletable.
      *
-     * @throws NotDeletableException When the ResearchGroup has associated Persons.
-     *
      * @return void
+     *
+     * @throws NotDeletableException when the ResearchGroup has associated Persons
      */
     public function checkDeletable()
     {
-        $notDeletableReasons = array();
+        $notDeletableReasons = [];
         $personResearchGroupCount = count($this->getPersonResearchGroups());
         if ($personResearchGroupCount > 0) {
             $notDeletableReasons[] = 'there ' . ($personResearchGroupCount > 1 ? 'are' : 'is') .
@@ -786,10 +691,10 @@ class ResearchGroup extends Entity
     /**
      * Compare two Research Groups by name.
      *
-     * @param ResearchGroup $a First Research Group to compare.
-     * @param ResearchGroup $b Second Research Group to compare.
+     * @param ResearchGroup $a first Research Group to compare
+     * @param ResearchGroup $b second Research Group to compare
      *
-     * @return integer
+     * @return int
      */
     public static function compareByName(ResearchGroup $a, ResearchGroup $b)
     {
@@ -798,8 +703,6 @@ class ResearchGroup extends Entity
 
     /**
      * Getter for short name.
-     *
-     * @return string|null
      */
     public function getShortName(): ?string
     {
@@ -809,9 +712,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for short name.
      *
-     * @param string|null $shortName Short name for the research group.
-     *
-     * @return void
+     * @param string|null $shortName short name for the research group
      */
     public function setShortName(?string $shortName): void
     {
@@ -822,18 +723,18 @@ class ResearchGroup extends Entity
      * Returns a collection of project directors (Person entity).
      *
      * @Serializer\Groups({"overview"})
-     * @Serializer\VirtualProperty
      *
-     * @return Collection
+     * @Serializer\VirtualProperty
      */
     public function getProjectDirectors(): Collection
     {
         $projectDirectors = new ArrayCollection();
         foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+            if (ResearchGroupRole::LEADERSHIP === $personResearchGroup->getRole()->getName()) {
                 $projectDirectors->add($personResearchGroup->getPerson());
             }
         }
+
         return $projectDirectors;
     }
 

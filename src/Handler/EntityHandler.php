@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\Security;
 /**
  * A handler for entities.
  *
- * @deprecated 6.57.0 Entityhandler should not be used anymore, use Repository or EntityManager
+ * @deprecated 7.0.0 Entityhandler should not be used anymore, use Repository or EntityManager
  */
 class EntityHandler
 {

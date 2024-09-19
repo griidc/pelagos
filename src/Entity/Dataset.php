@@ -57,30 +57,29 @@ class Dataset extends Entity
     ];
 
     /**
-     * Cold Storage Tag
+     * Cold Storage Tag.
      */
-    const TAG_COLD_STORAGE = 'Cold Storage';
+    public const TAG_COLD_STORAGE = 'Cold Storage';
 
     /**
-     * Remotely Hosted Tag
+     * Remotely Hosted Tag.
      */
-    const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
+    public const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
 
     /**
-     * ERDDAP Tag
+     * ERDDAP Tag.
      */
-    const TAG_ERDDAP = 'ERDDAP';
-
+    public const TAG_ERDDAP = 'ERDDAP';
 
     /**
-     * NCEI Tag
+     * NCEI Tag.
      */
-    const TAG_NCEI = 'NCEI';
+    public const TAG_NCEI = 'NCEI';
 
     /**
      * Valid Tags for a dataset.
      */
-    const TAGS = [
+    public const TAGS = [
         self::TAG_COLD_STORAGE => 'Cold Storage',
         self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
         self::TAG_ERDDAP => 'ERDDAP',
@@ -131,8 +130,8 @@ class Dataset extends Entity
      * @var ResearchGroup
      *
      * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
      *
+     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     protected $researchGroup;
@@ -163,7 +162,6 @@ class Dataset extends Entity
      * @var Collection
      *
      * @Serializer\Exclude
-     *
      */
     #[ORM\OneToMany(targetEntity: 'DatasetSubmission', mappedBy: 'dataset', cascade: ['remove'])]
     #[ORM\OrderBy(['sequence' => 'DESC'])]
@@ -335,8 +333,8 @@ class Dataset extends Entity
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
         if (
-            DatasetSubmission::STATUS_COMPLETE === $datasetSubmission->getStatus() or
-            DatasetSubmission::STATUS_IN_REVIEW === $datasetSubmission->getStatus()
+            DatasetSubmission::STATUS_COMPLETE === $datasetSubmission->getStatus()
+            or DatasetSubmission::STATUS_IN_REVIEW === $datasetSubmission->getStatus()
         ) {
             $this->datasetSubmission = $datasetSubmission;
         } else {
@@ -686,8 +684,8 @@ class Dataset extends Entity
                         break;
                 }
             } elseif (
-                DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus() or
-                DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
+                DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus()
+                or DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
             ) {
                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
             } else {
@@ -708,8 +706,8 @@ class Dataset extends Entity
                                 break;
                         }
                     } elseif (
-                        DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus() or
-                        DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
+                        DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus()
+                        or DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
                     ) {
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                     } else {
@@ -762,8 +760,8 @@ class Dataset extends Entity
     {
         $isRestricted = false;
         if (
-            $this->getDatasetSubmission() instanceof DatasetSubmission and
-            DatasetSubmission::RESTRICTION_RESTRICTED === $this->getDatasetSubmission()->getRestrictions()
+            $this->getDatasetSubmission() instanceof DatasetSubmission
+            and DatasetSubmission::RESTRICTION_RESTRICTED === $this->getDatasetSubmission()->getRestrictions()
         ) {
             $isRestricted = true;
         }
@@ -791,13 +789,13 @@ class Dataset extends Entity
                 $statusResult = 'Back to Submitter';
             } elseif (self::DATASET_STATUS_ACCEPTED == $datasetStatus) {
                 if (
-                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED == $availabilityStatus ||
-                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED == $availabilityStatus
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED == $availabilityStatus
+                    || DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED == $availabilityStatus
                 ) {
                     $statusResult = 'Completed, Restricted';
                 } elseif (
-                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE == $availabilityStatus ||
-                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED == $availabilityStatus
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE == $availabilityStatus
+                    || DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED == $availabilityStatus
                 ) {
                     $statusResult = 'Completed';
                 } else {
@@ -970,10 +968,10 @@ class Dataset extends Entity
      * Show friendly name of this entity.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("friendlyName")
-     * @Serializer\Groups({"search"})
      *
-     * @return string
+     * @Serializer\SerializedName("friendlyName")
+     *
+     * @Serializer\Groups({"search"})
      */
     public function getFriendlyName(): string
     {
@@ -984,10 +982,10 @@ class Dataset extends Entity
      * Show class name of this entity.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("className")
-     * @Serializer\Groups({"search"})
      *
-     * @return string
+     * @Serializer\SerializedName("className")
+     *
+     * @Serializer\Groups({"search"})
      */
     public function getClassName(): string
     {
@@ -996,8 +994,6 @@ class Dataset extends Entity
 
     /**
      * Returns the "tags" for this datasets.
-     *
-     * @return array
      */
     public function getTags(): array
     {
@@ -1026,31 +1022,28 @@ class Dataset extends Entity
         return $tags;
     }
 
-
     /**
      * Gets the UDI, stringifier.
-     *
-     * @return string
      */
     public function __toString(): string
     {
         return $this->getUdi();
     }
 
-     /**
-     * Get the Dataset's Lifecycle Status
+    /**
+     * Get the Dataset's Lifecycle Status.
      */
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
 
-        if (($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) and ($this->isRestricted() === true)) {
+        if ((Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) and (true === $this->isRestricted())) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::RESTRICTED;
-        } elseif ($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
+        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::AVAILABLE;
         } elseif ($this->hasDatasetSubmission()) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::SUBMITTED;
-        } elseif ($this->hasDif() and $this->getDif()->getStatus() == DIF::STATUS_APPROVED) {
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $this->getDif()->getStatus()) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::IDENTIFIED;
         }
 
