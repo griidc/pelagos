@@ -49,7 +49,7 @@ class DatasetExportController extends ReportController
         //Query for datasets, filtered as appropriate.
         $qb = $entityManager->createQueryBuilder();
         $qb
-            ->select('d.udi, d.datasetStatus')
+            ->select('d.udi')
             ->from('\App\Entity\Dataset', 'd')
             ->join('\App\Entity\ResearchGroup', 'rg', Join::WITH, 'rg.id = d.researchGroup')
             ->join('\App\Entity\FundingCycle', 'fc', Join::WITH, 'fc.id = rg.fundingCycle')
@@ -72,8 +72,9 @@ class DatasetExportController extends ReportController
         $geometryUtil = new Geometry($entityManager);
 
         foreach ($results as $result) {
-            if ($result['datasetStatus'] !== Dataset::DATASET_STATUS_ACCEPTED) {
-                continue;
+            $dataset = $datasetRepository->findOneBy(array('udi' => $result['udi']));
+            if ($dataset instanceof Dataset) {
+                $datasetLifeCycleStatus = $dataset->getDatasetLifecycleStatus();
             }
             //initialize array with key  = udi
             if (isset($dataArray[$currentIndex]['udi']) && $result['udi'] != $dataArray[$currentIndex]['udi']) {
@@ -98,9 +99,8 @@ class DatasetExportController extends ReportController
                     'themeKeywords' => null,
                     'placeKeywords' => null,
                     'topicKeywords' => null,
+                    'LifecycleStatus' => $datasetLifeCycleStatus,
                 );
-
-                $dataset = $datasetRepository->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['fundingOrg.name'] = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getName();
                 $dataArray[$currentIndex]['fundingCycle.name'] = $dataset->getResearchGroup()->getFundingCycle()->getName();
