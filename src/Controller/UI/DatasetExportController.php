@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DatasetExportController extends ReportController
 {
     //DateTime format used for date range
-    const INREPORT_DATETIMEFORMAT = 'm-d-Y';
+    public const INREPORT_DATETIMEFORMAT = 'm-d-Y';
 
     /**
      * This is a parameterless report, so all is in the default action.
@@ -92,6 +92,7 @@ class DatasetExportController extends ReportController
                     'researchGroup.name' => null,
                     'udi' => $result['udi'],
                     'doi' => null,
+                    'LifeCycleStatus' => $datasetLifeCycleStatus->value,
                     'title' => null,
                     'totalFileSizeMB' => null,
                     'parameters.units' => null,
@@ -104,7 +105,6 @@ class DatasetExportController extends ReportController
                     'themeKeywords' => null,
                     'placeKeywords' => null,
                     'topicKeywords' => null,
-                    'LifecycleStatus' => $datasetLifeCycleStatus->value,
                 );
 
                 $dataArray[$currentIndex]['fundingOrg.name'] = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getName();
@@ -148,6 +148,7 @@ class DatasetExportController extends ReportController
             'researchGroup.name',
             'udi',
             'doi',
+            'status',
             'title',
             'totalFileSizeMB',
             'parameters.units',
