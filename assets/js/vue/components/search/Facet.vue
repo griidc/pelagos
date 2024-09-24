@@ -242,4 +242,8 @@ export default {
 .card-body {
   padding: 0.625rem !important;
 }
+
+article > .collapse {
+  visibility:visible !important;
+}
 </style>
