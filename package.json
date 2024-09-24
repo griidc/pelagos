@@ -40,7 +40,7 @@
         "@babel/preset-env": "7.9.0",
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.0.18",
-        "axios": "^1.6.0",
+        "axios": "^1.7.4",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
         "clsx": "^2.0.0",
