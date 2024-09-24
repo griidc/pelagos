@@ -1,0 +1,72 @@
+{% set acceptedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE'))|length %}
+{% set restrictedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED'))|length %}
+{% set submittedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED'))|length %}
+{% set identifiedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED'))|length %}
+{% set totalDatasets = group.datasets|submittedDIFs|length %}
+
+<div style="display: inline-block;white-space: nowrap;">
+    <table>
+        {% if prefixText|default %}
+        <tr>
+            <td colspan="10">
+                <b class="text-xl">{{ prefixText }}</b>
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>
+            {% if showGraphics|default('true') == 'true' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                    <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE').color  }}" opacity="1">
+                    </rect>
+                </svg>
+            </td>
+            <td>
+            {% endif %}
+            <b>Available: {{acceptedDatasets}}</b></td>
+
+            <td class="pl-4">
+            {% if showGraphics|default('true') == 'true' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                    <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED').color  }}" opacity="1">
+                    </rect>
+                </svg>
+            </td>
+            <td>
+            {% endif %}
+            <b>Restricted: {{restrictedDatasets}}</b></td>
+            <td class="pl-4">
+            {% if showGraphics|default('true') == 'true' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                    <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED').color  }}" opacity="1">
+                    </rect>
+                </svg>
+            </td>
+            <td>
+            {% endif %}
+            <b>Submitted: {{submittedDatasets}}</b></td>
+            <td class="pl-4">
+            {% if showGraphics|default('true') == 'true' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                    <rect x="0" y="0" width="12" height="12" fill="{{ constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED').color  }}" opacity="1">
+                    </rect>
+                </svg>
+            </td>
+            <td>
+            {% endif %}
+            <b>Identified: {{identifiedDatasets}}</b></td>
+            {% if showTotal|default %}
+                <td class="pl-4">
+                {% if showGraphics|default('true') == 'true' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                        <rect x="0" y="0" width="12" height="12" fill="#000" opacity="1">
+                        </rect>
+                    </svg>
+                </td>
+                <td>
+                {% endif %}
+                <b>Total: {{totalDatasets}}</b></td>
+            {% endif %}
+        </tr>
+    </table>
+</div>
