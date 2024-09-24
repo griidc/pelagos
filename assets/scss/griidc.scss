@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Font face - Weight: 100 */
 @font-face {
     font-family: 'dm-sans';
@@ -67,6 +71,10 @@
     --color-light-cyan: #becacd;
     --color-dark-green: #002d38;
 
+    --color-logo-DarkBlue: #2E3E90;
+    --color-logo-LightBlue: #53AAD8;
+    --color-logo-Blue: #3975B7;
+
     --color-pink: #ffbdaf;
     --color-grey: #ebebeb;
     --color-darkGrey: #252525;
@@ -83,6 +91,9 @@
 
     --color-main: var(--color-teal);
     --color-menu: var(--color-lightBlue);
+
+    --color-primary: var(--color-logo-DarkBlue);
+    --color-secondary: var(--color-logo-LightBlue);
 
     --atlassion-button-main: var(--color-teal);
     --atlassion-button-bg: var(--color-dark-cyan);

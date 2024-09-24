@@ -1,66 +1,93 @@
-{% extends "template/UI.html.twig" %}
+{% extends "base.html.twig" %}
 {% block title %}Dataset Monitoring{% endblock title %}
 
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" rel="stylesheet" />
+    {{ encore_entry_link_tags('dataset-monitoring') }}
 
-    <link href="{{ asset('build/css/dataset-monitoring.css') }}" rel="stylesheet" />
-    <link href="{{ asset('build/css/scrollbars.css') }}" rel="stylesheet" />
-    <link href="{{ asset('build/css/projects.css') }}" rel="stylesheet" />
-{% endblock stylesheets %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.light.css" rel="stylesheet">
+    <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+      .dx-widget {
+        font-size: 1rem!important;
+      }
+
+      .dx-treeview li {
+        margin-bottom: revert;
+        line-height: 1rem;
+        font-size: 1rem!important;
+      }
+
+      input.dx-texteditor-input:focus-visible {
+        outline-style: none!important;
+      }
+
+      input[type='text'].dx-texteditor-input:focus {
+        box-shadow: none!important;
+      }
+
+      .dsmonitoringcols {
+        white-space: nowrap;
+      }
+
+      .dx-treelist [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+      .dx-datagrid [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+
+      .prose h3 {
+        margin-bottom: unset;
+      }
+
+      .main-header {
+        background-color: var(--color-primary);
+      }
+
+      .second-header {
+        background-color: var(--color-secondary);
+      }
+    </style>
+{% endblock stylesheets  %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.5/js/jquery.tablesorter.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    {{ encore_entry_script_tags('dataset-monitoring') }}
 
-    <script type="text/javascript" src="{{ asset('build/js/dataset-monitoring.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/tree.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/dotgraph.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/js/dx.all.js"></script>
 
-
+    <script type="text/javascript" src="{{ asset('build/js/datasetMonitoring.js') }}"></script>
 {% endblock javascripts %}
 
 {% block body %}
-    <div class="display-table" style="padding: 20px;">
-
-        <div class="display-table-row">
-            <div class="display-table-cell" style="font-size:2em;">
-                Dataset Monitoring
-            </div>
+  <div class="max-w-screen-xl mx-auto py-6">
+    <div class="grid grid-cols-[20%_80%] m-4 gap-2">
+      <div class="overflow-y-auto">
+        <div id="dsm-side-picker">
+          <div id="dsm-toolbar"></div>
+          <div id="dsm-search"></div>
+          <div id="dsm-treelist"></div>
         </div>
-
-        <div class="display-table-row">
-            <div class="display-table-cell" style="height:100%">
-                <div id="container">
-                    <div id="left">
-                        <div id="menu">
-                            <div class="viewport" style="padding-right: 25px;" >
-                                <div class="overview">
-                                    <div id="ds-treecontainer" class="treecontainer">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="right">
-                        <div id="content">
-                            <div class="viewport">
-                                <div class="overview"></div>
-                                <div class="spinner">
-                                    <div>
-                                        <img src="{{ asset('build/images/spinner.gif') }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      </div>
+        <div class="prose">
+          <div id="dsm-datasets" class="m-2 h-full overflow-y-auto ">
+            <div class="px-32 content-center text-center">
+              <h2>Dataset Monitoring</h2>
+              <span class="text-lg">
+              Dataset monitoring can be used to view the status of a dataset in the GRIIDC data package review process.
+              Datasets are organized by funding organization, funding cycle, and research group.
+              You can use the search bar to search for a specific group within any of these levels.
+              The dropdown can be used to filter groups that have no datasets submitted or groups with any datasets submitted.
+              </span>
             </div>
         </div>
     </div>
+  </div>
+<div class="dsm-loadpanel"></div>
 {% endblock %}
