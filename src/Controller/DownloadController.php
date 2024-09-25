@@ -18,6 +18,9 @@ use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Messenger\Middleware\StackInterface;
 
 /**
  * The Dataset download controller.
@@ -96,7 +99,7 @@ class DownloadController extends AbstractController
      *
      * @Route("/download/dataset/{id}", name="pelagos_app_download_dataset")
      */
-    public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
+    public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack): Response
     {
         $currentUser = $this->getUser();
         if ($currentUser instanceof Account) {
@@ -107,12 +110,13 @@ class DownloadController extends AbstractController
             $typeId = 'anonymous';
         }
 
+        $session = $requestStack->getSession()->getId();
         $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'File Download',
                 'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
-                'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId, 'udi' => $dataset->getUdi(), 'sessionId' => $session),
             ),
             'file_download'
         );
@@ -135,7 +139,7 @@ class DownloadController extends AbstractController
      *
      * @return Response
      */
-    public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack)
     {
         $datasetSubmission = $dataset->getDatasetSubmission();
         if ($dataset->isRestricted()) {
@@ -188,19 +192,20 @@ class DownloadController extends AbstractController
                         $typeId = $this->getUser()->getUserId();
                     } else {
                         $type = 'Non-GoMRI';
-                        $typeId = $this->getUser()->getUsername();
+                        $typeId = $this->getUser()->getUserIdentifier();
                     }
                 } else {
                     $type = 'Non-GoMRI';
                     $typeId = 'anonymous';
                 }
 
+                $session = $requestStack->getSession()->getId();
                 $logActionItemEventDispatcher->dispatch(
                     array(
                         'actionName' => 'File Download',
                         'subjectEntityName' => 'Pelagos\Entity\Dataset',
                         'subjectEntityId' => $dataset->getId(),
-                        'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                        'payLoad' => array('userType' => $type, 'userId' => $typeId, 'udi' => $dataset->getUdi(), 'sessionId' => $session),
                     ),
                     'file_download'
                 );

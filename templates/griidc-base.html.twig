@@ -23,8 +23,6 @@
         {{ encore_entry_link_tags('app') }}
     <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('build/css/griidc-tailwind.css') }}" rel="stylesheet" />
-
     {% if isMaintenanceMode() %}
         <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
         {% endif %}
@@ -35,7 +33,7 @@
 <body class="html page-pelagos-full">
 
 {% if isMaintenanceMode() %}
-    <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top p-8" style="background-color:{{ getMaintenanceModeColor() }}">
+    <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
         {{ getMaintenanceModeText()}}
     </div>
     <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">

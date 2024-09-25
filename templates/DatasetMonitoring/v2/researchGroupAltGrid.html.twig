@@ -1,0 +1,118 @@
+<div class="overflow-hidden dx-widget dx-visibility-change-handler" role="presentation">
+	<div class="dx-datagrid dx-gridbase-container dx-datagrid-borders" role="group" aria-label="Data grid with 28 rows and 4 columns">
+		<div class="dx-hidden"></div>
+		<div class="dx-hidden"></div>
+		<div class="dx-hidden"></div>
+		<div class="dx-hidden"></div>
+		<div class="dx-datagrid-headers" role="presentation" style="padding-right: 0px;">
+			<div class="dx-datagrid-scrollable-simulated dx-datagrid-content dx-datagrid-scroll-container" role="presentation">
+				<table class="dx-datagrid-table dx-datagrid-table-fixed">
+					<colgroup><col style="width: auto;"><col style="width: 201px;"><col style="width: auto;"><col style="width: 100px;"></colgroup>
+					<tbody role="presentation" class="">
+						<tr class="dx-row dx-column-lines dx-header-row" role="row">
+							<td role="columnheader" aria-colindex="1" id="dx-col-1" aria-label="Column UDI" class="dx-datagrid-action dx-cell-focus-disabled" aria-sort="none" tabindex="0" style="text-align: left; min-width: 198px; max-width: 198px; width: 198px;">
+								<div class="dx-column-indicators" role="presentation" style="float: right;">
+									<span class="dx-sort dx-sort-none"></span>
+								</div>
+								<div class="dx-datagrid-text-content dx-text-content-alignment-left" role="presentation">UDI</div>
+							</td>
+							<td class="dsmonitoringcols dx-datagrid-action dx-cell-focus-disabled" role="columnheader" aria-colindex="2" id="dx-col-2" aria-label="Column DOI" aria-sort="none" tabindex="0" style="text-align: left; min-width: 201px; max-width: 201px; width: 201px;">
+								<div class="dx-column-indicators" role="presentation" style="float: right;">
+									<span class="dx-sort dx-sort-none"></span>
+								</div>
+								<div class="dx-datagrid-text-content dx-text-content-alignment-left" role="presentation">DOI</div>
+							</td>
+							<td role="columnheader" aria-colindex="3" id="dx-col-3" aria-label="Column Title" class="dx-datagrid-action dx-cell-focus-disabled" aria-sort="none" tabindex="0" style="text-align: left;">
+								<div class="dx-column-indicators" role="presentation" style="float: right;">
+									<span class="dx-sort dx-sort-none"></span>
+								</div>
+								<div class="dx-datagrid-text-content dx-text-content-alignment-left" role="presentation">Title</div>
+							</td>
+							<td role="columnheader" aria-colindex="4" id="dx-col-4" aria-label="Column Status" class="dx-datagrid-action dx-cell-focus-disabled" aria-sort="none" tabindex="0" style="text-align: left; min-width: 100px; max-width: 100px; width: 100px;">
+								<div class="dx-column-indicators" role="presentation" style="float: right;">
+									<span class="dx-sort dx-sort-none"></span>
+								</div>
+								<div class="dx-datagrid-text-content dx-text-content-alignment-left" role="presentation">Status</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="dx-datagrid-rowsview dx-last-row-border dx-scrollable dx-visibility-change-handler dx-scrollable-both dx-scrollable-simulated" role="presentation">
+			<div class="dx-scrollable-wrapper">
+				<div class="dx-scrollable-container">
+					<div class="dx-scrollable-content" style="left: 0px; top: 0px; transform: none;">
+						<div class="dx-datagrid-content" style="">
+							<table class="dx-datagrid-table dx-datagrid-table-fixed" style="table-layout: fixed;">
+								<colgroup style=""><col style="width: width: 198px;"><col style="width: 201px;"><col style="width: auto;"><col style="width: 100px;"></colgroup>
+								<tbody role="presentation">
+                                {% for dataset in researchGroup.datasets|submittedDIFs %}
+									<tr class="dx-row dx-data-row dx-row-lines dx-column-lines" role="row">
+										<td style="text-align: left; min-width: 198px; max-width: 198px; width: 198px;">{{ dataset.udi }}</td>
+										<td style="text-align: left; min-width: 201px; max-width: 201px; width: 201px;">{{ (dataset.doi) ? dataset.doi.doi : "" }}</td>
+										<td style="text-align: left;">{{ dataset.title|e }}</td>
+										<td style="text-align: left; min-width: 100px; max-width: 100px; width: 100px;">{{ dataset.getDatasetLifecycleStatus.value }}</td>
+									</tr>
+                                {% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="dx-scrollable-scrollbar dx-widget dx-scrollbar-horizontal dx-scrollbar-hoverable" style="display: none;">
+						<div class="dx-scrollable-scroll dx-state-invisible" style="width: 2507px; transform: translate(0px, 0px);">
+							<div class="dx-scrollable-scroll-content"></div>
+						</div>
+					</div>
+					<div class="dx-scrollable-scrollbar dx-widget dx-scrollbar-vertical dx-scrollbar-hoverable" style="display: none;">
+						<div class="dx-scrollable-scroll dx-state-invisible" style="height: 1309px; transform: translate(0px, 0px);">
+							<div class="dx-scrollable-scroll-content"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span class="dx-datagrid-nodata dx-hidden"></span>
+		</div>
+		<div class="dx-hidden" style="padding-right: 0px;"></div>
+		<div></div>
+		<div class="dx-hidden"></div>
+		<div class="dx-hidden"></div>
+		<div class="dx-datagrid-drag-header dx-datagrid-text-content dx-widget" style="display: none;"></div>
+		<div class="dx-context-menu dx-has-context-menu dx-widget dx-visibility-change-handler dx-collection" role="presentation" aria-owns="dx-c31c8615-412a-8e81-c391-a7b85ef668d2">
+			<div class="dx-overlay dx-widget dx-visibility-change-handler dx-state-invisible">
+				<div class="dx-overlay-content dx-inner-overlay dx-context-menu dx-datagrid dx-menu-base dx-state-invisible" tabindex="0" style="width: auto; height: auto; z-index: 1501; left: 0px; top: 0px; transform: translate(67px, 352px); transition: none; visibility: visible; opacity: 0;" id="dx-c31c8615-412a-8e81-c391-a7b85ef668d2" role="menu" aria-hidden="true">
+					<div class="dx-submenu" style="visibility: visible;">
+						<ul role="none" class="dx-menu-items-container">
+							<li role="none" class="dx-menu-item-wrapper">
+								<div class="dx-item dx-menu-item dx-menu-item-has-text dx-menu-item-has-icon" role="menuitem" tabindex="-1">
+									<div class="dx-item-content dx-menu-item-content">
+										<i class="dx-icon dx-icon-context-menu-sort-asc"></i>
+										<span class="dx-menu-item-text">Sort Ascending</span>
+									</div>
+								</div>
+							</li>
+							<li role="none" class="dx-menu-item-wrapper">
+								<div class="dx-item dx-menu-item dx-menu-item-has-text dx-menu-item-has-icon" role="menuitem" tabindex="-1">
+									<div class="dx-item-content dx-menu-item-content">
+										<i class="dx-icon dx-icon-context-menu-sort-desc"></i>
+										<span class="dx-menu-item-text">Sort Descending</span>
+									</div>
+								</div>
+							</li>
+							<li role="none" class="dx-menu-item-wrapper">
+								<div class="dx-state-disabled dx-item dx-menu-item dx-menu-item-has-text dx-menu-item-has-icon" role="menuitem" tabindex="-1">
+									<div class="dx-item-content dx-menu-item-content">
+										<i class="dx-icon dx-icon-context-menu-sort-none"></i>
+										<span class="dx-menu-item-text">Clear Sorting</span>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="dx-header-filter-menu"></div>
+		<div></div>
+	</div>
+</div>
