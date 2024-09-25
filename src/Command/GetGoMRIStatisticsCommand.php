@@ -10,7 +10,6 @@ use App\Repository\LogActionItemRepository;
 use App\Util\FundingOrgFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
-use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -268,16 +267,16 @@ class GetGoMRIStatisticsCommand extends Command
      * @param  int|null   $quarter         The quarter to get top downloads from.
      * @return array      $topDownloadUdis An associative array of top UDIs with counts as value.
      *
-     * @throws Exception If quarter value used other than (1, 2, 3, 4)
+     * @throws \Exception If quarter value used other than (1, 2, 3, 4)
      */
     public function getTopDatasetsDownloadedByYearAndQuarter(int $count, int $year = null, int $quarter = null): array
     {
         if ($quarter !== null && !(in_array($quarter, array(1, 2, 3, 4)))) {
-            throw new Exception("Bad quarter specified, use 1-4.");
+            throw new \Exception("Bad quarter specified, use 1-4.");
         }
 
         if ($year === null && $quarter !== null) {
-            throw new Exception("If quarter is specified, year must be too.");
+            throw new \Exception("If quarter is specified, year must be too.");
         }
 
         // Create DB compatible strings from DateTime objects.

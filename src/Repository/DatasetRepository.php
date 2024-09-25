@@ -2,13 +2,17 @@
 
 namespace App\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Entity\DOI;
 use App\Entity\Funder;
+use App\Entity\FundingCycle;
+use App\Entity\FundingOrganization;
+use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Dataset Entity Repository class.
@@ -32,8 +36,8 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Constructor.
      *
-     * @param ManagerRegistry  $registry         The Registry Manager.
-     * @param FundingOrgFilter $fundingOrgFilter Utility to filter by funding organization.
+     * @param ManagerRegistry  $registry         the Registry Manager
+     * @param FundingOrgFilter $fundingOrgFilter utility to filter by funding organization
      */
     public function __construct(ManagerRegistry $registry, FundingOrgFilter $fundingOrgFilter)
     {
@@ -45,10 +49,10 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Count the number of registered Datasets.
      *
-     * @param integer $fundingOrganizationId The ID of the FundingOrganization.
-     * @param boolean $accepted              Only return accepted datasets.
+     * @param int  $fundingOrganizationId the ID of the FundingOrganization
+     * @param bool $accepted              only return accepted datasets
      *
-     * @return integer
+     * @return int
      */
     public function countRegistered(int $fundingOrganizationId = null, bool $accepted = null)
     {
@@ -57,15 +61,15 @@ class DatasetRepository extends ServiceEntityRepository
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
 
-        if ($accepted === true) {
+        if (true === $accepted) {
             $qb
             ->andWhere('dataset.availabilityStatus IN (:available)')
-            ->setParameter('available', array(
+            ->setParameter('available', [
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
-            ));
+            ]);
         }
 
         if (is_numeric($fundingOrganizationId)) {
@@ -91,10 +95,10 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Sum of all dataset file sizes.
      *
-     * @param integer $fundingOrganizationId The ID of the FundingOrganization.
-     * @param boolean $accepted              Only return accepted datasets.
+     * @param int  $fundingOrganizationId the ID of the FundingOrganization
+     * @param bool $accepted              only return accepted datasets
      *
-     * @return integer Size of data in bytes.
+     * @return int size of data in bytes
      */
     public function totalDatasetSize(int $fundingOrganizationId = null, bool $accepted = null): int
     {
@@ -104,15 +108,15 @@ class DatasetRepository extends ServiceEntityRepository
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
 
-        if ($accepted === true) {
+        if (true === $accepted) {
             $qb
             ->andWhere('dataset.availabilityStatus IN (:available)')
-            ->setParameter('available', array(
+            ->setParameter('available', [
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
                 DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
-            ));
+            ]);
         }
 
         if (is_numeric($fundingOrganizationId)) {
@@ -138,10 +142,10 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Get datasets with properties matching any values specified by $criteria filtered by text and/or geo filters.
      *
-     * @param array   $criteria   An array of criteria.
-     * @param string  $textFilter A string of words to filter by.
-     * @param string  $geoFilter  A WKT string of a geometry to filter by.
-     * @param integer $hydrator   The hydrator to use.
+     * @param array  $criteria   an array of criteria
+     * @param string $textFilter a string of words to filter by
+     * @param string $geoFilter  a WKT string of a geometry to filter by
+     * @param int    $hydrator   the hydrator to use
      *
      * @return array
      */
@@ -190,7 +194,7 @@ class DatasetRepository extends ServiceEntityRepository
             $qb->setParameter('geometry', "SRID=4326;$geoFilter::geometry");
         }
         if (null !== $textFilter) {
-            $searchProperties = array(
+            $searchProperties = [
                 'dataset.udi',
                 'dif.title',
                 'dif.abstract',
@@ -198,7 +202,7 @@ class DatasetRepository extends ServiceEntityRepository
                 'datasetSubmission.abstract',
                 'datasetSubmission.authors',
                 'researchGroup.name',
-            );
+            ];
             $orX = null;
             $keywords = preg_split('/\s+/', trim($textFilter));
             foreach ($keywords as $index => $keyword) {
@@ -223,14 +227,15 @@ class DatasetRepository extends ServiceEntityRepository
         $qb->orderBy('datasetSubmission.creationTimeStamp', 'DESC');
         $qb->addOrderBy('dif.modificationTimeStamp', 'DESC');
         $query = $qb->getQuery();
+
         return $query->getResult($hydrator);
     }
 
     /**
      * Creates a new QueryBuilder instance that is prepopulated for this entity and provides a sorted result.
      *
-     * @param string $alias   The Entity alias.
-     * @param string $indexBy The index for the from.
+     * @param string $alias   the Entity alias
+     * @param string $indexBy the index for the from
      *
      * @return QueryBuilder
      */
@@ -257,10 +262,10 @@ class DatasetRepository extends ServiceEntityRepository
     /**
      * Return number of dataset in specified range.
      *
-     * @param int|null $lower The lower limit or null.
-     * @param int|null $upper The upper limit.
+     * @param int|null $lower the lower limit or null
+     * @param int|null $upper the upper limit
      *
-     * @return integer
+     * @return int
      */
     public function getDatasetByFileSizeRange(int $lower = null, int $upper = null)
     {
@@ -287,15 +292,14 @@ class DatasetRepository extends ServiceEntityRepository
         }
 
         $query = $qb->getQuery();
+
         return $query->getSingleScalarResult();
     }
 
     /**
      * Get datasets based on associated funders.
      *
-     * @param Funder $funder
-     *
-     * @return array An array of Datasets.
+     * @return array an array of Datasets
      */
     public function findByFunder(Funder $funder): array
     {
@@ -318,7 +322,7 @@ class DatasetRepository extends ServiceEntityRepository
             ->groupBy('d.udi, d.acceptedDate, d.title')
             ->orderBy('d.acceptedDate', 'DESC')
             ->setParameter(1, Dataset::DATASET_STATUS_ACCEPTED)
-            ;
+        ;
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -331,9 +335,53 @@ class DatasetRepository extends ServiceEntityRepository
     public function getDatasetWithDoiSet(): array
     {
         $queryBuilder = $this->createQueryBuilder('d');
+
         return
             $queryBuilder
             ->where($queryBuilder->expr()->isNotNull('d.doi'))
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Return datasets by research group for dataset monitoring.
+     *
+     * @param string|null $researchGroup The string ID for the research group
+     */
+    public function getDatasetsBy(string $researchGroup = null, string $fundingCycle = null, string $fundingOrganization = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('d');
+
+        $queryBuilder
+        ->select('d.udi as UDI, doi.doi as DOI, d.title as Title, d.datasetStatus as Status, rg.name as Research_Group, fc.name as Funding_Cycle, fo.name as Funding_Organization')
+        ->join(DOI::class, 'doi', 'WITH', 'd.doi = doi.id')
+        ->join(ResearchGroup::class, 'rg', 'WITH', 'd.researchGroup = rg.id')
+        ->join(FundingCycle::class, 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+        ->join(FundingOrganization::class, 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+        ;
+
+        if (!empty($fundingCycle)) {
+            $queryBuilder
+            ->where('fc.id = ?1')
+            ->setParameter(1, $fundingCycle);
+        }
+
+        if (!empty($researchGroup)) {
+            $queryBuilder
+            ->where('rg.id = ?1')
+            ->setParameter(1, $researchGroup);
+        }
+
+        if (!empty($fundingOrganization)) {
+            $queryBuilder
+            ->where('fo.id = ?1')
+            ->setParameter(1, $fundingOrganization);
+        }
+
+        return
+            $queryBuilder
+            ->orderBy('d.udi', 'ASC')
             ->getQuery()
             ->getResult()
         ;

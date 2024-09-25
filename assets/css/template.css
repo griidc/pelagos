@@ -58,6 +58,16 @@ body {
     width: 980px;
 }
 
+.branding {
+    margin-left: auto;
+    margin-right: auto;
+    width: 980px;
+}
+
+.branding img {
+    max-width: unset;
+}
+
 h1 {
     font-family: inherit;
     font-size: 1.733em;
