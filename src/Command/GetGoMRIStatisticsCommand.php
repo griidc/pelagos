@@ -349,8 +349,9 @@ class GetGoMRIStatisticsCommand extends Command
      */
     public function getDownloads(): array
     {
+
         $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
-        ->select('log.creationTimeStamp, log.subjectEntityId')
+        ->select('log.creationTimeStamp, log.subjectEntityId, log.payLoad')
         ->where('log.subjectEntityName = :entityName')
         ->andWhere('log.actionName = :actionName')
         ->orderBy('log.subjectEntityId', 'ASC')
@@ -383,7 +384,16 @@ class GetGoMRIStatisticsCommand extends Command
             if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
                 $currentTimeStamp = $epochTime;
                 $downloadArray[] = array($id, $dateTime);
+
+                if (($timeStamp['payLoad']['userId'] ?? 'anonymous') === 'anonymous') {
+                    $user = 'anonymous';
+                } else {
+                    $user = 'logged-in';
+                }
+
+                $downloadArray[] = array($id, $dateTime, $user);
             }
+
             $currentId = $id;
         }
         return $downloadArray;
