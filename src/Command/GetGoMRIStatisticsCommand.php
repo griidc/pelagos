@@ -117,21 +117,31 @@ class GetGoMRIStatisticsCommand extends Command
 
         $io->writeln("\nGoMRI Downloads:\n");
         $downloadSizeByYearAndQuarter = [];
-        $downloadCountByYearAndQuarter = [];
+        $anonymousDownloadCountByYearAndQuarter = [];
+        $loggedInDownloadCountByYearAndQuarter = [];
         foreach ($this->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
+            $loginType = $datasetDownload[2];
 
             $yearQuarter = $this->determineQuarter($timestamp);
             $year = $yearQuarter['year'];
             $quarter = $yearQuarter['quarter'];
 
-            if (!array_key_exists($year, $downloadCountByYearAndQuarter)) {
-                $downloadCountByYearAndQuarter[$year][0] = 0;
-                $downloadCountByYearAndQuarter[$year][1] = 0;
-                $downloadCountByYearAndQuarter[$year][2] = 0;
-                $downloadCountByYearAndQuarter[$year][3] = 0;
-                $downloadCountByYearAndQuarter[$year][4] = 0;
+            if (!array_key_exists($year, $anonymousDownloadCountByYearAndQuarter)) {
+                $anonymousDownloadCountByYearAndQuarter[$year][0] = 0;
+                $anonymousDownloadCountByYearAndQuarter[$year][1] = 0;
+                $anonymousDownloadCountByYearAndQuarter[$year][2] = 0;
+                $anonymousDownloadCountByYearAndQuarter[$year][3] = 0;
+                $anonymousDownloadCountByYearAndQuarter[$year][4] = 0;
+            }
+
+            if (!array_key_exists($year, $loggedInDownloadCountByYearAndQuarter)) {
+                $loggedInDownloadCountByYearAndQuarter[$year][0] = 0;
+                $loggedInDownloadCountByYearAndQuarter[$year][1] = 0;
+                $loggedInDownloadCountByYearAndQuarter[$year][2] = 0;
+                $loggedInDownloadCountByYearAndQuarter[$year][3] = 0;
+                $loggedInDownloadCountByYearAndQuarter[$year][4] = 0;
             }
 
             if (!array_key_exists($year, $downloadSizeByYearAndQuarter)) {
@@ -152,16 +162,20 @@ class GetGoMRIStatisticsCommand extends Command
                 $skipCount++;
             }
 
-            $downloadCountByYearAndQuarter[$year][$quarter]++;
+            if ($loginType === 'anonymous') {
+                $loggedInDownloadCountByYearAndQuarter[$year][$quarter]++;
+            } else {
+                $anonymousDownloadCountByYearAndQuarter[$year][$quarter]++;
+            }
             $downloadSizeByYearAndQuarter[$year][$quarter] += $size / 1000000000;
         }
 
         // array_keys still onlys dump first level, years, for $array[year][quarter].
-        $firstYear = min(array_keys($downloadCountByYearAndQuarter));
-        $lastYear = max(array_keys($downloadCountByYearAndQuarter));
+        $firstYear = min(array_keys($anonymousDownloadCountByYearAndQuarter));
+        $lastYear = max(array_keys($anonymousDownloadCountByYearAndQuarter));
 
-        // Deal with the data harvest of 2019Q2.
-        $downloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
+        // Deal with the data harvest of 2019Q2. (were not logged-in)
+        $anonymousDownloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
         $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
 
         $totalDownloads = 0;
@@ -171,12 +185,26 @@ class GetGoMRIStatisticsCommand extends Command
             $yearSizeTotal = 0;
             for ($quarter = 1; $quarter <= 4; $quarter++) {
                 $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
-                $io->writeln($year . '/Q' . $quarter . ' Download Count: ' . $downloadCountByYearAndQuarter[$year][$quarter]
-                . ', ' . 'Total Size (GB): ' . round($downloadSizeByYearAndQuarter[$year][$quarter]));
-                $yearCountTotal += $downloadCountByYearAndQuarter[$year][$quarter];
-                $totalDownloads += $downloadCountByYearAndQuarter[$year][$quarter];
+                $io->writeln(
+                    $year
+                    . '/Q'
+                    . $quarter
+                    . ' Logged-in Download Count: '
+                    . $loggedInDownloadCountByYearAndQuarter[$year][$quarter]
+                    . ' Anonymous DL Count: '
+                    . $anonymousDownloadCountByYearAndQuarter[$year][$quarter]
+                    . ', ' . 'Total Size (GB): '
+                    . round($downloadSizeByYearAndQuarter[$year][$quarter])
+                );
+
+                $yearCountTotal += $loggedInDownloadCountByYearAndQuarter[$year][$quarter];
+                $yearCountTotal += $anonymousDownloadCountByYearAndQuarter[$year][$quarter];
+                $totalDownloads += $loggedInDownloadCountByYearAndQuarter[$year][$quarter];
+                $totalDownloads += $anonymousDownloadCountByYearAndQuarter[$year][$quarter];
+
                 $yearSizeTotal += $downloadSizeByYearAndQuarter[$year][$quarter];
                 $totalDownloadSize += $downloadSizeByYearAndQuarter[$year][$quarter];
+
                 $popular = "Top: ";
                 foreach ($popularDownloads as $udi => $count) {
                     $popular .= "$udi:$count, ";
