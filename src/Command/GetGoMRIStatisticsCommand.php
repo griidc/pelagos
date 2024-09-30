@@ -119,6 +119,7 @@ class GetGoMRIStatisticsCommand extends Command
         $downloadSizeByYearAndQuarter = [];
         $anonymousDownloadCountByYearAndQuarter = [];
         $loggedInDownloadCountByYearAndQuarter = [];
+
         foreach ($this->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
@@ -163,9 +164,9 @@ class GetGoMRIStatisticsCommand extends Command
             }
 
             if ($loginType === 'anonymous') {
-                $loggedInDownloadCountByYearAndQuarter[$year][$quarter]++;
-            } else {
                 $anonymousDownloadCountByYearAndQuarter[$year][$quarter]++;
+            } else {
+                $loggedInDownloadCountByYearAndQuarter[$year][$quarter]++;
             }
             $downloadSizeByYearAndQuarter[$year][$quarter] += $size / 1000000000;
         }
@@ -411,7 +412,6 @@ class GetGoMRIStatisticsCommand extends Command
 
             if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
                 $currentTimeStamp = $epochTime;
-                $downloadArray[] = array($id, $dateTime);
 
                 if (($timeStamp['payLoad']['userId'] ?? 'anonymous') === 'anonymous') {
                     $user = 'anonymous';
