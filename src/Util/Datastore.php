@@ -74,7 +74,7 @@ class Datastore
 
         try {
             $this->datastoreFlysystem->writeStream($newFilePathName, $resource);
-        } catch (FilesystemException|UnableToWriteFile $exception) {
+        } catch (FilesystemException | UnableToWriteFile $exception) {
             $this->logger->error(sprintf('Unable to write. Message: "%s"', $exception->getMessage()));
         }
 
@@ -130,7 +130,7 @@ class Datastore
         $newFilePath = FileNameUtilities::fixFileNameLength($newFilePath);
         try {
             $this->datastoreFlysystem->move($oldFilePath, $newFilePath);
-        } catch (FilesystemException|UnableToMoveFile $exception) {
+        } catch (FilesystemException | UnableToMoveFile $exception) {
             $this->logger->error(sprintf('Unable to rename file. Message: "%s"', $exception->getMessage()));
         }
 
