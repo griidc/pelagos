@@ -23,10 +23,12 @@ require('../../css/griidc-app.css');
 const axios = require('axios');
 
 const mainsite = process.env.MAINSITE;
-const griidcMenuElement = document.getElementById('griidc-menu');
-const showAdmin = griidcMenuElement.hasAttribute('show-admin') && griidcMenuElement.getAttribute('show-admin') === 'true';
+const griidcMenu = document.getElementById('griidc-menu');
 
-createRoot(griidcMenuElement).render(<GriidcMenu mainsite={mainsite} showAdmin={ showAdmin }/>);
+if (typeof (griidcMenu) !== 'undefined' && griidcMenu != null) {
+  const showAdmin = griidcMenu.hasAttribute('show-admin') && griidcMenu.getAttribute('show-admin') === 'true';
+  createRoot(griidcMenu).render(<GriidcMenu mainsite={mainsite} showAdmin={ showAdmin }/>);
+}
 
 global.axios = axios;
 
@@ -37,40 +39,3 @@ global.Routing = Routing;
 global.templateSwitch = templateSwitch;
 
 templateSwitch.setTemplate('GRIIDC');
-
-function hoverIn() {
-  $(this).find('ul').removeClass('sf-hidden');
-  $(this).addClass('sfHover');
-}
-
-function hoverOut() {
-  $(this).find('ul').addClass('sf-hidden');
-  $(this).removeClass('sfHover');
-}
-
-function setContentHeight() {
-  const winHeight = $(window).height();
-  let adminMenuHeight = $('#admin-menu').outerHeight(true);
-  if (adminMenuHeight) {
-    $('body').height($(window).height() - adminMenuHeight);
-  } else {
-    adminMenuHeight = 0;
-  }
-  const headerHeight = $('#header').outerHeight(true);
-  const navHeight = $('#navigation').outerHeight(true);
-  const messagesHeight = $('#page > .messages').length ? $('#page > .messages').outerHeight(true) : 0;
-  const footerHeight = $('#footer').length ? $('#footer').outerHeight(true) : 0;
-
-  const newheight = winHeight
-      - (adminMenuHeight + headerHeight + navHeight + messagesHeight + footerHeight);
-
-  $('.page-pelagos-full #main-wrapper').height(newheight);
-}
-
-$(() => {
-  $('#pelagos-menu-1').hoverIntent(hoverIn, hoverOut, 'li');
-
-  $(window).on('resize', () => {
-    setContentHeight();
-  }).trigger('resize');
-});
