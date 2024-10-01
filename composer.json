@@ -35,7 +35,7 @@
         "jms/serializer-bundle": "^5.0",
         "knplabs/knp-snappy-bundle": "^1.10",
         "maennchen/zipstream-php": "^3.0",
-        "oneup/flysystem-bundle": "^3.5",
+        "oneup/flysystem-bundle": "^4.0",
         "opensoft/doctrine-postgres-types": "^1.2",
         "phayes/geophp": "^1.2",
         "ramsey/uuid": "^4.1",
