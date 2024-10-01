@@ -2,59 +2,49 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Entity\Account;
-use App\Entity\ResearchGroup;
-use App\Entity\FundingCycle;
-use App\Entity\FundingOrganization;
 use App\Entity\DataRepository;
 use App\Entity\DataRepositoryRole;
+use App\Entity\FundingCycle;
+use App\Entity\FundingOrganization;
+use App\Entity\ResearchGroup;
 use App\Entity\ResearchGroupRole;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * A voter to determine if a ResearchGroup can be created or edited.
  */
 class ResearchGroupVoter extends PelagosEntityVoter
 {
-    const CAN_CREATE_DIF_FOR = 'CAN_CREATE_DIF_FOR';
+    public const CAN_CREATE_DIF_FOR = 'CAN_CREATE_DIF_FOR';
 
-    /**
-     * Determines if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute.
-     * @param mixed  $object    The subject to secure.
-     *
-     * @return boolean True if the attribute and subject are supported, false otherwise.
-     */
-    // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // phpcs:ignore
-    protected function supports($attribute, $object)
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // Make sure the object is an instance of ResearchGroup
-        if (!$object instanceof ResearchGroup) {
+        if (!$subject instanceof ResearchGroup) {
             return false;
         }
 
         // If the attribute isn't one of CAN_EDIT, CAN_DELETE, or CAN_CREATE_DIF_FOR, we cannot vote.
         if (
-            !in_array($attribute, array(
+            !in_array($attribute, [
             PelagosEntityVoter::CAN_EDIT,
             PelagosEntityVoter::CAN_DELETE,
-            self::CAN_CREATE_DIF_FOR))
+            self::CAN_CREATE_DIF_FOR])
         ) {
             return false;
         }
 
         // Only if the tree is as expected, vote.
         if (
-            ($object
+            ($subject
                 ->getFundingCycle()
-                instanceof FundingCycle) and
-            ($object
+                instanceof FundingCycle)
+            and ($subject
                 ->getFundingCycle()
                 ->getFundingOrganization()
-                instanceof FundingOrganization) and
-            ($object
+                instanceof FundingOrganization)
+            and ($subject
                 ->getFundingCycle()
                 ->getFundingOrganization()
                 ->getDataRepository()
@@ -62,24 +52,12 @@ class ResearchGroupVoter extends PelagosEntityVoter
         ) {
             return true;
         }
+
         // Otherwise abstain.
         return false;
     }
 
-    /**
-     * Perform a authorization test on an attribute, ResearchGroup subject and authentication token.
-     *
-     * The Symfony calling security framework calls supports before calling voteOnAttribute.
-     *
-     * @param string         $attribute The action to be considered.
-     * @param mixed          $object    A ResearchGroup.
-     * @param TokenInterface $token     A security token containing user authentication information.
-     *
-     * @return boolean True if the attribute (action) is allowed on the subject for the user specified by the token.
-     */
-    // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // phpcs:ignore
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
@@ -94,11 +72,11 @@ class ResearchGroupVoter extends PelagosEntityVoter
         // Action: CAN_EDIT  Role: LEADERSHIP, ADMIN or DATA
         // If attribute is CAN_EDIT and user role is one of LEADERSHIP, ADMIN, DATA  n PersonResearchGroup
         // the user is authorized for the action.
-        if (in_array($attribute, array(PelagosEntityVoter::CAN_EDIT))) {
+        if (in_array($attribute, [PelagosEntityVoter::CAN_EDIT])) {
             // Research Group Person - Leadership, Admin, Data (aka DR-P/LAD)
-            $personResearchGroups = $object->getPersonResearchGroups();
+            $personResearchGroups = $subject->getPersonResearchGroups();
             // If user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
-            $rgRoles = array(ResearchGroupRole::LEADERSHIP, ResearchGroupRole::ADMIN, ResearchGroupRole::DATA);
+            $rgRoles = [ResearchGroupRole::LEADERSHIP, ResearchGroupRole::ADMIN, ResearchGroupRole::DATA];
             if ($this->doesUserHaveRole($userPerson, $personResearchGroups, $rgRoles)) {
                 return true;
             }
@@ -106,8 +84,8 @@ class ResearchGroupVoter extends PelagosEntityVoter
 
         if (self::CAN_CREATE_DIF_FOR === $attribute) {
             $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
-                function ($personDataRepository) use ($object) {
-                    return (!$personDataRepository->isSameTypeAndId($object));
+                function ($personDataRepository) use ($subject) {
+                    return !$personDataRepository->isSameTypeAndId($subject);
                 }
             );
             // Data Repository Managers can create DIFs for all Research Groups.
@@ -115,14 +93,14 @@ class ResearchGroupVoter extends PelagosEntityVoter
                 $this->doesUserHaveRole(
                     $userPerson,
                     $personDataRepositories,
-                    array(DataRepositoryRole::MANAGER)
+                    [DataRepositoryRole::MANAGER]
                 )
             ) {
                 return true;
             }
 
             // Regular people can create DIFs for Research Groups they are associated with.
-            $personResearchGroups = $object->getPersonResearchGroups();
+            $personResearchGroups = $subject->getPersonResearchGroups();
             foreach ($personResearchGroups as $personResearchGroup) {
                 if ($userPerson->isSameTypeAndId($personResearchGroup->getPerson())) {
                     return true;
