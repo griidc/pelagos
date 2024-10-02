@@ -25,14 +25,12 @@ abstract class AbstractRole extends Entity implements RoleInterface
      * @var string
      *
      *
-     * @Assert\NotBlank(
-     *     message="Name is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext')]
+    #[Assert\NotBlank(message: 'Name is required')]
     protected $name;
 
     /**
@@ -40,12 +38,9 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @var integer
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Weight is required"
-     * )
      */
     #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: 'Weight is required')]
     protected $weight;
 
     /**

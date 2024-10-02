@@ -32,10 +32,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/count", name="pelagos_api_difs_count", methods={"GET"}, defaults={"_format"="json"})
      * @return integer
      */
     #[View]
+    #[Route(path: '/api/difs/count', name: 'pelagos_api_difs_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(DIF::class, $request);
@@ -48,12 +48,11 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs", name="pelagos_api_difs_get_collection", methods={"GET"}, defaults={"_format"="json"})
-     *
      *
      * @return array
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/difs', name: 'pelagos_api_difs_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(DIF::class, $request);
@@ -67,10 +66,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}", name="pelagos_api_difs_get", methods={"GET"}, defaults={"_format"="json"})
      * @return DIF
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/difs/{id}', name: 'pelagos_api_difs_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(DIF $dif, SerializerInterface $serializer)
     {
         $context = SerializationContext::create();
@@ -89,11 +88,11 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs", name="pelagos_api_difs_post", methods={"POST"}, defaults={"_format"="json"})
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new DIF in the Location header.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs', name: 'pelagos_api_difs_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
     {
         // Create a new Dataset.
@@ -125,10 +124,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}", name="pelagos_api_difs_put", methods={"PUT"}, defaults={"_format"="json"})
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}', name: 'pelagos_api_difs_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         /** @var DIF $dif */
@@ -147,10 +146,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}", name="pelagos_api_difs_patch", methods={"PATCH"}, defaults={"_format"="json"})
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}', name: 'pelagos_api_difs_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         /** @var DIF $dif */
@@ -171,10 +170,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}/submit", name="pelagos_api_difs_submit", methods={"PATCH"}, defaults={"_format"="json"})
      * @return Response A response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}/submit', name: 'pelagos_api_difs_submit', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function submitAction(int $id)
     {
         // Get the specified DIF.
@@ -211,10 +210,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}/approve", name="pelagos_api_difs_approve", methods={"PATCH"}, defaults={"_format"="json"})
      * @return Response A response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}/approve', name: 'pelagos_api_difs_approve', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function approveAction(int $id)
     {
         // Get the specified DIF.
@@ -255,10 +254,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}/reject", name="pelagos_api_difs_reject", methods={"PATCH"}, defaults={"_format"="json"})
      * @return Response A response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}/reject', name: 'pelagos_api_difs_reject', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function rejectAction(int $id)
     {
         // Get the specified DIF.
@@ -295,10 +294,10 @@ class DIFController extends EntityController
      *
      *
      *
-     * @Route("/api/difs/{id}/unlock", name="pelagos_api_difs_unlock", methods={"PATCH"}, defaults={"_format"="json"})
      * @return Response A response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}/unlock', name: 'pelagos_api_difs_unlock', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function unlockAction(int $id)
     {
         // Get the specified DIF.
@@ -336,12 +335,11 @@ class DIFController extends EntityController
      * @throws AccessDeniedHttpException When you do not have the permissions to unlock.
      * @throws BadRequestHttpException   When DIF can not be unlocked.
      *
-     * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"}, defaults={"_format"="json"})
-     *
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/difs/{id}/request-unlock', name: 'pelagos_api_difs_request_unlock', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function requestUnlockAction(int $id, EntityEventDispatcher $entityEventDispatcher)
     {
         // Get the specified DIF.

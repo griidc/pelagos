@@ -56,10 +56,10 @@ class SideBySideController extends AbstractController
      * @param Request     $request The Symfony request object.
      * @param string|null $udi     The UDI of the Dataset to load.
      *
-     * @Route("/sidebyside/{udi}", name="pelagos_app_ui_sidebyside_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/sidebyside/{udi}', name: 'pelagos_app_ui_sidebyside_default', methods: ['GET'])]
     public function defaultAction(Request $request, $udi = null)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -80,10 +80,10 @@ class SideBySideController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/sidebyside", name="pelagos_app_ui_sidebyside_getversions", methods={"POST"})
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/sidebyside', name: 'pelagos_app_ui_sidebyside_getversions', methods: ['POST'])]
     public function getVersions(Request $request)
     {
         $udi = $request->request->get('udi');
@@ -130,10 +130,10 @@ class SideBySideController extends AbstractController
      *
      * @throws \Exception If revision does not exists.
      *
-     * @Route("/sidebyside/getForm/{udi}/{revision} ", name="pelagos_app_ui_sidebyside_getsubmissionform")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/sidebyside/getForm/{udi}/{revision} ', name: 'pelagos_app_ui_sidebyside_getsubmissionform')]
     public function getSubmissionFormAction(Request $request, FormFactoryInterface $formFactory, $udi = null, $revision = null)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {

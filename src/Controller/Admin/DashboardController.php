@@ -22,10 +22,9 @@ class DashboardController extends AbstractDashboardController
 {
     /**
      * Main dashboard page.
-     *
-     * @Route("/admin", name="admin")
      */
     #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/admin', name: 'admin')]
     public function index(): Response
     {
         return $this->render('Admin/index.html.twig');

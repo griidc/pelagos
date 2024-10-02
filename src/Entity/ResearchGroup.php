@@ -16,21 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Entity class to represent a Research Group.
  *
- * @Assert\GroupSequence({
- *     "id",
- *     "unique_id",
- *     "ResearchGroup",
- *     "Entity",
- * })
  *
- * @UniqueEntity(
- *     fields={"name", "fundingCycle"},
- *     errorPath="name",
- *     message="A Research Group with this name already exists"
- * )
- * @UniqueEntity("shortName", message="A Research Group with this Short name already exists")
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\ResearchGroupRepository')]
+#[Assert\GroupSequence(['id', 'unique_id', 'ResearchGroup', 'Entity'])]
+#[UniqueEntity(fields: ['name', 'fundingCycle'], errorPath: 'name', message: 'A Research Group with this name already exists')]
+#[UniqueEntity('shortName', message: 'A Research Group with this Short name already exists')]
 class ResearchGroup extends Entity
 {
     /**
@@ -54,15 +45,13 @@ class ResearchGroup extends Entity
      * @var string $name
      *
      *
-     * @Assert\NotBlank(
-     *     message="Name is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     #[Serializer\Groups(['overview', 'search'])]
+    #[Assert\NotBlank(message: 'Name is required')]
     protected $name;
 
     /**
@@ -70,15 +59,13 @@ class ResearchGroup extends Entity
      *
      * @var string $shortName
      *
-     * @Assert\NotBlank(
-     *     message="Short Name is required"
-     * )
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
+    #[Assert\NotBlank(message: 'Short Name is required')]
     protected $shortName;
 
     /**
@@ -86,15 +73,13 @@ class ResearchGroup extends Entity
      *
      * @var FundingCycle $fundingCycle
      *
-     * @Assert\NotBlank(
-     *     message="Funding Cycle is required"
-     * )
      *
      *
      */
     #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
+    #[Assert\NotBlank(message: 'Funding Cycle is required')]
     protected $fundingCycle;
 
     /**
@@ -211,12 +196,9 @@ class ResearchGroup extends Entity
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
-     *
-     * @Assert\Email(
-     *     message="Email address is invalid"
-     * )
      */
     #[ORM\Column(type: 'citext', nullable: true)]
+    #[Assert\Email(message: 'Email address is invalid')]
     protected $emailAddress;
 
     /**
@@ -243,13 +225,10 @@ class ResearchGroup extends Entity
      *
      * @var bool $locked
      *
-     *
-     * @Assert\NotNull(
-     *     message="Please select Yes or No"
-     * )
      */
     #[ORM\Column(type: 'boolean', nullable: false)]
     #[Serializer\Groups(['data'])]
+    #[Assert\NotNull(message: 'Please select Yes or No')]
     protected $locked = false;
 
     /**

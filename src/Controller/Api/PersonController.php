@@ -25,12 +25,11 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route("/api/people/count", name="pelagos_api_people_count", methods={"GET"}, defaults={"_format"="json"})
-     *
      *
      * @return integer
      */
     #[View]
+    #[Route(path: '/api/people/count', name: 'pelagos_api_people_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(Person::class, $request);
@@ -43,17 +42,11 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people/validateProperty",
-     *     name="pelagos_api_people_validate_property",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/people/validateProperty', name: 'pelagos_api_people_validate_property', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(PersonType::class, Person::class, $request);
@@ -67,17 +60,11 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people/{id}/validateProperty",
-     *     name="pelagos_api_people_validate_property_existing",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/people/{id}/validateProperty', name: 'pelagos_api_people_validate_property_existing', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonType::class, Person::class, $request, $id);
@@ -90,17 +77,11 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people/getDistinctVals/{property}",
-     *     name="pelagos_api_people_get_distinct_vals",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return array The list of distinct values for a property.
      */
     #[View]
+    #[Route(path: '/api/people/getDistinctVals/{property}', name: 'pelagos_api_people_get_distinct_vals', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getDistinctValsAction(string $property)
     {
         return $this->getDistinctVals(Person::class, $property);
@@ -113,17 +94,11 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people",
-     *     name="pelagos_api_people_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return Response
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/people', name: 'pelagos_api_people_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(Person::class, $request);
@@ -137,15 +112,10 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people/{id}",
-     *     name="pelagos_api_people_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
      * @return Person
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/people/{id}', name: 'pelagos_api_people_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(Person::class, $id);
@@ -158,16 +128,11 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people",
-     *     name="pelagos_api_people_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person in the Location header.
      */
+    #[Route(path: '/api/people', name: 'pelagos_api_people_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $person = $this->handlePost(PersonType::class, Person::class, $request);
@@ -182,15 +147,10 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people/{id}",
-     *     name="pelagos_api_people_put",
-     *     methods={"PUT"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/people/{id}', name: 'pelagos_api_people_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PUT');
@@ -205,15 +165,10 @@ class PersonController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/people/{id}",
-     *     name="pelagos_api_people_patch",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/people/{id}', name: 'pelagos_api_people_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PATCH');
@@ -232,15 +187,10 @@ class PersonController extends EntityController
      * @throws BadRequestHttpException When the person is not deletable due to
      * association with secondary point of contact in DIF.
      *
-     * @Route(
-     *     "/api/people/{id}",
-     *     name="pelagos_api_people_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/people/{id}', name: 'pelagos_api_people_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
@@ -263,18 +213,11 @@ class PersonController extends EntityController
      *
      * @param Person $person The id of the Person.
      *
-     * @Route(
-     *     "/api/person/{id}",
-     *     name="pelagos_api_get_person",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
      *
      * @return Response
      */
     #[View]
+    #[Route(path: '/api/person/{id}', name: 'pelagos_api_get_person', methods: ['GET'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function getPerson(Person $person): Response
     {
         $personData = array(

@@ -24,12 +24,11 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups/count", name="pelagos_api_research_groups_count", methods={"GET"}, defaults={"_format"="json"})
-     *
      *
      * @return integer
      */
     #[View]
+    #[Route(path: '/api/research-groups/count', name: 'pelagos_api_research_groups_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(ResearchGroup::class, $request);
@@ -42,17 +41,11 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/research-groups/validateProperty",
-     *     name="pelagos_api_research_groups_validate_property",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/research-groups/validateProperty', name: 'pelagos_api_research_groups_validate_property', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request);
@@ -66,17 +59,11 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/research-groups/{id}/validateProperty",
-     *     name="pelagos_api_research_groups_validate_property_existing",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/research-groups/{id}/validateProperty', name: 'pelagos_api_research_groups_validate_property_existing', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request, $id);
@@ -90,10 +77,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups", name="pelagos_api_research_groups_get_collection", methods={"GET"}, defaults={"_format"="json"})
      * @return Response
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/research-groups', name: 'pelagos_api_research_groups_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(
@@ -111,15 +98,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/research-groups/{id}",
-     *     name="pelagos_api_research_groups_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
      * @return ResearchGroup The Research Group that was retrieved.
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/research-groups/{id}', name: 'pelagos_api_research_groups_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         $researchGroup = $this->handleGetOne(ResearchGroup::class, $id);
@@ -141,11 +123,11 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups", name="pelagos_api_research_groups_post", methods={"POST"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Research Group in the Location header.
      */
+    #[Route(path: '/api/research-groups', name: 'pelagos_api_research_groups_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $researchGroup = $this->handlePost(ResearchGroupType::class, ResearchGroup::class, $request);
@@ -160,10 +142,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_put", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/research-groups/{id}', name: 'pelagos_api_research_groups_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PUT');
@@ -178,10 +160,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_patch", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/research-groups/{id}', name: 'pelagos_api_research_groups_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PATCH');
@@ -195,10 +177,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/research-groups/{id}', name: 'pelagos_api_research_groups_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $this->handleDelete(ResearchGroup::class, $id);
@@ -212,15 +194,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/research-groups/{id}/logo",
-     *     name="pelagos_api_research_groups_get_logo",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object containing the logo.
      */
+    #[Route(path: '/api/research-groups/{id}/logo', name: 'pelagos_api_research_groups_get_logo', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getLogoAction(int $id)
     {
         return $this->getProperty(ResearchGroup::class, $id, 'logo');
@@ -234,15 +211,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/research-groups/{id}/logo",
-     *     name="pelagos_api_research_groups_post_logo",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/research-groups/{id}/logo', name: 'pelagos_api_research_groups_post_logo', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postLogoAction(int $id, Request $request)
     {
         return $this->postProperty(ResearchGroup::class, $id, 'logo', $request);
@@ -256,10 +228,10 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_put_logo", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/research-groups/{id}/logo', name: 'pelagos_api_research_groups_put_logo', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putLogoAction(int $id, Request $request)
     {
         return $this->putProperty(ResearchGroup::class, $id, 'logo', $request);
@@ -268,13 +240,12 @@ class ResearchGroupController extends EntityController
     /**
      * Gets the research group data as JSON for the Research Group Landing Page.
      *
-     * @Route("/api/research-group/{id}", name="pelagos_api_research_group")
      *
      * @param ResearchGroup  $researchGroup  The research group for this request.
      * @param JsonSerializer $jsonSerializer The Pelagos JSON serializer.
-     *
      * @return Response
      */
+    #[Route(path: '/api/research-group/{id}', name: 'pelagos_api_research_group')]
     public function getResearchGroupData(ResearchGroup $researchGroup, JsonSerializer $jsonSerializer): Response
     {
         $groups = array(

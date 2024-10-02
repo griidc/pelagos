@@ -22,17 +22,11 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/count",
-     *     name="pelagos_api_person_research_groups_count",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return integer
      */
     #[View]
+    #[Route(path: '/api/person-research-groups/count', name: 'pelagos_api_person_research_groups_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(PersonResearchGroup::class, $request);
@@ -45,17 +39,11 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/validateProperty",
-     *     name="pelagos_api_person_research_groups_validate_property",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/person-research-groups/validateProperty', name: 'pelagos_api_person_research_groups_validate_property', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(PersonResearchGroupType::class, PersonResearchGroup::class, $request);
@@ -69,17 +57,11 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/{id}/validateProperty",
-     *     name="pelagos_api_person_research_groups_validate_property_existing",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/person-research-groups/{id}/validateProperty', name: 'pelagos_api_person_research_groups_validate_property_existing', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonResearchGroupType::class, PersonResearchGroup::class, $request, $id);
@@ -93,15 +75,10 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups",
-     *     name="pelagos_api_person_research_groups_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
      * @return Response
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/person-research-groups', name: 'pelagos_api_person_research_groups_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(PersonResearchGroup::class, $request);
@@ -115,15 +92,10 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/{id}",
-     *     name="pelagos_api_person_research_groups_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
      * @return PersonResearchGroup
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/person-research-groups/{id}', name: 'pelagos_api_person_research_groups_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(PersonResearchGroup::class, $id);
@@ -136,16 +108,11 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups",
-     *     name="pelagos_api_person_research_groups_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Research Group Association in the Location header.
      */
+    #[Route(path: '/api/person-research-groups', name: 'pelagos_api_person_research_groups_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $personResearchGroup = $this->handlePost(PersonResearchGroupType::class, PersonResearchGroup::class, $request);
@@ -160,15 +127,10 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/{id}",
-     *     name="pelagos_api_person_research_groups_put",
-     *      methods={"PUT"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/person-research-groups/{id}', name: 'pelagos_api_person_research_groups_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonResearchGroupType::class, PersonResearchGroup::class, $id, $request, 'PUT');
@@ -183,15 +145,10 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/{id}",
-     *     name="pelagos_api_person_research_groups_patch",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/person-research-groups/{id}', name: 'pelagos_api_person_research_groups_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonResearchGroupType::class, PersonResearchGroup::class, $id, $request, 'PATCH');
@@ -205,15 +162,10 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-research-groups/{id}",
-     *     name="pelagos_api_person_research_groups_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/person-research-groups/{id}', name: 'pelagos_api_person_research_groups_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $this->handleDelete(PersonResearchGroup::class, $id);

@@ -58,13 +58,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="An account must be attached to a Person"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
     #[ORM\Id]
+    #[Assert\NotBlank(message: 'An account must be attached to a Person')]
     protected $person;
 
     /**
@@ -72,12 +69,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="User ID is required"
-     * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Assert\NotBlank(message: 'User ID is required')]
     protected $userId;
 
     /**
@@ -85,12 +79,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Password
      *
-     *
-     * @Assert\NotBlank(
-     *     message="An Account must be attached to a Password"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Password', cascade: ['persist'])]
+    #[Assert\NotBlank(message: 'An Account must be attached to a Password')]
     protected $password;
 
     /**

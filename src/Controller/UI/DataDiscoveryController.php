@@ -24,10 +24,10 @@ class DataDiscoveryController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/data-discovery", name="pelagos_app_ui_datadiscovery_default", methods={"GET"})
      *
      * @return Response
      */
+    #[Route(path: '/data-discovery', name: 'pelagos_app_ui_datadiscovery_default', methods: ['GET'])]
     public function defaultAction(Request $request)
     {
         return $this->render(
@@ -47,10 +47,10 @@ class DataDiscoveryController extends AbstractController
      * @param DatasetIndex                 $datasetIndex                 The dataset index.
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
-     * @Route("/data-discovery/dataset-count", name="pelagos_app_ui_datadiscovery_count", methods={"GET"})
      *
      * @return Response
      */
+    #[Route(path: '/data-discovery/dataset-count', name: 'pelagos_app_ui_datadiscovery_count', methods: ['GET'])]
     public function countAction(Request $request, DatasetIndex $datasetIndex, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $criteria = array();
@@ -171,10 +171,10 @@ class DataDiscoveryController extends AbstractController
      * @param Request      $request      The Symfony request object.
      * @param DatasetIndex $datasetIndex The dataset index.
      *
-     * @Route("/data-discovery/dataset-results", name="pelagos_app_ui_datadiscovery_search", methods={"GET"})
      *
      * @return JsonResponse
      */
+    #[Route(path: '/data-discovery/dataset-results', name: 'pelagos_app_ui_datadiscovery_search', methods: ['GET'])]
     public function searchAction(Request $request, DatasetIndex $datasetIndex)
     {
         $criteria = array();

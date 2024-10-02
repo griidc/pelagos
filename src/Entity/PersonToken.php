@@ -39,13 +39,10 @@ class PersonToken extends Entity
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Person is required"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'token')]
     #[ORM\Id]
+    #[Assert\NotBlank(message: 'Person is required')]
     protected $person;
 
     /**
@@ -53,13 +50,10 @@ class PersonToken extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Token text is required."
-     * )
      */
     #[ORM\Column(type: 'text')]
     #[Serializer\Exclude]
+    #[Assert\NotBlank(message: 'Token text is required.')]
     protected $tokenText;
 
     /**
@@ -67,12 +61,9 @@ class PersonToken extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Token use is required."
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Token use is required.')]
     protected $use;
 
     /**

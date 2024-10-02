@@ -26,13 +26,10 @@ class InformationProduct extends Entity
      * @var string
      *
      *
-     *
-     * @Assert\NotBlank(
-     *     message="A title is required."
-     * )
      */
     #[ORM\Column(type: 'text')]
     #[Serializer\Groups(['card'])]
+    #[Assert\NotBlank(message: 'A title is required.')]
     private $title;
 
     /**
@@ -41,13 +38,10 @@ class InformationProduct extends Entity
      * @var string
      *
      *
-     *
-     * @Assert\NotBlank(
-     *     message="A creator is required."
-     * )
      */
     #[ORM\Column(type: 'text')]
     #[Serializer\Groups(['card'])]
+    #[Assert\NotBlank(message: 'A creator is required.')]
     private $creators;
 
     /**
@@ -57,13 +51,11 @@ class InformationProduct extends Entity
      *
      *
      *
-     * @Assert\NotBlank(
-     *     message="A publisher is required."
-     * )
      *
      */
     #[ORM\Column(type: 'text')]
     #[Serializer\Groups(['card'])]
+    #[Assert\NotBlank(message: 'A publisher is required.')]
     private $publisher;
 
     /**

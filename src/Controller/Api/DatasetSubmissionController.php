@@ -33,17 +33,11 @@ class DatasetSubmissionController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_submission",
-     *     name="pelagos_api_dataset_submission_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return Response
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/dataset_submission', name: 'pelagos_api_dataset_submission_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(DatasetSubmission::class, $request);
@@ -56,17 +50,11 @@ class DatasetSubmissionController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_submission/{id}",
-     *     name="pelagos_api_dataset_submission_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return DatasetSubmission
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/dataset_submission/{id}', name: 'pelagos_api_dataset_submission_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(DatasetSubmission::class, $id);
@@ -79,16 +67,11 @@ class DatasetSubmissionController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_submission",
-     *     name="pelagos_api_dataset_submission_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Dataset Submission in the Location header.
      */
+    #[Route(path: '/api/dataset_submission', name: 'pelagos_api_dataset_submission_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $datasetSubmission = $this->handlePost(DatasetSubmissionType::class, DatasetSubmission::class, $request);
@@ -105,15 +88,10 @@ class DatasetSubmissionController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_submission/{id}",
-     *     name="pelagos_api_dataset_submission_put",
-     *     methods={"PUT"},
-     *     defaults={"_format"="json"}
-     *     )
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[Route(path: '/api/dataset_submission/{id}', name: 'pelagos_api_dataset_submission_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
@@ -140,15 +118,10 @@ class DatasetSubmissionController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_submission/{id}",
-     *     name="pelagos_api_dataset_submission_patch",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/dataset_submission/{id}', name: 'pelagos_api_dataset_submission_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
@@ -172,15 +145,10 @@ class DatasetSubmissionController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_submission/{id}",
-     *     name="pelagos_api_dataset_submission_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/dataset_submission/{id}', name: 'pelagos_api_dataset_submission_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $this->handleDelete(DatasetSubmission::class, $id);
@@ -194,18 +162,11 @@ class DatasetSubmissionController extends EntityController
      * @param Request                   $request                  The request object.
      * @param FolderStructureGenerator  $folderStructureGenerator Folder structure generator Util class.
      *
-     * @Route(
-     *     "/api/files_dataset_submission/{id}",
-     *     name="pelagos_api_get_files_dataset_submission",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
      *
      * @return Response The list of uploaded files.
      */
     #[View]
+    #[Route(path: '/api/files_dataset_submission/{id}', name: 'pelagos_api_get_files_dataset_submission', methods: ['GET'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function getFiles(int $id, Request $request, FolderStructureGenerator $folderStructureGenerator): Response
     {
         $fileData = array();
@@ -223,18 +184,11 @@ class DatasetSubmissionController extends EntityController
      * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
      * @param Request           $request           The request object.
      *
-     * @Route(
-     *     "/api/file_dataset_submission/{id}",
-     *     name="pelagos_api_get_file_dataset_submission",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
      *
      * @return Response
      */
     #[View]
+    #[Route(path: '/api/file_dataset_submission/{id}', name: 'pelagos_api_get_file_dataset_submission', methods: ['GET'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function getFile(DatasetSubmission $datasetSubmission, Request $request): Response
     {
         $fileset = $datasetSubmission->getFileset();
@@ -261,17 +215,11 @@ class DatasetSubmissionController extends EntityController
      * @param Request       $request       The request object.
      * @param UrlValidation $urlValidation The URL validator.
      *
-     * @Route(
-     *     "/api/dataset_submission/validate-url/{id}",
-     *     name="pelagos_api_dataset_submission_validate_url",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string
      */
     #[View]
+    #[Route(path: '/api/dataset_submission/validate-url/{id}', name: 'pelagos_api_dataset_submission_validate_url', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validateUrlAction(int $id, Request $request, UrlValidation $urlValidation)
     {
         $erddapUrl = $request->get('erddapUrl');
@@ -286,17 +234,11 @@ class DatasetSubmissionController extends EntityController
     /**
      * Returns a list of global ingest folders.
      *
-     * @Route(
-     *     "/api/dataset_submission_folder_list",
-     *     name="pelagos_api_get_folder_list_dataset_submission",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     )
-     *
      *
      * @return Response
      */
     #[View]
+    #[Route(path: '/api/dataset_submission_folder_list', name: 'pelagos_api_get_folder_list_dataset_submission', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
     {
         if (!($this->getUser() instanceof Account)) {

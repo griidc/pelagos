@@ -417,12 +417,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission title is required."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission title is required.')]
     protected $title;
 
     /**
@@ -440,12 +437,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission abstract is required."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission abstract is required.')]
     protected $abstract;
 
     /**
@@ -455,13 +449,10 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission author list is required."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['authors'])]
+    #[Assert\NotBlank(message: 'The dataset submission author list is required.')]
     protected $authors;
 
     /**
@@ -494,14 +485,10 @@ class DatasetSubmission extends Entity
      * @var Collection
      *
      *
-     *
-     * @Assert\Count(
-     *      min = "1",
-     *      minMessage="A Dataset contact person is required."
-     * )
      */
     #[ORM\OneToMany(targetEntity: 'PersonDatasetSubmissionDatasetContact', mappedBy: 'datasetSubmission', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['primaryContact' => 'DESC', 'creationTimeStamp' => 'ASC'])]
+    #[Assert\Count(min: 1, minMessage: 'A Dataset contact person is required.')]
     protected $datasetContacts;
 
     /**
@@ -510,14 +497,10 @@ class DatasetSubmission extends Entity
      * @var Collection
      *
      *
-     *
-     * @Assert\Count(
-     *      min = "1",
-     *      minMessage="A Metadata contact person is required."
-     * )
      */
     #[ORM\OneToMany(targetEntity: 'PersonDatasetSubmissionMetadataContact', mappedBy: 'datasetSubmission', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['creationTimeStamp' => 'ASC'])]
+    #[Assert\Count(min: 1, minMessage: 'A Metadata contact person is required.')]
     protected $metadataContacts;
 
     /**
@@ -529,12 +512,9 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission restrictions must be set."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: 'The dataset submission restrictions must be set.')]
     protected $restrictions = self::RESTRICTION_NONE;
 
     /**
@@ -546,12 +526,9 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission dataset file transfer type must be set."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission dataset file transfer type must be set.')]
     protected $datasetFileTransferType;
 
     /**
@@ -680,12 +657,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission purpose field is required."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission purpose field is required.')]
     protected $purpose;
 
     /**
@@ -693,12 +667,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission data parameters/units field is required."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission data parameters/units field is required.')]
     protected $suppParams;
 
     /**
@@ -745,12 +716,9 @@ class DatasetSubmission extends Entity
      * Theme keywords describing this dataset.
      *
      * @var array
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission theme keyword(s) field is required."
-     * )
      */
     #[ORM\Column(type: 'json', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission theme keyword(s) field is required.')]
     protected $themeKeywords = array();
 
     /**
@@ -774,12 +742,9 @@ class DatasetSubmission extends Entity
      *
      * @var array
      *
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission topic keyword(s) field is required."
-     * )
      */
     #[ORM\Column(type: 'json', nullable: true)]
+    #[Assert\NotBlank(message: 'The dataset submission topic keyword(s) field is required.')]
     protected $topicKeywords = array();
 
     /**
@@ -1123,10 +1088,10 @@ class DatasetSubmission extends Entity
      *
      * @param ExecutionContextInterface $context validation context
      *
-     * @Assert\Callback
      *
      * @return void
      */
+    #[Assert\Callback]
     public function validate(ExecutionContextInterface $context)
     {
         if (null !== $this->spatialExtent) {

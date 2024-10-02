@@ -25,12 +25,11 @@ class GmlController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/gmltowkt", name="pelagos_app_gml_towkt", methods={"POST"})
      *
      * @throws BadRequestHttpException When no GML is given.
-     *
      * @return Response A response containing converted wkt.
      */
+    #[Route(path: '/gmltowkt', name: 'pelagos_app_gml_towkt', methods: ['POST'])]
     public function toWktAction(Request $request, Geometry $geometryUtil)
     {
         $gml = $request->request->get('gml');
@@ -52,12 +51,11 @@ class GmlController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/wkttogml", name="pelagos_app_gml_fromwkt", methods={"POST"})
      *
      * @throws BadRequestHttpException When no WKT is given.
-     *
      * @return Response A response containing converted gml.
      */
+    #[Route(path: '/wkttogml', name: 'pelagos_app_gml_fromwkt', methods: ['POST'])]
     public function fromWktAction(Request $request, EntityManagerInterface $entityManager)
     {
         $wkt = $request->request->get('wkt');
@@ -150,10 +148,10 @@ class GmlController extends AbstractController
      *
      * @throws BadRequestHttpException When no GML was given.
      *
-     * @Route("/validategml", name="pelagos_app_gml_validategml", methods={"POST"})
      *
      * @return JsonResponse A json array response including a boolean,errors array,warnings array.
      */
+    #[Route(path: '/validategml', name: 'pelagos_app_gml_validategml', methods: ['POST'])]
     public function validateGml(Request $request, Metadata $metadataUtil, string $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd')
     {
         $gml = $request->request->get('gml');
@@ -194,12 +192,11 @@ class GmlController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/validategeometryfromwkt", name="pelagos_app_gml_validategeometryfromwkt", methods={"POST"})
      *
      * @throws BadRequestHttpException When no WKT is given.
-     *
      * @return Response Includes boolean and invalid reason.
      */
+    #[Route(path: '/validategeometryfromwkt', name: 'pelagos_app_gml_validategeometryfromwkt', methods: ['POST'])]
     public function validateGeometryFromWktAction(Request $request, EntityManagerInterface $entityManager)
     {
         $wkt = $request->request->get('wkt');

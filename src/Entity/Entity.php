@@ -10,16 +10,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
- *
- * @UniqueEntity(
- *     fields = {"id"},
- *     errorPath = "id",
- *     message = "This id has already been assigned",
- *     groups = {"unique_id"}
- * )
  */
 #[ORM\MappedSuperclass]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['id'], errorPath: 'id', message: 'This id has already been assigned', groups: ['unique_id'])]
 abstract class Entity
 {
     /**
@@ -31,19 +25,12 @@ abstract class Entity
      * Entity identifier.
      *
      * @var int
-     *
-     * @Assert\Range(
-     *     min = 1,
-     *     max = 2147483647,
-     *     notInRangeMessage = "ID must be in between 1 and 2147483647",
-     *     invalidMessage = "ID must be a positive integer",
-     *     groups = {"id"}
-     * )
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[Serializer\Groups(["id", "search"])]
+    #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'ID must be in between 1 and 2147483647', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
     protected $id;
 
     /**

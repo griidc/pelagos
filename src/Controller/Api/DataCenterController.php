@@ -22,12 +22,11 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route("/api/data-center/count", name="pelagos_api_data_center_count", methods={"GET"}, defaults={"_format"="json"})
-     *
      *
      * @return integer
      */
     #[View]
+    #[Route(path: '/api/data-center/count', name: 'pelagos_api_data_center_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(DataCenter::class, $request);
@@ -40,17 +39,11 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center/validateProperty",
-     *     name="pelagos_api_data_center_validate_property",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/data-center/validateProperty', name: 'pelagos_api_data_center_validate_property', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(DataCenterType::class, DataCenter::class, $request);
@@ -64,17 +57,11 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center/{id}/validateProperty",
-     *     name="pelagos_api_data_center_validate_property_existing",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
     #[View]
+    #[Route(path: '/api/data-center/{id}/validateProperty', name: 'pelagos_api_data_center_validate_property_existing', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(DataCenterType::class, DataCenter::class, $request, $id);
@@ -87,17 +74,11 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center",
-     *     name="pelagos_api_data_center_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return Response
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/data-center', name: 'pelagos_api_data_center_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(DataCenter::class, $request);
@@ -110,17 +91,11 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center/{id}",
-     *     name="pelagos_api_data_center_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
      *
      * @return Entity(DataCenter)
      */
     #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/data-center/{id}', name: 'pelagos_api_data_center_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(DataCenter::class, $id);
@@ -133,15 +108,10 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center",
-     *     name="pelagos_api_data_center_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with empty body and status code.
      */
+    #[Route(path: '/api/data-center', name: 'pelagos_api_data_center_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $dataCenter = $this->handlePost(DataCenterType::class, DataCenter::class, $request);
@@ -156,15 +126,10 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center/{id}",
-     *     name="pelagos_api_data_center_put",
-     *     methods={"PUT"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/data-center/{id}', name: 'pelagos_api_data_center_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(DataCenterType::class, DataCenter::class, $id, $request, 'PUT');
@@ -179,15 +144,10 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center/{id}",
-     *     name="pelagos_api_data_center_patch",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/data-center/{id}', name: 'pelagos_api_data_center_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(DataCenterType::class, DataCenter::class, $id, $request, 'PATCH');
@@ -201,15 +161,10 @@ class DataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/data-center/{id}",
-     *     name="pelagos_api_data_center_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/data-center/{id}', name: 'pelagos_api_data_center_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $this->handleDelete(DataCenter::class, $id);

@@ -70,12 +70,9 @@ class DIF extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Title is required"
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Title is required')]
     protected $title;
 
     /**
@@ -83,13 +80,10 @@ class DIF extends Entity
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Primary Point of Contact is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
     #[Serializer\MaxDepth(1)]
+    #[Assert\NotBlank(message: 'Primary Point of Contact is required')]
     protected $primaryPointOfContact;
 
     /**
@@ -107,12 +101,9 @@ class DIF extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Abstract is required"
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Abstract is required')]
     protected $abstract;
 
     /**
@@ -452,12 +443,10 @@ class DIF extends Entity
     /**
      * Gets the Research Group this DIF is attached to.
      *
-     * @Assert\NotBlank(
-     *     message="You must select a project"
-     * )
      *
      * @return ResearchGroup the Research Group this DIF is attached to
      */
+    #[Assert\NotBlank(message: 'You must select a project')]
     public function getResearchGroup()
     {
         if (!$this->dataset instanceof Dataset) {
