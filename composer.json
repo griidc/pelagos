@@ -28,7 +28,7 @@
         "easycorp/easyadmin-bundle": "^4.0",
         "easyrdf/easyrdf": "^1.1",
         "friendsofsymfony/elastica-bundle": "^6.1.0",
-        "friendsofsymfony/jsrouting-bundle": "^2.1",
+        "friendsofsymfony/jsrouting-bundle": "^3.0",
         "friendsofsymfony/rest-bundle": "^3.0",
         "guzzlehttp/guzzle": "^7.6",
         "hidehalo/nanoid-php": "^1.1",
