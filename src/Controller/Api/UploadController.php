@@ -20,7 +20,6 @@ class UploadController extends EntityController
      * @param Request      $request      The Symfony request object.
      * @param FileUploader $fileUploader File upload handler service.
      *
-     * @View()
      *
      * @Route(
      *     "/api/files/upload-chunks",
@@ -28,9 +27,9 @@ class UploadController extends EntityController
      *     methods={"POST"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return Response The result of the post.
      */
+    #[View]
     public function postChunks(Request $request, FileUploader $fileUploader)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

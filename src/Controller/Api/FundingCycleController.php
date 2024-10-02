@@ -24,10 +24,10 @@ class FundingCycleController extends EntityController
      *
      * @Route("/api/funding-cycles/count", name="pelagos_api_funding_cycles_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(FundingCycle::class, $request);
@@ -47,10 +47,10 @@ class FundingCycleController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(FundingCycleType::class, FundingCycle::class, $request);
@@ -71,10 +71,10 @@ class FundingCycleController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(FundingCycleType::class, FundingCycle::class, $request, $id);
@@ -94,10 +94,10 @@ class FundingCycleController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(FundingCycle::class, $request);
@@ -110,7 +110,6 @@ class FundingCycleController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route(
      *     "/api/funding-cycles/{id}",
@@ -118,9 +117,9 @@ class FundingCycleController extends EntityController
      *     methods={"GET"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return FundingCycle
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(FundingCycle::class, $id);

@@ -39,10 +39,10 @@ class AccountController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return array The incoming directory.
      */
+    #[View]
     public function getIncomingDirectoryAction(Request $request, int $id)
     {
         if (-1 == $id) {
@@ -154,10 +154,10 @@ class AccountController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
      */
+    #[View]
     public function makePosixAction(POSIXifyAccount $posixifyAccount)
     {
         if (!($this->getUser() instanceof Account)) {

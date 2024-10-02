@@ -32,10 +32,10 @@ class PublicationController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(Publication::class, $request);
@@ -55,10 +55,10 @@ class PublicationController extends EntityController
      *     defaults={"_format"="json"}
      * )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(Publication::class, $request);
@@ -141,7 +141,6 @@ class PublicationController extends EntityController
      *
      * @param integer $id Entity ID for Publication.
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route(
      *     "/api/publications/{id}",
@@ -149,9 +148,9 @@ class PublicationController extends EntityController
      *     methods={"GET"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return Publication
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(Publication::class, $id);

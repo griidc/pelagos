@@ -24,10 +24,10 @@ class DataCenterController extends EntityController
      *
      * @Route("/api/data-center/count", name="pelagos_api_data_center_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(DataCenter::class, $request);
@@ -47,10 +47,10 @@ class DataCenterController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(DataCenterType::class, DataCenter::class, $request);
@@ -71,10 +71,10 @@ class DataCenterController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(DataCenterType::class, DataCenter::class, $request, $id);
@@ -94,10 +94,10 @@ class DataCenterController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(DataCenter::class, $request);
@@ -117,10 +117,10 @@ class DataCenterController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Entity(DataCenter)
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(DataCenter::class, $id);

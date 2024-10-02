@@ -26,10 +26,10 @@ class ResearchGroupController extends EntityController
      *
      * @Route("/api/research-groups/count", name="pelagos_api_research_groups_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(ResearchGroup::class, $request);
@@ -49,10 +49,10 @@ class ResearchGroupController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request);
@@ -73,10 +73,10 @@ class ResearchGroupController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request, $id);
@@ -89,12 +89,11 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/research-groups", name="pelagos_api_research_groups_get_collection", methods={"GET"}, defaults={"_format"="json"})
-     *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(
@@ -111,7 +110,6 @@ class ResearchGroupController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route(
      *     "/api/research-groups/{id}",
@@ -119,9 +117,9 @@ class ResearchGroupController extends EntityController
      *     methods={"GET"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return ResearchGroup The Research Group that was retrieved.
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         $researchGroup = $this->handleGetOne(ResearchGroup::class, $id);

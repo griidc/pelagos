@@ -31,12 +31,11 @@ class DIFController extends EntityController
      *
      *
      *
-     * @View()
      *
      * @Route("/api/difs/count", name="pelagos_api_difs_count", methods={"GET"}, defaults={"_format"="json"})
-     *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(DIF::class, $request);
@@ -51,10 +50,10 @@ class DIFController extends EntityController
      *
      * @Route("/api/difs", name="pelagos_api_difs_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return array
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(DIF::class, $request);
@@ -67,12 +66,11 @@ class DIFController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/difs/{id}", name="pelagos_api_difs_get", methods={"GET"}, defaults={"_format"="json"})
-     *
      * @return DIF
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(DIF $dif, SerializerInterface $serializer)
     {
         $context = SerializationContext::create();

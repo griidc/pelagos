@@ -40,10 +40,10 @@ class MetadataController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(Request $request, Geometry $geoUtil, Metadata $metadataUtility)
     {
         $params = $request->query->all();

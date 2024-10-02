@@ -37,31 +37,31 @@ class DatasetPublicationController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(DatasetPublication::class, $request);
     }
 
    /**
-    * Get a collection of PublicationDatasets.
-    *
+     * Get a collection of PublicationDatasets.
      *
-    *
-    * @Route(
-    *     "/api/dataset_publications",
-    *     name="pelagos_api_dataset_publications_get_collection",
-    *     methods={"GET"},
-    *     defaults={"_format"="json"}
-    *     )
-    *
-    * @View(serializerEnableMaxDepthChecks = true)
-    *
-    * @return array
-    */
+     *
+     *
+     * @Route(
+     *     "/api/dataset_publications",
+     *     name="pelagos_api_dataset_publications_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     *
+     * @return array
+     */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction()
     {
         $collection = $this->entityHandler->getAll(

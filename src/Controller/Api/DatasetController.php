@@ -42,10 +42,10 @@ class DatasetController extends EntityController
      *
      * @Route("/api/datasets/count", name="pelagos_api_datasets_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(Dataset::class, $request);
@@ -58,12 +58,11 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/datasets", name="pelagos_api_datasets_get_collection", methods={"GET"}, defaults={"_format"="json"})
-     *
      * @return array
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(Dataset::class, $request);
@@ -76,12 +75,11 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/datasets/{id}", name="pelagos_api_datasets_get", methods={"GET"}, defaults={"_format"="json"})
-     *
      * @return Dataset
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(Dataset::class, $id);
@@ -96,10 +94,10 @@ class DatasetController extends EntityController
      *
      * @Route("/api/datasets/{id}/citation", name="pelagos_api_datasets_get_citation", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return string
      */
+    #[View]
     public function getCitationAction(int $id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
@@ -242,10 +240,10 @@ class DatasetController extends EntityController
      *
      * @Route("/api/datasetFileCountSize", name="pelagos_api_datasets_file_count_size", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return Response
      */
+    #[View]
     public function getFileCountSize(DatasetRepository $datasetRepository): Response
     {
         $datasets = $datasetRepository->findAll();

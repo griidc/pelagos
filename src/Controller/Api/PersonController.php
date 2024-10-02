@@ -27,10 +27,10 @@ class PersonController extends EntityController
      *
      * @Route("/api/people/count", name="pelagos_api_people_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(Person::class, $request);
@@ -50,10 +50,10 @@ class PersonController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(PersonType::class, Person::class, $request);
@@ -74,10 +74,10 @@ class PersonController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonType::class, Person::class, $request, $id);
@@ -97,10 +97,10 @@ class PersonController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return array The list of distinct values for a property.
      */
+    #[View]
     public function getDistinctValsAction(string $property)
     {
         return $this->getDistinctVals(Person::class, $property);
@@ -120,10 +120,10 @@ class PersonController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(Person::class, $request);
@@ -136,7 +136,6 @@ class PersonController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route(
      *     "/api/people/{id}",
@@ -144,9 +143,9 @@ class PersonController extends EntityController
      *     methods={"GET"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return Person
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(Person::class, $id);
@@ -272,10 +271,10 @@ class PersonController extends EntityController
      *     requirements={"id"="\d+"}
      *     )
      *
-     * @View()
      *
      * @return Response
      */
+    #[View]
     public function getPerson(Person $person): Response
     {
         $personData = array(

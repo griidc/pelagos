@@ -29,10 +29,10 @@ class PersonResearchGroupController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(PersonResearchGroup::class, $request);
@@ -52,10 +52,10 @@ class PersonResearchGroupController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(PersonResearchGroupType::class, PersonResearchGroup::class, $request);
@@ -76,10 +76,10 @@ class PersonResearchGroupController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonResearchGroupType::class, PersonResearchGroup::class, $request, $id);
@@ -92,7 +92,6 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route(
      *     "/api/person-research-groups",
@@ -100,9 +99,9 @@ class PersonResearchGroupController extends EntityController
      *     methods={"GET"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(PersonResearchGroup::class, $request);
@@ -115,7 +114,6 @@ class PersonResearchGroupController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route(
      *     "/api/person-research-groups/{id}",
@@ -123,9 +121,9 @@ class PersonResearchGroupController extends EntityController
      *     methods={"GET"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return PersonResearchGroup
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(PersonResearchGroup::class, $id);

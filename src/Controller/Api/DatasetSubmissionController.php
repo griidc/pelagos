@@ -40,10 +40,10 @@ class DatasetSubmissionController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(DatasetSubmission::class, $request);
@@ -63,10 +63,10 @@ class DatasetSubmissionController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return DatasetSubmission
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(DatasetSubmission::class, $id);
@@ -202,10 +202,10 @@ class DatasetSubmissionController extends EntityController
      *     requirements={"id"="\d+"}
      *     )
      *
-     * @View()
      *
      * @return Response The list of uploaded files.
      */
+    #[View]
     public function getFiles(int $id, Request $request, FolderStructureGenerator $folderStructureGenerator): Response
     {
         $fileData = array();
@@ -231,10 +231,10 @@ class DatasetSubmissionController extends EntityController
      *     requirements={"id"="\d+"}
      *     )
      *
-     * @View()
      *
      * @return Response
      */
+    #[View]
     public function getFile(DatasetSubmission $datasetSubmission, Request $request): Response
     {
         $fileset = $datasetSubmission->getFileset();
@@ -268,10 +268,10 @@ class DatasetSubmissionController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string
      */
+    #[View]
     public function validateUrlAction(int $id, Request $request, UrlValidation $urlValidation)
     {
         $erddapUrl = $request->get('erddapUrl');
@@ -293,10 +293,10 @@ class DatasetSubmissionController extends EntityController
      *     defaults={"_format"="json"},
      *     )
      *
-     * @View()
      *
      * @return Response
      */
+    #[View]
     public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
     {
         if (!($this->getUser() instanceof Account)) {

@@ -29,10 +29,10 @@ class PersonDataRepositoryController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return integer
      */
+    #[View]
     public function countAction(Request $request)
     {
         return $this->handleCount(PersonDataRepository::class, $request);
@@ -52,10 +52,10 @@ class PersonDataRepositoryController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(PersonDataRepositoryType::class, PersonDataRepository::class, $request);
@@ -76,10 +76,10 @@ class PersonDataRepositoryController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonDataRepositoryType::class, PersonDataRepository::class, $request, $id);
@@ -99,10 +99,10 @@ class PersonDataRepositoryController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(PersonDataRepository::class, $request);
@@ -122,10 +122,10 @@ class PersonDataRepositoryController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonDataRepository
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
     public function getAction(int $id)
     {
         return $this->handleGetOne(PersonDataRepository::class, $id);
