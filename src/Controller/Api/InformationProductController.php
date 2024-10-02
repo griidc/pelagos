@@ -128,10 +128,9 @@ class InformationProductController extends AbstractFOSRestController
      * @param Request             $request            the Request
      * @param InformationProduct  $informationProduct the information product to update
      * @param MessageBusInterface $messageBus         the message bus
+
      *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
-     *
-     * * @Route (
+     * @Route (
      *     "/api/information_product/{id}",
      *     name="pelagos_api_update_information_product",
      *     methods={"PATCH"},
@@ -139,6 +138,7 @@ class InformationProductController extends AbstractFOSRestController
      *     requirements={"id"="\d+"}
      * )
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function updateInformationProduct(Request $request, InformationProduct $informationProduct, MessageBusInterface $messageBus, EntityManagerInterface $entityManager): Response
     {
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
@@ -307,9 +307,8 @@ class InformationProductController extends AbstractFOSRestController
      *     name="pelagos_api_add_file_information_product",
      *     methods={"POST"}
      *     )
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function addFileToInformationProduct(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -423,9 +422,8 @@ class InformationProductController extends AbstractFOSRestController
      *     )
      *
      * @throws BadRequestHttpException when the file doesn't exist, or is not the right kind of file
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function deleteInformationProductFile(
         Request $request,
         EntityManagerInterface $entityManager,

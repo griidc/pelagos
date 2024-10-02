@@ -8,6 +8,7 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use App\Event\LogActionItemEventDispatcher;
 use App\Message\RenameFile;
+use App\Security\Voter\PelagosEntityVoter;
 use App\Util\Datastore;
 use App\Util\FileNameUtilities;
 use App\Util\FileUploader;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 
 /**
  * FileManager API used by File Manager app.
@@ -120,11 +122,11 @@ class FileManager extends AbstractFOSRestController
      *     requirements={"id"="\d+"}
      *     )
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_DELETE", subject="datasetSubmission")
      *
      * @return Response
      */
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[IsGranted(PelagosEntityVoter::CAN_DELETE, subject: 'datasetSubmission')]
     public function delete(
         DatasetSubmission $datasetSubmission,
         Request $request,
@@ -194,13 +196,13 @@ class FileManager extends AbstractFOSRestController
      *
      * @Route("/api/file_update_filename/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_EDIT", subject="datasetSubmission")
      *
      * @throws BadRequestHttpException When the destination file or folder name already exists.
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[IsGranted(PelagosEntityVoter::CAN_EDIT, subject: 'datasetSubmission')]
     public function updateFileOrFolderName(
         DatasetSubmission $datasetSubmission,
         Request $request,

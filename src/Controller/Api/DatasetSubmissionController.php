@@ -19,6 +19,7 @@ use App\Entity\Fileset;
 use App\Util\UrlValidation;
 use App\Form\DatasetSubmissionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 
 /**
  * The Dataset Submission api controller.
@@ -103,7 +104,6 @@ class DatasetSubmissionController extends EntityController
      * @throws BadRequestHttpException When the submission has already been submitted.
      *
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @Route(
      *     "/api/dataset_submission/{id}",
@@ -111,9 +111,9 @@ class DatasetSubmissionController extends EntityController
      *     methods={"PUT"},
      *     defaults={"_format"="json"}
      *     )
-     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function putAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
