@@ -545,7 +545,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return array The roles for this Account.
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
@@ -605,7 +605,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return boolean True to tell the EquatableInterface we are a real user class.
      */
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): bool
     {
         if ($this->getUsername() === $user->getUsername()) {
             return true;
