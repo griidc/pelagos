@@ -36,17 +36,16 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"organization"})
      *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Serializer\Groups(['organization'])]
     protected $name;
 
     /**
@@ -102,13 +101,13 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"organization"})
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['organization'])]
     protected $url;
 
     /**

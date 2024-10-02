@@ -42,7 +42,6 @@ class Person extends Entity
      *
      * @var string $firstName
      *
-     * @Serializer\Groups({"director", "person"})
      *
      *
      * @Assert\NotBlank(
@@ -53,6 +52,7 @@ class Person extends Entity
      * )
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['director', 'person'])]
     protected $firstName;
 
     /**
@@ -60,7 +60,6 @@ class Person extends Entity
      *
      * @var string $lastName
      *
-     * @Serializer\Groups({"director", "person"})
      *
      *
      * @Assert\NotBlank(
@@ -71,6 +70,7 @@ class Person extends Entity
      * )
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['director', 'person'])]
     protected $lastName;
 
     /**
@@ -78,7 +78,6 @@ class Person extends Entity
      *
      * @var string $emailAddress
      *
-     * @Serializer\Groups({"person"})
      *
      *
      * @Assert\NotBlank(
@@ -93,6 +92,7 @@ class Person extends Entity
      * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Serializer\Groups(['person'])]
     protected $emailAddress;
 
     /**
@@ -207,14 +207,13 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @Serializer\Groups({"director", "person"})
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Organization cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['director', 'person'])]
     protected $organization;
 
     /**
@@ -269,10 +268,9 @@ class Person extends Entity
      *
      * @access protected
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToOne(targetEntity: 'Account', mappedBy: 'person')]
+    #[Serializer\Exclude]
     protected $account;
 
     /**
@@ -282,10 +280,9 @@ class Person extends Entity
      *
      * @access protected
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToOne(targetEntity: 'PersonToken', mappedBy: 'person')]
+    #[Serializer\Exclude]
     protected $token;
 
     /**

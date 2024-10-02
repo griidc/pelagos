@@ -51,10 +51,9 @@ abstract class Entity
      *
      * @var Person;
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[Serializer\Exclude]
     protected $creator;
 
     /**
@@ -78,10 +77,9 @@ abstract class Entity
      *
      * @var Person
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[Serializer\Exclude]
     protected $modifier;
 
     /**
@@ -396,11 +394,11 @@ abstract class Entity
     /**
      * Serializer for the creator virtual property.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("creator")
      *
      * @return array|null
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('creator')]
     public function serializeCreator()
     {
         if (!($this->creator instanceof Person)) {
@@ -417,11 +415,11 @@ abstract class Entity
     /**
      * Serializer for the modifier virtual property.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("modifier")
      *
      * @return array|null
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('modifier')]
     public function serializeModifier()
     {
         if (!($this->modifier instanceof Person)) {

@@ -48,10 +48,9 @@ class DIF extends Entity
      * The Dataset this DIF identifies.
      *
      * @var Dataset
-     *
-     * @Serializer\MaxDepth(2)
      */
     #[ORM\OneToOne(targetEntity: 'Dataset', mappedBy: 'dif', cascade: ['persist'])]
+    #[Serializer\MaxDepth(2)]
     protected $dataset;
 
     /**
@@ -61,10 +60,9 @@ class DIF extends Entity
      *
      * @see STATUS_* constants.
      *
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'smallint')]
+    #[Serializer\Groups(['card'])]
     protected $status = self::STATUS_UNSUBMITTED;
 
     /**
@@ -89,9 +87,9 @@ class DIF extends Entity
      * @Assert\NotBlank(
      *     message="Primary Point of Contact is required"
      * )
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[Serializer\MaxDepth(1)]
     protected $primaryPointOfContact;
 
     /**
@@ -99,10 +97,9 @@ class DIF extends Entity
      *
      * @var Person
      *
-     *
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[Serializer\MaxDepth(1)]
     protected $secondaryPointOfContact;
 
     /**
@@ -253,10 +250,9 @@ class DIF extends Entity
      *
      * @var \DateTime
      *
-     *
-     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Serializer\Type("DateTime<'Y-m-d'>")]
     protected $estimatedStartDate;
 
     /**
@@ -264,10 +260,9 @@ class DIF extends Entity
      *
      * @var \DateTime
      *
-     *
-     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Serializer\Type("DateTime<'Y-m-d'>")]
     protected $estimatedEndDate;
 
     /**
@@ -1436,10 +1431,10 @@ class DIF extends Entity
     /**
      * Gets the issue tracking ticket for this Dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("issueTrackingTicket")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('issueTrackingTicket')]
     public function getIssueTrackingTicket(): string
     {
         $dataset = $this->getDataset();

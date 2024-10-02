@@ -57,9 +57,9 @@ class PersonToken extends Entity
      * @Assert\NotBlank(
      *     message="Token text is required."
      * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Exclude]
     protected $tokenText;
 
     /**

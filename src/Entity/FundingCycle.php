@@ -45,17 +45,16 @@ class FundingCycle extends Entity
      *
      * @var string $name
      *
-     * @Serializer\Groups({"organization"})
      *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['organization'])]
     protected $name;
 
     /**
@@ -103,26 +102,25 @@ class FundingCycle extends Entity
      *
      * @var FundingOrganization
      *
-     * @Serializer\Groups({"organization"})
      *
      * @Assert\NotBlank(
      *     message="Funding Organization is required"
      * )
      *
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'fundingCycles')]
+    #[Serializer\Groups(['organization'])]
+    #[Serializer\MaxDepth(1)]
     protected $fundingOrganization;
 
     /**
      * Funding cycle's list of associated research groups.
      *
      * @var \Doctrine\Common\Collections\Collection
-     *
-     * @Serializer\MaxDepth(2)
      */
     #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[Serializer\MaxDepth(2)]
     protected $researchGroups;
 
     /**

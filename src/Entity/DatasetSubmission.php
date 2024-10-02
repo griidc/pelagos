@@ -455,14 +455,13 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"authors"})
-     *
      *
      * @Assert\NotBlank(
      *     message="The dataset submission author list is required."
      * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['authors'])]
     protected $authors;
 
     /**
@@ -609,10 +608,9 @@ class DatasetSubmission extends Entity
      * Legacy DB column: dataset_download_size
      *
      * @var int
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'bigint', nullable: true)]
+    #[Serializer\Groups(['card'])]
     protected $datasetFileSize;
 
     /**
@@ -840,10 +838,9 @@ class DatasetSubmission extends Entity
      * The name of the format the data is distributed in.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card'])]
     protected $distributionFormatName;
 
     /**
@@ -1831,14 +1828,14 @@ class DatasetSubmission extends Entity
     /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
      *
-     * @Serializer\Groups({"coldStorage"})
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("coldStorage")
      *
      * @return bool
      */
+    #[Serializer\Groups(['coldStorage'])]
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('coldStorage')]
     public function isDatasetFileInColdStorage()
     {
         if (
@@ -2517,10 +2514,10 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the NCEI url.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\Groups({"card"})
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\Groups(['card'])]
     public function getNceiUrl(): ?string
     {
         $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
@@ -2539,10 +2536,9 @@ class DatasetSubmission extends Entity
 
     /**
      * Getter for the erddap url.
-     *
-     * @Serializer\VirtualProperty
-     * @Serializer\Groups({"card"})
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\Groups(['card'])]
     public function getErddapUrl(): ?string
     {
         $erddapLink = $this->getErddapDatasetLink();
@@ -2797,10 +2793,10 @@ class DatasetSubmission extends Entity
     /**
      * Gets the issue tracking ticket for this Dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("issueTrackingTicket")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('issueTrackingTicket')]
     public function getIssueTrackingTicket(): string
     {
         $dataset = $this->getDataset();

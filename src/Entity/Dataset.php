@@ -90,20 +90,18 @@ class Dataset extends Entity
      * The UDI for this Dataset.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card", "search"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card', 'search'])]
     protected $udi;
 
     /**
      * The title for this Dataset.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card", "search"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card', 'search'])]
     protected $title;
 
     /**
@@ -118,10 +116,9 @@ class Dataset extends Entity
      * The DOI for this Dataset.
      *
      * @var DOI
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
+    #[Serializer\Groups(['card'])]
     protected $doi;
 
     /**
@@ -129,52 +126,48 @@ class Dataset extends Entity
      *
      * @var ResearchGroup
      *
-     * @Serializer\MaxDepth(1)
      *
-     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
+    #[Serializer\MaxDepth(1)]
+    #[Serializer\Groups(['search'])]
     protected $researchGroup;
 
     /**
      * The DIF for this Dataset.
      *
      * @var DIF
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\OneToOne(targetEntity: 'DIF', inversedBy: 'dataset')]
+    #[Serializer\Groups(['card'])]
     protected $dif;
 
     /**
      * The most recent Dataset Submission for this dataset.
      *
      * @var DatasetSubmission
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
+    #[Serializer\Groups(['card'])]
     protected $datasetSubmission;
 
     /**
      * All Dataset Submissions for this dataset.
      *
      * @var Collection
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToMany(targetEntity: 'DatasetSubmission', mappedBy: 'dataset', cascade: ['remove'])]
     #[ORM\OrderBy(['sequence' => 'DESC'])]
+    #[Serializer\Exclude]
     protected $datasetSubmissionHistory;
 
     /**
      * Accepted Date Timestamp for Dataset.
      *
      * @var \DateTime;
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'datetimetz', nullable: true)]
+    #[Serializer\Groups(['card'])]
     protected $acceptedDate;
 
     /**
@@ -213,20 +206,18 @@ class Dataset extends Entity
      * @var int
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'smallint')]
+    #[Serializer\Groups(['card'])]
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
     /**
      * Collection of DatasetPublication.
      *
      * @var Collection
-     *
-     * @Serializer\Groups({"publications"})
      */
     #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'dataset', orphanRemoval: true)]
+    #[Serializer\Groups(['publications'])]
     protected $datasetPublications;
 
     /**
@@ -927,10 +918,10 @@ class Dataset extends Entity
     /**
      * Return the total file size for this dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("totalFileSize")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('totalFileSize')]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -947,10 +938,10 @@ class Dataset extends Entity
     /**
      * Return the number of files in this dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("numberOfFiles")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('numberOfFiles')]
     public function getNumberOfFiles(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -967,12 +958,12 @@ class Dataset extends Entity
     /**
      * Show friendly name of this entity.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("friendlyName")
      *
-     * @Serializer\Groups({"search"})
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('friendlyName')]
+    #[Serializer\Groups(['search'])]
     public function getFriendlyName(): string
     {
         return $this::FRIENDLY_NAME;
@@ -981,12 +972,12 @@ class Dataset extends Entity
     /**
      * Show class name of this entity.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("className")
      *
-     * @Serializer\Groups({"search"})
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('className')]
+    #[Serializer\Groups(['search'])]
     public function getClassName(): string
     {
         return get_class($this);

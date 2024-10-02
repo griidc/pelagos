@@ -32,8 +32,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
-     * @Serializer\Groups({"person"})
-     * @Serializer\MaxDepth(2)
      *
      *
      * @Assert\NotBlank(
@@ -41,6 +39,8 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      * )
      */
     #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'personResearchGroups')]
+    #[Serializer\Groups(['person'])]
+    #[Serializer\MaxDepth(2)]
     protected $person;
 
     /**
@@ -74,7 +74,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var string
      *
-     * @Serializer\Groups({"person"})
      *
      *
      * @Assert\NotBlank(
@@ -85,6 +84,7 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      * )
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['person'])]
     protected $label;
 
     /**

@@ -44,9 +44,9 @@ class Password extends Entity
      * @Assert\NotBlank(
      *     message="Password hash is required"
      * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'blob')]
+    #[Serializer\Exclude]
     protected $passwordHash;
 
     /**
@@ -58,9 +58,8 @@ class Password extends Entity
      * THIS FIELD SHALL NOT BE PERSISTED.
      *
      * @var string
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     protected $clearTextPassword;
 
     /**
@@ -72,9 +71,9 @@ class Password extends Entity
      * @Assert\NotBlank(
      *     message="Password hash algorithm is required"
      * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Exclude]
     protected $passwordHashAlgorithm;
 
     /**
@@ -86,9 +85,9 @@ class Password extends Entity
      * @Assert\NotBlank(
      *     message="Password hash salt is required"
      * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'blob')]
+    #[Serializer\Exclude]
     protected $passwordHashSalt;
 
     /**
