@@ -28,10 +28,8 @@ abstract class AbstractRole extends Entity implements RoleInterface
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex('/<>/', 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext')]
     protected $name;
 

@@ -73,10 +73,8 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      * @Assert\NotBlank(
      *     message="Label is required"
      * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Label cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex('/<>/', 'Label cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text')]
     protected $label;
 
