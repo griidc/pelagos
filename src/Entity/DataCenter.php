@@ -52,8 +52,10 @@ class DataCenter extends Entity
      * @Assert\NotBlank(
      *     message="Organization URL is required"
      * )
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Website URL cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', unique: true)]
     protected $organizationUrl;
 
@@ -63,8 +65,10 @@ class DataCenter extends Entity
      * @var string
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Phone number cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $phoneNumber;
 
@@ -74,8 +78,10 @@ class DataCenter extends Entity
      * @var string
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $deliveryPoint;
 
@@ -85,8 +91,10 @@ class DataCenter extends Entity
      * @var string
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="City cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $city;
 
@@ -98,8 +106,10 @@ class DataCenter extends Entity
      * @access protected
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $administrativeArea;
 
@@ -109,8 +119,10 @@ class DataCenter extends Entity
      * @var string
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $postalCode;
 
@@ -120,8 +132,10 @@ class DataCenter extends Entity
      * @var string
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Country cannot contain angle brackets (< or >)"
+     * )
      */
-    #[Assert\Regex('/<>/', 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $country;
 
@@ -131,12 +145,14 @@ class DataCenter extends Entity
      * @var string
      *
      *
+     * @CustomAssert\NoAngleBrackets(
+     *     message="Phone number cannot contain angle brackets (< or >)"
+     * )
      * @Assert\Email(
      *     message="Email address is invalid",
      *     mode="strict"
      * )
      */
-    #[Assert\Regex('/<>/', 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $emailAddress;
 
