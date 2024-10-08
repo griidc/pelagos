@@ -26,5 +26,5 @@ for line in infile:
     if '*/' in line:
         print(line, end="")
         if msg:
-            print('    #[Assert\Regex(\'/<>/\', \''+msg+'\')]')
+            print('    #[Assert\Regex(pattern: \'/<>/\', message: \''+msg+'\')]')
             msg = ''
