@@ -4,7 +4,6 @@ namespace App\Tests\Entity;
 
 use App\Entity\Person;
 use App\Tests\Helpers\ValidationAssertions;
-use App\Validator\Constraints\NoAngleBrackets;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error;
 
@@ -242,7 +241,7 @@ class PersonTest extends TestCase
             $violations[0]
         );
         $this->assertInstanceOf(
-            'App\Validator\Constraints\NoAngleBrackets',
+            Constraints\Regex::class,
             $violations[0]->getConstraint()
         );
         $this->assertEquals('firstName', $violations[0]->getPropertyPath());
@@ -286,7 +285,7 @@ class PersonTest extends TestCase
             $violations[0]
         );
         $this->assertInstanceOf(
-            'App\Validator\Constraints\NoAngleBrackets',
+            Constraints\Regex::class,
             $violations[0]->getConstraint()
         );
         $this->assertEquals('lastName', $violations[0]->getPropertyPath());
@@ -322,7 +321,7 @@ class PersonTest extends TestCase
         $this->assertContainsConstraintForProperty(
             $violations,
             'emailAddress',
-            NoAngleBrackets::class,
+            Constraints\Regex::class,
             'Email address cannot contain angle brackets (< or >)'
         );
     }
