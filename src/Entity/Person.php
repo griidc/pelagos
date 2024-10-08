@@ -16,20 +16,11 @@ use App\Exception\NotDeletableException;
  *
  *
  *
- * @Assert\GroupSequence({
- *     "id",
- *     "unique_id",
- *     "Person",
- *     "Entity",
- * })
  *
- * @UniqueEntity(
- *     fields={"emailAddress"},
- *     errorPath="emailAddress",
- *     message="A Person with this email address already exists"
- * )
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\PersonRepository')]
+#[Assert\GroupSequence(['id', 'unique_id', 'Person', 'Entity'])]
+#[UniqueEntity(fields: ['emailAddress'], errorPath: 'emailAddress', message: 'A Person with this email address already exists')]
 class Person extends Entity
 {
     /**
@@ -42,17 +33,15 @@ class Person extends Entity
      *
      * @var string $firstName
      *
-     * @Serializer\Groups({"director", "person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="First name is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="First name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['director', 'person'])]
+    #[Assert\NotBlank(message: 'First name is required')]
     protected $firstName;
 
     /**
@@ -60,17 +49,15 @@ class Person extends Entity
      *
      * @var string $lastName
      *
-     * @Serializer\Groups({"director", "person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="Last name is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="Last name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['director', 'person'])]
+    #[Assert\NotBlank(message: 'Last name is required')]
     protected $lastName;
 
     /**
@@ -78,21 +65,16 @@ class Person extends Entity
      *
      * @var string $emailAddress
      *
-     * @Serializer\Groups({"person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="Email address is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
-     * @Assert\Email(
-     *     message="Email address is invalid",
-     *     mode="strict"
-     * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Serializer\Groups(['person'])]
+    #[Assert\NotBlank(message: 'Email address is required')]
+    #[Assert\Email(message: 'Email address is invalid', mode: 'strict')]
     protected $emailAddress;
 
     /**
@@ -207,14 +189,13 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @Serializer\Groups({"director", "person"})
-     *
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Organization cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['director', 'person'])]
     protected $organization;
 
     /**
@@ -269,10 +250,9 @@ class Person extends Entity
      *
      * @access protected
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToOne(targetEntity: 'Account', mappedBy: 'person')]
+    #[Serializer\Exclude]
     protected $account;
 
     /**
@@ -282,10 +262,9 @@ class Person extends Entity
      *
      * @access protected
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToOne(targetEntity: 'PersonToken', mappedBy: 'person')]
+    #[Serializer\Exclude]
     protected $token;
 
     /**

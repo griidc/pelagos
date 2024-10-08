@@ -49,20 +49,18 @@ class File extends Entity
      * Filepath name.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card'])]
     protected $filePathName;
 
     /**
      * File size(bytes).
      *
      * @var integer
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'bigint', nullable: true)]
+    #[Serializer\Groups(['card'])]
     protected $fileSize;
 
     /**
@@ -111,10 +109,9 @@ class File extends Entity
      * @var string
      *
      * @see FILE_* constants.
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['card'])]
     protected $status = self::FILE_NEW;
 
     /**
@@ -164,12 +161,12 @@ class File extends Entity
     /**
      * Getter for Filepath Extension.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("fileExtension")
-     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('fileExtension')]
+    #[Serializer\Groups(['card'])]
     public function getFileExtension(): ?string
     {
         $filePathName = $this->getFilePathName();

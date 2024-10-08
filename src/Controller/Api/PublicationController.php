@@ -25,17 +25,11 @@ class PublicationController extends EntityController
      *
      *)
      *
-     * @Route(
-     *     "/api/publications/count",
-     *     name="pelagos_api_publications_count",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return integer
      */
+    #[View]
+    #[Route(path: '/api/publications/count', name: 'pelagos_api_publications_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(Publication::class, $request);
@@ -48,17 +42,11 @@ class PublicationController extends EntityController
      *
      * )
      *
-     * @Route(
-     *     "/api/publications",
-     *     name="pelagos_api_publications_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     * )
-     *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/publications', name: 'pelagos_api_publications_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(Publication::class, $request);
@@ -79,15 +67,10 @@ class PublicationController extends EntityController
      * @throws NotFoundHttpException   If external DOI service couldn't site this type of DOI (dataset doi).
      * @throws \Exception              Upon other DOI pull failure.
      *
-     * @Route(
-     *     "/api/publications",
-     *     name="pelagos_api_publications_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     * )
      *
      * @return Publication
      */
+    #[Route(path: '/api/publications', name: 'pelagos_api_publications_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request, PubLinkUtil $pubLinkUtil)
     {
         //query for a current publication/citation.
@@ -141,17 +124,11 @@ class PublicationController extends EntityController
      *
      * @param integer $id Entity ID for Publication.
      *
-     * @View(serializerEnableMaxDepthChecks = true)
-     *
-     * @Route(
-     *     "/api/publications/{id}",
-     *     name="pelagos_api_publications_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Publication
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/publications/{id}', name: 'pelagos_api_publications_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(Publication::class, $id);
@@ -168,15 +145,9 @@ class PublicationController extends EntityController
      * @throws NotFoundHttpException If cached citation could not be retrieved.
      * @throws \Exception            If more than one cached publication found by DOI.
      *
-     * @Route(
-     *     "/api/publications/cached/citation",
-     *     name="pelagos_api_publications_get_cached_citation",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     * )
-
      * @return Publication|null
      */
+    #[Route(path: '/api/publications/cached/citation', name: 'pelagos_api_publications_get_cached_citation', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCachedCitationAction(Request $request)
     {
         $doi = $request->query->get('doi');

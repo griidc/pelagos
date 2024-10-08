@@ -97,10 +97,10 @@ class DatasetSubmissionController extends AbstractController
      *
      * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default", methods={"GET", "POST"})
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/dataset-submission', name: 'pelagos_app_ui_datasetsubmission_default', methods: ['GET', 'POST'])]
     public function defaultAction(Request $request, EntityManagerInterface $entityManager)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -194,10 +194,10 @@ class DatasetSubmissionController extends AbstractController
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
      *
-     * @Route("/dataset-submission/{id}", name="pelagos_app_ui_datasetsubmission_post", methods={"POST"})
      *
      * @return Response A Response instance
      */
+    #[Route(path: '/dataset-submission/{id}', name: 'pelagos_app_ui_datasetsubmission_post', methods: ['POST'])]
     public function postAction(Request $request, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, int $id = null)
     {
         $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
@@ -523,10 +523,10 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Info page for Dataset Submission.
      *
-     * @Route("/dataset-submission/how-to-submit-data", name="pelagos_app_ui_datasetsubmission_info", methods={"GET"})
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/dataset-submission/how-to-submit-data', name: 'pelagos_app_ui_datasetsubmission_info', methods: ['GET'])]
     public function submissionInfoPage(): Response
     {
         return $this->render("DatasetSubmission/how-to-submit.html.twig");

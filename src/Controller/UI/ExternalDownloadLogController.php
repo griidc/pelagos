@@ -53,10 +53,10 @@ class ExternalDownloadLogController extends AbstractController
      * @throws \Exception $exception Exception thrown when Dataset does not exist for the given Udi.
      * @throws \Exception $exception Exception thrown when Person does not exist for the given username.
      *
-     * @Route("/external-download-log", name="pelagos_app_ui_externaldownloadlog_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/external-download-log', name: 'pelagos_app_ui_externaldownloadlog_default')]
     public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

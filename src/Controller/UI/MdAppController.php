@@ -49,14 +49,10 @@ class MdAppController extends AbstractController
     /**
      * MDApp UI.
      *
-     * @Route(
-     *      "/mdapp",
-     *      name="pelagos_app_ui_mdapp_default",
-     *      methods={"GET"}
-     * )
      *
      * @return Response
      */
+    #[Route(path: '/mdapp', name: 'pelagos_app_ui_mdapp_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
@@ -76,14 +72,10 @@ class MdAppController extends AbstractController
      * @param MdappLogger $mdappLogger The Pelagos Mdapp logger.
      * @param integer     $id          The id of the Dataset to change the dataset status for.
      *
-     * @Route(
-     *      "/mdapp/change-dataset-status/{id}",
-     *      name="pelagos_app_ui_mdapp_changedatasetstatus",
-     *      methods={"POST"}
-     * )
      *
      * @return Response
      */
+    #[Route(path: '/mdapp/change-dataset-status/{id}', name: 'pelagos_app_ui_mdapp_changedatasetstatus', methods: ['POST'])]
     public function changeDatasetStatusAction(Request $request, MdappLogger $mdappLogger, int $id)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
@@ -179,12 +171,10 @@ class MdAppController extends AbstractController
      * @param string      $udi         The dataset UDI identifier.
      * @param MdappLogger $mdappLogger The Logger utility.
      *
-     * @Route("/mdapp/getlog/{udi}",
-     *      name="pelagos_app_ui_mdapp_getlog"
-     * )
      *
      * @return response
      */
+    #[Route(path: '/mdapp/getlog/{udi}', name: 'pelagos_app_ui_mdapp_getlog')]
     public function getlog(string $udi, MdappLogger $mdappLogger)
     {
         $data = null;

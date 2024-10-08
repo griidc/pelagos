@@ -35,12 +35,9 @@ class DataCenter extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Organization name is required"
-     * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Assert\NotBlank(message: 'Organization name is required')]
     protected $organizationName;
 
     /**
@@ -49,14 +46,12 @@ class DataCenter extends Entity
      * @var string
      *
      *
-     * @Assert\NotBlank(
-     *     message="Organization URL is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'text', unique: true)]
+    #[Assert\NotBlank(message: 'Organization URL is required')]
     protected $organizationUrl;
 
     /**
@@ -148,12 +143,9 @@ class DataCenter extends Entity
      * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
-     * @Assert\Email(
-     *     message="Email address is invalid",
-     *     mode="strict"
-     * )
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Email(message: 'Email address is invalid', mode: 'strict')]
     protected $emailAddress;
 
     /**

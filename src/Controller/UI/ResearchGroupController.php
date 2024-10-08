@@ -28,10 +28,10 @@ class ResearchGroupController extends AbstractController
      *
      * @throws NotFoundHttpException When the research group was not found.
      *
-     * @Route("/research-group/{id}", name="pelagos_app_ui_researchgroup_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/research-group/{id}', name: 'pelagos_app_ui_researchgroup_default')]
     public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
@@ -85,10 +85,10 @@ class ResearchGroupController extends AbstractController
      *
      * @throws NotFoundHttpException When the research group was not found.
      *
-     * @Route("/research-group/about/{id}", name="pelagos_app_ui_researchgroup_about", requirements={"id"="\d+"})
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/research-group/about/{id}', name: 'pelagos_app_ui_researchgroup_about', requirements: ['id' => '\d+'])]
     public function landingPageAction(int $id)
     {
         return $this->render('ResearchGroup/index.html.twig', ['researchGroupId' => $id]);
