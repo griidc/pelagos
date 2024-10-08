@@ -13,7 +13,7 @@ class PersonVoter extends PelagosEntityVoter
 {
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // Make sure the subject is an instance of Person
+        // Make sure the object is an instance of Person
         if (!$subject instanceof Person) {
             return false;
         }

@@ -24,27 +24,19 @@ class DIFVoter extends PelagosEntityVoter
     const CAN_UNLOCK  = 'CAN_UNLOCK';
     const CAN_REQUEST_UNLOCK  = 'CAN_REQUEST_UNLOCK';
 
-    /**
-     * Determine if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute denoting an action.
-     * @param mixed  $subject    The subject of creation, deletion or change.
-     */
-    // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // phpcs:ignore
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // If the subject is an EntityProperty.
+        // If the object is an EntityProperty.
         if ($subject instanceof EntityProperty) {
             // If the property is not 'status' we abstain.
             if ($subject->getProperty() != 'status') {
                 return false;
             }
-            // Make the Entity the subject for further inspection.
+            // Make the Entity the object for further inspection.
             $subject = $subject->getEntity();
         }
 
-        // Make sure the subject is an instance of DIF
+        // Make sure the object is an instance of DIF
         if (!$subject instanceof DIF) {
             return false;
         }
@@ -71,12 +63,6 @@ class DIFVoter extends PelagosEntityVoter
         return false;
     }
 
-    /**
-     * Perform a authorization test on an attribute, DIF subject and authentication token.
-     * The Symfony calling security framework calls supports before calling voteOnAttribute.
-     */
-    // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // phpcs:ignore
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
@@ -88,7 +74,7 @@ class DIFVoter extends PelagosEntityVoter
 
         $userPerson = $user->getPerson();
 
-        // If the subject is an EntityProperty
+        // If the object is an EntityProperty
         if ($subject instanceof EntityProperty) {
             // If attribute is CAN_EDIT and the property is 'status'
             if (
