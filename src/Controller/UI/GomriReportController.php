@@ -22,10 +22,10 @@ class GomriReportController extends ReportController
     /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @Route("/gomri/v1", name="pelagos_app_ui_gomrireport_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/gomri/v1', name: 'pelagos_app_ui_gomrireport_default')]
     public function defaultAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -40,10 +40,10 @@ class GomriReportController extends ReportController
     /**
      * This is the version 2 Gomri Report.
      *
-     * @Route("/gomri/v2", name="pelagos_app_ui_gomrireport_versiontworeport")
      *
      * @return Response A Response instance
      */
+    #[Route(path: '/gomri/v2', name: 'pelagos_app_ui_gomrireport_versiontworeport')]
     public function versionTwoReportAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

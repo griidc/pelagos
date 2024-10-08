@@ -12,14 +12,10 @@ use JMS\Serializer\Annotation as Serializer;
  * Entity class to represent a Person to Research Group Association.
  *
  *
- * @UniqueEntity(
- *     fields={"person", "researchGroup"},
- *     errorPath="person",
- *     message="A Person can have only one association with a Research Group"
- * )
  *
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\PersonResearchGroupRepository')]
+#[UniqueEntity(fields: ['person', 'researchGroup'], errorPath: 'person', message: 'A Person can have only one association with a Research Group')]
 class PersonResearchGroup extends Entity implements PersonAssociationInterface
 {
     /**
@@ -32,15 +28,12 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
-     * @Serializer\Groups({"person"})
-     * @Serializer\MaxDepth(2)
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Person is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'personResearchGroups')]
+    #[Serializer\Groups(['person'])]
+    #[Serializer\MaxDepth(2)]
+    #[Assert\NotBlank(message: 'Person is required')]
     protected $person;
 
     /**
@@ -48,12 +41,9 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var ResearchGroup
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Research Group is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'personResearchGroups')]
+    #[Assert\NotBlank(message: 'Research Group is required')]
     protected $researchGroup;
 
     /**
@@ -61,12 +51,9 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var ResearchGroupRole
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Role is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroupRole')]
+    #[Assert\NotBlank(message: 'Role is required')]
     protected $role;
 
     /**
@@ -74,17 +61,15 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var string
      *
-     * @Serializer\Groups({"person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="Label is required"
-     * )
      * @CustomAssert\NoAngleBrackets(
      *     message="Label cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['person'])]
+    #[Assert\NotBlank(message: 'Label is required')]
     protected $label;
 
     /**

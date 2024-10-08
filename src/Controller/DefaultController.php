@@ -67,10 +67,10 @@ class DefaultController extends AbstractController
     /**
      * The index action.
      *
-     * @Route("/", name="pelagos_homepage")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/', name: 'pelagos_homepage')]
     public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request)
     {
         $customTemplate = $this->getParameter('custom_template');
@@ -124,10 +124,10 @@ class DefaultController extends AbstractController
     /**
      * The admin action.
      *
-     * @Route("/pelagos-admin", name="pelagos_admin")
      *
      * @return Response
      */
+    #[Route(path: '/pelagos-admin', name: 'pelagos_admin')]
     public function admin()
     {
         return $this->render('Default/admin.html.twig');
@@ -139,10 +139,10 @@ class DefaultController extends AbstractController
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
      *
-     * @Route("/sitemap.xml", name="pelagos_sitemap")
      *
      * @return StreamedResponse
      */
+    #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
     public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter)
     {
         $criteria = array(

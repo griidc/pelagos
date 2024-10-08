@@ -15,24 +15,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Entity class to represent a Funding Cycle.
  *
- * @Assert\GroupSequence({
- *     "id",
- *     "unique_id",
- *     "FundingCycle",
- *     "Entity",
- * })
  *
- * @UniqueEntity(
- *     fields={"fundingOrganization","name"},
- *     errorPath="name",
- *     message="Name must be unique within a FundingOrganization"
- * )
- * @UniqueEntity(
- *     fields={"udiPrefix"},
- *     message="This UDI prefix is already used."
- * )
  */
 #[ORM\Entity]
+#[Assert\GroupSequence(['id', 'unique_id', 'FundingCycle', 'Entity'])]
+#[UniqueEntity(fields: ['fundingOrganization', 'name'], errorPath: 'name', message: 'Name must be unique within a FundingOrganization')]
+#[UniqueEntity(fields: ['udiPrefix'], message: 'This UDI prefix is already used.')]
 class FundingCycle extends Entity
 {
     /**
@@ -45,17 +33,14 @@ class FundingCycle extends Entity
      *
      * @var string $name
      *
-     * @Serializer\Groups({"organization"})
-     *
-     * @Assert\NotBlank(
-     *     message="Name is required"
-     * )
      *
      * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['organization'])]
+    #[Assert\NotBlank(message: 'Name is required')]
     protected $name;
 
     /**
@@ -103,26 +88,23 @@ class FundingCycle extends Entity
      *
      * @var FundingOrganization
      *
-     * @Serializer\Groups({"organization"})
      *
-     * @Assert\NotBlank(
-     *     message="Funding Organization is required"
-     * )
      *
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'fundingCycles')]
+    #[Serializer\Groups(['organization'])]
+    #[Serializer\MaxDepth(1)]
+    #[Assert\NotBlank(message: 'Funding Organization is required')]
     protected $fundingOrganization;
 
     /**
      * Funding cycle's list of associated research groups.
      *
      * @var \Doctrine\Common\Collections\Collection
-     *
-     * @Serializer\MaxDepth(2)
      */
     #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[Serializer\MaxDepth(2)]
     protected $researchGroups;
 
     /**
@@ -130,31 +112,20 @@ class FundingCycle extends Entity
      *
      * @var string $udiPrefix
      *
-     * @Assert\NotBlank(
-     *     message="UDI Prefix is required"
-     * )
      *
-     * @Assert\Regex(
-     *      pattern="/^[A-Z\d]{2}$/",
-     *      message="Funding Cycle prefix must be composed of 2 uppercase characters or numbers."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: 'UDI Prefix is required')]
+    #[Assert\Regex(pattern: '/^[A-Z\d]{2}$/', message: 'Funding Cycle prefix must be composed of 2 uppercase characters or numbers.')]
     protected $udiPrefix;
 
     /**
      * This holds the position in the sort order of this Entity.
      *
      * @var int
-     *
-     * @Assert\Range(
-     *     min = 1,
-     *     max = 2147483647,
-     *     notInRangeMessage = "Sort position must be in between 1 and 2147483647",
-     *     invalidMessage = "Sort position must be a positive integer."
-     * )
      */
     #[ORM\Column(nullable: true, type: 'integer')]
+    #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'Sort position must be in between 1 and 2147483647', invalidMessage: 'Sort position must be a positive integer.')]
     protected $sortOrder;
 
     /**

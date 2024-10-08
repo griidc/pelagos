@@ -21,12 +21,12 @@ class SearchTermsReportController extends ReportController
     const FILENAME_TIMESTAMPFORMAT = 'Y-m-d_Hi';
 
   /**
-   * Report for search terms from the data discovery app.
-   *
-   * @Route("/datadisc-search-terms-report", name="pelagos_app_ui_datadisc_searchtermsreport_default")
-   *
-   * @return Response A Response instance.
-   */
+     * Report for search terms from the data discovery app.
+     *
+     *
+     * @return Response A Response instance.
+     */
+    #[Route(path: '/datadisc-search-terms-report', name: 'pelagos_app_ui_datadisc_searchtermsreport_default')]
     public function defaultAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -139,10 +139,10 @@ class SearchTermsReportController extends ReportController
     /**
      * Report for search terms from the search app.
      *
-     * @Route("/search-terms-report", name="pelagos_app_ui_searchtermsreport")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/search-terms-report', name: 'pelagos_app_ui_searchtermsreport')]
     public function searchReport()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

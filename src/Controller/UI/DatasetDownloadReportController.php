@@ -33,12 +33,11 @@ class DatasetDownloadReportController extends ReportController
      *
      * @param Request $request Message response.
      *
-     * @Route("/dataset-download-report", name="pelagos_app_ui_datasetdownloadreport_default")
      *
      * @throws InvalidDateSelectedException Selected Dates are invalid.
-     *
      * @return Response|StreamedResponse A Response instance.
      */
+    #[Route(path: '/dataset-download-report', name: 'pelagos_app_ui_datasetdownloadreport_default')]
     public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
@@ -172,10 +171,10 @@ class DatasetDownloadReportController extends ReportController
     /**
      * Generates report of dataset downloads based on timestamp.
      *
-     * @Route("/dataset-download-report/timestamp", name="pelagos_app_ui_datasetdownloadreport_timestampreport")
      *
      * @return Response|StreamedResponse A Response instance.
      */
+    #[Route(path: '/dataset-download-report/timestamp', name: 'pelagos_app_ui_datasetdownloadreport_timestampreport')]
     public function timeStampReportAction()
     {
         // Checks authorization of users

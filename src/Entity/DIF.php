@@ -48,10 +48,9 @@ class DIF extends Entity
      * The Dataset this DIF identifies.
      *
      * @var Dataset
-     *
-     * @Serializer\MaxDepth(2)
      */
     #[ORM\OneToOne(targetEntity: 'Dataset', mappedBy: 'dif', cascade: ['persist'])]
+    #[Serializer\MaxDepth(2)]
     protected $dataset;
 
     /**
@@ -61,10 +60,9 @@ class DIF extends Entity
      *
      * @see STATUS_* constants.
      *
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'smallint')]
+    #[Serializer\Groups(['card'])]
     protected $status = self::STATUS_UNSUBMITTED;
 
     /**
@@ -72,12 +70,9 @@ class DIF extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Title is required"
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Title is required')]
     protected $title;
 
     /**
@@ -85,13 +80,10 @@ class DIF extends Entity
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Primary Point of Contact is required"
-     * )
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[Serializer\MaxDepth(1)]
+    #[Assert\NotBlank(message: 'Primary Point of Contact is required')]
     protected $primaryPointOfContact;
 
     /**
@@ -99,10 +91,9 @@ class DIF extends Entity
      *
      * @var Person
      *
-     *
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[Serializer\MaxDepth(1)]
     protected $secondaryPointOfContact;
 
     /**
@@ -110,12 +101,9 @@ class DIF extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Abstract is required"
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Abstract is required')]
     protected $abstract;
 
     /**
@@ -253,10 +241,9 @@ class DIF extends Entity
      *
      * @var \DateTime
      *
-     *
-     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Serializer\Type("DateTime<'Y-m-d'>")]
     protected $estimatedStartDate;
 
     /**
@@ -264,10 +251,9 @@ class DIF extends Entity
      *
      * @var \DateTime
      *
-     *
-     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Serializer\Type("DateTime<'Y-m-d'>")]
     protected $estimatedEndDate;
 
     /**
@@ -457,12 +443,10 @@ class DIF extends Entity
     /**
      * Gets the Research Group this DIF is attached to.
      *
-     * @Assert\NotBlank(
-     *     message="You must select a project"
-     * )
      *
      * @return ResearchGroup the Research Group this DIF is attached to
      */
+    #[Assert\NotBlank(message: 'You must select a project')]
     public function getResearchGroup()
     {
         if (!$this->dataset instanceof Dataset) {
@@ -1436,10 +1420,10 @@ class DIF extends Entity
     /**
      * Gets the issue tracking ticket for this Dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("issueTrackingTicket")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('issueTrackingTicket')]
     public function getIssueTrackingTicket(): string
     {
         $dataset = $this->getDataset();

@@ -19,10 +19,9 @@ class DatasetPublication extends Entity
      * A Pelagos Publication entity.
      *
      * @var Publication
-     *
-     * @Serializer\Groups({"publications"})
      */
     #[ORM\ManyToOne(targetEntity: 'Publication', inversedBy: 'datasetPublications')]
+    #[Serializer\Groups(['publications'])]
     protected $publication;
 
     /**

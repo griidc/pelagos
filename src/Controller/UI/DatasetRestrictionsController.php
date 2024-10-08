@@ -50,14 +50,10 @@ class DatasetRestrictionsController extends AbstractController
     /**
      * Dataset Restrictions Modifier UI.
      *
-     * @Route(
-     *      "/dataset-restrictions",
-     *      name="pelagos_app_ui_datasetrestrictions_default",
-     *      methods={"GET"}
-     * )
      *
      * @return Response
      */
+    #[Route(path: '/dataset-restrictions', name: 'pelagos_app_ui_datasetrestrictions_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
@@ -79,17 +75,12 @@ class DatasetRestrictionsController extends AbstractController
      * @param integer       $id            The entity ID of a Dataset.
      * @param EntityHandler $entityHandler A Pelagos entity handler.
      *
-     * @Route(
-     *      "/dataset-restrictions/{id}",
-     *      name="pelagos_app_ui_datasetrestrictions_post",
-     *      methods={"POST"}
-     * )
      *
      * @throws PersistenceException    Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
-     *
      * @return Response
      */
+    #[Route(path: '/dataset-restrictions/{id}', name: 'pelagos_app_ui_datasetrestrictions_post', methods: ['POST'])]
     public function postAction(Request $request, int $id, EntityHandler $entityHandler)
     {
         $restrictionKey = $request->request->get('restrictions');

@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Account;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\InformationProduct;
@@ -22,11 +23,9 @@ class InformationProductController extends AbstractController
 {
     /**
      * The information product page.
-     *
-     * @Route("/information-product", name="pelagos_app_ui_information_product")
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/information-product', name: 'pelagos_app_ui_information_product')]
     public function index(SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
         $researchGroupList = [];
@@ -58,11 +57,9 @@ class InformationProductController extends AbstractController
 
     /**
      * The information product page.
-     *
-     * @Route("/information-product/{id}", name="pelagos_app_ui_edit_information_product", requirements={"id"="\d+"})
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/information-product/{id}', name: 'pelagos_app_ui_edit_information_product', requirements: ['id' => '\d+'])]
     public function edit(InformationProduct $informationProduct, SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
         $context = SerializationContext::create();
@@ -95,11 +92,9 @@ class InformationProductController extends AbstractController
 
     /**
      * The information product page.
-     *
-     * @Route("/information-products", name="pelagos_app_ui_information_products")
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/information-products', name: 'pelagos_app_ui_information_products')]
     public function list(): Response
     {
         $researchGroupList = [];
@@ -121,9 +116,8 @@ class InformationProductController extends AbstractController
 
     /**
      * Landing page for information product.
-     *
-     * @Route("/infoprod/{id}", name="pelagos_app_ui_info_product_landing", requirements={"id"="\d+"})
      */
+    #[Route(path: '/infoprod/{id}', name: 'pelagos_app_ui_info_product_landing', requirements: ['id' => '\d+'])]
     public function infoProductLanding(InformationProduct $informationProduct): Response
     {
         return $this->render(

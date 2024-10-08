@@ -15,14 +15,10 @@ class DatasetSummaryController extends AbstractController
     /**
      * The default action.
      *
-     * @Route(
-     *      "/dataset-summary",
-     *      name="pelagos_app_ui_datasetsummary_default",
-     *      methods={"GET"}
-     * )
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/dataset-summary', name: 'pelagos_app_ui_datasetsummary_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
