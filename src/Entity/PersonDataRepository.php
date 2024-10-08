@@ -56,10 +56,8 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      * @var string
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Label cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Label cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank(message: 'Label is required')]
     protected $label;

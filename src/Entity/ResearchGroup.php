@@ -45,10 +45,8 @@ class ResearchGroup extends Entity
      * @var string $name
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     #[Serializer\Groups(['overview', 'search'])]
     #[Assert\NotBlank(message: 'Name is required')]
@@ -60,10 +58,8 @@ class ResearchGroup extends Entity
      * @var string $shortName
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Short name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Short name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Short Name is required')]
     protected $shortName;
@@ -87,10 +83,8 @@ class ResearchGroup extends Entity
      *
      * @var string $url
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Website URL cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
@@ -99,10 +93,8 @@ class ResearchGroup extends Entity
      *
      * @var string $phoneNumber
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Phone number cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $phoneNumber;
 
@@ -111,10 +103,8 @@ class ResearchGroup extends Entity
      *
      * @var string $deliveryPoint
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $deliveryPoint;
 
@@ -123,10 +113,8 @@ class ResearchGroup extends Entity
      *
      * @var string $city
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="City cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $city;
 
@@ -135,10 +123,8 @@ class ResearchGroup extends Entity
      *
      * @var string $administrativeArea
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $administrativeArea;
 
@@ -147,10 +133,8 @@ class ResearchGroup extends Entity
      *
      * @var string $postalCode
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $postalCode;
 
@@ -159,10 +143,8 @@ class ResearchGroup extends Entity
      *
      * @var string $country
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Country cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $country;
 
@@ -172,10 +154,8 @@ class ResearchGroup extends Entity
      * @var string $description
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Description cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['overview'])]
     protected $description;
@@ -193,10 +173,8 @@ class ResearchGroup extends Entity
      *
      * @var string $emailAddress
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Email address cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/<>/', message: 'Email address cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', nullable: true)]
     #[Assert\Email(message: 'Email address is invalid')]
     protected $emailAddress;
