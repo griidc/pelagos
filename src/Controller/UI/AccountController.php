@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Environment as TwigEnvironment
 
 /**
  * The account controller.
@@ -106,7 +107,7 @@ class AccountController extends AbstractController
      * @return Response A Symfony Response instance.
      */
     #[Route(path: '/account', methods: ['POST'], name: 'pelagos_app_ui_account_sendverificationemail')]
-    public function sendVerificationEmail(Request $request, MailSender $mailer, PersonRepository $personRepository)
+    public function sendVerificationEmail(Request $request, MailSender $mailer, PersonRepository $personRepository, TwigEnvironment $twigEnvironment)
     {
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
@@ -142,19 +143,16 @@ class AccountController extends AbstractController
 
         $dateInterval = new \DateInterval('P7D');
 
-        // Get TWIG instance
-        $twig = $this->get('twig');
-
         if ($reset === true) {
             // Create new personToken
             $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
             // Load email template
-            $template = $twig->load('Account/PasswordReset.email.twig');
+            $template = $twigEnvironment->load('Account/PasswordReset.email.twig');
         } else {
             // Create new personToken
             $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
             // Load email template
-            $template = $twig->load('Account/AccountConfirmation.email.twig');
+            $template = $twigEnvironment->load('Account/AccountConfirmation.email.twig');
         }
 
         // Persist and Validate PersonToken

@@ -73,7 +73,7 @@ class DatalandController extends AbstractController
      * @return Response
      */
     #[Route(path: '/data/v1/{udi}', name: 'pelagos_app_ui_dataland_v1')]
-    public function defaultAction(string $udi)
+    public function defaultAction(string $udi, EntityManagerInterface $entityManager)
     {
         $dataset = $this->getDataset($udi);
 
@@ -96,7 +96,7 @@ class DatalandController extends AbstractController
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
         if ($dataset->isAvailable()) {
-            $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
+            $qb = $entityManager->createQueryBuilder();
             $qb->select($qb->expr()->count('a'))
                 ->from('\App\Entity\LogActionItem', 'a')
                 ->where('a.subjectEntityId = ?1')

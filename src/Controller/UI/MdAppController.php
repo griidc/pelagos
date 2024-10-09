@@ -96,11 +96,11 @@ class MdAppController extends AbstractController
                         $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
                     $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
                         ' to ' . $this->getFlashBagStatus($to);
-                    $this->get('session')->getFlashBag()->add('success', $message);
+                    $this->addFlash('success', $message);
                 }
             } else {
                 $message = 'Unable to move the dataset ' . $udi . ' from status Request Revisions to status InReview as it has a unsubmitted draft dataset-submission';
-                $this->get('session')->getFlashBag()->add('error', $message);
+                $this->addFlash('error', $message);
             }
         }
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
