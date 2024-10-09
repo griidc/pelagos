@@ -117,8 +117,7 @@ class PersonTest extends TestCase
     protected function setUp()
     {
         $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping(true)
-            ->addDefaultDoctrineAnnotationReader()
+            ->enableAttributeMapping(true)
             ->getValidator();
         $this->person = new Person;
         $this->person->setFirstName(self::$testFirstName);
