@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Twig\Environment as TwigEnvironment
+use Twig\Environment as TwigEnvironment;
 
 /**
  * The account controller.
