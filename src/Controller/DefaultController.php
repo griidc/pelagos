@@ -71,7 +71,7 @@ class DefaultController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/', name: 'pelagos_homepage')]
-    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request)
+    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request, EntityManagerInterface $entityManager)
     {
         $customTemplate = $this->getParameter('custom_template');
 
@@ -82,9 +82,9 @@ class DefaultController extends AbstractController
                 $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
             }
 
-            $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+            $fundingCycles = $entityManager->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
 
-            $leadershipPersons = $this->get('doctrine')->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
+            $leadershipPersons = $entityManager->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
 
             $projectDirectorList = $this->getProjectDirectorList($leadershipPersons);
 
