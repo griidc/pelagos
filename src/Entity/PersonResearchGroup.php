@@ -64,7 +64,7 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      *
      */
-    #[Assert\Regex(pattern: '/<>/', message: 'Label cannot contain angle brackets (< or >)')]
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Label cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text')]
     #[Serializer\Groups(['person'])]
     #[Assert\NotBlank(message: 'Label is required')]
