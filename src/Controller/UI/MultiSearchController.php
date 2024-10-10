@@ -12,9 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MultiSearchController extends AbstractController
 {
-    /**
-     * @Route("/multi-search", name="app_multi_search")
-     */
+    #[Route(path: '/multi-search', name: 'app_multi_search')]
     public function index(): Response
     {
         return $this->render('MultiSearch/index.html.twig', [
@@ -23,10 +21,9 @@ class MultiSearchController extends AbstractController
     }
 
     /**
-     * @Route("/api/multi_search", name="app_multi_search_api")
-     *
      * @return Response
      */
+    #[Route(path: '/api/multi_search', name: 'app_multi_search_api')]
     public function search(Request $request, MultiSearch $multiSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = (string) $request->query->get('queryString');

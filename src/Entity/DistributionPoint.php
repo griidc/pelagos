@@ -78,11 +78,9 @@ class DistributionPoint extends Entity
      *
      * @var DatasetSubmission
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Dataset Submission is required")
      */
     #[ORM\ManyToOne(targetEntity: 'DatasetSubmission', inversedBy: 'distributionPoints')]
+    #[Assert\NotBlank(message: 'Dataset Submission is required')]
     protected $datasetSubmission;
 
     /**
@@ -90,11 +88,9 @@ class DistributionPoint extends Entity
      *
      * @var DataCenter
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Distribution Contact is required")
      */
     #[ORM\ManyToOne(targetEntity: 'DataCenter')]
+    #[Assert\NotBlank(message: 'Distribution Contact is required')]
     protected $dataCenter;
 
     /**

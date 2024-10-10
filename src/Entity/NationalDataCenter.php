@@ -9,19 +9,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * National Data Center to Data Center dataset contact association entity class.
  *
- *
- * @UniqueEntity(
- *     fields={"organizationName"},
- *     errorPath="organizationName",
- *     message="A National data center with this name already exists"
- * )
- * @UniqueEntity(
- *     fields={"organizationUrl"},
- *     errorPath="organizationUrl",
- *     message="A National data center with this Url already exists"
- * )
  */
 #[ORM\Entity]
+#[UniqueEntity(fields: ['organizationName'], errorPath: 'organizationName', message: 'A National data center with this name already exists')]
+#[UniqueEntity(fields: ['organizationUrl'], errorPath: 'organizationUrl', message: 'A National data center with this Url already exists')]
 class NationalDataCenter extends DataCenter
 {
     /**

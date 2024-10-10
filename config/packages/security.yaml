@@ -42,7 +42,6 @@ security:
             logout:
                 path: security_logout
                 target: pelagos_homepage
-                handlers: [App\Security\LogoutHandler]
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos_account

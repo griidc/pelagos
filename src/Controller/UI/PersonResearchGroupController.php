@@ -27,10 +27,10 @@ class PersonResearchGroupController extends AbstractController
      *
      * @throws BadRequestHttpException When the research group parameter is not set.
      *
-     * @Route("/person-research-group/{id}", name="pelagos_app_ui_personresearchgroup_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/person-research-group/{id}', name: 'pelagos_app_ui_personresearchgroup_default')]
     public function defaultAction(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');

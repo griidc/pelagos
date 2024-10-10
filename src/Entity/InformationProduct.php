@@ -26,13 +26,10 @@ class InformationProduct extends Entity
      * @var string
      *
      *
-     * @Serializer\Groups({"card"})
-     *
-     * @Assert\NotBlank(
-     *     message="A title is required."
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['card'])]
+    #[Assert\NotBlank(message: 'A title is required.')]
     private $title;
 
     /**
@@ -41,13 +38,10 @@ class InformationProduct extends Entity
      * @var string
      *
      *
-     * @Serializer\Groups({"card"})
-     *
-     * @Assert\NotBlank(
-     *     message="A creator is required."
-     * )
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['card'])]
+    #[Assert\NotBlank(message: 'A creator is required.')]
     private $creators;
 
     /**
@@ -56,44 +50,39 @@ class InformationProduct extends Entity
      * @var string
      *
      *
-     * @Serializer\Groups({"card"})
      *
-     * @Assert\NotBlank(
-     *     message="A publisher is required."
-     * )
      *
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['card'])]
+    #[Assert\NotBlank(message: 'A publisher is required.')]
     private $publisher;
 
     /**
      * An external DOI for the Information Product.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card'])]
     private $externalDoi;
 
     /**
      * Is the Information Product published.
      *
      * @var boolean
-     *
-     * @Serializer\Groups({"search"})
      */
     #[ORM\Column(type: 'boolean')]
+    #[Serializer\Groups(['search'])]
     private $published = false;
 
     /**
      * Is the Information Product remotely hosted.
      *
      * @var boolean
-     *
-     * @Serializer\Groups({"search", "card"})
      */
     #[ORM\Column(type: 'boolean')]
+    #[Serializer\Groups(['search', 'card'])]
     private $remoteResource = false;
 
     /**
@@ -101,55 +90,50 @@ class InformationProduct extends Entity
      *
      * @var Collection
      *
-     *
-     * @Serializer\MaxDepth(1)
-     * @Serializer\SerializedName("researchGroup")
-     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToMany(targetEntity: ResearchGroup::class)]
+    #[Serializer\MaxDepth(1)]
+    #[Serializer\SerializedName('researchGroup')]
+    #[Serializer\Groups(['search'])]
     private $researchGroups;
 
     /**
      * The remote uri for this Information Product.
      *
      * @var string
-     *
-     * @Serializer\Groups({"search", "card"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['search', 'card'])]
     private $remoteUri;
 
     /**
      * The file for this Information Product.
      *
      * @var File
-     *
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search", "card"})
      */
     #[ORM\OneToOne(targetEntity: File::class, cascade: ['persist', 'remove'])]
+    #[Serializer\MaxDepth(1)]
+    #[Serializer\Groups(['search', 'card'])]
     private $file;
 
     /**
      * The collection of Product Types for this Information Product.
      *
      * @var Collection
-     *
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToMany(targetEntity: ProductTypeDescriptor::class)]
+    #[Serializer\MaxDepth(1)]
+    #[Serializer\Groups(['search'])]
     private $productTypeDescriptors;
 
     /**
      * The collection of Digital Resource Types for this Information Product.
      *
      * @var Collection
-     *
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
      */
     #[ORM\ManyToMany(targetEntity: DigitalResourceTypeDescriptor::class)]
+    #[Serializer\MaxDepth(1)]
+    #[Serializer\Groups(['search'])]
     private $digitalResourceTypeDescriptors;
 
     #[ORM\ManyToMany(targetEntity: Funder::class)]
@@ -324,11 +308,11 @@ class InformationProduct extends Entity
     /**
      * Get the Research Groups List for this Information Product.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("researchGroups")
      *
      * @return array
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('researchGroups')]
     public function getResearchGroupList(): array
     {
         $researchGroupList = [];
@@ -397,12 +381,12 @@ class InformationProduct extends Entity
     /**
      * Getter for Remote URI host name.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("remoteUriHostName")
-     * @Serializer\Groups({"card"})
      *
      * @return string|null
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('remoteUriHostName')]
+    #[Serializer\Groups(['card'])]
     public function getRemoteUriHostName(): ?string
     {
         $remoteUri = $this->getRemoteUri();
@@ -504,11 +488,11 @@ class InformationProduct extends Entity
     /**
      * Get the List of Product type descriptors for this Information Product.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("productTypeDescriptorsList")
      *
      * @return array
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('productTypeDescriptorsList')]
     public function getProductTypeDescriptorList(): array
     {
         $productTypeDescriptorList = [];
@@ -533,11 +517,11 @@ class InformationProduct extends Entity
     /**
      * Get the List of Digital Resource type descriptors for this Information Product.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("digitalResourceTypeDescriptorsList")
      *
      * @return array
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('digitalResourceTypeDescriptorsList')]
     public function getDigitalResourceTypeDescriptorList(): array
     {
         $digitalResourceTypeDescriptorList = [];
@@ -551,12 +535,12 @@ class InformationProduct extends Entity
     /**
      * Show friendly name of this entity.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("friendlyName")
-     * @Serializer\Groups({"search"})
      *
      * @return string
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('friendlyName')]
+    #[Serializer\Groups(['search'])]
     public function getFriendlyName(): string
     {
         return $this::FRIENDLY_NAME;
@@ -565,12 +549,12 @@ class InformationProduct extends Entity
     /**
      * Show class name of this entity.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("className")
-     * @Serializer\Groups({"search"})
      *
      * @return string
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('className')]
+    #[Serializer\Groups(['search'])]
     public function getClassName(): string
     {
         return get_class($this);
@@ -579,11 +563,11 @@ class InformationProduct extends Entity
     /**
      *Get the Funder List for this Information Product.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("funders")
      *
      * @return array
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('funders')]
     public function getFunderList(): array
     {
         $funderList = [];

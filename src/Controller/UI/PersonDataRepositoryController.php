@@ -22,10 +22,10 @@ class PersonDataRepositoryController extends AbstractController
      * @param EntityHandler $entityHandler The entity handler.
      * @param integer       $id            The id of the entity to retrieve.
      *
-     * @Route("/person-data-repository/{id}", name="pelagos_app_ui_persondatarepository_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/person-data-repository/{id}', name: 'pelagos_app_ui_persondatarepository_default')]
     public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users

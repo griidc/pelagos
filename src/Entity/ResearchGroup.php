@@ -16,21 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Entity class to represent a Research Group.
  *
- * @Assert\GroupSequence({
- *     "id",
- *     "unique_id",
- *     "ResearchGroup",
- *     "Entity",
- * })
  *
- * @UniqueEntity(
- *     fields={"name", "fundingCycle"},
- *     errorPath="name",
- *     message="A Research Group with this name already exists"
- * )
- * @UniqueEntity("shortName", message="A Research Group with this Short name already exists")
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\ResearchGroupRepository')]
+#[Assert\GroupSequence(['id', 'unique_id', 'ResearchGroup', 'Entity'])]
+#[UniqueEntity(fields: ['name', 'fundingCycle'], errorPath: 'name', message: 'A Research Group with this name already exists')]
+#[UniqueEntity('shortName', message: 'A Research Group with this Short name already exists')]
 class ResearchGroup extends Entity
 {
     /**
@@ -53,17 +44,12 @@ class ResearchGroup extends Entity
      *
      * @var string $name
      *
-     * @Serializer\Groups({"overview", "search"})
      *
-     * @Assert\NotBlank(
-     *     message="Name is required"
-     * )
-     *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
+    #[Serializer\Groups(['overview', 'search'])]
+    #[Assert\NotBlank(message: 'Name is required')]
     protected $name;
 
     /**
@@ -71,15 +57,11 @@ class ResearchGroup extends Entity
      *
      * @var string $shortName
      *
-     * @Assert\NotBlank(
-     *     message="Short Name is required"
-     * )
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Short name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Short name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
+    #[Assert\NotBlank(message: 'Short Name is required')]
     protected $shortName;
 
     /**
@@ -87,15 +69,13 @@ class ResearchGroup extends Entity
      *
      * @var FundingCycle $fundingCycle
      *
-     * @Assert\NotBlank(
-     *     message="Funding Cycle is required"
-     * )
      *
-     * @Serializer\MaxDepth(2)
      *
-     * @Serializer\Groups({"overview"})
      */
     #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
+    #[Serializer\MaxDepth(2)]
+    #[Serializer\Groups(['overview'])]
+    #[Assert\NotBlank(message: 'Funding Cycle is required')]
     protected $fundingCycle;
 
     /**
@@ -103,10 +83,8 @@ class ResearchGroup extends Entity
      *
      * @var string $url
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Website URL cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
@@ -115,10 +93,8 @@ class ResearchGroup extends Entity
      *
      * @var string $phoneNumber
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Phone number cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $phoneNumber;
 
@@ -127,10 +103,8 @@ class ResearchGroup extends Entity
      *
      * @var string $deliveryPoint
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $deliveryPoint;
 
@@ -139,10 +113,8 @@ class ResearchGroup extends Entity
      *
      * @var string $city
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="City cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $city;
 
@@ -151,10 +123,8 @@ class ResearchGroup extends Entity
      *
      * @var string $administrativeArea
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $administrativeArea;
 
@@ -163,10 +133,8 @@ class ResearchGroup extends Entity
      *
      * @var string $postalCode
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $postalCode;
 
@@ -175,10 +143,8 @@ class ResearchGroup extends Entity
      *
      * @var string $country
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Country cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $country;
 
@@ -187,13 +153,11 @@ class ResearchGroup extends Entity
      *
      * @var string $description
      *
-     * @Serializer\Groups({"overview"})
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Description cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['overview'])]
     protected $description;
 
     /**
@@ -209,36 +173,29 @@ class ResearchGroup extends Entity
      *
      * @var string $emailAddress
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Email address cannot contain angle brackets (< or >)"
-     * )
-     *
-     * @Assert\Email(
-     *     message="Email address is invalid"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Email address cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', nullable: true)]
+    #[Assert\Email(message: 'Email address is invalid')]
     protected $emailAddress;
 
     /**
      * Research group's PersonResearchGroups.
      *
      * @var \Doctrine\Common\Collections\Collection $personResearchGroups
-     *
-     * @Serializer\Groups({"overview"})
      */
     #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
+    #[Serializer\Groups(['overview'])]
     protected $personResearchGroups;
 
     /**
      * Research group's list of Datasets.
      *
      * @var Collection $datasets
-     *
-     * @Serializer\Groups({"overview"})
      */
     #[ORM\OneToMany(targetEntity: 'Dataset', mappedBy: 'researchGroup')]
     #[ORM\OrderBy(['udi' => 'ASC'])]
+    #[Serializer\Groups(['overview'])]
     protected $datasets;
 
     /**
@@ -246,13 +203,10 @@ class ResearchGroup extends Entity
      *
      * @var bool $locked
      *
-     * @Serializer\Groups({"data"})
-     *
-     * @Assert\NotNull(
-     *     message="Please select Yes or No"
-     * )
      */
     #[ORM\Column(type: 'boolean', nullable: false)]
+    #[Serializer\Groups(['data'])]
+    #[Assert\NotNull(message: 'Please select Yes or No')]
     protected $locked = false;
 
     /**
@@ -268,12 +222,12 @@ class ResearchGroup extends Entity
     /**
      * Serializer for the datasets virtual property.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("datasets")
      *
      * @return array
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('datasets')]
     public function serializeDatasets()
     {
         $datasets = [];
@@ -722,10 +676,10 @@ class ResearchGroup extends Entity
     /**
      * Returns a collection of project directors (Person entity).
      *
-     * @Serializer\Groups({"overview"})
      *
-     * @Serializer\VirtualProperty
      */
+    #[Serializer\Groups(['overview'])]
+    #[Serializer\VirtualProperty]
     public function getProjectDirectors(): Collection
     {
         $projectDirectors = new ArrayCollection();

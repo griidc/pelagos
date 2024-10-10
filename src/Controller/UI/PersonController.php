@@ -28,10 +28,10 @@ class PersonController extends AbstractController
      *
      * @throws NotFoundHttpException When person was not found.
      *
-     * @Route("/person/{id}", name="pelagos_app_ui_person_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/person/{id}', name: 'pelagos_app_ui_person_default')]
     public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
@@ -84,10 +84,10 @@ class PersonController extends AbstractController
      *
      * @throws NotFoundHttpException When the person is not found.
      *
-     * @Route("/profile/{id}", name="pelagos_app_ui_person_profile_page", requirements={"id"="\d+"})
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/profile/{id}', name: 'pelagos_app_ui_person_profile_page', requirements: ['id' => '\d+'])]
     public function personProfilePage(Person $person): Response
     {
         return $this->render('Person/index.html.twig', ['person' => $person]);
