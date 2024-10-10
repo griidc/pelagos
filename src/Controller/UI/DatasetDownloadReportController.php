@@ -29,6 +29,9 @@ class DatasetDownloadReportController extends ReportController
 
     const UDI_REPORT = 'udiReport';
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
+
     /**
      * This defaultAction generates the form to select the date range for the report.
      *
@@ -293,11 +296,11 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return Query
      */
-    private function getQuery(EntityManagerInterface $entityManager, string $reportName, array $options = null): Query
+    private function getQuery(string $reportName, array $options = null): Query
     {
         //Query
         if ($reportName === self::TIMESTAMP_REPORT) {
-            $qb = $entityManager->createQueryBuilder();
+            $qb = $this->entityManager->createQueryBuilder();
             $query = $qb
                 ->select('log.creationTimeStamp, d.udi, log.payLoad')
                 ->from('\App\Entity\LogActionItem', 'log')
@@ -316,7 +319,7 @@ class DatasetDownloadReportController extends ReportController
                 log.creationTimeStamp >= :startDate
                 and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
-            $query = $entityManager->createQuery($queryString);
+            $query = $this->entityManager->createQuery($queryString);
             $endDateInclusively = clone $options['endDate'];
             $endDateInclusively = $endDateInclusively->add(new \DateInterval('P1D'));
             $query->setParameters([
@@ -353,7 +356,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return array
      */
-    private function excludeGriidcStaff(EntityManagerInterface $entityManager): array
+    private function excludeGriidcStaff(): array
     {
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
@@ -361,7 +364,7 @@ class DatasetDownloadReportController extends ReportController
             ' personDataRepository JOIN ' . Person::class .
             ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
             ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
-        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcUserResult = $this->entityManager->createQuery($griidcUserQueryString)->getScalarResult();
         $griidcArray = array_column($griidcUserResult, 'userId');
 
         return $griidcArray;

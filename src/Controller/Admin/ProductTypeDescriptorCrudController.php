@@ -20,6 +20,9 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
+
     /**
      * Returns Fully Qualified Class Name.
      */
@@ -90,10 +93,10 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Is this Product Type Descriptor in use on an Information Product.
      */
-    private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor, EntityManagerInterface $entityManager): bool
+    private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor): bool
     {
         /** @var InformationProductRepository $informationProductRepository */
-        $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
+        $informationProductRepository = $this->entityManager->getRepository(InformationProduct::class);
 
         return count($informationProductRepository->findByProductTypeDescriptor($productTypeDescriptor)) > 0;
     }

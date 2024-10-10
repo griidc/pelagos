@@ -20,6 +20,9 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
+
     /**
      * Returns Fully Qualified Class Name.
      */
@@ -89,10 +92,10 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Is this digital resource in use on an Information Product.
      */
-    private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor, EntityManagerInterface $entityManager): bool
+    private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): bool
     {
         /** @var InformationProductRepository $informationProductRepository */
-        $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
+        $informationProductRepository = $this->entityManager->getRepository(InformationProduct::class);
 
         return count($informationProductRepository->findByDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor)) > 0;
     }
