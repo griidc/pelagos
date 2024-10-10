@@ -21,7 +21,8 @@ const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';
 class GomriReportController extends ReportController
 {
     public function __construct(private EntityManagerInterface $entityManager)
-    {}
+    {
+    }
 
     /**
      * This is a parameterless report, so all is in the default action.

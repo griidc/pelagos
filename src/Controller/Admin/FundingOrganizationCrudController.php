@@ -22,7 +22,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 class FundingOrganizationCrudController extends AbstractCrudController
 {
     public function __construct(private EntityManagerInterface $entityManager)
-    {}
+    {
+    }
 
     /**
      * Returns Fully Qualified Class Name.

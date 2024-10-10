@@ -30,7 +30,8 @@ class DatasetDownloadReportController extends ReportController
     const UDI_REPORT = 'udiReport';
 
     public function __construct(private EntityManagerInterface $entityManager)
-    {}
+    {
+    }
 
     /**
      * This defaultAction generates the form to select the date range for the report.

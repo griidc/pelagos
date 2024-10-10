@@ -22,7 +22,8 @@ class SearchTermsReportController extends ReportController
     const FILENAME_TIMESTAMPFORMAT = 'Y-m-d_Hi';
 
     public function __construct(private EntityManagerInterface $entityManager)
-    {}
+    {
+    }
 
     /**
      * Report for search terms from the data discovery app.

@@ -21,7 +21,8 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     use EasyAdminCrudTrait;
 
     public function __construct(private EntityManagerInterface $entityManager)
-    {}
+    {
+    }
 
     /**
      * Returns Fully Qualified Class Name.
