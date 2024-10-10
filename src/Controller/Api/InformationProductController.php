@@ -22,7 +22,7 @@ use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -184,9 +184,8 @@ class InformationProductController extends AbstractFOSRestController
      * Delete Information Product.
      */
     #[Route(path: '/api/information_product/{id}', name: 'pelagos_api_delete_information_product', methods: ['DELETE'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
-    public function deleteInformationProduct(Request $request, InformationProduct $informationProduct): Response
+    public function deleteInformationProduct(Request $request, InformationProduct $informationProduct, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($informationProduct);
         $entityManager->flush();
 

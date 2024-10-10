@@ -8,7 +8,6 @@ use App\Handler\EntityHandler;
 use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

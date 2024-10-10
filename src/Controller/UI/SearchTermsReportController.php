@@ -7,6 +7,7 @@ use App\Entity\Account;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,7 @@ class SearchTermsReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getData()
+    protected function getData(EntityManagerInterface $entityManager)
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -62,7 +63,6 @@ class SearchTermsReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $entityManager = $this->getDoctrine()->getManager();
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
           LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
@@ -164,9 +164,8 @@ class SearchTermsReportController extends ReportController
      *
      * @return array
      */
-    private function getGriidcStaff(): array
+    private function getGriidcStaff(EntityManagerInterface $entityManager): array
     {
-        $entityManager = $this->getDoctrine()->getManager();
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
@@ -182,7 +181,7 @@ class SearchTermsReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getDatav2(): array
+    protected function getDatav2(EntityManagerInterface $entityManager): array
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -196,7 +195,6 @@ class SearchTermsReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $entityManager = $this->getDoctrine()->getManager();
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
             LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';

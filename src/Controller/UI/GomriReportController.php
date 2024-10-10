@@ -10,6 +10,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use DateTime;
 use DateInterval;
+use Doctrine\ORM\EntityManagerInterface;
 
 const MONTH_DAY_FORMAT = 'M Y';
 const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';
@@ -126,9 +127,8 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionOneQueryData(array $dataArray)
+    private function getVersionOneQueryData(array $dataArray, EntityManagerInterface $entityManager)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         // Query Identified.
         $queryString = 'SELECT dif.creationTimeStamp ' .
             'FROM ' . Dataset::class . ' dataset ' .
@@ -212,9 +212,8 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionTwoQueryData(array $dataArray)
+    private function getVersionTwoQueryData(array $dataArray, EntityManagerInterface $entityManager)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         // Query Identified (i.e. Datasets which have DIF approved).
         $qb = $entityManager->createQueryBuilder();
         $query = $qb

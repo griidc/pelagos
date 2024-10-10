@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
+use App\Repository\FundingCycleRepository;
+use App\Repository\FundingOrganizationRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -92,11 +94,9 @@ class FundingOrganizationCrudController extends AbstractCrudController
     /**
      * Is this Funding organization in use funding cycle.
      */
-    private function isFundingOrgInUse(FundingOrganization $fundingOrganization): bool
+    private function isFundingOrgInUse(FundingOrganization $fundingOrganization, FundingCycleRepository $fundingCycleRepository): bool
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $fundingCycles = $entityManager->getRepository(FundingCycle::class)->findBy(['fundingOrganization' => $fundingOrganization]);
+        $fundingCycles = $fundingCycleRepository->findBy(['fundingOrganization' => $fundingOrganization]);
 
         return count($fundingCycles) > 0;
     }

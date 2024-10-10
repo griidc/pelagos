@@ -14,6 +14,7 @@ use App\Entity\Person;
 use App\Entity\DatasetSubmission;
 use App\Entity\Account;
 use App\Entity\PersonDataRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -292,10 +293,8 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return Query
      */
-    private function getQuery(string $reportName, array $options = null): Query
+    private function getQuery(EntityManagerInterface $entityManager, string $reportName, array $options = null): Query
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         //Query
         if ($reportName === self::TIMESTAMP_REPORT) {
             $qb = $entityManager->createQueryBuilder();
@@ -354,9 +353,8 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return array
      */
-    private function excludeGriidcStaff(): array
+    private function excludeGriidcStaff(EntityManagerInterface $entityManager): array
     {
-        $entityManager = $this->getDoctrine()->getManager();
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
