@@ -35,7 +35,7 @@ class FundingCycle extends Entity
      *
      *
      */
-    #[Assert\Regex(pattern: '/<>/', message: 'Name cannot contain angle brackets (< or >)')]
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext')]
     #[Serializer\Groups(['organization'])]
     #[Assert\NotBlank(message: 'Name is required')]
@@ -47,7 +47,7 @@ class FundingCycle extends Entity
      * @var string $description
      *
      */
-    #[Assert\Regex(pattern: '/<>/', message: 'Description cannot contain angle brackets (< or >)')]
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
@@ -57,7 +57,7 @@ class FundingCycle extends Entity
      * @var string $url
      *
      */
-    #[Assert\Regex(pattern: '/<>/', message: 'URL cannot contain angle brackets (< or >)')]
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
