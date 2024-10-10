@@ -21,7 +21,10 @@ class SearchTermsReportController extends ReportController
     //timestamp used in filename
     const FILENAME_TIMESTAMPFORMAT = 'Y-m-d_Hi';
 
-  /**
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
+
+    /**
      * Report for search terms from the data discovery app.
      *
      *
@@ -49,7 +52,7 @@ class SearchTermsReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getData(EntityManagerInterface $entityManager)
+    protected function getData()
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -66,7 +69,7 @@ class SearchTermsReportController extends ReportController
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
           LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(['actionName' => 'Search']);
         $results = $query->getResult();
         $griidcArray = $this->getGriidcStaff();
@@ -164,7 +167,7 @@ class SearchTermsReportController extends ReportController
      *
      * @return array
      */
-    private function getGriidcStaff(EntityManagerInterface $entityManager): array
+    private function getGriidcStaff(): array
     {
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
@@ -172,7 +175,7 @@ class SearchTermsReportController extends ReportController
             ' personDataRepository JOIN ' . Person::class .
             ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
             ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
-        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcUserResult = $this->entityManager->createQuery($griidcUserQueryString)->getScalarResult();
         return array_column($griidcUserResult, 'userId');
     }
 
@@ -181,7 +184,7 @@ class SearchTermsReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getDatav2(EntityManagerInterface $entityManager): array
+    protected function getDatav2(): array
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -198,7 +201,7 @@ class SearchTermsReportController extends ReportController
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
             LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(['actionName' => 'New Search']);
         $results = $query->getResult();
 

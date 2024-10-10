@@ -20,6 +20,9 @@ const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';
  */
 class GomriReportController extends ReportController
 {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
+
     /**
      * This is a parameterless report, so all is in the default action.
      *
@@ -127,7 +130,7 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionOneQueryData(array $dataArray, EntityManagerInterface $entityManager)
+    private function getVersionOneQueryData(array $dataArray)
     {
         // Query Identified.
         $queryString = 'SELECT dif.creationTimeStamp ' .
@@ -138,7 +141,7 @@ class GomriReportController extends ReportController
             'JOIN fundingCycle.fundingOrganization fundingOrganization ' .
             'WHERE fundingOrganization.name = :gomri ' .
             'AND dif.status = :difStatusApproved';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(array(
             'difStatusApproved' => DIF::STATUS_APPROVED,
             'gomri' => GOMRI_STRING,
@@ -163,7 +166,7 @@ class GomriReportController extends ReportController
             '   WHERE subdatasetsubmission.datasetFileUri IS NOT null ' .
             '   GROUP BY subdatasetsubmission.dataset)' .
             'AND fundingOrganization.name = :gomri ';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(array('gomri' => GOMRI_STRING,));
         $results = $query->getResult();
 
@@ -188,7 +191,7 @@ class GomriReportController extends ReportController
             '   AND subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
             '   GROUP BY subdatasetsubmission.dataset)' .
             'AND fundingOrganization.name = :gomri';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(array(
             'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
@@ -212,10 +215,10 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionTwoQueryData(array $dataArray, EntityManagerInterface $entityManager)
+    private function getVersionTwoQueryData(array $dataArray)
     {
         // Query Identified (i.e. Datasets which have DIF approved).
-        $qb = $entityManager->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
             ->select('dif.approvedDate')
             ->from('\App\Entity\Dataset', 'd')
@@ -236,7 +239,7 @@ class GomriReportController extends ReportController
         }
 
         // Query Registered (i.e. Datasets which are submitted).
-        $qb = $entityManager->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
             ->select('ds.submissionTimeStamp')
             ->from('\App\Entity\Dataset', 'd')
@@ -256,9 +259,9 @@ class GomriReportController extends ReportController
         }
 
         // Query Available (i.e. Datasets which are publicly available).
-        $qb = $entityManager->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
 
-        $qb2 = $entityManager->createQueryBuilder()
+        $qb2 = $this->entityManager->createQueryBuilder()
             ->select('IDENTITY(ds2.dataset)')
             ->from('\App\Entity\DatasetSubmission', 'ds2')
             ->join('\App\Entity\Dataset', 'd2', 'WITH', 'ds2.dataset = d2.id')
