@@ -18,7 +18,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\Fileset;
 use App\Util\UrlValidation;
 use App\Form\DatasetSubmissionType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 
 /**

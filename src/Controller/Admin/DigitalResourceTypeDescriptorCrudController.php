@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Repository\InformationProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -88,10 +89,8 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Is this digital resource in use on an Information Product.
      */
-    private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): bool
+    private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor, EntityManagerInterface $entityManager): bool
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         /** @var InformationProductRepository $informationProductRepository */
         $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
 

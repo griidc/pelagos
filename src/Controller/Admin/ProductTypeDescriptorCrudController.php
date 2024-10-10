@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -89,10 +90,8 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
     /**
      * Is this Product Type Descriptor in use on an Information Product.
      */
-    private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor): bool
+    private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor, EntityManagerInterface $entityManager): bool
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         /** @var InformationProductRepository $informationProductRepository */
         $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
 

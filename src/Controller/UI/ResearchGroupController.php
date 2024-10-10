@@ -8,6 +8,7 @@ use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
 use App\Form\ResearchGroupType;
 use App\Form\PersonResearchGroupType;
+use App\Repository\FundingOrganizationRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -32,7 +33,7 @@ class ResearchGroupController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/research-group/{id}', name: 'pelagos_app_ui_researchgroup_default')]
-    public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
+    public function defaultAction(EntityHandler $entityHandler, FundingOrganizationRepository $fundingOrganizationRepository, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -73,7 +74,7 @@ class ResearchGroupController extends AbstractController
         $form = $formFactory->createNamed('', ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
-        $ui['FundingOrganizations'] = $this->getDoctrine()->getRepository(FundingOrganization::class)->findAll();
+        $ui['FundingOrganizations'] = $fundingOrganizationRepository->findAll();
 
         return $this->render('template/ResearchGroup.html.twig', $ui);
     }
