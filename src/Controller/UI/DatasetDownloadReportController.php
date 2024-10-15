@@ -125,7 +125,7 @@ class DatasetDownloadReportController extends ReportController
                     'fileSize' => null
                 );
 
-                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+                $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
@@ -241,7 +241,7 @@ class DatasetDownloadReportController extends ReportController
                     'fileSize' => null
                 );
 
-                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+                $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
