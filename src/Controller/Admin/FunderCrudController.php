@@ -23,6 +23,10 @@ class FunderCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * Returns Entity Class Name.
      */
@@ -119,10 +123,8 @@ class FunderCrudController extends AbstractCrudController
      */
     private function isFunderBeingUsed(Funder $funder): bool
     {
-        $entityManager = $this->container->get('doctrine')->getManager();
-
         /** @var DatasetRepository $datasetRepository */
-        $datasetRepository = $entityManager->getRepository(Dataset::class);
+        $datasetRepository = $this->entityManager->getRepository(Dataset::class);
 
         return count($datasetRepository->findByFunder($funder)) > 0;
     }

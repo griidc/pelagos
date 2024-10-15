@@ -9,6 +9,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -48,6 +49,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * Report version number 3.
      */
     const REPORT_VERSION_THREE = 3;
+
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
 
     /**
      * The default action.
@@ -260,8 +265,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     {
         $serializer = SerializerBuilder::create()->build();
 
-        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
-            ->findOneBy(array('id' => $researchGroupId));
+        $researchGroup = $this->entityManager->getRepository(ResearchGroup::class)
+        ->findOneBy(array('id' => $researchGroupId));
 
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
@@ -313,7 +318,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     private function getReport(int $researchGroupId, int $version)
     {
-        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
+        $researchGroup = $this->entityManager->getRepository(ResearchGroup::class)
             ->findOneBy(array('id' => $researchGroupId));
         $researchGroupName = $researchGroup->getName();
 
