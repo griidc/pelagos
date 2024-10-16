@@ -25,10 +25,10 @@ class DataRepositoryController extends AbstractController
      *
      * @throws NotFoundHttpException When the Funding Organization is not found.
      *
-     * @Route("/data-repository/{id}", name="pelagos_app_ui_datarepository_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/data-repository/{id}', name: 'pelagos_app_ui_datarepository_default')]
     public function defaultAction(int $id, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users

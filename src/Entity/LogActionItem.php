@@ -23,12 +23,9 @@ class LogActionItem extends Entity
      *
      * @access protected
      *
-     *
-     * @Assert\NotBlank(
-     *      message="Action Name is required"
-     * )
      */
     #[ORM\Column(type: 'citext')]
+    #[Assert\NotBlank(message: 'Action Name is required')]
     protected $actionName;
 
     /**

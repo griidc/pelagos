@@ -40,12 +40,11 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @Route("/api/datasets/count", name="pelagos_api_datasets_count", methods={"GET"}, defaults={"_format"="json"})
-     *
-     * @View()
      *
      * @return integer
      */
+    #[View]
+    #[Route(path: '/api/datasets/count', name: 'pelagos_api_datasets_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(Dataset::class, $request);
@@ -58,12 +57,11 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
-     *
-     * @Route("/api/datasets", name="pelagos_api_datasets_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return array
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/datasets', name: 'pelagos_api_datasets_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(Dataset::class, $request);
@@ -76,12 +74,11 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @View(serializerEnableMaxDepthChecks = true)
-     *
-     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_get", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return Dataset
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/datasets/{id}', name: 'pelagos_api_datasets_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(Dataset::class, $id);
@@ -94,12 +91,11 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @Route("/api/datasets/{id}/citation", name="pelagos_api_datasets_get_citation", methods={"GET"}, defaults={"_format"="json"})
-     *
-     * @View()
      *
      * @return string
      */
+    #[View]
+    #[Route(path: '/api/datasets/{id}/citation', name: 'pelagos_api_datasets_get_citation', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCitationAction(int $id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
@@ -115,10 +111,10 @@ class DatasetController extends EntityController
      *
      *
      *
-     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_patch", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/datasets/{id}', name: 'pelagos_api_datasets_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request, MdappLogger $mdappLogger)
     {
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
@@ -145,10 +141,10 @@ class DatasetController extends EntityController
      * @param MessageBusInterface          $messageBus                    Symfony messenger message bus interface.
      * @param LogActionItemEventDispatcher $logActionItemEventDistpatcher The Log action item event dispatcher.
      *
-     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/datasets/{id}', name: 'pelagos_api_datasets_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher, MessageBusInterface $messageBus, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
@@ -240,12 +236,11 @@ class DatasetController extends EntityController
      *
      * @param DatasetRepository $datasetRepository The Dataset Repository.
      *
-     * @Route("/api/datasetFileCountSize", name="pelagos_api_datasets_file_count_size", methods={"GET"}, defaults={"_format"="json"})
-     *
-     * @View()
      *
      * @return Response
      */
+    #[View]
+    #[Route(path: '/api/datasetFileCountSize', name: 'pelagos_api_datasets_file_count_size', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getFileCountSize(DatasetRepository $datasetRepository): Response
     {
         $datasets = $datasetRepository->findAll();
@@ -267,11 +262,11 @@ class DatasetController extends EntityController
     /**
      * Ouput zip file.
      *
-     * @Route("/api/datasets/zip/{dataset}", name="pelagos_api_download_zip")
      *
      * @param Dataset $dataset
      * @return Response
      */
+    #[Route(path: '/api/datasets/zip/{dataset}', name: 'pelagos_api_download_zip')]
     public function getZipStream(Dataset $dataset, ZipFiles $zipFiles, Datastore $datastore): Response
     {
         $zipFileName = str_replace(':', '.', $dataset->getUdi()) . '.zip';

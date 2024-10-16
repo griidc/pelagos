@@ -8,14 +8,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Entity class to keep list of issued UDI's.
  *
- *
- * @UniqueEntity(
- *     fields={"uniqueDataIdentifier"},
- *     errorPath="uniqueDataIdentifier",
- *     message="This UDI already exists"
- * )
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\UdiRepository')]
+#[UniqueEntity(fields: ['uniqueDataIdentifier'], errorPath: 'uniqueDataIdentifier', message: 'This UDI already exists')]
 class Udi
 {
     /**

@@ -32,20 +32,18 @@ class Publication extends Entity
      * Citation Text.
      *
      * @var $citationText string
-     *
-     * @Serializer\Groups({"citation"})
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['citation'])]
     private $citationText;
 
     /**
      * DOI.
      *
      * @var string
-     *
-     * @Serializer\Groups({"citation"})
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['citation'])]
     protected $doi;
 
     /**
@@ -53,10 +51,9 @@ class Publication extends Entity
      *
      * @var Collection
      *
-     *
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'publication')]
+    #[Serializer\MaxDepth(1)]
     protected $datasetPublications;
 
     /**

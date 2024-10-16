@@ -35,10 +35,9 @@ class DOI extends Entity
      * The DOI identifier.
      *
      * @var string
-     *
-     * @Serializer\Groups({"doi"})
      */
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Serializer\Groups(['doi'])]
     protected $doi;
 
     /**

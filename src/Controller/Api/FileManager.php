@@ -8,6 +8,7 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use App\Event\LogActionItemEventDispatcher;
 use App\Message\RenameFile;
+use App\Security\Voter\PelagosEntityVoter;
 use App\Util\Datastore;
 use App\Util\FileNameUtilities;
 use App\Util\FileUploader;
@@ -16,7 +17,7 @@ use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 
 /**
  * FileManager API used by File Manager app.
@@ -43,19 +45,12 @@ class FileManager extends AbstractFOSRestController
      * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
      * @param FileUploader           $fileUploader      File upload handler service.
      *
-     * @Route(
-     *     "/api/files_dataset_submission/{id}",
-     *     name="pelagos_api_add_file_dataset_submission",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
      *
      *
      * @throws BadRequestHttpException When the file renamer fails because the sequence is over 999.
-     *
      * @return Response
      */
+    #[Route(path: '/api/files_dataset_submission/{id}', name: 'pelagos_api_add_file_dataset_submission', methods: ['POST'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -112,19 +107,12 @@ class FileManager extends AbstractFOSRestController
      * @param EntityManagerInterface $entityManager     Entity manager interface instance.
      * @param MessageBusInterface    $messageBus        Message bus interface.
      *
-     * @Route(
-     *     "/api/file_delete/{id}",
-     *     name="pelagos_api_file_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_DELETE", subject="datasetSubmission")
      *
      * @return Response
      */
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[IsGranted(PelagosEntityVoter::CAN_DELETE, subject: 'datasetSubmission')]
+    #[Route(path: '/api/file_delete/{id}', name: 'pelagos_api_file_delete', methods: ['DELETE'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function delete(
         DatasetSubmission $datasetSubmission,
         Request $request,
@@ -192,15 +180,14 @@ class FileManager extends AbstractFOSRestController
      * @param FolderStructureGenerator $folderStructureGenerator Folder structure generator Util class.
      * @param MessageBusInterface      $messageBus               Message bus interface.
      *
-     * @Route("/api/file_update_filename/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_EDIT", subject="datasetSubmission")
      *
      * @throws BadRequestHttpException When the destination file or folder name already exists.
-     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[IsGranted(PelagosEntityVoter::CAN_EDIT, subject: 'datasetSubmission')]
+    #[Route(path: '/api/file_update_filename/{id}', name: 'pelagos_api_file_update_filename', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function updateFileOrFolderName(
         DatasetSubmission $datasetSubmission,
         Request $request,
@@ -273,13 +260,12 @@ class FileManager extends AbstractFOSRestController
     /**
      * Download a file from disk.
      *
-     * @Route("/api/file/download/{id}", name="pelagos_api_file_download", defaults={"_format"="json"})
      *
      * @throws AccessDeniedHttpException Error thrown when file not available for download.
      * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
-     *
      * @return Response
      */
+    #[Route(path: '/api/file/download/{id}', name: 'pelagos_api_file_download', defaults: ['_format' => 'json'])]
     public function downloadFile(File $file, Datastore $datastore, Request $request, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack): Response
     {
         $session = $requestStack->getSession()->getId() ?? '';
@@ -343,9 +329,8 @@ class FileManager extends AbstractFOSRestController
 
     /**
      * Download zip for all files in a dataset.
-     *
-     * @Route("/api/file_zip_download_all/{id}", name="pelagos_api_file_zip_download_all", defaults={"_format"="json"})
      */
+    #[Route(path: '/api/file_zip_download_all/{id}', name: 'pelagos_api_file_zip_download_all', defaults: ['_format' => 'json'])]
     public function downloadZipAllFiles(
         DatasetSubmission $datasetSubmission,
         LogActionItemEventDispatcher $logActionItemEventDispatcher,
@@ -410,9 +395,8 @@ class FileManager extends AbstractFOSRestController
 
     /**
      * Checks if the zip file exists for the dataset.
-     *
-     * @Route("/api/check_zip_exists/{id}", name="pelagos_api_check_zip_exists", defaults={"_format"="json"})
      */
+    #[Route(path: '/api/check_zip_exists/{id}', name: 'pelagos_api_check_zip_exists', defaults: ['_format' => 'json'])]
     public function doesZipFileExist(DatasetSubmission $datasetSubmission): Response
     {
         return new Response(

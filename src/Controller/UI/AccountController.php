@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * The account controller.
@@ -66,10 +67,10 @@ class AccountController extends AbstractController
     /**
      * The index action.
      *
-     * @Route("/account", methods={"GET"}, name="pelagos_app_ui_account_default")
      *
      * @return Response
      */
+    #[Route(path: '/account', methods: ['GET'], name: 'pelagos_app_ui_account_default')]
     public function index()
     {
         return $this->render('Account/Account.html.twig', [
@@ -80,10 +81,10 @@ class AccountController extends AbstractController
     /**
      * Password Reset action.
      *
-     * @Route("/account/reset-password", name="pelagos_app_ui_account_passwordreset")
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/account/reset-password', name: 'pelagos_app_ui_account_passwordreset')]
     public function passwordReset()
     {
         // If the user is authenticated.
@@ -102,11 +103,11 @@ class AccountController extends AbstractController
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("/account", methods={"POST"}, name="pelagos_app_ui_account_sendverificationemail")
      *
      * @return Response A Symfony Response instance.
      */
-    public function sendVerificationEmail(Request $request, MailSender $mailer, PersonRepository $personRepository)
+    #[Route(path: '/account', methods: ['POST'], name: 'pelagos_app_ui_account_sendverificationemail')]
+    public function sendVerificationEmail(Request $request, MailSender $mailer, PersonRepository $personRepository, TwigEnvironment $twigEnvironment)
     {
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
@@ -142,19 +143,16 @@ class AccountController extends AbstractController
 
         $dateInterval = new \DateInterval('P7D');
 
-        // Get TWIG instance
-        $twig = $this->get('twig');
-
         if ($reset === true) {
             // Create new personToken
             $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
             // Load email template
-            $template = $twig->load('Account/PasswordReset.email.twig');
+            $template = $twigEnvironment->load('Account/PasswordReset.email.twig');
         } else {
             // Create new personToken
             $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
             // Load email template
-            $template = $twig->load('Account/AccountConfirmation.email.twig');
+            $template = $twigEnvironment->load('Account/AccountConfirmation.email.twig');
         }
 
         // Persist and Validate PersonToken
@@ -187,10 +185,10 @@ class AccountController extends AbstractController
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/account/verify-email", methods={"GET"}, name="pelagos_app_ui_account_verifyemail")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/account/verify-email', methods: ['GET'], name: 'pelagos_app_ui_account_verifyemail')]
     public function verifyEmailAction()
     {
         // If the user is not authenticated.
@@ -222,10 +220,10 @@ class AccountController extends AbstractController
     /**
      * The page for changing the password when it's expired.
      *
-     * @Route("/account/password-expired", methods={"GET"}, name="pelagos_app_ui_account_passwordexpired")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/account/password-expired', methods: ['GET'], name: 'pelagos_app_ui_account_passwordexpired')]
     public function passwordExpiredAction()
     {
         // If the user is not authenticated.
@@ -246,10 +244,10 @@ class AccountController extends AbstractController
     /**
      * Redirect GET sent to this route.
      *
-     * @Route("/account/create", methods={"GET"}, name="pelagos_app_ui_account_redirect")
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/account/create', methods: ['GET'], name: 'pelagos_app_ui_account_redirect')]
     public function redirectAction()
     {
         $redirectResponse = new RedirectResponse('/', 303);
@@ -264,10 +262,10 @@ class AccountController extends AbstractController
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/account/create", methods={"POST"}, name="pelagos_app_ui_account_create")
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/account/create', methods: ['POST'], name: 'pelagos_app_ui_account_create')]
     public function createAction(Request $request, Ldap $ldap)
     {
         // If the user is not authenticated.
@@ -374,10 +372,10 @@ class AccountController extends AbstractController
     /**
      * The action to change your password, will show password change dialog.
      *
-     * @Route("/change-password", methods={"GET"}, name="pelagos_app_ui_account_changepassword")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/change-password', methods: ['GET'], name: 'pelagos_app_ui_account_changepassword')]
     public function changePasswordAction()
     {
         // If the user is not authenticated.
@@ -398,10 +396,10 @@ class AccountController extends AbstractController
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/change-password", methods={"POST"}, name="pelagos_app_ui_account_changepasswordpost")
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/change-password', methods: ['POST'], name: 'pelagos_app_ui_account_changepasswordpost')]
     public function changePasswordPostAction(Request $request, Ldap $ldap)
     {
         // If the user is not authenticated.
@@ -465,10 +463,10 @@ class AccountController extends AbstractController
      * @param Request               $request               The Symfony request object.
      * @param EntityEventDispatcher $entityEventDispatcher The Entity Event Dispatcher.
      *
-     * @Route("/account/forgot-username", methods={"GET"}, name="pelagos_app_ui_account_forgotusername")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/account/forgot-username', methods: ['GET'], name: 'pelagos_app_ui_account_forgotusername')]
     public function forgotUsernameAction(Request $request, EntityEventDispatcher $entityEventDispatcher, PersonRepository $personRepository)
     {
         // If the user is already authenticated.
@@ -502,10 +500,10 @@ class AccountController extends AbstractController
      *
      * Either change password if logged in, otherwise reset password.
      *
-     * @Route("/password", methods={"GET"}, name="pelagos_app_ui_account_password"))
      *
      * @return RedirectResponse A Redirect Response.
      */
+    #[Route(path: '/password', methods: ['GET'], name: 'pelagos_app_ui_account_password')]
     public function passwordAction()
     {
         // If the user is not authenticated.

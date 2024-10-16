@@ -26,10 +26,10 @@ class FundingCycleController extends AbstractController
      *
      * @throws NotFoundHttpException When fundingcycle was not found.
      *
-     * @Route("/funding-cycle/{id}", name="pelagos_app_ui_fundingcycle_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/funding-cycle/{id}', name: 'pelagos_app_ui_fundingcycle_default')]
     public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users

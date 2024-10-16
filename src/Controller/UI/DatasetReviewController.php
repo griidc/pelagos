@@ -79,11 +79,10 @@ class DatasetReviewController extends AbstractController
 
     /**
      * The default action for Dataset Review.
-
-     * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default", methods={"GET"})
      *
      * @return Response a Response instance
      */
+    #[Route(path: '/dataset-review', name: 'pelagos_app_ui_datasetreview_default', methods: ['GET'])]
     public function defaultAction(Request $request)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -415,9 +414,8 @@ class DatasetReviewController extends AbstractController
      *
      * @throws BadRequestHttpException when dataset submission has already been submitted
      * @throws BadRequestHttpException when DIF has not yet been approved
-     *
-     * @Route("/dataset-review/{id}", name="pelagos_app_ui_datasetreview_post", methods={"POST"})
      */
+    #[Route(path: '/dataset-review/{id}', name: 'pelagos_app_ui_datasetreview_post', methods: ['POST'])]
     public function postAction(Request $request, EntityManagerInterface $entityManager, MessageBusInterface $messageBus, int $id = null): Response
     {
         /** @var DatasetSubmission $datasetSubmission */

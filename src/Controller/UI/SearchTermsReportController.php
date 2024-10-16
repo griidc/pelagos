@@ -7,6 +7,7 @@ use App\Entity\Account;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,13 +21,17 @@ class SearchTermsReportController extends ReportController
     //timestamp used in filename
     const FILENAME_TIMESTAMPFORMAT = 'Y-m-d_Hi';
 
-  /**
-   * Report for search terms from the data discovery app.
-   *
-   * @Route("/datadisc-search-terms-report", name="pelagos_app_ui_datadisc_searchtermsreport_default")
-   *
-   * @return Response A Response instance.
-   */
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
+    /**
+     * Report for search terms from the data discovery app.
+     *
+     *
+     * @return Response A Response instance.
+     */
+    #[Route(path: '/datadisc-search-terms-report', name: 'pelagos_app_ui_datadisc_searchtermsreport_default')]
     public function defaultAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -62,11 +67,10 @@ class SearchTermsReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $entityManager = $this->getDoctrine()->getManager();
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
           LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(['actionName' => 'Search']);
         $results = $query->getResult();
         $griidcArray = $this->getGriidcStaff();
@@ -139,10 +143,10 @@ class SearchTermsReportController extends ReportController
     /**
      * Report for search terms from the search app.
      *
-     * @Route("/search-terms-report", name="pelagos_app_ui_searchtermsreport")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/search-terms-report', name: 'pelagos_app_ui_searchtermsreport')]
     public function searchReport()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -166,14 +170,13 @@ class SearchTermsReportController extends ReportController
      */
     private function getGriidcStaff(): array
     {
-        $entityManager = $this->getDoctrine()->getManager();
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
             ' personDataRepository JOIN ' . Person::class .
             ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
             ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
-        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcUserResult = $this->entityManager->createQuery($griidcUserQueryString)->getScalarResult();
         return array_column($griidcUserResult, 'userId');
     }
 
@@ -196,11 +199,10 @@ class SearchTermsReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $entityManager = $this->getDoctrine()->getManager();
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
             LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(['actionName' => 'New Search']);
         $results = $query->getResult();
 

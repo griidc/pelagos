@@ -15,15 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entity class to represent a Funding Organization.
- *
- * @UniqueEntity(
- *     fields={"name"},
- *     errorPath="name",
- *     message="A Funding Organization with this name already exists"
- * )
- * @UniqueEntity("shortName", message="A Funding Organization with this Short name already exists")
  */
 #[ORM\Entity(repositoryClass: FundingOrganizationRepository::class)]
+#[UniqueEntity(fields: ['name'], errorPath: 'name', message: 'A Funding Organization with this name already exists')]
+#[UniqueEntity('shortName', message: 'A Funding Organization with this Short name already exists')]
 class FundingOrganization extends Entity
 {
     /**
@@ -36,17 +31,12 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"organization"})
      *
-     * @Assert\NotBlank(
-     *     message="Name is required"
-     * )
-     *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Serializer\Groups(['organization'])]
+    #[Assert\NotBlank(message: 'Name is required')]
     protected $name;
 
     /**
@@ -54,10 +44,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Short name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Short name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
     protected $shortName;
 
@@ -74,15 +62,10 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Email address cannot contain angle brackets (< or >)"
-     * )
-     *
-     * @Assert\Email(
-     *     message="Email address is invalid"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Email address cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Email(message: 'Email address is invalid')]
     protected $emailAddress;
 
     /**
@@ -90,10 +73,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Description cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
@@ -102,13 +83,11 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @Serializer\Groups({"organization"})
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Website URL cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['organization'])]
     protected $url;
 
     /**
@@ -116,10 +95,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Phone number cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $phoneNumber;
 
@@ -128,10 +105,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $deliveryPoint;
 
@@ -140,10 +115,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="City cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $city;
 
@@ -152,10 +125,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $administrativeArea;
 
@@ -164,10 +135,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $postalCode;
 
@@ -176,10 +145,8 @@ class FundingOrganization extends Entity
      *
      * @var string
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Country cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $country;
 
@@ -204,39 +171,27 @@ class FundingOrganization extends Entity
      * This FundingOrganization's parent DataRepository.
      *
      * @var DataRepository
-     *
-     * @Assert\NotBlank(
-     *     message="Data Repository is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'DataRepository', inversedBy: 'fundingOrganizations')]
+    #[Assert\NotBlank(message: 'Data Repository is required')]
     protected $dataRepository;
 
     /**
      * This holds the position in the sort order of this Entity.
      *
      * @var int
-     *
-     * @Assert\Range(
-     *     min = 1,
-     *     max = 2147483647,
-     *     notInRangeMessage = "Sort position must be in between 1 and 2147483647",
-     *     invalidMessage = "Sort position must be a positive integer."
-     * )
      */
     #[ORM\Column(nullable: true, type: 'integer')]
+    #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'Sort position must be in between 1 and 2147483647', invalidMessage: 'Sort position must be a positive integer.')]
     protected $sortOrder;
 
     /**
      * The default funder for this Funding Organization.
      *
      * @var ?Funder
-     *
-     * @Assert\NotBlank(
-     *     message="Default Funder is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: Funder::class)]
+    #[Assert\NotBlank(message: 'Default Funder is required')]
     protected $defaultFunder;
 
     /**

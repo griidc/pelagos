@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -18,6 +19,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 class ProductTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
+
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
 
     /**
      * Returns Fully Qualified Class Name.
@@ -91,10 +96,8 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
      */
     private function isProductTypeInUse(ProductTypeDescriptor $productTypeDescriptor): bool
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         /** @var InformationProductRepository $informationProductRepository */
-        $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
+        $informationProductRepository = $this->entityManager->getRepository(InformationProduct::class);
 
         return count($informationProductRepository->findByProductTypeDescriptor($productTypeDescriptor)) > 0;
     }

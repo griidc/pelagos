@@ -25,10 +25,10 @@ class DIFController extends AbstractController
      * @param string|null          $id               The id of the DIF to load.
      * @param FundingOrgFilter     $fundingOrgFilter Utility to filter by funding organization.
      *
-     * @Route("/dif/{id}", name="pelagos_app_ui_dif_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/dif/{id}', name: 'pelagos_app_ui_dif_default')]
     public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter, $id = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

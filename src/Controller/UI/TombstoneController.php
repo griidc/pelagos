@@ -39,10 +39,10 @@ class TombstoneController extends AbstractController
      *
      * @throws NotFoundHttpException When no non-available dataset is found with this UDI.
      *
-     * @Route("/tombstone/{udi}", name="pelagos_app_ui_tombstone_default")
      *
      * @return Response
      */
+    #[Route(path: '/tombstone/{udi}', name: 'pelagos_app_ui_tombstone_default')]
     public function defaultAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
