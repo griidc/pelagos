@@ -2096,6 +2096,14 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Stringified getter for theme keywords.
+     */
+    public function getThemeKeywordsString(): string
+    {
+        return implode(',', $this->themeKeywords);
+    }
+
+    /**
      * Setter for place keywords.
      *
      * @param array $placeKeywords array of keywords
@@ -2113,6 +2121,14 @@ class DatasetSubmission extends Entity
     public function getPlaceKeywords(): array
     {
         return $this->placeKeywords;
+    }
+
+    /**
+     * Stringified getter for place keywords
+     */
+    public function getPlaceKeywordsString(): string
+    {
+        return implode(',', $this->placeKeywords);
     }
 
     /**
@@ -2142,6 +2158,14 @@ class DatasetSubmission extends Entity
     public function getTopicKeywords(): array
     {
         return $this->topicKeywords;
+    }
+
+    /**
+     * Stringified getter for topic keywords
+     */
+    public function getTopicKeywordsString(): string
+    {
+        return implode(',', $this->topicKeywords);
     }
 
     /**
