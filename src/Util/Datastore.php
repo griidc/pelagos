@@ -24,8 +24,10 @@ class Datastore
     /**
      * Configuration options
      */
-    public array $config = ['visibility' => 'public',
-                            'directory_visibility'	=> 'public'];
+    public array $config = [
+        'visibility' => 'public',
+        'directory_visibility' => 'public'
+    ];
 
     /**
      * Datastore constructor.
