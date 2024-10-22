@@ -7,4 +7,6 @@ oneup_flysystem:
     filesystems:
         datastore_flysystem:
             adapter: data_store_adapter
+            visibility: public
+            directory_visibility: public
             #alias: League\Flysystem\Filesystem
