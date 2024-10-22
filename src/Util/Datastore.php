@@ -22,6 +22,12 @@ class Datastore
     public const MARK_FILE_AS_DELETED = '_DELETED';
 
     /**
+     * Configuration options
+     */
+    public array $config = ['visibility' => 'public',
+                            'directory_visibility'	=> 'public'];
+
+    /**
      * Datastore constructor.
      */
     public function __construct(private FilesystemOperator $datastoreFlysystem, private LoggerInterface $logger)
@@ -73,7 +79,7 @@ class Datastore
         $resource = $stream->detach();
 
         try {
-            $this->datastoreFlysystem->writeStream($newFilePathName, $resource);
+            $this->datastoreFlysystem->writeStream($newFilePathName, $resource, $this->config);
         } catch (FilesystemException | UnableToWriteFile $exception) {
             $this->logger->error(sprintf('Unable to write. Message: "%s"', $exception->getMessage()));
         }
@@ -129,7 +135,7 @@ class Datastore
         }
         $newFilePath = FileNameUtilities::fixFileNameLength($newFilePath);
         try {
-            $this->datastoreFlysystem->move($oldFilePath, $newFilePath);
+            $this->datastoreFlysystem->move($oldFilePath, $newFilePath, $this->config);
         } catch (FilesystemException | UnableToMoveFile $exception) {
             $this->logger->error(sprintf('Unable to rename file. Message: "%s"', $exception->getMessage()));
         }
