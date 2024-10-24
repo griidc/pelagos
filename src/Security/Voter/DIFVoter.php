@@ -9,7 +9,7 @@ use App\Entity\DataRepositoryRole;
 use App\Security\EntityProperty;
 
 /**
- * A voter to determine if a actions are possible by the user on a DIF object.
+ * A voter to determine if a actions are possible by the user on a DIF subject.
 
  * @package Pelagos\Bundle\AppBundle\Security
  */
@@ -24,30 +24,20 @@ class DIFVoter extends PelagosEntityVoter
     const CAN_UNLOCK  = 'CAN_UNLOCK';
     const CAN_REQUEST_UNLOCK  = 'CAN_REQUEST_UNLOCK';
 
-    /**
-     * Determine if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute denoting an action.
-     * @param mixed  $object    The subject of creation, deletion or change.
-     *
-     * @return boolean True if the attribute and subject are supported, false otherwise.
-     */
-    // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // phpcs:ignore
-    protected function supports($attribute, $object)
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // If the object is an EntityProperty.
-        if ($object instanceof EntityProperty) {
+        if ($subject instanceof EntityProperty) {
             // If the property is not 'status' we abstain.
-            if ($object->getProperty() != 'status') {
+            if ($subject->getProperty() != 'status') {
                 return false;
             }
             // Make the Entity the object for further inspection.
-            $object = $object->getEntity();
+            $subject = $subject->getEntity();
         }
 
         // Make sure the object is an instance of DIF
-        if (!$object instanceof DIF) {
+        if (!$subject instanceof DIF) {
             return false;
         }
 
@@ -73,20 +63,7 @@ class DIFVoter extends PelagosEntityVoter
         return false;
     }
 
-    /**
-     * Perform a authorization test on an attribute, DIF subject and authentication token.
-     *
-     * The Symfony calling security framework calls supports before calling voteOnAttribute.
-     *
-     * @param string         $attribute The action to be considered.
-     * @param mixed          $object    A DIF.
-     * @param TokenInterface $token     A security token containing user authentication information.
-     *
-     * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
-     */
-    // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // phpcs:ignore
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
@@ -98,11 +75,11 @@ class DIFVoter extends PelagosEntityVoter
         $userPerson = $user->getPerson();
 
         // If the object is an EntityProperty
-        if ($object instanceof EntityProperty) {
+        if ($subject instanceof EntityProperty) {
             // If attribute is CAN_EDIT and the property is 'status'
             if (
                 in_array($attribute, array(self::CAN_EDIT)) and
-                $object->getProperty() == 'status'
+                $subject->getProperty() == 'status'
             ) {
                 return true;
             }
@@ -110,8 +87,8 @@ class DIFVoter extends PelagosEntityVoter
         }
 
         $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
-            function ($personDataRepository) use ($object) {
-                return (!$personDataRepository->isSameTypeAndId($object));
+            function ($personDataRepository) use ($subject) {
+                return (!$personDataRepository->isSameTypeAndId($subject));
             }
         );
         // Data Repository Managers can submit, approve, reject, and unlock
@@ -134,7 +111,7 @@ class DIFVoter extends PelagosEntityVoter
         }
 
         // If research group is locked, vote false.
-        if (true === $object->getResearchGroup()->isLocked()) {
+        if (true === $subject->getResearchGroup()->isLocked()) {
             return false;
         }
 
@@ -144,7 +121,7 @@ class DIFVoter extends PelagosEntityVoter
         }
 
         // Anyone can update if not locked.
-        if (self::CAN_EDIT === $attribute and !$object->isLocked()) {
+        if (self::CAN_EDIT === $attribute and !$subject->isLocked()) {
             return true;
         }
 

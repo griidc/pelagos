@@ -25,10 +25,10 @@ class PersonFundingOrganizationController extends AbstractController
      *
      * @throws NotFoundHttpException When the person funding organization is not found.
      *
-     * @Route("/person-funding-organization/{id}", name="pelagos_app_ui_personfundingorganization_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/person-funding-organization/{id}', name: 'pelagos_app_ui_personfundingorganization_default')]
     public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users

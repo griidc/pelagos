@@ -1,10 +1,12 @@
-# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle/tree/master/Resources/doc/index.md
+# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle
 oneup_flysystem:
     adapters:
         data_store_adapter:
             local:
-                directory: '%env(DATA_STORE_DIRECTORY)%'
+                location: '%env(DATA_STORE_DIRECTORY)%'
     filesystems:
         datastore_flysystem:
             adapter: data_store_adapter
+            visibility: public
+            directory_visibility: public
             #alias: League\Flysystem\Filesystem

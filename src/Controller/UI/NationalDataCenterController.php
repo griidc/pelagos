@@ -25,10 +25,10 @@ class NationalDataCenterController extends AbstractController
      *
      * @throws NotFoundHttpException When National data center was not found.
      *
-     * @Route("/national-data-center/{id}", name="pelagos_app_ui_nationaldatacenter_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/national-data-center/{id}', name: 'pelagos_app_ui_nationaldatacenter_default')]
     public function defaultAction(EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         // Checks authorization of users

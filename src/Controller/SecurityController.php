@@ -18,10 +18,10 @@ class SecurityController extends AbstractController
      *
      * @param AuthenticationUtils $authenticationUtils Instance of Authentication Utilities.
      *
-     * @Route("/login", name="security_login")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/login', name: 'security_login')]
     public function loginAction(AuthenticationUtils $authenticationUtils, FormFactoryInterface $formFactory)
     {
         // get the login error if there is one
@@ -45,12 +45,11 @@ class SecurityController extends AbstractController
     /**
      * The logout action.
      *
-     * @Route("/logout", name="security_logout")
      *
      * @throws \Exception This exception should not be seen.
-     *
      * @return void
      */
+    #[Route(path: '/logout', name: 'security_logout')]
     public function logoutAction()
     {
         throw new \Exception('this should not be reached!');

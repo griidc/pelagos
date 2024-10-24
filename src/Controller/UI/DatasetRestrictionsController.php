@@ -2,17 +2,18 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Handler\EntityHandler;
 use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * The Dataset Restrictions Modifier controller.
@@ -50,14 +51,10 @@ class DatasetRestrictionsController extends AbstractController
     /**
      * Dataset Restrictions Modifier UI.
      *
-     * @Route(
-     *      "/dataset-restrictions",
-     *      name="pelagos_app_ui_datasetrestrictions_default",
-     *      methods={"GET"}
-     * )
      *
      * @return Response
      */
+    #[Route(path: '/dataset-restrictions', name: 'pelagos_app_ui_datasetrestrictions_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
@@ -79,18 +76,13 @@ class DatasetRestrictionsController extends AbstractController
      * @param integer       $id            The entity ID of a Dataset.
      * @param EntityHandler $entityHandler A Pelagos entity handler.
      *
-     * @Route(
-     *      "/dataset-restrictions/{id}",
-     *      name="pelagos_app_ui_datasetrestrictions_post",
-     *      methods={"POST"}
-     * )
      *
      * @throws PersistenceException    Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
-     *
      * @return Response
      */
-    public function postAction(Request $request, int $id, EntityHandler $entityHandler)
+    #[Route(path: '/dataset-restrictions/{id}', name: 'pelagos_app_ui_datasetrestrictions_post', methods: ['POST'])]
+    public function postAction(Request $request, int $id, EntityHandler $entityHandler, TokenStorageInterface $tokenStorage)
     {
         $restrictionKey = $request->request->get('restrictions');
 
@@ -104,7 +96,9 @@ class DatasetRestrictionsController extends AbstractController
             if ($restrictionKey) {
                 // Record the original state for logging purposes before changing it.
                 $from = $datasetSubmission->getRestrictions();
-                $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
+                /** @var Account $account */
+                $account = $tokenStorage->getToken()?->getUser();
+                $actor = $account->getUserId();
                 $this->dispatchLogRestrictionsEvent($dataset, $actor, $from, $restrictionKey);
 
                 $datasetSubmission->setRestrictions($restrictionKey);

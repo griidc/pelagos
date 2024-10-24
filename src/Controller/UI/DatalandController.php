@@ -69,11 +69,11 @@ class DatalandController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/data/v1/{udi}", name="pelagos_app_ui_dataland_v1")
      *
      * @return Response
      */
-    public function defaultAction(string $udi)
+    #[Route(path: '/data/v1/{udi}', name: 'pelagos_app_ui_dataland_v1')]
+    public function defaultAction(string $udi, EntityManagerInterface $entityManager)
     {
         $dataset = $this->getDataset($udi);
 
@@ -96,7 +96,7 @@ class DatalandController extends AbstractController
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
         if ($dataset->isAvailable()) {
-            $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
+            $qb = $entityManager->createQueryBuilder();
             $qb->select($qb->expr()->count('a'))
                 ->from('\App\Entity\LogActionItem', 'a')
                 ->where('a.subjectEntityId = ?1')
@@ -127,10 +127,10 @@ class DatalandController extends AbstractController
      *
      * @throws BadRequestHttpException When the dataset status is not accepted.
      *
-     * @Route("/data/{udi}/metadata", name="pelagos_app_ui_dataland_metadata")
      *
      * @return Response
      */
+    #[Route(path: '/data/{udi}/metadata', name: 'pelagos_app_ui_dataland_metadata')]
     public function metadataAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
@@ -205,10 +205,10 @@ class DatalandController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/data/{udi}", name="pelagos_app_ui_dataland_default")
      *
      * @return Response
      */
+    #[Route(path: '/data/{udi}', name: 'pelagos_app_ui_dataland_default')]
     public function indexPage(string $udi, EntityManagerInterface $entityManager)
     {
         $dataset = $this->getDataset($udi);
@@ -280,10 +280,10 @@ class DatalandController extends AbstractController
      *
      * @throws BadRequestHttpException When the dataset status is not accepted.
      *
-     * @Route("/data/{udi}/formatted-metadata", name="pelagos_app_ui_dataland_formatted_metadata")
      *
      * @return Response
      */
+    #[Route(path: '/data/{udi}/formatted-metadata', name: 'pelagos_app_ui_dataland_formatted_metadata')]
     public function getFormattedMetadata(string $udi)
     {
         $dataset = $this->getDataset($udi);

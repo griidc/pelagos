@@ -47,4 +47,6 @@ phpstan.neon
 pnpm-lock.yaml
 ###< pnpm ###
 
-
+###> rector/rector ###
+rector.php
+###< rector/rector ###

@@ -10,14 +10,9 @@ use App\Validator\Constraints as CustomAssert;
 /**
  * Entity class to represent a Person to Data Repository Association.
  *
- *
- * @UniqueEntity(
- *     fields={"person", "dataRepository"},
- *     errorPath="person",
- *     message="A Person can have only one association with a Data Repository"
- * )
  */
 #[ORM\Entity]
+#[UniqueEntity(fields: ['person', 'dataRepository'], errorPath: 'person', message: 'A Person can have only one association with a Data Repository')]
 class PersonDataRepository extends Entity implements PersonAssociationInterface
 {
     /**
@@ -30,12 +25,9 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Person is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'personDataRepositories')]
+    #[Assert\NotBlank(message: 'Person is required')]
     protected $person;
 
     /**
@@ -43,12 +35,9 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var DataRepository
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Data Repositry is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'DataRepository', inversedBy: 'personDataRepositories')]
+    #[Assert\NotBlank(message: 'Data Repositry is required')]
     protected $dataRepository;
 
     /**
@@ -56,12 +45,9 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var DataRepositoryRole
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Role is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'DataRepositoryRole')]
+    #[Assert\NotBlank(message: 'Role is required')]
     protected $role;
 
     /**
@@ -70,14 +56,10 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      * @var string
      *
      *
-     * @Assert\NotBlank(
-     *     message="Label is required"
-     * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Label cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Label cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Label is required')]
     protected $label;
 
     /**

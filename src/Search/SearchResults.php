@@ -24,54 +24,48 @@ class SearchResults
      * Pager Fanta Search Results.
      *
      * @var PagerfantaInterface
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $pagerFantaResults;
 
     /**
      * An instance of the SearchOptions.
      *
      * @var SearchOptions
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $searchOptions;
 
     /**
      * The number of results returned.
      *
      * @var int
-     *
-     * @Serializer\SerializedName("count")
      */
+    #[Serializer\SerializedName('count')]
     private $numberOfResults;
 
     /**
      * Number of pages available.
      *
      * @var int
-     *
-     * @Serializer\SerializedName("pages")
      */
+    #[Serializer\SerializedName('pages')]
     private $numberOfPages;
 
     /**
      * Number of results per page.
      *
      * @var int
-     *
-     * @Serializer\SerializedName("resultPerPage")
      */
+    #[Serializer\SerializedName('resultPerPage')]
     private $resultsPerPage;
 
     /**
      * The current page of results.
      *
      * @var int
-     *
-     * @Serializer\SerializedName("currentPage")
      */
+    #[Serializer\SerializedName('currentPage')]
     private $currentPage;
 
     /**
@@ -86,55 +80,50 @@ class SearchResults
      *
      * @var object|iterable
      *
-     * @Serializer\SerializedName("results")
      *
-     * @Serializer\Groups({"search"})
      */
+    #[Serializer\SerializedName('results')]
+    #[Serializer\Groups(['search'])]
     private $result;
 
     /**
      * Instance of the EntityManager.
      *
      * @var EntityManagerInterface
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $entityManager;
 
     /**
      * Instance of the ResearchGroupRepository.
      *
      * @var ResearchGroupRepository
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $researchGroupRepository;
 
     /**
      * Instance of the FunderRepository.
      *
      * @var FunderRepository
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $funderRepository;
 
     /**
      * Instance of the DigitalResourceTypeDescriptorRepository.
      *
      * @var DigitalResourceTypeDescriptorRepository
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $digitalResourceTypeDescriptorRepository;
 
     /**
      * Instance of the ProductTypeDescriptorRepository.
      *
      * @var ProductTypeDescriptorRepository
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     private $productTypeDescriptorRepository;
 
     /**

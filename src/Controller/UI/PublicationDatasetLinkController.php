@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * The PublicationDatasetLink controller.
@@ -16,10 +15,10 @@ class PublicationDatasetLinkController extends AbstractController
     /**
      * The default action.
      *
-     * @Route("/publink", name="pelagos_app_ui_publicationdatasetlink_default", methods={"GET"})
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/publink', name: 'pelagos_app_ui_publicationdatasetlink_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
@@ -33,10 +32,10 @@ class PublicationDatasetLinkController extends AbstractController
     /**
      * List all publinks.
      *
-     * @Route("/publink/list", name="pelagos_app_ui_publicationdatasetlink_list", methods={"GET"})
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/publink/list', name: 'pelagos_app_ui_publicationdatasetlink_list', methods: ['GET'])]
     public function listAction()
     {
         return $this->render('PublicationDatasetLink/linkList.html.twig');

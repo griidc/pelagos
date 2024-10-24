@@ -32,17 +32,11 @@ class AccountController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/account/{id}/incoming-directory",
-     *     name="pelagos_api_account_get_incoming_directory",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return array The incoming directory.
      */
+    #[View]
+    #[Route(path: '/api/account/{id}/incoming-directory', name: 'pelagos_api_account_get_incoming_directory', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getIncomingDirectoryAction(Request $request, int $id)
     {
         if (-1 == $id) {
@@ -147,17 +141,11 @@ class AccountController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/account/self/make-posix",
-     *     name="pelagos_api_account_make_posix",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
      */
+    #[View]
+    #[Route(path: '/api/account/self/make-posix', name: 'pelagos_api_account_make_posix', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function makePosixAction(POSIXifyAccount $posixifyAccount)
     {
         if (!($this->getUser() instanceof Account)) {
