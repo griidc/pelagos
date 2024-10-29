@@ -51,10 +51,10 @@ class SearchPageController extends AbstractController
     /**
      * The default action for Dataset Review.
      *
-     * @Route("/search", name="pelagos_app_ui_searchpage_default")
      *
      * @return Response
      */
+    #[Route(path: '/search', name: 'pelagos_app_ui_searchpage_default')]
     public function defaultAction(RequestStack $requestStack)
     {
         $session = $requestStack->getSession();
@@ -64,12 +64,11 @@ class SearchPageController extends AbstractController
 
     /**
      * The default action for Dataset Review.
-
      *
-     * @Route("/search/results", name="pelagos_app_ui_searchpage_results")
      *
      * @return Response
      */
+    #[Route(path: '/search/results', name: 'pelagos_app_ui_searchpage_results')]
     public function getSearchResults(Request $request, Search $searchUtil)
     {
         $results = [];

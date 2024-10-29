@@ -19,10 +19,10 @@ class MaintenanceModeController extends AbstractController
      * @param Request         $request         The Symfony request object.
      * @param MaintenanceMode $maintenanceMode Maintenance mode utility class object.
      *
-     * @Route("/maintenancemode", name="pelagos_app_ui_maintenancemode_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/maintenancemode', name: 'pelagos_app_ui_maintenancemode_default')]
     public function defaultAction(Request $request, MaintenanceMode $maintenanceMode)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

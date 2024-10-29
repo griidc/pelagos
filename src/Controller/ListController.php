@@ -13,10 +13,10 @@ class ListController extends AbstractController
     /**
      * The List the Lists action.
      *
-     * @Route("/lists", name="pelagos_app_list_lists")
      *
      * @return Response A list of Lists.
      */
+    #[Route(path: '/lists', name: 'pelagos_app_list_lists')]
     public function listsAction()
     {
         // Checks authorization of users
@@ -31,10 +31,10 @@ class ListController extends AbstractController
     /**
      * The Research Group Generate List action.
      *
-     * @Route("/research-groups", name="pelagos_app_list_researchgroups")
      *
      * @return Response  List of Research Groups
      */
+    #[Route(path: '/research-groups', name: 'pelagos_app_list_researchgroups')]
     public function researchGroupsAction()
     {
         // Checks authorization of users
@@ -48,10 +48,10 @@ class ListController extends AbstractController
     /**
      * The Person Generate List action.
      *
-     * @Route("/people", name="pelagos_app_list_people")
      *
      * @return Response  List of People
      */
+    #[Route(path: '/people', name: 'pelagos_app_list_people')]
     public function peopleAction()
     {
         // Checks authorization of users
@@ -65,10 +65,10 @@ class ListController extends AbstractController
     /**
      * The Funding Organization Generate List action.
      *
-     * @Route("/funding-organizations", name="pelagos_app_list_fundingorganizations")
      *
      * @return Response  List of Funding Organizations
      */
+    #[Route(path: '/funding-organizations', name: 'pelagos_app_list_fundingorganizations')]
     public function fundingOrganizationsAction()
     {
         // Checks authorization of users
@@ -82,10 +82,10 @@ class ListController extends AbstractController
     /**
      * The National Data Repository Generate List action.
      *
-     * @Route("/national-data-centers", name="pelagos_app_list_nationaldatacenters")
      *
      * @return Response  List of Funding Organizations
      */
+    #[Route(path: '/national-data-centers', name: 'pelagos_app_list_nationaldatacenters')]
     public function nationalDatacentersAction()
     {
         // Checks authorization of users

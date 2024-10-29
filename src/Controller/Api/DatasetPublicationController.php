@@ -30,38 +30,26 @@ class DatasetPublicationController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/dataset_publications/count",
-     *     name="pelagos_api_dataset_publications_count",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return integer
      */
+    #[View]
+    #[Route(path: '/api/dataset_publications/count', name: 'pelagos_api_dataset_publications_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(DatasetPublication::class, $request);
     }
 
    /**
-    * Get a collection of PublicationDatasets.
-    *
+     * Get a collection of PublicationDatasets.
      *
-    *
-    * @Route(
-    *     "/api/dataset_publications",
-    *     name="pelagos_api_dataset_publications_get_collection",
-    *     methods={"GET"},
-    *     defaults={"_format"="json"}
-    *     )
-    *
-    * @View(serializerEnableMaxDepthChecks = true)
-    *
-    * @return array
-    */
+     *
+     *
+     *
+     * @return array
+     */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/dataset_publications', name: 'pelagos_api_dataset_publications_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction()
     {
         $collection = $this->entityHandler->getAll(
@@ -116,14 +104,9 @@ class DatasetPublicationController extends EntityController
      * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
      *
      *
-     * @Route(
-     *     "/api/dataset_publications/{id}",
-     *     name="pelagos_api_dataset_publications_link",
-     *     methods={"LINK"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      */
+    #[Route(path: '/api/dataset_publications/{id}', name: 'pelagos_api_dataset_publications_link', methods: ['LINK'], defaults: ['_format' => 'json'])]
     public function linkAction(int $id, Request $request, ObjectPersister $objectPersister, MessageBusInterface $messageBus)
     {
         $datasetId = $request->query->get('dataset');
@@ -175,14 +158,9 @@ class DatasetPublicationController extends EntityController
      * @return Response A response object with an empty body and a "no content" status code.
      *
      *
-     * @Route(
-     *     "/api/dataset_publications/{id}",
-     *     name="pelagos_api_dataset_publications_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      */
+    #[Route(path: '/api/dataset_publications/{id}', name: 'pelagos_api_dataset_publications_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id, MessageBusInterface $messageBus)
     {
         $datasetPublication = $this->handleDelete(DatasetPublication::class, $id);

@@ -2,15 +2,18 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Account;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
+use App\Repository\ProductTypeDescriptorRepository;
+use App\Repository\ResearchGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,11 +25,9 @@ class InformationProductController extends AbstractController
 {
     /**
      * The information product page.
-     *
-     * @Route("/information-product", name="pelagos_app_ui_information_product")
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/information-product', name: 'pelagos_app_ui_information_product')]
     public function index(SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
         $researchGroupList = [];
@@ -58,11 +59,9 @@ class InformationProductController extends AbstractController
 
     /**
      * The information product page.
-     *
-     * @Route("/information-product/{id}", name="pelagos_app_ui_edit_information_product", requirements={"id"="\d+"})
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/information-product/{id}', name: 'pelagos_app_ui_edit_information_product', requirements: ['id' => '\d+'])]
     public function edit(InformationProduct $informationProduct, SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
     {
         $context = SerializationContext::create();
@@ -95,16 +94,14 @@ class InformationProductController extends AbstractController
 
     /**
      * The information product page.
-     *
-     * @Route("/information-products", name="pelagos_app_ui_information_products")
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
-    public function list(): Response
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/information-products', name: 'pelagos_app_ui_information_products')]
+    public function list(ResearchGroupRepository $researchGroupRepository, ProductTypeDescriptorRepository $productTypeDescriptorRepository): Response
     {
         $researchGroupList = [];
-        $researchGroups = $this->getDoctrine()->getRepository(ResearchGroup::class)->findAll();
-        $productTypeDescriptors = $this->getDoctrine()->getRepository(ProductTypeDescriptor::class)->findAll();
+        $researchGroups = $researchGroupRepository->findAll();
+        $productTypeDescriptors = $productTypeDescriptorRepository->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = [
                 'id' => $researchGroup->getId(),
@@ -121,9 +118,8 @@ class InformationProductController extends AbstractController
 
     /**
      * Landing page for information product.
-     *
-     * @Route("/infoprod/{id}", name="pelagos_app_ui_info_product_landing", requirements={"id"="\d+"})
      */
+    #[Route(path: '/infoprod/{id}', name: 'pelagos_app_ui_info_product_landing', requirements: ['id' => '\d+'])]
     public function infoProductLanding(InformationProduct $informationProduct): Response
     {
         return $this->render(
