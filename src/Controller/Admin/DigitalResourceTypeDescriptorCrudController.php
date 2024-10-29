@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Repository\InformationProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -18,6 +19,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
+
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
 
     /**
      * Returns Fully Qualified Class Name.
@@ -90,10 +95,8 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
      */
     private function isDigitalResourceTypeInUse(DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor): bool
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         /** @var InformationProductRepository $informationProductRepository */
-        $informationProductRepository = $entityManager->getRepository(InformationProduct::class);
+        $informationProductRepository = $this->entityManager->getRepository(InformationProduct::class);
 
         return count($informationProductRepository->findByDigitalResourceTypeDescriptor($digitalResourceTypeDescriptor)) > 0;
     }

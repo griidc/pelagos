@@ -42,10 +42,10 @@ class StatsController extends AbstractController
     /**
      * Statistics Page.
      *
-     * @Route("/stats", name="pelagos_app_ui_stats_default")
      *
      * @return Response
      */
+    #[Route(path: '/stats', name: 'pelagos_app_ui_stats_default')]
     public function defaultAction()
     {
         $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloads);
@@ -99,12 +99,11 @@ class StatsController extends AbstractController
     /**
      * Get Statistics Data as JSON.
      *
-     * @Route("/stats/json", name="pelagos_app_ui_stats_getstatisticsjson")
      *
      * @param Request $request The Request.
-     *
      * @return Response
      */
+    #[Route(path: '/stats/json', name: 'pelagos_app_ui_stats_getstatisticsjson')]
     public function getStatisticsJson(Request $request): Response
     {
         $fundingOrganizationId = $request->query->get('fundingOrganization');
@@ -130,10 +129,10 @@ class StatsController extends AbstractController
     /**
      * JSON data for Datasets over Time.
      *
-     * @Route("/stats/data/total-records-over-time", name="pelagos_app_ui_stats_getdatasetovertime")
      *
      * @return Response
      */
+    #[Route(path: '/stats/data/total-records-over-time', name: 'pelagos_app_ui_stats_getdatasetovertime')]
     public function getDatasetOverTimeAction()
     {
         $registeredDatasets = $this->entityManager
@@ -168,10 +167,10 @@ class StatsController extends AbstractController
     /**
      * JSON data for Dataset Size Ranges.
      *
-     * @Route("/stats/data/dataset-size-ranges", name="pelagos_app_ui_stats_getdatasetsizeranges")
      *
      * @return Response
      */
+    #[Route(path: '/stats/data/dataset-size-ranges', name: 'pelagos_app_ui_stats_getdatasetsizeranges')]
     public function getDatasetSizeRangesAction()
     {
         $dataSizes = array(

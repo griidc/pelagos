@@ -2,26 +2,16 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Entity\Account;
 use App\Entity\Dataset;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * A voter to determine if a actions are possible by the user on a Dataset.
-
- * @package App\Security\Voter
  */
 class DatasetVoter extends PelagosEntityVoter
 {
-    /**
-     * Determine if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute denoting an action.
-     * @param mixed  $subject   The subject of creation, deletion or change.
-     *
-     * @return boolean True if the attribute and subject are supported, false otherwise.
-     */
-    protected function supports($attribute, $subject) //phpcs:ignore
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // Make sure the subject is an instance of Dataset
         if (!$subject instanceof Dataset) {
@@ -29,7 +19,7 @@ class DatasetVoter extends PelagosEntityVoter
         }
 
         // Supports create and edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (in_array($attribute, [self::CAN_CREATE, self::CAN_EDIT])) {
             return true;
         }
 
@@ -37,18 +27,7 @@ class DatasetVoter extends PelagosEntityVoter
         return false;
     }
 
-    /**
-     * Perform a authorization test on an attribute, Dataset subject and authentication token.
-     *
-     * The Symfony calling security framework calls supports before calling voteOnAttribute.
-     *
-     * @param string         $attribute The action to be considered.
-     * @param mixed          $subject   A Dataset.
-     * @param TokenInterface $token     A security token containing user authentication information.
-     *
-     * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) //phpcs:ignore
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
@@ -58,7 +37,7 @@ class DatasetVoter extends PelagosEntityVoter
         }
 
         // Anyone with an account can create or edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (in_array($attribute, [self::CAN_CREATE, self::CAN_EDIT])) {
             return true;
         }
 

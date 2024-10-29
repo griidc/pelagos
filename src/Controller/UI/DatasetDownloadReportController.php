@@ -14,6 +14,7 @@ use App\Entity\Person;
 use App\Entity\DatasetSubmission;
 use App\Entity\Account;
 use App\Entity\PersonDataRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -28,17 +29,20 @@ class DatasetDownloadReportController extends ReportController
 
     const UDI_REPORT = 'udiReport';
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * This defaultAction generates the form to select the date range for the report.
      *
      * @param Request $request Message response.
      *
-     * @Route("/dataset-download-report", name="pelagos_app_ui_datasetdownloadreport_default")
      *
      * @throws InvalidDateSelectedException Selected Dates are invalid.
-     *
      * @return Response|StreamedResponse A Response instance.
      */
+    #[Route(path: '/dataset-download-report', name: 'pelagos_app_ui_datasetdownloadreport_default')]
     public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
@@ -121,7 +125,7 @@ class DatasetDownloadReportController extends ReportController
                     'fileSize' => null
                 );
 
-                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+                $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
@@ -172,10 +176,10 @@ class DatasetDownloadReportController extends ReportController
     /**
      * Generates report of dataset downloads based on timestamp.
      *
-     * @Route("/dataset-download-report/timestamp", name="pelagos_app_ui_datasetdownloadreport_timestampreport")
      *
      * @return Response|StreamedResponse A Response instance.
      */
+    #[Route(path: '/dataset-download-report/timestamp', name: 'pelagos_app_ui_datasetdownloadreport_timestampreport')]
     public function timeStampReportAction()
     {
         // Checks authorization of users
@@ -237,7 +241,7 @@ class DatasetDownloadReportController extends ReportController
                     'fileSize' => null
                 );
 
-                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+                $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
@@ -295,11 +299,9 @@ class DatasetDownloadReportController extends ReportController
      */
     private function getQuery(string $reportName, array $options = null): Query
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         //Query
         if ($reportName === self::TIMESTAMP_REPORT) {
-            $qb = $entityManager->createQueryBuilder();
+            $qb = $this->entityManager->createQueryBuilder();
             $query = $qb
                 ->select('log.creationTimeStamp, d.udi, log.payLoad')
                 ->from('\App\Entity\LogActionItem', 'log')
@@ -318,7 +320,7 @@ class DatasetDownloadReportController extends ReportController
                 log.creationTimeStamp >= :startDate
                 and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
-            $query = $entityManager->createQuery($queryString);
+            $query = $this->entityManager->createQuery($queryString);
             $endDateInclusively = clone $options['endDate'];
             $endDateInclusively = $endDateInclusively->add(new \DateInterval('P1D'));
             $query->setParameters([
@@ -357,14 +359,13 @@ class DatasetDownloadReportController extends ReportController
      */
     private function excludeGriidcStaff(): array
     {
-        $entityManager = $this->getDoctrine()->getManager();
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
             ' personDataRepository JOIN ' . Person::class .
             ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
             ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
-        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcUserResult = $this->entityManager->createQuery($griidcUserQueryString)->getScalarResult();
         $griidcArray = array_column($griidcUserResult, 'userId');
 
         return $griidcArray;

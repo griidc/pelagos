@@ -4,7 +4,6 @@ namespace App\Controller\UI;
 
 use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,10 +46,10 @@ class RemotelyHostedDatasetsController extends AbstractController
     /**
      * Default action of Remotely Hosted Datasets.
      *
-     * @Route("/remotelyhosted-datasets", name="pelagos_app_ui_remotelyhosteddatasets_default", methods={"GET"})
      *
      * @return Response A response instance.
      */
+    #[Route(path: '/remotelyhosted-datasets', name: 'pelagos_app_ui_remotelyhosteddatasets_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
@@ -67,10 +66,10 @@ class RemotelyHostedDatasetsController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/remotelyhosted-datasets/{udi}", name="pelagos_app_ui_remotelyhosteddatasets_post", methods={"POST"})
      *
      * @return Response
      */
+    #[Route(path: '/remotelyhosted-datasets/{udi}', name: 'pelagos_app_ui_remotelyhosteddatasets_post', methods: ['POST'])]
     public function postAction(Request $request)
     {
         // Checks authorization of users
@@ -128,10 +127,10 @@ class RemotelyHostedDatasetsController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/remotelyhosted-datasets/{udi}", name="pelagos_app_ui_remotelyhosteddatasets_geturl", methods={"GET"})
      *
      * @return Response
      */
+    #[Route(path: '/remotelyhosted-datasets/{udi}', name: 'pelagos_app_ui_remotelyhosteddatasets_geturl', methods: ['GET'])]
     public function getUrlAction(Request $request)
     {
         $udi = $request->attributes->get('udi');

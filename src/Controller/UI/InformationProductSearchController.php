@@ -12,9 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InformationProductSearchController extends AbstractController
 {
-    /**
-     * @Route("/ip-search", name="app_information_product_search")
-     */
+    #[Route(path: '/ip-search', name: 'app_information_product_search')]
     public function index(): Response
     {
         return $this->render('information_product_search/index.html.twig', [
@@ -23,10 +21,9 @@ class InformationProductSearchController extends AbstractController
     }
 
     /**
-     * @Route("/api/ip_search", name="app_information_product_search_api")
-     *
      * @return Response
      */
+    #[Route(path: '/api/ip_search', name: 'app_information_product_search_api')]
     public function searchForInformationProduct(Request $request, InformationProductSearch $informationProductSearch, JsonSerializer $jsonSerializer): Response
     {
         $queryString = $request->query->get('queryString');

@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
+use App\Repository\FundingCycleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -19,6 +21,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class FundingOrganizationCrudController extends AbstractCrudController
 {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * Returns Fully Qualified Class Name.
      */
@@ -94,9 +100,8 @@ class FundingOrganizationCrudController extends AbstractCrudController
      */
     private function isFundingOrgInUse(FundingOrganization $fundingOrganization): bool
     {
-        $entityManager = $this->getDoctrine()->getManager();
 
-        $fundingCycles = $entityManager->getRepository(FundingCycle::class)->findBy(['fundingOrganization' => $fundingOrganization]);
+        $fundingCycles = $this->entityManager->getRepository(FundingCycle::class)->findBy(['fundingOrganization' => $fundingOrganization]);
 
         return count($fundingCycles) > 0;
     }

@@ -58,13 +58,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="An account must be attached to a Person"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
     #[ORM\Id]
+    #[Assert\NotBlank(message: 'An account must be attached to a Person')]
     protected $person;
 
     /**
@@ -72,12 +69,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="User ID is required"
-     * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Assert\NotBlank(message: 'User ID is required')]
     protected $userId;
 
     /**
@@ -85,12 +79,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Password
      *
-     *
-     * @Assert\NotBlank(
-     *     message="An Account must be attached to a Password"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Password', cascade: ['persist'])]
+    #[Assert\NotBlank(message: 'An Account must be attached to a Password')]
     protected $password;
 
     /**
@@ -545,7 +536,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return array The roles for this Account.
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
@@ -605,7 +596,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return boolean True to tell the EquatableInterface we are a real user class.
      */
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): bool
     {
         if ($this->getUsername() === $user->getUsername()) {
             return true;
