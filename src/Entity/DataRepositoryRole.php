@@ -18,6 +18,7 @@ class DataRepositoryRole extends AbstractRole implements RoleInterface
     // Known Data Repository Roles.
     const MANAGER = 'Manager';
     const ENGINEER = 'Engineer';
+    const DEVELOPER = 'Developer';
     const SUPPORT = 'Support';
     const SME = 'Subject Matter Expert';
 }
