@@ -2,29 +2,19 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\File;
 use App\Entity\PersonDatasetSubmission;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * A voter to determine if a actions are possible by the user on a Dataset Submission.
- *
- * @package App\Security\Voter
  */
 class DatasetSubmissionVoter extends PelagosEntityVoter
 {
-    /**
-     * Determine if an attribute and subject are supported by this voter.
-     *
-     * @param string $attribute The action to be considered.
-     * @param mixed  $subject   The subject the action would be performed on.
-     *
-     * @return boolean True if the attribute and subject are supported, false otherwise.
-     */
-    protected function supports($attribute, $subject) //phpcs:ignore
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
         if (
@@ -35,7 +25,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         }
 
         // Supports create and edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
+        if (in_array($attribute, [self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE])) {
             return true;
         }
 
@@ -43,18 +33,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         return false;
     }
 
-    /**
-     * Test authorization of the action specified by $attribute on $subject for the current user.
-     *
-     * This is only called if $this->supports($attribute, $subject) returns true for the same $attribute and $subject.
-     *
-     * @param string         $attribute The action to be considered.
-     * @param mixed          $subject   The subject the action would be performed on.
-     * @param TokenInterface $token     A security token containing user authentication information.
-     *
-     * @return boolean True if the current user is authorized to perform the action specified by $attribute on $subject.
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) //phpcs:ignore
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         // If research group is locked, vote false.
         if ($subject instanceof DatasetSubmission and true === $subject->getDataset()->getResearchGroup()->isLocked()) {
@@ -90,7 +69,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (in_array($attribute, [self::CAN_CREATE, self::CAN_EDIT])) {
             if (null !== $submissionResearchGroup) {
                 foreach ($researchGroups as $researchGroup) {
                     if ($submissionResearchGroup->isSameTypeAndId($researchGroup)) {

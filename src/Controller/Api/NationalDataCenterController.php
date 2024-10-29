@@ -22,17 +22,11 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/count",
-     *     name="pelagos_api_national_data_center_count",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return integer
      */
+    #[View]
+    #[Route(path: '/api/national-data-center/count', name: 'pelagos_api_national_data_center_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(NationalDataCenter::class, $request);
@@ -45,17 +39,11 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/validateProperty",
-     *     name="pelagos_api_national_data_center_validate_property",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
+    #[Route(path: '/api/national-data-center/validateProperty', name: 'pelagos_api_national_data_center_validate_property', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(NationalDataCenterType::class, NationalDataCenter::class, $request);
@@ -69,17 +57,11 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/{id}/validateProperty",
-     *     name="pelagos_api_national_data_center_validate_property_existing",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
+    #[Route(path: '/api/national-data-center/{id}/validateProperty', name: 'pelagos_api_national_data_center_validate_property_existing', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(NationalDataCenterType::class, NationalDataCenter::class, $request, $id);
@@ -92,17 +74,11 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center",
-     *     name="pelagos_api_national_data_center_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/national-data-center', name: 'pelagos_api_national_data_center_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(NationalDataCenter::class, $request);
@@ -115,17 +91,11 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/{id}",
-     *     name="pelagos_api_national_data_center_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Entity(NationalDataCenter)
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/national-data-center/{id}', name: 'pelagos_api_national_data_center_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(NationalDataCenter::class, $id);
@@ -138,15 +108,10 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center",
-     *     name="pelagos_api_national_data_center_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with empty body and status code.
      */
+    #[Route(path: '/api/national-data-center', name: 'pelagos_api_national_data_center_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $nationalDataCenter = $this->handlePost(NationalDataCenterType::class, NationalDataCenter::class, $request);
@@ -161,15 +126,10 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/{id}",
-     *     name="pelagos_api_national_data_center_put",
-     *     methods={"PUT"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/national-data-center/{id}', name: 'pelagos_api_national_data_center_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(NationalDataCenterType::class, NationalDataCenter::class, $id, $request, 'PUT');
@@ -184,15 +144,10 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/{id}",
-     *     name="pelagos_api_national_data_center_patch",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/national-data-center/{id}', name: 'pelagos_api_national_data_center_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(NationalDataCenterType::class, NationalDataCenter::class, $id, $request, 'PATCH');
@@ -206,15 +161,10 @@ class NationalDataCenterController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/national-data-center/{id}",
-     *     name="pelagos_api_national_data_center_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/national-data-center/{id}', name: 'pelagos_api_national_data_center_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $this->handleDelete(NationalDataCenter::class, $id);

@@ -67,10 +67,10 @@ class DownloadController extends AbstractController
      *
      * @param integer $id The id of the dataset to download.
      *
-     * @Route("/download/{id}", name="pelagos_app_download_default")
      *
      * @return Response
      */
+    #[Route(path: '/download/{id}', name: 'pelagos_app_download_default')]
     public function defaultAction(int $id)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
@@ -96,9 +96,8 @@ class DownloadController extends AbstractController
 
     /**
      * Download dataset, count and forward to zip stream.
-     *
-     * @Route("/download/dataset/{id}", name="pelagos_app_download_dataset")
      */
+    #[Route(path: '/download/dataset/{id}', name: 'pelagos_app_download_dataset')]
     public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack): Response
     {
         $currentUser = $this->getUser();
@@ -135,10 +134,10 @@ class DownloadController extends AbstractController
      * @param Datastore                    $dataStore                    The data store.
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
-     * @Route("/download/{id}/http", name="pelagos_app_download_http")
      *
      * @return Response
      */
+    #[Route(path: '/download/{id}/http', name: 'pelagos_app_download_http')]
     public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack)
     {
         $datasetSubmission = $dataset->getDatasetSubmission();

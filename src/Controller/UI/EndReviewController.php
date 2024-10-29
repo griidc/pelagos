@@ -51,10 +51,10 @@ class EndReviewController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/end-review", name="pelagos_app_ui_endreview_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/end-review', name: 'pelagos_app_ui_endreview_default')]
     public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

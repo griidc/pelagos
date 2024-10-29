@@ -42,7 +42,6 @@ security:
             logout:
                 path: security_logout
                 target: pelagos_homepage
-                handlers: [App\Security\LogoutHandler]
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos_account
@@ -54,6 +53,7 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/log-viewer, roles: ROLE_DATA_REPOSITORY_MANAGER }
 
 when@test:
     security:

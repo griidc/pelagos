@@ -22,17 +22,11 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/count",
-     *     name="pelagos_api_person_data_repositories_count",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return integer
      */
+    #[View]
+    #[Route(path: '/api/person-data-repositories/count', name: 'pelagos_api_person_data_repositories_count', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function countAction(Request $request)
     {
         return $this->handleCount(PersonDataRepository::class, $request);
@@ -45,17 +39,11 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/validateProperty",
-     *     name="pelagos_api_person_data_repositories_validate_property",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
+    #[Route(path: '/api/person-data-repositories/validateProperty', name: 'pelagos_api_person_data_repositories_validate_property', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyAction(Request $request)
     {
         return $this->validateProperty(PersonDataRepositoryType::class, PersonDataRepository::class, $request);
@@ -69,17 +57,11 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/{id}/validateProperty",
-     *     name="pelagos_api_person_data_repositories_validate_property_existing",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
+    #[View]
+    #[Route(path: '/api/person-data-repositories/{id}/validateProperty', name: 'pelagos_api_person_data_repositories_validate_property_existing', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonDataRepositoryType::class, PersonDataRepository::class, $request, $id);
@@ -92,17 +74,11 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories",
-     *     name="pelagos_api_person_data_repositories_get_collection",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/person-data-repositories', name: 'pelagos_api_person_data_repositories_get_collection', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getCollectionAction(Request $request)
     {
         return $this->handleGetCollection(PersonDataRepository::class, $request);
@@ -115,17 +91,11 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/{id}",
-     *     name="pelagos_api_person_data_repositories_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonDataRepository
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/person-data-repositories/{id}', name: 'pelagos_api_person_data_repositories_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(int $id)
     {
         return $this->handleGetOne(PersonDataRepository::class, $id);
@@ -138,16 +108,11 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories",
-     *     name="pelagos_api_person_data_repositories_post",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Data Repository Association in the Location header.
      */
+    #[Route(path: '/api/person-data-repositories', name: 'pelagos_api_person_data_repositories_post', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function postAction(Request $request)
     {
         $personDataRepository = $this->handlePost(PersonDataRepositoryType::class, PersonDataRepository::class, $request);
@@ -162,15 +127,10 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/{id}",
-     *     name="pelagos_api_person_data_repositories_put",
-     *     methods={"PUT"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/person-data-repositories/{id}', name: 'pelagos_api_person_data_repositories_put', methods: ['PUT'], defaults: ['_format' => 'json'])]
     public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonDataRepositoryType::class, PersonDataRepository::class, $id, $request, 'PUT');
@@ -185,15 +145,10 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/{id}",
-     *     name="pelagos_api_person_data_repositories_patch",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/person-data-repositories/{id}', name: 'pelagos_api_person_data_repositories_patch', methods: ['PATCH'], defaults: ['_format' => 'json'])]
     public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonDataRepositoryType::class, PersonDataRepository::class, $id, $request, 'PATCH');
@@ -207,15 +162,10 @@ class PersonDataRepositoryController extends EntityController
      *
      *
      *
-     * @Route(
-     *     "/api/person-data-repositories/{id}",
-     *     name="pelagos_api_person_data_repositories_delete",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"}
-     *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
+    #[Route(path: '/api/person-data-repositories/{id}', name: 'pelagos_api_person_data_repositories_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id)
     {
         $this->handleDelete(PersonDataRepository::class, $id);

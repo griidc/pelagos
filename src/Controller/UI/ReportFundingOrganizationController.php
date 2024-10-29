@@ -25,10 +25,10 @@ class ReportFundingOrganizationController extends ReportController
      *
      * @param Request $request Message information for this Request.
      *
-     * @Route("/report-funding-org", name="pelagos_app_ui_reportfundingorg_default")
      *
      * @return Response A Symfony Response instance.
      */
+    #[Route(path: '/report-funding-org', name: 'pelagos_app_ui_reportfundingorg_default')]
     public function defaultAction(Request $request, FundingOrganizationRepository $fundingOrganizationRepository, FormFactoryInterface $formFactory): Response
     {
         // Checks authorization of users
