@@ -45,6 +45,11 @@ class Account extends Entity implements UserInterface, EquatableInterface
     const ROLE_SUBJECT_MATTER_EXPERT = 'ROLE_SUBJECT_MATTER_EXPERT';
 
     /**
+     * A role given only to Developers.
+     */
+    public const ROLE_DEVELOPER = 'ROLE_DEVELOPER';
+
+    /**
      * This is defined here to override the base class id.
      *
      * This is not used by the Account Entity because it gets its identity through Person.
@@ -550,6 +555,11 @@ class Account extends Entity implements UserInterface, EquatableInterface
                 and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)
             ) {
                 $roles[] = self::ROLE_SUBJECT_MATTER_EXPERT;
+            } elseif (
+                $personDataRepository->getRole()->getName() === DataRepositoryRole::DEVELOPER
+                and !in_array(self::ROLE_DEVELOPER, $roles)
+            ) {
+                $roles[] = self::ROLE_DEVELOPER;
             }
         }
         foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
