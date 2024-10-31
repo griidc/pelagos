@@ -22,7 +22,7 @@ use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,15 +39,8 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @param InformationProduct  $informationProduct the id of the information product
      * @param SerializerInterface $serializer         JMS Serializer instance
-     *
-     * @Route (
-     *     "/api/information_product/{id}",
-     *     name="pelagos_api_get_information_product",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     * )
      */
+    #[Route(path: '/api/information_product/{id}', name: 'pelagos_api_get_information_product', methods: ['GET'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function getInformationProduct(InformationProduct $informationProduct, SerializerInterface $serializer): Response
     {
         $context = SerializationContext::create();
@@ -62,14 +55,8 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @param Request             $request    the Request
      * @param MessageBusInterface $messageBus the message bus
-     *
-     * @Route (
-     *     "/api/information_product",
-     *     name="pelagos_api_create_information_product",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"},
-     * )
      */
+    #[Route(path: '/api/information_product', name: 'pelagos_api_create_information_product', methods: ['POST'], defaults: ['_format' => 'json'])]
     public function createInformationProduct(Request $request, MessageBusInterface $messageBus, EntityManagerInterface $entityManager): Response
     {
         $response = Response::HTTP_BAD_REQUEST;
@@ -128,17 +115,9 @@ class InformationProductController extends AbstractFOSRestController
      * @param Request             $request            the Request
      * @param InformationProduct  $informationProduct the information product to update
      * @param MessageBusInterface $messageBus         the message bus
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
-     *
-     * * @Route (
-     *     "/api/information_product/{id}",
-     *     name="pelagos_api_update_information_product",
-     *     methods={"PATCH"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     * )
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/api/information_product/{id}', name: 'pelagos_api_update_information_product', methods: ['PATCH'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function updateInformationProduct(Request $request, InformationProduct $informationProduct, MessageBusInterface $messageBus, EntityManagerInterface $entityManager): Response
     {
         $prefilledRequestDataBag = $this->jsonToRequestDataBag($request->getContent());
@@ -203,18 +182,10 @@ class InformationProductController extends AbstractFOSRestController
 
     /**
      * Delete Information Product.
-     *
-     * @Route (
-     *     "/api/information_product/{id}",
-     *     name="pelagos_api_delete_information_product",
-     *     methods={"DELETE"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     * )
      */
-    public function deleteInformationProduct(Request $request, InformationProduct $informationProduct): Response
+    #[Route(path: '/api/information_product/{id}', name: 'pelagos_api_delete_information_product', methods: ['DELETE'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
+    public function deleteInformationProduct(Request $request, InformationProduct $informationProduct, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($informationProduct);
         $entityManager->flush();
 
@@ -227,14 +198,8 @@ class InformationProductController extends AbstractFOSRestController
      * @param Request $request The Request.
      *
      * @return Response
-     *
-     * @Route (
-     *     "/api/information_products",
-     *     name="pelagos_api_get_all_information_product",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     * )
      */
+    #[Route(path: '/api/information_products', name: 'pelagos_api_get_all_information_product', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAllInformationProducts(InformationProductRepository $informationProductRepository, SerializerInterface $serializer)
     {
         $context = SerializationContext::create();
@@ -272,15 +237,8 @@ class InformationProductController extends AbstractFOSRestController
      * @param ResearchGroup                $researchGroup                the id of the research group
      * @param SerializerInterface          $serializer                   JMS serializer instance
      * @param InformationProductRepository $informationProductRepository entity repository to get the entity
-     *
-     * @Route (
-     *     "/api/information_product_by_research_group_id/{id}",
-     *     name="pelagos_api_get_information_product_by_research_group_id",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     * )
      */
+    #[Route(path: '/api/information_product_by_research_group_id/{id}', name: 'pelagos_api_get_information_product_by_research_group_id', methods: ['GET'], defaults: ['_format' => 'json'], requirements: ['id' => '\d+'])]
     public function getInformationProductByResearchGroupId(
         ResearchGroup $researchGroup,
         SerializerInterface $serializer,
@@ -301,15 +259,9 @@ class InformationProductController extends AbstractFOSRestController
      * @param EntityManagerInterface       $entityManager                entity manager interface to doctrine operations
      * @param FileUploader                 $fileUploader                 file upload handler service
      * @param InformationProductRepository $informationProductRepository the information product repository
-     *
-     * @Route(
-     *     "/api/add_file_to_information_product",
-     *     name="pelagos_api_add_file_information_product",
-     *     methods={"POST"}
-     *     )
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/api/add_file_to_information_product', name: 'pelagos_api_add_file_information_product', methods: ['POST'])]
     public function addFileToInformationProduct(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -362,15 +314,10 @@ class InformationProductController extends AbstractFOSRestController
      *
      * @param InformationProduct $informationProduct the information product, that has the file
      *
-     * @Route(
-     *     "/api/information_product_file_download/{id}",
-     *     name="pelagos_api_ip_file_download",
-     *     methods={"GET"},
-     *     requirements={"id"="\d+"}
-     *     )
      *
      * @throws BadRequestHttpException when file is not found
      */
+    #[Route(path: '/api/information_product_file_download/{id}', name: 'pelagos_api_ip_file_download', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function downloadFile(InformationProduct $informationProduct, Datastore $datastore): Response
     {
         $file = $informationProduct->getFile();
@@ -416,16 +363,11 @@ class InformationProductController extends AbstractFOSRestController
      * @param InformationProductRepository $informationProductRepository the information product repository
      * @param FileRepository               $fileRepository               the file repository
      *
-     * @Route(
-     *     "/api/information_product_file_delete",
-     *     name="pelagos_api_ip_file_delete",
-     *     methods={"DELETE"},
-     *     )
      *
      * @throws BadRequestHttpException when the file doesn't exist, or is not the right kind of file
-     *
-     * @IsGranted("ROLE_DATA_REPOSITORY_MANAGER")
      */
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    #[Route(path: '/api/information_product_file_delete', name: 'pelagos_api_ip_file_delete', methods: ['DELETE'])]
     public function deleteInformationProductFile(
         Request $request,
         EntityManagerInterface $entityManager,

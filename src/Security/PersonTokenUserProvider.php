@@ -106,12 +106,10 @@ class PersonTokenUserProvider implements UserProviderInterface
      * Report whether this provider supports a class.
      *
      * @param string $class The class to test.
-     *
-     * @return boolean Whether the given class is supported.
      */
     // Next line to be ignored because implemented function does not have type-hint on $class.
     // phpcs:ignore
-    public function supportsClass($class)
+    public function supportsClass(string $class): bool
     {
         return Account::class === $class;
     }

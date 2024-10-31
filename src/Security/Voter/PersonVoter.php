@@ -7,24 +7,14 @@ use App\Entity\Account;
 use App\Entity\Person;
 
 /**
- * A voter to determine if a actions are possible by the user on a Person object.
-
- * @package Pelagos\Bundle\AppBundle\Security
+ * A voter to determine if a actions are possible by the user on a Person subject.
  */
 class PersonVoter extends PelagosEntityVoter
 {
-    /**
-     * Determine if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute denoting an action.
-     * @param mixed  $object    The subject of creation, deletion or change.
-     *
-     * @return boolean True if the attribute and subject are supported, false otherwise.
-     */
-    protected function supports($attribute, $object) //phpcs:ignore
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // Make sure the object is an instance of Person
-        if (!$object instanceof Person) {
+        if (!$subject instanceof Person) {
             return false;
         }
 
@@ -37,18 +27,7 @@ class PersonVoter extends PelagosEntityVoter
         return false;
     }
 
-    /**
-     * Perform a authorization test on an attribute, Person subject and authentication token.
-     *
-     * The Symfony calling security framework calls supports before calling voteOnAttribute.
-     *
-     * @param string         $attribute The action to be considered.
-     * @param mixed          $object    A Person.
-     * @param TokenInterface $token     A security token containing user authentication information.
-     *
-     * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
-     */
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token) //phpcs:ignore
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
@@ -61,7 +40,7 @@ class PersonVoter extends PelagosEntityVoter
         $userPerson = $user->getPerson();
 
         // People can edit themselves.
-        if ($attribute == PelagosEntityVoter::CAN_EDIT and $object->isSameTypeAndId($userPerson)) {
+        if ($attribute == PelagosEntityVoter::CAN_EDIT and $subject->isSameTypeAndId($userPerson)) {
             return true;
         }
 

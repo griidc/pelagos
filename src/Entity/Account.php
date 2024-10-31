@@ -45,6 +45,11 @@ class Account extends Entity implements UserInterface, EquatableInterface
     const ROLE_SUBJECT_MATTER_EXPERT = 'ROLE_SUBJECT_MATTER_EXPERT';
 
     /**
+     * A role given only to Developers.
+     */
+    public const ROLE_DEVELOPER = 'ROLE_DEVELOPER';
+
+    /**
      * This is defined here to override the base class id.
      *
      * This is not used by the Account Entity because it gets its identity through Person.
@@ -58,13 +63,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Person
      *
-     *
-     * @Assert\NotBlank(
-     *     message="An account must be attached to a Person"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
     #[ORM\Id]
+    #[Assert\NotBlank(message: 'An account must be attached to a Person')]
     protected $person;
 
     /**
@@ -72,12 +74,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="User ID is required"
-     * )
      */
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Assert\NotBlank(message: 'User ID is required')]
     protected $userId;
 
     /**
@@ -85,12 +84,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @var Password
      *
-     *
-     * @Assert\NotBlank(
-     *     message="An Account must be attached to a Password"
-     * )
      */
     #[ORM\OneToOne(targetEntity: 'Password', cascade: ['persist'])]
+    #[Assert\NotBlank(message: 'An Account must be attached to a Password')]
     protected $password;
 
     /**
@@ -545,7 +541,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return array The roles for this Account.
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
@@ -559,6 +555,11 @@ class Account extends Entity implements UserInterface, EquatableInterface
                 and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)
             ) {
                 $roles[] = self::ROLE_SUBJECT_MATTER_EXPERT;
+            } elseif (
+                $personDataRepository->getRole()->getName() === DataRepositoryRole::DEVELOPER
+                and !in_array(self::ROLE_DEVELOPER, $roles)
+            ) {
+                $roles[] = self::ROLE_DEVELOPER;
             }
         }
         foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
@@ -605,7 +606,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return boolean True to tell the EquatableInterface we are a real user class.
      */
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): bool
     {
         if ($this->getUsername() === $user->getUsername()) {
             return true;
