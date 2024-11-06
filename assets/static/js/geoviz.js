@@ -938,7 +938,7 @@ function GeoViz()
             }
             if (drawMode == "polygon" || drawMode == "box")
             {
-                const numPairs = points.split(" ").length;
+                const numPairs = points.trim().split(" ").length;
                 if (numPairs < 3) {
                     checkMsg = "Not enough points pairs for a polygon! (Minimum of 3)";
                     jQuery(mapDiv).trigger("coordinateError", checkMsg);
