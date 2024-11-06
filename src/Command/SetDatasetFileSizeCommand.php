@@ -21,12 +21,9 @@ class SetDatasetFileSizeCommand extends Command
 
     /**
      * Class constructor for dependency injection.
-     *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         parent::__construct();
     }
 
