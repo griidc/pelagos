@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
-use App\Entity\FileSet;
+use App\Entity\Fileset;
 use App\Entity\Person;
 use App\Message\DatasetSubmissionFiler;
 use App\Message\DeleteFile;
