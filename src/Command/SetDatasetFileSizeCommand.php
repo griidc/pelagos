@@ -14,11 +14,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:set-dataset-filesize', description: 'Set dataset filesize for all datasets.')]
 class SetDatasetFileSizeCommand extends Command
 {
-    protected static $defaultName = 'pelagos:set-dataset-filesize';
-    protected static $defaultDescription = 'Set dataset filesize for all datasets.';
-
     /**
      * Class constructor for dependency injection.
      */
