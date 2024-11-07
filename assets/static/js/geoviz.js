@@ -940,7 +940,7 @@ function GeoViz()
             {
                 const numPairs = pointList.length;
                 if (numPairs < 3) {
-                    checkMsg = "Not enough points pairs for a polygon! (Minimum of 3)";
+                    checkMsg = "Not enough point pairs for a polygon! (Minimum of 3)";
                     jQuery(mapDiv).trigger("coordinateError", checkMsg);
                     return false;
                 }
