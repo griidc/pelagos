@@ -318,7 +318,7 @@ class DatasetDownloadReportController extends ReportController
                 ->join('\App\Entity\Dataset', 'd', Query\Expr\Join::WITH, 'log.subjectEntityId = d.id')
                 ->where('log.subjectEntityName = ?1')
                 ->andWhere('log.actionName = ?2')
-                ->orderBy('dataset.udi', 'ASC')
+                ->orderBy('log.creationTimeStamp', 'ASC')
                 ->setParameter(1, 'Pelagos\Entity\Dataset')
                 ->setParameter(2, 'File Download')
                 ->getQuery();
