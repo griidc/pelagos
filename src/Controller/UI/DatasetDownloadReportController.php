@@ -111,10 +111,9 @@ class DatasetDownloadReportController extends ReportController
         $lastTime = 0;
         $lastUdi = '';
         foreach ($results as $result) {
-
+            // set up timekeeping for 30-sec window
             $dateTime = $result['creationTimeStamp'];
             $epochTime = (int) $dateTime->format('U');
-
             //initialize array with key  = udi, set title and primary POC
             if (isset($dataArray[$currentIndex]['udi']) && $result['udi'] != $dataArray[$currentIndex]['udi']) {
                 $currentIndex++;
