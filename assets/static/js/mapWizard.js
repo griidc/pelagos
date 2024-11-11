@@ -466,7 +466,7 @@ function MapWizard(json)
         if (!triedAdd)
         {
             message = "Those coordinates don't appear to make a valid feature.";
-            if (typeof errMsg != "undefined") { message += "<p>Reason:"+errMsg+"</p>";errMsg=undefined;};
+            if (typeof errMsg != "undefined") { message += "<p>Reason: "+errMsg+"</p>";errMsg=undefined;};
             $("<div>"+message+"</div>").dialog({
                 height: "auto",
                 width: "auto",
