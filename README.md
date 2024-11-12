@@ -13,6 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 * [ClamAV](https://www.clamav.net) - ClamAV® open source antivirus engine
 * [PHP 8.2+](http://php.net/docs.php) - General-purpose scripting language
 * [PostgreSQL 14+](https://www.postgresql.org) - ORDBMS
+* [PostGIS 3.4.3](https://www.postgis.net/) - Geographic Information Systems Extensions to PostgreSQL
 * [Elasticsearch 7.17+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
 * [Composer 2.8.2+](https://getcomposer.org/) - Dependency Manager for PHP
 * [Yarn 1.22.22+](https://yarnpkg.com/en/) - Package Manager
