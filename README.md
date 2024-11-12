@@ -9,17 +9,17 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [Redhat Linux 8](https://www.redhat.com/) - Redhat Linux or compatible
+* [Redhat Linux 8+](https://www.redhat.com/) - Redhat Linux or compatible
 * [ClamAV](https://www.clamav.net) - ClamAV® open source antivirus engine
-* [PHP 8.1+](http://php.net/docs.php) - General-purpose scripting language
-* [PostgreSQL 13+](https://www.postgresql.org) - ORDBMS
+* [PHP 8.2+](http://php.net/docs.php) - General-purpose scripting language
+* [PostgreSQL 14+](https://www.postgresql.org) - ORDBMS
 * [Elasticsearch 7.17+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
-* [Composer 2.5.1+](https://getcomposer.org/) - Dependency Manager for PHP
-* [Yarn 1.22.19+](https://yarnpkg.com/en/) - Package Manager
+* [Composer 2.8.2+](https://getcomposer.org/) - Dependency Manager for PHP
+* [Yarn 1.22.22+](https://yarnpkg.com/en/) - Package Manager
 
 ### Installation
 
-Pelagos is a [Symfony 5.4+](https://symfony.com) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
+Pelagos is a [Symfony 6.4+](https://symfony.com) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
 
 To install fullfill prerequisites then run:
 * `composer install`
