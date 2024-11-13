@@ -44,6 +44,38 @@ $(() => {
     }).always(function () {
       dsmTreeList.option("disabled", false);
       const expandedKeys = groupStore.items().filter(({ expanded }) => expanded === true).map(key => key.id);
+
+      // Get query parameters from URL and store on respective variables
+      const urlParams = new URLSearchParams(window.location.search);
+      const fundingOrganization = urlParams.get('fundingOrganization');
+      const fundingCycle = urlParams.get('fundingCycle');
+      const researchGroup = urlParams.get('researchGroup');
+
+      // if any of the query parameters is present, expand the respective group
+      if (fundingOrganization) {
+        const fundingOrganizationItem = groups.find(group => group.fundingOrganization === parseInt(fundingOrganization, 10));
+        expandedKeys.push(fundingOrganizationItem.id);
+        selectedItem = fundingOrganizationItem;
+        loadGroupHtml(selectedItem)
+      }
+
+      if (researchGroup) {
+        const researchGroupItem = groups.find(group => group.researchGroup === parseInt(researchGroup, 10));
+        const parentItem = groups.find(group => group.id === researchGroupItem.parent);
+        expandedKeys.push(researchGroupItem.parent);
+        expandedKeys.push(parentItem.parent);
+        selectedItem = researchGroupItem;
+        loadGroupHtml(selectedItem);
+      }
+
+      if (fundingCycle) {
+        const fundingCycleItem = groups.find(group => group.fundingCycle === parseInt(fundingCycle, 10));
+        expandedKeys.push(fundingCycleItem.id);
+        expandedKeys.push(fundingCycleItem.parent);
+        selectedItem = fundingCycleItem;
+        loadGroupHtml(selectedItem);
+      }
+
       dsmTreeList.option("expandedRowKeys", expandedKeys);
     });
   }
@@ -198,6 +230,17 @@ $(() => {
     if (selectedItem.researchGroup !== undefined) {
       parameters = Object.assign(parameters, { researchGroup: selectedItem.researchGroup });
     }
+
+    // Change current browser URL to add query parameters
+    var currentUrl = new URL(window.location.href);
+    var queryParams = new URLSearchParams();
+    var urlPararameters = Object.assign({}, parameters);
+    delete urlPararameters.datasetFilter;
+    for (const key of Object.keys(urlPararameters)) {
+      queryParams.set(key, urlPararameters[key]);
+    }
+    currentUrl.search = queryParams.toString();
+    window.history.pushState({}, '', currentUrl);
 
     $.ajax({
       url: Routing.generate("app_api_dataset_monitoring_datasets",
