@@ -145,7 +145,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
         string $dataStore,
         bool $queueFiler,
         bool $ignoreFileExistCheck,
-        ?DatasetSubmission $datasetSubmission = null,
+        ?DatasetSubmission $datasetSubmission = null
     ) {
         if ($datasetSubmission instanceof DatasetSubmission) {
             $udi = $datasetSubmission->getDataset()->getUdi();
