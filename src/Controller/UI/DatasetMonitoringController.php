@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -88,35 +89,21 @@ class DatasetMonitoringController extends AbstractController
      */
     #[Route('/dataset-monitoring/datasets', name: 'app_api_dataset_monitoring_datasets')]
     public function getDatasets(
-        Request $request,
         FundingOrganizationRepository $fundingOrganizationRepository,
         FundingCycleRepository $fundingCycleRepository,
-        ResearchGroupRepository $researchGroupRepository
+        ResearchGroupRepository $researchGroupRepository,
+        #[MapQueryParameter('fundingOrganization')] ?int $fundingOrganizationId,
+        #[MapQueryParameter('fundingCycle')] ?int $fundingCycleId,
+        #[MapQueryParameter('researchGroup')] ?int $researchGroupId,
+        #[MapQueryParameter] ?string $datasetFilter,
+        #[MapQueryParameter] ?bool $makePdf = false
     ): Response {
-        $fundingOrganizationId = $request->query->get('fundingOrganization');
-        $fundingCycleId = $request->query->get('fundingCycle');
-        $researchGroupId = $request->query->get('researchGroup');
-        $datasetFilter = $request->query->get('datasetFilter');
-        $makePdf = (bool) $request->query->get('makePdf');
-        $fundingOrganization = (!empty($fundingOrganizationId)) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
-        $fundingCycle = (!empty($fundingCycleId)) ? $fundingCycleRepository->find($fundingCycleId) : null;
-        $researchGroup = (!empty($researchGroupId)) ? $researchGroupRepository->find($researchGroupId) : null;
-
-        if ($makePdf) {
-            return $this->render(
-                'DatasetMonitoring/v2/pdf.html.twig',
-                [
-                    'fundingOrganization' => $fundingOrganization,
-                    'fundingCycle' => $fundingCycle,
-                    'researchGroup' => $researchGroup,
-                    'datasetFilter' => $datasetFilter,
-                    'makePdf' => $makePdf,
-                ]
-            );
-        }
+        $fundingOrganization = (null !== $fundingOrganizationId) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
+        $fundingCycle = (null !== $fundingCycleId) ? $fundingCycleRepository->find($fundingCycleId) : null;
+        $researchGroup = (null !== $researchGroupId) ? $researchGroupRepository->find($researchGroupId) : null;
 
         return $this->render(
-            'DatasetMonitoring/v2/datasets.html.twig',
+            'DatasetMonitoring/v2/dataset-monitoring.html.twig',
             [
                 'fundingOrganization' => $fundingOrganization,
                 'fundingCycle' => $fundingCycle,

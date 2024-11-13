@@ -5,7 +5,8 @@
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
-    {% for dataset in researchGroup.datasets|submittedDIFs %}
+
+    {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
         data.push({
             'id': '{{ dataset.id }}',
             'title': '{{ dataset.title|e('js') }}',
