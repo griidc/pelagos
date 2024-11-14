@@ -171,7 +171,7 @@ img {
     padding-bottom: 1rem;
 }
 #difFilterTools #fltResults {
-    padding-left: 8px;
+    padding-left: .5em;
 }
 
 input.dx-texteditor-input:focus-visible {
@@ -190,5 +190,5 @@ input.dx-texteditor-input:focus-visible {
 }
 
 #difForm input[type="text"], textarea {
-    padding-left: 8px;
+    padding-left: .5em;
 }
