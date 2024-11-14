@@ -51,12 +51,11 @@ $(() => {
       const fundingCycle = urlParams.get('fundingCycle');
       const researchGroup = urlParams.get('researchGroup');
 
-      // if any of the query parameters is present, expand the respective group
+      // if any of the query parameters is present, expand the respective groups
       if (fundingOrganization) {
         const fundingOrganizationItem = groups.find(group => group.fundingOrganization === parseInt(fundingOrganization, 10));
         expandedKeys.push(fundingOrganizationItem.id);
-        selectedItem = fundingOrganizationItem;
-        loadGroupHtml(selectedItem)
+        dsmTreeList.selectRows([fundingOrganizationItem.id], false);
       }
 
       if (researchGroup) {
@@ -64,16 +63,14 @@ $(() => {
         const parentItem = groups.find(group => group.id === researchGroupItem.parent);
         expandedKeys.push(researchGroupItem.parent);
         expandedKeys.push(parentItem.parent);
-        selectedItem = researchGroupItem;
-        loadGroupHtml(selectedItem);
+        dsmTreeList.selectRows([researchGroupItem.id], false);
       }
 
       if (fundingCycle) {
         const fundingCycleItem = groups.find(group => group.fundingCycle === parseInt(fundingCycle, 10));
         expandedKeys.push(fundingCycleItem.id);
         expandedKeys.push(fundingCycleItem.parent);
-        selectedItem = fundingCycleItem;
-        loadGroupHtml(selectedItem);
+        dsmTreeList.selectRows([fundingCycleItem.id], false);
       }
 
       dsmTreeList.option("expandedRowKeys", expandedKeys);
