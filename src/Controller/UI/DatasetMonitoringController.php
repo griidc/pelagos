@@ -96,7 +96,7 @@ class DatasetMonitoringController extends AbstractController
         #[MapQueryParameter('fundingCycle')] ?int $fundingCycleId,
         #[MapQueryParameter('researchGroup')] ?int $researchGroupId,
         #[MapQueryParameter] ?string $datasetFilter,
-        #[MapQueryParameter] ?bool $makePdf = false
+        #[MapQueryParameter] ?bool $makePdf = false,
     ): Response {
         $fundingOrganization = (null !== $fundingOrganizationId) ? $fundingOrganizationRepository->find($fundingOrganizationId) : null;
         $fundingCycle = (null !== $fundingCycleId) ? $fundingCycleRepository->find($fundingCycleId) : null;
