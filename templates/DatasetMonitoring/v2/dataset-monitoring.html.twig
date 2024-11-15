@@ -1,0 +1,5 @@
+{% if not makePdf %}
+    {% include 'DatasetMonitoring/v2/datasets.html.twig' %}
+{% else %}
+    {% include 'DatasetMonitoring/v2/pdf.html.twig' %}
+{% endif %}
