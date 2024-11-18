@@ -33,42 +33,37 @@
 <div class="max-w-screen-xl mx-auto py-6">
     <div class="overflow-y-auto" x-data="{
         openTab: 1,
-        activeClasses: 'text-white bg-blue-700',
-        inactiveClasses: 'hover:text-gray-900 bg-gray-50 hover:bg-gray-100',
+        activeClasses: 'text-white bg-blue-700 cursor-pointer',
+        inactiveClasses: 'text-gray-500 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 cursor-pointer',
     }">
 
     <div class="md:flex">
-        <ul class="flex-column space-y space-y-4 text-gray-500 md:me-4 mb-4 md:mb-0 bg-gray-50 p-2">
-            <li>
-                <a @click="openTab = 1" href="#" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                    <i class="fa-solid fa-circle-info me-2"></i>
-                    Overview
-                </a>
+        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2">
+            <li @click="openTab = 1" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-circle-info me-2"></i>
+                Overview
             </li>
-            <li>
-                <a @click="openTab = 2" href="#" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                    <i class="fa-solid fa-user me-2"></i>
-                    People
-                </a>
+            <li @click="openTab = 2" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-user me-2"></i>
+                People
             </li>
-            <li>
-                <a @click="openTab = 3" href="#" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                    <i class="fa-solid fa-database me-2"></i>
-                    Datasets
-                </a>
+            <li @click="openTab = 3" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-database me-2"></i>
+                Datasets
             </li>
         </ul>
-        <div class="p-6 text-medium rounded-lg w-full">
-            <div :class="openTab === 1 ? 'active' : 'inactive'">
-                <h3 class="text-lg font-bold text-gray-900">Overview</h3>
+
+        <div class="p-6 rounded-lg w-full">
+            <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
+                <h3>Overview</h3>
                 <p class="mb-2">Overview Content</p>
             </div>
-            <div :class="openTab === 2 ? 'active' : 'inactive'">
-                <h3 class="text-lg font-bold text-gray-900">People</h3>
+            <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
+                <h3>People</h3>
                 <p class="mb-2">People Content</p>
             </div>
-            <div :class="openTab === 3 ? 'active' : 'inactive'">
-                <h3 class="text-lg font-bold text-gray-900">Datasets</h3>
+            <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
+                <h3>Datasets</h3>
                 <p class="mb-2">Dataset Content</p>
             </div>
         </div>
