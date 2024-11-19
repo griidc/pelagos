@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use PhpParser\Node\Name;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -278,6 +279,38 @@ class FundingCycle extends Entity
         }
 
         return $datasets;
+    }
+
+    /** Return a sorted array of people parts*/
+    public function getPeople(): Array
+    {
+        $people = [];
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            /** @var ResearchGroup $researchGroup */
+            foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
+                $person = $personResearchGroup->getPerson();
+                /** @var Person $person */
+                $role = $personResearchGroup->getRole();
+                $fundingOrganization = $this->getFundingOrganization();
+                $people[] = [
+                    'roleName' => $role->getName(),
+                    'fundingOrganizationName' => $fundingOrganization->getName(),
+                    'lastName' => $person->getLastName(),
+                    'firstName' => $person->getFirstName(),
+                    'email' => $person->getEmailAddress(),
+                ];
+            }
+        }
+
+        usort($people, function ($a, $b) {
+            $lastNameComparison = strcmp($a['lastName'], $b['lastName']);
+            if ($lastNameComparison === 0) {
+                return strcmp($a['firstName'], $b['firstName']);
+            }
+            return $lastNameComparison;
+        });
+
+        return $people;
     }
 
     /**
