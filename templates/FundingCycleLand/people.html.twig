@@ -1,14 +1,12 @@
 <h3>People</h3>
 
-{% for researchGroup in fundingCycle.researchGroups %}
-    {% for personResearchGroup in researchGroup.personResearchGroups %}
-        {% set person = personResearchGroup.person %}
-        <div class="bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
-            <h4>{{ person.lastName }}, {{ person.lastName }}</h4>
-            <p>{{ personResearchGroup.role.name }}</p>
-            <p>{{ fundingCycle.name }}<br />
-            {{ researchGroup.name }}</p>
-            <p>{{ person.emailAddress }}</p>
-        </div>
-    {% endfor %}
+{% for person in fundingCycle.people %}
+    <div class="bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
+        <h4>{{ person.lastName }}, {{ person.firstName }}</h4>
+        <p>
+            {{ person.roleName }}<br />
+            {{ person.fundingOrganizationName }}<br />
+            {{ person.email }}
+        </p>
+    </div>
 {% endfor %}
