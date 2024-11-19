@@ -45,9 +45,13 @@
             </li>
             <li @click="openTab = 2" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-user me-2"></i>
-                People
+                Research Groups
             </li>
             <li @click="openTab = 3" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-user me-2"></i>
+                People
+            </li>
+            <li @click="openTab = 4" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-database me-2"></i>
                 Datasets
             </li>
@@ -55,14 +59,16 @@
 
         <div class="p-6 rounded-lg w-full">
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
-                <h3>Overview</h3>
-                <p class="mb-2">Overview Content</p>
+                {% include 'FundingCycleLand/overview.html.twig' %}
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
+                {% include 'FundingCycleLand/research-groups.html.twig' %}
+            </div>
+            <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
                 <h3>People</h3>
                 <p class="mb-2">People Content</p>
             </div>
-            <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
+            <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
                 <h3>Datasets</h3>
                 <p class="mb-2">Dataset Content</p>
             </div>

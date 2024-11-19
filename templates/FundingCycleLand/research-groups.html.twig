@@ -1,0 +1,14 @@
+<h3>Research Groups</h3>
+
+
+{% for researchGroup in fundingCycle.researchGroups %}
+    <div class="bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
+        <h4>{{ researchGroup.name }}</h4>
+        <p><label>Description:</label>{{ researchGroup.description }}</p>
+        <p><label>Project Director:</label>
+         {% for projectDirector in researchGroup.getProjectDirectors %}
+            {{ projectDirector.lastName }}, {{ projectDirector.firstName }}
+         {% endfor %}
+         </p>
+    </div>
+{% endfor %}
