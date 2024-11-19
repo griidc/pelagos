@@ -1,22 +1,24 @@
 <h3>Datasets associated with {{ fundingCycle.name }} </h3>
 
 {% for researchGroup in fundingCycle.researchGroups %}
-    {% for dataset in researchGroup.datasets %}
+    {% for dataset in researchGroup.datasets|sortBy(["udi"]) %}
     <div class="bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
-    <!-- authors, publishedon, file format(s), doi, udi, total filesize (if hot) -->
+        <p>
         <h4>{{ dataset.title }}</h4>
         Authors: {{ dataset.authors }}<br />
 
         {% if dataset.acceptedDate is not null %}
-            Published On: {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
+            Published On: {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }} <br />
         {% else %}
-            Identified On:{{ dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }}
+            Identified On: {{ dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }} <br />
         {% endif %}
-        <br />
-        Filetype(s): <br />
+
+        {% if dataset.datasetSubmission.distributionFormatName|default %}
+            Filetype(s): {{ dataset.datasetSubmission.distributionFormatName|default }}<br />
+        {% endif %}
         {{ dataset.doi }}<br />
         UDI: {{ dataset.udi }}<br />
-        Size: {{ dataset.totalFileSize }} bytes<br />
+        Size: {{ dataset.totalFileSize|formatBytes }}<br />
         </p>
         </div>
     {% endfor %}

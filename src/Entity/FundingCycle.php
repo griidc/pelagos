@@ -284,7 +284,7 @@ class FundingCycle extends Entity
     /** Return a sorted array of people parts*/
     public function getPeople(): Collection
     {
-        $people = new ArrayCollection;
+        $people = new ArrayCollection();
 
         foreach ($this->getResearchGroups() as $researchGroup) {
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {

@@ -12,7 +12,8 @@ class FundingCycleLandController extends AbstractController
     #[Route('/funding-cycle/about/{fundingCycle}', name: 'app_funding_cycle_land')]
     public function index(FundingCycle $fundingCycle): Response
     {
-        return $this->render('FundingCycleLand/index.html.twig',
+        return $this->render(
+            'FundingCycleLand/index.html.twig',
             [
                 'fundingCycle' => $fundingCycle,
             ]
