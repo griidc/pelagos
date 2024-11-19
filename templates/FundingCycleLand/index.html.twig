@@ -10,12 +10,12 @@
 
     <style>
         .active {
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.25s ease-in-out;
             opacity: 1;
             height: auto;
         }
         .inactive {
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.25s ease-in-out;
             opacity: 0.5;
             height: 0;
             overflow: hidden;
@@ -38,7 +38,7 @@
     }">
 
     <div class="md:flex">
-        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2">
+        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2 w-1/5">
             <li @click="openTab = 1" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-circle-info me-2"></i>
                 Overview
@@ -49,15 +49,23 @@
             </li>
             <li @click="openTab = 3" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-user me-2"></i>
-                People
+                Datasets
             </li>
             <li @click="openTab = 4" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-database me-2"></i>
-                Datasets
+                People
+            </li>
+            <li @click="openTab = 5" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-circle-info me-2"></i>
+                Publications
+            </li>
+            <li @click="openTab = 6" :class="openTab === 6 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-circle-info me-2"></i>
+                Information Products
             </li>
         </ul>
 
-        <div class="p-6 rounded-lg w-full">
+        <div class="p-6 rounded-lg w-4/5">
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'FundingCycleLand/overview.html.twig' %}
             </div>
@@ -65,10 +73,16 @@
                 {% include 'FundingCycleLand/research-groups.html.twig' %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/people.html.twig' %}
+                {% include 'FundingCycleLand/datasets.html.twig' %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/datasets.html.twig' %}
+                {% include 'FundingCycleLand/people.html.twig' %}
+            </div>
+            <div :class="openTab === 5 ? 'active' : 'inactive'" class="opacity-0">
+                {% include 'FundingCycleLand/publications.html.twig' %}
+            </div>
+            <div :class="openTab === 6 ? 'active' : 'inactive'" class="opacity-0">
+                {% include 'FundingCycleLand/information-products.html.twig' %}
             </div>
         </div>
     </div>
