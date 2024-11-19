@@ -65,8 +65,7 @@
                 {% include 'FundingCycleLand/research-groups.html.twig' %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
-                <h3>People</h3>
-                <p class="mb-2">People Content</p>
+                {% include 'FundingCycleLand/people.html.twig' %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
                 <h3>Datasets</h3>
