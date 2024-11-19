@@ -1,12 +1,13 @@
 <h3>People</h3>
 
-{% for person in fundingCycle.people %}
+
+{% for person in fundingCycle.people | sortBy(["person.lastName"]) %}
     <div class="bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
         <h4>{{ person.lastName }}, {{ person.firstName }}</h4>
         <p>
-            {{ person.roleName }}<br />
-            {{ person.fundingOrganizationName }}<br />
-            {{ person.email }}
+            {{ person.position }}<br />
+            {{ person.organization }}<br />
+            {{ person.emailAddress }}
         </p>
     </div>
 {% endfor %}
