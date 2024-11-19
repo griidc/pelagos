@@ -1,4 +1,4 @@
-<h3>Datasets</h3>
+<h3>Datasets associated with {{ fundingCycle.name }} </h3>
 
 {% for researchGroup in fundingCycle.researchGroups %}
     {% for dataset in researchGroup.datasets %}
@@ -13,7 +13,7 @@
             Identified On:{{ dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }}
         {% endif %}
         <br />
-        Filetype(s): {{ dataset.datasetSubmission.fileTypes|join(', ') }}<br />
+        Filetype(s): <br />
         {{ dataset.doi }}<br />
         UDI: {{ dataset.udi }}<br />
         Size: {{ dataset.totalFileSize }} bytes<br />
