@@ -51,7 +51,7 @@ class PersonTokenUserProvider implements UserProviderInterface
     /**
      * Load the Account for a given token string or create a temporary one.
      *
-     * @param string $tokenString The token string to load the Account for.
+     * @param string $identifier The token string to load the Account for.
      *
      * @throws AuthenticationCredentialsNotFoundException When the provided token string does not match
      *                                                    any existing token.
@@ -61,17 +61,17 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return Account The account for the given token string.
      */
-    public function loadUserByIdentifier(string $tokenString): UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $personTokens = $this->entityManager->getRepository(PersonToken::class)->findBy(
-            array('tokenText' => $tokenString)
+            array('tokenText' => $identifier)
         );
         if (count($personTokens) === 0) {
             throw new AuthenticationCredentialsNotFoundException();
         }
         if (count($personTokens) > 1) {
             throw new \Exception(
-                sprintf('Multiple tokens found for token string: "%s"', $tokenString)
+                sprintf('Multiple tokens found for token string: "%s"', $identifier)
             );
         }
         $personToken = $personTokens[0];
@@ -79,11 +79,11 @@ class PersonTokenUserProvider implements UserProviderInterface
             throw new AuthenticationExpiredException();
         }
         $person = $personToken->getPerson();
-        $account = $person->getAccount();
+        $account = $person?->getAccount();
         if ($account instanceof Account) {
             return $account;
         }
-        return new Account($person, $person->getEmailAddress());
+        return new Account($person, $person?->getEmailAddress());
     }
 
     /**
@@ -95,7 +95,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return UserInterface
      */
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         // We send the token in each request so authentication is stateless.
         // Throwing this exception is proper to make things stateless.
