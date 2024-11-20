@@ -56,6 +56,24 @@ class InformationProductRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find by research group ids.
+     *
+     * @param array $researchGroupIds Research group ids associated.
+     *
+     * @return array
+     */
+    public function findByResearchGroupIds(array $researchGroupIds): array
+    {
+        return $this->createQueryBuilder('informationProduct')
+            ->innerJoin('informationProduct.researchGroups', 'rg')
+            ->andWhere('rg.id IN (:vals)')
+            ->setParameter('vals', $researchGroupIds)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
      * Get Information Products by Digital Resource Type.
      *
      * @param DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor
