@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\DigitalResourceTypeDescriptor;
+use App\Entity\FundingCycle;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Util\FundingOrgFilter;
@@ -62,12 +63,14 @@ class InformationProductRepository extends ServiceEntityRepository
      *
      * @return array
      */
-    public function findByResearchGroupIds(array $researchGroupIds): array
+    public function findByFundingCycle(FundingCycle $fundingCycle): array
     {
-        return $this->createQueryBuilder('informationProduct')
-            ->innerJoin('informationProduct.researchGroups', 'rg')
-            ->andWhere('rg.id IN (:vals)')
-            ->setParameter('vals', $researchGroupIds)
+        $qb = $this->createQueryBuilder('informationProduct');
+        return $qb
+            ->innerJoin('informationProduct.researchGroups', 'researchGroup')
+            ->join('researchGroup.fundingCycle', 'fundingCycle')
+            ->where('fundingCycle.id = :fundingCycleId')
+            ->setParameter('fundingCycleId', $fundingCycle->getId())
             ->getQuery()
             ->getResult()
         ;

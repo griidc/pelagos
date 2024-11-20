@@ -390,10 +390,10 @@ class DatasetRepository extends ServiceEntityRepository
         ;
     }
 
-    /** Get datasets by fundingCycle
-     *  @param string|null $fundingCycle The string ID for the funding cycle
+    /**
+     * Get datasets by fundingCycle
      */
-    public function getDatasetsByFundingCycle(string $fundingCycle = null): array
+    public function getDatasetsByFundingCycle(FundingCycle $fundingCycle): array
     {
         $queryBuilder = $this->createQueryBuilder('d');
 
