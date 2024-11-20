@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 use App\Entity\DOI;
 use App\Entity\Funder;
 use App\Entity\FundingCycle;
@@ -11,8 +12,10 @@ use App\Entity\FundingOrganization;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Internal\Hydration\ArrayHydrator;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\VarExporter\Internal\Hydrator;
 
 /**
  * Dataset Entity Repository class.
@@ -385,5 +388,38 @@ class DatasetRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /** Get datasets by fundingCycle
+     *  @param string|null $fundingCycle The string ID for the funding cycle
+     */
+    public function getDatasetsByFundingCycle(string $fundingCycle = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('d');
+
+        $queryBuilder
+        ->select(
+            'd.udi as UDI,
+            doi.doi as DOI,
+            d.title,
+            d.acceptedDate,
+            dif.approvedDate,
+            ds.distributionFormatName,
+            ds.authors'
+        )
+        ->leftjoin(DOI::class, 'doi', 'WITH', 'd.doi = doi.id')
+        ->join(DIF::class, 'dif', 'WITH', 'd.dif = dif.id')
+        ->join(ResearchGroup::class, 'rg', 'WITH', 'd.researchGroup = rg.id')
+        ->join(FundingCycle::class, 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+        ->leftjoin(DatasetSubmission::class, 'ds', 'WITH', 'd.datasetSubmission = ds.id')
+        ->where('fc.id = ?1')
+        ->setParameter(1, $fundingCycle);
+
+        return
+            $queryBuilder
+            ->orderBy('d.udi', 'ASC')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
     }
 }

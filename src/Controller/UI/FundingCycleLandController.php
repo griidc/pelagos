@@ -4,6 +4,7 @@ namespace App\Controller\UI;
 
 use App\Entity\FundingCycle;
 use App\Repository\InformationProductRepository;
+use App\Repository\DatasetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,10 +12,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class FundingCycleLandController extends AbstractController
 {
     private $informationProductRepository;
+    private $datasetRepository;
 
-    public function __construct(InformationProductRepository $informationProductRepository)
+    public function __construct(InformationProductRepository $informationProductRepository, DatasetRepository $datasetRepository)
     {
         $this->informationProductRepository = $informationProductRepository;
+        $this->datasetRepository = $datasetRepository;
     }
 
     #[Route('/funding-cycle/about/{fundingCycle}', name: 'app_funding_cycle_land')]
@@ -28,16 +31,16 @@ class FundingCycleLandController extends AbstractController
             $researchGroupList[] = $researchGroup->getId();
         }
 
-        // Retrieve information products using the findByResearchGroupIds method
         $informationProducts = $this->informationProductRepository->findByResearchGroupIds($researchGroupList);
+        $datasets = $this->datasetRepository->getDatasetsByFundingCycle($fundingCycle->getId());
 
-        // Pass the tab parameter and information products to the template
         return $this->render(
             'FundingCycleLand/index.html.twig',
             [
                 'fundingCycle' => $fundingCycle,
                 'researchGroupList' => $researchGroupList,
                 'informationProducts' => $informationProducts,
+                'datasets' => $datasets,
                 'tab' => $tab,
             ]
         );
