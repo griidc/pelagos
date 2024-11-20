@@ -1,16 +1,14 @@
 
 <h3>{{ fundingCycle.name }}</h3>
-<hr>
+<div class="p-4 rounded-lg mb-4 border-black shadow-lg">
 
-<p><label>Funding Organization:</label>
-<a href="{{ url('pelagos_app_ui_fundingorganization_default', {'id': fundingCycle.fundingOrganization.id}) }}"
-   class="text-blue-600 inline-flex items-center font-medium hover:underline"
->
-    {{ fundingCycle.fundingOrganization.name }}
-</a>
-</p>
-
-<label>Description:</label>
-{{ fundingCycle.description }}
-<br>
-<p class="mb-2">Overview Content</p>
+    <p><label>Funding Organization:</label>
+        <a href="{{ url('pelagos_app_ui_fundingorganization_default', {'id': fundingCycle.fundingOrganization.id}) }}"
+        target="_blank" class="text-blue-600 inline-flex items-center font-medium hover:underline">
+        {{ fundingCycle.fundingOrganization.name }}</a>
+    </p>
+    <p>
+        <label>Description:</label>
+        {{ fundingCycle.description }}
+    </p>
+</div>
