@@ -1,7 +1,7 @@
-<h4>Information Products associated with {{ fundingCycle.name }}</h4>
+<h3>Information Products associated with {{ fundingCycle.name }}</h3>
 
     {% for informationProduct in informationProducts %}
-        <div class="bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
+        <div class="p-4 rounded-lg mb-4 border-black shadow-lg">
             <p>{{ informationProduct.title }}</p>
             <p>
                 Creators: {{ informationProduct.creators }}<br />
@@ -19,19 +19,15 @@
                 </div>
             {% endif %}
             {% if informationProduct.file %}
-                <div>
-                    <p class="card-text text-dark">
-                        <strong>File name: </strong><br>
-                        <a href="{{ path('pelagos_api_ip_file_download', {id: informationProduct.id}) }}">
-                            {{ informationProduct.file.filePathName|default }}
-                        </a>
-                    </p>
-                    <hr>
-                    <p class="card-text text-dark">
-                        <strong>File size: </strong><br>
-                        {{ informationProduct.file.fileSize|default(0)|formatBytes }}
-                    </p>
-                </div>
+                    <div>
+                        <p class="card-text text-dark">
+                            <strong>File name: </strong>
+                            <a href="{{ path('pelagos_api_ip_file_download', {id: informationProduct.id}) }}">
+                                {{ informationProduct.file.filePathName|default }} ({{ informationProduct.file.fileSize|default(0)|formatBytes }})
+                            </a>
+                        </p>
+                    </div>
+
             {% endif %}
         </div>
 

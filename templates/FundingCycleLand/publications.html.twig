@@ -6,7 +6,7 @@
             {% if publication.doi is not empty %}
                 <a href="https://doi.org/{{ publication.doi }}" target="_blank" class="block">
             {% endif %}
-            <div class="publication bg-gray-50 p-4 rounded-lg mb-4 border-black shadow-lg m-5">
+            <div class="publication p-4 rounded-lg mb-4 border-black shadow-lg">
                 <h4>Publications linked to dataset {{ dataset.udi }} ({{ dataset.doi }})</h4>
                 <p>{{ publication.citationText|default }}</p>
             </div>

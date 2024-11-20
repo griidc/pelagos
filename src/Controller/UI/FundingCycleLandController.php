@@ -18,21 +18,27 @@ class FundingCycleLandController extends AbstractController
     }
 
     #[Route('/funding-cycle/about/{fundingCycle}', name: 'app_funding_cycle_land')]
-    public function index(FundingCycle $fundingCycle): Response
+    public function index(FundingCycle $fundingCycle, string $tab = null): Response
     {
+        $tab = $this->container->get('request_stack')->getCurrentRequest()->query->get('tab', $tab);
+
         $researchGroupList = [];
         foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
             /* @var $researchGroup \App\Entity\ResearchGroup */
             $researchGroupList[] = $researchGroup->getId();
         }
 
+        // Retrieve information products using the findByResearchGroupIds method
         $informationProducts = $this->informationProductRepository->findByResearchGroupIds($researchGroupList);
 
+        // Pass the tab parameter and information products to the template
         return $this->render(
             'FundingCycleLand/index.html.twig',
             [
                 'fundingCycle' => $fundingCycle,
+                'researchGroupList' => $researchGroupList,
                 'informationProducts' => $informationProducts,
+                'tab' => $tab,
             ]
         );
     }
