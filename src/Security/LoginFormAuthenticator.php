@@ -19,11 +19,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 /**
@@ -122,7 +122,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $this->logAttempt($request);
 
         $request->getSession()->set(
-            Security::LAST_USERNAME,
+            SecurityRequestAttributes::LAST_USERNAME,
             $credentials['_username']
         );
 
@@ -242,7 +242,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
         $response = new RedirectResponse($targetPath);
 
-        $cookie = Cookie::create('GRIIDC_USERNAME', $request->getSession()->get(Security::LAST_USERNAME));
+        $cookie = Cookie::create('GRIIDC_USERNAME', $request->getSession()->get(SecurityRequestAttributes::LAST_USERNAME));
         $response->headers->setCookie($cookie);
 
         return $response;
@@ -293,7 +293,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             );
         } else {
             $destination = $request->query->get('destination');
-            $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+            $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
             $url = $this->router->generate(
                 'security_login',
                 ['destination' => $destination]
