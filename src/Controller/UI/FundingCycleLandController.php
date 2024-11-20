@@ -3,19 +3,36 @@
 namespace App\Controller\UI;
 
 use App\Entity\FundingCycle;
+use App\Repository\InformationProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 class FundingCycleLandController extends AbstractController
 {
+    private $informationProductRepository;
+
+    public function __construct(InformationProductRepository $informationProductRepository)
+    {
+        $this->informationProductRepository = $informationProductRepository;
+    }
+
     #[Route('/funding-cycle/about/{fundingCycle}', name: 'app_funding_cycle_land')]
     public function index(FundingCycle $fundingCycle): Response
     {
+        $researchGroupList = [];
+        foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+            /* @var $researchGroup \App\Entity\ResearchGroup */
+            $researchGroupList[] = $researchGroup->getId();
+        }
+
+        $informationProducts = $this->informationProductRepository->findByResearchGroupIds($researchGroupList);
+
         return $this->render(
             'FundingCycleLand/index.html.twig',
             [
                 'fundingCycle' => $fundingCycle,
+                'informationProducts' => $informationProducts,
             ]
         );
     }
