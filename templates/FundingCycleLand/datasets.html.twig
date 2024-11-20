@@ -1,8 +1,8 @@
 <h3>Datasets associated with {{ fundingCycle.name }} </h3>
 
-{% for researchGroup in fundingCycle.researchGroups %}
-    {% for dataset in researchGroup.datasets|sortBy(["udi"]) %}
-    <a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank" class="block">
+
+{% for dataset in datasets %}
+    <a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.UDI }) }}" target="_blank" class="block">
         <div class="p-4 rounded-lg mb-4 border-black shadow-lg">
             <h4 class="mb-2">{{ dataset.title }}</h4>
             <div class="flex justify-between">
@@ -12,20 +12,18 @@
                     {% if dataset.acceptedDate is not null %}
                         Published On: {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }} <br />
                     {% else %}
-                        Identified On: {{ dataset.dif.approveddate|date('M d Y H:i T', 'UTC') }} <br />
+                        Identified On: {{ dataset.approvedDate|date('M d Y H:i T', 'UTC') }} <br />
                     {% endif %}
 
-                    {% if dataset.datasetSubmission.distributionFormatName|default %}
-                        Filetype(s): {{ dataset.datasetSubmission.distributionFormatName|default }}<br />
+                    {% if dataset.distributionFormatName|default %}
+                        Filetype(s): {{ dataset.distributionFormatName|default }}<br />
                     {% endif %}
                 </div>
                 <div class="text-left self-end">
-                    {{ dataset.doi }}<br />
-                    UDI: {{ dataset.udi }}<br />
-                    Size: {{ dataset.totalFileSize|formatBytes }}<br />
+                    {{ dataset.DOI }}<br />
+                    UDI: {{ dataset.UDI }}<br />
                 </div>
             </div>
         </div>
     </a>
-    {% endfor %}
 {% endfor %}
