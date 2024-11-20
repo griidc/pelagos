@@ -1,7 +1,7 @@
 <h3>Datasets associated with {{ fundingCycle.name }} </h3>
 
 
-{% for dataset in datasets %}
+{% for dataset in fundingCycle.getDatasets %}
     <a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.UDI }) }}" target="_blank" class="block">
         <div class="p-4 rounded-lg mb-4 border-black shadow-lg">
             <h4 class="mb-2">{{ dataset.title }}</h4>
@@ -12,7 +12,7 @@
                     {% if dataset.acceptedDate is not null %}
                         Published On: {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }} <br />
                     {% else %}
-                        Identified On: {{ dataset.approvedDate|date('M d Y H:i T', 'UTC') }} <br />
+                        Identified On: {{ dataset.dif.approvedDate|date('M d Y H:i T', 'UTC') }} <br />
                     {% endif %}
 
                     {% if dataset.distributionFormatName|default %}
