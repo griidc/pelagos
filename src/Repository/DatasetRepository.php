@@ -420,6 +420,5 @@ class DatasetRepository extends ServiceEntityRepository
             ->orderBy('d.udi', 'ASC')
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
-
     }
 }
