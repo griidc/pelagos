@@ -17,6 +17,13 @@ class FundingCycleLandController extends AbstractController
     {
         $informationProducts = $informationProductRepository->findByFundingCycle($fundingCycle);
 
+        $publications = [];
+        foreach ($fundingCycle->getDatasets() as $dataset) {
+            foreach ($dataset->getPublications() as $datasetPublication) {
+                $publications[] = $datasetPublication;
+            }
+        }
+
         // $datasets = $datasetRepository->getDatasetsByFundingCycle($fundingCycle);
 
         return $this->render(
@@ -24,7 +31,7 @@ class FundingCycleLandController extends AbstractController
             [
                 'fundingCycle' => $fundingCycle,
                 'informationProducts' => $informationProducts,
-                // 'datasets' => $datasets,
+                'publications' => $publications,
                 'tab' => $tab,
             ]
         );

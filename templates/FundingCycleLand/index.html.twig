@@ -41,14 +41,6 @@
         }
     }">
 
-    {% set publications = [] %}
-    {% for dataset in fundingCycle.datasets %}
-        {% for publication in dataset.publications %}
-            {% if publication.doi is not empty %}
-                {% set publications = publications|merge([publication]) %}
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
     <div class="md:flex">
         <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2 w-1/4">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
