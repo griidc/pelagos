@@ -32,16 +32,15 @@
 {% block body %}
 <div class="max-w-screen-xl mx-auto py-6">
     <div class="overflow-y-auto" x-data="{
-        openTab: {{ tab is not null ? tab : 1 }},
+        openTab: 1,
         activeClasses: 'text-white bg-blue-700 cursor-pointer',
         inactiveClasses: 'text-gray-500 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 cursor-pointer',
         changeTab(tab) {
             this.openTab = tab;
-            history.pushState(null, '', `?tab=${tab}`);
         }
     }">
 
-    <div class="md:flex">
+    <div class="md:flex border border-gray-300">
         <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2 w-1/4">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-circle-info me-2"></i>

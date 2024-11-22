@@ -2,7 +2,7 @@
 
 
 {% for person in fundingCycle.people | sortBy(["lastName", "firstName"]) %}
-    <div class="p-4 rounded-lg mb-4 border-black shadow-lg">
+    <div class="card">
         <h4>{{ person.firstName }} {{ person.lastName }}</h4>
         <p>
             {{ person.position }}<br />
