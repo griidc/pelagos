@@ -285,6 +285,23 @@ class FundingCycle extends Entity
     }
 
     /**
+     * Return a collection of Publications for the Funding Cycle.
+     */
+    public function getPublications(): Collection
+    {
+        $publications = new ArrayCollection();
+        foreach ($this->getDatasets() as $dataset) {
+            foreach ($dataset->getPublications() as $publication) {
+                if (!$publications->contains($publication)) {
+                    $publications->add($publication);
+                }
+            }
+        }
+
+        return $publications;
+    }
+
+    /**
      * Returns datasets by Dataset Lifecycle Status.
      */
     public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection

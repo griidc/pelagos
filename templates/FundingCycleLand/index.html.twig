@@ -60,7 +60,7 @@
             </li>
             <li @click="changeTab(5)" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-book me-2"></i>
-                Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ publications|length }}</span>
+                Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.getPublications|length }}</span>
             </li>
             <li @click="changeTab(6)" :class="openTab === 6 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-download me-2"></i>
@@ -83,14 +83,12 @@
                 {% include 'FundingCycleLand/people.html.twig' %}
             </div>
                 <div :class="openTab === 5 ? 'active' : 'inactive'" class="opacity-0">
-                    {% include 'FundingCycleLand/publications.html.twig' with {'publications': publications} %}
+                    {% include 'FundingCycleLand/publications.html.twig' with {'publications': fundingCycle.getPublications} %}
                 </div>
             <div :class="openTab === 6 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'FundingCycleLand/information-products.html.twig' %}
             </div>
         </div>
     </div>
-
 </div>
-<div class="dsm-loadpanel"></div>
 {% endblock %}
