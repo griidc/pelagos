@@ -1,5 +1,4 @@
-<h3>Research Groups</h3>
-{% for researchGroup in fundingCycle.researchGroups %}
+{% for researchGroup in researchGroups %}
     <a href="{{ path('pelagos_app_ui_researchgroup_about', {'id': researchGroup.id}) }}" target="_blank" class="no-underline">
         <div class="card">
             <h4>{{ researchGroup.name }}</h4>

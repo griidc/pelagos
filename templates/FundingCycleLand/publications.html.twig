@@ -1,5 +1,3 @@
-<h3>Publications associated with {{ fundingCycle.name }}</h3>
-
 {% for publication in publications %}
     {% if publication.doi is not empty %}
         <a href="https://doi.org/{{ publication.doi }}" target="_blank" class="block">

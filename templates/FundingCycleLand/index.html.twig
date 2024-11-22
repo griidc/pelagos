@@ -73,14 +73,13 @@
                 {% include 'FundingCycleLand/overview.html.twig' %}
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/research-groups.html.twig' %}
+                {% include 'FundingCycleLand/research-groups.html.twig' with {'researchGroups': fundingCycle.researchGroups} %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
-                <h3>Datasets associated with {{ fundingCycle.name }} </h3>
                 {% include 'FundingCycleLand/datasets.html.twig' with {'datasets': fundingCycle.datasets}  %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/people.html.twig' %}
+                {% include 'FundingCycleLand/people.html.twig' with {'people': fundingCycle.people | sortBy(["lastName", "firstName"])} %}
             </div>
                 <div :class="openTab === 5 ? 'active' : 'inactive'" class="opacity-0">
                     {% include 'FundingCycleLand/publications.html.twig' with {'publications': fundingCycle.getPublications} %}
