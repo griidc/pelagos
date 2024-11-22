@@ -1,0 +1,15 @@
+@layer components {
+    .badge {
+        @apply inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-md text-xs font-medium bg-blue-600 text-white;
+    }
+
+    .badge-primary {@apply bg-primary;}
+    .badge-itemtype {@apply bg-itemtype;}
+    .badge-restricted {@apply bg-restricted;}
+    .badge-available {@apply bg-available;}
+    .badge-submitted {@apply bg-submitted;}
+    .badge-identified {@apply bg-identified text-black;}
+    .badge-coldstorage {@apply bg-coldstorage text-black;}
+    .badge-ncei {@apply bg-ncei;}
+    .badge-erddap {@apply bg-erddap;}
+}
