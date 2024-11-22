@@ -108,7 +108,12 @@ class DatasetDownloadReportController extends ReportController
 
         //process result query into an array with organized data
         $currentIndex = 0;
+        $lastTime = 0;
+        $lastUdi = '';
         foreach ($results as $result) {
+            // set up timekeeping for 30-sec window
+            $dateTime = $result['creationTimeStamp'];
+            $epochTime = (int) $dateTime->format('U');
             //initialize array with key  = udi, set title and primary POC
             if (isset($dataArray[$currentIndex]['udi']) && $result['udi'] != $dataArray[$currentIndex]['udi']) {
                 $currentIndex++;
@@ -122,8 +127,9 @@ class DatasetDownloadReportController extends ReportController
                     'totalCount' => 0,
                     'GoMRI' => 0,
                     'NonGoMRI' => 0,
-                    'fileSize' => null
+                    'fileSize' => null,
                 );
+
 
                 $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
@@ -145,13 +151,17 @@ class DatasetDownloadReportController extends ReportController
                 // get file size from dataset submission
                 $dataArray[$currentIndex]['fileSize'] = $this->getFileSize($dataset);
             }
-            //count user downloads and total download
-            if ($result['payLoad']['userType'] == 'GoMRI') {
-                $dataArray[$currentIndex]['GoMRI']++;
-            } else {
-                $dataArray[$currentIndex]['NonGoMRI']++;
+            if ((($epochTime - $lastTime) > 30) or ($result['udi'] !== $lastUdi)) {
+                //count user downloads and total download
+                if ($result['payLoad']['userType'] == 'GoMRI') {
+                    $dataArray[$currentIndex]['GoMRI']++;
+                } else {
+                    $dataArray[$currentIndex]['NonGoMRI']++;
+                }
+                $dataArray[$currentIndex]['totalCount']++;
             }
-            $dataArray[$currentIndex]['totalCount']++;
+            $lastTime = $epochTime;
+            $lastUdi = $result['udi'];
         }
         return array_merge($this->getDefaultHeaders(), $additionalHeaders, $labels, $dataArray);
     }
@@ -313,7 +323,7 @@ class DatasetDownloadReportController extends ReportController
                 ->setParameter(2, 'File Download')
                 ->getQuery();
         } else {
-            $queryString = 'SELECT dataset.udi,log.payLoad from ' .
+            $queryString = 'SELECT dataset.udi, log.payLoad, log.creationTimeStamp from ' .
                 LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
                 log.subjectEntityId = dataset.id where log.actionName = :actionName and
                 log.subjectEntityName = :subjectEntityName and
