@@ -33,7 +33,7 @@
 <div class="max-w-screen-xl mx-auto py-6">
     <div class="overflow-y-auto" x-data="{
         openTab: 1,
-        activeClasses: 'text-white bg-blue-700 cursor-pointer',
+        activeClasses: 'text-white bg-primary cursor-pointer',
         inactiveClasses: 'text-gray-500 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 cursor-pointer',
         changeTab(tab) {
             this.openTab = tab;
@@ -41,30 +41,30 @@
     }">
 
     <div class="md:flex border border-gray-300">
-        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2 w-1/4">
+        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2 w-1/4 relative">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-circle-info me-2"></i>
                 Overview
             </li>
             <li @click="changeTab(2)" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-search me-2"></i>
-                Research Groups ({{ fundingCycle.researchGroups|length }})
+                Research Groups <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.researchGroups|length }}</span>
             </li>
             <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-database me-2"></i>
-                Datasets ({{ fundingCycle.datasets|length }})
+                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.datasets|length }}</span>
             </li>
             <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-user me-2"></i>
-                People ({{ fundingCycle.people|length }})
+                People <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.people|length }}</span>
             </li>
             <li @click="changeTab(5)" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-book me-2"></i>
-                Publications ({{ publications|length }})
+                Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ publications|length }}</span>
             </li>
             <li @click="changeTab(6)" :class="openTab === 6 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-download me-2"></i>
-                Information Products ({{ informationProducts|length }})
+                Information Products <span class="badge badge-pill badge-secondary absolute end-4">{{ informationProducts|length }}</span>
             </li>
         </ul>
 
