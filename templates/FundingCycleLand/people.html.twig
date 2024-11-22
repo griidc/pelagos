@@ -1,7 +1,4 @@
-<h3>People associated with {{ fundingCycle.name }}</h3>
-
-
-{% for person in fundingCycle.people | sortBy(["lastName", "firstName"]) %}
+{% for person in people %}
     <div class="card">
         <h4>{{ person.firstName }} {{ person.lastName }}</h4>
         <p>
