@@ -4,7 +4,7 @@
     {% if publication.doi is not empty %}
         <a href="https://doi.org/{{ publication.doi }}" target="_blank" class="block">
     {% endif %}
-    <div class="publication p-4 rounded-lg mb-4 border-black shadow-lg">
+    <div class="publication card">
         <p>{{ publication.citationText|default }}</p>
     </div>
     {% if publication.doi is not empty %}

@@ -1,7 +1,7 @@
 <h3>Information Products associated with {{ fundingCycle.name }}</h3>
 
     {% for informationProduct in informationProducts %}
-        <div class="p-4 rounded-lg mb-4 border-black shadow-lg">
+        <div class="card">
             <p>{{ informationProduct.title }}</p>
             <p>
                 Creators: {{ informationProduct.creators }}<br />
