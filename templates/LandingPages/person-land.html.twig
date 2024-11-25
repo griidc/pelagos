@@ -68,6 +68,28 @@
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
                 <h3>{{ person.firstName }} {{ person.lastName }}</h3>
             </div>
+            {% for researchGroup in person.researchGroups %}
+            <div>
+                Funding Organization: {{ researchGroup.fundingCycle.fundingOrganization.name }}
+            </div>
+            <div>
+                Research Group: {{ researchGroup.name }}
+            </div>
+
+            <br />
+            {% endfor %}
+            <div>
+                {{ person.position }}
+            </div>
+            <div>
+                {{ person.deliveryPoint }}<br />
+                {{ person.city }}, {{ person.administrativeArea }} {{ person.postalCode }}<br />
+                {{ person.country }}
+            </div>
+            <div>
+                email: {{ person.emailAddress }}
+            </div>
+            <br />
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': person.researchGroups} %}
             </div>
