@@ -2,6 +2,7 @@
         <a href="{{ path('pelagos_app_ui_info_product_landing', { 'id': informationProduct.id }) }}" target="_blank" class="block">
             <div class="card">
                 <div>
+                    <span class="badge badge-itemtype">Information Product</span>
                     {% for productType in informationProduct.productTypeDescriptors %}
                         <span class="badge badge-available mr-1">{{ productType.description }}</span>
                     {% endfor %}
@@ -19,7 +20,7 @@
                         <div class="text-right">{{ informationProduct.remoteUriHostname }}</div>
                     {% endif %}
                     {% if informationProduct.file %}
-                        <div class="text-right">{{ informationProduct.file.fileExtension }} ({{ informationProduct.file.fileSize|default(0)|formatBytes }})</div>
+                        <div class="text-right min-w-fit">{{ informationProduct.file.fileExtension }} ({{ informationProduct.file.fileSize|default(0)|formatBytes }})</div>
                     {% endif %}
                 </div>
             </div>
