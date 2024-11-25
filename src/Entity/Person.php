@@ -877,13 +877,13 @@ class Person extends Entity
     public function getPublications(): Collection
     {
         $publications = new ArrayCollection();
-        // foreach ($this->personResearchGroups as $personResearchGroup) {
-        //     foreach ($personResearchGroup->getResearchGroup()->getPublications() as $publication) {
-        //         if (!$publications->contains($publication)) {
-        //             $publications->add($publication);
-        //         }
-        //     }
-        // }
+         foreach ($this->getDatasets() as $dataset) {
+             foreach ($dataset->getPublications() as $publication) {
+                 if (!$publications->contains($publication)) {
+                     $publications->add($publication);
+                 }
+             }
+         }
         return $publications;
     }
 }
