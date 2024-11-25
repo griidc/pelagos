@@ -60,7 +60,7 @@
             </li>
             <li @click="changeTab(6)" :class="openTab === 6 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-download me-2"></i>
-                {# Information Products <span class="badge badge-pill badge-secondary absolute end-4">{{ informationProducts|length }}</span> #}
+                Information Products <span class="badge badge-pill badge-secondary absolute end-4">{{ informationProducts|length }}</span>
             </li>
         </ul>
 
@@ -92,8 +92,7 @@
                 {# {% include 'LandingPages/publications.html.twig' with {'publications': person.getPublications} %} #}
             </div>
             <div :class="openTab === 6 ? 'active' : 'inactive'" class="opacity-0">
-            INFO prods?
-                {# {% include 'LandingPages/information-products.html.twig' %} #}
+                {% include 'LandingPages/information-products.html.twig' with {'informationProducts': informationProducts} %}
             </div>
         </div>
     </div>

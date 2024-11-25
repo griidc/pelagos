@@ -13,13 +13,14 @@ class PersonLandController extends AbstractController
     #[Route('/person/about/{person}', name: 'app_person_land')]
     public function index(Person $person, InformationProductRepository $informationProductRepository): Response
     {
-        // $informationProducts = $informationProductRepository->findByFundingCycle($fundingCycle);
+
+        $informationProducts = $informationProductRepository->findByPerson($person);
 
         return $this->render(
             'LandingPages/person-land.html.twig',
             [
                 'person' => $person,
-                // 'informationProducts' => $informationProducts,
+                'informationProducts' => $informationProducts,
             ]
         );
     }
