@@ -70,22 +70,33 @@
 
         <div class="p-6 rounded-lg w-3/4">
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/overview.html.twig' %}
+                <h3>{{ fundingCycle.name }}</h3>
+                <div>
+                    <p><label>Funding Organization:</label>
+                        <a href="{{ url('pelagos_app_ui_fundingorganization_default', {'id': fundingCycle.fundingOrganization.id}) }}"
+                        target="_blank" class="text-blue-600 inline-flex items-center font-medium hover:underline">
+                        {{ fundingCycle.fundingOrganization.name }}</a>
+                    </p>
+                    <p>
+                        <label>Description:</label>
+                        {{ fundingCycle.description }}
+                    </p>
+                </div>
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/research-groups.html.twig' with {'researchGroups': fundingCycle.researchGroups} %}
+                {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': fundingCycle.researchGroups} %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/datasets.html.twig' with {'datasets': fundingCycle.datasets|sortBy(["udi"])}  %}
+                {% include 'LandingPages/datasets.html.twig' with {'datasets': fundingCycle.datasets|sortBy(["udi"])}  %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/people.html.twig' with {'people': fundingCycle.people | sortBy(["lastName", "firstName"])} %}
+                {% include 'LandingPages/people.html.twig' with {'people': fundingCycle.people | sortBy(["lastName", "firstName"])} %}
             </div>
                 <div :class="openTab === 5 ? 'active' : 'inactive'" class="opacity-0">
-                    {% include 'FundingCycleLand/publications.html.twig' with {'publications': fundingCycle.getPublications} %}
+                    {% include 'LandingPages/publications.html.twig' with {'publications': fundingCycle.getPublications} %}
                 </div>
             <div :class="openTab === 6 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'FundingCycleLand/information-products.html.twig' %}
+                {% include 'LandingPages/information-products.html.twig' %}
             </div>
         </div>
     </div>

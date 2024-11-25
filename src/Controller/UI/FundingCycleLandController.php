@@ -16,7 +16,7 @@ class FundingCycleLandController extends AbstractController
         $informationProducts = $informationProductRepository->findByFundingCycle($fundingCycle);
 
         return $this->render(
-            'FundingCycleLand/index.html.twig',
+            'LandingPages/funding-cycle-land.html.twig',
             [
                 'fundingCycle' => $fundingCycle,
                 'informationProducts' => $informationProducts,
