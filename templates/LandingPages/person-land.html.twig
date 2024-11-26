@@ -66,30 +66,39 @@
 
         <div class="p-6 rounded-lg w-3/4">
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
+                <p>
                     <h3>{{ person.firstName }} {{ person.lastName }}</h3>
-                <br />
-                {% for researchGroup in person.researchGroups %}
-                <div>
-                    Funding Organization: {{ researchGroup.fundingCycle.fundingOrganization.name }}
-                </div>
-                <div>
-                    Research Group: {{ researchGroup.name }}
-                </div>
-
-                <br />
-                {% endfor %}
-                <div>
-                    {{ person.position }}
-                </div>
-                <div>
+                    <i>{{ person.position }}</i> - {{ person.organization }}<br />
+                    {{ person.emailAddress }}
+                </p>
+                <p>
+                    {{ person.phoneNumber }}<br />
                     {{ person.deliveryPoint }}<br />
                     {{ person.city }}, {{ person.administrativeArea }} {{ person.postalCode }}<br />
                     {{ person.country }}
-                </div>
-                <div>
-                    email: {{ person.emailAddress }}
-                </div>
-                <br />
+                </p>
+                <p>
+                    <br />
+                    <label>Funding Organizations:</label>
+                    {% for personResearchGroup in person.personResearchGroups %}
+                        <p>
+                            {% set researchGroup = personResearchGroup.researchGroup %}
+                            {% set researchGroupPerson = personResearchGroup.person %}
+                            {% set role = personResearchGroup.role.name %}
+                            <div>
+                                <a href="{{ url('pelagos_app_ui_fundingorganization_default', {'id': researchGroup.fundingCycle.fundingOrganization.id}) }}"
+                                    target="_blank" class="text-blue-600 inline-flex items-center font-medium hover:underline">
+                                    {{ researchGroup.fundingCycle.fundingOrganization.name }}</a>
+                            </div>
+                            <div>
+                                Research Group: {{ researchGroup.name }}<br />
+                                <i>{{ role }}</i>
+                            </div>
+                        </p>
+                    {% endfor %}
+                </p>
+
+
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': person.researchGroups} %}
