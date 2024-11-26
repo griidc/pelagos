@@ -79,7 +79,11 @@
                 </p>
                 <p>
                     <br />
-                    <label>Funding Organizations:</label>
+                    {% if person.personResearchGroups|length > 0 %}
+                        {% set plural = person.personResearchGroups|length > 1 ? 's' : '' %}
+                        <label>Funding Organization{{ plural }}:</label>
+                    {% endif %}
+
                     {% for personResearchGroup in person.personResearchGroups %}
                         <p>
                             {% set researchGroup = personResearchGroup.researchGroup %}
