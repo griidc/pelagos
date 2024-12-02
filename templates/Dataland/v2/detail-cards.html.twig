@@ -18,7 +18,11 @@
             {% if dataset.researchGroup.fundingCycle.fundingOrganization.id not in excludedFundingCycleList %}
                 <p class="card-text text-dark">
                     <u>Funding Cycle:</u> <br>
-                    <span>{{ dataset.researchGroup.fundingCycle.name }}</span>
+                    <span>
+                        <a href="{{ path('app_funding_cycle_land', {'fundingCycle': dataset.researchGroup.fundingCycle.id }) }}" target="_blank">
+                            {{ dataset.researchGroup.fundingCycle.name }}
+                        </a>
+                    </span>
                 </p>
             {% endif %}
             <p class="card-text text-dark">
