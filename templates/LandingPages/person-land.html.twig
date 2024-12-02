@@ -57,11 +57,11 @@
                 <i class="fa-solid fa-database me-2"></i>
                 Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ person.datasets|length }}</span>
             </li>
-            <li @click="changeTab(4)" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+            <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-book me-2"></i>
                 Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ person.publications|length }}</span>
             </li>
-            <li @click="changeTab(5)" :class="openTab === 6 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+            <li @click="changeTab(5)" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-download me-2"></i>
                 Information Products <span class="badge badge-pill badge-secondary absolute end-4">{{ informationProducts|length }}</span>
             </li>
