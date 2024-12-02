@@ -1,0 +1,53 @@
+{% for dataset in datasets %}
+    <a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.UDI }) }}" target="_blank" class="block">
+        <div class="card">
+            <div>
+                <span class="badge badge-itemtype">Dataset</span>
+                {% if dataset.isIdentified %}
+                <span class="badge badge-identified">Identified</span>
+                {% endif %}
+                {% if dataset.isSubmitted %}
+                <span class="badge badge-submitted">Submitted</span>
+                {% endif %}
+                {% if dataset.isRestricted %}
+                <span class="badge badge-restricted">Restricted</span>
+                {% endif %}
+                {% if dataset.isAvailable %}
+                <span class="badge badge-available">Available</span>
+                {% endif %}
+                {% if dataset.isRemotelyHosted %}
+                <span class="badge badge-remotlyhosted">Remotely Hosted</span>
+                {% endif %}
+                {% if dataset.isColdStored %}
+                <span class="badge badge-coldstorage">Cold Storage</span>
+                {% endif %}
+                {% if dataset.hasErddapUrl %}
+                <span class="badge badge-erddap">ERDDAP</span>
+                {% endif %}
+                {% if dataset.hasNceiUrl %}
+                <span class="badge badge-ncei">NCEI</span>
+                {% endif %}
+            </div>
+            <p class="mb-2 text-2xl">{{ dataset.title }}</p>
+            <div class="flex justify-between">
+                <div class="mr-4">
+                    Authors: {{ dataset.authors }}<br />
+
+                    {% if dataset.acceptedDate is not null %}
+                        Published On: {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }} <br />
+                    {% else %}
+                        Identified On: {{ dataset.dif.approvedDate|date('M d Y H:i T', 'UTC') }} <br />
+                    {% endif %}
+
+                    {% if dataset.distributionFormatName|default %}
+                        Filetype(s): {{ dataset.distributionFormatName|default }}<br />
+                    {% endif %}
+                </div>
+                <div class="text-left self-end min-w-fit">
+                    DOI: {{ dataset.DOI.doi|default }} <br />
+                    UDI: {{ dataset.UDI }} <br />
+                </div>
+            </div>
+        </div>
+    </a>
+{% endfor %}

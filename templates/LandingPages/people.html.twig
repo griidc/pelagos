@@ -1,0 +1,10 @@
+{% for person in people %}
+    <div class="card">
+        <h4>{{ person.firstName }} {{ person.lastName }}</h4>
+        <p>
+            {{ person.position }}<br />
+            {{ person.organization }}<br />
+            {{ person.emailAddress }}
+        </p>
+    </div>
+{% endfor %}
