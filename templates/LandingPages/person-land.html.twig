@@ -20,6 +20,9 @@
             height: 0;
             overflow: hidden;
         }
+        li {
+            margin-bottom: revert!important;
+        }
     </style>
 {% endblock stylesheets  %}
 
@@ -41,7 +44,7 @@
     }">
 
     <div class="md:flex border border-gray-300">
-        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 not-prose p-2 w-1/4 relative">
+        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 p-2 w-1/4 relative">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-circle-info me-2"></i>
                 Overview
@@ -101,8 +104,6 @@
                         </p>
                     {% endfor %}
                 </p>
-
-
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': person.researchGroups} %}
