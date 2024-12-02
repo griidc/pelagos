@@ -4,7 +4,7 @@
     }
 
     .badge-pill {
-        @apply rounded-full;
+        @apply rounded-full py-1 px-2 min-w-8 text-center items-center justify-center;
     }
 
     .badge-primary {@apply bg-primary text-white;}
