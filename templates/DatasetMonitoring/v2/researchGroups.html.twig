@@ -5,7 +5,8 @@
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
-    {% for dataset in researchGroup.datasets|submittedDIFs %}
+
+    {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
         data.push({
             'id': '{{ dataset.id }}',
             'title': '{{ dataset.title|e('js') }}',
@@ -148,7 +149,7 @@
                                 </svg>
                             </td>
 
-                            {% if (loop.index % 80) == 0 %}
+                            {% if (loop.index % 68) == 0 %}
                         </tr>
                         <tr style="height: 12px">
                             {% endif %}

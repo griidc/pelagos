@@ -1289,6 +1289,14 @@ class DIF extends Entity
     }
 
     /**
+     * Return if DIF is approved.
+     */
+    public function isApproved(): bool
+    {
+        return self::STATUS_APPROVED === $this->status;
+    }
+
+    /**
      * Whether or not this DIF can be rejected.
      *
      * @return bool true if this DIF can be rejected, False otherwise

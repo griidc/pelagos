@@ -577,10 +577,8 @@ class Account extends Entity implements UserInterface, EquatableInterface
      * Does nothing because aren't keeping the plaintext password in the Account object.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
-     *
-     * @return void
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 

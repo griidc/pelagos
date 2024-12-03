@@ -5,13 +5,13 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
-use App\Entity\FileSet;
+use App\Entity\Fileset;
 use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -19,41 +19,22 @@ use Symfony\Component\Messenger\MessageBusInterface;
 /**
  * Command Class to migrate existing dataset files to new store.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:migrate-dataset-files', description: 'This command will migrate the datastore to the new datastore.')]
 class PelagosMigrateDatasetFilesCommand extends Command
 {
-    protected static $defaultName = 'pelagos:migrate-dataset-files';
-
-    /**
-     * A Doctrine ORM EntityManager instance.
-     *
-     * @var EntityManagerInterface $entityManager
-     */
-    protected $entityManager;
-
-    /**
-     * The message bus for dispatching the filer message.
-     *
-     * @var MessageBusInterface $messageBus
-     */
-    protected $messageBus;
-
     /**
      * This contains a list of submission IDs that need to be queued to filer.
-     *
-     * @var Array $submissionsListForFiler
      */
-    protected $submissionsListForFiler = array();
+    protected array $submissionsListForFiler = [];
 
     /**
      * Class constructor for dependency injection.
      *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param MessageBusInterface    $messageBus    The messenger bus.
+     * @param EntityManagerInterface $entityManager a Doctrine EntityManager
+     * @param MessageBusInterface    $messageBus    the messenger bus
      */
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly MessageBusInterface $messageBus)
     {
-        $this->entityManager = $entityManager;
-        $this->messageBus = $messageBus;
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
@@ -65,7 +46,6 @@ class PelagosMigrateDatasetFilesCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('This command will migrate the datastore to the new datastore.')
             ->addOption('qf', null, InputOption::VALUE_NONE, 'Queue Dataset to Filer')
             ->addOption('ifc', null, InputOption::VALUE_NONE, 'Do not check if dataset file exist on disk.')
         ;
@@ -74,10 +54,10 @@ class PelagosMigrateDatasetFilesCommand extends Command
     /**
      * The symfony command execute function.
      *
-     * @param InputInterface  $input  The Symfony Console Input.
-     * @param OutputInterface $output The Symfony Console Output.
+     * @param InputInterface  $input  the Symfony Console Input
+     * @param OutputInterface $output the Symfony Console Output
      *
-     * @return int Return code.
+     * @return int return code
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -97,7 +77,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
         $progressBar = new ProgressBar($output, count($datasets));
         $progressBar->start();
 
-        $listOfDrafts = array();
+        $listOfDrafts = [];
 
         foreach ($datasets as $dataset) {
             $udi = $dataset->getUdi();
@@ -111,8 +91,8 @@ class PelagosMigrateDatasetFilesCommand extends Command
             if ($lastDatasetSubmission instanceof DatasetSubmission) {
                 $subState = $lastDatasetSubmission->getStatus();
                 $fileUri = $lastDatasetSubmission->getDatasetFileUri();
-                if ($subState === DatasetSubmission::STATUS_INCOMPLETE and !empty($fileUri)) {
-                    $listOfDrafts[] = array('udi' => $udi, 'fileUri' => $fileUri);
+                if (DatasetSubmission::STATUS_INCOMPLETE === $subState and !empty($fileUri)) {
+                    $listOfDrafts[] = ['udi' => $udi, 'fileUri' => $fileUri];
                 }
             }
 
@@ -133,7 +113,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
         $io->section('Queuing Filer');
         $this->submissionsListForFiler = array_unique($this->submissionsListForFiler);
-        $io->note(sprintf('Files For Queue %d.', count(($this->submissionsListForFiler))));
+        $io->note(sprintf('Files For Queue %d.', count($this->submissionsListForFiler)));
 
         foreach ($this->submissionsListForFiler as $datasetSubmissionId) {
             $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmissionId);
@@ -148,16 +128,16 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
         $io->success('Done!');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
      * Set file data for the dataset submission.
      *
-     * @param String             $dataStore            The path to the datatore.
-     * @param bool               $queueFiler           Should this also be queued to the filer.
-     * @param bool               $ignoreFileExistCheck If checking for file exist should be ignored.
-     * @param DatasetSubmission  $datasetSubmission    The Dataset Submission to process.
+     * @param string            $dataStore            the path to the datatore
+     * @param bool              $queueFiler           should this also be queued to the filer
+     * @param bool              $ignoreFileExistCheck if checking for file exist should be ignored
+     * @param DatasetSubmission $datasetSubmission    the Dataset Submission to process
      *
      * @return void
      */
@@ -165,7 +145,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
         string $dataStore,
         bool $queueFiler,
         bool $ignoreFileExistCheck,
-        DatasetSubmission $datasetSubmission = null
+        ?DatasetSubmission $datasetSubmission = null
     ) {
         if ($datasetSubmission instanceof DatasetSubmission) {
             $udi = $datasetSubmission->getDataset()->getUdi();
@@ -195,7 +175,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
             $newFileset->addFile($file);
             $datasetSubmission->setFileset($newFileset);
 
-            if ($queueFiler === true) {
+            if (true === $queueFiler) {
                 $this->submissionsListForFiler[] = $datasetSubmission->getId();
             }
         }
@@ -204,9 +184,9 @@ class PelagosMigrateDatasetFilesCommand extends Command
     /**
      * Get the file data from the submission, because the settings have been forwarded.
      *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to process.
+     * @param DatasetSubmission $datasetSubmission the Dataset Submission to process
      *
-     * @return array An array of file data fields.
+     * @return array an array of file data fields
      */
     protected function getFileData(DatasetSubmission $datasetSubmission)
     {

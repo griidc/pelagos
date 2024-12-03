@@ -21,7 +21,6 @@ use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * A handler for entities.
@@ -36,13 +35,6 @@ class EntityHandler
      * @var EntityManagerInterface
      */
     private $entityManager;
-
-    /**
-     * The Symfony Security component.
-     *
-     * @var Security
-     */
-    private $security;
 
     /**
      * The authorization checker to use in this entity handler.
@@ -79,20 +71,17 @@ class EntityHandler
      * Constructor for EntityHandler.
      *
      * @param EntityManagerInterface        $entityManager         The entity manager to use.
-     * @param Security                      $security              The Symfony Security component.
      * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
      * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
      * @param FundingOrgFilter              $fundingOrgFilter      Utility to filter by funding organization.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Security $security,
         AuthorizationCheckerInterface $authorizationChecker,
         EntityEventDispatcher $entityEventDispatcher,
         FundingOrgFilter $fundingOrgFilter
     ) {
         $this->entityManager = $entityManager;
-        $this->security = $security;
         $this->authorizationChecker = $authorizationChecker;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->fundingOrgFilter = $fundingOrgFilter;
