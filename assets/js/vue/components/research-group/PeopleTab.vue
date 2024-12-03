@@ -37,7 +37,7 @@ export default {
     openUrl(person) {
       window.open(
         // eslint-disable-next-line no-undef
-        `${Routing.generate('app_person_land', { person: person.person.id })}`, '_blank'
+        `${Routing.generate('app_person_land', { person: person.person.id })}`, '_blank',
       );
     },
   },
