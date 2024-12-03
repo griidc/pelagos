@@ -44,25 +44,20 @@
     }">
 
     <div class="md:flex border border-gray-300">
-        <ul class="flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 p-2 w-1/4 relative">
+        <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 p-2 w-1/4 relative text-lg">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                <i class="fa-solid fa-circle-info me-2"></i>
                 Overview
             </li>
             <li @click="changeTab(2)" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                <i class="fa-solid fa-people-group me-2"></i>
                 Research Groups <span class="badge badge-pill badge-secondary absolute end-4">{{ person.researchGroups|length }}</span>
             </li>
             <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                <i class="fa-solid fa-database me-2"></i>
                 Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ person.datasets|length }}</span>
             </li>
             <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                <i class="fa-solid fa-book me-2"></i>
                 Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ person.publications|length }}</span>
             </li>
             <li @click="changeTab(5)" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                <i class="fa-solid fa-download me-2"></i>
                 Information Products <span class="badge badge-pill badge-secondary absolute end-4">{{ informationProducts|length }}</span>
             </li>
         </ul>
