@@ -1,12 +1,16 @@
-{% for person in people %}
-    <a href="{{ path('app_person_land', { 'person': person.id }) }}" class="block">
-        <div class="card">
-            <h4>{{ person.firstName }} {{ person.lastName }}</h4>
-            <p>
-                {{ person.position }}<br />
-                {{ person.organization }}<br />
-                {{ person.emailAddress }}
-            </p>
-        </div>
-    </a>
-{% endfor %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for person in people %}
+        <a href="{{ path('app_person_land', { 'person': person.id }) }}" class="block" target="_blank">
+            <div class="card p-4 border rounded shadow min-h-[250px]">
+                <p>
+                    <span class="text-2xl">{{ person.firstName }} {{ person.lastName }}</span><br />
+                    <span class="text-stone-500 text-base">{{ person.position }}</span><br />
+                    {{ person.organization }}<br />
+                </p>
+                <p>
+                    <span class="text-stone-500 break-words">{{ person.emailAddress }}</span>
+                </p>
+            </div>
+        </a>
+    {% endfor %}
+</div>
