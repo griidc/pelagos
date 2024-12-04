@@ -7,23 +7,6 @@
     {{ encore_entry_link_tags('person-land') }}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <style>
-        .active {
-            transition: opacity 0.25s ease-in-out;
-            opacity: 1;
-            height: auto;
-        }
-        .inactive {
-            transition: opacity 0.25s ease-in-out;
-            opacity: 0.5;
-            height: 0;
-            overflow: hidden;
-        }
-        li {
-            margin-bottom: revert!important;
-        }
-    </style>
 {% endblock stylesheets  %}
 
 {% block javascripts %}
@@ -34,17 +17,10 @@
 
 {% block body %}
 <div class="max-w-screen-xl mx-auto py-6">
-    <div class="overflow-y-auto" x-data="{
-        openTab: 1,
-        activeClasses: 'text-white bg-primary cursor-pointer',
-        inactiveClasses: 'text-gray-500 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 cursor-pointer',
-        changeTab(tab) {
-            this.openTab = tab;
-        }
-    }">
+    {% include 'LandingPages/changeTab.html.twig' %}
 
     <div class="md:flex border border-gray-300">
-        <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-gray-50 p-2 w-1/4 relative text-lg">
+        <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 w-1/4 relative text-lg">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 Overview
             </li>
