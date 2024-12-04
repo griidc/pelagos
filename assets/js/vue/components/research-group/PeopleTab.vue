@@ -4,7 +4,8 @@
                 v-for="person in sortedPeople"
                 :key="person.id"
                 :title="person.person.firstName + ' ' + person.person.lastName"
-                :sub-title="person.label" style="min-width: 18rem; max-width: 27rem">
+                :sub-title="person.label" style="min-width: 18rem; max-width: 27rem"
+                @click="openUrl(person)">
             <b-card-text v-tooltip="{
                             content: person.person.organization,
                             placement:'top'
@@ -31,6 +32,14 @@ export default {
   },
   created() {
     this.sortedPeople = this.$options.filters.sort('person.lastName', this.personResearchGroups);
+  },
+  methods: {
+    openUrl(person) {
+      window.open(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('app_person_land', { person: person.person.id })}`, '_blank',
+      );
+    },
   },
 };
 </script>
