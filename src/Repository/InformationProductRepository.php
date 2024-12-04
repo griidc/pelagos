@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\FundingCycle;
 use App\Entity\InformationProduct;
+use App\Entity\Person;
 use App\Entity\ProductTypeDescriptor;
 use App\Util\FundingOrgFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -57,10 +58,27 @@ class InformationProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find by research group ids.
+     * Find by person.
      *
-     * @param array $researchGroupIds Research group ids associated.
-     *
+     * @return array
+     */
+    public function findByPerson(Person $person): array
+    {
+        $qb = $this->createQueryBuilder('informationProduct');
+        return $qb
+            ->innerJoin('informationProduct.researchGroups', 'researchGroup')
+            ->innerJoin('researchGroup.personResearchGroups', 'personResearchGroup')
+            ->innerJoin('personResearchGroup.person', 'person')
+            ->where('person.id = :personId')
+            ->setParameter('personId', $person->getId())
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Find by funding cycle.
+
      * @return array
      */
     public function findByFundingCycle(FundingCycle $fundingCycle): array
