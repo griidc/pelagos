@@ -731,6 +731,50 @@ class Dataset extends Entity
     }
 
     /**
+     * Check if dataset is Identified.
+     */
+    public function isIdentified(): bool
+    {
+        return $this->getDatasetLifecycleStatus() == DatasetLifecycleStatus::IDENTIFIED;
+    }
+
+    /**
+     * Check if dataset is Submitted.
+     */
+    public function isSubmitted(): bool
+    {
+        return $this->getDatasetLifecycleStatus() == DatasetLifecycleStatus::SUBMITTED;
+    }
+
+    /**
+     * Check if Dataset is in Cold Storage.
+     */
+    public function isColdStored(): bool
+    {
+        if ($this->getDatasetSubmission() instanceof DatasetSubmission) {
+            return $this->getDatasetSubmission()->isDatasetFileInColdStorage();
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if Dataset has ERDDAP URL.
+     */
+    public function hasErddapUrl(): bool
+    {
+        return $this->getDatasetSubmission()?->getErddapUrl() !== null;
+    }
+
+    /**
+     * Check if Dataset has NCEI URL.
+     */
+    public function hasNceiUrl(): bool
+    {
+        return $this->getDatasetSubmission()?->getNceiUrl() !== null;
+    }
+
+    /**
      * Whether this Dataset is remotely hosted.
      */
     public function isRemotelyHosted(): bool

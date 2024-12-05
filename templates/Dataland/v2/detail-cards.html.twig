@@ -10,19 +10,23 @@
         </div>
         <div class="card-body">
             <p class="card-text text-dark">
-                <u>Funded By:</u> <br>
+                <u>Funded By:</u> <br />
                 {% for funder in dataset.funders|default %}
-                    <span> {{ funder.name }}</span><br>
+                    <span> {{ funder.name }}</span><br />
                 {% endfor %}
             </p>
             {% if dataset.researchGroup.fundingCycle.fundingOrganization.id not in excludedFundingCycleList %}
                 <p class="card-text text-dark">
-                    <u>Funding Cycle:</u> <br>
-                    <span>{{ dataset.researchGroup.fundingCycle.name }}</span>
+                    <u>Funding Cycle:</u> <br />
+                    <span>
+                        <a href="{{ path('app_funding_cycle_land', {'fundingCycle': dataset.researchGroup.fundingCycle.id }) }}" target="_blank">
+                            {{ dataset.researchGroup.fundingCycle.name }}
+                        </a>
+                    </span>
                 </p>
             {% endif %}
             <p class="card-text text-dark">
-                <u>Research Group:</u> <br>
+                <u>Research Group:</u> <br />
                 <span>
                     <a href="{{ path('pelagos_app_ui_researchgroup_about', {'id': dataset.researchGroup.id }) }}" target="_blank">
                         {{ dataset.researchGroup.name }}

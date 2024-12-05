@@ -1,0 +1,14 @@
+.active {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 1;
+    height: auto;
+}
+.inactive {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 0.5;
+    height: 0;
+    overflow: hidden;
+}
+li {
+    margin-bottom: revert!important;
+}

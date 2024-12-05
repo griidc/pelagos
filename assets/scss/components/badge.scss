@@ -1,0 +1,21 @@
+@layer components {
+    .badge {
+        @apply inline-flex items-center gap-x-1.5 py-1 px-2 rounded-md text-xs font-medium bg-blue-600 text-white shadow-sm font-bold text-[13.5px];
+    }
+
+    .badge-pill {
+        @apply rounded-full gap-x-1 py-1 px-2 min-w-8 text-center items-center justify-center;
+    }
+
+    .badge-primary {@apply bg-primary text-white;}
+    .badge-secondary {@apply bg-secondary text-white;}
+    .badge-alternate {@apply bg-alternate text-white;}
+    .badge-itemtype {@apply bg-itemtype text-white;}
+    .badge-restricted {@apply bg-restricted text-white;}
+    .badge-available {@apply bg-available text-white;}
+    .badge-submitted {@apply bg-submitted text-white;}
+    .badge-identified {@apply bg-identified text-black;}
+    .badge-coldstorage {@apply bg-coldstorage text-black;}
+    .badge-ncei {@apply bg-ncei text-white;}
+    .badge-erddap {@apply bg-erddap text-black;}
+}
