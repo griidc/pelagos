@@ -46,7 +46,11 @@
                 <div class="text-left self-end min-w-60">
                     DOI: {{ dataset.DOI.doi|default }} <br />
                     UDI: {{ dataset.UDI }} <br />
-                    File Size: {{ dataset.totalFileSize|formatBytes }} <br />
+                    {% if dataset.isColdStored %}
+                        File Size: {{ dataset.datasetSubmission.datasetFileColdStorageArchiveSize|formatBytes }} <br />
+                    {% elseif dataset.isRemotelyHosted == false %}
+                        File Size: {{ dataset.totalFileSize|formatBytes }} <br />
+                    {% endif %}
                 </div>
             </div>
         </div>
