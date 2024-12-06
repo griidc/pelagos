@@ -42,7 +42,7 @@
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
                 <p>
                     <h3>{{ person.firstName }} {{ person.lastName }}</h3>
-                    <i>{{ person.position }}</i> - {{ person.organization }}<br />
+                    {{ person.position }} - {{ person.organization }}<br />
                     {{ person.emailAddress }}
                 </p>
                 <p>
@@ -62,7 +62,6 @@
                         <p>
                             {% set researchGroup = personResearchGroup.researchGroup %}
                             {% set researchGroupPerson = personResearchGroup.person %}
-                            {% set role = personResearchGroup.role.name %}
                             <div>
                                 <a href="{{ url('pelagos_app_ui_fundingorganization_default', {'id': researchGroup.fundingCycle.fundingOrganization.id}) }}"
                                     target="_blank" class="text-blue-600 inline-flex items-center font-medium hover:underline">
@@ -70,7 +69,6 @@
                             </div>
                             <div>
                                 Research Group: {{ researchGroup.name }}<br />
-                                <i>{{ role }}</i>
                             </div>
                         </p>
                     {% endfor %}
