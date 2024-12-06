@@ -3,12 +3,6 @@
         <a class="pagelink" href="{{ path('pelagos_app_ui_researchgroup_about', {'id': researchGroup.id}) }}" target="_blank" class="no-underline">
             <h4>{{ researchGroup.name }}</h4>
         </a>
-        <p>
-            <label>Project Director:</label>
-            {% for projectDirector in researchGroup.getProjectDirectors %}
-                {{ projectDirector.lastName }}, {{ projectDirector.firstName }}
-            {% endfor %}
-        </p>
         {% if researchGroup.description %}
             <p>
                 <label>Description:</label>
