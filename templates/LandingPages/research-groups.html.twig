@@ -1,13 +1,22 @@
 {% for researchGroup in researchGroups %}
-    <div class="card">
-        <a class="pagelink" href="{{ path('pelagos_app_ui_researchgroup_about', {'id': researchGroup.id}) }}" target="_blank" class="no-underline">
-            <h4>{{ researchGroup.name }}</h4>
-        </a>
-        {% if researchGroup.description %}
-            <p>
-                <label>Description:</label>
-                {{ researchGroup.description }}
-            </p>
-        {% endif %}
-    </div>
+    <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'id': researchGroup.id }) }}" target="_blank" class="block">
+        <div class="card">
+                <h4>{{ researchGroup.name }}<br /></h4>
+            </a>
+            {% if researchGroup.description %}
+                <p>
+                    <label>Description:</label>
+                    {{ researchGroup.description }}<br />
+                </p>
+            {% endif %}
+            {% if researchGroup.fundingCycle %}
+                <label>Funding Cycle:</label>
+                {{ researchGroup.fundingCycle.name }}<br />
+            {% endif %}
+            {% if researchGroup.fundingCycle.fundingOrganization %}
+                <label>Funding Organization:</label>
+                {{ researchGroup.fundingCycle.fundingOrganization.name }}<br />
+            {% endif %}
+        </div>
+   </a>
 {% endfor %}
