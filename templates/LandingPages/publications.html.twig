@@ -1,4 +1,4 @@
-{% for publication in publications %}
+{% for publication in publications|sortBy(['citationText']) %}
     {% if publication.doi is not empty %}
         <a href="https://doi.org/{{ publication.doi }}" target="_blank" class="block">
     {% endif %}
