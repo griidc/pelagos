@@ -41,7 +41,7 @@ class LandingController extends AbstractController
         );
     }
 
-    #[Route('/researchgroup/about/{researchGroup}', name: 'app_research_group_land')]
+    #[Route('/research-group/about/{researchGroup}', name: 'pelagos_app_ui_researchgroup_about')]
     public function researchGroupLand(ResearchGroup $researchGroup, InformationProductRepository $informationProductRepository): Response
     {
 
