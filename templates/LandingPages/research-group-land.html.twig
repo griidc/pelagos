@@ -1,5 +1,5 @@
 {% extends "base.html.twig" %}
-{% block title %}Funding Cycle Page{% endblock title %}
+{% block title %}Research Group{% endblock title %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -18,23 +18,20 @@
 {% block body %}
 <div class="max-w-screen-xl mx-auto py-6 prose">
     {% include 'LandingPages/changeTab.html.twig' %}
-    <h2>Funding Cycle</h2>
+    <h2>Research Group</h2>
     <div class="md:flex border border-gray-300">
         <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 w-1/4 relative text-lg">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 Overview
             </li>
-            <li @click="changeTab(2)" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                Research Groups <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.researchGroups|length }}</span>
-            </li>
             <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.datasets|length }}</span>
+                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ researchGroup.datasets|length }}</span>
             </li>
             <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                People <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.people|length }}</span>
+                People <span class="badge badge-pill badge-secondary absolute end-4">{{ researchGroup.people|length }}</span>
             </li>
             <li @click="changeTab(5)" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.getPublications|length }}</span>
+                Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ researchGroup.getPublications|length }}</span>
             </li>
             <li @click="changeTab(6)" :class="openTab === 6 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 Information Products <span class="badge badge-pill badge-secondary absolute end-4">{{ informationProducts|length }}</span>
@@ -43,34 +40,40 @@
 
         <div class="p-6 rounded-lg w-3/4">
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
-                <h3>{{ fundingCycle.name }}</h3>
-                <div>
-                    <p><label>Funding Organization:</label>
-                        {% if fundingCycle.fundingOrganization.url %}
-                            <a class="pagelink" href="{{ fundingCycle.fundingOrganization.url }}" target="_blank">
-                                {{ fundingCycle.fundingOrganization.name }}
-                            </a>
-                        {% else %}
-                            {{ fundingCycle.fundingOrganization.name }}
-                        {% endif %}
+                <div class="text-2xl font-medium">{{ researchGroup.name }}</div>
+                <hr class="my-2">
+                <div class="text-lg">
+                    <p>
+                        <label>Project Director:</label>
+                        {{ researchGroup.projectDirectors|join(', ') }}
                     </p>
+
+                    <p>
+                        <label>Funding Organization:</label>
+                        <a class="pagelink" href="{{researchGroup.fundingCycle.fundingOrganization.url}}">
+                            {{ researchGroup.fundingCycle.fundingOrganization.name }}
+                        </a>
+                    </p>
+
+                    <p>
+                        <label>Funding Cycles:</label>
+                        {{ researchGroup.fundingCycle.name }}
+                    </p>
+
                     <p>
                         <label>Description:</label>
-                        {{ fundingCycle.description }}
+                        {{ researchGroup.description }}
                     </p>
                 </div>
             </div>
-            <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': fundingCycle.researchGroups} %}
-            </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'LandingPages/datasets.html.twig' with {'datasets': fundingCycle.datasets|sortBy(["udi"])}  %}
+                {% include 'LandingPages/datasets.html.twig' with {'datasets': researchGroup.datasets|sortBy(["udi"])}  %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'LandingPages/people.html.twig' with {'people': fundingCycle.people | sortBy(["lastName", "firstName"])} %}
+                {% include 'LandingPages/people.html.twig' with {'people': researchGroup.people | sortBy(["lastName", "firstName"])} %}
             </div>
                 <div :class="openTab === 5 ? 'active' : 'inactive'" class="opacity-0">
-                    {% include 'LandingPages/publications.html.twig' with {'publications': fundingCycle.getPublications} %}
+                    {% include 'LandingPages/publications.html.twig' with {'publications': researchGroup.getPublications} %}
                 </div>
             <div :class="openTab === 6 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'LandingPages/information-products.html.twig' %}
