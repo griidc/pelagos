@@ -48,7 +48,7 @@
                     UDI: {{ dataset.UDI }} <br />
                     {% if dataset.isColdStored %}
                         File Size: {{ dataset.datasetSubmission.datasetFileColdStorageArchiveSize|formatBytes }} <br />
-                    {% elseif dataset.isRemotelyHosted == false %}
+                    {% elseif dataset.isRemotelyHosted == false and dataset.totalFileSize > 0 %}
                         File Size: {{ dataset.totalFileSize|formatBytes }} <br />
                     {% endif %}
                 </div>
