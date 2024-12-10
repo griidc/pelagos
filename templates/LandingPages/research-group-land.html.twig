@@ -50,14 +50,16 @@
 
                     <p>
                         <label>Funding Organization:</label>
-                        <a class="pagelink" href="{{researchGroup.fundingCycle.fundingOrganization.url}}">
+                        <a href="{{researchGroup.fundingCycle.fundingOrganization.url}}" target="_blank" class="pagelink">
                             {{ researchGroup.fundingCycle.fundingOrganization.name }}
                         </a>
                     </p>
 
                     <p>
                         <label>Funding Cycles:</label>
-                        {{ researchGroup.fundingCycle.name }}
+                        <a href="{{ path('app_funding_cycle_land', { 'fundingCycle': researchGroup.fundingCycle.id }) }}" target="_blank" class="pagelink">
+                            {{ researchGroup.fundingCycle.name }}
+                        </a>
                     </p>
 
                     <p>
