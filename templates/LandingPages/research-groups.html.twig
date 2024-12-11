@@ -1,6 +1,6 @@
 {% for researchGroup in researchGroups %}
-    <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': researchGroup.id }) }}" target="_blank" class="block">
-        <div class="card">
+        <div class="card cursor-pointer">
+            <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': researchGroup.id }) }}" target="_blank" class="block"></a>
             <h4>{{ researchGroup.name }}<br /></h4>
             {% if researchGroup.description %}
                 <p>
@@ -17,5 +17,4 @@
                 {{ researchGroup.fundingCycle.fundingOrganization.name }}<br />
             {% endif %}
         </div>
-    </a>
 {% endfor %}
