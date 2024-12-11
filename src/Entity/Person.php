@@ -824,7 +824,7 @@ class Person extends Entity
      */
     public function __toString()
     {
-        return (string) $this->id;
+        return (string) $this->getFirstName() . ' ' . $this->getLastName();
     }
 
     /**
