@@ -1,11 +1,9 @@
 {% for publication in publications|sortBy(['citationText']) %}
+
+    <div class="publication card cursor-pointer">
     {% if publication.doi is not empty %}
-        <a href="https://doi.org/{{ publication.doi }}" target="_blank" class="block">
+        <a href="https://doi.org/{{ publication.doi }}" target="_blank" class="block"></a>
     {% endif %}
-    <div class="publication card">
         <p>{{ publication.citationText|default }}</p>
     </div>
-    {% if publication.doi is not empty %}
-        </a>
-    {% endif %}
 {% endfor %}
