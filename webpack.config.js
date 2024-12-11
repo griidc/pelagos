@@ -51,8 +51,7 @@ Encore
   .addEntry('info-prod-landing', './assets/js/entry/info-prod-landing.js')
   .addEntry('multi-search-app', './assets/js/entry/multi-search.js')
   .addEntry('dataset-monitoring', './assets/js/entry/dataset-monitoring.js')
-  .addEntry('funding-cycle-land', './assets/js/entry/funding-cycle-land.js')
-  .addEntry('person-land', './assets/js/entry/person-land.js')
+  .addEntry('landing-page', './assets/js/entry/landing-page.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
