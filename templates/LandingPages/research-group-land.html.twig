@@ -46,6 +46,7 @@
                     <p>
                         <label>Project Director:</label>
                         {{ researchGroup.projectDirectors|join(', ') }}
+                        {# using Join instead of for each, because person is now a string #}
                     </p>
 
                     <p>
