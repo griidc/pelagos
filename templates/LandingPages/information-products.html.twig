@@ -1,6 +1,6 @@
     {% for informationProduct in informationProducts %}
-        <a href="{{ path('pelagos_app_ui_info_product_landing', { 'id': informationProduct.id }) }}" target="_blank" class="block">
-            <div class="card">
+            <div class="card cursor-pointer">
+            <a href="{{ path('pelagos_app_ui_info_product_landing', { 'id': informationProduct.id }) }}" target="_blank" class="block"></a>
                 <div>
                     <span class="badge badge-itemtype">Information Product</span>
                     {% for productType in informationProduct.productTypeDescriptors %}
@@ -26,5 +26,4 @@
                     </div>
                 </div>
             </div>
-        </a>
     {% endfor %}

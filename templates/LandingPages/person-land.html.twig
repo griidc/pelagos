@@ -1,10 +1,10 @@
 {% extends "base.html.twig" %}
-{% block title %}Person Page{% endblock title %}
+{% block title %}Person Profile{% endblock title %}
 
 {% block stylesheets %}
     {{ parent() }}
 
-    {{ encore_entry_link_tags('person-land') }}
+    {{ encore_entry_link_tags('landing-page') }}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock stylesheets  %}
@@ -12,13 +12,13 @@
 {% block javascripts %}
     {{ parent() }}
 
-    {{ encore_entry_script_tags('person-land') }}
+    {{ encore_entry_script_tags('landing-page') }}
 {% endblock javascripts %}
 
 {% block body %}
-<div class="max-w-screen-xl mx-auto py-6">
+<div class="max-w-screen-xl mx-auto py-6 prose">
     {% include 'LandingPages/changeTab.html.twig' %}
-
+    <h2>Person Profile</h2>
     <div class="md:flex border border-gray-300">
         <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 w-1/4 relative text-lg">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
@@ -42,38 +42,9 @@
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
                 <p>
                     <h3>{{ person.firstName }} {{ person.lastName }}</h3>
-                    <i>{{ person.position }}</i> - {{ person.organization }}<br />
+                    {{ person.position }}<br />
+                    {{ person.organization }}<br />
                     {{ person.emailAddress }}
-                </p>
-                <p>
-                    {{ person.phoneNumber }}<br />
-                    {{ person.deliveryPoint }}<br />
-                    {{ person.city }}, {{ person.administrativeArea }} {{ person.postalCode }}<br />
-                    {{ person.country }}
-                </p>
-                <p>
-                    <br />
-                    {% if person.personResearchGroups|length > 0 %}
-                        {% set plural = person.personResearchGroups|length > 1 ? 's' : '' %}
-                        <label>Funding Organization{{ plural }}:</label>
-                    {% endif %}
-
-                    {% for personResearchGroup in person.personResearchGroups %}
-                        <p>
-                            {% set researchGroup = personResearchGroup.researchGroup %}
-                            {% set researchGroupPerson = personResearchGroup.person %}
-                            {% set role = personResearchGroup.role.name %}
-                            <div>
-                                <a href="{{ url('pelagos_app_ui_fundingorganization_default', {'id': researchGroup.fundingCycle.fundingOrganization.id}) }}"
-                                    target="_blank" class="text-blue-600 inline-flex items-center font-medium hover:underline">
-                                    {{ researchGroup.fundingCycle.fundingOrganization.name }}</a>
-                            </div>
-                            <div>
-                                Research Group: {{ researchGroup.name }}<br />
-                                <i>{{ role }}</i>
-                            </div>
-                        </p>
-                    {% endfor %}
                 </p>
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">

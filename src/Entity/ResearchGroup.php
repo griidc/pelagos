@@ -616,6 +616,40 @@ class ResearchGroup extends Entity
     }
 
     /**
+     * Get People for this Research Group.
+     */
+    public function getPeople(): Collection
+    {
+        $people = new ArrayCollection();
+        foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
+            $people->add($personResearchGroup->getPerson());
+        }
+
+        return $people;
+    }
+
+    /**
+     * Get publications for this Research Group.
+     */
+    public function getPublications(): Collection
+    {
+        $publications = new ArrayCollection();
+        foreach ($this->getDatasets() as $dataset) {
+            foreach ($dataset->getDatasetPublications() as $datasetPublication) {
+                foreach ($dataset->getPublications() as $publication) {
+                    if (!$publications->contains($publication)) {
+                        $publications->add($publication);
+                    }
+                }
+            }
+        }
+
+        return $publications;
+    }
+
+
+
+    /**
      * Check if this ResearchGroup is deletable.
      *
      * This method throws a NotDeletableException when the ResearchGroup has associated
