@@ -277,7 +277,10 @@ class FundingCycle extends Entity
 
         foreach ($this->getResearchGroups() as $researchGroup) {
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
-                $people->add($personResearchGroup->getPerson());
+                $person = $personResearchGroup->getPerson();
+                if (!$people->contains($person)) {
+                    $people->add($person);
+                }
             }
         }
 
