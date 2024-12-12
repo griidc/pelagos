@@ -622,7 +622,10 @@ class ResearchGroup extends Entity
     {
         $people = new ArrayCollection();
         foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
-            $people->add($personResearchGroup->getPerson());
+            $person = $personResearchGroup->getPerson();
+            if (!$people->contains($person)) {
+                $people->add($person);
+            }
         }
 
         return $people;
