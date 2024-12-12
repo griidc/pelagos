@@ -824,7 +824,7 @@ class Person extends Entity
      */
     public function __toString()
     {
-        return (string) $this->id;
+        return (string) $this->getFirstName() . ' ' . $this->getLastName();
     }
 
     /**
@@ -853,5 +853,37 @@ class Person extends Entity
             $researchGroups[] = $personResearchGroup->getResearchGroup();
         }
         return $researchGroups;
+    }
+
+    /**
+     * Get all datasets for this person for each research group they are in.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = new ArrayCollection();
+        foreach ($this->personResearchGroups as $personResearchGroup) {
+            foreach ($personResearchGroup->getResearchGroup()->getDatasets() as $dataset) {
+                if (!$datasets->contains($dataset)) {
+                    $datasets->add($dataset);
+                }
+            }
+        }
+        return $datasets;
+    }
+
+    /**
+     * Get publications for this perons.
+     */
+    public function getPublications(): Collection
+    {
+        $publications = new ArrayCollection();
+        foreach ($this->getDatasets() as $dataset) {
+            foreach ($dataset->getPublications() as $publication) {
+                if (!$publications->contains($publication)) {
+                    $publications->add($publication);
+                }
+            }
+        }
+        return $publications;
     }
 }
