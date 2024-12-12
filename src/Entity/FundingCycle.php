@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
-use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,8 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entity class to represent a Funding Cycle.
- *
- *
  */
 #[ORM\Entity]
 #[Assert\GroupSequence(['id', 'unique_id', 'FundingCycle', 'Entity'])]
@@ -32,8 +29,6 @@ class FundingCycle extends Entity
      * Name of a funding cycle.
      *
      * @var string $name
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext')]
@@ -45,7 +40,6 @@ class FundingCycle extends Entity
      * Description of a funding cycle.
      *
      * @var string $description
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -55,7 +49,6 @@ class FundingCycle extends Entity
      * Funding cycle's Website url.
      *
      * @var string $url
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -81,9 +74,6 @@ class FundingCycle extends Entity
      * Funding cycle's Funding Organization.
      *
      * @var FundingOrganization
-     *
-     *
-     *
      */
     #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'fundingCycles')]
     #[Serializer\Groups(['organization'])]
@@ -94,7 +84,7 @@ class FundingCycle extends Entity
     /**
      * Funding cycle's list of associated research groups.
      *
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
     #[ORM\OrderBy(['name' => 'ASC'])]
@@ -105,8 +95,6 @@ class FundingCycle extends Entity
      * Funding cycle's UDI Prefix.
      *
      * @var string $udiPrefix
-     *
-     *
      */
     #[ORM\Column(type: 'text', nullable: false)]
     #[Assert\NotBlank(message: 'UDI Prefix is required')]
@@ -173,7 +161,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setFundingOrganization(FundingOrganization $fundingOrg = null)
+    public function setFundingOrganization(?FundingOrganization $fundingOrg = null)
     {
         $this->fundingOrganization = $fundingOrg;
     }
@@ -217,7 +205,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setStartDate(\DateTime $startDate = null)
+    public function setStartDate(?\DateTime $startDate = null)
     {
         $this->startDate = $startDate;
     }
@@ -239,7 +227,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setEndDate(\DateTime $endDate = null)
+    public function setEndDate(?\DateTime $endDate = null)
     {
         $this->endDate = $endDate;
     }
@@ -257,7 +245,7 @@ class FundingCycle extends Entity
     /**
      * Getter for getResearchGroups.
      *
-     * @return \Doctrine\Common\Collections\Collection list of funding cycle's research groups
+     * @return Collection list of funding cycle's research groups
      */
     public function getResearchGroups()
     {
@@ -278,6 +266,42 @@ class FundingCycle extends Entity
         }
 
         return $datasets;
+    }
+
+    /**
+     * Return an array of people.
+     */
+    public function getPeople(): Collection
+    {
+        $people = new ArrayCollection();
+
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
+                $person = $personResearchGroup->getPerson();
+                if (!$people->contains($person)) {
+                    $people->add($person);
+                }
+            }
+        }
+
+        return $people;
+    }
+
+    /**
+     * Return a collection of Publications for the Funding Cycle.
+     */
+    public function getPublications(): Collection
+    {
+        $publications = new ArrayCollection();
+        foreach ($this->getDatasets() as $dataset) {
+            foreach ($dataset->getPublications() as $publication) {
+                if (!$publications->contains($publication)) {
+                    $publications->add($publication);
+                }
+            }
+        }
+
+        return $publications;
     }
 
     /**

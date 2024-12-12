@@ -89,7 +89,7 @@ class ResearchGroupController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    #[Route(path: '/research-group/about/{id}', name: 'pelagos_app_ui_researchgroup_about', requirements: ['id' => '\d+'])]
+    #[Route(path: '/research-group/old/{id}', name: 'pelagos_app_ui_researchgroup_old', requirements: ['id' => '\d+'])]
     public function landingPageAction(int $id)
     {
         return $this->render('ResearchGroup/index.html.twig', ['researchGroupId' => $id]);

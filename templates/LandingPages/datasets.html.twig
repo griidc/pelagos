@@ -1,0 +1,59 @@
+{% for dataset in datasets %}
+        <div class="card cursor-pointer">
+            <div>
+                <span class="badge badge-itemtype">Dataset</span>
+                {% if dataset.isIdentified %}
+                <span class="badge badge-identified">Identified</span>
+                {% endif %}
+                {% if dataset.isSubmitted %}
+                <span class="badge badge-submitted">Submitted</span>
+                {% endif %}
+                {% if dataset.isRestricted %}
+                <span class="badge badge-restricted">Restricted</span>
+                {% endif %}
+                {% if dataset.isAvailable %}
+                <span class="badge badge-available">Available</span>
+                {% endif %}
+                {% if dataset.isRemotelyHosted %}
+                <span class="badge badge-remotlyhosted">Remotely Hosted</span>
+                {% endif %}
+                {% if dataset.isColdStored %}
+                <span class="badge badge-coldstorage">Cold Storage</span>
+                {% endif %}
+                {% if dataset.hasErddapUrl %}
+                <span class="badge badge-erddap">ERDDAP</span>
+                {% endif %}
+                {% if dataset.hasNceiUrl %}
+                <span class="badge badge-ncei">NCEI</span>
+                {% endif %}
+            </div>
+            <a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.UDI }) }}" target="_blank" class="block"></a>
+            <p class="mb-2 text-xl font-medium">
+                {{ dataset.title }}
+            </p>
+            <div class="flex justify-between text-lg">
+                <div class="mr-4">
+                    Authors: {{ dataset.authors }}<br />
+
+                    {% if dataset.acceptedDate is not null %}
+                        Published On: {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }} <br />
+                    {% else %}
+                        Identified On: {{ dataset.dif.approvedDate|date('M d Y H:i T', 'UTC') }} <br />
+                    {% endif %}
+
+                    {% if dataset.datasetSubmission.distributionFormatName|default %}
+                        File Format: {{ dataset.datasetSubmission.distributionFormatName }}<br />
+                    {% endif %}
+                </div>
+                <div class="text-left self-end min-w-60">
+                    DOI: {{ dataset.DOI.doi|default }} <br />
+                    UDI: {{ dataset.UDI }} <br />
+                    {% if dataset.isColdStored %}
+                        File Size: {{ dataset.datasetSubmission.datasetFileColdStorageArchiveSize|formatBytes }} <br />
+                    {% elseif dataset.isRemotelyHosted == false and dataset.totalFileSize > 0 %}
+                        File Size: {{ dataset.totalFileSize|formatBytes }} <br />
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+{% endfor %}
