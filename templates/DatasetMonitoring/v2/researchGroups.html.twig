@@ -34,7 +34,7 @@
         searchPanel: {
             visible: false,
         },
-        focusedRowEnabled: true,
+        focusedRowEnabled: false,
         autoNavigateToFocusedRow: true,
         columns: [
             {
@@ -49,6 +49,14 @@
             },{
                 dataField: 'title',
                 caption: 'Title',
+                cellTemplate: function(container, options) {
+                    var researchGroupId = options.data.id;
+                    var url = "{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': 833 }) }}";
+                    $("<a>").text(options.displayValue)
+                    .attr("href", url)
+                    .attr('target', '_blank')
+                    .appendTo(container);
+                },
             },
             {
                 dataField: 'status',
@@ -83,9 +91,6 @@
                     tooltipInstance.hide();
                 });
             }
-        },
-        onRowClick: function(e) {
-            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
         },
         onFocusedRowChanged: function(e) {
             e.rowElement[0].scrollIntoView({ behavior: "auto", block: "center", inline: "center" });
