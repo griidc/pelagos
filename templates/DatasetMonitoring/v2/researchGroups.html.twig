@@ -5,6 +5,9 @@
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
+    function generateResearchGroupUrl(researchGroupId) {
+        return "{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': 'REPLACE_ID1' }) }}".replace('REPLACE_ID1', researchGroupId);
+    }
 
     {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
         data.push({
@@ -15,6 +18,7 @@
             'status': '{{ dataset.getDatasetLifecycleStatus.value }}',
             'statusTooltip': '{{ dataset.getDatasetLifecycleStatus.description }}',
             'researchGroup': '{{ dataset.researchGroup.name|e('js') }}',
+            'researchGroupId': '{{ dataset.researchGroup.id }}',
         });
     {% endfor %}
 
@@ -50,12 +54,11 @@
                 dataField: 'title',
                 caption: 'Title',
                 cellTemplate: function(container, options) {
-                    var researchGroupId = options.data.id;
-                    var url = "{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': 833 }) }}";
+                    var url = generateResearchGroupUrl(options.data.researchGroupId);
                     $("<a>").text(options.displayValue)
-                    .attr("href", url)
-                    .attr('target', '_blank')
-                    .appendTo(container);
+                        .attr("href", url)
+                        .attr('target', '_blank')
+                        .appendTo(container);
                 },
             },
             {
