@@ -5,10 +5,6 @@
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
-    function generateDatalandUrl(udi) {
-        return "{{ path('pelagos_app_ui_dataland_default', { 'udi': 'REPLACE_ID1' }) }}".replace('REPLACE_ID1', udi);
-    }
-
     {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
         data.push({
             'id': '{{ dataset.id }}',
@@ -53,11 +49,8 @@
                 dataField: 'title',
                 caption: 'Title',
                 cellTemplate: function(container, options) {
-                    var url = generateDatalandUrl(options.data.udi);
-                    $("<a>").text(options.displayValue)
-                        .attr("href", url)
-                        .attr('target', '_blank')
-                        .appendTo(container);
+                    const url = Routing.generate('pelagos_app_ui_dataland_default', { 'udi': options.data.udi } );
+                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
                 },
             },
             {
