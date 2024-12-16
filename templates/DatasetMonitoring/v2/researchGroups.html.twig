@@ -5,8 +5,8 @@
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
-    function generateResearchGroupUrl(researchGroupId) {
-        return "{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': 'REPLACE_ID1' }) }}".replace('REPLACE_ID1', researchGroupId);
+    function generateDatalandUrl(udi) {
+        return "{{ path('pelagos_app_ui_dataland_default', { 'udi': 'REPLACE_ID1' }) }}".replace('REPLACE_ID1', udi);
     }
 
     {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
@@ -18,7 +18,6 @@
             'status': '{{ dataset.getDatasetLifecycleStatus.value }}',
             'statusTooltip': '{{ dataset.getDatasetLifecycleStatus.description }}',
             'researchGroup': '{{ dataset.researchGroup.name|e('js') }}',
-            'researchGroupId': '{{ dataset.researchGroup.id }}',
         });
     {% endfor %}
 
@@ -54,7 +53,7 @@
                 dataField: 'title',
                 caption: 'Title',
                 cellTemplate: function(container, options) {
-                    var url = generateResearchGroupUrl(options.data.researchGroupId);
+                    var url = generateDatalandUrl(options.data.udi);
                     $("<a>").text(options.displayValue)
                         .attr("href", url)
                         .attr('target', '_blank')
