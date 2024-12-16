@@ -110,6 +110,11 @@
 
             {% if not fundingCycle|default %}
             <div class="block px-2 py-1">
+                <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': researchGroup.id }) }}" target="_blank" class="mr-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> Research Group Details
+                </a>
+            </div>
+            <div class="block px-2 py-1">
                 <span class="font-bold">Funding Cycle:</span> {{ researchGroup.fundingCycle.name }}
             </div>
             {% endif %}
