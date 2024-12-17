@@ -1,17 +1,15 @@
-{% set divContainer = "gridContainer#{random()}" %}
+{% set random = random() %}
+{% set divContainer = "gridContainer#{random}" %}
 
 {% if not makePdf %}
 <script>
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
-    // function to find TR by UDI
-    function highlightRow(udi) {
-
-        const key = $('#{{divContainer}}').dxDataGrid('instance').getRowIndexByKey(udi);
+    function highlightRow{{random}}(id) {
+        const key = $('#{{divContainer}}').dxDataGrid('instance').getRowIndexByKey(id);
         const element = $('#{{divContainer}}').dxDataGrid('instance').getRowElement(key);
 
-        // remove active class from all rows
         $('.dx-row').removeClass('dx-selection');
         element.addClass('dx-selection');
         element.get(0).scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
@@ -93,16 +91,14 @@
                     tooltipInstance.option("contentTemplate", function (contentElement) {
                         contentElement.html(`<div class='tooltipContent'><div>${e.data.statusTooltip}</div>`);
                     });
-
                     tooltipInstance.show(arg.target);
                 });
-
                 e.cellElement.mouseout(function (arg) {
                     tooltipInstance.hide();
                 });
             }
         },
-    }).dxDataGrid("instance");
+    });
 </script>
 {% endif %}
 <div class="p-2 m-0" style="page-break-inside: auto">
@@ -154,11 +150,11 @@
                     <tbody>
                         <tr style="height: 12px">
 
-                        {% for dataset in researchGroup.datasets|submittedDIFs|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
+                        {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true)|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
                             <td
                                 data-tippy-content="{{dataset.udi}}"
                                 style="width: 12px;"
-                                @click="highlightRow('{{dataset.id}}')"
+                                @click="highlightRow{{random}}('{{dataset.id}}')"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                                     <rect x="0" y="0" width="12" height="12" fill="{{dataset.getDatasetLifecycleStatus.color}}" opacity="1">
