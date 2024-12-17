@@ -5,6 +5,18 @@
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
+    // function to find TR by UDI
+    function highlightRow(udi) {
+
+        const key = $('#{{divContainer}}').dxDataGrid('instance').getRowIndexByKey(udi);
+        const element = $('#{{divContainer}}').dxDataGrid('instance').getRowElement(key);
+
+        // remove active class from all rows
+        $('.dx-row').removeClass('dx-selection');
+        element.addClass('dx-selection');
+        element.get(0).scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+    }
+
     {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
         data.push({
             'id': '{{ dataset.id }}',
@@ -33,18 +45,24 @@
         searchPanel: {
             visible: false,
         },
-        focusedRowEnabled: false,
-        autoNavigateToFocusedRow: true,
         columns: [
             {
                 dataField: 'udi',
                 caption: 'UDI',
                 width: 162,
+                cellTemplate: function(container, options) {
+                    const url = Routing.generate('pelagos_app_ui_dataland_default', { 'udi': options.data.udi } );
+                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                },
             },{
                 dataField: 'doi',
                 caption: 'DOI',
                 width: 201,
                 cssClass: 'dsmonitoringcols',
+                cellTemplate: function(container, options) {
+                    const url = `https://doi.org/${options.value}`;
+                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                },
             },{
                 dataField: 'title',
                 caption: 'Title',
@@ -66,9 +84,6 @@
         pager: {
             visible: false,
         },
-        selection: {
-            mode: 'single',
-        },
         showColumnLines: true,
         showRowLines: true,
         wordWrapEnabled: true,
@@ -86,9 +101,6 @@
                     tooltipInstance.hide();
                 });
             }
-        },
-        onFocusedRowChanged: function(e) {
-            e.rowElement[0].scrollIntoView({ behavior: "auto", block: "center", inline: "center" });
         },
     }).dxDataGrid("instance");
 </script>
@@ -141,7 +153,7 @@
                             <td
                                 data-tippy-content="{{dataset.udi}}"
                                 style="width: 12px;"
-                                @click="$('#{{divContainer}}').dxDataGrid('option', 'focusedRowKey', '{{dataset.id}}')"
+                                @click="highlightRow('{{dataset.id}}')"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                                     <rect x="0" y="0" width="12" height="12" fill="{{dataset.getDatasetLifecycleStatus.color}}" opacity="1">
