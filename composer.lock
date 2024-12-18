@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a496dc471c8e089a701a6fa0165b6be",
+    "content-hash": "d5b82dc8dd6a23fe734e6ca7e2c57199",
     "packages": [
         {
             "name": "brick/math",
@@ -10472,25 +10472,25 @@
         },
         {
             "name": "xenolope/quahog",
-            "version": "v2.1.1",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jonjomckay/quahog.git",
-                "reference": "925dad6486a386406d17d0254f0095b595247170"
+                "reference": "b3823659050cc54a160e8739d077c96d8830a2fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jonjomckay/quahog/zipball/925dad6486a386406d17d0254f0095b595247170",
-                "reference": "925dad6486a386406d17d0254f0095b595247170",
+                "url": "https://api.github.com/repos/jonjomckay/quahog/zipball/b3823659050cc54a160e8739d077c96d8830a2fa",
+                "reference": "b3823659050cc54a160e8739d077c96d8830a2fa",
                 "shasum": ""
             },
             "require": {
-                "clue/socket-raw": "^1.2",
-                "php": ">=5.6"
+                "clue/socket-raw": "^1.3",
+                "php": ">=7.3"
             },
             "require-dev": {
                 "mikey179/vfsstream": "^1.6",
-                "phpunit/phpunit": "^4.8"
+                "phpunit/phpunit": "^9.4"
             },
             "type": "library",
             "autoload": {
@@ -10511,9 +10511,9 @@
             "description": "A PHP client library for ClamAV clamd daemon",
             "support": {
                 "issues": "https://github.com/jonjomckay/quahog/issues",
-                "source": "https://github.com/jonjomckay/quahog/tree/v2.1.1"
+                "source": "https://github.com/jonjomckay/quahog/tree/v3.0.0"
             },
-            "time": "2020-11-24T16:11:04+00:00"
+            "time": "2020-11-25T12:06:14+00:00"
         }
     ],
     "packages-dev": [
