@@ -49,7 +49,7 @@
         "axios": "^1.7.4",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
-        "clsx": "^2.0.0",
+        "clsx": "^2.1.1",
         "devextreme": "^21.1.6",
         "devextreme-vue": "^21.1.6",
         "dotenv-webpack": "^8.0.1",
