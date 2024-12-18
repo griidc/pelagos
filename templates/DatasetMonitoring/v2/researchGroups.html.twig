@@ -10,7 +10,7 @@
         const key = $('#{{divContainer}}').dxDataGrid('instance').getRowIndexByKey(id);
         const element = $('#{{divContainer}}').dxDataGrid('instance').getRowElement(key);
 
-        $('.dx-row').removeClass('dx-selection');
+        $('tr.dx-data-row').removeClass('dx-selection');
         element.addClass('dx-selection');
         element.get(0).scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
     }
