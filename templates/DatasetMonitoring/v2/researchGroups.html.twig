@@ -118,7 +118,9 @@
 
             {% if not fundingCycle|default %}
             <div class="block px-2 py-1">
-                <span class="font-bold">Funding Cycle:</span> {{ researchGroup.fundingCycle.name }}
+                <a href="{{ path('app_funding_cycle_land', { 'fundingCycle': researchGroup.fundingCycle.id }) }}" class="cursor-pointer" target="_blank">
+                    <span class="font-bold">Funding Cycle:</span> {{ researchGroup.fundingCycle.name }}
+                </a>
             </div>
             {% endif %}
 
