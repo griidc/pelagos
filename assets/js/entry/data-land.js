@@ -123,8 +123,10 @@ if (metadataDownloadLink) {
     event.preventDefault();
     window.open(
       // eslint-disable-next-line no-undef
-      Routing.generate('pelagos_app_ui_dataland_formatted_metadata',
-        { udi: metadataDownloadLink.dataset.udi }),
+      Routing.generate(
+        'pelagos_app_ui_dataland_formatted_metadata',
+        { udi: metadataDownloadLink.dataset.udi },
+      ),
       '_blank',
     );
   });

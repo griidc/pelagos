@@ -53,19 +53,14 @@ export default {
     },
     infoProdUrl() {
       if (window.getSelection().toString() === '') {
-        window.open(
-          // eslint-disable-next-line no-undef
-          `${Routing.generate('pelagos_app_ui_info_product_landing',
-            { id: this.informationProduct.id })}`, '_blank',
-        );
+        // eslint-disable-next-line no-undef
+        const url = Routing.generate('pelagos_app_ui_info_product_landing', { id: this.informationProduct.id });
+        window.open(url, '_blank');
       }
     },
     openRemoteUrl() {
       if (window.getSelection().toString() === '') {
-        window.open(
-          // eslint-disable-next-line no-undef
-          `${this.informationProduct.remoteUri}`, '_blank',
-        );
+        window.open(`${this.informationProduct.remoteUri}`, '_blank');
       }
     },
   },
