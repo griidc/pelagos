@@ -22,7 +22,7 @@
         "ext-xsl": "*",
         "lib-libxml": "*",
         "doctrine/doctrine-bundle": "^2.0",
-        "doctrine/doctrine-fixtures-bundle": "^3.0",
+        "doctrine/doctrine-fixtures-bundle": "^4.0",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.11",
         "easycorp/easyadmin-bundle": "^4.0",
