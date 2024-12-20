@@ -4,4 +4,4 @@ controllers:
         namespace: App\Controller
     type: attribute
     options:
-        expose: false
+        expose: true
