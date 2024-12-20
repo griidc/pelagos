@@ -45,7 +45,7 @@
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.0.18",
         "@tailwindcss/typography": "^0.5.15",
-        "alpinejs": "^3.14.1",
+        "alpinejs": "^3.14.7",
         "axios": "^1.7.4",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
