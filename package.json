@@ -69,6 +69,6 @@
         "v-tooltip": "^2.0.3",
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0",
-        "xbytes": "^1.7.0"
+        "xbytes": "^1.9.1"
     }
 }
