@@ -7753,10 +7753,10 @@ ws@^8.13.0:
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.17.1.tgz#9293da530bb548febc95371d90f9c878727d919b"
   integrity sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==
 
-xbytes@^1.7.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/xbytes/-/xbytes-1.8.0.tgz#83838cfeb7d0b6cac566613d2b699360a04cc89a"
-  integrity sha512-o/8qiLr54dYJaX/OB47vvb6cfkqFCdoXXhQdzPc8pF7ulsBGOHRTjgFqVceaw+EcjX1fskToTdFHAUhoeZB6xg==
+xbytes@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/xbytes/-/xbytes-1.9.1.tgz#0a6a883205257a3fb747ef7cf45f52f8fc770523"
+  integrity sha512-29E0ygMFWrM5JW2W1ypmezjyR2FOS5aCszdLe620ymSJBoZzL0/RCLJKCoUFu3DfQGhZ/FWykEBp5dfEy6+hjA==
 
 xmlchars@^2.2.0:
   version "2.2.0"
