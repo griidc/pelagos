@@ -32,10 +32,9 @@ export default {
   },
   methods: {
     openUrl(person) {
-      window.open(
-        // eslint-disable-next-line no-undef
-        `${Routing.generate('app_person_land', { person: person.person.id })}`, '_blank',
-      );
+      // eslint-disable-next-line no-undef
+      const url = `${Routing.generate('app_person_land', { person: person.person.id })}`;
+      window.open(url, '_blank');
     },
   },
 };
