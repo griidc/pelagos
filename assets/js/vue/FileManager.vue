@@ -311,15 +311,14 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
           cancel = c;
         }),
       };
-      downloadApi(
-        // eslint-disable-next-line no-undef
-        `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`, config,
-        // eslint-disable-next-line no-shadow
-      ).then((response) => {
+      // eslint-disable-next-line no-undef
+      const url = `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`;
+      // eslint-disable-next-line no-shadow
+      downloadApi(url, config).then((response) => {
         if (myFileManager.$parent.downloadPopup) {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const href = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
-          link.href = url;
+          link.href = href;
           // eslint-disable-next-line no-use-before-define
           link.setAttribute('download', getFileNameFromHeader(response.headers));
           document.body.appendChild(link);

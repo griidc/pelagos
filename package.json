@@ -1,8 +1,8 @@
 {
     "devDependencies": {
         "@babel/core": "^7.24.4",
-        "@babel/preset-env": "7.9.0",
-        "@babel/preset-react": "^7.0.0",
+        "@babel/preset-env": "7.26.0",
+        "@babel/preset-react": "^7.26.3",
         "@fortawesome/fontawesome-free": "^5.11.1",
         "@hotwired/stimulus": "^3.0.0",
         "@symfony/stimulus-bridge": "^3.0.0",
@@ -12,9 +12,9 @@
         "autoprefixer": "^9.7.4",
         "core-js": "^3.0.0",
         "eslint": "^7.29.0",
-        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-config-airbnb-base": "^15.0.0",
         "eslint-import-resolver-alias": "^1.1.2",
-        "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-react": "^7.33.2",
         "eslint-plugin-vue": "^7.11.1",
         "file-loader": "^6.0.0",
@@ -43,13 +43,13 @@
     "dependencies": {
         "@alpinejs/collapse": "^3.14.1",
         "@headlessui/react": "^1.7.17",
-        "@heroicons/react": "^2.0.18",
+        "@heroicons/react": "^2.2.0",
         "@tailwindcss/typography": "^0.5.15",
-        "alpinejs": "^3.14.1",
+        "alpinejs": "^3.14.7",
         "axios": "^1.7.4",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
-        "clsx": "^2.0.0",
+        "clsx": "^2.1.1",
         "devextreme": "^21.1.6",
         "devextreme-vue": "^21.1.6",
         "dotenv-webpack": "^8.0.1",
@@ -69,6 +69,6 @@
         "v-tooltip": "^2.0.3",
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0",
-        "xbytes": "^1.7.0"
+        "xbytes": "^1.9.1"
     }
 }

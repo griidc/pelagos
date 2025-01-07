@@ -1,10 +1,19 @@
-{% set divContainer = "gridContainer#{random()}" %}
+{% set random = random() %}
+{% set divContainer = "gridContainer#{random}" %}
 
 {% if not makePdf %}
 <script>
     var data = [];
     var baseFontFamily = getComputedStyle(document.body).getPropertyValue('--baseFontFamily');
 
+    function highlightRow{{random}}(id) {
+        const key = $('#{{divContainer}}').dxDataGrid('instance').getRowIndexByKey(id);
+        const element = $('#{{divContainer}}').dxDataGrid('instance').getRowElement(key);
+
+        $('tr.dx-data-row').removeClass('dx-selection');
+        element.addClass('dx-selection');
+        element.get(0).scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+    }
 
     {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
         data.push({
@@ -34,21 +43,31 @@
         searchPanel: {
             visible: false,
         },
-        focusedRowEnabled: true,
-        autoNavigateToFocusedRow: true,
         columns: [
             {
                 dataField: 'udi',
                 caption: 'UDI',
                 width: 162,
+                cellTemplate: function(container, options) {
+                    const url = Routing.generate('pelagos_app_ui_dataland_default', { 'udi': options.data.udi } );
+                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                },
             },{
                 dataField: 'doi',
                 caption: 'DOI',
                 width: 201,
                 cssClass: 'dsmonitoringcols',
+                cellTemplate: function(container, options) {
+                    const url = `https://doi.org/${options.value}`;
+                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                },
             },{
                 dataField: 'title',
                 caption: 'Title',
+                cellTemplate: function(container, options) {
+                    const url = Routing.generate('pelagos_app_ui_dataland_default', { 'udi': options.data.udi } );
+                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                },
             },
             {
                 dataField: 'status',
@@ -63,9 +82,6 @@
         pager: {
             visible: false,
         },
-        selection: {
-            mode: 'single',
-        },
         showColumnLines: true,
         showRowLines: true,
         wordWrapEnabled: true,
@@ -75,22 +91,14 @@
                     tooltipInstance.option("contentTemplate", function (contentElement) {
                         contentElement.html(`<div class='tooltipContent'><div>${e.data.statusTooltip}</div>`);
                     });
-
                     tooltipInstance.show(arg.target);
                 });
-
                 e.cellElement.mouseout(function (arg) {
                     tooltipInstance.hide();
                 });
             }
         },
-        onRowClick: function(e) {
-            window.open(`${Routing.generate('pelagos_app_ui_dataland_default')}/${ e.data.udi }`, '_blank');
-        },
-        onFocusedRowChanged: function(e) {
-            e.rowElement[0].scrollIntoView({ behavior: "auto", block: "center", inline: "center" });
-        },
-    }).dxDataGrid("instance");
+    });
 </script>
 {% endif %}
 <div class="p-2 m-0" style="page-break-inside: auto">
@@ -108,18 +116,28 @@
 
         <div x-show="expanded" x-collapse>
 
-            {% if not fundingCycle|default %}
             <div class="block px-2 py-1">
-                <span class="font-bold">Funding Cycle:</span> {{ researchGroup.fundingCycle.name }}
+                <span class="font-bold">Research Group:</span>
+                <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': researchGroup.id }) }}" class="pagelink" target="_blank">
+                    {{ researchGroup.name }}
+                </a>
             </div>
-            {% endif %}
+
+            <div class="block px-2 py-1">
+                <span class="font-bold">Funding Cycle:</span>
+                <a href="{{ path('app_funding_cycle_land', { 'fundingCycle': researchGroup.fundingCycle.id }) }}" class="pagelink" target="_blank">
+                     {{ researchGroup.fundingCycle.name }}
+                </a>
+            </div>
 
             <div class="block px-2 py-1">
                 <span class="font-bold">Leadership:</span>
                 {% set leadership = researchGroup.personResearchGroups | role(constant('App\\Entity\\ResearchGroupRole::LEADERSHIP')) %}
                 {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
-                    {{ prg.person.firstName }} {{ prg.person.lastName }}
-                    {% if not loop.last %}, {% endif %}
+                    <a href="{{ path('app_person_land', { 'person': prg.person.id }) }}" class="pagelink" target="_blank">
+                        {{ prg.person.firstName }} {{ prg.person.lastName }}
+                    {# These element must stay together to prevent space before the comma. #}
+                    </a>{% if not loop.last %}, {% endif %}
                 {% endfor %}
             </div>
 
@@ -137,11 +155,11 @@
                     <tbody>
                         <tr style="height: 12px">
 
-                        {% for dataset in researchGroup.datasets|submittedDIFs|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
+                        {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true)|sort((a, b) => a.getDatasetLifecycleStatus.sortOrder <=> b.getDatasetLifecycleStatus.sortOrder) %}
                             <td
                                 data-tippy-content="{{dataset.udi}}"
                                 style="width: 12px;"
-                                @click="$('#{{divContainer}}').dxDataGrid('option', 'focusedRowKey', '{{dataset.id}}')"
+                                @click="highlightRow{{random}}('{{dataset.id}}')"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
                                     <rect x="0" y="0" width="12" height="12" fill="{{dataset.getDatasetLifecycleStatus.color}}" opacity="1">
