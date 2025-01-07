@@ -15,6 +15,7 @@ use App\Handler\EntityHandler;
 use App\Entity\Entity;
 use App\Exception\NotDeletableException;
 use App\Exception\UnmappedPropertyException;
+use Doctrine\ORM\Internal\TopologicalSort\CycleDetectedException;
 
 /**
  * The Entity api controller.
@@ -201,10 +202,14 @@ abstract class EntityController extends AbstractFOSRestController
         try {
             $this->entityHandler->delete($entity);
         } catch (NotDeletableException $exception) {
+
             throw new BadRequestHttpException(
                 'This ' . $entity::FRIENDLY_NAME . ' is not deletable because ' .
                 implode(', ', $exception->getReasons()) . '.'
             );
+        } catch (CycleDetectedException $exception) {
+            dump($exception->getCycle());
+            throw $exception;
         }
         return $entity;
     }
