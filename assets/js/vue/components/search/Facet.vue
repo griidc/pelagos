@@ -92,7 +92,7 @@
                   <span class="float-right badge badge-light round">{{
                     facet.count
                   }}</span>
-                  {{ facet.shortName ? facet.shortName : facet.name }}
+                  {{ facetName.queryParam === 'researchGroup' ? facet.name : facet.shortName ? facet.shortName : facet.name }}
                 </span>
               </label>
             </div>
