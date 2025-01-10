@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83309ced34628b72c2208180f4e42853",
+    "content-hash": "b5ad00c84051c608306bb6c0d650fd26",
     "packages": [
         {
             "name": "brick/math",
@@ -1634,16 +1634,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.20.3",
+            "version": "v4.20.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "cd8aca714bdd598898c3a0ba6a42e4e646641cc7"
+                "reference": "4903938a90d08afb481d7f185f2e2666d6767ca5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/cd8aca714bdd598898c3a0ba6a42e4e646641cc7",
-                "reference": "cd8aca714bdd598898c3a0ba6a42e4e646641cc7",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/4903938a90d08afb481d7f185f2e2666d6767ca5",
+                "reference": "4903938a90d08afb481d7f185f2e2666d6767ca5",
                 "shasum": ""
             },
             "require": {
@@ -1720,7 +1720,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.20.3"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.20.5"
             },
             "funding": [
                 {
@@ -1728,7 +1728,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-12T07:25:40+00:00"
+            "time": "2025-01-03T19:17:42+00:00"
         },
         {
             "name": "easyrdf/easyrdf",
@@ -13488,7 +13488,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -13508,6 +13508,6 @@
         "ext-xsl": "*",
         "lib-libxml": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
