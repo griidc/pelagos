@@ -1324,10 +1324,10 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.8.tgz#6667fac16c436b5434a387a34dedb013198f6e6e"
   integrity sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==
 
-"@symfony/stimulus-bridge@^3.0.0":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@symfony/stimulus-bridge/-/stimulus-bridge-3.2.2.tgz#afc1918f82d78cb2b6e299285c54094aa7f53696"
-  integrity sha512-kIaUEGPXW7g14zsHkIvQWw8cmfCdXSqsEQx18fuHPBb+R0h8nYPyY+e9uVtTuHlE2wHwAjrJoc6YBBK4a7CpKA==
+"@symfony/stimulus-bridge@^3.2.3":
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@symfony/stimulus-bridge/-/stimulus-bridge-3.2.3.tgz#1c496d4b11e24051be26a11045118f29f9c3f9b7"
+  integrity sha512-36rQTihQ2MGOn8EmdOYCr3DQfP3WS1CNcUUXKTPY5ghtFOeb7OVuhbc32AjRowE2/vaVDOUCPOTv3VLf5VtXBA==
   dependencies:
     "@hotwired/stimulus-webpack-helpers" "^1.0.1"
     "@types/webpack-env" "^1.16.4"
@@ -1871,17 +1871,7 @@ acorn@^7.1.1, acorn@^7.4.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
-acorn@^8.0.5:
-  version "8.7.1"
-  resolved "https://registry.npmjs.org/acorn/-/acorn-8.7.1.tgz"
-  integrity sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==
-
-acorn@^8.7.1:
-  version "8.8.1"
-  resolved "https://registry.npmjs.org/acorn/-/acorn-8.8.1.tgz"
-  integrity sha512-7zFpHzhnqYKrkYdUjF1HI1bzd0VygEGX8lFk4k5zVMqHEoES+P+7TKI+EvLO9WVMJ8eekdO0aDEK044xTXwPPA==
-
-acorn@^8.8.2:
+acorn@^8.0.5, acorn@^8.7.1, acorn@^8.8.2:
   version "8.11.2"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.11.2.tgz#ca0d78b51895be5390a5903c5b3bdcdaf78ae40b"
   integrity sha512-nc0Axzp/0FILLEVsm4fNwLCwMttvhEI263QtVPQcbpfZZ3ts0hLsZGOpE6czNlid7CJ9MlyH8reXkpsf3YUY4w==
