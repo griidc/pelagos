@@ -79,7 +79,7 @@
         "symfony/debug-bundle": "6.4.*",
         "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "6.4.*",
-        "symfony/web-profiler-bundle": "6.4.*",
+        "symfony/web-profiler-bundle": "7.2.*",
         "vimeo/psalm": "^5.0"
     },
     "config": {
