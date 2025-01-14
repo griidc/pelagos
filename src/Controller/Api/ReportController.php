@@ -2,27 +2,66 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\ResearchGroup;
+use App\Repository\FundingOrganizationRepository;
 use App\Repository\ResearchGroupRepository;
-use App\Util\FundingOrgFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-
 class ReportController extends AbstractController
 {
     #[Route(path: '/api/stuff')]
-    public function getStuff(ResearchGroupRepository $researchGroupRepository, FundingOrgFilter $fundingOrgFilter, SerializerInterface $serialzer) : Response
+    public function getStuff(ResearchGroupRepository $researchGroupRepository,  FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer) : Response
     {
-        $researchGroupsArray = $fundingOrgFilter->getResearchGroupsIdArray();
+        $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
-        $researchGroups = $researchGroupRepository->findBy($researchGroupsArray);
+        $researchGroupIds = [];
+        foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                $researchGroupIds[] = $researchGroup->getId();
+            }
+        }
 
-        $data = $serialzer->serialize($researchGroups, 'json', ['groups' => 'grp-dp-report']);
+        $researchGroups = $researchGroupRepository->findBy(['id' => $researchGroupIds], ['name' => 'ASC']);
 
-        // dd($data);
+        usort($researchGroups, function(ResearchGroup $a, ResearchGroup $b) {
+            return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
+        });
 
+        $data = $serialzer->serialize($researchGroups, 'csv',
+            [
+                'groups' => 'grp-dp-report',
+                'csv_headers' => [
+                    'Funding Cycle' => 'fundingCycle.name',
+                    'ResearchGroupName',
+                    'approvedDifsCount',
+                    'submittedDatasets',
+                    'availableDatasets',
+                    'restrictedDataset',
+                    'peopleCount'
+                ],
+                'output_utf8_bom' => true,
+            ]);
 
-        return new Response($data, 200, ['Content-Type' => 'text/json']);
+            $csvFilename = 'DatasetMonitoringReport-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+
+            dd($data);
+
+        $response = new Response($data);
+
+        $response->headers->set(
+            'Content-disposition',
+            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
+        );
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Encoding', 'UTF-8');
+
+        return $response;
     }
 }
