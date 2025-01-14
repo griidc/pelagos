@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,6 +35,7 @@ class FundingCycle extends Entity
     #[ORM\Column(type: 'citext')]
     #[Serializer\Groups(['organization'])]
     #[Assert\NotBlank(message: 'Name is required')]
+    #[Groups(['grp-dp-report'])]
     protected $name;
 
     /**
