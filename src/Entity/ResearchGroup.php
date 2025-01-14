@@ -11,7 +11,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * Entity class to represent a Research Group.
@@ -50,6 +53,8 @@ class ResearchGroup extends Entity
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     #[Serializer\Groups(['overview', 'search'])]
     #[Assert\NotBlank(message: 'Name is required')]
+    #[Groups(['grp-dp-report'])]
+    #[SerializedName('ResearchGroupName')]
     protected $name;
 
     /**
@@ -76,6 +81,7 @@ class ResearchGroup extends Entity
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
     #[Assert\NotBlank(message: 'Funding Cycle is required')]
+    #[Groups(['grp-dp-report'])]
     protected $fundingCycle;
 
     /**
@@ -737,5 +743,21 @@ class ResearchGroup extends Entity
         return $this->datasets->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
             return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
         });
+    }
+
+    /**
+     * Function that returns the number of DIFs approved for this Research Group.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getApprovedDifsCount(): int
+    {
+        $approvedDifsCount = 0;
+        foreach ($this->datasets as $dataset) {
+            if ($dataset->getDif()->getStatus() == DIF::STATUS_APPROVED) {
+                ++$approvedDifsCount;
+            }
+        }
+
+        return $approvedDifsCount;
     }
 }
