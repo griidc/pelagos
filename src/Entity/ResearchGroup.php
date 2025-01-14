@@ -4,24 +4,22 @@ namespace App\Entity;
 
 use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
+use App\Repository\ResearchGroupRepository;
 use App\Twig\Extensions as TwigExtentions;
-use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 /**
  * Entity class to represent a Research Group.
- *
- *
  */
-#[ORM\Entity(repositoryClass: 'App\Repository\ResearchGroupRepository')]
+#[ORM\Entity(repositoryClass: ResearchGroupRepository::class)]
 #[Assert\GroupSequence(['id', 'unique_id', 'ResearchGroup', 'Entity'])]
 #[UniqueEntity(fields: ['name', 'fundingCycle'], errorPath: 'name', message: 'A Research Group with this name already exists')]
 #[UniqueEntity('shortName', message: 'A Research Group with this Short name already exists')]
@@ -77,7 +75,8 @@ class ResearchGroup extends Entity
      *
      *
      */
-    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
+    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups', fetch:'EAGER')]
+    #[OrderBy(["name" => "ASC"])]
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
     #[Assert\NotBlank(message: 'Funding Cycle is required')]
@@ -638,6 +637,15 @@ class ResearchGroup extends Entity
     }
 
     /**
+     * Return a count of People for this Research Group.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getPeopleCount(): int
+    {
+        return $this->getPeople()->count();
+    }
+
+    /**
      * Get publications for this Research Group.
      */
     public function getPublications(): Collection
@@ -746,18 +754,38 @@ class ResearchGroup extends Entity
     }
 
     /**
-     * Function that returns the number of DIFs approved for this Research Group.
+     * Return a count of identified datasets.
      */
     #[Groups(['grp-dp-report'])]
     public function getApprovedDifsCount(): int
     {
-        $approvedDifsCount = 0;
-        foreach ($this->datasets as $dataset) {
-            if ($dataset->getDif()->getStatus() == DIF::STATUS_APPROVED) {
-                ++$approvedDifsCount;
-            }
-        }
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::IDENTIFIED)->count();
+    }
 
-        return $approvedDifsCount;
+    /**
+     * Returns a count of Submitted datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getSubmittedDatasets(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::SUBMITTED)->count();
+    }
+
+    /**
+     * Returns a count of Available datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getAvailableDatasets(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::AVAILABLE)->count();
+    }
+
+    /**
+     * Returns a count of Restricted datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getRestrictedDataset(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::RESTRICTED)->count();
     }
 }
