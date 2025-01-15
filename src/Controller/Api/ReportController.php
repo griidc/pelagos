@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class ReportController extends AbstractController
 {
     #[Route(path: '/api/grp-datasets-people-report', name: 'pelagos_api_grp_datasets_people_report', methods: ['GET'])]
-    public function getStuff(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
+    public function getGrpDatasetAndPeopleReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
     {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
