@@ -35,7 +35,9 @@ class ReportController extends AbstractController
             return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
         });
 
-        $data = $serialzer->serialize($researchGroups, 'csv',
+        $data = $serialzer->serialize(
+            $researchGroups,
+            'csv',
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
@@ -48,7 +50,8 @@ class ReportController extends AbstractController
                     'peopleCount',
                 ],
                 'output_utf8_bom' => true,
-            ]);
+            ]
+        );
 
         $csvFilename = 'GRP-Datasets-People-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
@@ -73,7 +76,9 @@ class ReportController extends AbstractController
 
         $datasets = $fundingOrganization->getDatasets();
 
-        $data = $serialzer->serialize($datasets, 'csv',
+        $data = $serialzer->serialize(
+            $datasets,
+            'csv',
             [
                 'groups' => 'grp-dk-report',
                 'csv_headers' => [
@@ -85,7 +90,8 @@ class ReportController extends AbstractController
                 ],
                 'output_utf8_bom' => true,
                 'enable_max_depth' => true,
-            ]);
+            ]
+        );
 
         $csvFilename = 'GRP-Dataset-Keywords-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
@@ -101,6 +107,5 @@ class ReportController extends AbstractController
         $response->headers->set('Content-Encoding', 'UTF-8');
 
         return $response;
-
     }
 }
