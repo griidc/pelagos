@@ -1201,8 +1201,7 @@ class Dataset extends Entity
         $keywords = $this->getDatasetSubmission()?->getKeywords();
 
         return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
-                return $keyword->getType() === $type;
-            }
-        );
+            return $keyword->getType() === $type;
+        });
     }
 }
