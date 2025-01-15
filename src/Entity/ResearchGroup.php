@@ -9,7 +9,6 @@ use App\Twig\Extensions as TwigExtentions;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\OrderBy;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -44,8 +43,6 @@ class ResearchGroup extends Entity
      * Name of a research group.
      *
      * @var string $name
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
@@ -59,8 +56,6 @@ class ResearchGroup extends Entity
      * Short Name of a research group.
      *
      * @var string $shortName
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Short name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
@@ -71,12 +66,9 @@ class ResearchGroup extends Entity
      * Research group's parent Funding Cycle.
      *
      * @var FundingCycle $fundingCycle
-     *
-     *
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups', fetch:'EAGER')]
-    #[OrderBy(["name" => "ASC"])]
+    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups', fetch: 'EAGER')]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
     #[Assert\NotBlank(message: 'Funding Cycle is required')]
@@ -87,7 +79,6 @@ class ResearchGroup extends Entity
      * Research group's Website url.
      *
      * @var string $url
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -97,7 +88,6 @@ class ResearchGroup extends Entity
      * Research group's telephone number.
      *
      * @var string $phoneNumber
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -107,7 +97,6 @@ class ResearchGroup extends Entity
      * Research group's delivery point (street address).
      *
      * @var string $deliveryPoint
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -117,7 +106,6 @@ class ResearchGroup extends Entity
      * Research group's city.
      *
      * @var string $city
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -127,7 +115,6 @@ class ResearchGroup extends Entity
      * Research group's administrative area (state).
      *
      * @var string $administrativeArea
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -137,7 +124,6 @@ class ResearchGroup extends Entity
      * Research group's postal code (zipcode).
      *
      * @var string $postalCode
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -147,7 +133,6 @@ class ResearchGroup extends Entity
      * Research group's country.
      *
      * @var string $country
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -157,8 +142,6 @@ class ResearchGroup extends Entity
      * Description of a research group.
      *
      * @var string $description
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -177,7 +160,6 @@ class ResearchGroup extends Entity
      * Research group's email address.
      *
      * @var string $emailAddress
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Email address cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', nullable: true)]
@@ -187,7 +169,7 @@ class ResearchGroup extends Entity
     /**
      * Research group's PersonResearchGroups.
      *
-     * @var \Doctrine\Common\Collections\Collection $personResearchGroups
+     * @var Collection $personResearchGroups
      */
     #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
     #[Serializer\Groups(['overview'])]
@@ -207,7 +189,6 @@ class ResearchGroup extends Entity
      * Lock flag for Research Group, defaults to false for new Research Groups.
      *
      * @var bool $locked
-     *
      */
     #[ORM\Column(type: 'boolean', nullable: false)]
     #[Serializer\Groups(['data'])]
@@ -226,8 +207,6 @@ class ResearchGroup extends Entity
 
     /**
      * Serializer for the datasets virtual property.
-     *
-     *
      *
      * @return array
      */
@@ -312,7 +291,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setFundingCycle(FundingCycle $fundingCycle = null)
+    public function setFundingCycle(?FundingCycle $fundingCycle = null)
     {
         $this->fundingCycle = $fundingCycle;
     }
@@ -612,8 +591,8 @@ class ResearchGroup extends Entity
     /**
      * Getter for personResearchGroups.
      *
-     * @return \Doctrine\Common\Collections\Collection collection containing personResearchGroups
-     *                                                 listings for this research group
+     * @return Collection collection containing personResearchGroups
+     *                    listings for this research group
      */
     public function getPersonResearchGroups()
     {
@@ -663,8 +642,6 @@ class ResearchGroup extends Entity
 
         return $publications;
     }
-
-
 
     /**
      * Check if this ResearchGroup is deletable.
@@ -726,8 +703,6 @@ class ResearchGroup extends Entity
 
     /**
      * Returns a collection of project directors (Person entity).
-     *
-     *
      */
     #[Serializer\Groups(['overview'])]
     #[Serializer\VirtualProperty]
