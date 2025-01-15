@@ -2,33 +2,36 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\FundingOrganization;
 use App\Entity\ResearchGroup;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\ResearchGroupRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+
 class ReportController extends AbstractController
 {
-    #[Route(path: '/api/stuff')]
-    public function getStuff(ResearchGroupRepository $researchGroupRepository,  FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer) : Response
+    #[Route(path: '/api/grp-datasets-people-report', name: 'pelagos_api_grp_datasets_people_report', methods: ['GET'])]
+    public function getStuff(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
     {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
         $researchGroupIds = [];
-        foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
-                $researchGroupIds[] = $researchGroup->getId();
+        if ($fundingOrganization instanceof FundingOrganization) {
+            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                    $researchGroupIds[] = $researchGroup->getId();
+                }
             }
         }
 
         $researchGroups = $researchGroupRepository->findBy(['id' => $researchGroupIds], ['name' => 'ASC']);
 
-        usort($researchGroups, function(ResearchGroup $a, ResearchGroup $b) {
+        usort($researchGroups, function (ResearchGroup $a, ResearchGroup $b) {
             return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
         });
 
@@ -36,22 +39,20 @@ class ReportController extends AbstractController
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
-                    'Funding Cycle' => 'fundingCycle.name',
+                    'fundingCycle.name',
                     'ResearchGroupName',
                     'approvedDifsCount',
                     'submittedDatasets',
                     'availableDatasets',
                     'restrictedDataset',
-                    'peopleCount'
+                    'peopleCount',
                 ],
                 'output_utf8_bom' => true,
             ]);
 
-            $csvFilename = 'DatasetMonitoringReport-' .
-            (new \DateTime('now'))->format('Ymd\THis') .
-            '.csv';
-
-            dd($data);
+        $csvFilename = 'GRP-Datasets-People-Report-' .
+        (new \DateTime('now'))->format('Ymd\THis') .
+        '.csv';
 
         $response = new Response($data);
 
