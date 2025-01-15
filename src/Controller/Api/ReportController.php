@@ -35,7 +35,9 @@ class ReportController extends AbstractController
             return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
         });
 
-        $data = $serialzer->serialize($researchGroups, 'csv',
+        $data = $serialzer->serialize(
+            $researchGroups,
+            'csv',
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
@@ -48,7 +50,8 @@ class ReportController extends AbstractController
                     'peopleCount',
                 ],
                 'output_utf8_bom' => true,
-            ]);
+            ]
+        );
 
         $csvFilename = 'GRP-Datasets-People-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
