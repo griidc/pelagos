@@ -40,8 +40,12 @@ class ReportController extends AbstractController
 >>>>>>> b88d625f4 (Working CSV)
 =======
     #[Route(path: '/api/grp-datasets-people-report', name: 'pelagos_api_grp_datasets_people_report', methods: ['GET'])]
+<<<<<<< HEAD
     public function getStuff(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
 >>>>>>> 146c8b57e (Added to admin list)
+=======
+    public function getGrpDatasetAndPeopleReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
+>>>>>>> 41d1ef528 (Changed Name)
     {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
