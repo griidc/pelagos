@@ -35,7 +35,7 @@ class FundingCycle extends Entity
     #[ORM\Column(type: 'citext')]
     #[Serializer\Groups(['organization'])]
     #[Assert\NotBlank(message: 'Name is required')]
-    #[Groups('grp-people-accounts-report')]
+    #[Groups(['grp-dp-report', 'grp-people-accounts-report'])]
     protected $name;
 
     /**
