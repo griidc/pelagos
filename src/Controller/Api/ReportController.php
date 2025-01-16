@@ -134,10 +134,14 @@ class ReportController extends AbstractController
 
     #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
 <<<<<<< HEAD
+<<<<<<< HEAD
     public function getGrpDatasetAndKeywordsReport(FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
 =======
     public function getGrpDatasetAndKeywordsReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
 >>>>>>> ada487f91 (Serializer working)
+=======
+    public function getGrpDatasetAndKeywordsReport(FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
+>>>>>>> 9a5b2327a (Added to admin page)
     {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
