@@ -81,6 +81,7 @@ class ReportController extends AbstractController
         $data = $serialzer->serialize(
             $researchGroups,
             'csv',
+<<<<<<< HEAD
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
@@ -94,6 +95,8 @@ class ReportController extends AbstractController
         });
 
         $data = $serialzer->serialize($researchGroups, 'csv',
+=======
+>>>>>>> 7200c6a55 (phpcs fixups.)
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
@@ -148,12 +151,18 @@ class ReportController extends AbstractController
         $datasets = $fundingOrganization->getDatasets();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         $data = $serialzer->serialize(
             $datasets,
             'csv',
 =======
         $data = $serialzer->serialize($datasets, 'csv',
 >>>>>>> ada487f91 (Serializer working)
+=======
+        $data = $serialzer->serialize(
+            $datasets,
+            'csv',
+>>>>>>> 7200c6a55 (phpcs fixups.)
             [
                 'groups' => 'grp-dk-report',
                 'csv_headers' => [
@@ -166,11 +175,16 @@ class ReportController extends AbstractController
                 'output_utf8_bom' => true,
                 'enable_max_depth' => true,
 <<<<<<< HEAD
+<<<<<<< HEAD
             ]
         );
 =======
             ]);
 >>>>>>> ada487f91 (Serializer working)
+=======
+            ]
+        );
+>>>>>>> 7200c6a55 (phpcs fixups.)
 
         $csvFilename = 'GRP-Dataset-Keywords-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
@@ -186,6 +200,7 @@ class ReportController extends AbstractController
         $response->headers->set('Content-Encoding', 'UTF-8');
 
         return $response;
+<<<<<<< HEAD
 <<<<<<< HEAD
     }
 
@@ -254,5 +269,7 @@ class ReportController extends AbstractController
 =======
 
 >>>>>>> ada487f91 (Serializer working)
+=======
+>>>>>>> 7200c6a55 (phpcs fixups.)
     }
 }
