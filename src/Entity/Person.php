@@ -10,9 +10,11 @@ use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Exception\NotDeletableException;
+use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 /**
  * Entity class to represent a Person.
@@ -234,7 +236,6 @@ class Person extends Entity
      */
     #[ORM\OneToOne(targetEntity: 'Account', mappedBy: 'person')]
     #[Serializer\Exclude]
-    #[Groups('grp-people-accounts-report')]
     protected $account;
 
     /**
@@ -893,10 +894,23 @@ class Person extends Entity
         return $publications;
     }
 
-    #[Groups('grp-people-accounts-report')]
+    /**
+     * Does this person have an account?
+     *
+     * @return string
+     */
+    #[Groups(['grp-people-accounts-report'])]
     #[SerializedName('hasAccount')]
-    public function getHasAccount(): string
+    public function getHasAccount(): bool
     {
         return ($this->getAccount() instanceof Account) ? 'yes' : 'no';
     }
+
+    #[Groups(['grp-people-accounts-report'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    public function getAccountCreationDate(): ?\DateTime
+    {
+        return $this->getAccount()?->getCreationTimeStamp();
+    }
+
 }
