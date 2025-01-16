@@ -896,16 +896,17 @@ class Person extends Entity
 
     /**
      * Does this person have an account?
-     *
-     * @return string
      */
     #[Groups(['grp-people-accounts-report'])]
     #[SerializedName('hasAccount')]
-    public function getHasAccount(): bool
+    public function getHasAccount(): string
     {
         return ($this->getAccount() instanceof Account) ? 'yes' : 'no';
     }
 
+    /**
+     * Get the account creation time.
+     */
     #[Groups(['grp-people-accounts-report'])]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     public function getAccountCreationDate(): ?\DateTime

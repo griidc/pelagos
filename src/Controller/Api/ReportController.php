@@ -2,25 +2,11 @@
 
 namespace App\Controller\Api;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 use App\Entity\FundingOrganization;
 use App\Entity\ResearchGroup;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\PersonResearchGroupRepository;
 use App\Repository\ResearchGroupRepository;
-=======
-use App\Entity\ResearchGroup;
-use App\Repository\FundingOrganizationRepository;
-use App\Repository\ResearchGroupRepository;
-use Doctrine\Common\Collections\ArrayCollection;
->>>>>>> b88d625f4 (Working CSV)
-=======
-use App\Entity\FundingOrganization;
-use App\Entity\ResearchGroup;
-use App\Repository\FundingOrganizationRepository;
-use App\Repository\ResearchGroupRepository;
->>>>>>> 146c8b57e (Added to admin list)
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,89 +16,32 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ReportController extends AbstractController
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
     #[Route(path: '/api/grp-datasets-people-report', name: 'pelagos_api_grp_datasets_people_report', methods: ['GET'])]
-    public function getGrpDatasetAndPeopleReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
-=======
-    #[Route(path: '/api/stuff')]
-    public function getStuff(ResearchGroupRepository $researchGroupRepository,  FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer) : Response
->>>>>>> b88d625f4 (Working CSV)
-=======
-    #[Route(path: '/api/grp-datasets-people-report', name: 'pelagos_api_grp_datasets_people_report', methods: ['GET'])]
-<<<<<<< HEAD
-    public function getStuff(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
->>>>>>> 146c8b57e (Added to admin list)
-=======
-    public function getGrpDatasetAndPeopleReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
->>>>>>> 41d1ef528 (Changed Name)
-    {
+    public function getGrpDatasetAndPeopleReport(
+        ResearchGroupRepository $researchGroupRepository,
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        SerializerInterface $serialzer,
+    ): Response {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
-        $researchGroupIds = [];
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 146c8b57e (Added to admin list)
-        if ($fundingOrganization instanceof FundingOrganization) {
-            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
-                    $researchGroupIds[] = $researchGroup->getId();
-                }
-<<<<<<< HEAD
-=======
-        foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
-                $researchGroupIds[] = $researchGroup->getId();
->>>>>>> b88d625f4 (Working CSV)
-=======
->>>>>>> 146c8b57e (Added to admin list)
-            }
-        }
+        $researchGroupIds = $this->getResearchGroupsIdsByFundingOrganization($fundingOrganization);
 
         $researchGroups = $researchGroupRepository->findBy(['id' => $researchGroupIds], ['name' => 'ASC']);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         usort($researchGroups, function (ResearchGroup $a, ResearchGroup $b) {
-            return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
-        });
-
-        $data = $serialzer->serialize(
-            $researchGroups,
-            'csv',
-<<<<<<< HEAD
-            [
-                'groups' => 'grp-dp-report',
-                'csv_headers' => [
-                    'fundingCycle.name',
-=======
-        usort($researchGroups, function(ResearchGroup $a, ResearchGroup $b) {
-=======
-        usort($researchGroups, function (ResearchGroup $a, ResearchGroup $b) {
->>>>>>> 146c8b57e (Added to admin list)
             return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
         });
 
         $data = $serialzer->serialize($researchGroups, 'csv',
-=======
->>>>>>> 7200c6a55 (phpcs fixups.)
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
-<<<<<<< HEAD
-                    'Funding Cycle' => 'fundingCycle.name',
->>>>>>> b88d625f4 (Working CSV)
-=======
-                    'fundingCycle.name',
->>>>>>> 146c8b57e (Added to admin list)
-                    'ResearchGroupName',
+                    'fundingCycleName',
+                    'researchGroupName',
                     'approvedDifsCount',
                     'submittedDatasets',
                     'availableDatasets',
                     'restrictedDataset',
-<<<<<<< HEAD
-<<<<<<< HEAD
                     'peopleCount',
                 ],
                 'output_utf8_bom' => true,
@@ -123,85 +52,38 @@ class ReportController extends AbstractController
         (new \DateTime('now'))->format('Ymd\THis') .
         '.csv';
 
-        $response = new Response($data);
-
-        $response->headers->set(
-            'Content-disposition',
-            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
-        );
-        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-        $response->headers->set('Content-Encoding', 'UTF-8');
-
-        return $response;
+        return $this->createCsvResponse($data, $csvFilename);
     }
 
     #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public function getGrpDatasetAndKeywordsReport(FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
-=======
-    public function getGrpDatasetAndKeywordsReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
->>>>>>> ada487f91 (Serializer working)
-=======
-    public function getGrpDatasetAndKeywordsReport(FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
->>>>>>> 9a5b2327a (Added to admin page)
-    {
+    public function getGrpDatasetAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        SerializerInterface $serialzer,
+    ): Response {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
-        $datasets = $fundingOrganization->getDatasets();
+        $datasets = $fundingOrganization?->getDatasets();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        $data = $serialzer->serialize(
-            $datasets,
-            'csv',
-=======
         $data = $serialzer->serialize($datasets, 'csv',
->>>>>>> ada487f91 (Serializer working)
-=======
-        $data = $serialzer->serialize(
-            $datasets,
-            'csv',
->>>>>>> 7200c6a55 (phpcs fixups.)
             [
                 'groups' => 'grp-dk-report',
                 'csv_headers' => [
-                    'researchGroup.fundingCycle.name',
-                    'researchGroup.ResearchGroupName',
+                    'fundingCycleName',
+                    'researchGroupName',
                     'udi',
                     'title',
                     'doi',
                 ],
                 'output_utf8_bom' => true,
                 'enable_max_depth' => true,
-<<<<<<< HEAD
-<<<<<<< HEAD
             ]
         );
-=======
-            ]);
->>>>>>> ada487f91 (Serializer working)
-=======
-            ]
-        );
->>>>>>> 7200c6a55 (phpcs fixups.)
 
         $csvFilename = 'GRP-Dataset-Keywords-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
         '.csv';
 
-        $response = new Response($data);
-
-        $response->headers->set(
-            'Content-disposition',
-            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
-        );
-        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-        $response->headers->set('Content-Encoding', 'UTF-8');
-
-        return $response;
-<<<<<<< HEAD
-<<<<<<< HEAD
+        return $this->createCsvResponse($data, $csvFilename);
     }
 
     #[Route(path: '/api/grp-people-accounts-report', name: 'pelagos_api_grp_accounts_people_report', methods: ['GET'])]
@@ -212,50 +94,36 @@ class ReportController extends AbstractController
     ): Response {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
-        $researchGroupIds = [];
-        if ($fundingOrganization instanceof FundingOrganization) {
-            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
-                    $researchGroupIds[] = $researchGroup->getId();
-                }
-            }
-        }
+        $researchGroupIds = $this->getResearchGroupsIdsByFundingOrganization($fundingOrganization);
 
         $personResearchGroups = $personResearchGroupRepository->findBy(['researchGroup' => $researchGroupIds]);
 
-        $data = $serializer->serialize($personResearchGroups, 'json',
+        $data = $serializer->serialize($personResearchGroups, 'csv',
             [
                 'groups' => ['grp-people-accounts-report'],
                 'enable_max_depth' => true,
-            ]);
-
-        return new Response($data, 200, ['Content-Type' => 'application/json', 'Content-Encoding' => 'UTF-8']);
-
-        $csvFilename = 'GRP-People-Accounts-Report-' .
-        (new \DateTime('now'))->format('Ymd\THis') .
-        '.csv';
-=======
-                    'peopleCount'
-=======
-                    'peopleCount',
->>>>>>> 146c8b57e (Added to admin list)
+                'csv_headers' => [
+                    'researchGroup.fundingCycle.name',
+                    'researchGroup.ResearchGroupName',
                 ],
                 'output_utf8_bom' => true,
             ]);
 
-<<<<<<< HEAD
-            $csvFilename = 'DatasetMonitoringReport-' .
-            (new \DateTime('now'))->format('Ymd\THis') .
-            '.csv';
-
-            dd($data);
->>>>>>> b88d625f4 (Working CSV)
-=======
-        $csvFilename = 'GRP-Datasets-People-Report-' .
+        $csvFilename = 'GRP-People-Accounts-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
         '.csv';
->>>>>>> 146c8b57e (Added to admin list)
 
+        return $this->createCsvResponse($data, $csvFilename);
+    }
+
+    /**
+     * Create a CSV Response.
+     *
+     * @param mixed  $data        the CSV data
+     * @param string $csvFilename the CSV filename
+     */
+    private function createCsvResponse(mixed $data, string $csvFilename): Response
+    {
         $response = new Response($data);
 
         $response->headers->set(
@@ -266,10 +134,22 @@ class ReportController extends AbstractController
         $response->headers->set('Content-Encoding', 'UTF-8');
 
         return $response;
-=======
+    }
 
->>>>>>> ada487f91 (Serializer working)
-=======
->>>>>>> 7200c6a55 (phpcs fixups.)
+    /**
+     * Get Research Groups IDs by Funding Organization.
+     *
+     * @return array an array of Research Group IDs
+     */
+    private function getResearchGroupsIdsByFundingOrganization(FundingOrganization $fundingOrganization): array
+    {
+        $researchGroupIds = [];
+        foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                $researchGroupIds[] = $researchGroup->getId();
+            }
+        }
+
+        return $researchGroupIds;
     }
 }

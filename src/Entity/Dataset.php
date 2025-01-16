@@ -139,8 +139,6 @@ class Dataset extends Entity
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     #[Serializer\MaxDepth(1)]
     #[Serializer\Groups(['search'])]
-    #[Groups(['grp-dk-report'])]
-    #[MaxDepth(1)]
     protected $researchGroup;
 
     /**
@@ -1126,7 +1124,7 @@ class Dataset extends Entity
      * Get ANZRC keys as a string.
      */
     #[Groups(['grp-dk-report'])]
-    public function getAnzrcKeywords(): ?string
+    public function getAnzsrcKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
 
@@ -1194,14 +1192,34 @@ class Dataset extends Entity
     }
 
     /**
-     * Key keywords by type.
+     * Get keywords by type.
      */
     private function getKeywordsByType(KeywordType $type): ?Collection
     {
         $keywords = $this->getDatasetSubmission()?->getKeywords();
 
         return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
-            return $keyword->getType() === $type;
-        });
+                return $keyword->getType() === $type;
+            }
+        );
     }
+
+    /**
+     * Get the dataset's Research Group name.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getResearchGroupName(): string
+    {
+        return $this->getResearchGroup()->getName();
+    }
+
+    /**
+     * Get the dataset's Funding Cycle name.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getFundingCycleName(): string
+    {
+        return $this->getResearchGroup()->getFundingCycle()->getName();
+    }
+
 }
