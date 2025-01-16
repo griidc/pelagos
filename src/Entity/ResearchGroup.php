@@ -4,21 +4,21 @@ namespace App\Entity;
 
 use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
+use App\Repository\ResearchGroupRepository;
 use App\Twig\Extensions as TwigExtentions;
-use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entity class to represent a Research Group.
- *
- *
  */
-#[ORM\Entity(repositoryClass: 'App\Repository\ResearchGroupRepository')]
+#[ORM\Entity(repositoryClass: ResearchGroupRepository::class)]
 #[Assert\GroupSequence(['id', 'unique_id', 'ResearchGroup', 'Entity'])]
 #[UniqueEntity(fields: ['name', 'fundingCycle'], errorPath: 'name', message: 'A Research Group with this name already exists')]
 #[UniqueEntity('shortName', message: 'A Research Group with this Short name already exists')]
@@ -43,21 +43,19 @@ class ResearchGroup extends Entity
      * Name of a research group.
      *
      * @var string $name
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     #[Serializer\Groups(['overview', 'search'])]
     #[Assert\NotBlank(message: 'Name is required')]
+    #[Groups(['grp-dp-report'])]
+    #[SerializedName('ResearchGroupName')]
     protected $name;
 
     /**
      * Short Name of a research group.
      *
      * @var string $shortName
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Short name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true, nullable: true)]
@@ -68,21 +66,19 @@ class ResearchGroup extends Entity
      * Research group's parent Funding Cycle.
      *
      * @var FundingCycle $fundingCycle
-     *
-     *
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups')]
+    #[ORM\ManyToOne(targetEntity: 'FundingCycle', inversedBy: 'researchGroups', fetch: 'EAGER')]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
     #[Assert\NotBlank(message: 'Funding Cycle is required')]
+    #[Groups(['grp-dp-report'])]
     protected $fundingCycle;
 
     /**
      * Research group's Website url.
      *
      * @var string $url
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -92,7 +88,6 @@ class ResearchGroup extends Entity
      * Research group's telephone number.
      *
      * @var string $phoneNumber
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -102,7 +97,6 @@ class ResearchGroup extends Entity
      * Research group's delivery point (street address).
      *
      * @var string $deliveryPoint
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -112,7 +106,6 @@ class ResearchGroup extends Entity
      * Research group's city.
      *
      * @var string $city
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -122,7 +115,6 @@ class ResearchGroup extends Entity
      * Research group's administrative area (state).
      *
      * @var string $administrativeArea
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -132,7 +124,6 @@ class ResearchGroup extends Entity
      * Research group's postal code (zipcode).
      *
      * @var string $postalCode
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -142,7 +133,6 @@ class ResearchGroup extends Entity
      * Research group's country.
      *
      * @var string $country
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -152,8 +142,6 @@ class ResearchGroup extends Entity
      * Description of a research group.
      *
      * @var string $description
-     *
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -172,7 +160,6 @@ class ResearchGroup extends Entity
      * Research group's email address.
      *
      * @var string $emailAddress
-     *
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Email address cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', nullable: true)]
@@ -182,7 +169,7 @@ class ResearchGroup extends Entity
     /**
      * Research group's PersonResearchGroups.
      *
-     * @var \Doctrine\Common\Collections\Collection $personResearchGroups
+     * @var Collection $personResearchGroups
      */
     #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
     #[Serializer\Groups(['overview'])]
@@ -202,7 +189,6 @@ class ResearchGroup extends Entity
      * Lock flag for Research Group, defaults to false for new Research Groups.
      *
      * @var bool $locked
-     *
      */
     #[ORM\Column(type: 'boolean', nullable: false)]
     #[Serializer\Groups(['data'])]
@@ -221,8 +207,6 @@ class ResearchGroup extends Entity
 
     /**
      * Serializer for the datasets virtual property.
-     *
-     *
      *
      * @return array
      */
@@ -307,7 +291,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setFundingCycle(FundingCycle $fundingCycle = null)
+    public function setFundingCycle(?FundingCycle $fundingCycle = null)
     {
         $this->fundingCycle = $fundingCycle;
     }
@@ -607,8 +591,8 @@ class ResearchGroup extends Entity
     /**
      * Getter for personResearchGroups.
      *
-     * @return \Doctrine\Common\Collections\Collection collection containing personResearchGroups
-     *                                                 listings for this research group
+     * @return Collection collection containing personResearchGroups
+     *                    listings for this research group
      */
     public function getPersonResearchGroups()
     {
@@ -632,6 +616,15 @@ class ResearchGroup extends Entity
     }
 
     /**
+     * Return a count of People for this Research Group.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getPeopleCount(): int
+    {
+        return $this->getPeople()->count();
+    }
+
+    /**
      * Get publications for this Research Group.
      */
     public function getPublications(): Collection
@@ -649,8 +642,6 @@ class ResearchGroup extends Entity
 
         return $publications;
     }
-
-
 
     /**
      * Check if this ResearchGroup is deletable.
@@ -712,8 +703,6 @@ class ResearchGroup extends Entity
 
     /**
      * Returns a collection of project directors (Person entity).
-     *
-     *
      */
     #[Serializer\Groups(['overview'])]
     #[Serializer\VirtualProperty]
@@ -737,5 +726,41 @@ class ResearchGroup extends Entity
         return $this->datasets->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
             return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
         });
+    }
+
+    /**
+     * Return a count of identified datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getApprovedDifsCount(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::IDENTIFIED)->count();
+    }
+
+    /**
+     * Returns a count of Submitted datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getSubmittedDatasets(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::SUBMITTED)->count();
+    }
+
+    /**
+     * Returns a count of Available datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getAvailableDatasets(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::AVAILABLE)->count();
+    }
+
+    /**
+     * Returns a count of Restricted datasets.
+     */
+    #[Groups(['grp-dp-report'])]
+    public function getRestrictedDataset(): int
+    {
+        return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::RESTRICTED)->count();
     }
 }
