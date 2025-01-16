@@ -32,7 +32,9 @@ class ReportController extends AbstractController
             return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
         });
 
-        $data = $serialzer->serialize($researchGroups, 'csv',
+        $data = $serialzer->serialize(
+            $researchGroups,
+            'csv',
             [
                 'groups' => 'grp-dp-report',
                 'csv_headers' => [
@@ -64,7 +66,9 @@ class ReportController extends AbstractController
 
         $datasets = $fundingOrganization?->getDatasets();
 
-        $data = $serialzer->serialize($datasets, 'csv',
+        $data = $serialzer->serialize(
+            $datasets,
+            'csv',
             [
                 'groups' => 'grp-dk-report',
                 'csv_headers' => [
@@ -98,7 +102,9 @@ class ReportController extends AbstractController
 
         $personResearchGroups = $personResearchGroupRepository->findBy(['researchGroup' => $researchGroupIds]);
 
-        $data = $serializer->serialize($personResearchGroups, 'csv',
+        $data = $serializer->serialize(
+            $personResearchGroups,
+            'csv',
             [
                 'groups' => ['grp-people-accounts-report'],
                 'enable_max_depth' => true,
@@ -107,7 +113,8 @@ class ReportController extends AbstractController
                     'researchGroup.ResearchGroupName',
                 ],
                 'output_utf8_bom' => true,
-            ]);
+            ]
+        );
 
         $csvFilename = 'GRP-People-Accounts-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .

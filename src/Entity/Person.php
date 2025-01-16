@@ -5,14 +5,12 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Exception\NotDeletableException;
 use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
@@ -913,5 +911,4 @@ class Person extends Entity
     {
         return $this->getAccount()?->getCreationTimeStamp();
     }
-
 }

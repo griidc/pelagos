@@ -1202,8 +1202,7 @@ class Dataset extends Entity
 
         return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
                 return $keyword->getType() === $type;
-            }
-        );
+        });
     }
 
     /**
@@ -1223,5 +1222,4 @@ class Dataset extends Entity
     {
         return $this->getResearchGroup()->getFundingCycle()->getName();
     }
-
 }
