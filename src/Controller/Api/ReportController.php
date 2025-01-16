@@ -68,4 +68,44 @@ class ReportController extends AbstractController
 
         return $response;
     }
+
+    #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
+    public function getGrpDatasetAndKeywordsReport(FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
+    {
+        $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
+
+        $datasets = $fundingOrganization->getDatasets();
+
+        $data = $serialzer->serialize(
+            $datasets,
+            'csv',
+            [
+                'groups' => 'grp-dk-report',
+                'csv_headers' => [
+                    'researchGroup.fundingCycle.name',
+                    'researchGroup.ResearchGroupName',
+                    'udi',
+                    'title',
+                    'doi',
+                ],
+                'output_utf8_bom' => true,
+                'enable_max_depth' => true,
+            ]
+        );
+
+        $csvFilename = 'GRP-Dataset-Keywords-Report-' .
+        (new \DateTime('now'))->format('Ymd\THis') .
+        '.csv';
+
+        $response = new Response($data);
+
+        $response->headers->set(
+            'Content-disposition',
+            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
+        );
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Encoding', 'UTF-8');
+
+        return $response;
+    }
 }
