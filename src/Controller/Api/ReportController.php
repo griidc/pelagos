@@ -133,15 +133,23 @@ class ReportController extends AbstractController
     }
 
     #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
+<<<<<<< HEAD
     public function getGrpDatasetAndKeywordsReport(FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
+=======
+    public function getGrpDatasetAndKeywordsReport(ResearchGroupRepository $researchGroupRepository, FundingOrganizationRepository $fundingOrganizationRepository, SerializerInterface $serialzer): Response
+>>>>>>> ada487f91 (Serializer working)
     {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
         $datasets = $fundingOrganization->getDatasets();
 
+<<<<<<< HEAD
         $data = $serialzer->serialize(
             $datasets,
             'csv',
+=======
+        $data = $serialzer->serialize($datasets, 'csv',
+>>>>>>> ada487f91 (Serializer working)
             [
                 'groups' => 'grp-dk-report',
                 'csv_headers' => [
@@ -153,8 +161,12 @@ class ReportController extends AbstractController
                 ],
                 'output_utf8_bom' => true,
                 'enable_max_depth' => true,
+<<<<<<< HEAD
             ]
         );
+=======
+            ]);
+>>>>>>> ada487f91 (Serializer working)
 
         $csvFilename = 'GRP-Dataset-Keywords-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
@@ -170,6 +182,7 @@ class ReportController extends AbstractController
         $response->headers->set('Content-Encoding', 'UTF-8');
 
         return $response;
+<<<<<<< HEAD
     }
 
     #[Route(path: '/api/grp-people-accounts-report', name: 'pelagos_api_grp_accounts_people_report', methods: ['GET'])]
@@ -234,5 +247,8 @@ class ReportController extends AbstractController
         $response->headers->set('Content-Encoding', 'UTF-8');
 
         return $response;
+=======
+
+>>>>>>> ada487f91 (Serializer working)
     }
 }
