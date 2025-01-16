@@ -73,6 +73,8 @@ class ResearchGroup extends Entity
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
     #[Assert\NotBlank(message: 'Funding Cycle is required')]
+    #[Groups(['grp-dp-report', 'grp-dk-report'])]
+    #[MaxDepth(1)]
     protected $fundingCycle;
 
     /**

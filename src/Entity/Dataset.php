@@ -139,6 +139,8 @@ class Dataset extends Entity
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     #[Serializer\MaxDepth(1)]
     #[Serializer\Groups(['search'])]
+    #[Groups(['grp-dk-report'])]
+    #[MaxDepth(1)]
     protected $researchGroup;
 
     /**
