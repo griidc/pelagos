@@ -162,8 +162,6 @@ class ReportController extends AbstractController
 
     /**
      * Get Research Groups IDs by Funding Organization.
-     *
-     * @return array an array of Research Group IDs
      */
     private function getResearchGroupsIdsByFundingOrganization(FundingOrganization $fundingOrganization): array
     {
