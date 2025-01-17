@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Context\Encoder\CsvEncoderContextBuilder;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ReportController extends AbstractController
@@ -34,23 +36,23 @@ class ReportController extends AbstractController
             return $a->getFundingCycleName() <=> $b->getFundingCycleName();
         });
 
-        $data = $serialzer->serialize(
-            $researchGroups,
-            'csv',
-            [
-                'groups' => 'grp-dp-report',
-                'csv_headers' => [
-                    'fundingCycleName',
-                    'researchGroupName',
-                    'approvedDifsCount',
-                    'submittedDatasets',
-                    'availableDatasets',
-                    'restrictedDataset',
-                    'peopleCount',
-                ],
-                'output_utf8_bom' => true,
-            ]
-        );
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups(['grp-dp-report']);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+        ->withContext($contextBuilder)
+        ->withOutputUtf8Bom(true)
+        ->withHeaders([
+            'fundingCycleName',
+            'researchGroupName',
+            'approvedDifsCount',
+            'submittedDatasets',
+            'availableDatasets',
+            'restrictedDataset',
+            'peopleCount',
+        ]);
+
+        $data = $serialzer->serialize($researchGroups, 'csv', $contextBuilder->toArray());
 
         $csvFilename = 'GRP-Datasets-People-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
@@ -72,22 +74,21 @@ class ReportController extends AbstractController
             return $a->getFundingCycleName() <=> $b->getFundingCycleName();
         });
 
-        $data = $serialzer->serialize(
-            $datasets,
-            'csv',
-            [
-                'groups' => 'grp-dk-report',
-                'csv_headers' => [
-                    'fundingCycleName',
-                    'researchGroupName',
-                    'udi',
-                    'title',
-                    'doi',
-                ],
-                'output_utf8_bom' => true,
-                'enable_max_depth' => true,
-            ]
-        );
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups(['grp-dk-report']);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+        ->withContext($contextBuilder)
+        ->withOutputUtf8Bom(true)
+        ->withHeaders([
+            'fundingCycleName',
+            'researchGroupName',
+            'udi',
+            'title',
+            'doi',
+        ]);
+
+        $data = $serialzer->serialize($datasets, 'csv', $contextBuilder->toArray());
 
         $csvFilename = 'GRP-Dataset-Keywords-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
@@ -112,19 +113,18 @@ class ReportController extends AbstractController
             return $a->getFundingCycleName() <=> $b->getFundingCycleName();
         });
 
-        $data = $serializer->serialize(
-            $personResearchGroups,
-            'csv',
-            [
-                'groups' => ['grp-people-accounts-report'],
-                'enable_max_depth' => true,
-                'csv_headers' => [
-                    'fundingCycleName',
-                    'researchGroupName',
-                ],
-                'output_utf8_bom' => true,
-            ]
-        );
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups(['grp-people-accounts-report']);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+        ->withContext($contextBuilder)
+        ->withOutputUtf8Bom(true)
+        ->withHeaders([
+            'fundingCycleName',
+            'researchGroupName',
+        ]);
+
+        $data = $serializer->serialize($personResearchGroups, 'csv', $contextBuilder->toArray());
 
         $csvFilename = 'GRP-People-Accounts-Report-' .
         (new \DateTime('now'))->format('Ymd\THis') .
