@@ -1128,41 +1128,51 @@ class Dataset extends Entity
     }
 
     /**
-     * Get ANZRC keys as a string.
+     * Get ANZRC keywords as a string.
      */
     #[Groups(['grp-dk-report'])]
     public function getAnzsrcKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
-
-        if ($keywords instanceof Collection) {
-            $keywords = $keywords->map(
-                function (Keyword $keyword) {
-                    return $keyword->getLabel();
-                }
-            );
-        }
-
-        return implode(',', $keywords?->toArray() ?? []);
+        return implode(';',  $this->makeUniqueKeywordDictionary($keywords));
     }
 
     /**
-     * Get ANZRC keys as a string.
+     * Get GCMD keywords as a string.
      */
     #[Groups(['grp-dk-report'])]
     public function getGcmdKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
+        return implode(';',  $this->makeUniqueKeywordDictionary($keywords));
+    }
+
+    /**
+     * Make a unique dictionary of keywords.
+     */
+    private function makeUniqueKeywordDictionary(?Collection $keywords, bool $wordCapped = true): array
+    {
+        $dictionary = [];
 
         if ($keywords instanceof Collection) {
-            $keywords = $keywords->map(
-                function (Keyword $keyword) {
-                    return $keyword->getLabel();
+            foreach ($keywords as $keyword) {
+                $keywordParts = explode('>', $keyword->getDisplayPath());
+                foreach ($keywordParts as $part) {
+                    $part = trim($part);
+                    $part = strtolower($part);
+                    if ($wordCapped) {
+                        $dictionary[] = ucwords($part);
+                    } else {
+                        $dictionary[] = ucfirst($part);
+                    }
+
                 }
-            );
+            }
         }
 
-        return implode(',', $keywords?->toArray() ?? []);
+        sort($dictionary);
+
+        return array_unique($dictionary);
     }
 
     /**
@@ -1173,7 +1183,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getThemeKeywords();
 
-        return implode(',', $keywords ?? []);
+        return implode(';', $keywords ?? []);
     }
 
     /**
@@ -1184,7 +1194,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getPlaceKeywords();
 
-        return implode(',', $keywords ?? []);
+        return implode(';', $keywords ?? []);
     }
 
     /**
@@ -1195,7 +1205,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getTopicKeywords();
 
-        return implode(',', $keywords ?? []);
+        return implode(';', $keywords ?? []);
     }
 
     /**
