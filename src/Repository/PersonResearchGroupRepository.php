@@ -10,6 +10,13 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Person Research group Entity Repository class.
+ *
+ * @extends ServiceEntityRepository<PersonResearchGroup>
+ *
+ * @method PersonResearchGroup|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PersonResearchGroup|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PersonResearchGroup[]    findAll()
+ * @method PersonResearchGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class PersonResearchGroupRepository extends ServiceEntityRepository
 {

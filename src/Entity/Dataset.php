@@ -5,12 +5,10 @@ namespace App\Entity;
 use App\Enum\DatasetLifecycleStatus;
 use App\Enum\KeywordType;
 use App\Util\DatasetCitationUtil;
-use App\Util\GenerateUrl;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Serializer\Attribute\SerializedName;
@@ -139,8 +137,6 @@ class Dataset extends Entity
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     #[Serializer\MaxDepth(1)]
     #[Serializer\Groups(['search'])]
-    #[Groups(['grp-dk-report'])]
-    #[MaxDepth(1)]
     protected $researchGroup;
 
     /**

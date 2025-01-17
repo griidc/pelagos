@@ -46,7 +46,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'personResearchGroups')]
     #[Assert\NotBlank(message: 'Research Group is required')]
-    #[Groups('grp-people-accounts-report')]
     protected $researchGroup;
 
     /**
@@ -161,5 +160,23 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * Get the Research Group Name.
+     */
+    #[Groups('grp-people-accounts-report')]
+    public function getResearchGroupName(): string
+    {
+        return $this->researchGroup->getName();
+    }
+
+    /**
+     * Get the Research Group Funding Cycle Name.
+     */
+    #[Groups('grp-people-accounts-report')]
+    public function getFundingCycleName(): string
+    {
+        return $this->researchGroup->getFundingCycle()->getName();
     }
 }

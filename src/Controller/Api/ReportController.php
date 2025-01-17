@@ -2,7 +2,9 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Dataset;
 use App\Entity\FundingOrganization;
+use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\PersonResearchGroupRepository;
@@ -29,7 +31,7 @@ class ReportController extends AbstractController
         $researchGroups = $researchGroupRepository->findBy(['id' => $researchGroupIds], ['name' => 'ASC']);
 
         usort($researchGroups, function (ResearchGroup $a, ResearchGroup $b) {
-            return $a->getFundingCycle()->getName() <=> $b->getFundingCycle()->getName();
+            return $a->getFundingCycleName() <=> $b->getFundingCycleName();
         });
 
         $data = $serialzer->serialize(
@@ -64,7 +66,11 @@ class ReportController extends AbstractController
     ): Response {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
-        $datasets = $fundingOrganization?->getDatasets();
+        $datasets = $fundingOrganization?->getDatasets()->toArray();
+
+        usort($datasets, function (Dataset $a, Dataset $b) {
+            return $a->getFundingCycleName() <=> $b->getFundingCycleName();
+        });
 
         $data = $serialzer->serialize(
             $datasets,
@@ -102,6 +108,10 @@ class ReportController extends AbstractController
 
         $personResearchGroups = $personResearchGroupRepository->findBy(['researchGroup' => $researchGroupIds]);
 
+        usort($personResearchGroups, function (PersonResearchGroup $a, PersonResearchGroup $b) {
+            return $a->getFundingCycleName() <=> $b->getFundingCycleName();
+        });
+
         $data = $serializer->serialize(
             $personResearchGroups,
             'csv',
@@ -109,8 +119,8 @@ class ReportController extends AbstractController
                 'groups' => ['grp-people-accounts-report'],
                 'enable_max_depth' => true,
                 'csv_headers' => [
-                    'researchGroup.fundingCycle.name',
-                    'researchGroup.ResearchGroupName',
+                    'fundingCycleName',
+                    'researchGroupName',
                 ],
                 'output_utf8_bom' => true,
             ]
