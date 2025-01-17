@@ -1,6 +1,6 @@
 {
     "devDependencies": {
-        "@babel/core": "^7.24.4",
+        "@babel/core": "^7.26.0",
         "@babel/preset-env": "7.26.0",
         "@babel/preset-react": "^7.26.3",
         "@fortawesome/fontawesome-free": "^5.11.1",
