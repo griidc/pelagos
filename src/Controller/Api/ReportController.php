@@ -6,6 +6,7 @@ use App\Entity\Dataset;
 use App\Entity\FundingOrganization;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
+use App\Enum\DatasetLifecycleStatus;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\PersonResearchGroupRepository;
 use App\Repository\ResearchGroupRepository;
@@ -68,7 +69,13 @@ class ReportController extends AbstractController
     ): Response {
         $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
 
-        $datasets = $fundingOrganization?->getDatasets()->toArray();
+        $datasets = $fundingOrganization?->getDatasets();
+
+        $datasets = $datasets->filter(function (Dataset $dataset) {
+            return $dataset->getDatasetLifecycleStatus() !== DatasetLifecycleStatus::NONE;
+        });
+
+        $datasets = $datasets->toArray();
 
         usort($datasets, function (Dataset $a, Dataset $b) {
             return $a->getFundingCycleName() <=> $b->getFundingCycleName();
