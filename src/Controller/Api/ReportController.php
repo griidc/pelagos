@@ -72,7 +72,7 @@ class ReportController extends AbstractController
         $datasets = $fundingOrganization?->getDatasets();
 
         $datasets = $datasets->filter(function (Dataset $dataset) {
-            return $dataset->getDatasetLifecycleStatus() !== DatasetLifecycleStatus::NONE;
+            return DatasetLifecycleStatus::NONE !== $dataset->getDatasetLifecycleStatus();
         });
 
         $datasets = $datasets->toArray();
