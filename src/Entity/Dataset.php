@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
 /**
@@ -913,6 +912,16 @@ class Dataset extends Entity
         }
 
         return $spatialExtent;
+    }
+
+    /**
+     * Does this Dataset have a spatial extent?
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('hasSpatialExtent')]
+    public function hasSpatialExtent(): string
+    {
+        return null !== $this->getSpatialExtentGeometry() ? 'Yes' : 'No';
     }
 
     /**
