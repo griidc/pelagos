@@ -1134,7 +1134,7 @@ class Dataset extends Entity
     public function getAnzsrcKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
-        return implode(';', $this->makeUniqueKeywordDictionary($keywords));
+        return implode('|', $this->makeUniqueKeywordDictionary($keywords));
     }
 
     /**
@@ -1144,7 +1144,7 @@ class Dataset extends Entity
     public function getGcmdKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
-        return implode(';', $this->makeUniqueKeywordDictionary($keywords));
+        return implode('|', $this->makeUniqueKeywordDictionary($keywords));
     }
 
     /**
@@ -1182,7 +1182,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getThemeKeywords();
 
-        return implode(';', $keywords ?? []);
+        return implode('|', $keywords ?? []);
     }
 
     /**
@@ -1193,7 +1193,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getPlaceKeywords();
 
-        return implode(';', $keywords ?? []);
+        return implode('|', $keywords ?? []);
     }
 
     /**
@@ -1204,7 +1204,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getTopicKeywords();
 
-        return implode(';', $keywords ?? []);
+        return implode('|', $keywords ?? []);
     }
 
     /**
