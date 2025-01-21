@@ -2,8 +2,12 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('login') }}
 
-    <link href="{{ asset('build/css/griidc-tailwind.css') }}" rel="stylesheet" />
+   <!--
+   <link href="{{ asset('build/css/griidc-tailwind.css') }}" rel="stylesheet" />
+   -->
+
 {% endblock %}
 
 {% block javascripts %}
@@ -20,54 +24,51 @@
     </div>
 {% endif %}
 
-<div class="flex items-center justify-center h-screen">
-<div class="py-6">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-     <img class="mx-auto h-10 w-auto" src="{{ asset('build/images/user-profile-pic.png') }}" alt="generic profile image of user" >
-    <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">GRIIDC Sign-In</h2>
-  </div>
+<div class="flex items-center justify-center">
+  <div class="py-10">
+    <div>
+      <img class="mx-auto h-10 w-auto" src="{{ asset('build/images/user-profile-pic.png') }}" alt="generic profile image of user" >
+      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">GRIIDC Sign-In</h2>
+    </div>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <form class="space-y-6" action="{{ path('security_login') }}" method="POST">
-      <div>
-        <div class="flex items-center justify-between pb-2">
-          <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
-          <div class="text-sm">
-          <a tabindex="-1" href="/account/forgot-username" class="font-semibold text-blue-600 hover:text-indigo-600">Forgot Username?</a>
+    <div class="mt-10 flex items-center justify-center">
+      <form class="space-y-6 min-w-80" action="{{ path('security_login') }}" method="POST">
+        <div>
+          <div class="flex items-center justify-between pb-2">
+            <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
+            <div class="text-sm">
+              <a tabindex="-1" href="/account/forgot-username" class="font-semibold text-blue-600 hover:text-indigo-600">Forgot Username?</a>
+            </div>
+          </div>
+          <div>
+            {{ form_widget(form._username, {"attr": {"class": "block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus-within:border-gray-300 focus:ring-0"}}) }}
           </div>
         </div>
-        <div>
-          {{ form_widget(form._username, {"attr": {"class": "block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus-within:border-gray-300 focus:ring-0"}}) }}
-        </div>
-      </div>
 
-      <div>
-        <div class="flex items-center justify-between py-2">
-          <label for="password" class="block text-sm font-medium leading-1 text-gray-900">Password</label>
-          <div class="text-sm">
-            <a tabindex="-1" href="/password" class="font-semibold text-blue-600 hover:text-indigo-600">Reset Password</a>
+        <div>
+          <div class="flex items-center justify-between py-2">
+            <label for="password" class="block text-sm font-medium leading-1 text-gray-900">Password</label>
+            <div class="text-sm">
+              <a tabindex="-1" href="/password" class="font-semibold text-blue-600 hover:text-indigo-600">Reset Password</a>
+            </div>
+          </div>
+          <div>
+            {{ form_widget(form._password, {"attr": {"class": "block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus-within:border-gray-300 focus:ring-0"}}) }}
           </div>
         </div>
-        <div>
-          {{ form_widget(form._password, {"attr": {"class": "block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus-within:border-gray-300 focus:ring-0"}}) }}
+        <div class="py-2">
+          <button type="submit" class="flex w-full justify-center button button-regular text-sm font-medium text-center text-white inline-block mt-6">Sign in</button>
         </div>
-      </div>
-      <div class="py-2">
-        <button type="submit" class="flex w-full justify-center button button-regular text-sm font-medium text-center text-white inline-block mt-6">Sign in</button>
-      </div>
-    </form>
+      </form>
+    </div>
+    <span class="text-sm flex items-left justify-center">
+      You are accessing a Texas A&amp;M University-Corpus Christi information system.<br/ >
+      Unauthorized use is prohibited.<br />
+      Usage may be subject to security testing and monitoring.<br />
+      Misuse is subject to criminal prosecution.<br />
+      Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
+    </span>
   </div>
 </div>
-
-
-</div>
-
-<span class="text-sm flex items-left justify-center h-screen">
-  You are accessing a Texas A&amp;M University-Corpus Christi information system.<br/ >
-  Unauthorized use is prohibited.<br />
-  Usage may be subject to security testing and monitoring.<br />
-  Misuse is subject to criminal prosecution.<br />
-  Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
-</span>
 
 {% endblock %}
