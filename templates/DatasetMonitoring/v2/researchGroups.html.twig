@@ -59,7 +59,9 @@
                 cssClass: 'dsmonitoringcols',
                 cellTemplate: function(container, options) {
                     const url = `https://doi.org/${options.value}`;
-                    return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                    if (!['Identified', 'None'].includes(options.data.status)) {
+                        return doi = $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+                    }
                 },
             },{
                 dataField: 'title',
