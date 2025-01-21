@@ -3,11 +3,6 @@
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('login') }}
-
-   <!--
-   <link href="{{ asset('build/css/griidc-tailwind.css') }}" rel="stylesheet" />
-   -->
-
 {% endblock %}
 
 {% block javascripts %}
@@ -61,12 +56,14 @@
         </div>
       </form>
     </div>
-    <span class="text-sm flex items-left justify-center">
+    <span class="text-sm items-left justify-center">
       You are accessing a Texas A&amp;M University-Corpus Christi information system.<br/ >
       Unauthorized use is prohibited.<br />
       Usage may be subject to security testing and monitoring.<br />
       Misuse is subject to criminal prosecution.<br />
       Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
+      By logging in, you are agreeing to the rules and conditions set forth by the
+      <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_BLANK">Texas A&amp;M University-Corpus Christi Acceptable Use Policy</a>.<br />
     </span>
   </div>
 </div>
