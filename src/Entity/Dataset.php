@@ -1150,7 +1150,7 @@ class Dataset extends Entity
     /**
      * Make a unique dictionary of keywords.
      */
-    private function makeUniqueKeywordDictionary(?Collection $keywords, bool $wordCapped = true): array
+    private function makeUniqueKeywordDictionary(?Collection $keywords): array
     {
         $dictionary = [];
 
@@ -1160,11 +1160,7 @@ class Dataset extends Entity
                 foreach ($keywordParts as $part) {
                     $part = trim($part);
                     $part = strtolower($part);
-                    if ($wordCapped) {
-                        $dictionary[] = ucwords($part);
-                    } else {
-                        $dictionary[] = ucfirst($part);
-                    }
+                    $dictionary[] = ucwords($part);
                 }
             }
         }
