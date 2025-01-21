@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\FundingOrganization;
 use App\Entity\PersonResearchGroup;
@@ -15,13 +16,18 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Context\Encoder\CsvEncoderContextBuilder;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ReportController extends AbstractController
 {
+    /**
+     * Datasets and People Report.
+     */
     #[Route(path: '/api/grp-datasets-people-report', name: 'pelagos_api_grp_datasets_people_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function getGrpDatasetAndPeopleReport(
         ResearchGroupRepository $researchGroupRepository,
         FundingOrganizationRepository $fundingOrganizationRepository,
@@ -62,7 +68,11 @@ class ReportController extends AbstractController
         return $this->createCsvResponse($data, $csvFilename);
     }
 
+    /**
+     * Datasets and Keywords Report.
+     */
     #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function getGrpDatasetAndKeywordsReport(
         FundingOrganizationRepository $fundingOrganizationRepository,
         SerializerInterface $serialzer,
@@ -104,7 +114,11 @@ class ReportController extends AbstractController
         return $this->createCsvResponse($data, $csvFilename);
     }
 
+    /**
+     * People and Accounts Report.
+     */
     #[Route(path: '/api/grp-people-accounts-report', name: 'pelagos_api_grp_accounts_people_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function getGrpPeopleAndAccountsReport(
         FundingOrganizationRepository $fundingOrganizationRepository,
         PersonResearchGroupRepository $personResearchGroupRepository,
