@@ -19,20 +19,20 @@
     </div>
 {% endif %}
 
-<div class="flex items-center justify-center">
-  <div class="py-10">
-    <div>
+<div class="flex items-center justify-center mt-8">
+  <div class="py-4">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <img class="mx-auto h-10 w-auto" src="{{ asset('build/images/user-profile-pic.png') }}" alt="generic profile image of user" >
-      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">GRIIDC Sign-In</h2>
+      <h2 class="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">GRIIDC Sign-In</h2>
     </div>
 
-    <div class="mt-10 flex items-center justify-center">
-      <form class="space-y-6 min-w-80" action="{{ path('security_login') }}" method="POST">
+    <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+      <form class="mt-2 mb-4" action="{{ path('security_login') }}" method="POST">
         <div>
           <div class="flex items-center justify-between pb-2">
             <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
             <div class="text-sm">
-              <a tabindex="-1" href="/account/forgot-username" class="font-semibold text-blue-600 hover:text-indigo-600">Forgot Username?</a>
+            <a tabindex="-1" href="/account/forgot-username" class="font-semibold text-blue-600 hover:text-indigo-600">Forgot Username?</a>
             </div>
           </div>
           <div>
@@ -51,21 +51,23 @@
             {{ form_widget(form._password, {"attr": {"class": "block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus-within:border-gray-300 focus:ring-0"}}) }}
           </div>
         </div>
-        <div class="py-2">
-          <button type="submit" class="flex w-full justify-center button button-regular text-sm font-medium text-center text-white inline-block mt-6">Sign in</button>
+        <div class="pt-4 pb-4">
+          <button type="submit" class="flex w-full justify-center button button-regular text-sm font-medium text-center text-white inline-block">Sign in</button>
         </div>
       </form>
     </div>
-    <span class="text-sm items-left justify-center">
-      You are accessing a Texas A&amp;M University-Corpus Christi information system.<br/ >
-      Unauthorized use is prohibited.<br />
-      Usage may be subject to security testing and monitoring.<br />
-      Misuse is subject to criminal prosecution.<br />
-      Users have no expectation of privacy except as otherwise provided by applicable privacy laws.<br />
-      By logging in, you are agreeing to the rules and conditions set forth by the
-      <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_BLANK">Texas A&amp;M University-Corpus Christi Acceptable Use Policy</a>.<br />
-    </span>
   </div>
+</div>
+<div class="text-sm sm:mx-auto sm:w-full sm:max-w-sm">
+  <p>You are accessing a Texas A&amp;M University-Corpus Christi information system.</p>
+  <ul class="list-disc pl-5 text-sm">
+    <li>Unauthorized use is prohibited.</li>
+    <li>Usage may be subject to security testing and monitoring.</li>
+    <li>Misuse is subject to criminal prosecution.</li>
+    <li>Users have no expectation of privacy except as otherwise provided by applicable privacy laws.</li>
+    <li>By logging in, you are agreeing to the rules and conditions set forth by the
+    <a href="https://www.tamucc.edu/governance/rules-procedures/assets/support-docs/it-acceptable-use.pdf" target="_BLANK">Texas A&amp;M University-Corpus Christi Acceptable Use Policy</li>
+  </ul>
 </div>
 
 {% endblock %}
