@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * Entity class to represent a Person to Research Group Association.
@@ -34,6 +35,7 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     #[Serializer\Groups(['person'])]
     #[Serializer\MaxDepth(2)]
     #[Assert\NotBlank(message: 'Person is required')]
+    #[Groups('grp-people-accounts-report')]
     protected $person;
 
     /**
@@ -158,5 +160,23 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * Get the Research Group Name.
+     */
+    #[Groups('grp-people-accounts-report')]
+    public function getResearchGroupName(): string
+    {
+        return $this->researchGroup->getName();
+    }
+
+    /**
+     * Get the Research Group Funding Cycle Name.
+     */
+    #[Groups('grp-people-accounts-report')]
+    public function getFundingCycleName(): string
+    {
+        return $this->researchGroup->getFundingCycle()->getName();
     }
 }
