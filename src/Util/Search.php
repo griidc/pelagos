@@ -256,9 +256,9 @@ class Search
             ];
         }
 
-        // Sorting based on highest count
-        $array_column = array_column($researchGroupsInfo, 'count');
-        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
+        // Sorting based on name
+        $array_column = array_column($researchGroupsInfo, 'name');
+        array_multisort($array_column, SORT_ASC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
     }
@@ -379,9 +379,9 @@ class Search
                 'count' => $aggregations[$fundingCycle->getId()],
             ];
         }
-        // Sorting based on highest count
-        $array_column = array_column($fundingCycleInfo, 'count');
-        array_multisort($array_column, SORT_DESC, $fundingCycleInfo);
+        // Sorting based on name
+        $array_column = array_column($fundingCycleInfo, 'name');
+        array_multisort($array_column, SORT_ASC, $fundingCycleInfo);
 
         return $fundingCycleInfo;
     }
