@@ -47,7 +47,7 @@
 							<table class="dx-datagrid-table dx-datagrid-table-fixed" style="table-layout: fixed;">
 								<colgroup style=""><col style="width: width: 198px;"><col style="width: 201px;"><col style="width: auto;"><col style="width: 100px;"></colgroup>
 								<tbody role="presentation">
-                                {% for dataset in researchGroup.datasets|submittedDIFs|filter(dataset => dataset.dif.isApproved == true) %}
+                                {% for dataset in researchGroup.datasets|approvedDIFs %}
 									<tr class="dx-row dx-data-row dx-row-lines dx-column-lines" role="row">
 										<td style="text-align: left; min-width: 198px; max-width: 198px; width: 198px;">{{ dataset.udi }}</td>
 										<td style="text-align: left; min-width: 201px; max-width: 201px; width: 201px;">{{ (dataset.doi) ? dataset.doi.doi : "" }}</td>

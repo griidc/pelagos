@@ -16,7 +16,7 @@
     {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, prefixText:prefixText, 'showGraphics': 'false', showTotal: true} only %}
 
     {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
-        {% if datasetFilter == "only" and fundingCycle.datasets|submittedDIFs|length == 0 %}
+        {% if datasetFilter == "only" and fundingCycle.datasets|approvedDIFs|length == 0 %}
             {# DOT NOT SHOW #}
         {% else %}
             {% if datasetFilter == "without" and fundingCycle.hasResearchGroupsWithoutDatasets == false %}
@@ -28,10 +28,10 @@
 
             {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
             <div x-data="{ expanded: false }">
-                {% if datasetFilter == "only" and researchGroup.datasets|submittedDIFs|length == 0 %}
+                {% if datasetFilter == "only" and researchGroup.datasets|approvedDIFs|length == 0 %}
                     {# DOT NOT SHOW #}
                 {% else %}
-                    {% if datasetFilter == "without" and researchGroup.datasets|submittedDIFs|length > 0 %}
+                    {% if datasetFilter == "without" and researchGroup.datasets|approvedDIFs|length > 0 %}
                         {# DOT NOT SHOW #}
                     {% else %}
                         {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
@@ -59,10 +59,10 @@
 
     {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
     <div x-data="{ expanded: false }">
-        {% if datasetFilter == "only" and researchGroup.datasets|submittedDIFs|length == 0 %}
+        {% if datasetFilter == "only" and researchGroup.datasets|approvedDIFs|length == 0 %}
             {# DOT NOT SHOW #}
         {% else %}
-            {% if datasetFilter == "without" and researchGroup.datasets|submittedDIFs|length > 0 %}
+            {% if datasetFilter == "without" and researchGroup.datasets|approvedDIFs|length > 0 %}
                 {# DOT NOT SHOW #}
             {% else %}
                 {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
