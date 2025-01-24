@@ -1154,7 +1154,7 @@ class Dataset extends Entity
     public function getGcmdKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
-        return implode('|', array_diff($this->makeUniqueKeywordDictionary($keywords), ['Science Keywords']));
+        return implode('|', array_diff($this->makeUniqueKeywordDictionary($keywords), ['Science Keywords', 'Earth Science']));
     }
 
     /**
