@@ -152,7 +152,8 @@ class Dataset extends Entity
      *
      * @var DatasetSubmission
      */
-    #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
+    #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     #[Serializer\Groups(['card'])]
     protected $datasetSubmission;
 
@@ -1106,6 +1107,15 @@ class Dataset extends Entity
         }
 
         return $datasetLifeCycleStatus;
+    }
+
+    /**
+     * Remove the DatasetSubmission reference.
+     */
+    #[ORM\PreRemove]
+    public function removeDatasetSubmissionReference(): void
+    {
+        $this->datasetSubmission->setDataset(null);
     }
 
     /**
