@@ -598,7 +598,9 @@ class FundingOrganization extends Entity
             foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
                 /** @var ResearchGroup $researchGroup */
                 foreach ($researchGroup->getPeople() as $person) {
-                    $people->add($person);
+                    if (!$people->contains($person)) {
+                        $people->add($person);
+                    }
                 }
             }
         }
