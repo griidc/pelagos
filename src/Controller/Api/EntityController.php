@@ -202,7 +202,6 @@ abstract class EntityController extends AbstractFOSRestController
         try {
             $this->entityHandler->delete($entity);
         } catch (NotDeletableException $exception) {
-
             throw new BadRequestHttpException(
                 'This ' . $entity::FRIENDLY_NAME . ' is not deletable because ' .
                 implode(', ', $exception->getReasons()) . '.'
