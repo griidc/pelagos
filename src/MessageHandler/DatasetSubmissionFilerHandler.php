@@ -7,7 +7,6 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use App\Event\EntityEventDispatcher;
 use App\Message\DatasetSubmissionFiler;
-use App\Message\ScanFileForVirus;
 use App\Repository\DatasetSubmissionRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
@@ -152,8 +151,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     /**
      * Function to process file.
      *
-     * Add a file to the datastore, and calculates hash,
-     * and queue's for virus scan.
+     * Add a file to the datastore, and calculates hash.
      *
      * @param File  $file           The File.
      * @param array $loggingContext Logging Context.
@@ -212,9 +210,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()), $loggingContext);
         }
 
-         // File virus Scan
          $localLogContext = array_merge($loggingContext, array('fileId' => $fileId, 'filePathName' => $file->getFilePathName()));
-         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
          $this->logger->info('Done processing file.', $localLogContext);
     }
 }

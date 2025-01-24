@@ -174,10 +174,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
-    App\Util\VirusScanUtil:
-        bind:
-            string $clamdSock: "%env(CLAMD_SOCKET)%"
-
     App\Util\POSIXifyAccount:
         bind:
             int $posixStartingUidNumber: "%env(POSIX_STARTING_UID)%"
