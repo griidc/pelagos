@@ -3590,16 +3590,16 @@
         },
         {
             "name": "oneup/flysystem-bundle",
-            "version": "4.12.2",
+            "version": "4.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupFlysystemBundle.git",
-                "reference": "888cceb2ee641b0d59d5feb31a2447318c311a48"
+                "reference": "23d7186524a9c6236662c452891b1175cb193777"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/888cceb2ee641b0d59d5feb31a2447318c311a48",
-                "reference": "888cceb2ee641b0d59d5feb31a2447318c311a48",
+                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/23d7186524a9c6236662c452891b1175cb193777",
+                "reference": "23d7186524a9c6236662c452891b1175cb193777",
                 "shasum": ""
             },
             "require": {
@@ -3673,9 +3673,9 @@
             ],
             "support": {
                 "issues": "https://github.com/1up-lab/OneupFlysystemBundle/issues",
-                "source": "https://github.com/1up-lab/OneupFlysystemBundle/tree/4.12.2"
+                "source": "https://github.com/1up-lab/OneupFlysystemBundle/tree/4.12.3"
             },
-            "time": "2024-06-10T12:55:36+00:00"
+            "time": "2024-10-15T06:27:06+00:00"
         },
         {
             "name": "opensoft/doctrine-postgres-types",
@@ -13374,7 +13374,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -13394,6 +13394,6 @@
         "ext-xsl": "*",
         "lib-libxml": "*"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
