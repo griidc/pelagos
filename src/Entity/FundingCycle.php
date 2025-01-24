@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,6 +36,7 @@ class FundingCycle extends Entity
     #[ORM\Column(type: 'citext')]
     #[Serializer\Groups(['organization'])]
     #[Assert\NotBlank(message: 'Name is required')]
+    #[Groups(['grp-dp-report', 'grp-dk-report'])]
     protected $name;
 
     /**
@@ -89,6 +92,7 @@ class FundingCycle extends Entity
     #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
     #[ORM\OrderBy(['name' => 'ASC'])]
     #[Serializer\MaxDepth(2)]
+    #[MaxDepth(1)]
     protected $researchGroups;
 
     /**

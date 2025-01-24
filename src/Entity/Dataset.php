@@ -3,11 +3,17 @@
 namespace App\Entity;
 
 use App\Enum\DatasetLifecycleStatus;
+use App\Enum\KeywordType;
 use App\Util\DatasetCitationUtil;
+use App\Util\GenerateUrl;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 /**
  * Dataset Entity class.
@@ -93,6 +99,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
+    #[Groups(['grp-dk-report'])]
     protected $udi;
 
     /**
@@ -102,6 +109,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
+    #[Groups(['grp-dk-report'])]
     protected $title;
 
     /**
@@ -131,6 +139,8 @@ class Dataset extends Entity
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     #[Serializer\MaxDepth(1)]
     #[Serializer\Groups(['search'])]
+    #[Groups(['grp-dk-report'])]
+    #[MaxDepth(1)]
     protected $researchGroup;
 
     /**
@@ -343,7 +353,7 @@ class Dataset extends Entity
      *
      * @return DatasetSubmission
      */
-    public function getDatasetSubmission()
+    public function getDatasetSubmission(): ?DatasetSubmission
     {
         return $this->datasetSubmission;
     }
@@ -440,12 +450,20 @@ class Dataset extends Entity
 
     /**
      * Get the DOI for this Dataset.
-     *
-     * @return DOI
      */
-    public function getDoi()
+    public function getDoi(): ?DOI
     {
         return $this->doi;
+    }
+
+    /**
+     * Get the DOI string for this Dataset.
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('doi')]
+    public function getDoiString(): string
+    {
+        return $this->getDoi()?->getDoi() ?? '';
     }
 
     /**
@@ -1093,5 +1111,107 @@ class Dataset extends Entity
     public function removeDatasetSubmissionReference(): void
     {
         $this->datasetSubmission->setDataset(null);
+    }
+
+    /**
+     * Get Dataset Lifecycle Status as a string.
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('datasetLifecycleStatus')]
+    public function getDatasetLifecycleStatusString(): string
+    {
+        return $this->getDatasetLifecycleStatus()->value;
+    }
+
+    /**
+     * Get a link to the dataset landing page.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getLandingPage(): string
+    {
+        return 'https://grp.griidc.org/data/' . $this->getUdi();
+    }
+
+    /**
+     * Get ANZRC keys as a string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getAnzrcKeywords(): ?string
+    {
+        $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
+
+        if ($keywords instanceof Collection) {
+            $keywords = $keywords->map(
+                function (Keyword $keyword) {
+                    return $keyword->getLabel();
+                }
+            );
+        }
+
+        return implode(',', $keywords?->toArray() ?? []);
+    }
+
+    /**
+     * Get ANZRC keys as a string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getGcmdKeywords(): ?string
+    {
+        $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
+
+        if ($keywords instanceof Collection) {
+            $keywords = $keywords->map(
+                function (Keyword $keyword) {
+                    return $keyword->getLabel();
+                }
+            );
+        }
+
+        return implode(',', $keywords?->toArray() ?? []);
+    }
+
+    /**
+     * Get theme keywords as string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getThemeKeywords(): ?string
+    {
+        $keywords = $this->getDatasetSubmission()?->getThemeKeywords();
+
+        return implode(',', $keywords ?? []);
+    }
+
+    /**
+     * Get place keywords as string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getPlaceKeywords(): ?string
+    {
+        $keywords = $this->getDatasetSubmission()?->getPlaceKeywords();
+
+        return implode(',', $keywords ?? []);
+    }
+
+    /**
+     * Get topic keywords as string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getTopicKeywords(): ?string
+    {
+        $keywords = $this->getDatasetSubmission()?->getTopicKeywords();
+
+        return implode(',', $keywords ?? []);
+    }
+
+    /**
+     * Key keywords by type.
+     */
+    private function getKeywordsByType(KeywordType $type): ?Collection
+    {
+        $keywords = $this->getDatasetSubmission()?->getKeywords();
+
+        return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
+            return $keyword->getType() === $type;
+        });
     }
 }

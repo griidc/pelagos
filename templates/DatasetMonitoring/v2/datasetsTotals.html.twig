@@ -2,7 +2,7 @@
 {% set restrictedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED'))|length %}
 {% set submittedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED'))|length %}
 {% set identifiedDatasets = group.getDatasetsByLifecycleStatus(constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED'))|length %}
-{% set totalDatasets = group.datasets|submittedDIFs|length %}
+{% set totalDatasets = group.datasets|approvedDIFs|length %}
 
 <div style="display: inline-block;white-space: nowrap;">
     <table>

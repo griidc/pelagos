@@ -122,6 +122,10 @@ class Extensions extends AbstractExtension
                 array(self::class, 'submittedDIFs')
             ),
             new \Twig\TwigFilter(
+                'approvedDIFs',
+                array(self::class, 'approvedDIFs')
+            ),
+            new \Twig\TwigFilter(
                 'transformXml',
                 array($this, 'transformXml')
             ),
@@ -266,6 +270,15 @@ class Extensions extends AbstractExtension
         return $datasets->filter(
             function ($dataset) {
                 return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
+            }
+        );
+    }
+
+    public static function approvedDIFs(Collection $datasets)
+    {
+        return $datasets->filter(
+            function ($dataset) {
+                return $dataset->getDif()->getStatus() === DIF::STATUS_APPROVED;
             }
         );
     }
