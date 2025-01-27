@@ -22,7 +22,6 @@ framework:
 
         routing:
             # Slow running Handlers
-            'App\Message\ScanFileForVirus': async_low
             'App\Message\ZipDatasetFiles': async_low
 
             # Normal Handlers
