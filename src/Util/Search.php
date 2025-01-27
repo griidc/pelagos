@@ -379,9 +379,9 @@ class Search
                 'count' => $aggregations[$fundingCycle->getId()],
             ];
         }
-        // Sorting based on name
-        $array_column = array_column($fundingCycleInfo, 'name');
-        array_multisort($array_column, SORT_ASC, $fundingCycleInfo);
+        // Sorting based on highest count
+        $array_column = array_column($fundingCycleInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $fundingCycleInfo);
 
         return $fundingCycleInfo;
     }
@@ -472,13 +472,10 @@ class Search
                 'count' => $aggregations[$funder->getId()],
             ];
         }
-        // Sorting based on highest count
-        $array_column1 = array_column($fundersInfo, 'count');
-        $array_column2 = array_column($fundersInfo, 'name');
+        // Sorting based on name
+        $array_column1 = array_column($fundersInfo, 'name');
         array_multisort(
             $array_column1,
-            SORT_DESC,
-            $array_column2,
             SORT_ASC,
             $fundersInfo
         );
