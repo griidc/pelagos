@@ -40,8 +40,8 @@ class PersonToken extends Entity
      * @var Person
      *
      */
-    #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'token')]
-    #[ORM\Id]
+    #[ORM\OneToOne(targetEntity: Person::class, inversedBy: 'token')]
+    #[ORM\Column(type: "integer", name:"person_token_id", columnDefinition:"INT AUTO_INCREMENT")]
     #[Assert\NotBlank(message: 'Person is required')]
     protected $person;
 

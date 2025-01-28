@@ -65,7 +65,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      */
     #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
-    #[ORM\Id]
+    #[ORM\Column(type: "integer", name:"person_id", columnDefinition:"INT AUTO_INCREMENT")]
     #[Assert\NotBlank(message: 'An account must be attached to a Person')]
     protected $person;
 
