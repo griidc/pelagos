@@ -256,9 +256,9 @@ class Search
             ];
         }
 
-        // Sorting based on highest count
-        $array_column = array_column($researchGroupsInfo, 'count');
-        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
+        // Sorting based on name
+        $array_column = array_column($researchGroupsInfo, 'name');
+        array_multisort($array_column, SORT_ASC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
     }
@@ -472,13 +472,10 @@ class Search
                 'count' => $aggregations[$funder->getId()],
             ];
         }
-        // Sorting based on highest count
-        $array_column1 = array_column($fundersInfo, 'count');
-        $array_column2 = array_column($fundersInfo, 'name');
+        // Sorting based on name
+        $array_column1 = array_column($fundersInfo, 'name');
         array_multisort(
             $array_column1,
-            SORT_DESC,
-            $array_column2,
             SORT_ASC,
             $fundersInfo
         );
