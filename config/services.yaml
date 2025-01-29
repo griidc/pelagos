@@ -193,6 +193,10 @@ services:
         bind:
             string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
 
+    App\Controller\DefaultController:
+        bind:
+            string $sitemapMinDateParam: '%env(SITEMAP_MIN_DATE)%'
+
     App\Controller\UI\MdAppController:
         bind:
             string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'

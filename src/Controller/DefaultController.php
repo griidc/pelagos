@@ -14,12 +14,20 @@ use App\Entity\FundingCycle;
 use App\Entity\PersonResearchGroup;
 use App\Util\FundingOrgFilter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * This is the default controller.
  */
 class DefaultController extends AbstractController
 {
+    private $params;
+
+    public function __construct(ParameterBagInterface $params)
+    {
+        $this->params = $params;
+    }
+
     /**
      * Get research groups array in the funding cycle.
      *
@@ -138,12 +146,10 @@ class DefaultController extends AbstractController
      *
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
-     *
-     *
-     * @return StreamedResponse
+     * @param string                 $sitemapMinDate   The minimum date for the sitemap.
      */
     #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
-    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter)
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter, string $sitemapMinDateParam): StreamedResponse
     {
         $criteria = array(
             'availabilityStatus' =>
@@ -162,11 +168,13 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
-        $response = new StreamedResponse(function () use ($datasets) {
+        $sitemapMinDate = new \DateTime($sitemapMinDateParam);
+        $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
                 array(
-                    'datasets' => $datasets
+                    'datasets' => $datasets,
+                    'sitemapMinDate' => $sitemapMinDate,
                 )
             );
         });
