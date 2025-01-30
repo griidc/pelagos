@@ -21,13 +21,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  */
 class DefaultController extends AbstractController
 {
-    private $params;
-
-    public function __construct(ParameterBagInterface $params)
-    {
-        $this->params = $params;
-    }
-
     /**
      * Get research groups array in the funding cycle.
      *
@@ -146,10 +139,9 @@ class DefaultController extends AbstractController
      *
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
-     * @param string                 $sitemapMinDate   The minimum date for the sitemap.
      */
     #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
-    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter, string $sitemapMinDateParam): StreamedResponse
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter): StreamedResponse
     {
         $criteria = array(
             'availabilityStatus' =>
@@ -168,7 +160,12 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
+        $sitemapMinDateParam = $this->getParameter('sitemap_min_date');
+        if (!is_string($sitemapMinDateParam)) {
+            throw new \InvalidArgumentException('The parameter "sitemap_min_date" must be a valid string.');
+        }
         $sitemapMinDate = new \DateTime($sitemapMinDateParam);
+
         $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
