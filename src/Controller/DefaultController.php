@@ -14,7 +14,6 @@ use App\Entity\FundingCycle;
 use App\Entity\PersonResearchGroup;
 use App\Util\FundingOrgFilter;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * This is the default controller.
