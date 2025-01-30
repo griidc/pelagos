@@ -140,7 +140,7 @@ class DefaultController extends AbstractController
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
      */
     #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
-    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter): StreamedResponse
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter): Response
     {
         $criteria = array(
             'availabilityStatus' =>
