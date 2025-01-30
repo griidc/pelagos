@@ -159,21 +159,34 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
-        $sitemapMinDateParam = $this->getParameter('sitemap_min_date');
-        if (!is_string($sitemapMinDateParam)) {
-            throw new \InvalidArgumentException('The parameter "sitemap_min_date" must be a valid string.');
+        try {
+            $sitemapMinDateParam = $this->getParameter('sitemap_min_date');
+        } catch (\Exception) {
+            $sitemapMinDateParam = null;
         }
-        $sitemapMinDate = new \DateTime($sitemapMinDateParam);
 
-        $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
-            echo $this->renderView(
-                'Default/sitemap.xml.twig',
-                array(
-                    'datasets' => $datasets,
-                    'sitemapMinDate' => $sitemapMinDate,
-                )
-            );
-        });
+        if ($sitemapMinDateParam !== null && is_string($sitemapMinDateParam) && $sitemapMinDateParam !== '') {
+            $sitemapMinDate = \DateTime::createFromFormat('Y-m-d', $sitemapMinDateParam);
+        }
+
+        if (isset($sitemapMinDate) && (false !== $sitemapMinDate)) {
+            $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
+                echo $this->renderView(
+                    'Default/sitemap.xml.twig',
+                    array(
+                        'datasets' => $datasets,
+                        'sitemapMinDate' => $sitemapMinDate,
+                    )
+                );
+            });
+        } else {
+            $response = new StreamedResponse(function () use ($datasets) {
+                echo $this->renderView(
+                    'Default/sitemap.xml.twig',
+                    array('datasets' => $datasets)
+                );
+            });
+        }
 
         $response->headers->set('Content-Type', 'text/xml');
 
