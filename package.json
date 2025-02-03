@@ -52,7 +52,7 @@
         "clsx": "^2.1.1",
         "devextreme": "^21.1.6",
         "devextreme-vue": "^21.1.6",
-        "dotenv-webpack": "^8.0.1",
+        "dotenv-webpack": "^8.1.0",
         "dropzone": "^5.7.2",
         "exceljs": "^4.3.0",
         "file-saver": "^2.0.5",
