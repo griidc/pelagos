@@ -4,7 +4,7 @@
         "@babel/preset-env": "7.26.0",
         "@babel/preset-react": "^7.26.3",
         "@fortawesome/fontawesome-free": "^5.11.1",
-        "@hotwired/stimulus": "^3.0.0",
+        "@hotwired/stimulus": "^3.2.2",
         "@symfony/stimulus-bridge": "^3.2.3",
         "@symfony/webpack-encore": "^4.6.1",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
