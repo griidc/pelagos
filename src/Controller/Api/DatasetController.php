@@ -147,6 +147,7 @@ class DatasetController extends EntityController
     #[Route(path: '/api/datasets/{id}', name: 'pelagos_api_datasets_delete', methods: ['DELETE'], defaults: ['_format' => 'json'])]
     public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher, MessageBusInterface $messageBus, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
+        /** @var Dataset $dataset */
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
         $dif = $dataset->getDif();
