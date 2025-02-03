@@ -5,14 +5,11 @@ namespace App\Entity;
 use App\Enum\DatasetLifecycleStatus;
 use App\Enum\KeywordType;
 use App\Util\DatasetCitationUtil;
-use App\Util\GenerateUrl;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
 /**
@@ -139,8 +136,6 @@ class Dataset extends Entity
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
     #[Serializer\MaxDepth(1)]
     #[Serializer\Groups(['search'])]
-    #[Groups(['grp-dk-report'])]
-    #[MaxDepth(1)]
     protected $researchGroup;
 
     /**
@@ -921,6 +916,16 @@ class Dataset extends Entity
     }
 
     /**
+     * Does this Dataset have a spatial extent?
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('hasSpatialExtent')]
+    public function hasSpatialExtent(): string
+    {
+        return null !== $this->getSpatialExtentGeometry() ? 'Yes' : 'No';
+    }
+
+    /**
      * Getter to accepted date.
      *
      * @return \DateTime
@@ -1133,41 +1138,46 @@ class Dataset extends Entity
     }
 
     /**
-     * Get ANZRC keys as a string.
+     * Get ANZRC keywords as a string.
      */
     #[Groups(['grp-dk-report'])]
-    public function getAnzrcKeywords(): ?string
+    public function getAnzsrcKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
-
-        if ($keywords instanceof Collection) {
-            $keywords = $keywords->map(
-                function (Keyword $keyword) {
-                    return $keyword->getLabel();
-                }
-            );
-        }
-
-        return implode(',', $keywords?->toArray() ?? []);
+        return implode('|', $this->makeUniqueKeywordDictionary($keywords));
     }
 
     /**
-     * Get ANZRC keys as a string.
+     * Get GCMD keywords as a string.
      */
     #[Groups(['grp-dk-report'])]
     public function getGcmdKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
+        return implode('|', array_diff($this->makeUniqueKeywordDictionary($keywords), ['Science Keywords', 'Earth Science']));
+    }
+
+    /**
+     * Make a unique dictionary of keywords.
+     */
+    private function makeUniqueKeywordDictionary(?Collection $keywords): array
+    {
+        $dictionary = [];
 
         if ($keywords instanceof Collection) {
-            $keywords = $keywords->map(
-                function (Keyword $keyword) {
-                    return $keyword->getLabel();
+            foreach ($keywords as $keyword) {
+                $keywordParts = explode('>', $keyword->getDisplayPath());
+                foreach ($keywordParts as $part) {
+                    $part = trim($part);
+                    $part = strtolower($part);
+                    $dictionary[] = ucwords($part);
                 }
-            );
+            }
         }
 
-        return implode(',', $keywords?->toArray() ?? []);
+        sort($dictionary);
+
+        return array_unique($dictionary);
     }
 
     /**
@@ -1178,7 +1188,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getThemeKeywords();
 
-        return implode(',', $keywords ?? []);
+        return implode('|', $keywords ?? []);
     }
 
     /**
@@ -1189,7 +1199,7 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getPlaceKeywords();
 
-        return implode(',', $keywords ?? []);
+        return implode('|', $keywords ?? []);
     }
 
     /**
@@ -1200,18 +1210,36 @@ class Dataset extends Entity
     {
         $keywords = $this->getDatasetSubmission()?->getTopicKeywords();
 
-        return implode(',', $keywords ?? []);
+        return implode('|', $keywords ?? []);
     }
 
     /**
-     * Key keywords by type.
+     * Get keywords by type.
      */
     private function getKeywordsByType(KeywordType $type): ?Collection
     {
         $keywords = $this->getDatasetSubmission()?->getKeywords();
 
         return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
-            return $keyword->getType() === $type;
+                return $keyword->getType() === $type;
         });
+    }
+
+    /**
+     * Get the dataset's Research Group name.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getResearchGroupName(): string
+    {
+        return $this->getResearchGroup()->getName();
+    }
+
+    /**
+     * Get the dataset's Funding Cycle name.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getFundingCycleName(): string
+    {
+        return $this->getResearchGroup()->getFundingCycle()->getName();
     }
 }

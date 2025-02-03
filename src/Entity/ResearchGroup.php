@@ -49,8 +49,8 @@ class ResearchGroup extends Entity
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     #[Serializer\Groups(['overview', 'search'])]
     #[Assert\NotBlank(message: 'Name is required')]
-    #[Groups(['grp-dp-report', 'grp-dk-report'])]
-    #[SerializedName('ResearchGroupName')]
+    #[Groups(['grp-dp-report', 'grp-dk-report', 'grp-people-accounts-report'])]
+    #[SerializedName('researchGroupName')]
     protected $name;
 
     /**
@@ -73,8 +73,6 @@ class ResearchGroup extends Entity
     #[Serializer\MaxDepth(2)]
     #[Serializer\Groups(['overview'])]
     #[Assert\NotBlank(message: 'Funding Cycle is required')]
-    #[Groups(['grp-dp-report', 'grp-dk-report'])]
-    #[MaxDepth(1)]
     protected $fundingCycle;
 
     /**
@@ -306,6 +304,15 @@ class ResearchGroup extends Entity
     public function getFundingCycle()
     {
         return $this->fundingCycle;
+    }
+
+    /**
+     * Get the name of the Funding Cycle for this Research Group.
+     */
+    #[Groups(['grp-dp-report', 'grp-dk-report', 'grp-people-accounts-report'])]
+    public function getFundingCycleName(): string
+    {
+        return $this->fundingCycle->getName();
     }
 
     /**
