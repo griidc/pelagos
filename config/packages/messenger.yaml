@@ -29,37 +29,37 @@ when@dev:
 
 when@prod:
     framework:
-    messenger:
-        failure_transport: failed
+        messenger:
+            failure_transport: failed
 
-        transports:
-            async_normal:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    queue_name: normal
-            failed:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    queue_name: failed
-            async_low:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    queue_name: low
-            async_doi:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    queue_name: doi
+            transports:
+                async_normal:
+                    dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                    options:
+                        queue_name: normal
+                failed:
+                    dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                    options:
+                        queue_name: failed
+                async_low:
+                    dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                    options:
+                        queue_name: low
+                async_doi:
+                    dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                    options:
+                        queue_name: doi
 
-        routing:
-            # Slow running Handlers
-            'App\Message\ZipDatasetFiles': async_low
+            routing:
+                # Slow running Handlers
+                'App\Message\ZipDatasetFiles': async_low
 
-            # Normal Handlers
-            'App\Message\DatasetSubmissionFiler': async_normal
-            'App\Message\RenameFile': async_normal
-            'App\Message\DeleteFile': async_normal
-            'App\Message\DeleteDir': async_normal
-            'App\Message\InformationProductFiler': async_normal
+                # Normal Handlers
+                'App\Message\DatasetSubmissionFiler': async_normal
+                'App\Message\RenameFile': async_normal
+                'App\Message\DeleteFile': async_normal
+                'App\Message\DeleteDir': async_normal
+                'App\Message\InformationProductFiler': async_normal
 
-            # DOI Handler
-            'App\Message\DoiMessage': async_doi
+                # DOI Handler
+                'App\Message\DoiMessage': async_doi
