@@ -589,6 +589,26 @@ class FundingOrganization extends Entity
     }
 
     /**
+     * Get People from Research Groups associated with this Funding Organization.
+     */
+    public function getPeople(): Collection
+    {
+        $people = new ArrayCollection();
+        foreach ($this->getFundingCycles() as $fundingCycle) {
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                /** @var ResearchGroup $researchGroup */
+                foreach ($researchGroup->getPeople() as $person) {
+                    if (!$people->contains($person)) {
+                        $people->add($person);
+                    }
+                }
+            }
+        }
+
+        return $people;
+    }
+
+    /**
      * Setter for dataRepository.
      *
      * @param DataRepository $dataRepository an instance of \App\Entity\DataRepository

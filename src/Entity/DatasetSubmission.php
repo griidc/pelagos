@@ -381,14 +381,10 @@ class DatasetSubmission extends Entity
 
     /**
      * The Dataset this Dataset Submission is attached to.
-     *
-     * @var Dataset
-     *
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'Dataset', inversedBy: 'datasetSubmissionHistory', cascade: ['persist'])]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    protected $dataset;
+    #[ORM\ManyToOne(targetEntity: Dataset::class, inversedBy: 'datasetSubmissionHistory', cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    protected ?Dataset $dataset = null;
 
     /**
      * The review for this Dataset Submission.
@@ -1265,12 +1261,8 @@ class DatasetSubmission extends Entity
 
     /**
      * Set the Dataset this Dataset Submission is attached to.
-     *
-     * @param Dataset $dataset the Dataset this Dataset Submission is attached to
-     *
-     * @return void
      */
-    public function setDataset(Dataset $dataset)
+    public function setDataset(?Dataset $dataset): void
     {
         $this->dataset = $dataset;
     }
