@@ -32,7 +32,7 @@ const templateVariables = {
     showFundingCycles: false,
     showProjectDirector: false,
     fundingOrgExpanded: false,
-    showFunderFacet: false,
+    showFunderFacet: true,
     researchAwardOption: 'Research Award',
     digitalTypeDesc: 'Resource Type',
     productTypeDesc: 'Product Type',
