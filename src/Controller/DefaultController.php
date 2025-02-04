@@ -138,12 +138,9 @@ class DefaultController extends AbstractController
      *
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
-     *
-     *
-     * @return StreamedResponse
      */
     #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
-    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter)
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter): Response
     {
         $criteria = array(
             'availabilityStatus' =>
@@ -162,11 +159,19 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
-        $response = new StreamedResponse(function () use ($datasets) {
+        $sitemapMinDateParam = $this->getParameter('sitemap_min_date');
+        if (!empty($sitemapMinDateParam)) {
+            $sitemapMinDate = \DateTime::createFromFormat('Y-m-d', $sitemapMinDateParam);
+        } else {
+            $sitemapMinDate = null;
+        }
+
+        $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
                 array(
-                    'datasets' => $datasets
+                    'datasets' => $datasets,
+                    'sitemapMinDate' => $sitemapMinDate,
                 )
             );
         });

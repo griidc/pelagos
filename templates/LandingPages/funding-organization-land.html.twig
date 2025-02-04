@@ -1,0 +1,63 @@
+{% extends "base.html.twig" %}
+{% block title %}Funding Organization Page{% endblock title %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('landing-page') }}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('landing-page') }}
+{% endblock javascripts %}
+
+{% block body %}
+<div class="max-w-screen-xl mx-auto py-6 prose">
+    {% include 'LandingPages/changeTab.html.twig' %}
+    <h2>Funding Organization</h2>
+    <div class="md:flex border border-gray-300">
+        <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 w-1/4 relative text-lg">
+            <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                Overview
+            </li>
+            <li @click="changeTab(2)" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingOrganization.datasets|length }}</span>
+            </li>
+            <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                People <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingOrganization.people|length }}</span>
+            </li>
+        </ul>
+
+        <div class="p-6 rounded-lg w-3/4">
+            <div :class="openTab === 1 ? 'active' : 'inactive'" class="opacity-0">
+                <h3>{{ fundingOrganization.name }}</h3>
+                <div>
+                    <p><label>Funding Organization:</label>
+                        {% if fundingOrganization.url %}
+                            <a class="pagelink" href="{{ fundingOrganization.url }}" target="_blank">
+                                {{ fundingOrganization.name }}
+                            </a>
+                        {% else %}
+                            {{ fundingOrganization.name }}
+                        {% endif %}
+                    </p>
+                    <p>
+                        <label>Description:</label>
+                        {{ fundingOrganization.description }}
+                    </p>
+                </div>
+            </div>
+            <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
+                {% include 'LandingPages/datasets.html.twig' with {'datasets': fundingOrganization.datasets|sortBy(["udi"])}  %}
+            </div>
+            <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
+                {% include 'LandingPages/people.html.twig' with {'people': fundingOrganization.people | sortBy(["lastName", "firstName"])} %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
