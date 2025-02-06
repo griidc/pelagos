@@ -12,8 +12,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
 use App\Util\GmlUtil;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * The Dataset Monitoring controller.
@@ -42,6 +45,13 @@ class DatalandController extends AbstractController
     protected $entityHandler;
 
     /**
+     * Entity Manager
+     *
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
      * Base URL of Issue Tracker (Currenty JIRA)
      *
      * @var string
@@ -51,17 +61,19 @@ class DatalandController extends AbstractController
     /**
      * Dataland Controller constructor.
      *
-     * @param EntityHandler $entityHandler        The Entity Handler.
+     * @param EntityHandler $entityHandler        The legacy Entity Handler.
+     * @param EnityManager  $em                   The Entity Manager.
      * @param Geometry      $geoUtil              The Geomtery Util.
      * @param Metadata      $metadataUtil         The Metadata Util.
      * @param string        $issueTrackingBaseUrl The base URL for the GRIIDC issuetracker (Jira).
      */
-    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
+    public function __construct(EntityHandler $entityHandler, EntityManagerInterface $entityManager, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
     {
         $this->entityHandler = $entityHandler;
         $this->geoUtil = $geoUtil;
         $this->metadataUtil = $metadataUtil;
         $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -301,5 +313,31 @@ class DatalandController extends AbstractController
                 'rawxml' => $rawXml,
             )
         );
+    }
+
+    /**
+     * Route used to generate GeoJSON for a dataset for Leaflet-based map tool.
+     */
+    #[Route('/leaflet/json/{udi}', name: 'app_leaflet_json', methods: ['GET', 'HEAD'])]
+    public function getjson(string $udi): JsonResponse
+    {
+        $geoUtil = new Geometry($this->entityManager);
+        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+        if ($dataset instanceof Dataset) {
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            if ($datasetSubmission instanceof DatasetSubmission) {
+                $spatialExtent = $datasetSubmission->getSpatialExtent();
+                if ($spatialExtent !== null) {
+                    $geoUtil = new Geometry($this->entityManager);
+                    $geoJson = $geoUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi);
+                }
+            }
+        }
+        if (isset($geoJson) and $geoJson !== null) {
+            $json = new JsonResponse($geoJson, 200, [], true);
+        } else {
+            $json = new JsonResponse(null, 200, [], false);
+        }
+        return $json;
     }
 }
