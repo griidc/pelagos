@@ -30,15 +30,6 @@ class LeafletController extends AbstractController
         $this->entityManager = $em;
     }
 
-    #[Route('/leaflet/{udi}', name: 'app_leaflet')]
-    public function index(string $udi): Response
-    {
-        return $this->render('leaflet/index.html.twig', [
-            'controller_name' => 'LeafletController',
-            'udi' => $udi,
-        ]);
-    }
-
     #[Route('/leaflet/json/{udi}', name: 'app_leaflet_json', methods: ['GET', 'HEAD'])]
     public function getjson(string $udi): JsonResponse
     {
