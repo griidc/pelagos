@@ -26,13 +26,10 @@ class Password extends Entity
      * @var Account
      *
      *
-     *
-     * @Assert\NotBlank(
-     *     message="A Password must be attached to an Account"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'Account', inversedBy: 'passwordHistory')]
     #[ORM\JoinColumn(referencedColumnName: 'person_id')]
+    #[Assert\NotBlank(message: 'A Password must be attached to an Account')]
     protected $account;
 
     /**
@@ -40,13 +37,10 @@ class Password extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Password hash is required"
-     * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'blob')]
+    #[Serializer\Exclude]
+    #[Assert\NotBlank(message: 'Password hash is required')]
     protected $passwordHash;
 
     /**
@@ -58,9 +52,8 @@ class Password extends Entity
      * THIS FIELD SHALL NOT BE PERSISTED.
      *
      * @var string
-     *
-     * @Serializer\Exclude
      */
+    #[Serializer\Exclude]
     protected $clearTextPassword;
 
     /**
@@ -68,13 +61,10 @@ class Password extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Password hash algorithm is required"
-     * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'text')]
+    #[Serializer\Exclude]
+    #[Assert\NotBlank(message: 'Password hash algorithm is required')]
     protected $passwordHashAlgorithm;
 
     /**
@@ -82,13 +72,10 @@ class Password extends Entity
      *
      * @var string
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Password hash salt is required"
-     * )
-     * @Serializer\Exclude
      */
     #[ORM\Column(type: 'blob')]
+    #[Serializer\Exclude]
+    #[Assert\NotBlank(message: 'Password hash salt is required')]
     protected $passwordHashSalt;
 
     /**

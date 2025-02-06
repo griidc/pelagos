@@ -19,12 +19,14 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * A handler for entities.
+ *
+ * @deprecated 7.0.0 Entityhandler should not be used anymore, use Repository or EntityManager
  */
 class EntityHandler
 {
@@ -34,13 +36,6 @@ class EntityHandler
      * @var EntityManagerInterface
      */
     private $entityManager;
-
-    /**
-     * The Symfony Security component.
-     *
-     * @var Security
-     */
-    private $security;
 
     /**
      * The authorization checker to use in this entity handler.
@@ -74,26 +69,27 @@ class EntityHandler
     private $fundingOrgFilter;
 
     /**
-     * Constructor for EntityHandler.
+     * Security Bundle.
      *
-     * @param EntityManagerInterface        $entityManager         The entity manager to use.
-     * @param Security                      $security              The Symfony Security component.
-     * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
-     * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
-     * @param FundingOrgFilter              $fundingOrgFilter      Utility to filter by funding organization.
+     * @var Security
+     */
+    private $security;
+
+    /**
+     * Constructor for EntityHandler.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Security $security,
         AuthorizationCheckerInterface $authorizationChecker,
         EntityEventDispatcher $entityEventDispatcher,
-        FundingOrgFilter $fundingOrgFilter
+        FundingOrgFilter $fundingOrgFilter,
+        Security $security
     ) {
         $this->entityManager = $entityManager;
-        $this->security = $security;
         $this->authorizationChecker = $authorizationChecker;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->fundingOrgFilter = $fundingOrgFilter;
+        $this->security = $security;
     }
 
     /**

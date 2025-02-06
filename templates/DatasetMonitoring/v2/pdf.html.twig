@@ -1,0 +1,92 @@
+{% extends "pdf-base.html.twig" %}
+{% block title %}Dataset Monitoring Report{% endblock title %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/22.1.13/css/dx.light.css" rel="stylesheet">
+    <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+      * {
+        font-family: "DM Sans", sans-serif;
+        font-weight: 400;
+      }
+
+      header * {
+        border-width: 0 !important;
+      }
+
+      footer * {
+        border-width: 0 !important;
+      }
+
+      .border {
+        border-width: 0 !important;
+      }
+
+      h3 {
+        font-size: 30px;
+        font-weight: 700;
+      }
+
+      h2 {
+        font-size: 36px;
+        font-weight: 700;
+      }
+
+      table {
+        border: 0px;
+      }
+
+      .dx-widget {
+        font-size: 1rem!important;
+      }
+
+      .dx-treeview li {
+        margin-bottom: revert;
+        line-height: 1rem;
+        font-size: 1rem!important;
+      }
+
+      input.dx-texteditor-input:focus-visible {
+        outline-style: none!important;
+      }
+
+      input[type='text'].dx-texteditor-input:focus {
+        box-shadow: none!important;
+      }
+
+      .dsmonitoringcols {
+        white-space: nowrap;
+      }
+
+      .dx-treelist [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+      .dx-datagrid [tabindex]:not([tabindex="-1"]):focus-visible:focus-visible {
+        outline: none;
+      }
+
+      .prose h3 {
+        margin-bottom: unset;
+      }
+
+      .noPrint{
+        display:none;
+      }
+    </style>
+{% endblock stylesheets  %}
+
+{% block javascripts %}
+{% endblock javascripts %}
+
+{% block body %}
+    {% include 'DatasetMonitoring/v2/datasets.html.twig' %}
+{% endblock %}

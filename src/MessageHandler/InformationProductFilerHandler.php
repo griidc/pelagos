@@ -5,7 +5,6 @@ namespace App\MessageHandler;
 use App\Entity\File;
 use App\Entity\Person;
 use App\Message\InformationProductFiler;
-use App\Message\ScanFileForVirus;
 use App\Repository\InformationProductRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
@@ -138,10 +137,6 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()), $loggingContext);
         }
-
-        // File virus Scan
-        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
-        $this->messageBus->dispatch(new ScanFileForVirus($fileId, "INFORMATION.PRODUCT:$informationProductId"));
 
         $file->setDescription('Information Product');
         $file->setStatus(File::FILE_DONE);

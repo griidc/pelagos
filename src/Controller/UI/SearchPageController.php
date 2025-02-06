@@ -7,6 +7,7 @@ use App\Event\LogActionItemEventDispatcher;
 use App\Util\Search;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -50,23 +51,24 @@ class SearchPageController extends AbstractController
     /**
      * The default action for Dataset Review.
      *
-     * @Route("/search", name="pelagos_app_ui_searchpage_default")
      *
      * @return Response
      */
-    public function defaultAction()
+    #[Route(path: '/search', name: 'pelagos_app_ui_searchpage_default')]
+    public function defaultAction(RequestStack $requestStack)
     {
+        $session = $requestStack->getSession();
+        $session->set('last_visit', new \DateTime());
         return $this->render('Search/index.html.twig');
     }
 
     /**
      * The default action for Dataset Review.
-
      *
-     * @Route("/search/results", name="pelagos_app_ui_searchpage_results")
      *
      * @return Response
      */
+    #[Route(path: '/search/results', name: 'pelagos_app_ui_searchpage_results')]
     public function getSearchResults(Request $request, Search $searchUtil)
     {
         $results = [];

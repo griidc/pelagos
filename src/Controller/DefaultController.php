@@ -67,11 +67,11 @@ class DefaultController extends AbstractController
     /**
      * The index action.
      *
-     * @Route("/", name="pelagos_homepage")
      *
      * @return Response A Response instance.
      */
-    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request)
+    #[Route(path: '/', name: 'pelagos_homepage')]
+    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request, EntityManagerInterface $entityManager)
     {
         $customTemplate = $this->getParameter('custom_template');
 
@@ -82,9 +82,9 @@ class DefaultController extends AbstractController
                 $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
             }
 
-            $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+            $fundingCycles = $entityManager->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
 
-            $leadershipPersons = $this->get('doctrine')->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
+            $leadershipPersons = $entityManager->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
 
             $projectDirectorList = $this->getProjectDirectorList($leadershipPersons);
 
@@ -124,10 +124,10 @@ class DefaultController extends AbstractController
     /**
      * The admin action.
      *
-     * @Route("/pelagos-admin", name="pelagos_admin")
      *
      * @return Response
      */
+    #[Route(path: '/pelagos-admin', name: 'pelagos_admin')]
     public function admin()
     {
         return $this->render('Default/admin.html.twig');
@@ -138,12 +138,9 @@ class DefaultController extends AbstractController
      *
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
-     *
-     * @Route("/sitemap.xml", name="pelagos_sitemap")
-     *
-     * @return StreamedResponse
      */
-    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter)
+    #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter): Response
     {
         $criteria = array(
             'availabilityStatus' =>
@@ -162,11 +159,19 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
-        $response = new StreamedResponse(function () use ($datasets) {
+        $sitemapMinDateParam = $this->getParameter('sitemap_min_date');
+        if (!empty($sitemapMinDateParam)) {
+            $sitemapMinDate = \DateTime::createFromFormat('Y-m-d', $sitemapMinDateParam);
+        } else {
+            $sitemapMinDate = null;
+        }
+
+        $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
                 array(
-                    'datasets' => $datasets
+                    'datasets' => $datasets,
+                    'sitemapMinDate' => $sitemapMinDate,
                 )
             );
         });

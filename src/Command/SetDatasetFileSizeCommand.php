@@ -7,26 +7,19 @@ use App\Entity\DatasetSubmission;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:set-dataset-filesize', description: 'Set dataset filesize for all datasets.')]
 class SetDatasetFileSizeCommand extends Command
 {
-    protected static $defaultName = 'pelagos:set-dataset-filesize';
-    protected static $defaultDescription = 'Set dataset filesize for all datasets.';
-
     /**
      * Class constructor for dependency injection.
-     *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         parent::__construct();
     }
 
@@ -52,15 +45,15 @@ class SetDatasetFileSizeCommand extends Command
                 }
             }
             $progressBar->finish();
-            $io->note("Flushing data...");
+            $io->note('Flushing data...');
             $this->entityManager->flush();
 
-            $io->success("DONE!");
+            $io->success('DONE!');
 
             return Command::SUCCESS;
         }
 
-        $io->warning("ABORTED");
+        $io->warning('ABORTED');
 
         return Command::INVALID;
     }

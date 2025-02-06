@@ -11,6 +11,7 @@ parameters:
     router.request_context.base_url: '%env(REQUEST_CONTEXT_BASE_URL)%'
     custom_template: '%env(CUSTOM_BASE_TEMPLATE)%'
     main_site: '%env(MAINSITE)%'
+    sitemap_min_date: '%env(SITEMAP_MIN_DATE)%'
 
 services:
     # default configuration for services in *this* file
@@ -94,6 +95,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.remotelyhosted_update_log, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.dataset_deletion, method: onNewLogCreated }
 
     App\Event\InformationProductListener:
         tags:
@@ -172,10 +174,6 @@ services:
             bool $debug: '%kernel.debug%'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-
-    App\Util\VirusScanUtil:
-        bind:
-            string $clamdSock: "%env(CLAMD_SOCKET)%"
 
     App\Util\POSIXifyAccount:
         bind:

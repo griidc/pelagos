@@ -18,6 +18,9 @@ use App\Entity\DatasetSubmission;
 use App\Twig\Extensions as TwigExtentions;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Messenger\Middleware\StackInterface;
 
 /**
  * The Dataset download controller.
@@ -64,10 +67,10 @@ class DownloadController extends AbstractController
      *
      * @param integer $id The id of the dataset to download.
      *
-     * @Route("/download/{id}", name="pelagos_app_download_default")
      *
      * @return Response
      */
+    #[Route(path: '/download/{id}', name: 'pelagos_app_download_default')]
     public function defaultAction(int $id)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
@@ -93,10 +96,9 @@ class DownloadController extends AbstractController
 
     /**
      * Download dataset, count and forward to zip stream.
-     *
-     * @Route("/download/dataset/{id}", name="pelagos_app_download_dataset")
      */
-    public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
+    #[Route(path: '/download/dataset/{id}', name: 'pelagos_app_download_dataset')]
+    public function downloadCount(Dataset $dataset, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack): Response
     {
         $currentUser = $this->getUser();
         if ($currentUser instanceof Account) {
@@ -107,12 +109,13 @@ class DownloadController extends AbstractController
             $typeId = 'anonymous';
         }
 
+        $session = $requestStack->getSession()->getId();
         $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'File Download',
                 'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
-                'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId, 'udi' => $dataset->getUdi(), 'sessionId' => $session),
             ),
             'file_download'
         );
@@ -131,11 +134,11 @@ class DownloadController extends AbstractController
      * @param Datastore                    $dataStore                    The data store.
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
-     * @Route("/download/{id}/http", name="pelagos_app_download_http")
      *
      * @return Response
      */
-    public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    #[Route(path: '/download/{id}/http', name: 'pelagos_app_download_http')]
+    public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher, RequestStack $requestStack)
     {
         $datasetSubmission = $dataset->getDatasetSubmission();
         if ($dataset->isRestricted()) {
@@ -188,19 +191,20 @@ class DownloadController extends AbstractController
                         $typeId = $this->getUser()->getUserId();
                     } else {
                         $type = 'Non-GoMRI';
-                        $typeId = $this->getUser()->getUsername();
+                        $typeId = $this->getUser()->getUserIdentifier();
                     }
                 } else {
                     $type = 'Non-GoMRI';
                     $typeId = 'anonymous';
                 }
 
+                $session = $requestStack->getSession()->getId();
                 $logActionItemEventDispatcher->dispatch(
                     array(
                         'actionName' => 'File Download',
                         'subjectEntityName' => 'Pelagos\Entity\Dataset',
                         'subjectEntityId' => $dataset->getId(),
-                        'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                        'payLoad' => array('userType' => $type, 'userId' => $typeId, 'udi' => $dataset->getUdi(), 'sessionId' => $session),
                     ),
                     'file_download'
                 );

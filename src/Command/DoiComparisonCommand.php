@@ -423,10 +423,8 @@ class DoiComparisonCommand extends Command
      * Gets the doi status according to griidc system.
      *
      * @param string $state Datacite doi state.
-     *
-     * @return string
      */
-    private function getDoiStatus(string $state): string
+    private function getDoiStatus(string $state): ?string
     {
         switch (true) {
             case ($state === self::DOI_DRAFT):
@@ -437,6 +435,9 @@ class DoiComparisonCommand extends Command
                 break;
             case ($state === self::DOI_REGISTERED):
                 return DOI::STATE_REGISTERED;
+                break;
+            default:
+                return null;
                 break;
         }
     }

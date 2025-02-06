@@ -170,6 +170,9 @@ img {
 #difFilterTools td {
     padding-bottom: 1rem;
 }
+#difFilterTools #fltResults {
+    padding-left: .5em;
+}
 
 input.dx-texteditor-input:focus-visible {
     outline-style: none !important;
@@ -184,4 +187,8 @@ input.dx-texteditor-input:focus-visible {
     outline-width: 2px !important;
     outline-offset: 4px !important;
     outline-color: #2563eb !important;
+}
+
+#difForm input[type="text"], textarea {
+    padding-left: .5em;
 }

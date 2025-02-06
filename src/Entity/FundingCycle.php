@@ -2,75 +2,47 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
-use JMS\Serializer\Annotation as Serializer;
+use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entity class to represent a Funding Cycle.
- *
- *
- * @Assert\GroupSequence({
- *     "id",
- *     "unique_id",
- *     "FundingCycle",
- *     "Entity",
- * })
- *
- * @UniqueEntity(
- *     fields={"fundingOrganization","name"},
- *     errorPath="name",
- *     message="Name must be unique within a FundingOrganization"
- * )
- *
- * @UniqueEntity(
- *     fields={"udiPrefix"},
- *     message="This UDI prefix is already used."
- * )
  */
 #[ORM\Entity]
+#[Assert\GroupSequence(['id', 'unique_id', 'FundingCycle', 'Entity'])]
+#[UniqueEntity(fields: ['fundingOrganization', 'name'], errorPath: 'name', message: 'Name must be unique within a FundingOrganization')]
+#[UniqueEntity(fields: ['udiPrefix'], message: 'This UDI prefix is already used.')]
 class FundingCycle extends Entity
 {
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'Funding Cycle';
+    public const FRIENDLY_NAME = 'Funding Cycle';
 
     /**
      * Name of a funding cycle.
      *
      * @var string $name
-     *
-     * @access protected
-     *
-     * @Serializer\Groups({"organization"})
-     *
-     *
-     * @Assert\NotBlank(
-     *     message="Name is required"
-     * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['organization'])]
+    #[Assert\NotBlank(message: 'Name is required')]
     protected $name;
 
     /**
      * Description of a funding cycle.
      *
      * @var string $description
-     *
-     * @access protected
-     *
-     *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Description cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Description cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
@@ -78,14 +50,8 @@ class FundingCycle extends Entity
      * Funding cycle's Website url.
      *
      * @var string $url
-     *
-     * @access protected
-     *
-     *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="URL cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
@@ -93,8 +59,6 @@ class FundingCycle extends Entity
      * Funding cycle's start date.
      *
      * @var \Datetime $startDate
-     *
-     * @access protected
      */
     #[ORM\Column(type: 'date', nullable: true)]
     protected $startDate;
@@ -103,8 +67,6 @@ class FundingCycle extends Entity
      * Funding cycle's end date.
      *
      * @var \Datetime $endDate
-     *
-     * @access protected
      */
     #[ORM\Column(type: 'date', nullable: true)]
     protected $endDate;
@@ -113,75 +75,47 @@ class FundingCycle extends Entity
      * Funding cycle's Funding Organization.
      *
      * @var FundingOrganization
-     *
-     * @access protected
-     *
-     * @Serializer\Groups({"organization"})
-     *
-     *
-     * @Assert\NotBlank(
-     *     message="Funding Organization is required"
-     * )
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'fundingCycles')]
+    #[Serializer\Groups(['organization'])]
+    #[Serializer\MaxDepth(1)]
+    #[Assert\NotBlank(message: 'Funding Organization is required')]
     protected $fundingOrganization;
 
     /**
      * Funding cycle's list of associated research groups.
      *
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @access protected
-     *
-     *
-     *
-     * @Serializer\MaxDepth(2)
+     * @var Collection
      */
     #[ORM\OneToMany(targetEntity: 'ResearchGroup', mappedBy: 'fundingCycle')]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[Serializer\MaxDepth(2)]
+    #[MaxDepth(1)]
     protected $researchGroups;
 
     /**
      * Funding cycle's UDI Prefix.
      *
      * @var string $udiPrefix
-     *
-     * @access protected
-     *
-     * @Assert\NotBlank(
-     *     message="UDI Prefix is required"
-     * )
-     * @Assert\Regex(
-     *      pattern="/^[A-Z\d]{2}$/",
-     *      message="Funding Cycle prefix must be composed of 2 uppercase characters or numbers."
-     * )
      */
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: 'UDI Prefix is required')]
+    #[Assert\Regex(pattern: '/^[A-Z\d]{2}$/', message: 'Funding Cycle prefix must be composed of 2 uppercase characters or numbers.')]
     protected $udiPrefix;
 
     /**
      * This holds the position in the sort order of this Entity.
      *
-     * @var integer
-     *
-     *
-     * @Assert\Range(
-     *     min = 1,
-     *     max = 2147483647,
-     *     notInRangeMessage = "Sort position must be in between 1 and 2147483647",
-     *     invalidMessage = "Sort position must be a positive integer."
-     * )
+     * @var int
      */
     #[ORM\Column(nullable: true, type: 'integer')]
+    #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'Sort position must be in between 1 and 2147483647', invalidMessage: 'Sort position must be a positive integer.')]
     protected $sortOrder;
 
     /**
      * Setter for name.
      *
-     * @param string $name Textual name of funding cycle.
-     *
-     * @access public
+     * @param string $name textual name of funding cycle
      *
      * @return void
      */
@@ -193,9 +127,7 @@ class FundingCycle extends Entity
     /**
      * Getter for name.
      *
-     * @access public
-     *
-     * @return string String containing name of funding cycle.
+     * @return string string containing name of funding cycle
      */
     public function getName()
     {
@@ -205,9 +137,7 @@ class FundingCycle extends Entity
     /**
      * Setter for description.
      *
-     * @param string|null $description Description of funding cycle.
-     *
-     * @access public
+     * @param string|null $description description of funding cycle
      *
      * @return void
      */
@@ -219,9 +149,7 @@ class FundingCycle extends Entity
     /**
      * Getter for description.
      *
-     * @access public
-     *
-     * @return string Description of funding cycle.
+     * @return string description of funding cycle
      */
     public function getDescription()
     {
@@ -231,13 +159,11 @@ class FundingCycle extends Entity
     /**
      * Setter for Funding Cycle.
      *
-     * @param FundingOrganization $fundingOrg The funding organization.
-     *
-     * @access public
+     * @param FundingOrganization $fundingOrg the funding organization
      *
      * @return void
      */
-    public function setFundingOrganization(FundingOrganization $fundingOrg = null)
+    public function setFundingOrganization(?FundingOrganization $fundingOrg = null)
     {
         $this->fundingOrganization = $fundingOrg;
     }
@@ -245,9 +171,7 @@ class FundingCycle extends Entity
     /**
      * Getter for Funding Organization.
      *
-     * @access public
-     *
-     * @return FundingOrganization Funding Organization.
+     * @return FundingOrganization funding Organization
      */
     public function getFundingOrganization()
     {
@@ -257,9 +181,7 @@ class FundingCycle extends Entity
     /**
      * Setter for url.
      *
-     * @param string|null $url Funding organization's Website URL.
-     *
-     * @access public
+     * @param string|null $url funding organization's Website URL
      *
      * @return void
      */
@@ -271,9 +193,7 @@ class FundingCycle extends Entity
     /**
      * Getter for url.
      *
-     * @access public
-     *
-     * @return string URL of funding cycle's Website.
+     * @return string URL of funding cycle's Website
      */
     public function getUrl()
     {
@@ -283,13 +203,11 @@ class FundingCycle extends Entity
     /**
      * Setter for startDate.
      *
-     * @param \DateTime $startDate The Start Date.
-     *
-     * @access public
+     * @param \DateTime $startDate the Start Date
      *
      * @return void
      */
-    public function setStartDate(\DateTime $startDate = null)
+    public function setStartDate(?\DateTime $startDate = null)
     {
         $this->startDate = $startDate;
     }
@@ -297,9 +215,7 @@ class FundingCycle extends Entity
     /**
      * Getter for startDate.
      *
-     * @access public
-     *
-     * @return \DateTime startDate of funding cycle's Website.
+     * @return \DateTime startDate of funding cycle's Website
      */
     public function getStartDate()
     {
@@ -309,13 +225,11 @@ class FundingCycle extends Entity
     /**
      * Setter for endDate.
      *
-     * @param \DateTime $endDate The End Date.
-     *
-     * @access public
+     * @param \DateTime $endDate the End Date
      *
      * @return void
      */
-    public function setEndDate(\DateTime $endDate = null)
+    public function setEndDate(?\DateTime $endDate = null)
     {
         $this->endDate = $endDate;
     }
@@ -323,9 +237,7 @@ class FundingCycle extends Entity
     /**
      * Getter for endDate.
      *
-     * @access public
-     *
-     * @return \DateTime endDate of funding cycle's Website.
+     * @return \DateTime endDate of funding cycle's Website
      */
     public function getEndDate()
     {
@@ -335,9 +247,7 @@ class FundingCycle extends Entity
     /**
      * Getter for getResearchGroups.
      *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection List of funding cycle's research groups.
+     * @return Collection list of funding cycle's research groups
      */
     public function getResearchGroups()
     {
@@ -345,11 +255,87 @@ class FundingCycle extends Entity
     }
 
     /**
+     * Return a collection of all Datasets for the Funding Cycle.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = new ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            /** @var ResearchGroup $researchGroup */
+            foreach ($researchGroup->getDatasets() as $dataset) {
+                $datasets->add($dataset);
+            }
+        }
+
+        return $datasets;
+    }
+
+    /**
+     * Return an array of people.
+     */
+    public function getPeople(): Collection
+    {
+        $people = new ArrayCollection();
+
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
+                $person = $personResearchGroup->getPerson();
+                if (!$people->contains($person)) {
+                    $people->add($person);
+                }
+            }
+        }
+
+        return $people;
+    }
+
+    /**
+     * Return a collection of Publications for the Funding Cycle.
+     */
+    public function getPublications(): Collection
+    {
+        $publications = new ArrayCollection();
+        foreach ($this->getDatasets() as $dataset) {
+            foreach ($dataset->getPublications() as $publication) {
+                if (!$publications->contains($publication)) {
+                    $publications->add($publication);
+                }
+            }
+        }
+
+        return $publications;
+    }
+
+    /**
+     * Returns datasets by Dataset Lifecycle Status.
+     */
+    public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection
+    {
+        return $this->getDatasets()->filter(function (Dataset $dataset) use ($datasetLifecycleStatus) {
+            return $dataset->getDatasetLifecycleStatus() === $datasetLifecycleStatus;
+        });
+    }
+
+    /**
+     * Check the see if this Funding Cycle has any Research Groups without Datasets.
+     */
+    public function hasResearchGroupsWithoutDatasets(): bool
+    {
+        $result = false;
+
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            if (0 == count($researchGroup->getDatasets())) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Setter for udiPrefix.
      *
-     * @param string|null $udiPrefix The prefix of the UDI for this Funding Cycle.
-     *
-     * @access public
+     * @param string|null $udiPrefix the prefix of the UDI for this Funding Cycle
      *
      * @return void
      */
@@ -361,9 +347,7 @@ class FundingCycle extends Entity
     /**
      * Getter for udiPrefix.
      *
-     * @access public
-     *
-     * @return string String containing UDI prefix of funding cycle.
+     * @return string string containing UDI prefix of funding cycle
      */
     public function getUdiPrefix()
     {
@@ -373,9 +357,7 @@ class FundingCycle extends Entity
     /**
      * Setter for sortOrder.
      *
-     * @param integer|null $position The position to set in the sort ordering.
-     *
-     * @access public
+     * @param int|null $position the position to set in the sort ordering
      *
      * @return void
      */
@@ -387,9 +369,7 @@ class FundingCycle extends Entity
     /**
      * Getter for sortOrder.
      *
-     * @access public
-     *
-     * @return integer Of position to use in a sorted list.
+     * @return int of position to use in a sorted list
      */
     public function getSortOrder()
     {
@@ -403,13 +383,13 @@ class FundingCycle extends Entity
      * ResearchGroups. The NotDeletableException will have its reasons set to a list of
      * reasons the FundingCycle is not deletable.
      *
-     * @throws NotDeletableException When the FundingCycle has associated ResearchGroups.
-     *
      * @return void
+     *
+     * @throws NotDeletableException when the FundingCycle has associated ResearchGroups
      */
     public function checkDeletable()
     {
-        $notDeletableReasons = array();
+        $notDeletableReasons = [];
         $researchGroupCount = count($this->getResearchGroups());
         if ($researchGroupCount > 0) {
             $notDeletableReasons[] = 'there ' . ($researchGroupCount > 1 ? 'are' : 'is') .

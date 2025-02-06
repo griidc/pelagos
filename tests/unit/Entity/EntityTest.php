@@ -72,8 +72,7 @@ class EntityTest extends TestCase
     {
         $this->testCreator = new Person();
         $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping(true)
-            ->addDefaultDoctrineAnnotationReader()
+            ->enableAttributeMapping(true)
             ->getValidator();
         $this->testEntity = $this
             ->getMockBuilder('App\Entity\Entity')

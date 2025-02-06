@@ -5,31 +5,25 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Exception\NotDeletableException;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 /**
  * Entity class to represent a Person.
  *
  *
  *
- * @Assert\GroupSequence({
- *     "id",
- *     "unique_id",
- *     "Person",
- *     "Entity",
- * })
  *
- * @UniqueEntity(
- *     fields={"emailAddress"},
- *     errorPath="emailAddress",
- *     message="A Person with this email address already exists"
- * )
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\PersonRepository')]
+#[Assert\GroupSequence(['id', 'unique_id', 'Person', 'Entity'])]
+#[UniqueEntity(fields: ['emailAddress'], errorPath: 'emailAddress', message: 'A Person with this email address already exists')]
 class Person extends Entity
 {
     /**
@@ -42,17 +36,14 @@ class Person extends Entity
      *
      * @var string $firstName
      *
-     * @Serializer\Groups({"director", "person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="First name is required"
-     * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="First name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'First name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['director', 'person'])]
+    #[Assert\NotBlank(message: 'First name is required')]
+    #[Groups('grp-people-accounts-report')]
     protected $firstName;
 
     /**
@@ -60,17 +51,14 @@ class Person extends Entity
      *
      * @var string $lastName
      *
-     * @Serializer\Groups({"director", "person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="Last name is required"
-     * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Last name cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Last name cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['director', 'person'])]
+    #[Assert\NotBlank(message: 'Last name is required')]
+    #[Groups('grp-people-accounts-report')]
     protected $lastName;
 
     /**
@@ -78,21 +66,14 @@ class Person extends Entity
      *
      * @var string $emailAddress
      *
-     * @Serializer\Groups({"person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="Email address is required"
-     * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Email address cannot contain angle brackets (< or >)"
-     * )
-     * @Assert\Email(
-     *     message="Email address is invalid",
-     *     mode="strict"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Email address cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'citext', unique: true)]
+    #[Serializer\Groups(['person'])]
+    #[Assert\NotBlank(message: 'Email address is required')]
+    #[Assert\Email(message: 'Email address is invalid', mode: 'strict')]
     protected $emailAddress;
 
     /**
@@ -103,10 +84,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Phone number cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $phoneNumber;
 
@@ -118,10 +97,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Delievery point (address) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $deliveryPoint;
 
@@ -133,10 +110,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="City cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'City cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $city;
 
@@ -148,10 +123,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Administrative area (state) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $administrativeArea;
 
@@ -163,10 +136,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Postal code (zip) cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $postalCode;
 
@@ -178,10 +149,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Country cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Country cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $country;
 
@@ -193,10 +162,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Website URL cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Website URL cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $url;
 
@@ -207,14 +174,11 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @Serializer\Groups({"director", "person"})
      *
-     *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Organization cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Organization cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['director', 'person'])]
     protected $organization;
 
     /**
@@ -225,10 +189,8 @@ class Person extends Entity
      * @access protected
      *
      *
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Position cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Position cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $position;
 
@@ -269,10 +231,9 @@ class Person extends Entity
      *
      * @access protected
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToOne(targetEntity: 'Account', mappedBy: 'person')]
+    #[Serializer\Exclude]
     protected $account;
 
     /**
@@ -282,10 +243,9 @@ class Person extends Entity
      *
      * @access protected
      *
-     *
-     * @Serializer\Exclude
      */
     #[ORM\OneToOne(targetEntity: 'PersonToken', mappedBy: 'person')]
+    #[Serializer\Exclude]
     protected $token;
 
     /**
@@ -869,7 +829,7 @@ class Person extends Entity
      */
     public function __toString()
     {
-        return (string) $this->id;
+        return (string) $this->getFirstName() . ' ' . $this->getLastName();
     }
 
     /**
@@ -898,5 +858,57 @@ class Person extends Entity
             $researchGroups[] = $personResearchGroup->getResearchGroup();
         }
         return $researchGroups;
+    }
+
+    /**
+     * Get all datasets for this person for each research group they are in.
+     */
+    public function getDatasets(): Collection
+    {
+        $datasets = new ArrayCollection();
+        foreach ($this->personResearchGroups as $personResearchGroup) {
+            foreach ($personResearchGroup->getResearchGroup()->getDatasets() as $dataset) {
+                if (!$datasets->contains($dataset)) {
+                    $datasets->add($dataset);
+                }
+            }
+        }
+        return $datasets;
+    }
+
+    /**
+     * Get publications for this perons.
+     */
+    public function getPublications(): Collection
+    {
+        $publications = new ArrayCollection();
+        foreach ($this->getDatasets() as $dataset) {
+            foreach ($dataset->getPublications() as $publication) {
+                if (!$publications->contains($publication)) {
+                    $publications->add($publication);
+                }
+            }
+        }
+        return $publications;
+    }
+
+    /**
+     * Does this person have an account?
+     */
+    #[Groups(['grp-people-accounts-report'])]
+    #[SerializedName('hasAccount')]
+    public function getHasAccount(): string
+    {
+        return ($this->getAccount() instanceof Account) ? 'yes' : 'no';
+    }
+
+    /**
+     * Get the account creation time.
+     */
+    #[Groups(['grp-people-accounts-report'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    public function getAccountCreationDate(): ?\DateTime
+    {
+        return $this->getAccount()?->getCreationTimeStamp();
     }
 }

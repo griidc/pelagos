@@ -14,6 +14,7 @@ use App\Entity\Person;
 use App\Entity\DatasetSubmission;
 use App\Entity\Account;
 use App\Entity\PersonDataRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -28,17 +29,20 @@ class DatasetDownloadReportController extends ReportController
 
     const UDI_REPORT = 'udiReport';
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * This defaultAction generates the form to select the date range for the report.
      *
      * @param Request $request Message response.
      *
-     * @Route("/dataset-download-report", name="pelagos_app_ui_datasetdownloadreport_default")
      *
      * @throws InvalidDateSelectedException Selected Dates are invalid.
-     *
      * @return Response|StreamedResponse A Response instance.
      */
+    #[Route(path: '/dataset-download-report', name: 'pelagos_app_ui_datasetdownloadreport_default')]
     public function defaultAction(Request $request, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
@@ -104,7 +108,12 @@ class DatasetDownloadReportController extends ReportController
 
         //process result query into an array with organized data
         $currentIndex = 0;
+        $lastTime = 0;
+        $lastUdi = '';
         foreach ($results as $result) {
+            // set up timekeeping for 30-sec window
+            $dateTime = $result['creationTimeStamp'];
+            $epochTime = (int) $dateTime->format('U');
             //initialize array with key  = udi, set title and primary POC
             if (isset($dataArray[$currentIndex]['udi']) && $result['udi'] != $dataArray[$currentIndex]['udi']) {
                 $currentIndex++;
@@ -118,10 +127,11 @@ class DatasetDownloadReportController extends ReportController
                     'totalCount' => 0,
                     'GoMRI' => 0,
                     'NonGoMRI' => 0,
-                    'fileSize' => null
+                    'fileSize' => null,
                 );
 
-                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+
+                $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
@@ -141,13 +151,17 @@ class DatasetDownloadReportController extends ReportController
                 // get file size from dataset submission
                 $dataArray[$currentIndex]['fileSize'] = $this->getFileSize($dataset);
             }
-            //count user downloads and total download
-            if ($result['payLoad']['userType'] == 'GoMRI') {
-                $dataArray[$currentIndex]['GoMRI']++;
-            } else {
-                $dataArray[$currentIndex]['NonGoMRI']++;
+            if ((($epochTime - $lastTime) > 30) or ($result['udi'] !== $lastUdi)) {
+                //count user downloads and total download
+                if ($result['payLoad']['userType'] == 'GoMRI') {
+                    $dataArray[$currentIndex]['GoMRI']++;
+                } else {
+                    $dataArray[$currentIndex]['NonGoMRI']++;
+                }
+                $dataArray[$currentIndex]['totalCount']++;
             }
-            $dataArray[$currentIndex]['totalCount']++;
+            $lastTime = $epochTime;
+            $lastUdi = $result['udi'];
         }
         return array_merge($this->getDefaultHeaders(), $additionalHeaders, $labels, $dataArray);
     }
@@ -172,10 +186,10 @@ class DatasetDownloadReportController extends ReportController
     /**
      * Generates report of dataset downloads based on timestamp.
      *
-     * @Route("/dataset-download-report/timestamp", name="pelagos_app_ui_datasetdownloadreport_timestampreport")
      *
      * @return Response|StreamedResponse A Response instance.
      */
+    #[Route(path: '/dataset-download-report/timestamp', name: 'pelagos_app_ui_datasetdownloadreport_timestampreport')]
     public function timeStampReportAction()
     {
         // Checks authorization of users
@@ -237,7 +251,7 @@ class DatasetDownloadReportController extends ReportController
                     'fileSize' => null
                 );
 
-                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+                $dataset = $this->entityManager->getRepository(Dataset::class)
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
@@ -295,11 +309,9 @@ class DatasetDownloadReportController extends ReportController
      */
     private function getQuery(string $reportName, array $options = null): Query
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         //Query
         if ($reportName === self::TIMESTAMP_REPORT) {
-            $qb = $entityManager->createQueryBuilder();
+            $qb = $this->entityManager->createQueryBuilder();
             $query = $qb
                 ->select('log.creationTimeStamp, d.udi, log.payLoad')
                 ->from('\App\Entity\LogActionItem', 'log')
@@ -311,14 +323,14 @@ class DatasetDownloadReportController extends ReportController
                 ->setParameter(2, 'File Download')
                 ->getQuery();
         } else {
-            $queryString = 'SELECT dataset.udi,log.payLoad from ' .
+            $queryString = 'SELECT dataset.udi, log.payLoad, log.creationTimeStamp from ' .
                 LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
                 log.subjectEntityId = dataset.id where log.actionName = :actionName and
                 log.subjectEntityName = :subjectEntityName and
                 log.creationTimeStamp >= :startDate
                 and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
-            $query = $entityManager->createQuery($queryString);
+            $query = $this->entityManager->createQuery($queryString);
             $endDateInclusively = clone $options['endDate'];
             $endDateInclusively = $endDateInclusively->add(new \DateInterval('P1D'));
             $query->setParameters([
@@ -357,14 +369,13 @@ class DatasetDownloadReportController extends ReportController
      */
     private function excludeGriidcStaff(): array
     {
-        $entityManager = $this->getDoctrine()->getManager();
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
             ' personDataRepository JOIN ' . Person::class .
             ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
             ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
-        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcUserResult = $this->entityManager->createQuery($griidcUserQueryString)->getScalarResult();
         $griidcArray = array_column($griidcUserResult, 'userId');
 
         return $griidcArray;

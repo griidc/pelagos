@@ -31,21 +31,19 @@ class Publication extends Entity
     /**
      * Citation Text.
      *
-     * @var $citationText string
-     *
-     * @Serializer\Groups({"citation"})
+     * @var string $citationText
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['citation'])]
     private $citationText;
 
     /**
      * DOI.
      *
      * @var string
-     *
-     * @Serializer\Groups({"citation"})
      */
     #[ORM\Column(type: 'citext')]
+    #[Serializer\Groups(['citation'])]
     protected $doi;
 
     /**
@@ -53,10 +51,9 @@ class Publication extends Entity
      *
      * @var Collection
      *
-     *
-     * @Serializer\MaxDepth(1)
      */
     #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'publication')]
+    #[Serializer\MaxDepth(1)]
     protected $datasetPublications;
 
     /**
@@ -99,5 +96,18 @@ class Publication extends Entity
     public function getCitationText()
     {
         return $this->citationText;
+    }
+
+    /**
+     * Get publication year from Citation text.
+     */
+    public function getPublicationYear(): ?string
+    {
+        $matches = [];
+        preg_match('/\((\d{4})\)/', $this->citationText, $matches);
+        if (isset($matches[1])) {
+            return $matches[1];
+        }
+        return null;
     }
 }

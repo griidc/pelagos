@@ -1,0 +1,20 @@
+{% for researchGroup in researchGroups %}
+        <div class="card cursor-pointer">
+            <a href="{{ path('pelagos_app_ui_researchgroup_about', { 'researchGroup': researchGroup.id }) }}" target="_blank" class="block"></a>
+            <h4>{{ researchGroup.name }}<br /></h4>
+            {% if researchGroup.description %}
+                <p>
+                    <label>Description:</label>
+                    {{ researchGroup.description }}<br />
+                </p>
+            {% endif %}
+            {% if researchGroup.fundingCycle %}
+                <label>Funding Cycle:</label>
+                {{ researchGroup.fundingCycle.name }}<br />
+            {% endif %}
+            {% if researchGroup.fundingCycle.fundingOrganization %}
+                <label>Funding Organization:</label>
+                {{ researchGroup.fundingCycle.fundingOrganization.name }}<br />
+            {% endif %}
+        </div>
+{% endfor %}

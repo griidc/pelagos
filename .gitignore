@@ -42,3 +42,11 @@ psalm.xml
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+###> pnpm ###
+pnpm-lock.yaml
+###< pnpm ###
+
+###> rector/rector ###
+rector.php
+###< rector/rector ###

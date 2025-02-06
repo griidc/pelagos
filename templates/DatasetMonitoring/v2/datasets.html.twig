@@ -1,0 +1,87 @@
+<div id="tooltipContainer"></div>
+
+{% if not makePdf %}
+<script>
+    tippy('[data-tippy-content]', {
+        //options
+    });
+</script>
+{% endif %}
+
+{% if fundingOrganization %}
+    {% set urlParameters = { fundingOrganization : fundingOrganization.id} %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingOrganization, urlParameters: urlParameters, group: fundingOrganization} only %}
+
+    {% set prefixText = 'Funding Organization Dataset Status Totals:' %}
+    {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingOrganization, prefixText:prefixText, 'showGraphics': 'false', showTotal: true} only %}
+
+    {% for fundingCycle in fundingOrganization.fundingCycles | sortBy(["fundingCycle.name"]) %}
+        {% if datasetFilter == "only" and fundingCycle.datasets|approvedDIFs|length == 0 %}
+            {# DOT NOT SHOW #}
+        {% else %}
+            {% if datasetFilter == "without" and fundingCycle.hasResearchGroupsWithoutDatasets == false %}
+                {# DOT NOT SHOW #}
+            {% else %}
+                <span class="font-bold block px-2 shadow-lg border rounded text-white main-header"><h3>Funding Cycle: {{fundingCycle.name}}</h3></span>
+            {% endif %}
+
+
+            {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+            <div x-data="{ expanded: false }">
+                {% if datasetFilter == "only" and researchGroup.datasets|approvedDIFs|length == 0 %}
+                    {# DOT NOT SHOW #}
+                {% else %}
+                    {% if datasetFilter == "without" and researchGroup.datasets|approvedDIFs|length > 0 %}
+                        {# DOT NOT SHOW #}
+                    {% else %}
+                        {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if fundingCycle %}
+    {% set urlParameters = { fundingCycle : fundingCycle.id} %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': fundingCycle.fundingOrganization, urlParameters: urlParameters, group: fundingCycle} only %}
+
+    <span class="font-bold block px-2 shadow-lg border rounded text-white main-header">
+        <h3>Funding Cycle: {{ fundingCycle.name }}</h3>
+    </span>
+
+    <div class="">
+        {% set prefixText = 'Funding Cycle Dataset Status Totals:' %}
+        {% include 'DatasetMonitoring/v2/datasetsTotals.html.twig' with {'group': fundingCycle, prefixText: prefixText, 'showGraphics': 'false', showTotal: true} only %}
+    </div>
+
+    {% for researchGroup in fundingCycle.researchGroups | sortBy(["researchGroup.name"]) %}
+    <div x-data="{ expanded: false }">
+        {% if datasetFilter == "only" and researchGroup.datasets|approvedDIFs|length == 0 %}
+            {# DOT NOT SHOW #}
+        {% else %}
+            {% if datasetFilter == "without" and researchGroup.datasets|approvedDIFs|length > 0 %}
+                {# DOT NOT SHOW #}
+            {% else %}
+                {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endfor %}
+
+{% endif %}
+
+{% if researchGroup %}
+    {% set urlParameters = { researchGroup : researchGroup.id} %}
+    {% include 'DatasetMonitoring/v2/header.html.twig' with {'fundingOrganization': researchGroup.fundingCycle.fundingOrganization, urlParameters: urlParameters, group: researchGroup} only %}
+
+    <span class="font-bold block px-2 shadow-lg border rounded text-white main-header">
+        <h3>Funding Cycle: {{ researchGroup.fundingCycle.name }}</h3>
+    </span>
+
+    <div x-data="{ expanded: true }">
+    {% include 'DatasetMonitoring/v2/researchGroups.html.twig' %}
+    </div>
+{% endif %}

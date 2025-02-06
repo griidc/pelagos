@@ -49,14 +49,10 @@ class MdAppController extends AbstractController
     /**
      * MDApp UI.
      *
-     * @Route(
-     *      "/mdapp",
-     *      name="pelagos_app_ui_mdapp_default",
-     *      methods={"GET"}
-     * )
      *
      * @return Response
      */
+    #[Route(path: '/mdapp', name: 'pelagos_app_ui_mdapp_default', methods: ['GET'])]
     public function defaultAction()
     {
         // Checks authorization of users
@@ -76,14 +72,10 @@ class MdAppController extends AbstractController
      * @param MdappLogger $mdappLogger The Pelagos Mdapp logger.
      * @param integer     $id          The id of the Dataset to change the dataset status for.
      *
-     * @Route(
-     *      "/mdapp/change-dataset-status/{id}",
-     *      name="pelagos_app_ui_mdapp_changedatasetstatus",
-     *      methods={"POST"}
-     * )
      *
      * @return Response
      */
+    #[Route(path: '/mdapp/change-dataset-status/{id}', name: 'pelagos_app_ui_mdapp_changedatasetstatus', methods: ['POST'])]
     public function changeDatasetStatusAction(Request $request, MdappLogger $mdappLogger, int $id)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
@@ -100,15 +92,15 @@ class MdAppController extends AbstractController
                     $datasetSubmission->setDatasetStatus($to);
                     $this->entityHandler->update($datasetSubmission);
                     $this->entityHandler->update($dataset);
-                    $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
+                    $mdappLogger->writeLog($this->getUser()->getUserIdentifier() . ' changed status for ' .
                         $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
                     $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
                         ' to ' . $this->getFlashBagStatus($to);
-                    $this->get('session')->getFlashBag()->add('success', $message);
+                    $this->addFlash('success', $message);
                 }
             } else {
                 $message = 'Unable to move the dataset ' . $udi . ' from status Request Revisions to status InReview as it has a unsubmitted draft dataset-submission';
-                $this->get('session')->getFlashBag()->add('error', $message);
+                $this->addFlash('error', $message);
             }
         }
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
@@ -179,12 +171,10 @@ class MdAppController extends AbstractController
      * @param string      $udi         The dataset UDI identifier.
      * @param MdappLogger $mdappLogger The Logger utility.
      *
-     * @Route("/mdapp/getlog/{udi}",
-     *      name="pelagos_app_ui_mdapp_getlog"
-     * )
      *
      * @return response
      */
+    #[Route(path: '/mdapp/getlog/{udi}', name: 'pelagos_app_ui_mdapp_getlog')]
     public function getlog(string $udi, MdappLogger $mdappLogger)
     {
         $data = null;

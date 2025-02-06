@@ -922,7 +922,7 @@ function GeoViz()
         }
         else
         {
-            pointList = pointList.split(" ");
+            pointList = pointList.trim().split(" ");
             var points = "";
             for (var i=0;i<pointList.length;i++)
             {
@@ -938,6 +938,12 @@ function GeoViz()
             }
             if (drawMode == "polygon" || drawMode == "box")
             {
+                const numPairs = pointList.length;
+                if (numPairs < 3) {
+                    checkMsg = "Not enough point pairs for a polygon! (Minimum of 3)";
+                    jQuery(mapDiv).trigger("coordinateError", checkMsg);
+                    return false;
+                }
                 var WKT = "POLYGON((" + points.substring(0,(points.length)-1) + "))";
             }
             else if (drawMode == "point")

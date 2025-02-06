@@ -1,0 +1,6 @@
+@layer components {
+    .pagelink {
+        @apply text-blue-600 inline-flex items-center font-medium hover:underline;
+    }
+}
+

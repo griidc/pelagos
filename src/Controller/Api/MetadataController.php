@@ -33,17 +33,11 @@ class MetadataController extends EntityController
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
      * @throws BadRequestHttpException When the DIF is Unsubmitted.
      *
-     * @Route(
-     *     "/api/metadata",
-     *     name="pelagos_api_metadata_get",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
+    #[View(serializerEnableMaxDepthChecks: true)]
+    #[Route(path: '/api/metadata', name: 'pelagos_api_metadata_get', methods: ['GET'], defaults: ['_format' => 'json'])]
     public function getAction(Request $request, Geometry $geoUtil, Metadata $metadataUtility)
     {
         $params = $request->query->all();

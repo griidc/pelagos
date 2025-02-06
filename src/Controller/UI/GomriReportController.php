@@ -10,6 +10,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use DateTime;
 use DateInterval;
+use Doctrine\ORM\EntityManagerInterface;
 
 const MONTH_DAY_FORMAT = 'M Y';
 const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';
@@ -19,13 +20,17 @@ const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';
  */
 class GomriReportController extends ReportController
 {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @Route("/gomri/v1", name="pelagos_app_ui_gomrireport_default")
      *
      * @return Response A Response instance.
      */
+    #[Route(path: '/gomri/v1', name: 'pelagos_app_ui_gomrireport_default')]
     public function defaultAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -40,10 +45,10 @@ class GomriReportController extends ReportController
     /**
      * This is the version 2 Gomri Report.
      *
-     * @Route("/gomri/v2", name="pelagos_app_ui_gomrireport_versiontworeport")
      *
      * @return Response A Response instance
      */
+    #[Route(path: '/gomri/v2', name: 'pelagos_app_ui_gomrireport_versiontworeport')]
     public function versionTwoReportAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -128,7 +133,6 @@ class GomriReportController extends ReportController
      */
     private function getVersionOneQueryData(array $dataArray)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         // Query Identified.
         $queryString = 'SELECT dif.creationTimeStamp ' .
             'FROM ' . Dataset::class . ' dataset ' .
@@ -138,7 +142,7 @@ class GomriReportController extends ReportController
             'JOIN fundingCycle.fundingOrganization fundingOrganization ' .
             'WHERE fundingOrganization.name = :gomri ' .
             'AND dif.status = :difStatusApproved';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(array(
             'difStatusApproved' => DIF::STATUS_APPROVED,
             'gomri' => GOMRI_STRING,
@@ -163,7 +167,7 @@ class GomriReportController extends ReportController
             '   WHERE subdatasetsubmission.datasetFileUri IS NOT null ' .
             '   GROUP BY subdatasetsubmission.dataset)' .
             'AND fundingOrganization.name = :gomri ';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(array('gomri' => GOMRI_STRING,));
         $results = $query->getResult();
 
@@ -188,7 +192,7 @@ class GomriReportController extends ReportController
             '   AND subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
             '   GROUP BY subdatasetsubmission.dataset)' .
             'AND fundingOrganization.name = :gomri';
-        $query = $entityManager->createQuery($queryString);
+        $query = $this->entityManager->createQuery($queryString);
         $query->setParameters(array(
             'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
@@ -214,9 +218,8 @@ class GomriReportController extends ReportController
      */
     private function getVersionTwoQueryData(array $dataArray)
     {
-        $entityManager = $this->getDoctrine()->getManager();
         // Query Identified (i.e. Datasets which have DIF approved).
-        $qb = $entityManager->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
             ->select('dif.approvedDate')
             ->from('\App\Entity\Dataset', 'd')
@@ -237,7 +240,7 @@ class GomriReportController extends ReportController
         }
 
         // Query Registered (i.e. Datasets which are submitted).
-        $qb = $entityManager->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
             ->select('ds.submissionTimeStamp')
             ->from('\App\Entity\Dataset', 'd')
@@ -257,9 +260,9 @@ class GomriReportController extends ReportController
         }
 
         // Query Available (i.e. Datasets which are publicly available).
-        $qb = $entityManager->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
 
-        $qb2 = $entityManager->createQueryBuilder()
+        $qb2 = $this->entityManager->createQueryBuilder()
             ->select('IDENTITY(ds2.dataset)')
             ->from('\App\Entity\DatasetSubmission', 'ds2')
             ->join('\App\Entity\Dataset', 'd2', 'WITH', 'ds2.dataset = d2.id')

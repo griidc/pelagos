@@ -9,6 +9,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -49,16 +50,20 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     const REPORT_VERSION_THREE = 3;
 
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * The default action.
      *
      * @param Request       $request         Message information for this Request.
      * @param EntityHandler $entityHandler   The entity handler.
      *
-     * @Route("/report-researchgroup-dataset-status", name="pelagos_app_ui_reportresearchgroupdatasetstatus_default")
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
+    #[Route(path: '/report-researchgroup-dataset-status', name: 'pelagos_app_ui_reportresearchgroupdatasetstatus_default')]
     public function defaultAction(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
     {
         // Checks authorization of users
@@ -103,13 +108,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * @param EntityHandler $entityHandler   The entity handler.
      * @param integer|null  $id              Research group id.
      *
-     * @Route(
-     *     "/report-researchgroup/dataset-monitoring/{id}",
-     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport",
-     *     )
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
+    #[Route(path: '/report-researchgroup/dataset-monitoring/{id}', name: 'pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport')]
     public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, int $id = null)
     {
         if ($id) {
@@ -156,13 +158,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * @param EntityHandler $entityHandler   The entity handler.
      * @param string|null   $id              Research group id.
      *
-     * @Route(
-     *     "/report-researchgroup/grp-report/{id}",
-     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_grpresearchgroupreport",
-     *     )
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
+    #[Route(path: '/report-researchgroup/grp-report/{id}', name: 'pelagos_app_ui_reportresearchgroupdatasetstatus_grpresearchgroupreport')]
     public function getGrpResearchGroupReport(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, string $id = null)
     {
         if (isset($id) and is_int($id)) {
@@ -209,13 +208,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * @param EntityHandler $entityHandler   The entity handler.
      * @param string|null   $id              Research group id.
      *
-     * @Route(
-     *     "/report-researchgroup/detail-report/{id}",
-     *     name="pelagos_app_ui_reportresearchgroup_detailreport",
-     *     )
      *
      * @return Response|JsonResponse A Symfony Response instance.
      */
+    #[Route(path: '/report-researchgroup/detail-report/{id}', name: 'pelagos_app_ui_reportresearchgroup_detailreport')]
     public function getResearchDetailReport(Request $request, EntityHandler $entityHandler, FormFactoryInterface $formFactory, string $id = null): Response
     {
         // Checks authorization of users
@@ -269,8 +265,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     {
         $serializer = SerializerBuilder::create()->build();
 
-        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
-            ->findOneBy(array('id' => $researchGroupId));
+        $researchGroup = $this->entityManager->getRepository(ResearchGroup::class)
+        ->findOneBy(array('id' => $researchGroupId));
 
         $context = SerializationContext::create();
         $context->enableMaxDepthChecks();
@@ -322,7 +318,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     private function getReport(int $researchGroupId, int $version)
     {
-        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
+        $researchGroup = $this->entityManager->getRepository(ResearchGroup::class)
             ->findOneBy(array('id' => $researchGroupId));
         $researchGroupName = $researchGroup->getName();
 

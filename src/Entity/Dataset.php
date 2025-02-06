@@ -2,11 +2,15 @@
 
 namespace App\Entity;
 
+use App\Enum\DatasetLifecycleStatus;
+use App\Enum\KeywordType;
 use App\Util\DatasetCitationUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 /**
  * Dataset Entity class.
@@ -56,30 +60,29 @@ class Dataset extends Entity
     ];
 
     /**
-     * Cold Storage Tag
+     * Cold Storage Tag.
      */
-    const TAG_COLD_STORAGE = 'Cold Storage';
+    public const TAG_COLD_STORAGE = 'Cold Storage';
 
     /**
-     * Remotely Hosted Tag
+     * Remotely Hosted Tag.
      */
-    const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
+    public const TAG_REMOTELY_HOSTED = 'Remotely Hosted';
 
     /**
-     * ERDDAP Tag
+     * ERDDAP Tag.
      */
-    const TAG_ERDDAP = 'ERDDAP';
-
+    public const TAG_ERDDAP = 'ERDDAP';
 
     /**
-     * NCEI Tag
+     * NCEI Tag.
      */
-    const TAG_NCEI = 'NCEI';
+    public const TAG_NCEI = 'NCEI';
 
     /**
      * Valid Tags for a dataset.
      */
-    const TAGS = [
+    public const TAGS = [
         self::TAG_COLD_STORAGE => 'Cold Storage',
         self::TAG_REMOTELY_HOSTED => 'Remotely Hosted',
         self::TAG_ERDDAP => 'ERDDAP',
@@ -90,20 +93,20 @@ class Dataset extends Entity
      * The UDI for this Dataset.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card", "search"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card', 'search'])]
+    #[Groups(['grp-dk-report'])]
     protected $udi;
 
     /**
      * The title for this Dataset.
      *
      * @var string
-     *
-     * @Serializer\Groups({"card", "search"})
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Serializer\Groups(['card', 'search'])]
+    #[Groups(['grp-dk-report'])]
     protected $title;
 
     /**
@@ -118,10 +121,9 @@ class Dataset extends Entity
      * The DOI for this Dataset.
      *
      * @var DOI
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
+    #[Serializer\Groups(['card'])]
     protected $doi;
 
     /**
@@ -129,53 +131,49 @@ class Dataset extends Entity
      *
      * @var ResearchGroup
      *
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Groups({"search"})
      *
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'datasets')]
+    #[Serializer\MaxDepth(1)]
+    #[Serializer\Groups(['search'])]
     protected $researchGroup;
 
     /**
      * The DIF for this Dataset.
      *
      * @var DIF
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\OneToOne(targetEntity: 'DIF', inversedBy: 'dataset')]
+    #[Serializer\Groups(['card'])]
     protected $dif;
 
     /**
      * The most recent Dataset Submission for this dataset.
      *
      * @var DatasetSubmission
-     *
-     * @Serializer\Groups({"card"})
      */
-    #[ORM\OneToOne(targetEntity: 'DatasetSubmission')]
+    #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    #[Serializer\Groups(['card'])]
     protected $datasetSubmission;
 
     /**
      * All Dataset Submissions for this dataset.
      *
      * @var Collection
-     *
-     * @Serializer\Exclude
-     *
      */
     #[ORM\OneToMany(targetEntity: 'DatasetSubmission', mappedBy: 'dataset', cascade: ['remove'])]
     #[ORM\OrderBy(['sequence' => 'DESC'])]
+    #[Serializer\Exclude]
     protected $datasetSubmissionHistory;
 
     /**
      * Accepted Date Timestamp for Dataset.
      *
      * @var \DateTime;
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'datetimetz', nullable: true)]
+    #[Serializer\Groups(['card'])]
     protected $acceptedDate;
 
     /**
@@ -214,20 +212,18 @@ class Dataset extends Entity
      * @var int
      *
      * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
-     *
-     * @Serializer\Groups({"card"})
      */
     #[ORM\Column(type: 'smallint')]
+    #[Serializer\Groups(['card'])]
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
     /**
      * Collection of DatasetPublication.
      *
      * @var Collection
-     *
-     * @Serializer\Groups({"publications"})
      */
     #[ORM\OneToMany(targetEntity: 'DatasetPublication', mappedBy: 'dataset', orphanRemoval: true)]
+    #[Serializer\Groups(['publications'])]
     protected $datasetPublications;
 
     /**
@@ -334,8 +330,8 @@ class Dataset extends Entity
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
         if (
-            DatasetSubmission::STATUS_COMPLETE === $datasetSubmission->getStatus() or
-            DatasetSubmission::STATUS_IN_REVIEW === $datasetSubmission->getStatus()
+            DatasetSubmission::STATUS_COMPLETE === $datasetSubmission->getStatus()
+            or DatasetSubmission::STATUS_IN_REVIEW === $datasetSubmission->getStatus()
         ) {
             $this->datasetSubmission = $datasetSubmission;
         } else {
@@ -447,12 +443,20 @@ class Dataset extends Entity
 
     /**
      * Get the DOI for this Dataset.
-     *
-     * @return DOI
      */
-    public function getDoi()
+    public function getDoi(): ?DOI
     {
         return $this->doi;
+    }
+
+    /**
+     * Get the DOI string for this Dataset.
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('doi')]
+    public function getDoiString(): string
+    {
+        return $this->getDoi()?->getDoi() ?? '';
     }
 
     /**
@@ -683,8 +687,8 @@ class Dataset extends Entity
                         break;
                 }
             } elseif (
-                DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus() or
-                DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
+                DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus()
+                or DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
             ) {
                 $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
             } else {
@@ -705,8 +709,8 @@ class Dataset extends Entity
                                 break;
                         }
                     } elseif (
-                        DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus() or
-                        DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
+                        DatasetSubmission::STATUS_COMPLETE === $this->getDatasetSubmission()->getStatus()
+                        or DatasetSubmission::STATUS_IN_REVIEW === $this->getDatasetSubmission()->getStatus()
                     ) {
                         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                     } else {
@@ -739,6 +743,50 @@ class Dataset extends Entity
     }
 
     /**
+     * Check if dataset is Identified.
+     */
+    public function isIdentified(): bool
+    {
+        return $this->getDatasetLifecycleStatus() == DatasetLifecycleStatus::IDENTIFIED;
+    }
+
+    /**
+     * Check if dataset is Submitted.
+     */
+    public function isSubmitted(): bool
+    {
+        return $this->getDatasetLifecycleStatus() == DatasetLifecycleStatus::SUBMITTED;
+    }
+
+    /**
+     * Check if Dataset is in Cold Storage.
+     */
+    public function isColdStored(): bool
+    {
+        if ($this->getDatasetSubmission() instanceof DatasetSubmission) {
+            return $this->getDatasetSubmission()->isDatasetFileInColdStorage();
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if Dataset has ERDDAP URL.
+     */
+    public function hasErddapUrl(): bool
+    {
+        return $this->getDatasetSubmission()?->getErddapUrl() !== null;
+    }
+
+    /**
+     * Check if Dataset has NCEI URL.
+     */
+    public function hasNceiUrl(): bool
+    {
+        return $this->getDatasetSubmission()?->getNceiUrl() !== null;
+    }
+
+    /**
      * Whether this Dataset is remotely hosted.
      */
     public function isRemotelyHosted(): bool
@@ -759,8 +807,8 @@ class Dataset extends Entity
     {
         $isRestricted = false;
         if (
-            $this->getDatasetSubmission() instanceof DatasetSubmission and
-            DatasetSubmission::RESTRICTION_RESTRICTED === $this->getDatasetSubmission()->getRestrictions()
+            $this->getDatasetSubmission() instanceof DatasetSubmission
+            and DatasetSubmission::RESTRICTION_RESTRICTED === $this->getDatasetSubmission()->getRestrictions()
         ) {
             $isRestricted = true;
         }
@@ -788,13 +836,13 @@ class Dataset extends Entity
                 $statusResult = 'Back to Submitter';
             } elseif (self::DATASET_STATUS_ACCEPTED == $datasetStatus) {
                 if (
-                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED == $availabilityStatus ||
-                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED == $availabilityStatus
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED == $availabilityStatus
+                    || DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED == $availabilityStatus
                 ) {
                     $statusResult = 'Completed, Restricted';
                 } elseif (
-                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE == $availabilityStatus ||
-                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED == $availabilityStatus
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE == $availabilityStatus
+                    || DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED == $availabilityStatus
                 ) {
                     $statusResult = 'Completed';
                 } else {
@@ -866,6 +914,16 @@ class Dataset extends Entity
     }
 
     /**
+     * Does this Dataset have a spatial extent?
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('hasSpatialExtent')]
+    public function hasSpatialExtent(): string
+    {
+        return null !== $this->getSpatialExtentGeometry() ? 'Yes' : 'No';
+    }
+
+    /**
      * Getter to accepted date.
      *
      * @return \DateTime
@@ -926,10 +984,10 @@ class Dataset extends Entity
     /**
      * Return the total file size for this dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("totalFileSize")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('totalFileSize')]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -946,10 +1004,10 @@ class Dataset extends Entity
     /**
      * Return the number of files in this dataset.
      *
-     * @Serializer\VirtualProperty
      *
-     * @Serializer\SerializedName("numberOfFiles")
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('numberOfFiles')]
     public function getNumberOfFiles(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -966,12 +1024,12 @@ class Dataset extends Entity
     /**
      * Show friendly name of this entity.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("friendlyName")
-     * @Serializer\Groups({"search"})
      *
-     * @return string
+     *
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('friendlyName')]
+    #[Serializer\Groups(['search'])]
     public function getFriendlyName(): string
     {
         return $this::FRIENDLY_NAME;
@@ -980,12 +1038,12 @@ class Dataset extends Entity
     /**
      * Show class name of this entity.
      *
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("className")
-     * @Serializer\Groups({"search"})
      *
-     * @return string
+     *
      */
+    #[Serializer\VirtualProperty]
+    #[Serializer\SerializedName('className')]
+    #[Serializer\Groups(['search'])]
     public function getClassName(): string
     {
         return get_class($this);
@@ -993,8 +1051,6 @@ class Dataset extends Entity
 
     /**
      * Returns the "tags" for this datasets.
-     *
-     * @return array
      */
     public function getTags(): array
     {
@@ -1023,14 +1079,165 @@ class Dataset extends Entity
         return $tags;
     }
 
-
     /**
      * Gets the UDI, stringifier.
-     *
-     * @return string
      */
     public function __toString(): string
     {
         return $this->getUdi();
+    }
+
+    /**
+     * Get the Dataset's Lifecycle Status.
+     */
+    public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
+    {
+        $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
+
+        if ((Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) and (true === $this->isRestricted())) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::RESTRICTED;
+        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::AVAILABLE;
+        } elseif ($this->hasDatasetSubmission()) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::SUBMITTED;
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $this->getDif()->getStatus()) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::IDENTIFIED;
+        }
+
+        return $datasetLifeCycleStatus;
+    }
+
+    /**
+     * Remove the DatasetSubmission reference.
+     */
+    #[ORM\PreRemove]
+    public function removeDatasetSubmissionReference(): void
+    {
+        $this->datasetSubmission->setDataset(null);
+    }
+
+    /**
+     * Get Dataset Lifecycle Status as a string.
+     */
+    #[Groups(['grp-dk-report'])]
+    #[SerializedName('datasetLifecycleStatus')]
+    public function getDatasetLifecycleStatusString(): string
+    {
+        return $this->getDatasetLifecycleStatus()->value;
+    }
+
+    /**
+     * Get a link to the dataset landing page.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getLandingPage(): string
+    {
+        return 'https://grp.griidc.org/data/' . $this->getUdi();
+    }
+
+    /**
+     * Get ANZRC keywords as a string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getAnzsrcKeywords(): ?string
+    {
+        $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
+        return implode('|', $this->makeUniqueKeywordDictionary($keywords));
+    }
+
+    /**
+     * Get GCMD keywords as a string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getGcmdKeywords(): ?string
+    {
+        $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
+        return implode('|', array_diff($this->makeUniqueKeywordDictionary($keywords), ['Science Keywords', 'Earth Science']));
+    }
+
+    /**
+     * Make a unique dictionary of keywords.
+     */
+    private function makeUniqueKeywordDictionary(?Collection $keywords): array
+    {
+        $dictionary = [];
+
+        if ($keywords instanceof Collection) {
+            foreach ($keywords as $keyword) {
+                $keywordParts = explode('>', $keyword->getDisplayPath());
+                foreach ($keywordParts as $part) {
+                    $part = trim($part);
+                    $part = strtolower($part);
+                    $dictionary[] = ucwords($part);
+                }
+            }
+        }
+
+        sort($dictionary);
+
+        return array_unique($dictionary);
+    }
+
+    /**
+     * Get theme keywords as string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getThemeKeywords(): ?string
+    {
+        $keywords = $this->getDatasetSubmission()?->getThemeKeywords();
+
+        return implode('|', $keywords ?? []);
+    }
+
+    /**
+     * Get place keywords as string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getPlaceKeywords(): ?string
+    {
+        $keywords = $this->getDatasetSubmission()?->getPlaceKeywords();
+
+        return implode('|', $keywords ?? []);
+    }
+
+    /**
+     * Get topic keywords as string.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getTopicKeywords(): ?string
+    {
+        $keywords = $this->getDatasetSubmission()?->getTopicKeywords();
+
+        return implode('|', $keywords ?? []);
+    }
+
+    /**
+     * Get keywords by type.
+     */
+    private function getKeywordsByType(KeywordType $type): ?Collection
+    {
+        $keywords = $this->getDatasetSubmission()?->getKeywords();
+
+        return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
+                return $keyword->getType() === $type;
+        });
+    }
+
+    /**
+     * Get the dataset's Research Group name.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getResearchGroupName(): string
+    {
+        return $this->getResearchGroup()->getName();
+    }
+
+    /**
+     * Get the dataset's Funding Cycle name.
+     */
+    #[Groups(['grp-dk-report'])]
+    public function getFundingCycleName(): string
+    {
+        return $this->getResearchGroup()->getFundingCycle()->getName();
     }
 }

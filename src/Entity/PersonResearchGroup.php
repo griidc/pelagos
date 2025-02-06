@@ -7,19 +7,16 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * Entity class to represent a Person to Research Group Association.
  *
  *
- * @UniqueEntity(
- *     fields={"person", "researchGroup"},
- *     errorPath="person",
- *     message="A Person can have only one association with a Research Group"
- * )
  *
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\PersonResearchGroupRepository')]
+#[UniqueEntity(fields: ['person', 'researchGroup'], errorPath: 'person', message: 'A Person can have only one association with a Research Group')]
 class PersonResearchGroup extends Entity implements PersonAssociationInterface
 {
     /**
@@ -32,15 +29,13 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
-     * @Serializer\Groups({"person"})
-     * @Serializer\MaxDepth(2)
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Person is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'personResearchGroups')]
+    #[Serializer\Groups(['person'])]
+    #[Serializer\MaxDepth(2)]
+    #[Assert\NotBlank(message: 'Person is required')]
+    #[Groups('grp-people-accounts-report')]
     protected $person;
 
     /**
@@ -48,12 +43,9 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var ResearchGroup
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Research Group is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroup', inversedBy: 'personResearchGroups')]
+    #[Assert\NotBlank(message: 'Research Group is required')]
     protected $researchGroup;
 
     /**
@@ -61,12 +53,9 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var ResearchGroupRole
      *
-     *
-     * @Assert\NotBlank(
-     *     message="Role is required"
-     * )
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroupRole')]
+    #[Assert\NotBlank(message: 'Role is required')]
     protected $role;
 
     /**
@@ -74,17 +63,13 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var string
      *
-     * @Serializer\Groups({"person"})
      *
      *
-     * @Assert\NotBlank(
-     *     message="Label is required"
-     * )
-     * @CustomAssert\NoAngleBrackets(
-     *     message="Label cannot contain angle brackets (< or >)"
-     * )
      */
+    #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Label cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text')]
+    #[Serializer\Groups(['person'])]
+    #[Assert\NotBlank(message: 'Label is required')]
     protected $label;
 
     /**
@@ -175,5 +160,23 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * Get the Research Group Name.
+     */
+    #[Groups('grp-people-accounts-report')]
+    public function getResearchGroupName(): string
+    {
+        return $this->researchGroup->getName();
+    }
+
+    /**
+     * Get the Research Group Funding Cycle Name.
+     */
+    #[Groups('grp-people-accounts-report')]
+    public function getFundingCycleName(): string
+    {
+        return $this->researchGroup->getFundingCycle()->getName();
     }
 }

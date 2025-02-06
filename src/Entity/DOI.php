@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * DOI Entity class.
@@ -35,10 +36,10 @@ class DOI extends Entity
      * The DOI identifier.
      *
      * @var string
-     *
-     * @Serializer\Groups({"doi"})
      */
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Serializer\Groups(['doi'])]
+    #[Groups(['grp-dk-report'])]
     protected $doi;
 
     /**
