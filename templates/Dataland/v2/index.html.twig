@@ -68,30 +68,6 @@
             layerGroup: geoQueryLayer,
         });
 
-        // This leaves box and polygon tool enabled, which is probably what we want.
-        map.pm.addControls({
-            editControls: false,
-            drawMarker:false,
-            drawPolyline: false,
-            drawCircle:false,
-            drawText:false,
-            drawCircleMarker:false,
-      });
-
-        map.on("pm:create", function (e) {
-            geoJSONQuery = geoQueryLayer.toGeoJSON();
-            console.log(geoJSONQuery);
-            alert("GEOJSON:\r\n" + JSON.stringify(geoJSONQuery));
-
-            // reference: https://dev.to/itsmestevieg/leafletjs-capture-geojson-wkt-sql-spatial-format-12lb
-            var wkt_options = {};
-            var geojson_format = new OpenLayers.Format.GeoJSON();
-            var testFeature = geojson_format.read(geoJSONQuery);
-            var wkt = new OpenLayers.Format.WKT(wkt_options);
-            var out = wkt.write(testFeature);
-            alert("WKT FORMAT\r\n" + out);
-        });
-
         const url = "/leaflet/json/{{ dataset.udi }}";
 
         const response = fetch(url).then(response => response.json()).then(response => {
