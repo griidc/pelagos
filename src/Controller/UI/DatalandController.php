@@ -219,7 +219,7 @@ class DatalandController extends AbstractController
         $boundingBox = null;
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
             $boundingBoxArray = $this->getBoundingBox($dataset);
-            if (count($boundingBoxArray) === 4 ) {
+            if (count($boundingBoxArray) === 4) {
                 $boundingBox =
                     $boundingBoxArray['southBoundLatitude']
                     . ' '
