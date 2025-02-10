@@ -87,24 +87,24 @@ if (helpBtnElement) {
   });
 }
 
-// eslint-disable-next-line no-undef
-const dlmap = new GeoViz();
+// // eslint-disable-next-line no-undef
+// const dlmap = new GeoViz();
 
-dlmap.initMap('dlolmap', {
-  onlyOneFeature: false, allowModify: false, allowDelete: false, staticMap: false, labelAttr: 'udi',
-});
+// dlmap.initMap('dlolmap', {
+//   onlyOneFeature: false, allowModify: false, allowDelete: false, staticMap: false, labelAttr: 'udi',
+// });
 
-// eslint-disable-next-line no-undef
-const geovizMap = $('#dlolmap');
+// // eslint-disable-next-line no-undef
+// const geovizMap = $('#dlolmap');
 
-if (geovizMap.attr('description') !== '' && geovizMap.attr('wkt') === '') {
-  const imagePath = geovizMap.attr('labimage');
-  dlmap.addImage(imagePath, 0.4);
-  dlmap.makeStatic();
-} else if (geovizMap.attr('wkt')) {
-  dlmap.addFeatureFromWKT(geovizMap.attr('wkt'), { udi: geovizMap.attr('udi') });
-  dlmap.gotoAllFeatures();
-}
+// if (geovizMap.attr('description') !== '' && geovizMap.attr('wkt') === '') {
+//   const imagePath = geovizMap.attr('labimage');
+//   dlmap.addImage(imagePath, 0.4);
+//   dlmap.makeStatic();
+// } else if (geovizMap.attr('wkt')) {
+//   dlmap.addFeatureFromWKT(geovizMap.attr('wkt'), { udi: geovizMap.attr('udi') });
+//   dlmap.gotoAllFeatures();
+// }
 
 const metadataDownloadBtn = document.getElementById('metadata-download');
 if (metadataDownloadBtn) {
