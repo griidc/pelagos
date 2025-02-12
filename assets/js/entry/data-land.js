@@ -1,11 +1,67 @@
 import Vue from 'vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+
+import * as Leaflet from 'leaflet';
+import 'esri-leaflet';
+import * as EsriLeafletVector from 'esri-leaflet-vector';
+import '../../css/leaflet-custom.css';
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import FileManager from '../vue/FileManager.vue';
 import '../../css/file-manager.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
 import HelpModal from '../vue/components/data-land/HelpModal.vue';
 import '../../scss/data-land.scss';
+
+const leafletMap = document.getElementById('leaflet-map');
+
+if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
+  const { datasetId } = leafletMap.dataset;
+  const EsriApiKey = process.env.ESRI_API_KEY;
+
+  const GRIIDCStyle = {
+    color: 'orange',
+    weight: 4,
+    opacity: 1,
+    fillOpacity: 0.15,
+  };
+
+  const map = Leaflet.map('leaflet-map', {
+    preferCanvas: true,
+    minZoom: 3,
+    maxZoom: 14,
+    attributionControl: true,
+    worldCopyJump: true,
+  });
+
+  const basemapEnum = 'ArcGIS:Imagery';
+  EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
+    apiKey: EsriApiKey,
+  }).addTo(map);
+
+  Leaflet.featureGroup().addTo(map);
+
+  const url = `${Routing.generate('pelagos_app_ui_dataland_get_json')}/${datasetId}`;
+  fetch(url).then((response) => response.json()).then((response) => {
+    const geojsonMarkerOptions = {
+      radius: 12,
+      fill: false,
+      weight: 4,
+      opacity: 1,
+    };
+    const geojsonLayer = Leaflet.geoJson(response, {
+      pointToLayer(feature, latlng) {
+        return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
+      },
+      style: GRIIDCStyle,
+      onEachFeature(feature, layer) {
+        layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
+      },
+    }).addTo(map);
+    const bounds = geojsonLayer.getBounds();
+    map.fitBounds(bounds, { padding: [20, 20] });
+  });
+}
 
 // Mount File Manager vue component
 const fileManagerElement = document.getElementById('file-manager-app');
@@ -86,25 +142,6 @@ if (helpBtnElement) {
   </HelpModal>`,
   });
 }
-
-// // eslint-disable-next-line no-undef
-// const dlmap = new GeoViz();
-
-// dlmap.initMap('dlolmap', {
-//   onlyOneFeature: false, allowModify: false, allowDelete: false, staticMap: false, labelAttr: 'udi',
-// });
-
-// // eslint-disable-next-line no-undef
-// const geovizMap = $('#dlolmap');
-
-// if (geovizMap.attr('description') !== '' && geovizMap.attr('wkt') === '') {
-//   const imagePath = geovizMap.attr('labimage');
-//   dlmap.addImage(imagePath, 0.4);
-//   dlmap.makeStatic();
-// } else if (geovizMap.attr('wkt')) {
-//   dlmap.addFeatureFromWKT(geovizMap.attr('wkt'), { udi: geovizMap.attr('udi') });
-//   dlmap.gotoAllFeatures();
-// }
 
 const metadataDownloadBtn = document.getElementById('metadata-download');
 if (metadataDownloadBtn) {
