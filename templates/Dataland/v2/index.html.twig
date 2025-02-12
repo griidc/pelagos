@@ -22,6 +22,27 @@
             max-height: 3rem;
             overflow-x: auto;
         }
+
+        .leaflet-control-zoom-in span,
+        .leaflet-control-zoom-out span {
+            color: white;
+        }
+
+        .leaflet-control-zoom-in:focus span,
+        .leaflet-control-zoom-in:hover span,
+        .leaflet-control-zoom-out:focus span,
+        .leaflet-control-zoom-out:hover span {
+            color: black;
+        }
+
+        .leaflet-bar {
+            background-color: rgba(0, 60, 136, 0.5);
+        }
+
+        .leaflet-bar a:hover,
+        .leaflet-bar a:focus {
+	        background-color: rgba(0, 60, 136, 0.5);
+	    }
     </style>
 {% endblock stylesheets %}
 
@@ -152,8 +173,8 @@
         const map = L.map('map', {
             preferCanvas: true,
             minZoom: 3,
-            maxZoom: 8,
-            attributionControl: false,
+            maxZoom: 14,
+            attributionControl: true,
             worldCopyJump: true,
         });
         const basemapEnum = "ArcGIS:Imagery";
