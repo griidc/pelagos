@@ -17,7 +17,7 @@ const leafletMap = document.getElementById('leaflet-map');
 
 if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
   const { datasetId } = leafletMap.dataset;
-  const EsriApiKey = process.env.ESRI_API_KEY;
+  const esriApiKey = process.env.ESRI_API_KEY;
 
   const GRIIDCStyle = {
     color: 'orange',
@@ -36,7 +36,7 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
 
   const basemapEnum = 'ArcGIS:Imagery';
   EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
-    apiKey: EsriApiKey,
+    apiKey: esriApiKey,
   }).addTo(map);
 
   Leaflet.featureGroup().addTo(map);
