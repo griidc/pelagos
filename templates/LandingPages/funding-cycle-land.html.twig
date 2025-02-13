@@ -28,7 +28,7 @@
                 Research Groups <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.researchGroups|length }}</span>
             </li>
             <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.datasets|length }}</span>
+                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.datasets|approvedDIFs|length }}</span>
             </li>
             <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 People <span class="badge badge-pill badge-secondary absolute end-4">{{ fundingCycle.people|length }}</span>

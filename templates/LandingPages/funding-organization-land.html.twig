@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'LandingPages/datasets.html.twig' with {'datasets': fundingOrganization.datasets|sortBy(["udi"])}  %}
+                {% include 'LandingPages/datasets.html.twig' with {'datasets': fundingOrganization.datasets|approvedDIFs|sortBy(["udi"])}  %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'LandingPages/people.html.twig' with {'people': fundingOrganization.people | sortBy(["lastName", "firstName"])} %}
