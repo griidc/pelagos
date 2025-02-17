@@ -54,6 +54,7 @@
         "symfony/monolog-bundle": "^3.0",
         "symfony/runtime": "6.4.*",
         "symfony/security-bundle": "6.4.*",
+        "symfony/string": "7.2.*",
         "symfony/templating": "6.4.*",
         "symfony/translation": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
@@ -78,7 +79,6 @@
         "symfony/debug-bundle": "6.4.*",
         "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "6.4.*",
-        "symfony/string": "^7.2.0",
         "symfony/web-profiler-bundle": "6.4.*",
         "vimeo/psalm": "^6.0.0"
     },
