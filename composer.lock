@@ -2978,16 +2978,16 @@
         },
         {
             "name": "knplabs/knp-snappy",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/snappy.git",
-                "reference": "98468898b50c09f26d56d905b79b0f52a2215da6"
+                "reference": "3dd138e9e47de91cd2e056c5e6e1a0dd72547ee7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/snappy/zipball/98468898b50c09f26d56d905b79b0f52a2215da6",
-                "reference": "98468898b50c09f26d56d905b79b0f52a2215da6",
+                "url": "https://api.github.com/repos/KnpLabs/snappy/zipball/3dd138e9e47de91cd2e056c5e6e1a0dd72547ee7",
+                "reference": "3dd138e9e47de91cd2e056c5e6e1a0dd72547ee7",
                 "shasum": ""
             },
             "require": {
@@ -3039,22 +3039,22 @@
             ],
             "support": {
                 "issues": "https://github.com/KnpLabs/snappy/issues",
-                "source": "https://github.com/KnpLabs/snappy/tree/v1.5.0"
+                "source": "https://github.com/KnpLabs/snappy/tree/v1.5.1"
             },
-            "time": "2023-12-18T09:12:11+00:00"
+            "time": "2025-01-06T16:53:26+00:00"
         },
         {
             "name": "knplabs/knp-snappy-bundle",
-            "version": "v1.10.2",
+            "version": "v1.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpSnappyBundle.git",
-                "reference": "39ffad9e7294e3c9d87ee5de7da7e4495b055126"
+                "reference": "df217e5deed3397de88b7eb96de1d7c0cd7ed9e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpSnappyBundle/zipball/39ffad9e7294e3c9d87ee5de7da7e4495b055126",
-                "reference": "39ffad9e7294e3c9d87ee5de7da7e4495b055126",
+                "url": "https://api.github.com/repos/KnpLabs/KnpSnappyBundle/zipball/df217e5deed3397de88b7eb96de1d7c0cd7ed9e9",
+                "reference": "df217e5deed3397de88b7eb96de1d7c0cd7ed9e9",
                 "shasum": ""
             },
             "require": {
@@ -3097,9 +3097,9 @@
             ],
             "support": {
                 "issues": "https://github.com/KnpLabs/KnpSnappyBundle/issues",
-                "source": "https://github.com/KnpLabs/KnpSnappyBundle/tree/v1.10.2"
+                "source": "https://github.com/KnpLabs/KnpSnappyBundle/tree/v1.10.4"
             },
-            "time": "2024-06-10T12:38:45+00:00"
+            "time": "2025-01-14T07:31:54+00:00"
         },
         {
             "name": "league/flysystem",
