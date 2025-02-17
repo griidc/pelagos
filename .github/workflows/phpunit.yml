@@ -10,9 +10,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        php-versions: ['8.2', '8.3', '8.4']
+        php: ['8.2', '8.3']
+        experimental: [false]
+        include:
+          - php: '8.4'
+            experimental: true
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +25,7 @@ jobs:
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php }}
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
