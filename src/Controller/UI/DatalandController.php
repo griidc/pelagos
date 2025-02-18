@@ -14,6 +14,7 @@ use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
 use App\Util\GmlUtil;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * The Dataset Monitoring controller.
@@ -269,6 +270,7 @@ class DatalandController extends AbstractController
                 'wkt' => $wkt,
                 'datasetSubmissionLockStatus' => true,
                 'issuetracker' => $this->issueTrackingBaseUrl,
+                'esri_api_key' => $mainsite = $this->getParameter('esri_api_key'),
             )
         );
     }
@@ -301,5 +303,19 @@ class DatalandController extends AbstractController
                 'rawxml' => $rawXml,
             )
         );
+    }
+
+    #[Route('/data/json/{dataset}', name: 'pelagos_app_ui_dataland_get_json', methods: ['GET', 'HEAD'])]
+    public function getjson(Dataset $dataset, Geometry $geometryUtil): Response
+    {
+        $geoJson = [];
+        $udi = $dataset->getUdi();
+        $spatialExtent = $dataset->getSpatialExtentGeometry();
+
+        if ($spatialExtent !== null) {
+            $geoJson = $geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi);
+        }
+
+        return new JsonResponse($geoJson, 200, [], true);
     }
 }
