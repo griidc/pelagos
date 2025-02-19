@@ -14,6 +14,7 @@ use App\Entity\FundingCycle;
 use App\Entity\PersonResearchGroup;
 use App\Util\FundingOrgFilter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * This is the default controller.
@@ -71,7 +72,7 @@ class DefaultController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/', name: 'pelagos_homepage')]
-    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request, EntityManagerInterface $entityManager)
+    public function index(FundingOrgFilter $fundingOrgFilter, StatsController $statsController, Request $request, RequestStack $requestStack, EntityManagerInterface $entityManager)
     {
         $customTemplate = $this->getParameter('custom_template');
 
@@ -114,7 +115,8 @@ class DefaultController extends AbstractController
         $mainsite = $this->getParameter('main_site');
         $mainsite = is_string($mainsite) ? $mainsite : '/';
 
-        if ($request->getHost() == "data.griidc.org") {
+        if (($request->getHost() === "data.griidc.org") and (false !== stripos($request->headers->get('User-Agent'), 'googlebot'))) {
+            // redirect for main site except for googlebots, due to google indexing behavior incorrectly skipping sitemap entries based on this redirect.
             return $this->redirect($mainsite, 302);
         } else {
             return $this->render('Default/index.html.twig');
