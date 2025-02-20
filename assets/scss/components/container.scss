@@ -1,0 +1,33 @@
+@layer components {
+    .container-page {
+        @apply max-w-full px-[1.25rem] md:px-[3.75rem];
+    }
+
+    .container-content {
+        @apply mx-auto max-w-screen-xl;
+    }
+
+    .container-text {
+        @apply max-w-[40.75rem] xl:ml-[11rem] lg:ml-[7rem];
+    }
+
+    .container-nested .container-page {
+        @apply px-0 max-w-none;
+    }
+
+    .container-nested .container-content {
+        @apply max-w-none;
+    }
+
+    .container-nested .container-text {
+        @apply max-w-none ml-0;
+    }
+
+    .container-content-wrapper {
+        @apply mx-auto max-w-[62rem];
+    }
+
+    .container-nested .container-page:last-child .container-text {
+        @apply mb-0;
+    }
+}
