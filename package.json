@@ -67,7 +67,6 @@
         "postcss-loader": "^7.0.0",
         "prop-types": "^15.8.1",
         "qtip2": "2.2.0",
-        "query-string": "^6.8.1",
         "spin.js": "^4.1.1",
         "tippy.js": "^6.3.7",
         "v-tooltip": "^2.0.3",
