@@ -33,7 +33,7 @@ To install fullfill prerequisites then run:
 See the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
 
 ## License
-Copyright © 2024 Texas A&M University-Corpus Christi
+Copyright © 2025 Texas A&M University-Corpus Christi
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
