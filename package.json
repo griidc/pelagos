@@ -50,7 +50,7 @@
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
         "clsx": "^2.1.1",
-        "devextreme": "^21.1.6",
+        "devextreme": "^24.2.5",
         "devextreme-vue": "^21.1.6",
         "dotenv-webpack": "^8.1.0",
         "dropzone": "^5.7.2",
