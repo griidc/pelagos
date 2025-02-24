@@ -114,7 +114,8 @@ class DefaultController extends AbstractController
         $mainsite = $this->getParameter('main_site');
         $mainsite = is_string($mainsite) ? $mainsite : '/';
 
-        if ($request->getHost() == "data.griidc.org") {
+        if (($request->getHost() === "data.griidc.org") and (false === stripos($request->headers->get('User-Agent'), 'googlebot'))) {
+            // redirect for main site except for googlebots, due to google indexing behavior incorrectly skipping sitemap entries based on this redirect.
             return $this->redirect($mainsite, 302);
         } else {
             return $this->render('Default/index.html.twig');
