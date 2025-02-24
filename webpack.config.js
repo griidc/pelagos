@@ -54,8 +54,6 @@ Encore
   .addEntry('landing-page', './assets/js/entry/landing-page.js')
   .addEntry('login', './assets/js/entry/login.js')
   .addEntry('change-password', './assets/js/entry/change-password.js')
-  .addEntry('set-expired-password', './assets/js/entry/set-expired-password.js')
-  .addEntry('reset-password', './assets/js/entry/reset-password.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
