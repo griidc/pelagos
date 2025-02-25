@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Annotation\Groups as AnnotationGroups;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -2685,6 +2688,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for remotely hosted url.
      */
+    #[Groups(['remotely-hosted-dataset-report'])]
     public function getRemotelyHostedUrl(): ?string
     {
         return $this->remotelyHostedUrl;
