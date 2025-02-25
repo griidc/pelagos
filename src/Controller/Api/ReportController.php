@@ -8,6 +8,7 @@ use App\Entity\FundingOrganization;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Enum\DatasetLifecycleStatus;
+use App\Repository\DatasetRepository;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\PersonResearchGroupRepository;
 use App\Repository\ResearchGroupRepository;
@@ -187,5 +188,47 @@ class ReportController extends AbstractController
         }
 
         return $researchGroupIds;
+    }
+
+    /**
+     * Creates a CSV of the remotely-hosted datasets
+     */
+    #[Route(path: '/api/remotely-hosted-dataset-report')]
+    public function remotelyHostedReportCSV(DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
+    {
+        $datasets = $datasetRepository->findAll();
+
+        $array = [];
+        foreach ($datasets as $dataset) {
+            if ($dataset->IsRemotelyHosted()) {
+                $array[] = $dataset;
+            }
+        }
+
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups(['remotely-hosted-dataset-report']);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+        ->withContext($contextBuilder)
+        ->withOutputUtf8Bom(true)
+        ->withAsCollection(false);
+
+        $data = $serializer->serialize($array, 'csv', $contextBuilder->toArray());
+
+        $csvFilename = 'RemotelyHostedDatasetReport-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+
+        $response = new Response($data);
+
+        $response->headers->set(
+            'Content-disposition',
+            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
+        );
+
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Encoding', 'UTF-8');
+
+        return $response;
     }
 }
