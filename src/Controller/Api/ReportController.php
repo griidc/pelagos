@@ -193,7 +193,8 @@ class ReportController extends AbstractController
     /**
      * Creates a CSV of the remotely-hosted datasets
      */
-    #[Route(path: '/api/remotely-hosted-dataset-report')]
+    #[Route(path: '/api/remotely-hosted-dataset-report', name: 'pelagos_api_remotely_hosted_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     public function remotelyHostedReportCSV(DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
     {
         $datasets = $datasetRepository->findAll();
