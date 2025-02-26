@@ -4,49 +4,28 @@ namespace App\MessageHandler;
 
 use App\Message\DeleteFile;
 use App\Util\Datastore;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class DeleteFileHandler implements MessageHandlerInterface
+#[AsMessageHandler()]
+class DeleteFileHandler
 {
-    /**
-     * The monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Datastore Utility instance.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-    /**
-     * A Doctrine ORM EntityManager instance.
-     *
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param LoggerInterface        $deleteFileLogger Name hinted delete_file logger.
-     * @param Datastore              $datastore        Datastore utility instance.
+     * @param LoggerInterface $logger    name hinted delete_file logger
+     * @param Datastore       $datastore datastore utility instance
      */
-    public function __construct(LoggerInterface $deleteFileLogger, Datastore $datastore)
-    {
-        $this->logger = $deleteFileLogger;
-        $this->datastore = $datastore;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly Datastore $datastore,
+    ) {
     }
 
     /**
      * Invoke function to mark file as deleted.
      *
-     * @param DeleteFile $deleteFile The DeleteFile message to be handled.
+     * @param DeleteFile $deleteFile the DeleteFile message to be handled
      */
     public function __invoke(DeleteFile $deleteFile)
     {
