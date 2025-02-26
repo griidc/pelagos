@@ -5,40 +5,24 @@ namespace App\MessageHandler;
 use App\Message\DeleteDir;
 use App\Util\Datastore;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class DeleteDirHandler implements MessageHandlerInterface
+#[AsMessageHandler()]
+class DeleteDirHandler
 {
     /**
-     * The monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Datastore Utility instance.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-    /**
      * Constructor for this Controller, to set up default services.
-     *
-     * @param LoggerInterface        $deleteFolderLogger Name hinted delete_file logger.
-     * @param Datastore              $datastore        Datastore utility instance.
      */
-    public function __construct(LoggerInterface $deleteFolderLogger, Datastore $datastore)
-    {
-        $this->logger = $deleteFolderLogger;
-        $this->datastore = $datastore;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly Datastore $datastore,
+    ) {
     }
 
     /**
      * Invoke function to delete folder and its contents.
      *
-     * @param DeleteDir $deleteDir The DeleteDir message to be handled.
+     * @param DeleteDir $deleteDir the DeleteDir message to be handled
      */
     public function __invoke(DeleteDir $deleteDir)
     {

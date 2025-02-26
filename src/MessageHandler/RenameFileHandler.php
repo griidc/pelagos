@@ -8,65 +8,27 @@ use App\Repository\FileRepository;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Class for RenameFileHandler.
  */
-class RenameFileHandler implements MessageHandlerInterface
+#[AsMessageHandler()]
+class RenameFileHandler
 {
     /**
-     * The Entity Manager.
-     *
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * The File Repository.
-     *
-     * @var FileRepository
-     */
-    private $fileRepository;
-
-    /**
-     * The monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Pelagos Datastore.
-     *
-     * @var Datastore
-     */
-    private $dataStore;
-
-    /**
      * Constructor for rename file handler.
-     *
-     * @param EntityManagerInterface $entityManager    The entity handler.
-     * @param FileRepository         $fileRepository   The file Repository.
-     * @param LoggerInterface        $renameFileLogger Name hinted rename_file logger.
-     * @param Datastore              $dataStore        Datastore utility instance.
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        FileRepository $fileRepository,
-        LoggerInterface $renameFileLogger,
-        Datastore $dataStore
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FileRepository $fileRepository,
+        private readonly LoggerInterface $logger,
+        private readonly Datastore $dataStore,
     ) {
-        $this->entityManager = $entityManager;
-        $this->fileRepository = $fileRepository;
-        $this->logger = $renameFileLogger;
-        $this->dataStore = $dataStore;
     }
 
     /**
      * Invoke function to rename files or mark files as deleted.
-     *
-     * @param RenameFile $renameFile
      */
     public function __invoke(RenameFile $renameFile)
     {
@@ -75,7 +37,7 @@ class RenameFileHandler implements MessageHandlerInterface
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
             $filePhysicalPath = $file->getPhysicalFilePath();
-            if ($file->getStatus() === File::FILE_DELETED) {
+            if (File::FILE_DELETED === $file->getStatus()) {
                 $this->logger->info(sprintf('Marking File as deleted for ID: %d', $fileId));
                 $newFilePath = $filePhysicalPath . Datastore::MARK_FILE_AS_DELETED;
                 $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $newFilePath, true);
