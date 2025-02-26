@@ -10,11 +10,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:dataset-report-csv-by-rg', description: 'CSV of udi, doi, title, abstract, authors, pubdate for RG')]
 class CSVDatasetReportByRGCommand extends Command
 {
-    protected static $defaultName = 'pelagos:dataset-report-csv-by-rg';
-    protected static $defaultDescription = 'CSV of udi, doi, title, abstract, authors, pubdate for RG';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -37,7 +35,6 @@ class CSVDatasetReportByRGCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('outputFileName', InputArgument::REQUIRED, 'What is the output filename?')
             ->addArgument('RGID', InputArgument::REQUIRED, 'What is Research Group ID?');
         ;
@@ -45,14 +42,14 @@ class CSVDatasetReportByRGCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        new SymfonyStyle($input, $output);
 
         $outputFileName = $input->getArgument('outputFileName');
         $researchGroupId = $input->getArgument('RGID');
 
         $outputFile = fopen($outputFileName, 'w');
         $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
-            array('researchGroup' => $researchGroupId)
+            ['researchGroup' => $researchGroupId]
         );
 
         fputcsv($outputFile, ['UDI', 'DOI', 'TITLE', 'AUTHOR(S)', 'ACCEPTED DATE', 'ABSTRACT']);
@@ -67,6 +64,6 @@ class CSVDatasetReportByRGCommand extends Command
             fputcsv($outputFile, [$udi, $doi, $title, $authors, $publishedDate, $abstract]);
         }
         fclose($outputFile);
-        return 0;
+        return Command::SUCCESS;
     }
 }

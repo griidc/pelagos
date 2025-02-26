@@ -25,7 +25,7 @@ class UpdateAllAcceptedDatasetDOICommand extends Command
     /**
      * Class constructor for dependency injection.
      */
-    public function __construct(private EntityManagerInterface $entityManager, private MessageBusInterface $messageBus)
+    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly MessageBusInterface $messageBus)
     {
         parent::__construct();
     }
@@ -35,7 +35,7 @@ class UpdateAllAcceptedDatasetDOICommand extends Command
      *
      * @return int return code
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $datasets = $this->entityManager->getRepository(Dataset::class)->getDatasetWithDoiSet();
 
@@ -45,6 +45,6 @@ class UpdateAllAcceptedDatasetDOICommand extends Command
             echo 'Requesting DOI update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

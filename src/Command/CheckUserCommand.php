@@ -13,15 +13,9 @@ use App\Entity\Account;
 /**
  * Command to display a user's active/inactive status.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:CheckUser', description: 'Check status of a user by username.')]
 class CheckUserCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:CheckUser';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -50,7 +44,6 @@ class CheckUserCommand extends Command
     protected function configure()
     {
         $this->
-            setDescription('Check status of a user by username.')->
             addArgument('username', InputArgument::REQUIRED, 'Username to be checked');
     }
 
@@ -64,7 +57,7 @@ class CheckUserCommand extends Command
      *
      * @return int Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
@@ -75,7 +68,7 @@ class CheckUserCommand extends Command
         );
 
         if ($account instanceof Account) {
-            $rgList = array();
+            $rgList = [];
             $activeUser = false;
             $person = $account->getPerson();
             $researchGroups = $person->getResearchGroups();
@@ -93,6 +86,6 @@ class CheckUserCommand extends Command
         } else {
             $io->note(sprintf('Username: %s: INACTIVE (has no account).', $username));
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

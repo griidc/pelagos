@@ -15,15 +15,9 @@ use App\Util\DOIutil;
  *
  * @see Command
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:reports:doi-datacite-report', description: 'DOI report from Datacite.')]
 class DoiDataciteReportCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:reports:doi-datacite-report';
-
     /**
      * A name of the file that will store the results of this report program.
      *
@@ -38,7 +32,7 @@ class DoiDataciteReportCommand extends Command
      *
      * @var OutputInterface fileOutput
      */
-    protected $fileOutput = null;
+    protected $fileOutput;
 
     /**
      * The file output array which stores the data.
@@ -82,7 +76,6 @@ class DoiDataciteReportCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('DOI report from Datacite.')
             ->addArgument('outputFileName', InputArgument::REQUIRED, 'What is the output file path and name?');
     }
 
@@ -94,7 +87,7 @@ class DoiDataciteReportCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->outputFileName = $input->getArgument('outputFileName');
         if ($this->fileOutput === null) {
@@ -105,7 +98,7 @@ class DoiDataciteReportCommand extends Command
 
         $this->createDataciteReport();
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
@@ -115,25 +108,14 @@ class DoiDataciteReportCommand extends Command
      */
     private function createDataciteReport()
     {
-        $headers = array(
-            'doi',
-            'target_url',
-            'udi',
-            'title',
-            'created',
-            'registered',
-            'updated',
-            'state',
-            'resourceType'
-
-        );
+        $headers = ['doi', 'target_url', 'udi', 'title', 'created', 'registered', 'updated', 'state', 'resourceType'];
 
         $this->fileOutput->writeln(implode(',', $headers));
 
         $dois = $this->getDoiData();
 
         foreach ($dois as $doi) {
-            $this->fileOutputArray = array();
+            $this->fileOutputArray = [];
             $this->fileOutputArray[] = $doi['doi'];
             $this->fileOutputArray[] = $doi['url'];
             $this->fileOutputArray[] = $doi['udi'];
@@ -152,8 +134,6 @@ class DoiDataciteReportCommand extends Command
      * Send the results to the printer.
      *
      * This also adds the comma delimiter.
-     *
-     * @return void
      */
     private function printResults(): void
     {
@@ -171,13 +151,10 @@ class DoiDataciteReportCommand extends Command
 
     /**
      * Get the doi data.
-     *
-     * @return array
      */
     private function getDoiData(): array
     {
-        $response = null;
-        $doiJson = array();
+        $doiJson = [];
         $pageNumber = 1;
 
         do {
@@ -186,21 +163,11 @@ class DoiDataciteReportCommand extends Command
             $pageNumber++;
         } while (array_key_exists('next', $body['links']));
 
-        $doiData = array();
+        $doiData = [];
 
         foreach ($doiJson as $dois) {
             foreach ($dois as $doi) {
-                $doiData[$doi['id']] = array(
-                    'doi' => $doi['attributes']['doi'],
-                    'url' => $doi['attributes']['url'],
-                    'udi' => $this->getUdi($doi['attributes']['url']),
-                    'title' => str_replace(',', '', $doi['attributes']['titles'][0]['title']),
-                    'created' => $doi['attributes']['created'],
-                    'registered' => $doi['attributes']['registered'],
-                    'updated' => $doi['attributes']['updated'],
-                    'state' => $doi['attributes']['state'],
-                    'resourceType' => $this->getResourceType($doi['attributes']['types'])
-                );
+                $doiData[$doi['id']] = ['doi' => $doi['attributes']['doi'], 'url' => $doi['attributes']['url'], 'udi' => $this->getUdi($doi['attributes']['url']), 'title' => str_replace(',', '', $doi['attributes']['titles'][0]['title']), 'created' => $doi['attributes']['created'], 'registered' => $doi['attributes']['registered'], 'updated' => $doi['attributes']['updated'], 'state' => $doi['attributes']['state'], 'resourceType' => $this->getResourceType($doi['attributes']['types'])];
             }
         }
 
@@ -211,15 +178,13 @@ class DoiDataciteReportCommand extends Command
      * Get udi from Url.
      *
      * @param string $url Url that needs to be fetched.
-     *
-     * @return null
      */
-    private function getUdi(string $url)
+    private function getUdi(string $url): ?string
     {
         $udi = null;
         $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d:\d\d\d\d)\b/';
         if (preg_match_all($udiRegEx, $url, $matches)) {
-            trim(preg_replace($udiRegEx, '', $url));
+            trim((string) preg_replace($udiRegEx, '', $url));
             $udi = $matches[1][0];
         }
 
@@ -230,8 +195,6 @@ class DoiDataciteReportCommand extends Command
      * Get the resource type for the Doi.
      *
      * @param array $types Types of resources from doi.
-     *
-     * @return string
      */
     private function getResourceType(array $types): string
     {

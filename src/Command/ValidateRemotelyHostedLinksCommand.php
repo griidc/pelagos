@@ -18,15 +18,9 @@ use Twig\Environment;
  *
  * @see Command
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:validate-remotely-hosted', description: 'Validate links for remotely hosted datasets.')]
 class ValidateRemotelyHostedLinksCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:validate-remotely-hosted';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -76,15 +70,6 @@ class ValidateRemotelyHostedLinksCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * Configures the current command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this->setDescription('Validate links for remotely hosted datasets.');
-    }
 
     /**
      * Executes the current command.
@@ -94,17 +79,12 @@ class ValidateRemotelyHostedLinksCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
-            array(
-                'availabilityStatus' =>
-                    array(
-                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
-                    )
-            )
+            ['availabilityStatus' =>
+                [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED]]
         );
-        $errorUdi = array();
 
         foreach ($datasets as $dataset) {
             $datasetSubmission = $dataset->getDatasetSubmission();
@@ -131,11 +111,11 @@ class ValidateRemotelyHostedLinksCommand extends Command
         if (!empty($errors)) {
             $this->mailer->sendEmailMessage(
                 $this->twig->load('Email/data-repository-managers.error-remotely-hosted.email.twig'),
-                array('errors' => $errors),
-                array(new Address('help@griidc.org', 'GRIIDC')),
+                ['errors' => $errors],
+                [new Address('help@griidc.org', 'GRIIDC')],
             );
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

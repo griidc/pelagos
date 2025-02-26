@@ -17,11 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:import-files-to-dataset', description: 'Imports file to a dataset')]
 class PelagosImportFilesToDatasetCommand extends Command
 {
-    protected static $defaultName = 'pelagos:import-files-to-dataset';
-    protected static $defaultDescription = 'Imports file to a dataset';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -57,7 +55,6 @@ class PelagosImportFilesToDatasetCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('basePath', InputArgument::REQUIRED, 'Path to files')
             ->addArgument('udi', InputArgument::REQUIRED, 'The UDI')
         ;
@@ -84,13 +81,13 @@ class PelagosImportFilesToDatasetCommand extends Command
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
         if (!$dataset instanceof Dataset) {
             $io->error("Dataset not found for $udi");
-            return 1;
+            return Command::FAILURE;
         }
 
         $datasetSubmission = $dataset->getLatestDatasetReview();
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $io->error("Dataset Submission not found for $udi");
-            return 1;
+            return Command::FAILURE;
         }
 
         $files = $this->dirToList($basePath);
@@ -101,19 +98,17 @@ class PelagosImportFilesToDatasetCommand extends Command
 
         if (!$fileset instanceof Fileset) {
             throw new \Exception('The dataset does not have a fileset, QUITTING!');
-            return 1;
         } else {
             $deleteFile = $fileset->getProcessedFiles()->first();
             if ($deleteFile instanceof File) {
                 $physicalFilePath = $deleteFile->getPhysicalFilePath();
                 $pattern = '/^\w\w\.x\d{3}\.\d{3}\:\d{4}\/\w\w\.x\d{3}\.\d{3}\:\d{4}\.dat$/';
-                if (preg_match($pattern, $physicalFilePath) === 1) {
+                if (preg_match($pattern, (string) $physicalFilePath) === 1) {
                     $deleteFileMessage = new DeleteFile($physicalFilePath);
                     $this->messageBus->dispatch($deleteFileMessage);
                     $fileset->removeFile($deleteFile);
                 } else {
                     throw new \Exception('Original .dat file can not be located in the fileset, QUITTING!');
-                    return 1;
                 }
             }
         }
@@ -125,11 +120,10 @@ class PelagosImportFilesToDatasetCommand extends Command
 
             if ($fileset->doesFileExist($fileName)) {
                 throw new \Exception("File: $fileName already imported, QUITTING!");
-                return 1;
             }
 
             $newFile = new File();
-            $newFile->setFilePathName(trim($fileName));
+            $newFile->setFilePathName(trim((string) $fileName));
             $newFile->setFileSize($fileSize);
             $newFile->setUploadedAt(new \DateTime('now'));
             $newFile->setUploadedBy($systemPerson);
@@ -147,7 +141,7 @@ class PelagosImportFilesToDatasetCommand extends Command
 
         $io->success(sprintf('Files imported for %s.', $udi));
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
@@ -159,14 +153,14 @@ class PelagosImportFilesToDatasetCommand extends Command
      *
      * @return array The list of files paths in an array.
      */
-    private function dirToList(string $basePath, string $directory = '', array $files = array()): array
+    private function dirToList(string $basePath, string $directory = '', array $files = []): array
     {
         $filePath = $basePath . DIRECTORY_SEPARATOR . $directory;
 
         $contents = scandir($filePath);
 
         foreach ($contents as $item) {
-            if (!in_array($item, array(".",".."))) {
+            if (!in_array($item, [".", ".."])) {
                 if (is_dir($filePath . DIRECTORY_SEPARATOR . $item)) {
                     $files = $this->dirToList($basePath, $directory . DIRECTORY_SEPARATOR .  $item, $files);
                 } else {

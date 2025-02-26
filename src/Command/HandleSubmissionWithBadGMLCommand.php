@@ -15,15 +15,9 @@ use App\Entity\Dataset;
  *
  * @see Command
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:handle-bad-gml-submission', description: 'Make the submission accessible in Dataset Review and Submission tool and retrigger filer/hasher.')]
 class HandleSubmissionWithBadGMLCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:handle-bad-gml-submission';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -50,7 +44,6 @@ class HandleSubmissionWithBadGMLCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Make the submission accessible in Dataset Review and Submission tool and retrigger filer/hasher.')
             ->addArgument('udi', InputArgument::REQUIRED, 'What is the UDI of the dataset?');
     }
 
@@ -65,11 +58,11 @@ class HandleSubmissionWithBadGMLCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $udi = $input->getArgument('udi');
 
-        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(['udi' => $udi]);
 
         if (count($datasets) == 0) {
             throw new \Exception('Could not find a dataset with the udi provided.');
@@ -95,6 +88,6 @@ class HandleSubmissionWithBadGMLCommand extends Command
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

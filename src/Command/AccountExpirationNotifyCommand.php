@@ -16,15 +16,9 @@ use App\Entity\Account;
  *
  * @see Command
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:account-expiration-notify', description: 'Notify holder of accounts with soon to expire or expired passwords.')]
 class AccountExpirationNotifyCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:account-expiration-notify';
-
     /**
      * The Symfony Console output object.
      *
@@ -109,16 +103,6 @@ class AccountExpirationNotifyCommand extends Command
     }
 
     /**
-     * Configures the current command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this->setDescription('Notify holder of accounts with soon to expire or expired passwords.');
-    }
-
-    /**
      * Executes the current command.
      *
      * @param InputInterface  $input  An InputInterface instance.
@@ -126,7 +110,7 @@ class AccountExpirationNotifyCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // This command takes no input.
         unset($input);
@@ -182,7 +166,7 @@ class AccountExpirationNotifyCommand extends Command
             );
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
@@ -240,20 +224,14 @@ class AccountExpirationNotifyCommand extends Command
             $this->output->writeln(' expiration: ' . $expireTimeStamp->format('c'));
 
             // Construct an array for twig containing data needed for rendering the email template.
-            $twigData = array(
-                'person' => $person,
-                'hostname' => $this->hostName,
-                'expireTimeStamp' => $expireTimeStamp,
-            );
+            $twigData = ['person' => $person, 'hostname' => $this->hostName, 'expireTimeStamp' => $expireTimeStamp];
 
             $mailData['recipient'] = $person;
 
             $this->mailer->sendEmailMessage(
                 $emailTemplate,
                 $twigData,
-                array(
-                    new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName()),
-                )
+                [new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName())]
             );
         }
     }

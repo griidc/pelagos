@@ -26,7 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class PelagosImportKeywordsCommand extends Command
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
@@ -51,7 +51,7 @@ class PelagosImportKeywordsCommand extends Command
         $keywordIdentifier = $input->getOption('keyword');
 
         try {
-            switch (strtoupper($action)) {
+            switch (strtoupper((string) $action)) {
                 case 'IMPORT':
                     $type = KeywordType::tryFrom($type);
                     if (empty($type) or empty($dataURI)) {
@@ -77,7 +77,6 @@ class PelagosImportKeywordsCommand extends Command
                     break;
                 default:
                     throw new \Exception('No valid action given!');
-                    break;
             }
         } catch (\Exception $e) {
             $io->caution($e->getMessage());

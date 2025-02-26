@@ -14,21 +14,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Command Class to assign dataset's Funder based on associated FO's default funder.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:backfill-dataset-funder', description: "This command will set all dataset's funder to it's upstream Funding Org's default funder. ")]
 class PelagosBackfillExistingDatasetFunderCommand extends Command
 {
-    protected static $defaultName = 'pelagos:backfill-dataset-funder';
-
-    /**
-     * A Doctrine ORM EntityManager instance.
-     */
-    private EntityManagerInterface $entityManager;
-
     /**
      * Class constructor for dependency injection.
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         parent::__construct();
     }
 
@@ -38,7 +31,6 @@ class PelagosBackfillExistingDatasetFunderCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription("This command will set all dataset's funder to it's upstream Funding Org's default funder. ")
             ->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite existing funders?')
         ;
     }

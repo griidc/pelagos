@@ -20,15 +20,9 @@ use Twig\Environment;
  *
  * @see Command
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:dataset-doi:comparison', description: 'DOI comparison tool.')]
 class DoiComparisonCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:dataset-doi:comparison';
-
     /**
      * A value for doi state from Datacite.
      */
@@ -49,7 +43,7 @@ class DoiComparisonCommand extends Command
      *
      * @var array
      */
-    protected $outOfSyncDoi = array();
+    protected $outOfSyncDoi = [];
 
     /**
      * A Doctrine ORM EntityManager instance.
@@ -107,7 +101,7 @@ class DoiComparisonCommand extends Command
      */
     protected function configure()
     {
-        $this->setDescription('DOI comparison tool.')
+        $this
             ->addArgument(
                 'emailRecipientList',
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
@@ -123,12 +117,11 @@ class DoiComparisonCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $emailRecipientList = $input->getArgument('emailRecipientList');
-        $response = null;
-        $doiJson = array();
-        $doiData = array();
+        $doiJson = [];
+        $doiData = [];
         $pageNumber = 1;
 
         do {
@@ -139,46 +132,35 @@ class DoiComparisonCommand extends Command
 
         foreach ($doiJson as $dois) {
             foreach ($dois as $doi) {
-                $doiData[$doi['id']] = array(
-                    'doi' => $doi['attributes']['doi'],
-                    'url' => $doi['attributes']['url'],
-                    'udi' => $this->getUdi($doi['attributes']['url']),
-                    'title' => str_replace(
-                        ',',
-                        '',
-                        $this->doesKeyExist($doi['attributes']['titles'], 'title')
-                            ? $doi['attributes']['titles'][0]['title'] : ''
-                    ),
-                    'author' => str_replace(
-                        ',',
-                        '',
-                        $this->doesKeyExist($doi['attributes']['creators'], 'name')
-                            ? $doi['attributes']['creators'][0]['name'] : ''
-                    ),
-                    'publisher' => $doi['attributes']['publisher'],
-                    'state' => $doi['attributes']['state'],
-                    'resourceType' => $this->getResourceType($doi['attributes']['types'])
-                );
+                $doiData[$doi['id']] = ['doi' => $doi['attributes']['doi'], 'url' => $doi['attributes']['url'], 'udi' => $this->getUdi($doi['attributes']['url']), 'title' => str_replace(
+                    ',',
+                    '',
+                    $this->doesKeyExist($doi['attributes']['titles'], 'title')
+                        ? $doi['attributes']['titles'][0]['title'] : ''
+                ), 'author' => str_replace(
+                    ',',
+                    '',
+                    $this->doesKeyExist($doi['attributes']['creators'], 'name')
+                        ? $doi['attributes']['creators'][0]['name'] : ''
+                ), 'publisher' => $doi['attributes']['publisher'], 'state' => $doi['attributes']['state'], 'resourceType' => $this->getResourceType($doi['attributes']['types'])];
             }
         }
 
         $this->syncConditions($doiData, $emailRecipientList);
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
      * Get udi from Url.
      *
      * @param string $url Url that needs to be fetched.
-     *
-     * @return null
      */
-    private function getUdi(string $url)
+    private function getUdi(string $url): ?string
     {
         $udi = null;
         $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d:\d\d\d\d)\b/';
         if (preg_match_all($udiRegEx, $url, $matches)) {
-            trim(preg_replace($udiRegEx, '', $url));
+            trim((string) preg_replace($udiRegEx, '', $url));
             $udi = $matches[1][0];
         }
 
@@ -189,8 +171,6 @@ class DoiComparisonCommand extends Command
      * Get the resource type for the Doi.
      *
      * @param array $types Types of resources from doi.
-     *
-     * @return string
      */
     private function getResourceType(array $types): string
     {
@@ -209,8 +189,6 @@ class DoiComparisonCommand extends Command
      *
      * @param array  $doiMetadataElementArray Metadata element array to check if empty and key exists.
      * @param string $keySearch               The key which needs to be checked if it exists in the array.
-     *
-     * @return boolean
      */
     private function doesKeyExist(array $doiMetadataElementArray, string $keySearch): bool
     {
@@ -228,8 +206,6 @@ class DoiComparisonCommand extends Command
      *
      * @param array $doiData            Dois metadata from Datacite.
      * @param array $emailRecipientList Email recipient list for DOI comparison report.
-     *
-     * @return void
      */
     private function syncConditions(array $doiData, array $emailRecipientList): void
     {
@@ -240,9 +216,7 @@ class DoiComparisonCommand extends Command
                     $this->compareFields($doi, $dataset);
                 } else {
                     // Error message
-                    $this->outOfSyncDoi[$doi['doi']] = array(
-                        'orphan' => 'Orphan/Duplicate'
-                    );
+                    $this->outOfSyncDoi[$doi['doi']] = ['orphan' => 'Orphan/Duplicate'];
                 }
             } else {
                 $this->compareFields($doi);
@@ -251,7 +225,7 @@ class DoiComparisonCommand extends Command
         if (!empty($this->outOfSyncDoi)) {
             $this->mailer->sendEmailMessage(
                 $this->twig->load('Email/data-repository-managers.out-of-sync-doi.email.twig'),
-                array('dois' => $this->outOfSyncDoi),
+                ['dois' => $this->outOfSyncDoi],
                 $emailRecipientList
             );
         }
@@ -261,14 +235,10 @@ class DoiComparisonCommand extends Command
      * Gets a dataset by udi.
      *
      * @param string $udi Identifier used to get a dataset.
-     *
-     * @return Dataset|null
      */
     private function getDataset(string $udi): ?Dataset
     {
-        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array(
-            'udi' => array('udi' => substr($udi, 0, 16))
-        ));
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(['udi' => ['udi' => substr($udi, 0, 16)]]);
 
         if (!empty($datasets)) {
             $dataset = $datasets[0];
@@ -285,8 +255,6 @@ class DoiComparisonCommand extends Command
      *
      * @param array   $doiElements Doi metadata elements.
      * @param Dataset $dataset     A dataset instance.
-     *
-     * @return void
      */
     private function compareFields(array $doiElements, Dataset $dataset = null): void
     {
@@ -298,7 +266,7 @@ class DoiComparisonCommand extends Command
             );
 
             // Check author
-            $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : '(:tba)';
+            $creator = $dataset->getAuthors() ?: '(:tba)';
 
             $this->doesStringExist(
                 ['doi' => $doiElements['doi'], 'author' => $doiElements['author'], 'field' => 'author'],
@@ -356,14 +324,11 @@ class DoiComparisonCommand extends Command
             if ($doiStatus === DOI::STATE_REGISTERED) {
                 if ($this->isUrlValid($doiElements['url'], 'invalidDOI') === false) {
                     // Error message
-                    $this->outOfSyncDoi[$doiElements['doi']] = array(
-                        'url' => 'Incorrect url',
-                        'value' => $doiElements['url']
-                    );
+                    $this->outOfSyncDoi[$doiElements['doi']] = ['url' => 'Incorrect url', 'value' => $doiElements['url']];
                 }
             } else {
                 // Error message
-                $this->outOfSyncDoi[$doiElements['doi']] = array('state' => 'Incorrect state');
+                $this->outOfSyncDoi[$doiElements['doi']] = ['state' => 'Incorrect state'];
             }
         }
     }
@@ -373,8 +338,6 @@ class DoiComparisonCommand extends Command
      *
      * @param Dataset $dataset     A dataset instance.
      * @param array   $doiElements Doi metadata elements.
-     *
-     * @return void
      */
     private function isStateValid(Dataset $dataset, array $doiElements): void
     {
@@ -387,10 +350,7 @@ class DoiComparisonCommand extends Command
             if ($doiStatus === DOI::STATE_DRAFT || $doiStatus === DOI::STATE_REGISTERED) {
                 if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
                     // Error message
-                    $this->outOfSyncDoi[$doiElements['doi']] = array(
-                        'url' => 'Incorrect url',
-                        'value' => $doiElements['url']
-                    );
+                    $this->outOfSyncDoi[$doiElements['doi']] = ['url' => 'Incorrect url', 'value' => $doiElements['url']];
                 }
             }
         } elseif ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_NONE) {
@@ -398,24 +358,18 @@ class DoiComparisonCommand extends Command
                 if ($dataset->isAvailable()) {
                     if (!$this->isUrlValid($doiElements['url'], 'data')) {
                         // Error message
-                        $this->outOfSyncDoi[$doiElements['doi']] = array(
-                            'url' => 'Incorrect url',
-                            'value' => $doiElements['url']
-                            );
+                        $this->outOfSyncDoi[$doiElements['doi']] = ['url' => 'Incorrect url', 'value' => $doiElements['url']];
                     }
                 } else {
                     if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
                         // Error message
-                        $this->outOfSyncDoi[$doiElements['doi']] = array(
-                            'url' => 'Incorrect url',
-                            'value' => $doiElements['url']
-                            );
+                        $this->outOfSyncDoi[$doiElements['doi']] = ['url' => 'Incorrect url', 'value' => $doiElements['url']];
                     }
                 }
             }
         } else {
             // Error message
-            $this->outOfSyncDoi[$doiElements['doi']] = array('state' => 'Incorrect state');
+            $this->outOfSyncDoi[$doiElements['doi']] = ['state' => 'Incorrect state'];
         }
     }
 
@@ -426,20 +380,12 @@ class DoiComparisonCommand extends Command
      */
     private function getDoiStatus(string $state): ?string
     {
-        switch (true) {
-            case ($state === self::DOI_DRAFT):
-                return DOI::STATE_DRAFT;
-                break;
-            case ($state === self::DOI_FINDABLE):
-                return DOI::STATE_FINDABLE;
-                break;
-            case ($state === self::DOI_REGISTERED):
-                return DOI::STATE_REGISTERED;
-                break;
-            default:
-                return null;
-                break;
-        }
+        return match (true) {
+            $state === self::DOI_DRAFT => DOI::STATE_DRAFT,
+            $state === self::DOI_FINDABLE => DOI::STATE_FINDABLE,
+            $state === self::DOI_REGISTERED => DOI::STATE_REGISTERED,
+            default => null,
+        };
     }
 
     /**
@@ -447,13 +393,11 @@ class DoiComparisonCommand extends Command
      *
      * @param string $url    The haystack string.
      * @param string $needle Needle to search the string.
-     *
-     * @return boolean
      */
     private function isUrlValid(string $url, string $needle): bool
     {
         $url = str_replace('https://data.griidc.org/', '', $url);
-        if (strpos($url, $needle) !== false) {
+        if (str_contains($url, $needle)) {
             return true;
         }
 
@@ -466,8 +410,6 @@ class DoiComparisonCommand extends Command
      * @param array        $metadataElement   Doi metadata elements.
      * @param string       $comparisonElement String that needs to be compared.
      * @param Dataset|null $dataset           A dataset instance.
-     *
-     * @return void
      */
     private function doesStringExist(array $metadataElement, string $comparisonElement, Dataset $dataset = null): void
     {
@@ -480,17 +422,12 @@ class DoiComparisonCommand extends Command
                 return;
             }
             //Error message
-            $this->outOfSyncDoi[$metadataElement['doi']] = array(
-                $metadataElement['field'] => 'Null/Empty ' . $metadataElement['field']
-            );
+            $this->outOfSyncDoi[$metadataElement['doi']] = [$metadataElement['field'] => 'Null/Empty ' . $metadataElement['field']];
         } else {
-            if (strcasecmp($comparisonElement, $metadataElement[$metadataElement['field']]) !== 0) {
-                if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
+            if (strcasecmp($comparisonElement, (string) $metadataElement[$metadataElement['field']]) !== 0) {
+                if (!str_contains($comparisonElement, (string) $metadataElement[$metadataElement['field']])) {
                     //Error message
-                    $this->outOfSyncDoi[$metadataElement['doi']] = array(
-                        $metadataElement['field'] => 'Incorrect ' . $metadataElement['field'],
-                        'value' => $metadataElement[$metadataElement['field']]
-                    );
+                    $this->outOfSyncDoi[$metadataElement['doi']] = [$metadataElement['field'] => 'Incorrect ' . $metadataElement['field'], 'value' => $metadataElement[$metadataElement['field']]];
                 }
             }
         }
@@ -501,8 +438,6 @@ class DoiComparisonCommand extends Command
      *
      * @param string  $doi     Doi identifier for the dataset.
      * @param Dataset $dataset A dataset instance.
-     *
-     * @return boolean
      */
     private function isOrphan(string $doi, Dataset $dataset): bool
     {
