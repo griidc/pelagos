@@ -7,7 +7,9 @@ use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\FundingOrganization;
 use App\Entity\LogActionItem;
+use App\Entity\PersonResearchGroup;
 use App\Entity\ProductTypeDescriptor;
+use App\Entity\ResearchGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -52,6 +54,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
+        yield MenuItem::linkToCrud('Research Groups', 'fas fa-list-alt', ResearchGroup::class);
+        yield MenuItem::linkToCrud('Person to Research Groups', 'fas fa-list-alt', PersonResearchGroup::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
         yield MenuItem::section('Create New');

@@ -402,4 +402,12 @@ class FundingCycle extends Entity
             throw $notDeletableException;
         }
     }
+
+    /**
+     * The name of the Funding Cycle.
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
 }

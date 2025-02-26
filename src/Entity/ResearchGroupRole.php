@@ -20,4 +20,11 @@ class ResearchGroupRole extends AbstractRole implements RoleInterface
     const ADMIN = 'Administration';
     const DATA = 'Data';
     const RESEARCHER = 'Researcher';
+
+    public const array ROLES = [
+        self::LEADERSHIP => self::LEADERSHIP,
+        self::ADMIN => self::ADMIN,
+        self::DATA => self::DATA,
+        self::RESEARCHER => self::RESEARCHER,
+    ];
 }
