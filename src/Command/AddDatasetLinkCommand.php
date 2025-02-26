@@ -18,15 +18,9 @@ use DateTimeZone;
 /**
  * This command adds a ERDDAP or NCEI dataset link.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:dataset-add-link', description: 'Sets an ERDDAP or a NCEI link for a dataset.')]
 class AddDatasetLinkCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:dataset-add-link';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -53,7 +47,6 @@ class AddDatasetLinkCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Sets an ERDDAP or a NCEI link for a dataset.')
             ->addOption('udi', null, InputOption::VALUE_REQUIRED, 'UDI of dataset to add erddap link to')
             ->addOption('type', null, InputOption::VALUE_REQUIRED, 'link type: ERDDAP or NCEI')
             ->addOption('url', null, InputOption::VALUE_REQUIRED, 'URL of ERDDAP link')
@@ -68,7 +61,7 @@ class AddDatasetLinkCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $systemPerson = $this->entityManager->find(Person::class, 0);
         $io = new SymfonyStyle($input, $output);
@@ -80,19 +73,19 @@ class AddDatasetLinkCommand extends Command
         // Since Symfony doesn't allow mandatory options, and arguments are ordered and undescribed, not using.  Instead force options mandatory.
         if (empty($udi) or empty($type) or empty($targetUrl)) {
             $io->error("UDI, type, and URL parameters are not optional.");
-            return 1;
+            return Command::FAILURE;
         }
 
         // Accept only known types, 'NCEI' or 'ERDDAP'.
-        if (!in_array($type, array(DatasetLink::LINK_NAME_CODES["erddap"]["name"], DatasetLink::LINK_NAME_CODES["ncei"]["name"]))) {
+        if (!in_array($type, [DatasetLink::LINK_NAME_CODES["erddap"]["name"], DatasetLink::LINK_NAME_CODES["ncei"]["name"]])) {
             $io->error("Please specify either ERDDAP or NCEI.");
-            return 1;
+            return Command::FAILURE;
         }
 
-        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
         if (!($dataset instanceof Dataset)) {
             $io->error('Could not find a dataset with UDI (' . $udi . ')');
-            return 1;
+            return Command::FAILURE;
         } else {
             // get submission
             $submission = $dataset->getDatasetSubmission();
@@ -134,10 +127,10 @@ class AddDatasetLinkCommand extends Command
                 }
             } else {
                 $io->error("$udi has no submission.");
-                return 1;
+                return Command::FAILURE;
             }
         }
         $io->success('Command Complete.');
-        return 0;
+        return Command::SUCCESS;
     }
 }

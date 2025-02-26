@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class PelagosGetGmlCommand extends Command
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
@@ -33,7 +33,7 @@ class PelagosGetGmlCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        new SymfonyStyle($input, $output);
         $udi = $input->getArgument('udi');
 
         $datasetRepository = $this->entityManager->getRepository(Dataset::class);

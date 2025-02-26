@@ -16,11 +16,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:get-gomri-statistics', description: 'Produce GoMRI report artifacts.')]
 class GetGoMRIStatisticsCommand extends Command
 {
-    protected static $defaultName = 'pelagos:get-gomri-statistics';
-    protected static $defaultDescription = 'Produce GoMRI report artifacts.';
-
     // These values were derived from studying the sequence of downloads
     // and determing the range of dates where the harvesting seemed to have
     // occurred.
@@ -33,16 +31,15 @@ class GetGoMRIStatisticsCommand extends Command
      * Class constructor for dependency injection.
      */
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LogActionItemRepository $logActionItemRepository,
-        private FundingOrgFilter $fundingOrgFilter,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LogActionItemRepository $logActionItemRepository,
+        private readonly FundingOrgFilter $fundingOrgFilter,
     ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -153,7 +150,7 @@ class GetGoMRIStatisticsCommand extends Command
                 $downloadSizeByYearAndQuarter[$year][4] = 0;
             }
 
-            $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
+            $dataset = $this->entityManager->find(Dataset::class, $id);
             // We may also need to consider using the right size for the external-logged download requests
             // that also get counted here, but end up getting the stub sizes. There aren't many though.
             if ($dataset instanceof Dataset) {
@@ -246,13 +243,12 @@ class GetGoMRIStatisticsCommand extends Command
         // Add disclaimer for data cleanup for big data harvest event.
         $io->note('Removed ' . self::HARVEST2019COUNT . ' / ' . self::HARVEST2019DATA . 'GB from 2019Q2 downloads - data harvest occurred');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
      * Returns Year and Quarter given a timestamp.
      *
-     * @param \DateTime $timestamp
      * @return array $yearQuarter
      */
     protected function determineQuarter(\DateTime $timestamp): array
@@ -262,14 +258,11 @@ class GetGoMRIStatisticsCommand extends Command
         $month = $timestamp->format('n');  // returns 1-12
         $quarter = ceil($month / 3);
 
-        return array("year" => $year, "quarter" => $quarter);
+        return ["year" => $year, "quarter" => $quarter];
     }
 
     /**
      * Maintains array of quarter counts.
-     *
-     * @param \DateTime $timestamp
-     * @param array $quarterCounts
      */
     protected function quarterize(\DateTime $timestamp, array &$quarterCounts): void
     {
@@ -300,7 +293,7 @@ class GetGoMRIStatisticsCommand extends Command
      */
     public function getTopDatasetsDownloadedByYearAndQuarter(int $count, int $year = null, int $quarter = null): array
     {
-        if ($quarter !== null && !(in_array($quarter, array(1, 2, 3, 4)))) {
+        if ($quarter !== null && !(in_array($quarter, [1, 2, 3, 4]))) {
             throw new \Exception("Bad quarter specified, use 1-4.");
         }
 
@@ -362,7 +355,7 @@ class GetGoMRIStatisticsCommand extends Command
         foreach ($results as $row) {
             $count = $row[1];
             $id = $row['subjectEntityId'];
-            $dataset = $this->entityManager->find('\App\Entity\Dataset', $id);
+            $dataset = $this->entityManager->find(Dataset::class, $id);
             if ($dataset instanceof Dataset) {
                 $udi = $dataset->getUdi();
                 $topDownloadUdis[$udi] = $count;
@@ -419,7 +412,7 @@ class GetGoMRIStatisticsCommand extends Command
                     $user = 'logged-in';
                 }
 
-                $downloadArray[] = array($id, $dateTime, $user);
+                $downloadArray[] = [$id, $dateTime, $user];
             }
 
             $currentId = $id;
