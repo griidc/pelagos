@@ -96,7 +96,8 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report'])]
+    #[SerializedName('UDI')]
     protected $udi;
 
     /**
@@ -155,6 +156,7 @@ class Dataset extends Entity
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     #[Serializer\Groups(['card'])]
+    #[Groups(['remotely-hosted-dataset-report'])]
     protected $datasetSubmission;
 
     /**
@@ -1092,6 +1094,7 @@ class Dataset extends Entity
     /**
      * Get the Dataset's Lifecycle Status.
      */
+    #[Groups(['remotely-hosted-dataset-report'])]
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
