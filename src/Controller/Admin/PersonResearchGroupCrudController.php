@@ -6,6 +6,7 @@ use App\Entity\Person;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Entity\ResearchGroupRole;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -26,13 +27,9 @@ class PersonResearchGroupCrudController extends AbstractCrudController
         return [
             IdField::new('id')
             ->onlyOnIndex(),
-            AssociationField::new('person')
-            ->setSortProperty('lastName'),
-            AssociationField::new('researchGroup')
-            ->setSortProperty('name'),
-            ChoiceField::new('role')
-            ->setChoices(ResearchGroupRole::ROLES)
-            ->onlyOnForms(),
+            AssociationField::new('person'),
+            AssociationField::new('researchGroup'),
+            AssociationField::new('role'),
             TextField::new('label'),
         ];
     }
@@ -40,6 +37,7 @@ class PersonResearchGroupCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
+            ->setSearchFields(['person.lastName', 'label', 'researchGroup.name', 'role.name'])
             // ->setDefaultSort(['person' => 'ASC', 'researchGroup' => 'ASC'])
             ;
     }
