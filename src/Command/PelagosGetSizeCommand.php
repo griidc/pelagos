@@ -44,7 +44,8 @@ class PelagosGetSizeCommand extends Command
         $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
         $size = $dataset->getTotalFileSize() ?? 0;
         if ($dataset->isColdStored()) {
-            $size = $dataset->getDatasetSubmission()->getColdStorageTotalUnpackedSize() ?? 0;
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $size = $datasetSubmission ? $datasetSubmission->getColdStorageTotalUnpackedSize() ?? 0 : 0;
         } else {
             $size = $dataset->getTotalFileSize() ?? 0;
         }
