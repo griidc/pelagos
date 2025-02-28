@@ -50,9 +50,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
 
     /**
      * Role for this association.
-     *
-     * @var ResearchGroupRole
-     *
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroupRole')]
     #[Assert\NotBlank(message: 'Role is required')]

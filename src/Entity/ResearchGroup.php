@@ -315,6 +315,11 @@ class ResearchGroup extends Entity
         return $this->fundingCycle->getName();
     }
 
+    public function getFundingOrganization(): FundingOrganization
+    {
+        return $this->fundingCycle->getFundingOrganization();
+    }
+
     /**
      * Setter for url.
      *
@@ -771,5 +776,13 @@ class ResearchGroup extends Entity
     public function getRestrictedDataset(): int
     {
         return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::RESTRICTED)->count();
+    }
+
+    /**
+     * The name of this Research Group.
+     */
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

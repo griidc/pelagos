@@ -701,4 +701,12 @@ class FundingOrganization extends Entity
     {
         $this->defaultFunder = $defaultFunder;
     }
+
+    /**
+     * The name of this Funding Organization.
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
 }
