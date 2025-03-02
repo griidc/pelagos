@@ -7489,10 +7489,10 @@ spdy@^4.0.2:
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
 
-spin.js@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/spin.js/-/spin.js-4.1.1.tgz#567464a08620541e523da856cb5f67af2d0f48ad"
-  integrity sha512-3cjbjZBw8TmZmvzcmlXqArUpefJ1vGgQZ+dh1CdyDyxZZNxNmw+2Dq5jyoP/OCqQP+z78rWgSJX9m3uMuGaxxw==
+spin.js@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/spin.js/-/spin.js-4.1.2.tgz#866180f0489ce90432201363e71c314f0db28824"
+  integrity sha512-ua/yEpxEwyEUWs57tMQYdik/KJ12sQRyMXjSlK/Ai927aEUDVY3FXUi4ml4VvlLCTQNIjC6tHyjSLBrJzFAqMA==
 
 sprintf-js@~1.0.2:
   version "1.0.3"
