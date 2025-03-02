@@ -6,7 +6,7 @@
         "@fortawesome/fontawesome-free": "^6.7.2",
         "@hotwired/stimulus": "^3.2.2",
         "@symfony/stimulus-bridge": "^3.2.3",
-        "@symfony/webpack-encore": "^4.6.1",
+        "@symfony/webpack-encore": "^5.1.0",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
         "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
