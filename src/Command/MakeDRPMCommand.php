@@ -16,15 +16,9 @@ use App\Entity\PersonDataRepository;
 /**
  * Command to convert a user into a Pelagos DRPM.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:DRPMize', description: 'Promote an existing user into a DRPM.')]
 class MakeDRPMCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:DRPMize';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -53,7 +47,6 @@ class MakeDRPMCommand extends Command
     protected function configure()
     {
         $this->
-            setDescription('Promote an existing user into a DRPM.')->
             addArgument('username', InputArgument::REQUIRED, 'User to make into DRPM.');
     }
 
@@ -67,7 +60,7 @@ class MakeDRPMCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
@@ -102,6 +95,6 @@ class MakeDRPMCommand extends Command
             throw new \Exception('The username ' . $username . ' was not found in system.');
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
