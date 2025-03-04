@@ -11,11 +11,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:clear-error-file', description: 'Removes an error-status file from fileset and if exists, filesystem.')]
 class PelagosClearErrorAndFileCommand extends Command
 {
-    protected static $defaultName = 'pelagos:clear-error-file';
-    protected static $defaultDescription = 'Removes an error-status file from fileset and if exists, filesystem.';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -49,7 +47,6 @@ class PelagosClearErrorAndFileCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('fileId', InputArgument::REQUIRED, 'ID of file in error to delete')
         ;
     }
@@ -69,10 +66,7 @@ class PelagosClearErrorAndFileCommand extends Command
 
         $fileToDelete = $this->entityManager->getRepository(File::class)->findOneBy(
         // Only identify files in an error state.
-            array(
-                'id' => $fileId,
-                'status' => File::FILE_ERROR
-            )
+            ['id' => $fileId, 'status' => File::FILE_ERROR]
         );
 
         if ($fileToDelete instanceof File) {
@@ -93,6 +87,6 @@ class PelagosClearErrorAndFileCommand extends Command
         } else {
             $io->warning("File specified ($fileId) is not in error or not found.");
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }
