@@ -25,7 +25,7 @@ class PelagosGetFiletypesCommand extends Command
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
@@ -56,7 +56,7 @@ class PelagosGetFiletypesCommand extends Command
             if ($fileSet instanceof Fileset) {
                 $fileTypes = [];
                 foreach ($fileSet->getAllFiles() as $file) {
-                    $type = pathinfo($file->getFilePathName(), PATHINFO_EXTENSION);
+                    $type = pathinfo((string) $file->getFilePathName(), PATHINFO_EXTENSION);
                     if (array_key_exists($type, $fileTypes)) {
                         $fileTypes[$type]++;
                     } else {
@@ -67,8 +67,7 @@ class PelagosGetFiletypesCommand extends Command
                 foreach ($fileTypes as $key => $value) {
                     $fileList .= $key . ',' . $value . ',';
                 }
-                $fileList = rtrim($fileList, ',');
-                return $fileList;
+                return rtrim($fileList, ',');
             }
         }
         return null;

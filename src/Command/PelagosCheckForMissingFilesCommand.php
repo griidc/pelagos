@@ -14,11 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:missing-file-detector', description: 'Checks for missing files on a dataset.')]
 class PelagosCheckForMissingFilesCommand extends Command
 {
-    protected static $defaultName = 'pelagos:missing-file-detector';
-    protected static $defaultDescription = 'Checks for missing files on a dataset.';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -64,7 +62,6 @@ class PelagosCheckForMissingFilesCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addOption('udi', null, InputOption::VALUE_OPTIONAL, 'Run only against passed UDI', null);
     }
 
@@ -83,7 +80,7 @@ class PelagosCheckForMissingFilesCommand extends Command
 
         if ($udi) {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
-                array('udi' => $udi)
+                ['udi' => $udi]
             );
         } else {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
@@ -98,9 +95,7 @@ class PelagosCheckForMissingFilesCommand extends Command
             if ($datasetSubmission instanceof DatasetSubmission) {
                 $fileset = $datasetSubmission->getFileset();
                 if ($fileset instanceof Fileset) {
-                    $files = $fileset->getAllFiles()->filter(function (File $file) {
-                        return $file->getStatus() === File::FILE_DONE;
-                    });
+                    $files = $fileset->getAllFiles()->filter(fn(File $file) => $file->getStatus() === File::FILE_DONE);
                     $fileCount = count($files);
                     $io->writeln('Dataset ' . $dataset->getUdi() . ' has ' . $fileCount . ' files.' . "\n");
                     /** @var File $file */
@@ -114,6 +109,6 @@ class PelagosCheckForMissingFilesCommand extends Command
                 }
             }
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

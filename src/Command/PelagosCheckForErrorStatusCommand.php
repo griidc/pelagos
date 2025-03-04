@@ -15,11 +15,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:error-checker', description: 'Checks for error status in current files of a dataset')]
 class PelagosCheckForErrorStatusCommand extends Command
 {
-    protected static $defaultName = 'pelagos:error-checker';
-    protected static $defaultDescription = 'Checks for error status in current files of a dataset';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -29,8 +27,6 @@ class PelagosCheckForErrorStatusCommand extends Command
 
     /**
      * An instance of the high-performance memcached server.
-     *
-     * @var Memcached $memcached
      */
     protected \Memcached $memcached;
 
@@ -63,7 +59,6 @@ class PelagosCheckForErrorStatusCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addOption('udi', null, InputOption::VALUE_OPTIONAL, 'Run only against passed UDI', null)
             ->addOption('summary', 's', InputOption::VALUE_NONE, 'Just show number of errored files per dataset.', null)
         ;
@@ -86,7 +81,7 @@ class PelagosCheckForErrorStatusCommand extends Command
         $short = $input->getOption('summary');
         if ($udi) {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
-                array('udi' => $udi)
+                ['udi' => $udi]
             );
         } else {
             $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
@@ -99,9 +94,7 @@ class PelagosCheckForErrorStatusCommand extends Command
             if ($datasetSubmission instanceof DatasetSubmission) {
                 $fileset = $datasetSubmission->getFileset();
                 if ($fileset instanceof Fileset) {
-                    $files = $fileset->getAllFiles()->filter(function (File $file) {
-                        return $file->getStatus() === File::FILE_ERROR;
-                    });
+                    $files = $fileset->getAllFiles()->filter(fn(File $file) => $file->getStatus() === File::FILE_ERROR);
                     $fileCountInError = count($files);
                     if ($fileCountInError > 0) {
                         $io->warning('Dataset ' . $dataset->getUdi() . ' has ' . $fileCountInError . ' files in error.');
@@ -112,18 +105,16 @@ class PelagosCheckForErrorStatusCommand extends Command
                             $id = $file->getId();
                             $twins = $this->twinFinder($dataset, $file, $this->entityManager, $io);
                             $io->note("known dataset file: ($id): " . $file->getPhysicalFilePath());
-                            if (count($twins) > 0) {
-                                foreach ($twins as $twin) {
-                                    $twinId = $twin->getId();
-                                    $io->warning("same hash ($twinId): " . $twin->getPhysicalFilePath());
-                                }
+                            foreach ($twins as $twin) {
+                                $twinId = $twin->getId();
+                                $io->warning("same hash ($twinId): " . $twin->getPhysicalFilePath());
                             }
                         }
                     }
                 }
             }
         }
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**
@@ -138,9 +129,9 @@ class PelagosCheckForErrorStatusCommand extends Command
      */
     protected function twinFinder(Dataset $dataset, File $file, EntityManager $em, SymfonyStyle $io): array
     {
-        $hashMatches = array();
+        $hashMatches = [];
         $originalFile = $unalteredOriginalFile = $file->getPhysicalFilePath();
-        if (substr($originalFile, 0, 1) !== '/') {
+        if (!str_starts_with((string) $originalFile, '/')) {
             $originalFile = $this->dataStoreDirectory . '/' . $originalFile;
         }
         if (file_exists($originalFile)) {
@@ -157,7 +148,7 @@ class PelagosCheckForErrorStatusCommand extends Command
 
             foreach ($matches as $match) {
                 $matchesPath = $match->getPhysicalFilePath();
-                if (substr($matchesPath, 0, 1) !== '/') {
+                if (!str_starts_with((string) $matchesPath, '/')) {
                     $matchesPath = $this->dataStoreDirectory . '/' . $matchesPath;
                 }
                 if (file_exists($matchesPath)) {
