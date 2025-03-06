@@ -6,6 +6,7 @@ use App\Entity\ResearchGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -46,6 +47,8 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('country')->hideOnIndex(),
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
+            CollectionField::new('personResearchGroups')->hideOnIndex()
+            ->useEntryCrudForm(),
         ];
     }
 }

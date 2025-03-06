@@ -176,4 +176,10 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     {
         return $this->researchGroup->getFundingCycle()->getName();
     }
+
+    public function __toString()
+    {
+        $person = $this->getPerson();
+        return $person->getFirstName() . ' ' . $person->getLastName();
+    }
 }
