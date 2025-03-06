@@ -16,6 +16,7 @@ use App\Message\DeleteFile;
 use App\Message\DeleteDir;
 use App\Repository\DatasetRepository;
 use App\Util\Datastore;
+use App\Util\Geometry;
 use App\Util\MdappLogger;
 use App\Util\ZipFiles;
 use FOS\RestBundle\Controller\Annotations\View;
@@ -296,5 +297,29 @@ class DatasetController extends EntityController
 
             $zipFiles->finish();
         }, 200, $headers);
+    }
+
+    #[Route(path: '/api/datasetsgeojson', name: 'pelagos_api_datasets_all_geojson')]
+    public function getDatasetsAsGeoJson(DatasetRepository $datasetRepository, Geometry $geometryUtil): Response
+    {
+        $datasets = $datasetRepository->findAll();
+        $features = [];
+        foreach ($datasets as $dataset) {
+            $udi = $dataset->getUdi();
+            $spatialExtent = $dataset->getSpatialExtentGeometry();
+            if (!empty($spatialExtent)) {
+                $feature = json_decode($geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi));
+                $features[] = $feature;
+            }
+        }
+
+        $geoJson = [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+
+        // dd($geoJson);
+
+        return new JsonResponse($geoJson);
     }
 }
