@@ -20,15 +20,9 @@ use App\Entity\Person;
  * supplied manifest file, then re-triggers filer/hasher in an expected way for
  * a replaced datafile.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:dataset-flag-coldstorage', description: 'Marks specified dataset as cold-stored and updates fileset with provided files')]
 class ColdStorageFlagCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:dataset-flag-coldstorage';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -55,7 +49,6 @@ class ColdStorageFlagCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Marks specified dataset as cold-stored and updates fileset with provided files')
             ->addOption('udi', null, InputOption::VALUE_REQUIRED, 'UDI of dataset to flag as cold stored')
             ->addOption('originalfilesize', null, InputOption::VALUE_REQUIRED, 'Original file size')
             ->addOption('originalfilehash', null, InputOption::VALUE_REQUIRED, 'Original sha256 hash')
@@ -73,7 +66,7 @@ class ColdStorageFlagCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $systemPerson = $this->entityManager->find(Person::class, 0);
 
@@ -93,18 +86,18 @@ class ColdStorageFlagCommand extends Command
         $io->note("Unpacked Byte Count: ($unpackedByteCount)");
         $io->note("Attempting to flag $udi as Cold Stored.");
 
-        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
         if ($dataset instanceof Dataset) {
             $io->note('Dataset Found.');
         } else {
             $io->error('Could not find a dataset with UDI ' . $udi);
-            return 1;
+            return Command::FAILURE;
         }
 
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!($datasetSubmission instanceof DatasetSubmission)) {
             $io->error('Could not find Dataset Submission in dataset ' . $udi);
-            return 1;
+            return Command::FAILURE;
         } else {
             $io->note('Submission Found.');
 
@@ -116,6 +109,6 @@ class ColdStorageFlagCommand extends Command
 
         $io->success('Done!');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -2,46 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Font face - Weight: 100 */
-@font-face {
-    font-family: 'dm-sans';
-    font-style: normal;
-    font-weight: 100;
-    font-display: swap;
-    src: url('../fonts/DMSans-Thin.woff') format('woff');
-    src: url('../fonts/DMSans-Thin.woff2') format('woff2');
-}
-
-/* Font face - Weight: 400 */
-@font-face {
-    font-family: 'dm-sans';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('../fonts/DMSans-Regular.woff') format('woff');
-    src: url('../fonts/DMSans-Regular.woff2') format('woff2');
-}
-
-/* Font face - Weight: 500 */
-@font-face {
-    font-family: 'dm-sans';
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: url('../fonts/DMSans-Medium.woff') format('woff');
-    src: url('../fonts/DMSans-Medium.woff2') format('woff2');
-}
-
-/* Font face - Weight: 700 */
-@font-face {
-    font-family: 'dm-sans';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url('../fonts/DMSans-Bold.woff') format('woff');
-    src: url('../fonts/DMSans-Bold.woff2') format('woff2');
-}
-
+@import 'components/fonts.scss';
+@import 'components/container.scss';
 @import 'griidc-colors.scss';
 @import 'bootstrap.scss';
 
