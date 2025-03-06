@@ -32,5 +32,14 @@
    "datePublished" : "{{dataset.acceptedDate|date('c', 'UTC') }}",
    "@type" : "Dataset",
    "@context" : "http://schema.org"
+   {% if boundingBox is not empty %},
+   "spatialCoverage": {
+      "@type": "Place",
+      "geo": {
+         "@type": "GeoShape",
+         "box": "{{boundingBox|default}}"
+      }
+   }
+   {% endif %}
 }
 </script>

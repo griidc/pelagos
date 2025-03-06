@@ -217,10 +217,22 @@ class DatalandController extends AbstractController
         $rawXml = null;
         $wkt = null;
 
+        $boundingBox = null;
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
             $boundingBoxArray = $this->getBoundingBox($dataset);
+            if (count($boundingBoxArray) === 4) {
+                $boundingBox =
+                    $boundingBoxArray['southBoundLatitude']
+                    . ' '
+                    . $boundingBoxArray['westBoundLongitude']
+                    . ' '
+                    . $boundingBoxArray['northBoundLatitude']
+                    . ' '
+                    . $boundingBoxArray['eastBoundLongitude'];
+            }
             $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
         }
+
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
         if (!empty($dataset->getSpatialExtentGeometry())) {
             try {
@@ -270,6 +282,7 @@ class DatalandController extends AbstractController
                 'wkt' => $wkt,
                 'datasetSubmissionLockStatus' => true,
                 'issuetracker' => $this->issueTrackingBaseUrl,
+                'boundingBox' => $boundingBox,
                 'esri_api_key' => $mainsite = $this->getParameter('esri_api_key'),
             )
         );
