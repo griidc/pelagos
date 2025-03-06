@@ -241,10 +241,20 @@ class DatasetController extends EntityController
      * @return Response
      */
     #[View]
-    #[Route(path: '/api/datasetFileCountSize', name: 'pelagos_api_datasets_file_count_size', methods: ['GET'], defaults: ['_format' => 'json'])]
-    public function getFileCountSize(DatasetRepository $datasetRepository): Response
+    #[Route(path: '/api/datasetFileCountSize/{udi?}', name: 'pelagos_api_datasets_file_count_size', methods: ['GET'], defaults: ['_format' => 'json'])]
+    public function getFileCountSize(DatasetRepository $datasetRepository, ?string $udi): Response
     {
-        $datasets = $datasetRepository->findAll();
+
+        if ($udi) {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (null === $dataset) {
+                return new JsonResponse(['error' => 'Dataset not found'], Response::HTTP_NOT_FOUND);
+            }
+            $datasets = [$dataset];
+        } else {
+            $datasets = $datasetRepository->findAll(); // no UDI is provided, get all datasets
+        }
+
 
         $data = [];
 
@@ -253,6 +263,10 @@ class DatasetController extends EntityController
                 "udi" => $dataset->getUdi(),
                 "numberOfFiles" => $dataset->getNumberOfFiles(),
                 "totalFileSize" => $dataset->getTotalFileSize(),
+                "isColdStored" => $dataset->isColdStored(),
+                "coldSize" => $dataset->getDatasetSubmission()?->getColdStorageTotalUnpackedSize(),
+                "coldFileCount" => $dataset->getDatasetSubmission()?->getColdStorageTotalUnpackedCount(),
+                "datasetStatus" => $dataset->getDatasetLifecycleStatus(),
             );
             $data[] = $datasetArray;
         }
