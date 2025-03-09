@@ -55,7 +55,7 @@
         "symfony/runtime": "6.4.*",
         "symfony/security-bundle": "6.4.*",
         "symfony/templating": "6.4.*",
-        "symfony/translation": "6.4.*",
+        "symfony/translation": "7.2.*",
         "symfony/twig-bundle": "6.4.*",
         "symfony/validator": "6.4.*",
         "symfony/webpack-encore-bundle": "^2.0",
