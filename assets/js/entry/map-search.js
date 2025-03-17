@@ -1,5 +1,9 @@
 import '../../scss/map-search.scss';
 import '../modules/cardClick';
+import $ from 'jquery';
+import 'devextreme/integration/jquery';
+import 'devextreme/ui/data_grid';
+import 'devextreme/scss/bundles/dx.light.scss';
 
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
@@ -8,6 +12,7 @@ import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const leafletMap = document.getElementById('leaflet-map');
+let geojsonLayer = null;
 
 if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
   const esriApiKey = process.env.ESRI_API_KEY;
@@ -17,6 +22,13 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
     weight: 4,
     opacity: 0,
     fillOpacity: 0,
+  };
+
+  const geojsonMarkerOptions = {
+    radius: 12,
+    fill: false,
+    weight: 4,
+    opacity: 1,
   };
 
   const map = Leaflet.map('leaflet-map', {
@@ -36,25 +48,60 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
   map.setView([27.5, -97.5], 3);
 
   const url = `${Routing.generate('pelagos_api_datasets_all_geojson')}`;
-  // eslint-disable-next-line no-unused-vars
-  let geojsonLayer = null;
   fetch(url).then((response) => response.json()).then((response) => {
-    const geojsonMarkerOptions = {
-      radius: 12,
-      fill: false,
-      weight: 4,
-      opacity: 1,
-    };
     geojsonLayer = Leaflet.geoJSON(response, {
       pointToLayer(feature, latlng) {
         return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
       },
       style: GRIIDCStyle,
-      onEachFeature(feature, layer) {
-        layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
-      },
     }).addTo(map);
+
     // const bounds = geojsonLayer.getBounds();
     // map.fitBounds(bounds, { padding: [20, 20] });
   });
 }
+
+function showGeometryByUDI(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    if (layer.feature.properties.id === id) {
+      const { feature } = layer;
+      layer.setStyle({ opacity: 1 });
+      layer.bindTooltip(feature.properties.name.toString(), { permanent: true, className: 'label' });
+    }
+  });
+}
+
+function hideGeometryByUDI(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    if (layer.feature.properties.id === id) {
+      layer.setStyle({ opacity: 0 });
+      layer.bindTooltip(null);
+    }
+  });
+}
+
+$(() => {
+  $('#datasets-grid').dxDataGrid({
+    dataSource: '/api/datasetsjson',
+    columns: ['UDI', 'title'],
+    showBorders: true,
+    hoverStateEnabled: true,
+    onCellHoverChanged(e) {
+      if (e.eventType === 'mouseover') {
+        if (e.data && e.data.UDI) {
+          showGeometryByUDI(e.data.UDI);
+        }
+      } else if (e.eventType === 'mouseout') {
+        if (e.data && e.data.UDI) {
+          hideGeometryByUDI(e.data.UDI);
+        }
+      }
+    },
+  });
+});
