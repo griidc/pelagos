@@ -36,6 +36,7 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
   map.setView([27.5, -97.5], 3);
 
   const url = `${Routing.generate('pelagos_api_datasets_all_geojson')}`;
+  // eslint-disable-next-line no-unused-vars
   let geojsonLayer = null;
   fetch(url).then((response) => response.json()).then((response) => {
     const geojsonMarkerOptions = {
@@ -56,24 +57,4 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
     // const bounds = geojsonLayer.getBounds();
     // map.fitBounds(bounds, { padding: [20, 20] });
   });
-
-  // find feature in geojsonLayer and hide it
-  const showFeatureById = (id) => {
-    geojsonLayer.eachLayer((layer) => {
-      if (layer.feature.properties.id === id) {
-        layer.setStyle({ opacity: 1 });
-      }
-    });
-  };
-
-  window.showFeatureByProperty = showFeatureById;
 }
-
-// add on mouseover event for card class
-const cards = document.querySelectorAll('.card');
-cards.forEach((card) => {
-  card.addEventListener('mouseover', () => {
-    const { id } = card.dataset;
-    window.showFeatureByProperty(id);
-  });
-});
