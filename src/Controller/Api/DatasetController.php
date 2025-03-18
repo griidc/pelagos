@@ -301,6 +301,9 @@ class DatasetController extends EntityController
         }, 200, $headers);
     }
 
+    /**
+     * Get all datasets as GeoJson.
+     */
     #[Route(path: '/api/datasetsgeojson', name: 'pelagos_api_datasets_all_geojson')]
     public function getDatasetsAsGeoJson(DatasetRepository $datasetRepository, Geometry $geometryUtil): Response
     {
@@ -319,8 +322,6 @@ class DatasetController extends EntityController
             'type' => 'FeatureCollection',
             'features' => $features,
         ];
-
-        // dd($geoJson);
 
         return new JsonResponse($geoJson);
     }
