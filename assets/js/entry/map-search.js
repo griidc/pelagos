@@ -1,5 +1,4 @@
 import '../../scss/map-search.scss';
-import '../modules/cardClick';
 import $ from 'jquery';
 import 'devextreme/integration/jquery';
 import 'devextreme/ui/data_grid';
@@ -86,17 +85,64 @@ function hideGeometryByUDI(id) {
 $(() => {
   $('#datasets-grid').dxDataGrid({
     dataSource: '/api/datasetsjson',
-    columns: ['UDI', 'title'],
+    searchPanel: {
+      visible: true,
+      placeholder: 'Search...',
+      width: 400,
+    },
+    headerFilter: {
+      visible: true,
+    },
+    columns: [
+      {
+        dataField: 'udi',
+        caption: 'UDI',
+        width: 162,
+        allowHeaderFiltering: false,
+        // cellTemplate(container, options) {
+        //   const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
+        //   return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+        // },
+      },
+      {
+        dataField: 'doi',
+        caption: 'DOI',
+        width: 201,
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const doiurl = `https://doi.org/${options.value}`;
+          if (!['Identified', 'None'].includes(options.data.status)) {
+            return $('<a>', { href: doiurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+          }
+          return '';
+        },
+      },
+      {
+        dataField: 'title',
+        caption: 'Title',
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
+          return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+        },
+      },
+      {
+        dataField: 'datasetLifecycleStatus',
+        caption: 'Status',
+        width: 100,
+        allowHeaderFiltering: true,
+      },
+    ],
     showBorders: true,
     hoverStateEnabled: true,
     onCellHoverChanged(e) {
       if (e.eventType === 'mouseover') {
-        if (e.data && e.data.UDI) {
-          showGeometryByUDI(e.data.UDI);
+        if (e.data && e.data.udi) {
+          showGeometryByUDI(e.data.udi);
         }
       } else if (e.eventType === 'mouseout') {
-        if (e.data && e.data.UDI) {
-          hideGeometryByUDI(e.data.UDI);
+        if (e.data && e.data.udi) {
+          hideGeometryByUDI(e.data.udi);
         }
       }
     },

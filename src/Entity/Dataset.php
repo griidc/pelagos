@@ -97,7 +97,6 @@ class Dataset extends Entity
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
     #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search'])]
-    #[SerializedName('UDI')]
     protected $udi;
 
     /**
@@ -456,7 +455,7 @@ class Dataset extends Entity
     /**
      * Get the DOI string for this Dataset.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     #[SerializedName('doi')]
     public function getDoiString(): string
     {
@@ -1124,7 +1123,7 @@ class Dataset extends Entity
     /**
      * Get Dataset Lifecycle Status as a string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     #[SerializedName('datasetLifecycleStatus')]
     public function getDatasetLifecycleStatusString(): string
     {
