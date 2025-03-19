@@ -456,7 +456,7 @@ class Dataset extends Entity
     /**
      * Get the DOI string for this Dataset.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     #[SerializedName('doi')]
     public function getDoiString(): string
     {
@@ -1124,7 +1124,7 @@ class Dataset extends Entity
     /**
      * Get Dataset Lifecycle Status as a string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     #[SerializedName('datasetLifecycleStatus')]
     public function getDatasetLifecycleStatusString(): string
     {

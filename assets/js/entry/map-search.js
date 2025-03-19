@@ -86,7 +86,54 @@ function hideGeometryByUDI(id) {
 $(() => {
   $('#datasets-grid').dxDataGrid({
     dataSource: '/api/datasetsjson',
-    columns: ['UDI', 'title'],
+    searchPanel: {
+      visible: true,
+      placeholder: 'Search...',
+      width: 400,
+    },
+    headerFilter: {
+      visible: true,
+    },
+    columns: [
+      {
+        dataField: 'UDI',
+        caption: 'UDI',
+        width: 162,
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
+          return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+        },
+      },
+      {
+        dataField: 'doi',
+        caption: 'DOI',
+        width: 201,
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const doiurl = `https://doi.org/${options.value}`;
+          if (!['Identified', 'None'].includes(options.data.status)) {
+            return $('<a>', { href: doiurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+          }
+          return '';
+        },
+      },
+      {
+        dataField: 'title',
+        caption: 'Title',
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
+          return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+        },
+      },
+      {
+        dataField: 'datasetLifecycleStatus',
+        caption: 'Status',
+        width: 100,
+        allowHeaderFiltering: true,
+      },
+    ],
     showBorders: true,
     hoverStateEnabled: true,
     onCellHoverChanged(e) {
