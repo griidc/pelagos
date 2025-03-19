@@ -82,6 +82,19 @@ function hideGeometryByUDI(id) {
   });
 }
 
+function zoomAndPanToFeature(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    if (layer.feature.properties.id === id) {
+      layer.setStyle({ opacity: 1 });
+      layer.bringToFront();
+      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+    }
+  });
+}
+
 $(() => {
   $('#datasets-grid').dxDataGrid({
     dataSource: '/api/datasetsjson',
@@ -135,6 +148,11 @@ $(() => {
     ],
     showBorders: true,
     hoverStateEnabled: true,
+    onRowClick(e) {
+      if (e.data && e.data.udi) {
+        zoomAndPanToFeature(e.data.udi);
+      }
+    },
     onCellHoverChanged(e) {
       if (e.eventType === 'mouseover') {
         if (e.data && e.data.udi) {
