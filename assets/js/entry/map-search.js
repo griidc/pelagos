@@ -100,10 +100,10 @@ $(() => {
         caption: 'UDI',
         width: 162,
         allowHeaderFiltering: false,
-        cellTemplate(container, options) {
-          const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
-          return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
-        },
+        // cellTemplate(container, options) {
+        //   const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
+        //   return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+        // },
       },
       {
         dataField: 'doi',
