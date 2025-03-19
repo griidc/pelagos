@@ -1,5 +1,5 @@
 {% for dataset in datasets %}
-        <div class="card cursor-pointer">
+        <div class="card cursor-pointer" data-id="{{ dataset.UDI }}">
             <div>
                 <span class="badge badge-itemtype">Dataset</span>
                 {% if dataset.isIdentified %}
