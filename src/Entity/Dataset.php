@@ -97,7 +97,6 @@ class Dataset extends Entity
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
     #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search'])]
-    #[SerializedName('UDI')]
     protected $udi;
 
     /**

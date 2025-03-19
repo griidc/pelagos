@@ -11,11 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MapSearchController extends AbstractController
 {
     #[Route('/map', name: 'app_map_search')]
-    public function index(DatasetRepository $datasetRepository): Response
+    public function index(): Response
     {
-        $datasets = new ArrayCollection($datasetRepository->findAll());
-        return $this->render('MapSearch/index.html.twig', [
-            'datasets' => $datasets,
-        ]);
+        return $this->render('MapSearch/index.html.twig');
     }
 }
