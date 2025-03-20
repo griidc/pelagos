@@ -331,7 +331,7 @@ class DatasetController extends EntityController
             } else {
                 $spatialExtent = $dataset->getSpatialExtentGeometry();
                 if (!empty($spatialExtent)) {
-                   $feature = json_decode($geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi));
+                    $feature = json_decode($geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi));
                     $features[] = $feature;
                 }
                 $this->memcached->set('feature-' . $udi, $feature);
