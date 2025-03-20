@@ -106,7 +106,6 @@ class DoctrineDatasetListener
     {
         $entity = $args->getObject();
         if ($entity instanceof Dataset) {
-
             if (
                 ($entity->getDatasetSubmission() instanceof DatasetSubmission and
                 in_array(

@@ -31,7 +31,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\VarDumper\Caster\MemcachedCaster;
 
 /**
  * The Dataset api controller.
