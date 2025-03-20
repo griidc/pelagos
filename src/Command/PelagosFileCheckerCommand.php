@@ -18,24 +18,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * A Symfony Console Command to requeue files.
+ *
+ * P
+ */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:file-checker', description: 'Checked and fixed files for UDI (do not use)')]
 class PelagosFileCheckerCommand extends Command
 {
-    protected static $defaultName = 'pelagos:file-checker';
-    protected static $defaultDescription = 'Requeues Files';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
      * @var EntityManagerInterface $entityManager
      */
     protected $entityManager;
-
-    /**
-     * Pelagos Datastore.
-     *
-     * @var Datastore
-     */
-    private $datastore;
 
     /**
      * The message bus for dispatching the filer message.
@@ -46,18 +42,12 @@ class PelagosFileCheckerCommand extends Command
 
     /**
      * Class constructor for dependency injection.
-     *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param Datastore              $datastore     Datastore utility instance.
-     * @param MessageBusInterface    $messageBus    The messenger bus.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Datastore $datastore,
         MessageBusInterface $messageBus
     ) {
         $this->entityManager = $entityManager;
-        $this->datastore = $datastore;
         $this->messageBus = $messageBus;
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
@@ -67,7 +57,6 @@ class PelagosFileCheckerCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('udi', InputArgument::REQUIRED, 'The UDI')
             ->addOption('fix', null, InputOption::VALUE_NONE, 'Fix the file')
         ;
@@ -76,29 +65,27 @@ class PelagosFileCheckerCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $fix = $input->getOption('fix');
+        $input->getOption('fix');
         $udi = $input->getArgument('udi');
 
         /** @var Dataset $dataset */
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(
-            array('udi' => $udi)
+            ['udi' => $udi]
         );
 
         $datasetSubmission = $dataset->getLatestDatasetReview();
 
-        $files = $datasetSubmission->getFileset()->getAllFiles()->filter(function (File $file) {
-            return $file->getStatus() === File::FILE_ERROR;
-        });
+        $files = $datasetSubmission->getFileset()->getAllFiles()->filter(fn(File $file) => $file->getStatus() === File::FILE_ERROR);
 
         /** @var File $file */
         foreach ($files as $file) {
             $filePathName = $file->getFilePathName();
-            if (str_contains($file->getPhysicalFilePath(), $filePathName)) {
+            if (str_contains((string) $file->getPhysicalFilePath(), (string) $filePathName)) {
                 $file->setStatus(File::FILE_DONE);
             } else {
                 // if filePathName contains "funkywhitespace"...
-                if (preg_match("/\p{C}+/u", $filePathName)) {
-                    $file->setFilePathName(preg_replace("/\p{C}+/u", ' ', $filePathName));
+                if (preg_match("/\p{C}+/u", (string) $filePathName)) {
+                    $file->setFilePathName(preg_replace("/\p{C}+/u", ' ', (string) $filePathName));
                 }
                 $file->setStatus(File::FILE_IN_QUEUE);
             }
@@ -111,6 +98,6 @@ class PelagosFileCheckerCommand extends Command
 
         $io->success('Done!');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
