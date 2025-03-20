@@ -10,6 +10,7 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 
 /**
  * Doctrine Listener class for Dataset related events.
@@ -24,13 +25,22 @@ class DoctrineDatasetListener
     protected $messageBus;
 
     /**
+     * Memcached adapter instance.
+     *
+     * @var \Memcached
+     */
+    protected $cache;
+
+    /**
      * DoctrineDatasetListener constructor.
      *
      * @param MessageBusInterface $messageBus Symfony messenger bus interface.
+     * @param MemcachedAdapter    $cache      Memcached adapter instance.
      */
     public function __construct(MessageBusInterface $messageBus)
     {
         $this->messageBus = $messageBus;
+        $this->cache = MemcachedAdapter::createConnection('memcached://localhost');
     }
 
     /**
@@ -78,6 +88,9 @@ class DoctrineDatasetListener
                     $entity->setDatasetFileSize($dataset->getTotalFileSize());
                 }
             }
+            // Invalidate the cache entry for the dataset
+            $cacheKey = 'feature-' . $dataset->getUdi();
+            $this->cache->deleteItem($cacheKey);
         }
     }
 
@@ -93,6 +106,7 @@ class DoctrineDatasetListener
     {
         $entity = $args->getObject();
         if ($entity instanceof Dataset) {
+
             if (
                 ($entity->getDatasetSubmission() instanceof DatasetSubmission and
                 in_array(
