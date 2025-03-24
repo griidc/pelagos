@@ -2,11 +2,14 @@ import '../../scss/map-search.scss';
 import $ from 'jquery';
 import 'devextreme/integration/jquery';
 import 'devextreme/ui/data_grid';
+import 'devextreme/ui/toolbar';
+import 'devextreme/ui/button';
 import 'devextreme/scss/bundles/dx.light.scss';
 
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
+// import 'leaflet/dist/leaflet.css';
 import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
@@ -15,7 +18,7 @@ const esriApiKey = process.env.ESRI_API_KEY;
 const GRIIDCStyle = {
   color: 'orange',
   weight: 4,
-  opacity: 0,
+  opacity: 1,
   fillOpacity: 0,
 };
 
@@ -39,7 +42,7 @@ EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
   apiKey: esriApiKey,
 }).addTo(map);
 
-Leaflet.featureGroup().addTo(map);
+const features = Leaflet.featureGroup().addTo(map);
 map.setView([27.5, -97.5], 3);
 
 let geojsonLayer = null;
@@ -51,7 +54,7 @@ fetch(url).then((response) => response.json()).then((response) => {
       return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
     },
     style: GRIIDCStyle,
-  }).addTo(map);
+  });
 
   // const bounds = geojsonLayer.getBounds();
   // map.fitBounds(bounds, { padding: [20, 20] });
@@ -62,10 +65,12 @@ function showGeometryByUDI(id) {
     return;
   }
   geojsonLayer.eachLayer((layer) => {
-    if (layer.feature.properties.id === id) {
-      const { feature } = layer;
-      layer.setStyle({ opacity: 1 });
+    const { feature } = layer;
+    if (feature.properties.id === id) {
       layer.bindTooltip(feature.properties.name.toString(), { permanent: true, className: 'label' });
+      if (!features.hasLayer(layer)) {
+        features.addLayer(layer);
+      }
     }
   });
 }
@@ -75,10 +80,28 @@ function hideGeometryByUDI(id) {
     return;
   }
   geojsonLayer.eachLayer((layer) => {
-    if (layer.feature.properties.id === id) {
-      layer.setStyle({ opacity: 0 });
-      layer.bindTooltip(null);
+    const { feature } = layer;
+    if (feature.properties.id === id) {
+      features.removeLayer(layer);
     }
+  });
+}
+
+function showAllGeometry() {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    features.addLayer(layer);
+  });
+}
+
+function hideAllGeometry() {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    features.removeLayer(layer);
   });
 }
 
@@ -87,8 +110,29 @@ $(() => {
     dataSource: '/api/datasetsjson',
     searchPanel: {
       visible: true,
-      placeholder: 'Search...',
       width: 400,
+    },
+    toolbar: {
+      items: [
+        'groupPanel',
+        {
+          location: 'before',
+          widget: 'dxButton',
+          options: {
+            text: 'Show All',
+            onClick(e) {
+              if (this.option('text') === 'Hide All') {
+                hideAllGeometry();
+                this.option('text', 'Show All');
+              } else if (this.option('text') === 'Show All') {
+                showAllGeometry();
+                this.option('text', 'Hide All');
+              }
+            },
+          },
+        },
+        'searchPanel',
+      ],
     },
     headerFilter: {
       visible: true,
