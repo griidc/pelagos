@@ -105,6 +105,7 @@ function showAllGeometry() {
     return;
   }
   geojsonLayer.eachLayer((layer) => {
+    layer.bindTooltip(null);
     features.addLayer(layer);
   });
 }
@@ -125,6 +126,9 @@ $(() => {
       visible: true,
       placeholder: 'Search...',
       width: 400,
+    },
+    selection: {
+      mode: 'single',
     },
     toolbar: {
       items: [
@@ -194,11 +198,17 @@ $(() => {
     showBorders: true,
     hoverStateEnabled: true,
     onRowClick(e) {
-      if (e.data && e.data.udi) {
-        zoomAndPanToFeature(e.data.udi);
+      if (e.isSelected) {
+        e.component.clearSelection();
       }
     },
+    onSelectionChanged(e) {
+      zoomAndPanToFeature(e.selectedRowsData.udi);
+    },
     onCellHoverChanged(e) {
+      if (e.row && e.row.isSelected) {
+        return;
+      }
       if (e.eventType === 'mouseover') {
         if (e.data && e.data.udi) {
           showGeometryByUDI(e.data.udi);
