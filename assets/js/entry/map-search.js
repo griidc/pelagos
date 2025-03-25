@@ -110,6 +110,7 @@ $(() => {
     dataSource: '/api/datasetsjson',
     searchPanel: {
       visible: true,
+      placeholder: 'Search...',
       width: 400,
     },
     toolbar: {
