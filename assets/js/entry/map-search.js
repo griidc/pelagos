@@ -93,7 +93,7 @@ function zoomAndPanToFeature(id) {
   }
   geojsonLayer.eachLayer((layer) => {
     if (layer.feature.properties.id === id) {
-      layer.setStyle({ opacity: 1 });
+      features.addLayer(layer);
       layer.bringToFront();
       map.fitBounds(layer.getBounds(), { padding: [20, 20] });
     }
@@ -197,15 +197,12 @@ $(() => {
     ],
     showBorders: true,
     hoverStateEnabled: true,
-    onRowClick(e) {
-      if (e.isSelected) {
-        e.component.clearSelection();
-      }
-    },
     onSelectionChanged(e) {
-      zoomAndPanToFeature(e.selectedRowsData.udi);
+      // console.log('onSelectionChanged', e);
+      zoomAndPanToFeature(e.selectedRowsData[0].udi);
     },
     onCellHoverChanged(e) {
+      // console.log('onCellHoverChanged', e);
       if (e.row && e.row.isSelected) {
         return;
       }
