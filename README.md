@@ -18,6 +18,7 @@ These instructions will get you a copy of the project up and running on your loc
 * [Elasticsearch 7.17+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
 * [Wkhtmltox 0.12.6.1+](https://wkhtmltopdf.org/) - PDF generation utility
 * [ClamAV](https://www.clamav.net) - ClamAV® open source antivirus engine
+* [memcached 1.5.22+](https://www.memcached.org/) - High Performance, Distributed Memory Object Cache
 
 ### Installation
 
