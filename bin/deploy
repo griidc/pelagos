@@ -43,5 +43,20 @@ bin/console doctrine:migrations:status
 bin/console fos:elastica:reset
 bin/console fos:elastica:populate
 
-#
+# Prime the gml2geojson cache for production, test, demo, and dev (prod mode)
+HOSTNAME=$(hostname)
+if [ "$HOSTNAME" == "griidc-prod.tamucc.edu" ]; then
+    echo "Priming the gml2geojson cache on production"
+    wget -O /dev/null -q https://data.griidc.org/api/datasetsgeojson
+elif [ "$HOSTNAME" == "pelagos-test.tamucc.edu" ]; then
+    echo "Priming the gml2geojson cache on test"
+    wget -O /dev/null -q https://data-test.griidc.org/api/datasetsgeojson
+elif [ "$HOSTNAME" == "pelagos-demo.tamucc.edu" ]; then
+    echo "Priming the gml2geojson cache on demo"
+    wget -O /dev/null -q https://demo.griidc.org/api/datasetsgeojson
+elif [ "$HOSTNAME" == "pelagos-dev.tamucc.edu" ]; then
+    echo "Priming the gml2geojson cache on dev's prod mode"
+    wget -O /dev/null -q https://dev.griidc.org/api/datasetsgeojson
+fi
+
 echo "Remember to start consumers with: sudo systemctl start pelagos-messengemq"
