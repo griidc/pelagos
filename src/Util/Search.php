@@ -621,7 +621,8 @@ class Search
     {
         $availabilityStatusAgg = new Aggregation\Terms('status');
         $availabilityStatusAgg->setField('availabilityStatus');
-        $availabilityStatusAgg->setSize(5);
+        // 7 availability statuses, even though only 6 are currently ever used
+        $availabilityStatusAgg->setSize(7);
 
         return $availabilityStatusAgg;
     }
