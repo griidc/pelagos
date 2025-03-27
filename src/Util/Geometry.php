@@ -4,6 +4,7 @@ namespace App\Util;
 
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use App\Exception\InvalidGmlException;
 
 /**
@@ -19,6 +20,11 @@ class Geometry
     protected $entityManager;
 
     /**
+     * An instance of the high-performance memcached server.
+     */
+    protected \Memcached $memcached;
+
+    /**
      * Class constructor for Dependency Injection.
      *
      * @param EntityManagerInterface $entityManager A Pelagos EntityManager.
@@ -26,6 +32,7 @@ class Geometry
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->memcached = MemcachedAdapter::createConnection('memcached://localhost');
     }
 
     /**
@@ -135,6 +142,13 @@ class Geometry
      */
     public function convertGmlToGeoJSON(string $gml, string $udi = 'unknown', string $id = 'A'): mixed
     {
+        if ($udi !== 'unknown') {
+            $geoJson = $this->memcached->get('gml2geojson' . $udi);
+            if ($geoJson) {
+                return $geoJson;
+            }
+        }
+
         $sql = "SELECT ST_AsGeoJSON(t.*) FROM (VALUES(:id, :name, ST_GeomFromGML(:gml))) AS t(id, name, geom)";
         $connection = $this->entityManager->getConnection();
         $statement = $connection->prepare($sql);
@@ -143,6 +157,8 @@ class Geometry
         } catch (DriverException $e) {
             throw new InvalidGmlException($e->getMessage());
         }
-        return $result->fetchOne();
+        $geoJson = $result->fetchOne();
+        $this->memcached->set('gml2geojson' . $udi, $geoJson);
+        return $geoJson;
     }
 }

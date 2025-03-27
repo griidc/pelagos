@@ -89,7 +89,7 @@ class DoctrineDatasetListener
                 }
             }
             // Invalidate the cache entry for the dataset
-            $cacheKey = 'feature-' . $dataset->getUdi();
+            $cacheKey = 'gml2geojson' . $dataset->getUdi();
             $this->cache->deleteItem($cacheKey);
         }
     }

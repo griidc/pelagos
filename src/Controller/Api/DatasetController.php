@@ -21,7 +21,6 @@ use App\Util\MdappLogger;
 use App\Util\ZipFiles;
 use FOS\RestBundle\Controller\Annotations\View;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
-use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,19 +36,6 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class DatasetController extends EntityController
 {
-    /**
-     * An instance of the high-performance memcached server.
-     */
-    protected \Memcached $memcached;
-
-    /**
-     * Class constructor for dependency injection.
-     */
-    public function __construct()
-    {
-        $this->memcached = MemcachedAdapter::createConnection('memcached://localhost');
-    }
-
     /**
      * Get a count of Datasets.
      *
@@ -339,16 +325,10 @@ class DatasetController extends EntityController
         $features = [];
         foreach ($datasets as $dataset) {
             $udi = $dataset->getUdi();
-            $feature = $this->memcached->get('feature-' . $udi);
-            if ($feature) {
+            $spatialExtent = $dataset->getSpatialExtentGeometry();
+            if (!empty($spatialExtent)) {
+                $feature = json_decode($geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi));
                 $features[] = $feature;
-            } else {
-                $spatialExtent = $dataset->getSpatialExtentGeometry();
-                if (!empty($spatialExtent)) {
-                    $feature = json_decode($geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi));
-                    $features[] = $feature;
-                }
-                $this->memcached->set('feature-' . $udi, $feature);
             }
         }
 
