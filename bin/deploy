@@ -48,15 +48,15 @@ HOSTNAME=$(hostname)
 if [ "$HOSTNAME" == "griidc-prod.tamucc.edu" ]; then
     echo "Priming the gml2geojson cache on production"
     wget -O /dev/null -q https://data.griidc.org/api/datasetsgeojson
-elif [ "$HOSTNAME" == "pelagos-test.tamucc.edu" ]; then
+elif [ "$HOSTNAME" == "griidc-test.tamucc.edu" ]; then
     echo "Priming the gml2geojson cache on test"
     wget -O /dev/null -q https://data-test.griidc.org/api/datasetsgeojson
-elif [ "$HOSTNAME" == "pelagos-demo.tamucc.edu" ]; then
+elif [ "$HOSTNAME" == "griidc-demo.tamucc.edu" ]; then
     echo "Priming the gml2geojson cache on demo"
     wget -O /dev/null -q https://demo.griidc.org/api/datasetsgeojson
-elif [ "$HOSTNAME" == "pelagos-dev.tamucc.edu" ]; then
+elif [ "$HOSTNAME" == "griidc-dev.tamucc.edu" ]; then
     echo "Priming the gml2geojson cache on dev's prod mode"
-    wget -O /dev/null -q https://dev.griidc.org/api/datasetsgeojson
+    wget -O /dev/null -q https://griidc-dev.tamucc.edu/api/datasetsgeojson
 fi
 
 echo "Remember to start consumers with: sudo systemctl start pelagos-messengemq"
