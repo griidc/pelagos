@@ -6,6 +6,7 @@ use App\Exception\NotDeletableException;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -30,6 +31,7 @@ abstract class Entity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[Serializer\Groups(["id", "search"])]
+    #[Groups(["id", "search"])]
     #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'ID must be in between 1 and 2147483647', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
     protected $id;
 

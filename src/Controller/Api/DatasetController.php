@@ -16,6 +16,7 @@ use App\Message\DeleteFile;
 use App\Message\DeleteDir;
 use App\Repository\DatasetRepository;
 use App\Util\Datastore;
+use App\Util\Geometry;
 use App\Util\MdappLogger;
 use App\Util\ZipFiles;
 use FOS\RestBundle\Controller\Annotations\View;
@@ -27,6 +28,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * The Dataset api controller.
@@ -310,5 +313,49 @@ class DatasetController extends EntityController
 
             $zipFiles->finish();
         }, 200, $headers);
+    }
+
+    /**
+     * Get all datasets as GeoJson.
+     */
+    #[Route(path: '/api/datasetsgeojson', name: 'pelagos_api_datasets_all_geojson')]
+    public function getDatasetsAsGeoJson(DatasetRepository $datasetRepository, Geometry $geometryUtil): Response
+    {
+        $datasets = $datasetRepository->findAll();
+        $features = [];
+        foreach ($datasets as $dataset) {
+            $udi = $dataset->getUdi();
+            $spatialExtent = $dataset->getSpatialExtentGeometry();
+            if (!empty($spatialExtent)) {
+                $feature = json_decode($geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi));
+                $features[] = $feature;
+            }
+        }
+
+        $geoJson = [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+
+        return new JsonResponse($geoJson);
+    }
+
+    /**
+     * Get all datasets as Json.
+     */
+    #[Route(path: '/api/datasetsjson', name: 'pelagos_api_datasets_all_json')]
+    public function getDatasetsAsJson(DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
+    {
+        $datasets = $datasetRepository->findAll();
+
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups(['search']);
+
+        $data = $serializer->serialize($datasets, 'json', $contextBuilder->toArray());
+
+        return new JsonResponse(
+            data: $data,
+            json: true,
+        );
     }
 }
