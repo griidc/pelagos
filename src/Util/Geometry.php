@@ -28,11 +28,12 @@ class Geometry
      * Class constructor for Dependency Injection.
      *
      * @param EntityManagerInterface $entityManager A Pelagos EntityManager.
+     * @param string                 $memcachedPort The port for Memcached.
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, string $memcachedPort)
     {
         $this->entityManager = $entityManager;
-        $this->memcached = MemcachedAdapter::createConnection('memcached://localhost');
+        $this->memcached = MemcachedAdapter::createConnection('memcached://localhost:' . $memcachedPort);
     }
 
     /**

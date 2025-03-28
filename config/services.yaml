@@ -226,3 +226,7 @@ services:
     App\Twig\Extensions:
         bind:
             array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
+
+    App\Util\Geometry:
+        arguments:
+            $memcachedPort: '%env(MEMCACHED_PORT)%'
