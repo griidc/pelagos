@@ -55,7 +55,7 @@
         "dotenv-webpack": "^8.1.0",
         "dropzone": "^5.7.2",
         "esri-leaflet": "^3.0.14",
-        "esri-leaflet-vector": "^4.2.7",
+        "esri-leaflet-vector": "^4.2.8",
         "exceljs": "^4.3.0",
         "file-saver": "^2.0.5",
         "jquery": "^3.5.1",
