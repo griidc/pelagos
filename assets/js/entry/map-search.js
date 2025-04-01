@@ -167,7 +167,7 @@ $(() => {
             groupCount: response.groupCount,
           });
         })
-        .fail(() => { throw 'Data loading error'; });
+        .fail(() => { throw new Error('Data loading error'); });
       return d.promise();
     },
     // Needed to process selected value(s) in the SelectBox, Lookup, Autocomplete, and DropDownBox
@@ -189,9 +189,12 @@ $(() => {
       sorting: true,
       summary: false,
     },
+    showBorders: true,
+    showColumnLines: true,
+    showRowLines: true,
     paging: {
       enabled: true,
-      pageSize: 20
+      pageSize: 20,
     },
     pager: {
       visible: true,
