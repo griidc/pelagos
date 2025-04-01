@@ -53,11 +53,11 @@ fetch(url).then((response) => response.json()).then((response) => {
     pointToLayer(feature, latlng) {
       return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
     },
+    onEachFeature(feature, layer) {
+      layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
+    },
     style: GRIIDCStyle,
   });
-
-  // const bounds = geojsonLayer.getBounds();
-  // map.fitBounds(bounds, { padding: [20, 20] });
 });
 
 function showGeometryByUDI(id) {
@@ -82,7 +82,21 @@ function hideGeometryByUDI(id) {
   geojsonLayer.eachLayer((layer) => {
     const { feature } = layer;
     if (feature.properties.id === id) {
+      layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
       features.removeLayer(layer);
+    }
+  });
+}
+
+function zoomAndPanToFeature(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    if (layer.feature.properties.id === id) {
+      features.addLayer(layer);
+      layer.bringToFront();
+      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
     }
   });
 }
@@ -92,6 +106,7 @@ function showAllGeometry() {
     return;
   }
   geojsonLayer.eachLayer((layer) => {
+    layer.bindTooltip(null);
     features.addLayer(layer);
   });
 }
@@ -105,6 +120,10 @@ function hideAllGeometry() {
   });
 }
 
+function goHome() {
+  map.setView([27.5, -97.5], 3);
+}
+
 $(() => {
   $('#datasets-grid').dxDataGrid({
     dataSource: '/api/datasetsjson',
@@ -113,15 +132,17 @@ $(() => {
       placeholder: 'Search...',
       width: 400,
     },
+    selection: {
+      mode: 'single',
+    },
     toolbar: {
       items: [
-        'groupPanel',
         {
           location: 'before',
           widget: 'dxButton',
           options: {
             text: 'Show All',
-            onClick(e) {
+            onClick() {
               if (this.option('text') === 'Hide All') {
                 hideAllGeometry();
                 this.option('text', 'Show All');
@@ -129,6 +150,26 @@ $(() => {
                 showAllGeometry();
                 this.option('text', 'Hide All');
               }
+            },
+          },
+        },
+        {
+          location: 'before',
+          widget: 'dxButton',
+          options: {
+            icon: 'home',
+            onClick() {
+              goHome();
+            },
+          },
+        },
+        {
+          location: 'before',
+          widget: 'dxButton',
+          options: {
+            icon: 'clear',
+            onClick() {
+              $('#datasets-grid').dxDataGrid('instance').clearSelection();
             },
           },
         },
@@ -144,10 +185,6 @@ $(() => {
         caption: 'UDI',
         width: 162,
         allowHeaderFiltering: false,
-        // cellTemplate(container, options) {
-        //   const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
-        //   return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
-        // },
       },
       {
         dataField: 'doi',
@@ -180,7 +217,18 @@ $(() => {
     ],
     showBorders: true,
     hoverStateEnabled: true,
+    onSelectionChanged(e) {
+      if (e.currentDeselectedRowKeys.length > 0) {
+        hideGeometryByUDI(e.currentDeselectedRowKeys[0].udi);
+      }
+      if (e.currentSelectedRowKeys.length > 0) {
+        zoomAndPanToFeature(e.currentSelectedRowKeys[0].udi);
+      }
+    },
     onCellHoverChanged(e) {
+      if (e.row && e.row.isSelected) {
+        return;
+      }
       if (e.eventType === 'mouseover') {
         if (e.data && e.data.udi) {
           showGeometryByUDI(e.data.udi);
