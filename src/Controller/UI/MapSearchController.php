@@ -32,6 +32,7 @@ final class MapSearchController extends AbstractController
     ): Response {
         $query = new Query();
 
+        // sort
         if (is_array($sort) && !empty($sort)) {
             $sortArray = json_decode($sort[0]);
             $sortObject = $sortArray['0'];
