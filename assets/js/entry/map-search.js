@@ -5,6 +5,7 @@ import 'devextreme/ui/data_grid';
 import 'devextreme/ui/toolbar';
 import 'devextreme/ui/button';
 import 'devextreme/scss/bundles/dx.light.scss';
+import CustomStore from 'devextreme/data/custom_store';
 
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
@@ -12,7 +13,6 @@ import * as EsriLeafletVector from 'esri-leaflet-vector';
 // import 'leaflet/dist/leaflet.css';
 import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-import CustomStore from 'devextreme/data/custom_store';
 
 const esriApiKey = process.env.ESRI_API_KEY;
 
