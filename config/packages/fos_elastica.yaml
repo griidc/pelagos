@@ -86,12 +86,19 @@ fos_elastica:
                 friendlyName:
                     type: 'keyword'
                 udi:
-                    type: 'text'
+                    type: 'keyword'
                 title:
                     type: 'text'
                 abstract:
                     type: 'text'
                 tags:
+                    type: 'keyword'
+                    property_path: false
+                geometry:
+                    type: 'geo_shape'
+                    ignore_malformed: true
+                    property_path: false
+                datasetLifecycleStatus:
                     type: 'keyword'
                     property_path: false
                 researchGroup:

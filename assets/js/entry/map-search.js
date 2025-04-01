@@ -12,6 +12,7 @@ import * as EsriLeafletVector from 'esri-leaflet-vector';
 // import 'leaflet/dist/leaflet.css';
 import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+import CustomStore from 'devextreme/data/custom_store';
 
 const esriApiKey = process.env.ESRI_API_KEY;
 
@@ -125,8 +126,77 @@ function goHome() {
 }
 
 $(() => {
+  function isNotEmpty(value) {
+    return value !== undefined && value !== null && value !== "";
+  }
+
+  const customDataSource = new CustomStore({
+    key: 'udi',
+    load(loadOptions) {
+      console.log(loadOptions);
+      const d = $.Deferred();
+      const params = {};
+
+      [
+        'filter',
+        'group',
+        'groupSummary',
+        'parentIds',
+        'requireGroupCount',
+        'requireTotalCount',
+        'searchExpr',
+        'searchOperation',
+        'searchValue',
+        'select',
+        'sort',
+        'skip',
+        'take',
+        'totalSummary',
+        'userData',
+      ].forEach((i) => {
+        if (i in loadOptions && isNotEmpty(loadOptions[i])) {
+          params[i] = JSON.stringify(loadOptions[i]);
+        }
+      });
+
+      $.getJSON('/map/search', params)
+        .done((response) => {
+          d.resolve(response.data, {
+            totalCount: response.totalCount,
+            summary: response.summary,
+            groupCount: response.groupCount,
+          });
+        })
+        .fail(() => { throw 'Data loading error'; });
+      return d.promise();
+    },
+    // Needed to process selected value(s) in the SelectBox, Lookup, Autocomplete, and DropDownBox
+    // byKey: function(key) {
+    //     var d = new $.Deferred();
+    //     $.get('/map/getkeys?id=' + key)
+    //         .done(function(result) {
+    //             d.resolve(result);
+    //         });
+    //     return d.promise();
+    // }
+  });
+
   $('#datasets-grid').dxDataGrid({
-    dataSource: '/api/datasetsjson',
+    dataSource: customDataSource,
+    remoteOperations: {
+      paging: true,
+      filtering: true,
+      sorting: true,
+      summary: false,
+    },
+    paging: {
+      enabled: true,
+      pageSize: 20
+    },
+    pager: {
+      visible: true,
+      showInfo: true,
+    },
     searchPanel: {
       visible: true,
       placeholder: 'Search...',
@@ -185,12 +255,14 @@ $(() => {
         caption: 'UDI',
         width: 162,
         allowHeaderFiltering: false,
+        allowSorting: true,
       },
       {
-        dataField: 'doi',
+        dataField: 'doi.doi',
         caption: 'DOI',
         width: 201,
         allowHeaderFiltering: false,
+        allowSorting: false,
         cellTemplate(container, options) {
           const doiurl = `https://doi.org/${options.value}`;
           if (!['Identified', 'None'].includes(options.data.status)) {
@@ -203,6 +275,7 @@ $(() => {
         dataField: 'title',
         caption: 'Title',
         allowHeaderFiltering: false,
+        allowSorting: false,
         cellTemplate(container, options) {
           const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
           return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
@@ -213,6 +286,7 @@ $(() => {
         caption: 'Status',
         width: 100,
         allowHeaderFiltering: true,
+        allowSearching: false,
       },
     ],
     showBorders: true,
