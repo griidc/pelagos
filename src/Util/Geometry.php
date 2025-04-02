@@ -20,9 +20,11 @@ class Geometry
     protected $entityManager;
 
     /**
-     * An instance of the high-performance memcached server.
+     * Memcached connection.
+     *
+     * @var string memcachedPort
      */
-    protected \Memcached $memcached;
+    private $memcachedPort;
 
     /**
      * Class constructor for Dependency Injection.
@@ -33,7 +35,7 @@ class Geometry
     public function __construct(EntityManagerInterface $entityManager, string $memcachedPort)
     {
         $this->entityManager = $entityManager;
-        $this->memcached = MemcachedAdapter::createConnection('memcached://localhost:' . $memcachedPort);
+        $this->memcachedPort = $memcachedPort;
     }
 
     /**
@@ -144,7 +146,8 @@ class Geometry
     public function convertGmlToGeoJSON(string $gml, string $udi = 'unknown', string $id = 'A'): mixed
     {
         if ($udi !== 'unknown') {
-            $geoJson = $this->memcached->get('gml2geojson' . $udi);
+            $memcached = MemcachedAdapter::createConnection('memcached://localhost:' . $this->memcachedPort);
+            $geoJson = $memcached->get('gml2geojson' . $udi);
             if ($geoJson) {
                 return $geoJson;
             }
@@ -159,7 +162,11 @@ class Geometry
             throw new InvalidGmlException($e->getMessage());
         }
         $geoJson = $result->fetchOne();
-        $this->memcached->set('gml2geojson' . $udi, $geoJson);
+        // don't cache for 'unknown' UDI, or if no GeoJSON was returned
+        if ($udi !== 'unknown' || $geoJson !== false) {
+            /** @psalm-suppress PossiblyUndefinedVariable */ //can't be undedfined here because of the above check
+            $memcached->set('gml2geojson' . $udi, $geoJson);
+        }
         return $geoJson;
     }
 }
