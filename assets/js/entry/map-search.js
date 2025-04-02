@@ -184,10 +184,7 @@ $(() => {
   $('#datasets-grid').dxDataGrid({
     dataSource: customDataSource,
     remoteOperations: {
-      paging: true,
-      filtering: true,
-      sorting: true,
-      summary: false,
+      groupPaging: true,
     },
     showBorders: true,
     showColumnLines: true,
