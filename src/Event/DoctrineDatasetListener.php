@@ -25,22 +25,22 @@ class DoctrineDatasetListener
     protected $messageBus;
 
     /**
-     * Memcached adapter instance.
+     * The port for Memcached.
      *
-     * @var \Memcached
+     * @var string
      */
-    protected $cache;
+    private $memcachedPort;
 
     /**
      * DoctrineDatasetListener constructor.
      *
      * @param MessageBusInterface $messageBus Symfony messenger bus interface.
-     * @param MemcachedAdapter    $cache      Memcached adapter instance.
+     * @param string              $memcachedPort The port for Memcached (optional).
      */
-    public function __construct(MessageBusInterface $messageBus)
+    public function __construct(MessageBusInterface $messageBus, string $memcachedPort)
     {
         $this->messageBus = $messageBus;
-        $this->cache = MemcachedAdapter::createConnection('memcached://localhost');
+        $this->memcachedPort = $memcachedPort;
     }
 
     /**
@@ -76,6 +76,7 @@ class DoctrineDatasetListener
             $entity instanceof DIF
             or $entity instanceof DatasetSubmission
         ) {
+            $cache = MemcachedAdapter::createConnection('memcached://localhost:' . $this->memcachedPort);
             $dataset = $entity->getDataset();
             if ($dataset instanceof Dataset) {
                 $dataset->updateTitle();
@@ -90,7 +91,7 @@ class DoctrineDatasetListener
             }
             // Invalidate the cache entry for the dataset
             $cacheKey = 'gml2geojson' . $dataset->getUdi();
-            $this->cache->delete($cacheKey);
+            $cache->delete($cacheKey);
         }
     }
 

@@ -77,6 +77,8 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.request_revisions, method: onRequestRevisions }
 
     App\Event\DoctrineDatasetListener:
+        bind:
+            $memcachedPort: '%env(MEMCACHED_PORT)%'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.orm.entity_listener, event: postUpdate, entity: App\Entity\Dataset }
