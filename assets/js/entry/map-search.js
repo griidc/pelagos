@@ -1,0 +1,243 @@
+import '../../scss/map-search.scss';
+import $ from 'jquery';
+import 'devextreme/integration/jquery';
+import 'devextreme/ui/data_grid';
+import 'devextreme/ui/toolbar';
+import 'devextreme/ui/button';
+import 'devextreme/scss/bundles/dx.light.scss';
+
+import * as Leaflet from 'leaflet';
+import 'esri-leaflet';
+import * as EsriLeafletVector from 'esri-leaflet-vector';
+// import 'leaflet/dist/leaflet.css';
+import '../../css/leaflet-custom.css';
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+
+const esriApiKey = process.env.ESRI_API_KEY;
+
+const GRIIDCStyle = {
+  color: 'orange',
+  weight: 4,
+  opacity: 1,
+  fillOpacity: 0,
+};
+
+const geojsonMarkerOptions = {
+  radius: 12,
+  fill: false,
+  weight: 4,
+  opacity: 1,
+};
+
+const map = Leaflet.map('leaflet-map', {
+  preferCanvas: true,
+  minZoom: 2,
+  maxZoom: 14,
+  attributionControl: true,
+  worldCopyJump: true,
+});
+
+const basemapEnum = 'ArcGIS:Imagery';
+EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
+  apiKey: esriApiKey,
+}).addTo(map);
+
+const features = Leaflet.featureGroup().addTo(map);
+map.setView([27.5, -97.5], 3);
+
+let geojsonLayer = null;
+
+const url = `${Routing.generate('pelagos_api_datasets_all_geojson')}`;
+fetch(url).then((response) => response.json()).then((response) => {
+  geojsonLayer = Leaflet.geoJSON(response, {
+    pointToLayer(feature, latlng) {
+      return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
+    },
+    onEachFeature(feature, layer) {
+      layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
+    },
+    style: GRIIDCStyle,
+  });
+});
+
+function showGeometryByUDI(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    const { feature } = layer;
+    if (feature.properties.id === id) {
+      layer.bindTooltip(feature.properties.name.toString(), { permanent: true, className: 'label' });
+      if (!features.hasLayer(layer)) {
+        features.addLayer(layer);
+      }
+    }
+  });
+}
+
+function hideGeometryByUDI(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    const { feature } = layer;
+    if (feature.properties.id === id) {
+      layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
+      features.removeLayer(layer);
+    }
+  });
+}
+
+function zoomAndPanToFeature(id) {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    if (layer.feature.properties.id === id) {
+      features.addLayer(layer);
+      layer.bringToFront();
+      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+    }
+  });
+}
+
+function showAllGeometry() {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    layer.bindTooltip(null);
+    features.addLayer(layer);
+  });
+}
+
+function hideAllGeometry() {
+  if (geojsonLayer === null) {
+    return;
+  }
+  geojsonLayer.eachLayer((layer) => {
+    features.removeLayer(layer);
+  });
+}
+
+function goHome() {
+  map.setView([27.5, -97.5], 3);
+}
+
+$(() => {
+  $('#datasets-grid').dxDataGrid({
+    dataSource: '/api/datasetsjson',
+    searchPanel: {
+      visible: true,
+      placeholder: 'Search...',
+      width: 400,
+    },
+    selection: {
+      mode: 'single',
+    },
+    toolbar: {
+      items: [
+        {
+          location: 'before',
+          widget: 'dxButton',
+          options: {
+            text: 'Show All',
+            onClick() {
+              if (this.option('text') === 'Hide All') {
+                hideAllGeometry();
+                this.option('text', 'Show All');
+              } else if (this.option('text') === 'Show All') {
+                showAllGeometry();
+                this.option('text', 'Hide All');
+              }
+            },
+          },
+        },
+        {
+          location: 'before',
+          widget: 'dxButton',
+          options: {
+            icon: 'home',
+            onClick() {
+              goHome();
+            },
+          },
+        },
+        {
+          location: 'before',
+          widget: 'dxButton',
+          options: {
+            icon: 'clear',
+            onClick() {
+              $('#datasets-grid').dxDataGrid('instance').clearSelection();
+            },
+          },
+        },
+        'searchPanel',
+      ],
+    },
+    headerFilter: {
+      visible: true,
+    },
+    columns: [
+      {
+        dataField: 'udi',
+        caption: 'UDI',
+        width: 162,
+        allowHeaderFiltering: false,
+      },
+      {
+        dataField: 'doi',
+        caption: 'DOI',
+        width: 201,
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const doiurl = `https://doi.org/${options.value}`;
+          if (!['Identified', 'None'].includes(options.data.status)) {
+            return $('<a>', { href: doiurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+          }
+          return '';
+        },
+      },
+      {
+        dataField: 'title',
+        caption: 'Title',
+        allowHeaderFiltering: false,
+        cellTemplate(container, options) {
+          const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
+          return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
+        },
+      },
+      {
+        dataField: 'datasetLifecycleStatus',
+        caption: 'Status',
+        width: 100,
+        allowHeaderFiltering: true,
+      },
+    ],
+    showBorders: true,
+    hoverStateEnabled: true,
+    onSelectionChanged(e) {
+      if (e.currentDeselectedRowKeys.length > 0) {
+        hideGeometryByUDI(e.currentDeselectedRowKeys[0].udi);
+      }
+      if (e.currentSelectedRowKeys.length > 0) {
+        zoomAndPanToFeature(e.currentSelectedRowKeys[0].udi);
+      }
+    },
+    onCellHoverChanged(e) {
+      if (e.row && e.row.isSelected) {
+        return;
+      }
+      if (e.eventType === 'mouseover') {
+        if (e.data && e.data.udi) {
+          showGeometryByUDI(e.data.udi);
+        }
+      } else if (e.eventType === 'mouseout') {
+        if (e.data && e.data.udi) {
+          hideGeometryByUDI(e.data.udi);
+        }
+      }
+    },
+  });
+});
