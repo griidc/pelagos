@@ -83,7 +83,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
                 $geoJson = $this->geometryUtil->convertGmlToGeoJSON(
                     gml: $dataset->getSpatialExtentGeometry(),
                     udi: $dataset->getUdi(),
-                    id: $dataset->getId(),
+                    id: $dataset->getUdi(),
                 );
             }
         } catch (InvalidGmlException $exception) {

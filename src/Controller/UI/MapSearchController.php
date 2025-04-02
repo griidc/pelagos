@@ -14,6 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class MapSearchController extends AbstractController
 {
+    public function __construct(
+        private TransformedFinder $searchPelagosFinder,
+    ) {
+    }
+
     #[Route('/map', name: 'app_map_search')]
     public function index(): Response
     {
@@ -22,7 +27,6 @@ final class MapSearchController extends AbstractController
 
     #[Route('/map/search', name: 'app_map_search_search')]
     public function search(
-        TransformedFinder $searchPelagosFinder,
         #[MapQueryParameter] ?int $take =20,
         #[MapQueryParameter] ?int $skip = 0,
         #[MapQueryParameter] ?array $filter = [],
@@ -55,7 +59,7 @@ final class MapSearchController extends AbstractController
             $query->setQuery($boolQuery);
         }
 
-        $find = $searchPelagosFinder->findHybridPaginated($query);
+        $find = $this->searchPelagosFinder->findHybridPaginated($query);
 
         $page = (int) ($skip / $take) + 1;
 
@@ -94,6 +98,38 @@ final class MapSearchController extends AbstractController
         }
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * Get all datasets as GeoJson.
+     */
+    #[Route(path: '/map/geojson', name: 'pelagos_map_all_geojson')]
+    public function getDatasetsAsGeoJson(): Response
+    {
+        $query = new Query();
+        $result = $this->searchPelagosFinder->findHybridPaginated($query);
+        $result->setMaxPerPage(500);
+
+        $features = [];
+
+        for ($index = 1; $index <= $result->getNbPages(); $index++) {
+            $result->setCurrentPage($index);
+            $transformed = $result->getCurrentPageResults();
+            foreach ($transformed as $item) {
+                $data = $item->getResult()->getData();
+                if (array_key_exists('geometry', $data)) {
+                    $feature = $data['geometry'];
+                    $features[] = json_decode($feature);
+                }
+            }
+        }
+
+        $geoJson = [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+
+        return new JsonResponse($geoJson);
     }
 
     private function GetParseParams(mixed $params, bool $assoc = false): mixed

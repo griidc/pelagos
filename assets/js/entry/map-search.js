@@ -48,7 +48,7 @@ map.setView([27.5, -97.5], 3);
 
 let geojsonLayer = null;
 
-const url = `${Routing.generate('pelagos_api_datasets_all_geojson')}`;
+const url = `${Routing.generate('pelagos_map_all_geojson')}`;
 fetch(url).then((response) => response.json()).then((response) => {
   geojsonLayer = Leaflet.geoJSON(response, {
     pointToLayer(feature, latlng) {
@@ -133,7 +133,6 @@ $(() => {
   const customDataSource = new CustomStore({
     key: 'udi',
     load(loadOptions) {
-      console.log(loadOptions);
       const d = $.Deferred();
       const params = {};
 
