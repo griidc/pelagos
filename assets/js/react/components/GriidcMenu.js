@@ -12,7 +12,7 @@ function avoidFocusOnClick() {
   });
 }
 
-const GriidcMenu = (props) => (
+const GriidcMenu = ({ mainsite = '', showAdmin = false }) => (
     <Popover.Group className="hidden lg:flex">
       <Popover className="relative">
         <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600" href="/">Home</a>
@@ -53,25 +53,25 @@ const GriidcMenu = (props) => (
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-                href={`${props.mainsite}/about`}>
+                href={`${mainsite}/about`}>
                 About Us
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-                href={`${props.mainsite}/program-overview`}>
+                href={`${mainsite}/program-overview`}>
                 Program Overview
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${props.mainsite}/team`}>
+               href={`${mainsite}/team`}>
                 Our Team
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${props.mainsite}/griidc-services`}>
+               href={`${mainsite}/griidc-services`}>
                 Services
               </a>
               </Popover.Panel>
@@ -135,7 +135,7 @@ const GriidcMenu = (props) => (
                         <a className={clsx(
                           'block p-2 pl-5 text-sm leading-[1.25rem] text-gray-500 hover:text-blue-600',
                         )}
-                        href={`${props.mainsite}/how-submit-data`}>
+                        href={`${mainsite}/how-submit-data`}>
                           How to Submit Data
                         </a>
                         <a className={clsx(
@@ -213,25 +213,25 @@ const GriidcMenu = (props) => (
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-                href={`${props.mainsite}/faq`}>
+                href={`${mainsite}/faq`}>
                 Frequently Asked Questions
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${props.mainsite}/training-user-guides`}>
+               href={`${mainsite}/training-user-guides`}>
                 Training and User Guides
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${props.mainsite}/webinar-recordings`}>
+               href={`${mainsite}/webinar-recordings`}>
                 Webinar Recordings
               </a>
               <a className={clsx(
                 'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
               )}
-               href={`${props.mainsite}/data-file-transfer-methods`}>
+               href={`${mainsite}/data-file-transfer-methods`}>
                 Data File Transfer Methods
               </a>
               </Popover.Panel>
@@ -241,9 +241,9 @@ const GriidcMenu = (props) => (
       </Popover>
       <Popover className="relative">
         <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600"
-          href={`${props.mainsite}/contact`}>Contact Us</a>
+          href={`${mainsite}/contact`}>Contact Us</a>
       </Popover>
-      { props.showAdmin
+      { showAdmin
         && <Popover className="relative">
           <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600"
             href="/admin">Admin</a>
@@ -251,10 +251,6 @@ const GriidcMenu = (props) => (
       }
     </Popover.Group>
 );
-
-GriidcMenu.defaultProps = {
-  showAdmin: false,
-};
 
 GriidcMenu.propTypes = {
   mainsite: PropTypes.string,
