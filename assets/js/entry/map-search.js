@@ -127,7 +127,7 @@ function goHome() {
 
 $(() => {
   function isNotEmpty(value) {
-    return value !== undefined && value !== null && value !== "";
+    return value !== undefined && value !== null && value !== '';
   }
 
   const customDataSource = new CustomStore({
@@ -292,7 +292,6 @@ $(() => {
         allowSearching: false,
       },
     ],
-    showBorders: true,
     hoverStateEnabled: true,
     onSelectionChanged(e) {
       if (e.currentDeselectedRowKeys.length > 0) {
