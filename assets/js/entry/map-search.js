@@ -125,6 +125,10 @@ function goHome() {
   map.setView([27.5, -97.5], 3);
 }
 
+function clearFeatures() {
+  features.clearLayers();
+}
+
 $(() => {
   function isNotEmpty(value) {
     return value !== undefined && value !== null && value !== '';
@@ -239,6 +243,7 @@ $(() => {
             icon: 'clear',
             onClick() {
               $('#datasets-grid').dxDataGrid('instance').clearSelection();
+              clearFeatures();
             },
           },
         },
@@ -291,10 +296,10 @@ $(() => {
     hoverStateEnabled: true,
     onSelectionChanged(e) {
       if (e.currentDeselectedRowKeys.length > 0) {
-        hideGeometryByUDI(e.currentDeselectedRowKeys[0].udi);
+        hideGeometryByUDI(e.currentDeselectedRowKeys[0]);
       }
       if (e.currentSelectedRowKeys.length > 0) {
-        zoomAndPanToFeature(e.currentSelectedRowKeys[0].udi);
+        zoomAndPanToFeature(e.currentSelectedRowKeys[0]);
       }
     },
     onCellHoverChanged(e) {
