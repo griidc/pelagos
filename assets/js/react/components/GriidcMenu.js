@@ -12,7 +12,7 @@ function avoidFocusOnClick() {
   });
 }
 
-const GriidcMenu = ({ mainsite = '', showAdmin = false }) => (
+const GriidcMenu = ({ mainsite, showAdmin = false }) => (
     <Popover.Group className="hidden lg:flex">
       <Popover className="relative">
         <a className="text-base font-medium text-gray-600 ml-8 hover:text-blue-600" href="/">Home</a>
