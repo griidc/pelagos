@@ -60,8 +60,12 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
     private function populateDatasetAttributes(PostTransformEvent $event)
     {
         $document = $event->getDocument();
+        $index = $document->getIndex();
         $dataset = $event->getObject();
         $wkt = null;
+        $geoJson = null;
+
+        $document->set('datasetLifecycleStatus', $dataset->getDatasetLifecycleStatus());
 
         // Logic to get the spatialExtent is in Dataset Entity.
         try {
@@ -72,6 +76,18 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
             }
         } catch (InvalidGmlException $exception) {
             $wkt = null;
+        }
+
+        try {
+            if ($dataset->getSpatialExtentGeometry()) {
+                $geoJson = $this->geometryUtil->convertGmlToGeoJSON(
+                    gml: $dataset->getSpatialExtentGeometry(),
+                    udi: $dataset->getUdi(),
+                    id: $dataset->getUdi(),
+                );
+            }
+        } catch (InvalidGmlException $exception) {
+            $geoJson = null;
         }
 
         if (null !== $wkt) {
@@ -93,6 +109,10 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
             }
 
             $document->set('simpleGeometry', $array);
+        }
+
+        if (null !== $geoJson) {
+            $document->set('geometry', $geoJson);
         }
 
         if (null !== $dataset->getDatasetSubmission()) {

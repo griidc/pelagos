@@ -5,6 +5,7 @@ import 'devextreme/ui/data_grid';
 import 'devextreme/ui/toolbar';
 import 'devextreme/ui/button';
 import 'devextreme/scss/bundles/dx.light.scss';
+import CustomStore from 'devextreme/data/custom_store';
 
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
@@ -47,7 +48,7 @@ map.setView([27.5, -97.5], 3);
 
 let geojsonLayer = null;
 
-const url = `${Routing.generate('pelagos_api_datasets_all_geojson')}`;
+const url = `${Routing.generate('pelagos_map_all_geojson')}`;
 fetch(url).then((response) => response.json()).then((response) => {
   geojsonLayer = Leaflet.geoJSON(response, {
     pointToLayer(feature, latlng) {
@@ -124,9 +125,81 @@ function goHome() {
   map.setView([27.5, -97.5], 3);
 }
 
+function clearFeatures() {
+  features.clearLayers();
+}
+
+function isNotEmpty(value) {
+  return value !== undefined && value !== null && value !== '';
+}
+
 $(() => {
+  const customDataSource = new CustomStore({
+    key: 'udi',
+    load(loadOptions) {
+      const d = $.Deferred();
+      const params = {};
+
+      [
+        'filter',
+        'group',
+        'groupSummary',
+        'parentIds',
+        'requireGroupCount',
+        'requireTotalCount',
+        'searchExpr',
+        'searchOperation',
+        'searchValue',
+        'select',
+        'sort',
+        'skip',
+        'take',
+        'totalSummary',
+        'userData',
+      ].forEach((i) => {
+        if (i in loadOptions && isNotEmpty(loadOptions[i])) {
+          params[i] = JSON.stringify(loadOptions[i]);
+        }
+      });
+
+      $.getJSON('/map/search', params)
+        .done((response) => {
+          d.resolve(response.data, {
+            totalCount: response.totalCount,
+            summary: response.summary,
+            groupCount: response.groupCount,
+          });
+        })
+        .fail(() => { d.reject(new Error('Data loading error')); });
+      return d.promise();
+    },
+    // Needed to process selected value(s) in the SelectBox, Lookup, Autocomplete, and DropDownBox
+    // byKey: function(key) {
+    //     var d = new $.Deferred();
+    //     $.get('/map/getkeys?id=' + key)
+    //         .done(function(result) {
+    //             d.resolve(result);
+    //         });
+    //     return d.promise();
+    // }
+  });
+
   $('#datasets-grid').dxDataGrid({
-    dataSource: '/api/datasetsjson',
+    dataSource: customDataSource,
+    remoteOperations: {
+      groupPaging: true,
+    },
+    showBorders: true,
+    showColumnLines: true,
+    showRowLines: true,
+    paging: {
+      enabled: true,
+      pageSize: 20,
+    },
+    pager: {
+      visible: true,
+      showInfo: true,
+    },
     searchPanel: {
       visible: true,
       placeholder: 'Search...',
@@ -170,6 +243,7 @@ $(() => {
             icon: 'clear',
             onClick() {
               $('#datasets-grid').dxDataGrid('instance').clearSelection();
+              clearFeatures();
             },
           },
         },
@@ -185,12 +259,14 @@ $(() => {
         caption: 'UDI',
         width: 162,
         allowHeaderFiltering: false,
+        allowSorting: true,
       },
       {
-        dataField: 'doi',
+        dataField: 'doi.doi',
         caption: 'DOI',
         width: 201,
         allowHeaderFiltering: false,
+        allowSorting: false,
         cellTemplate(container, options) {
           const doiurl = `https://doi.org/${options.value}`;
           if (!['Identified', 'None'].includes(options.data.status)) {
@@ -203,6 +279,7 @@ $(() => {
         dataField: 'title',
         caption: 'Title',
         allowHeaderFiltering: false,
+        allowSorting: false,
         cellTemplate(container, options) {
           const dlurl = Routing.generate('pelagos_app_ui_dataland_default', { udi: options.data.udi });
           return $('<a>', { href: dlurl, target: '_blank', class: 'pagelink' }).text(options.displayValue);
@@ -213,16 +290,16 @@ $(() => {
         caption: 'Status',
         width: 100,
         allowHeaderFiltering: true,
+        allowSearching: false,
       },
     ],
-    showBorders: true,
     hoverStateEnabled: true,
     onSelectionChanged(e) {
       if (e.currentDeselectedRowKeys.length > 0) {
-        hideGeometryByUDI(e.currentDeselectedRowKeys[0].udi);
+        hideGeometryByUDI(e.currentDeselectedRowKeys[0]);
       }
       if (e.currentSelectedRowKeys.length > 0) {
-        zoomAndPanToFeature(e.currentSelectedRowKeys[0].udi);
+        zoomAndPanToFeature(e.currentSelectedRowKeys[0]);
       }
     },
     onCellHoverChanged(e) {
