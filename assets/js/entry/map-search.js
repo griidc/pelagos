@@ -170,7 +170,7 @@ $(() => {
             groupCount: response.groupCount,
           });
         })
-        .fail(() => { throw new Error('Data loading error'); });
+        .fail(() => { d.reject(new Error('Data loading error')); });
       return d.promise();
     },
     // Needed to process selected value(s) in the SelectBox, Lookup, Autocomplete, and DropDownBox
