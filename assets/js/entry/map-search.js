@@ -129,11 +129,11 @@ function clearFeatures() {
   features.clearLayers();
 }
 
-$(() => {
-  function isNotEmpty(value) {
-    return value !== undefined && value !== null && value !== '';
-  }
+function isNotEmpty(value) {
+  return value !== undefined && value !== null && value !== '';
+}
 
+$(() => {
   const customDataSource = new CustomStore({
     key: 'udi',
     load(loadOptions) {
