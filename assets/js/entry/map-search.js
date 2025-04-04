@@ -337,3 +337,13 @@ $(() => {
     },
   });
 });
+
+// Function to handle the map filter drawn event
+let drawnLayer;
+let geojson;
+
+map.on('pm:create', function (e) {
+  drawnLayer = e.layer;
+  geojson = drawnLayer.toGeoJSON();
+  console.log('Drawn Layer:', geojson);
+});
