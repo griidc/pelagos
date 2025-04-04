@@ -13,6 +13,8 @@ import * as EsriLeafletVector from 'esri-leaflet-vector';
 // import 'leaflet/dist/leaflet.css';
 import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 const esriApiKey = process.env.ESRI_API_KEY;
 
@@ -36,6 +38,23 @@ const map = Leaflet.map('leaflet-map', {
   maxZoom: 14,
   attributionControl: true,
   worldCopyJump: true,
+});
+
+// add Leaflet-Geoman controls with some options to the map
+map.pm.addControls({
+  position: 'topleft',
+  drawCircleMarker: false,
+  drawMarker: false,
+  drawPolyline: false,
+  drawRectangle: true,
+  drawPolygon: true,
+  drawCircle: false,
+  drawText: false,
+  cutPolygon: false,
+  editMode: false,
+  dragMode: false,
+  removalMode: false,
+  rotateMode: false,
 });
 
 const basemapEnum = 'ArcGIS:Imagery';
