@@ -342,8 +342,9 @@ $(() => {
 let drawnLayer;
 let geojson;
 
-map.on('pm:create', function (e) {
+map.on('pm:create', (e) => {
   drawnLayer = e.layer;
   geojson = drawnLayer.toGeoJSON();
-  console.log('Drawn Layer:', geojson);
+  const encodedGeoJSON = encodeURIComponent(JSON.stringify(geojson));
+  console.log(encodedGeoJSON);
 });
