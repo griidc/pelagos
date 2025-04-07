@@ -188,6 +188,8 @@ $(() => {
       enabled: true,
       pageSize: 18,
     },
+    filterRow: { visible: true },
+    filterPanel: { visible: true },
     pager: {
       visible: true,
       showInfo: true,
@@ -231,19 +233,29 @@ $(() => {
         },
         {
           location: 'before',
-          widget: 'dxDateBox',
-          options: {
-            onClick() {
-              // TODO: Implement date filter
-            },
-          },
+          template: '<div>Start Date:</div>',
         },
         {
           location: 'before',
           widget: 'dxDateBox',
           options: {
-            onClick() {
-              // TODO: Implement date filter
+            showClearButton: true,
+            onValueChanged(e) {
+              console.log(e);
+            },
+          },
+        },
+        {
+          location: 'before',
+          template: '<div>End Date:</div>',
+        },
+        {
+          location: 'before',
+          widget: 'dxDateBox',
+          options: {
+            showClearButton: true,
+            onValueChanged(e) {
+              console.log(e);
             },
           },
         },
@@ -302,6 +314,11 @@ $(() => {
         width: 100,
         allowHeaderFiltering: true,
         allowSearch: false,
+      },
+      {
+        dataField: 'collectionEndDate',
+        // visible: false,
+        allowHeaderFiltering: true,
       },
     ],
     hoverStateEnabled: true,
