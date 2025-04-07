@@ -4,7 +4,9 @@ namespace App\Controller\UI;
 
 use App\Enum\DatasetLifecycleStatus;
 use Elastica\Query;
+use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
+use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +29,7 @@ final class MapSearchController extends AbstractController
 
     #[Route('/map/search', name: 'app_map_search_search')]
     public function search(
-        #[MapQueryParameter] ?int $take =20,
+        #[MapQueryParameter] ?int $take = 20,
         #[MapQueryParameter] ?int $skip = 0,
         #[MapQueryParameter] ?array $filter = [],
         #[MapQueryParameter] ?array $group = [],
@@ -38,25 +40,55 @@ final class MapSearchController extends AbstractController
         $query = new Query();
 
         if (is_array($sort) && !empty($sort)) {
-            $sort = $this->GetParseParams($sort, true);
+            $sort = $this->getParseParams($sort, true);
             foreach ($sort as $item) {
                 $query->addSort([$item[0]['selector'] => ['order' => $item[0]['desc'] ? 'DESC' : 'ASC']]);
             }
         }
 
         if (null !== $filter && [] !== $filter) {
-            $filters = json_decode($filter[0]);
+            $filters = json_decode($filter[0], true);
 
-            $boolQuery = new BoolQuery();
+            $searchFilter = new BoolQuery();
+            $filterQuery = new BoolQuery();
 
-            foreach ($filters as $filter) {
-                if (is_array($filter)) {
-                    $matchQuery = new Query\MatchPhrase($filter[0], $filter[2]);
-                    $boolQuery->addShould($matchQuery);
+            $lastOperation = 'or';
+
+            if (3 === count($filters) and is_string($filters[0]) && is_string($filters[1]) && is_string($filters[2])) {
+                $filterQuery = new Term();
+                $filterQuery->setTerm($filters[0], $filters[2]);
+                $searchFilter->addShould($filterQuery);
+            } else {
+                foreach ($filters as $filter) {
+                    if (is_array($filter)) {
+                        $filterQuery = $this->filterArrayToQuery($filter);
+                    } else {
+                        switch ($filter) {
+                            case 'and':
+                                $searchFilter->addMust($filterQuery);
+                                $lastOperation = 'and';
+                                break;
+                            case 'or':
+                                $searchFilter->addShould($filterQuery);
+                                $lastOperation = 'or';
+                                break;
+                            case '=':
+                                $searchFilter->addShould($filterQuery);
+                                break;
+                            default:
+                                throw new \InvalidArgumentException('Invalid filter operation');
+                        }
+                    }
+
+                    if ('and' === $lastOperation) {
+                        $searchFilter->addMust($filterQuery);
+                    } else {
+                        $searchFilter->addShould($filterQuery);
+                    }
                 }
             }
 
-            $query->setQuery($boolQuery);
+            $query->setQuery($searchFilter);
         }
 
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
@@ -112,7 +144,7 @@ final class MapSearchController extends AbstractController
 
         $features = [];
 
-        for ($index = 1; $index <= $result->getNbPages(); $index++) {
+        for ($index = 1; $index <= $result->getNbPages(); ++$index) {
             $result->setCurrentPage($index);
             $transformed = $result->getCurrentPageResults();
             foreach ($transformed as $item) {
@@ -132,21 +164,87 @@ final class MapSearchController extends AbstractController
         return new JsonResponse($geoJson);
     }
 
-    private function GetParseParams(mixed $params, bool $assoc = false): mixed
+    /**
+     * Transform the filter array to a query.
+     *
+     * @param array $filters
+     */
+    private function filterArrayToQuery(array $filters): AbstractQuery
     {
-        $result = NULL;
+        $query = new BoolQuery();
+
+        if (is_array($filters[0])) {
+            $searchFilter = new BoolQuery();
+            $filterQuery = new BoolQuery();
+            $lastOperation = 'or';
+            foreach ($filters as $filter) {
+                if (is_array($filter)) {
+                    $filterQuery = $this->filterArrayToQuery($filter);
+                } else {
+                    switch ($filter) {
+                        case 'and':
+                            $searchFilter->addMust($filterQuery);
+                            $lastOperation = 'and';
+                            break;
+                        case 'or':
+                            $searchFilter->addShould($filterQuery);
+                            $lastOperation = 'or';
+                            break;
+                        default:
+                            throw new \InvalidArgumentException('Invalid filter operation');
+                    }
+                }
+
+                if ('and' === $lastOperation) {
+                    $searchFilter->addMust($filterQuery);
+                } else {
+                    $searchFilter->addShould($filterQuery);
+                }
+            }
+
+            return $searchFilter;
+        }
+
+        $fieldName = $filters[0];
+        $fieldOperation = $filters[1];
+        $fieldValue = $filters[2];
+
+        switch ($fieldOperation) {
+            case '=':
+                $query = new Term();
+                $query->setTerm($fieldName, $fieldValue);
+                break;
+            case 'contains':
+                $query = new Query\MatchPhrase($fieldName, $fieldValue);
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid filter operation');
+        }
+
+        return $query;
+    }
+
+    /**
+     * Parse the parameters.
+     *
+     * @param mixed $params the parameters coming from the request
+     * @param bool  $assoc  whether to return the result as an associative array or not
+     */
+    private function getParseParams(mixed $params, bool $assoc = false): mixed
+    {
+        $result = null;
         if (is_array($params)) {
-            $result = array();
+            $result = [];
             foreach ($params as $key => $value) {
                 $result[$key] = json_decode($params[$key], $assoc);
-                if ($result[$key] === NULL) {
+                if (null === $result[$key]) {
                     $result[$key] = $params[$key];
                 }
             }
-        }
-        else {
+        } else {
             $result = $params;
         }
+
         return $result;
     }
 }
