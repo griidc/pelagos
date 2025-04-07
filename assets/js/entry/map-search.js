@@ -348,3 +348,10 @@ map.on('pm:create', (e) => {
   const encodedGeoJSON = encodeURIComponent(JSON.stringify(geojson));
   console.log(encodedGeoJSON);
 });
+
+// Listen for the drawstart event and clear the previously drawn features, if any.
+map.on('pm:drawstart', (e) => {
+  if (drawnLayer) {
+    map.removeLayer(drawnLayer);
+  }
+});
