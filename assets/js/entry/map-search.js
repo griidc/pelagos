@@ -188,8 +188,8 @@ $(() => {
       enabled: true,
       pageSize: 18,
     },
-    filterRow: { visible: true },
-    filterPanel: { visible: true },
+    filterRow: { visible: false },
+    filterPanel: { visible: false },
     pager: {
       visible: true,
       showInfo: true,
@@ -202,6 +202,7 @@ $(() => {
     selection: {
       mode: 'single',
     },
+    filterSyncEnabled: true,
     toolbar: {
       multiline: true,
       items: [
@@ -238,10 +239,17 @@ $(() => {
         {
           location: 'before',
           widget: 'dxDateBox',
+          type: 'date',
+          displayFormat: 'shortdate',
           options: {
             showClearButton: true,
             onValueChanged(e) {
-              console.log(e);
+              let filter = null;
+              if (e.value) {
+                filter = e.value;
+              }
+              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
             },
           },
         },
@@ -253,9 +261,16 @@ $(() => {
           location: 'before',
           widget: 'dxDateBox',
           options: {
+            type: 'date',
+            displayFormat: 'shortdate',
             showClearButton: true,
             onValueChanged(e) {
-              console.log(e);
+              let filter = null;
+              if (e.value) {
+                filter = e.value;
+              }
+              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
             },
           },
         },
@@ -316,9 +331,26 @@ $(() => {
         allowSearch: false,
       },
       {
-        dataField: 'collectionEndDate',
-        // visible: false,
+        id: 'collectionStartDate',
+        name: 'collectionStartDate',
+        dataField: 'collectionStartDate',
+        visible: false,
+        allowSearch: false,
         allowHeaderFiltering: true,
+        dataType: 'date',
+        selectedFilterOperation: '>=',
+        filterOperations: ['>='],
+      },
+      {
+        id: 'collectionEndDate',
+        name: 'collectionEndDate',
+        dataField: 'collectionEndDate',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'date',
+        selectedFilterOperation: '<=',
+        filterOperations: ['<='],
       },
     ],
     hoverStateEnabled: true,

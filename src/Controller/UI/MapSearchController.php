@@ -6,6 +6,7 @@ use App\Enum\DatasetLifecycleStatus;
 use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
+use Elastica\Query\Range;
 use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,8 +56,33 @@ final class MapSearchController extends AbstractController
             $lastOperation = 'or';
 
             if (3 === count($filters) and is_string($filters[0]) && is_string($filters[1]) && is_string($filters[2])) {
-                $filterQuery = new Term();
-                $filterQuery->setTerm($filters[0], $filters[2]);
+                $fieldName = $filters[0];
+                $fieldOperation = $filters[1];
+                $fieldValue = $filters[2];
+
+                switch ($fieldOperation) {
+                    case '=':
+                        $filterQuery = new Term();
+                        $filterQuery->setTerm($fieldName, $fieldValue);
+                        break;
+                    case '<=':
+                        $filterQuery = new Range($fieldName);
+                        $filterDate = new \DateTime($fieldValue);
+                        $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
+                        break;
+                    case '<':
+                        $filterQuery = new Range($fieldName);
+                        $filterDate = new \DateTime($fieldValue);
+                        $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
+                        break;
+                    case '>=':
+                        $filterQuery = new Range($fieldName);
+                        $filterDate = new \DateTime($fieldValue);
+                        $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
+                        break;
+                    default:
+                        throw new \InvalidArgumentException('Invalid filter operation');
+                }
                 $searchFilter->addShould($filterQuery);
             } else {
                 foreach ($filters as $filter) {
@@ -189,6 +215,12 @@ final class MapSearchController extends AbstractController
                         case 'or':
                             $searchFilter->addShould($filterQuery);
                             $lastOperation = 'or';
+                            break;
+                        case 'lte':
+                            dd($filterQuery);
+                            // $filterQuery = new Range($filter[0]);
+                            // $searchFilter->addShould($filterQuery);
+                            // $lastOperation = 'or';
                             break;
                         default:
                             throw new \InvalidArgumentException('Invalid filter operation');
