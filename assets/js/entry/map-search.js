@@ -4,6 +4,7 @@ import 'devextreme/integration/jquery';
 import 'devextreme/ui/data_grid';
 import 'devextreme/ui/toolbar';
 import 'devextreme/ui/button';
+import 'devextreme/ui/date_box';
 import 'devextreme/scss/bundles/dx.light.scss';
 import CustomStore from 'devextreme/data/custom_store';
 
@@ -173,15 +174,6 @@ $(() => {
         .fail(() => { d.reject(new Error('Data loading error')); });
       return d.promise();
     },
-    // Needed to process selected value(s) in the SelectBox, Lookup, Autocomplete, and DropDownBox
-    // byKey: function(key) {
-    //     var d = new $.Deferred();
-    //     $.get('/map/getkeys?id=' + key)
-    //         .done(function(result) {
-    //             d.resolve(result);
-    //         });
-    //     return d.promise();
-    // }
   });
 
   $('#datasets-grid').dxDataGrid({
@@ -194,8 +186,10 @@ $(() => {
     showRowLines: true,
     paging: {
       enabled: true,
-      pageSize: 20,
+      pageSize: 18,
     },
+    filterRow: { visible: false },
+    filterPanel: { visible: false },
     pager: {
       visible: true,
       showInfo: true,
@@ -208,7 +202,9 @@ $(() => {
     selection: {
       mode: 'single',
     },
+    filterSyncEnabled: true,
     toolbar: {
+      multiline: true,
       items: [
         {
           location: 'before',
@@ -233,6 +229,48 @@ $(() => {
             icon: 'home',
             onClick() {
               goHome();
+            },
+          },
+        },
+        {
+          location: 'before',
+          template: '<div>Start Date:</div>',
+        },
+        {
+          location: 'before',
+          widget: 'dxDateBox',
+          type: 'date',
+          displayFormat: 'shortdate',
+          options: {
+            showClearButton: true,
+            onValueChanged(e) {
+              let filter = null;
+              if (e.value) {
+                filter = e.value;
+              }
+              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
+            },
+          },
+        },
+        {
+          location: 'before',
+          template: '<div>End Date:</div>',
+        },
+        {
+          location: 'before',
+          widget: 'dxDateBox',
+          options: {
+            type: 'date',
+            displayFormat: 'shortdate',
+            showClearButton: true,
+            onValueChanged(e) {
+              let filter = null;
+              if (e.value) {
+                filter = e.value;
+              }
+              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
             },
           },
         },
@@ -290,7 +328,29 @@ $(() => {
         caption: 'Status',
         width: 100,
         allowHeaderFiltering: true,
-        allowSearching: false,
+        allowSearch: false,
+      },
+      {
+        id: 'collectionStartDate',
+        name: 'collectionStartDate',
+        dataField: 'collectionStartDate',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'date',
+        selectedFilterOperation: '>=',
+        filterOperations: ['>='],
+      },
+      {
+        id: 'collectionEndDate',
+        name: 'collectionEndDate',
+        dataField: 'collectionEndDate',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'date',
+        selectedFilterOperation: '<=',
+        filterOperations: ['<='],
       },
     ],
     hoverStateEnabled: true,
