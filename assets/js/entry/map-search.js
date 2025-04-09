@@ -64,8 +64,8 @@ map.on('pm:create', (e) => {
   drawnLayer = e.layer;
   const geojson = drawnLayer.toGeoJSON();
   if (geojson) {
-    // for now, just alert the geojson
-    alert(JSON.stringify(geojson));
+    const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+    dataGrid.columnOption('geometry', 'filterValue', geojson);
   }
 });
 
@@ -166,7 +166,6 @@ function goHome() {
 function clearFeatures() {
   features.clearLayers();
 }
-
 
 function isNotEmpty(value) {
   return value !== undefined && value !== null && value !== '';
@@ -389,6 +388,17 @@ $(() => {
         dataType: 'date',
         selectedFilterOperation: '<=',
         filterOperations: ['<='],
+      },
+      {
+        id: 'geometry',
+        name: 'geometry',
+        dataField: 'geometry',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'string',
+        selectedFilterOperation: '=',
+        filterOperations: ['='],
       },
     ],
     hoverStateEnabled: true,
