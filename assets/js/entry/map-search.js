@@ -54,7 +54,7 @@ map.pm.addControls({
   cutPolygon: false,
   editMode: false,
   dragMode: false,
-  removalMode: false,
+  removalMode: true,
   rotateMode: false,
 });
 
@@ -67,6 +67,11 @@ map.on('pm:create', (e) => {
     const dataGrid = $('#datasets-grid').dxDataGrid('instance');
     dataGrid.columnOption('geometry', 'filterValue', geojson);
   }
+});
+
+map.on('pm:remove', () => {
+  const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+  dataGrid.columnOption('geometry', 'filterValue', null);
 });
 
 // Listen for the drawstart event and clear the previously drawn features, if any.
