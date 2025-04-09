@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Enum\DatasetLifecycleStatus;
+use App\Util\ExpressionParser;
 use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
@@ -245,6 +246,21 @@ final class MapSearchController extends AbstractController
             case '=':
                 $query = new Term();
                 $query->setTerm($fieldName, $fieldValue);
+                break;
+            case '<=':
+                $filterQuery = new Range($fieldName);
+                $filterDate = new \DateTime($fieldValue);
+                $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
+                break;
+            case '<':
+                $filterQuery = new Range($fieldName);
+                $filterDate = new \DateTime($fieldValue);
+                $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
+                break;
+            case '>=':
+                $filterQuery = new Range($fieldName);
+                $filterDate = new \DateTime($fieldValue);
+                $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
                 break;
             case 'contains':
                 $query = new Query\MatchPhrase($fieldName, $fieldValue);
