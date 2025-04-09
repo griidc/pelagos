@@ -10,8 +10,8 @@ import CustomStore from 'devextreme/data/custom_store';
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
-// import 'leaflet/dist/leaflet.css';
-import '../../css/leaflet-custom.css';
+//import 'leaflet/dist/leaflet.css';
+import '../../css/leaflet-custom-map.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import "@geoman-io/leaflet-geoman-free";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
@@ -55,6 +55,24 @@ map.pm.addControls({
   dragMode: false,
   removalMode: false,
   rotateMode: false,
+});
+
+let drawnLayer;
+// Function to handle the map filter drawn event
+map.on('pm:create', (e) => {
+  drawnLayer = e.layer;
+  const geojson = drawnLayer.toGeoJSON();
+  if (geojson) {
+    // for now, just alert the geojson
+    alert(JSON.stringify(geojson));
+  }
+});
+
+// Listen for the drawstart event and clear the previously drawn features, if any.
+map.on('pm:drawstart', () => {
+  if (drawnLayer) {
+    map.removeLayer(drawnLayer);
+  }
 });
 
 const basemapEnum = 'ArcGIS:Imagery';
@@ -147,6 +165,7 @@ function goHome() {
 function clearFeatures() {
   features.clearLayers();
 }
+
 
 function isNotEmpty(value) {
   return value !== undefined && value !== null && value !== '';
@@ -336,23 +355,4 @@ $(() => {
       }
     },
   });
-});
-
-// Function to handle the map filter drawn event
-let drawnLayer;
-let geojson;
-
-map.on('pm:create', (e) => {
-  drawnLayer = e.layer;
-  geojson = drawnLayer.toGeoJSON();
-  if (geojson) {
-    alert(JSON.stringify(geojson));
-  }
-});
-
-// Listen for the drawstart event and clear the previously drawn features, if any.
-map.on('pm:drawstart', () => {
-  if (drawnLayer) {
-    map.removeLayer(drawnLayer);
-  }
 });
