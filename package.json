@@ -42,6 +42,7 @@
     },
     "dependencies": {
         "@alpinejs/collapse": "^3.14.9",
+        "@geoman-io/leaflet-geoman-free": "^2.18.3",
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.2.0",
         "@tailwindcss/typography": "^0.5.16",

@@ -12,8 +12,10 @@ import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
 // import 'leaflet/dist/leaflet.css';
-import '../../css/leaflet-custom.css';
+// import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 const esriApiKey = process.env.ESRI_API_KEY;
 
@@ -37,6 +39,46 @@ const map = Leaflet.map('leaflet-map', {
   maxZoom: 14,
   attributionControl: true,
   worldCopyJump: true,
+});
+
+// add Leaflet-Geoman controls with some options to the map
+map.pm.addControls({
+  position: 'topleft',
+  drawCircleMarker: false,
+  drawMarker: false,
+  drawPolyline: false,
+  drawRectangle: true,
+  drawPolygon: true,
+  drawCircle: false,
+  drawText: false,
+  cutPolygon: false,
+  editMode: false,
+  dragMode: false,
+  removalMode: true,
+  rotateMode: false,
+});
+
+let drawnLayer;
+// Function to handle the map filter drawn event
+map.on('pm:create', (e) => {
+  drawnLayer = e.layer;
+  const geojson = drawnLayer.toGeoJSON();
+  if (geojson) {
+    const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+    dataGrid.columnOption('geometry', 'filterValue', geojson);
+  }
+});
+
+map.on('pm:remove', () => {
+  const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+  dataGrid.columnOption('geometry', 'filterValue', null);
+});
+
+// Listen for the drawstart event and clear the previously drawn features, if any.
+map.on('pm:drawstart', () => {
+  if (drawnLayer) {
+    map.removeLayer(drawnLayer);
+  }
 });
 
 const basemapEnum = 'ArcGIS:Imagery';
@@ -351,6 +393,17 @@ $(() => {
         dataType: 'date',
         selectedFilterOperation: '<=',
         filterOperations: ['<='],
+      },
+      {
+        id: 'geometry',
+        name: 'geometry',
+        dataField: 'geometry',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'string',
+        selectedFilterOperation: '=',
+        filterOperations: ['='],
       },
     ],
     hoverStateEnabled: true,

@@ -3,10 +3,10 @@
 namespace App\Controller\UI;
 
 use App\Enum\DatasetLifecycleStatus;
-use App\Util\ExpressionParser;
 use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
+use Elastica\Query\GeoShapeProvided;
 use Elastica\Query\Range;
 use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
@@ -54,67 +54,80 @@ final class MapSearchController extends AbstractController
             $searchFilter = new BoolQuery();
             $filterQuery = new BoolQuery();
 
-            $lastOperation = 'or';
+            if ('geometry' == $filters[0]) {
+                $geoJson = json_encode($filters[2]);
 
-            if (3 === count($filters) and is_string($filters[0]) && is_string($filters[1]) && is_string($filters[2])) {
-                $fieldName = $filters[0];
-                $fieldOperation = $filters[1];
-                $fieldValue = $filters[2];
+                $geometry = \geoPHP::load($geoJson, 'json');
 
-                switch ($fieldOperation) {
-                    case '=':
-                        $filterQuery = new Term();
-                        $filterQuery->setTerm($fieldName, $fieldValue);
-                        break;
-                    case '<=':
-                        $filterQuery = new Range($fieldName);
-                        $filterDate = new \DateTime($fieldValue);
-                        $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
-                        break;
-                    case '<':
-                        $filterQuery = new Range($fieldName);
-                        $filterDate = new \DateTime($fieldValue);
-                        $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
-                        break;
-                    case '>=':
-                        $filterQuery = new Range($fieldName);
-                        $filterDate = new \DateTime($fieldValue);
-                        $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
-                        break;
-                    default:
-                        throw new \InvalidArgumentException('Invalid filter operation');
-                }
-                $searchFilter->addShould($filterQuery);
+                $geoFilter = new GeoShapeProvided(
+                    'simpleGeometry',
+                    $geometry->asArray(),
+                    GeoShapeProvided::TYPE_POLYGON
+                );
+
+                $filterQuery->addMust($geoFilter);
             } else {
-                foreach ($filters as $filter) {
-                    if (is_array($filter)) {
-                        $filterQuery = $this->filterArrayToQuery($filter);
-                    } else {
-                        switch ($filter) {
-                            case 'and':
-                                $searchFilter->addMust($filterQuery);
-                                $lastOperation = 'and';
-                                break;
-                            case 'or':
-                                $searchFilter->addShould($filterQuery);
-                                $lastOperation = 'or';
-                                break;
-                            case '=':
-                                $searchFilter->addShould($filterQuery);
-                                break;
-                            default:
-                                throw new \InvalidArgumentException('Invalid filter operation');
-                        }
-                    }
+                $lastOperation = 'or';
 
-                    if ('and' === $lastOperation) {
-                        $searchFilter->addMust($filterQuery);
-                    } else {
-                        $searchFilter->addShould($filterQuery);
+                if (3 === count($filters) and is_string($filters[0]) && is_string($filters[1]) && is_string($filters[2])) {
+                    $fieldName = $filters[0];
+                    $fieldOperation = $filters[1];
+                    $fieldValue = $filters[2];
+
+                    switch ($fieldOperation) {
+                        case '=':
+                            $filterQuery = new Term();
+                            $filterQuery->setTerm($fieldName, $fieldValue);
+                            break;
+                        case '<=':
+                            $filterQuery = new Range($fieldName);
+                            $filterDate = new \DateTime($fieldValue);
+                            $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
+                            break;
+                        case '<':
+                            $filterQuery = new Range($fieldName);
+                            $filterDate = new \DateTime($fieldValue);
+                            $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
+                            break;
+                        case '>=':
+                            $filterQuery = new Range($fieldName);
+                            $filterDate = new \DateTime($fieldValue);
+                            $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
+                            break;
+                        default:
+                            throw new \InvalidArgumentException('Invalid filter operation');
+                    }
+                    $searchFilter->addShould($filterQuery);
+                } else {
+                    foreach ($filters as $filter) {
+                        if (is_array($filter)) {
+                            $filterQuery = $this->filterArrayToQuery($filter);
+                        } else {
+                            switch ($filter) {
+                                case 'and':
+                                    $searchFilter->addMust($filterQuery);
+                                    $lastOperation = 'and';
+                                    break;
+                                case 'or':
+                                    $searchFilter->addShould($filterQuery);
+                                    $lastOperation = 'or';
+                                    break;
+                                case '=':
+                                    $searchFilter->addShould($filterQuery);
+                                    break;
+                                default:
+                                    throw new \InvalidArgumentException('Invalid filter operation');
+                            }
+                        }
+
+                        if ('and' === $lastOperation) {
+                            $searchFilter->addMust($filterQuery);
+                        } else {
+                            $searchFilter->addShould($filterQuery);
+                        }
                     }
                 }
             }
-
             $query->setQuery($searchFilter);
         }
 
@@ -193,8 +206,6 @@ final class MapSearchController extends AbstractController
 
     /**
      * Transform the filter array to a query.
-     *
-     * @param array $filters
      */
     private function filterArrayToQuery(array $filters): AbstractQuery
     {
