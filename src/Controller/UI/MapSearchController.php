@@ -6,7 +6,8 @@ use App\Enum\DatasetLifecycleStatus;
 use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
-use Elastica\Query\GeoShapeProvided;
+use Elastica\Query\MatchPhrase;
+use Elastica\Query\MatchPhrasePrefix;
 use Elastica\Query\Range;
 use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
@@ -27,6 +28,18 @@ final class MapSearchController extends AbstractController
     public function index(): Response
     {
         return $this->render('MapSearch/index.html.twig');
+    }
+
+    private function getValueFromFilterRegex(string $filter, string $field): ?string
+    {
+        // regex find using :"(title)","([^"]+)","([^"]+)"
+        preg_match('/"(' . $field . ')","([^"]+)","([^"]+)"/', $filter, $matches);
+
+        if (count($matches) > 0) {
+            return $matches[3];
+        }
+
+        return null;
     }
 
     #[Route('/map/search', name: 'app_map_search_search')]
@@ -51,83 +64,29 @@ final class MapSearchController extends AbstractController
         if (null !== $filter && [] !== $filter) {
             $filters = json_decode($filter[0], true);
 
+            dd($filters);
+
+            $mainQuery = new BoolQuery();
+
             $searchFilter = new BoolQuery();
+
+            $value = $this->getValueFromFilterRegex($filter[0], 'udi');
+            $matchQuery = new MatchPhrase('udi', $value);
+            $searchFilter->addShould($matchQuery);
+
+            $value = $this->getValueFromFilterRegex($filter[0], 'title');
+            $matchQuery = new MatchPhrasePrefix('title', $value);
+            $searchFilter->addShould($matchQuery);
+
+            $value = $this->getValueFromFilterRegex($filter[0], 'doi.doi');
+            $matchQuery = new MatchPhrasePrefix('doi.doi', $value);
+            $searchFilter->addShould($matchQuery);
+
+            $mainQuery->addMust($searchFilter);
+
             $filterQuery = new BoolQuery();
 
-            if ('geometry' == $filters[0]) {
-                $geoJson = json_encode($filters[2]);
 
-                $geometry = \geoPHP::load($geoJson, 'json');
-
-                $geoFilter = new GeoShapeProvided(
-                    'simpleGeometry',
-                    $geometry->asArray(),
-                    GeoShapeProvided::TYPE_POLYGON
-                );
-
-                $filterQuery->addMust($geoFilter);
-            } else {
-                $lastOperation = 'or';
-
-                if (3 === count($filters) and is_string($filters[0]) && is_string($filters[1]) && is_string($filters[2])) {
-                    $fieldName = $filters[0];
-                    $fieldOperation = $filters[1];
-                    $fieldValue = $filters[2];
-
-                    switch ($fieldOperation) {
-                        case '=':
-                            $filterQuery = new Term();
-                            $filterQuery->setTerm($fieldName, $fieldValue);
-                            break;
-                        case '<=':
-                            $filterQuery = new Range($fieldName);
-                            $filterDate = new \DateTime($fieldValue);
-                            $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
-                            break;
-                        case '<':
-                            $filterQuery = new Range($fieldName);
-                            $filterDate = new \DateTime($fieldValue);
-                            $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
-                            break;
-                        case '>=':
-                            $filterQuery = new Range($fieldName);
-                            $filterDate = new \DateTime($fieldValue);
-                            $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
-                            break;
-                        default:
-                            throw new \InvalidArgumentException('Invalid filter operation');
-                    }
-                    $searchFilter->addShould($filterQuery);
-                } else {
-                    foreach ($filters as $filter) {
-                        if (is_array($filter)) {
-                            $filterQuery = $this->filterArrayToQuery($filter);
-                        } else {
-                            switch ($filter) {
-                                case 'and':
-                                    $searchFilter->addMust($filterQuery);
-                                    $lastOperation = 'and';
-                                    break;
-                                case 'or':
-                                    $searchFilter->addShould($filterQuery);
-                                    $lastOperation = 'or';
-                                    break;
-                                case '=':
-                                    $searchFilter->addShould($filterQuery);
-                                    break;
-                                default:
-                                    throw new \InvalidArgumentException('Invalid filter operation');
-                            }
-                        }
-
-                        if ('and' === $lastOperation) {
-                            $searchFilter->addMust($filterQuery);
-                        } else {
-                            $searchFilter->addShould($filterQuery);
-                        }
-                    }
-                }
-            }
             $query->setQuery($searchFilter);
         }
 
