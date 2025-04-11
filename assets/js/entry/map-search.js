@@ -14,8 +14,8 @@ import * as EsriLeafletVector from 'esri-leaflet-vector';
 // import 'leaflet/dist/leaflet.css';
 // import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-import "@geoman-io/leaflet-geoman-free";
-import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+import '@geoman-io/leaflet-geoman-free';
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 const esriApiKey = process.env.ESRI_API_KEY;
 
