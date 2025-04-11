@@ -6,6 +6,7 @@ use App\Enum\DatasetLifecycleStatus;
 use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
+use Elastica\Query\GeoShapeProvided;
 use Elastica\Query\MatchPhrase;
 use Elastica\Query\MatchPhrasePrefix;
 use Elastica\Query\Range;
@@ -32,11 +33,13 @@ final class MapSearchController extends AbstractController
 
     private function getValueFromFilterRegex(string $filter, string $field): ?string
     {
-        // regex find using :"(title)","([^"]+)","([^"]+)"
-        preg_match('/"(' . $field . ')","([^"]+)","([^"]+)"/', $filter, $matches);
+        /* /"(geometry)","([^"]+)",(\{.*\})/ */
+        /* /"(title)","([^"]+)","([^"]+)"/   */
+        preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)")/', $filter, $matches);
+
 
         if (count($matches) > 0) {
-            return $matches[3];
+            return $matches[5] ?? $matches[3] ?? null;
         }
 
         return null;
@@ -44,7 +47,7 @@ final class MapSearchController extends AbstractController
 
     #[Route('/map/search', name: 'app_map_search_search')]
     public function search(
-        #[MapQueryParameter] ?int $take = 20,
+        #[MapQueryParameter] int $take,
         #[MapQueryParameter] ?int $skip = 0,
         #[MapQueryParameter] ?array $filter = [],
         #[MapQueryParameter] ?array $group = [],
@@ -62,37 +65,90 @@ final class MapSearchController extends AbstractController
         }
 
         if (null !== $filter && [] !== $filter) {
-            $filters = json_decode($filter[0], true);
-
-            dd($filters);
-
             $mainQuery = new BoolQuery();
 
             $searchFilter = new BoolQuery();
 
-            $value = $this->getValueFromFilterRegex($filter[0], 'udi');
-            $matchQuery = new MatchPhrase('udi', $value);
-            $searchFilter->addShould($matchQuery);
+            $field = 'udi';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $matchQuery = new MatchPhrase($field, $value);
+                $searchFilter->addShould($matchQuery);
+            }
 
-            $value = $this->getValueFromFilterRegex($filter[0], 'title');
-            $matchQuery = new MatchPhrasePrefix('title', $value);
-            $searchFilter->addShould($matchQuery);
+            $field = 'title';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $matchQuery = new MatchPhrasePrefix($field, $value);
+                $searchFilter->addShould($matchQuery);
+            }
 
-            $value = $this->getValueFromFilterRegex($filter[0], 'doi.doi');
-            $matchQuery = new MatchPhrasePrefix('doi.doi', $value);
-            $searchFilter->addShould($matchQuery);
+            $field = 'doi.doi';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $matchQuery = new MatchPhrase($field, $value);
+                $searchFilter->addShould($matchQuery);
+            }
 
-            $mainQuery->addMust($searchFilter);
+            if ($searchFilter->count() > 0) {
+                $mainQuery->addMust($searchFilter);
+            }
 
             $filterQuery = new BoolQuery();
 
+            $field = 'datasetLifecycleStatus';
+            $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus');
+            if ($value !== null) {
+                $termQuery = new Term();
+                $termQuery->setTerm($field, $value);
+                $filterQuery->addFilter($termQuery);
+            }
 
-            $query->setQuery($searchFilter);
+            $field = 'collectionStartDate';
+
+            $value = $this->getValueFromFilterRegex($filter[0], 'collectionStartDate');
+            if ($value !== null) {
+                $rangeQuery = new Range($field);
+                $filterDate = new \DateTime($value);
+                $rangeQuery->addField($field, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
+                $filterQuery->addFilter($rangeQuery);
+            }
+
+            $field = 'collectionEndDate';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $rangeQuery = new Range($field);
+                $filterDate = new \DateTime($value);
+                $rangeQuery->addField($field, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
+                $filterQuery->addFilter($rangeQuery);
+            }
+
+            if ($filterQuery->count() > 0) {
+                $mainQuery->addMust($filterQuery);
+            }
+
+            $field = 'geometry';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $geoJson = json_decode($value, true);
+                if (isset($geoJson['geometry']['coordinates'])) {
+                    $geoQuery = new GeoShapeProvided(
+                        'simpleGeometry',
+                        $geoJson['geometry']['coordinates'],
+                        GeoShapeProvided::TYPE_POLYGON
+                    );
+                    $geoQuery->setRelation(GeoShapeProvided::RELATION_INTERSECT);
+
+                    $mainQuery->addFilter($geoQuery);
+                }
+            }
+
+            $query->setQuery($mainQuery);
         }
 
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
 
-        $page = (int) ($skip / $take) + 1;
+        $page = (int) ($skip ?? 0 / $take) + 1;
 
         $find->setMaxPerPage($take);
         $find->setCurrentPage($page);
