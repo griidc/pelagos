@@ -8,6 +8,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * DeletedUdi Entity Repository class.
+ *
+ * @extends ServiceEntityRepository
  */
 class DeletedUdiRepository extends ServiceEntityRepository
 {
