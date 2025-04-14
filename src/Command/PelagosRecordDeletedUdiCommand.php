@@ -2,7 +2,9 @@
 
 namespace App\Command;
 
+use App\Entity\Dataset;
 use App\Entity\DeletedUdi;
+use App\Entity\Person;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -40,16 +42,28 @@ class PelagosRecordDeletedUdiCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $udi = $input->getArgument('udi');
+        $systemPerson = $this->entityManager->find(Person::class, 0);
 
-        if ($udi) {
-            $deletedUdi = new DeletedUdi();
-            $deletedUdi->setUDI($udi);
-            $this->entityManager->persist($deletedUdi);
-            $this->entityManager->flush();
+        $deletedUdi = $this->entityManager->getRepository(DeletedUdi::class)->findOneBy(['udi' => $udi]);
+        if ($deletedUdi instanceof DeletedUdi) {
+            $io->warning('UDI ' . $udi . ' already marked as deleted.');
+            return Command::SUCCESS;
         }
 
-        $io->success('Deleted UDI ' . $udi . ' recorded successfully.');
+        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
+        if ($dataset instanceof Dataset) {
+            $io->error('Dataset with UDI ' . $udi . ' currently exists. Cannot record as deleted.');
+            return Command::FAILURE;
+        } else {
+            $deletedUdi = new DeletedUdi();
+            $deletedUdi->setUDI($udi);
+            $deletedUdi->setCreator($systemPerson);
+            $this->entityManager->persist($deletedUdi);
+            $this->entityManager->flush();
 
-        return Command::SUCCESS;
+            $io->success('Deleted UDI ' . $udi . ' recorded successfully.');
+
+            return Command::SUCCESS;
+        }
     }
 }
