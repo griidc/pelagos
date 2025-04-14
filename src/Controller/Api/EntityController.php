@@ -2,6 +2,8 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Dataset;
+use App\Entity\DeletedUdi;
 use Doctrine\ORM\Query;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +17,8 @@ use App\Handler\EntityHandler;
 use App\Entity\Entity;
 use App\Exception\NotDeletableException;
 use App\Exception\UnmappedPropertyException;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\TopologicalSort\CycleDetectedException;
 
 /**
@@ -37,15 +41,23 @@ abstract class EntityController extends AbstractFOSRestController
     protected $formFactory;
 
     /**
+     * Entity manager instance.
+     *
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * EntityController constructor.
      *
      * @param EntityHandler        $entityHandler Entity Handler instance.
      * @param FormFactoryInterface $formFactory   Form factory instance.
      */
-    public function __construct(EntityHandler $entityHandler, FormFactoryInterface $formFactory)
+    public function __construct(EntityHandler $entityHandler, FormFactoryInterface $formFactory, EntityManagerInterface $entityManager)
     {
         $this->entityHandler = $entityHandler;
         $this->formFactory = $formFactory;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -209,6 +221,14 @@ abstract class EntityController extends AbstractFOSRestController
         } catch (CycleDetectedException $exception) {
             dump($exception->getCycle());
             throw $exception;
+        }
+        // If the entity deleted was a Dataset, create a DeletedUdi entity.
+        if ($entity instanceof Dataset) {
+            $deletedUdi = new DeletedUdi();
+            $deletedUdi->setUdi($entity->getUdi());
+            $deletedUdi->setCreator($this->getUser()->getPerson());
+            $this->entityManager->persist($deletedUdi);
+            $this->entityManager->flush();
         }
         return $entity;
     }
