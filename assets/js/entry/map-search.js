@@ -81,7 +81,80 @@ map.on('pm:drawstart', () => {
   }
 });
 
-const basemapEnum = 'ArcGIS:Imagery';
+let basemapEnum = 'ArcGIS:Imagery';
+
+const basemapOptions = {
+
+  'ArcGIS:Imagery': () => EsriLeafletVector.vectorBasemapLayer('ArcGIS:Imagery', { apiKey: esriApiKey }).addTo(map),
+
+  'USGS_USImageryTopo': () => Leaflet.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
+  }).addTo(map),
+
+  'Esri_NatGeoWorldMap': () => Leaflet.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+  }).addTo(map),
+
+  'OpenStreetMap': () => Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map),
+
+  'Stadia_AlidadeSatellite': () => Leaflet.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}', {
+    attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    ext: 'jpg'
+  }).addTo(map),
+
+  'TopPlusOpen': () => Leaflet.tileLayer('http://sgx.geodatenzentrum.de/wmts_topplus_open/tile/1.0.0/web/default/WEBMERCATOR/{z}/{y}/{x}.png', {
+    attribution: 'Map data: &copy; <a href="http://www.govdata.de/dl-de/by-2-0">dl-de/by-2-0</a>'
+  }).addTo(map),
+
+  'OpenTopoMap': () => Leaflet.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+  }).addTo(map),
+
+};
+
+// Function to switch basemaps
+function switchBasemap(basemap) {
+  map.eachLayer((layer) => {
+    if (layer !== features) {
+      map.removeLayer(layer);
+    }
+  });
+  basemapOptions[basemap]();
+}
+
+// Add a dropdown to switch basemaps
+const basemapControl = Leaflet.control({ position: 'topright' });
+basemapControl.onAdd = () => {
+  const div = Leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+  div.innerHTML = `
+    <select id="basemap-selector">
+      <option value="ArcGIS:Imagery">ArcGIS Imagery</option>
+      <option value="USGS_USImageryTopo">USGS US Imagery Topo</option>
+      <option value="Esri_NatGeoWorldMap">Esri NatGeo World Map</option>
+      <option value="OpenStreetMap">OpenStreetMap</option>
+      <option value="Stadia_AlidadeSatellite">Stadia Alidade Satellite</option>
+      <option value="TopPlusOpen">TopPlus Open</option>
+      <option value="OpenTopoMap">Open Topo Map</option>
+    </select>
+  `;
+  div.style.padding = '5px';
+  div.style.background = 'white';
+  div.style.cursor = 'pointer';
+  Leaflet.DomEvent.disableClickPropagation(div);
+  return div;
+};
+basemapControl.addTo(map);
+
+// Event listener for basemap selection
+document.getElementById('basemap-selector').addEventListener('change', (e) => {
+  basemapEnum = e.target.value;
+  switchBasemap(basemapEnum);
+});
+
+// Initialize the default basemap
+basemapOptions[basemapEnum]();
 EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
   apiKey: esriApiKey,
 }).addTo(map);
