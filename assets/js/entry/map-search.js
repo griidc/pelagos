@@ -87,6 +87,8 @@ const basemapOptions = {
 
   'ArcGIS:Imagery': () => EsriLeafletVector.vectorBasemapLayer('ArcGIS:Imagery', { apiKey: esriApiKey }).addTo(map),
 
+  'ArcGIS:Oceans': () => EsriLeafletVector.vectorBasemapLayer('ArcGIS:Oceans', { apiKey: esriApiKey }).addTo(map),
+
   'USGS_USImageryTopo': () => Leaflet.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
   }).addTo(map),
@@ -97,15 +99,6 @@ const basemapOptions = {
 
   'OpenStreetMap': () => Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map),
-
-  'Stadia_AlidadeSatellite': () => Leaflet.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}', {
-    attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    ext: 'jpg'
-  }).addTo(map),
-
-  'TopPlusOpen': () => Leaflet.tileLayer('http://sgx.geodatenzentrum.de/wmts_topplus_open/tile/1.0.0/web/default/WEBMERCATOR/{z}/{y}/{x}.png', {
-    attribution: 'Map data: &copy; <a href="http://www.govdata.de/dl-de/by-2-0">dl-de/by-2-0</a>'
   }).addTo(map),
 
   'OpenTopoMap': () => Leaflet.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
@@ -131,11 +124,10 @@ basemapControl.onAdd = () => {
   div.innerHTML = `
     <select id="basemap-selector">
       <option value="ArcGIS:Imagery">ArcGIS Imagery</option>
+      <option value="ArcGIS:Oceans">ArcGIS Oceans</option>
       <option value="USGS_USImageryTopo">USGS US Imagery Topo</option>
       <option value="Esri_NatGeoWorldMap">Esri NatGeo World Map</option>
       <option value="OpenStreetMap">OpenStreetMap</option>
-      <option value="Stadia_AlidadeSatellite">Stadia Alidade Satellite</option>
-      <option value="TopPlusOpen">TopPlus Open</option>
       <option value="OpenTopoMap">Open Topo Map</option>
     </select>
   `;
