@@ -239,14 +239,12 @@ $(() => {
     searchPanel: {
       visible: true,
       placeholder: 'Search...',
-      width: 400,
     },
     selection: {
       mode: 'single',
     },
     filterSyncEnabled: true,
     toolbar: {
-      multiline: true,
       items: [
         {
           location: 'before',
