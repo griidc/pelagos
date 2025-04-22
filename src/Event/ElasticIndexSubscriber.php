@@ -65,8 +65,6 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         $wkt = null;
         $geoJson = null;
 
-
-
         // Logic to get the spatialExtent is in Dataset Entity.
         try {
             if ($dataset->getSpatialExtentGeometry()) {

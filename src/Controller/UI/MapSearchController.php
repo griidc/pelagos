@@ -37,7 +37,6 @@ final class MapSearchController extends AbstractController
         /* /"(title)","([^"]+)","([^"]+)"/   */
         preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)")/', $filter, $matches);
 
-
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
         }
@@ -137,7 +136,7 @@ final class MapSearchController extends AbstractController
                         $geoJson['geometry']['coordinates'],
                         GeoShapeProvided::TYPE_POLYGON
                     );
-                    $geoQuery->setRelation(GeoShapeProvided::RELATION_INTERSECT);
+                    $geoQuery->setRelation(GeoShapeProvided::RELATION_WITHIN);
 
                     $mainQuery->addFilter($geoQuery);
                 }
