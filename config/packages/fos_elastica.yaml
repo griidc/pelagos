@@ -98,6 +98,10 @@ fos_elastica:
                     type: 'geo_shape'
                     ignore_malformed: true
                     property_path: false
+                simpleGeometry:
+                    type: 'geo_shape'
+                    ignore_malformed: true
+                    property_path: false
                 datasetLifecycleStatus:
                     type: 'keyword'
                     property_path: false
