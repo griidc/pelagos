@@ -7,6 +7,8 @@ use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
+use Elastica\Query\MatchPhrase;
+use Elastica\Query\MatchPhrasePrefix;
 use Elastica\Query\Range;
 use Elastica\Query\Term;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
@@ -29,9 +31,22 @@ final class MapSearchController extends AbstractController
         return $this->render('MapSearch/index.html.twig');
     }
 
+    private function getValueFromFilterRegex(string $filter, string $field): ?string
+    {
+        /* /"(geometry)","([^"]+)",(\{.*\})/ */
+        /* /"(title)","([^"]+)","([^"]+)"/   */
+        preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)")/', $filter, $matches);
+
+        if (count($matches) > 0) {
+            return $matches[5] ?? $matches[3] ?? null;
+        }
+
+        return null;
+    }
+
     #[Route('/map/search', name: 'app_map_search_search')]
     public function search(
-        #[MapQueryParameter] ?int $take = 20,
+        #[MapQueryParameter] int $take,
         #[MapQueryParameter] ?int $skip = 0,
         #[MapQueryParameter] ?array $filter = [],
         #[MapQueryParameter] ?array $group = [],
@@ -49,91 +64,90 @@ final class MapSearchController extends AbstractController
         }
 
         if (null !== $filter && [] !== $filter) {
-            $filters = json_decode($filter[0], true);
+            $mainQuery = new BoolQuery();
 
             $searchFilter = new BoolQuery();
+
+            $field = 'udi';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $matchQuery = new MatchPhrase($field, $value);
+                $searchFilter->addShould($matchQuery);
+            }
+
+            $field = 'title';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $matchQuery = new MatchPhrasePrefix($field, $value);
+                $searchFilter->addShould($matchQuery);
+            }
+
+            $field = 'doi.doi';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $matchQuery = new MatchPhrase($field, $value);
+                $searchFilter->addShould($matchQuery);
+            }
+
+            if ($searchFilter->count() > 0) {
+                $mainQuery->addMust($searchFilter);
+            }
+
             $filterQuery = new BoolQuery();
 
-            if ('geometry' == $filters[0]) {
-                $geoJson = json_encode($filters[2]);
+            $field = 'datasetLifecycleStatus';
+            $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus');
+            if ($value !== null) {
+                $termQuery = new Term();
+                $termQuery->setTerm($field, $value);
+                $filterQuery->addFilter($termQuery);
+            }
 
-                $geometry = \geoPHP::load($geoJson, 'json');
+            $field = 'collectionStartDate';
 
-                $geoFilter = new GeoShapeProvided(
-                    'simpleGeometry',
-                    $geometry->asArray(),
-                    GeoShapeProvided::TYPE_POLYGON
-                );
+            $value = $this->getValueFromFilterRegex($filter[0], 'collectionStartDate');
+            if ($value !== null) {
+                $rangeQuery = new Range($field);
+                $filterDate = new \DateTime($value);
+                $rangeQuery->addField($field, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
+                $filterQuery->addFilter($rangeQuery);
+            }
 
-                $filterQuery->addMust($geoFilter);
-            } else {
-                $lastOperation = 'or';
+            $field = 'collectionEndDate';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $rangeQuery = new Range($field);
+                $filterDate = new \DateTime($value);
+                $rangeQuery->addField($field, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
+                $filterQuery->addFilter($rangeQuery);
+            }
 
-                if (3 === count($filters) and is_string($filters[0]) && is_string($filters[1]) && is_string($filters[2])) {
-                    $fieldName = $filters[0];
-                    $fieldOperation = $filters[1];
-                    $fieldValue = $filters[2];
+            if ($filterQuery->count() > 0) {
+                $mainQuery->addMust($filterQuery);
+            }
 
-                    switch ($fieldOperation) {
-                        case '=':
-                            $filterQuery = new Term();
-                            $filterQuery->setTerm($fieldName, $fieldValue);
-                            break;
-                        case '<=':
-                            $filterQuery = new Range($fieldName);
-                            $filterDate = new \DateTime($fieldValue);
-                            $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
-                            break;
-                        case '<':
-                            $filterQuery = new Range($fieldName);
-                            $filterDate = new \DateTime($fieldValue);
-                            $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
-                            break;
-                        case '>=':
-                            $filterQuery = new Range($fieldName);
-                            $filterDate = new \DateTime($fieldValue);
-                            $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
-                            break;
-                        default:
-                            throw new \InvalidArgumentException('Invalid filter operation');
-                    }
-                    $searchFilter->addShould($filterQuery);
-                } else {
-                    foreach ($filters as $filter) {
-                        if (is_array($filter)) {
-                            $filterQuery = $this->filterArrayToQuery($filter);
-                        } else {
-                            switch ($filter) {
-                                case 'and':
-                                    $searchFilter->addMust($filterQuery);
-                                    $lastOperation = 'and';
-                                    break;
-                                case 'or':
-                                    $searchFilter->addShould($filterQuery);
-                                    $lastOperation = 'or';
-                                    break;
-                                case '=':
-                                    $searchFilter->addShould($filterQuery);
-                                    break;
-                                default:
-                                    throw new \InvalidArgumentException('Invalid filter operation');
-                            }
-                        }
+            $field = 'geometry';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $geoJson = json_decode($value, true);
+                if (isset($geoJson['geometry']['coordinates'])) {
+                    $geoQuery = new GeoShapeProvided(
+                        'simpleGeometry',
+                        $geoJson['geometry']['coordinates'],
+                        GeoShapeProvided::TYPE_POLYGON
+                    );
+                    $geoQuery->setRelation(GeoShapeProvided::RELATION_WITHIN);
 
-                        if ('and' === $lastOperation) {
-                            $searchFilter->addMust($filterQuery);
-                        } else {
-                            $searchFilter->addShould($filterQuery);
-                        }
-                    }
+                    $mainQuery->addFilter($geoQuery);
                 }
             }
-            $query->setQuery($searchFilter);
+
+            $query->setQuery($mainQuery);
         }
 
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
 
-        $page = (int) ($skip / $take) + 1;
+        $page = (int) ($skip ?? 0 / $take) + 1;
 
         $find->setMaxPerPage($take);
         $find->setCurrentPage($page);
