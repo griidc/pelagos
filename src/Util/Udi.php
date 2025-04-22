@@ -4,7 +4,6 @@ namespace App\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Dataset;
-use App\Entity\DeletedUdi;
 use App\Entity\Udi as UdiEntity;
 
 /**
@@ -86,18 +85,8 @@ class Udi
         // Add one. (If lastSequence = 0, this will be the first one).
         $sequence = ($lastSequence + 1);
 
-        // Test for the edge case where UDI is in the Deleted UDI list.
-        // This can only happen if the dataset with the highest sequence gets
-        // deleted.
-        $testUdi = $udi . sprintf('%04d', $sequence);
-        $deletedUdi = $this->entityManager->getRepository(DeletedUdi::class)->findOneBy(['udi' => $testUdi]);
-        if ($deletedUdi) {
-            // Incremenent the sequence again to make it unique. (logically there is no need to re-check)
-            $udi .= sprintf('%04d', $sequence + 1);
-        } else {
-            // Append proven-unique sequence to the UDI.
-            $udi .= sprintf('%04d', $sequence);
-        }
+        // Append the sequence to the UDI.
+        $udi .= sprintf('%04d', $sequence);
 
         $udiEntity = new UdiEntity($udi);
         $this->entityManager->persist($udiEntity);
