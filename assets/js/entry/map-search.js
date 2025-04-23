@@ -61,7 +61,7 @@ const styles = {
   'ArcGIS Terrain': ArcGISTerrain,
 };
 
-Leaflet.control.layers(styles).addTo(map);
+const controlLayer = Leaflet.control.layers(styles).addTo(map);
 
 // add Leaflet-Geoman controls with some options to the map
 map.pm.addControls({
@@ -119,6 +119,7 @@ fetch(url).then((response) => response.json()).then((response) => {
     },
     style: GRIIDCStyle,
   });
+  controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
 
 function showGeometryByUDI(id) {
