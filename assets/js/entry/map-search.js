@@ -18,6 +18,7 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 const esriApiKey = process.env.ESRI_API_KEY;
+const worldViewCode = process.env.WORLD_VIEW_CODE;
 
 const GRIIDCStyle = {
   color: 'orange',
@@ -33,13 +34,34 @@ const geojsonMarkerOptions = {
   opacity: 1,
 };
 
+function getV2BasemapLayer(style) {
+  return EsriLeafletVector.vectorBasemapLayer(style, {
+    token: esriApiKey,
+    version: 2,
+    worldview: worldViewCode,
+  });
+}
+
+const ArcGISImagery = getV2BasemapLayer('arcgis/imagery');
+const ArcGISOceans = getV2BasemapLayer('arcgis/oceans');
+const ArcGISTerrain = getV2BasemapLayer('arcgis/terrain');
+
 const map = Leaflet.map('leaflet-map', {
   preferCanvas: true,
   minZoom: 2,
   maxZoom: 14,
   attributionControl: true,
   worldCopyJump: true,
+  layers: [ArcGISImagery],
 });
+
+const styles = {
+  'ArcGIS Imagery': ArcGISImagery,
+  'ArcGIS Oceans': ArcGISOceans,
+  'ArcGIS Terrain': ArcGISTerrain,
+};
+
+Leaflet.control.layers(styles).addTo(map);
 
 // add Leaflet-Geoman controls with some options to the map
 map.pm.addControls({
@@ -80,76 +102,6 @@ map.on('pm:drawstart', () => {
     map.removeLayer(drawnLayer);
   }
 });
-
-let basemapEnum = 'ArcGIS:Imagery';
-
-const basemapOptions = {
-
-  'ArcGIS:Imagery': () => EsriLeafletVector.vectorBasemapLayer('ArcGIS:Imagery', { apiKey: esriApiKey }).addTo(map),
-
-  'ArcGIS:Oceans': () => EsriLeafletVector.vectorBasemapLayer('ArcGIS:Oceans', { apiKey: esriApiKey }).addTo(map),
-
-  'USGS_USImageryTopo': () => Leaflet.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
-  }).addTo(map),
-
-  'Esri_NatGeoWorldMap': () => Leaflet.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-  }).addTo(map),
-
-  'OpenStreetMap': () => Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map),
-
-  'OpenTopoMap': () => Leaflet.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-  }).addTo(map),
-
-};
-
-// Function to switch basemaps
-function switchBasemap(basemap) {
-  map.eachLayer((layer) => {
-    if (layer !== features) {
-      map.removeLayer(layer);
-    }
-  });
-  basemapOptions[basemap]();
-}
-
-// Add a dropdown to switch basemaps
-const basemapControl = Leaflet.control({ position: 'topright' });
-basemapControl.onAdd = () => {
-  const div = Leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-  div.innerHTML = `
-    <select id="basemap-selector">
-      <option value="ArcGIS:Imagery">ArcGIS Imagery</option>
-      <option value="ArcGIS:Oceans">ArcGIS Oceans</option>
-      <option value="USGS_USImageryTopo">USGS US Imagery Topo</option>
-      <option value="Esri_NatGeoWorldMap">Esri NatGeo World Map</option>
-      <option value="OpenStreetMap">OpenStreetMap</option>
-      <option value="OpenTopoMap">Open Topo Map</option>
-    </select>
-  `;
-  div.style.padding = '5px';
-  div.style.background = 'white';
-  div.style.cursor = 'pointer';
-  Leaflet.DomEvent.disableClickPropagation(div);
-  return div;
-};
-basemapControl.addTo(map);
-
-// Event listener for basemap selection
-document.getElementById('basemap-selector').addEventListener('change', (e) => {
-  basemapEnum = e.target.value;
-  switchBasemap(basemapEnum);
-});
-
-// Initialize the default basemap
-basemapOptions[basemapEnum]();
-EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
-  apiKey: esriApiKey,
-}).addTo(map);
 
 const features = Leaflet.featureGroup().addTo(map);
 map.setView([27.5, -97.5], 3);
