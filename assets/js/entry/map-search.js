@@ -18,6 +18,7 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 const esriApiKey = process.env.ESRI_API_KEY;
+const worldViewCode = process.env.WORLD_VIEW_CODE;
 
 const GRIIDCStyle = {
   color: 'orange',
@@ -33,13 +34,34 @@ const geojsonMarkerOptions = {
   opacity: 1,
 };
 
+function getV2BasemapLayer(style) {
+  return EsriLeafletVector.vectorBasemapLayer(style, {
+    token: esriApiKey,
+    version: 2,
+    worldview: worldViewCode,
+  });
+}
+
+const ArcGISImagery = getV2BasemapLayer('arcgis/imagery');
+const ArcGISOceans = getV2BasemapLayer('arcgis/oceans');
+const ArcGISTerrain = getV2BasemapLayer('arcgis/terrain');
+
 const map = Leaflet.map('leaflet-map', {
   preferCanvas: true,
   minZoom: 2,
   maxZoom: 14,
   attributionControl: true,
   worldCopyJump: true,
+  layers: [ArcGISImagery],
 });
+
+const styles = {
+  'ArcGIS Imagery': ArcGISImagery,
+  'ArcGIS Oceans': ArcGISOceans,
+  'ArcGIS Terrain': ArcGISTerrain,
+};
+
+const controlLayer = Leaflet.control.layers(styles).addTo(map);
 
 // add Leaflet-Geoman controls with some options to the map
 map.pm.addControls({
@@ -81,11 +103,6 @@ map.on('pm:drawstart', () => {
   }
 });
 
-const basemapEnum = 'ArcGIS:Imagery';
-EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
-  apiKey: esriApiKey,
-}).addTo(map);
-
 const features = Leaflet.featureGroup().addTo(map);
 map.setView([27.5, -97.5], 3);
 
@@ -102,6 +119,7 @@ fetch(url).then((response) => response.json()).then((response) => {
     },
     style: GRIIDCStyle,
   });
+  controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
 
 function showGeometryByUDI(id) {
