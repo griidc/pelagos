@@ -18,6 +18,7 @@ const leafletMap = document.getElementById('leaflet-map');
 if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
   const { datasetId } = leafletMap.dataset;
   const esriApiKey = process.env.ESRI_API_KEY;
+  const worldViewCode = process.env.WORLD_VIEW_CODE;
 
   const GRIIDCStyle = {
     color: 'orange',
@@ -34,9 +35,11 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
     worldCopyJump: true,
   });
 
-  const basemapEnum = 'ArcGIS:Imagery';
+  const basemapEnum = 'arcgis/imagery';
   EsriLeafletVector.vectorBasemapLayer(basemapEnum, {
-    apiKey: esriApiKey,
+    token: esriApiKey,
+    version: 2,
+    worldview: worldViewCode,
   }).addTo(map);
 
   Leaflet.featureGroup().addTo(map);
