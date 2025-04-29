@@ -3,14 +3,17 @@
 namespace App\Controller\UI;
 
 use App\Enum\DatasetLifecycleStatus;
+use App\Repository\ResearchGroupRepository;
 use Elastica\Query;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
 use Elastica\Query\MatchPhrase;
 use Elastica\Query\MatchPhrasePrefix;
+use Elastica\Query\Nested;
 use Elastica\Query\Range;
 use Elastica\Query\Term;
+use Elastica\Query\Terms;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,7 +38,7 @@ final class MapSearchController extends AbstractController
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)")/', $filter, $matches);
+        preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\d+)/', $filter, $matches);
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -85,8 +88,11 @@ final class MapSearchController extends AbstractController
             $field = 'doi.doi';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
             if ($value !== null) {
+                $nestedQuery = new Nested();
+                $nestedQuery->setPath('doi');
                 $matchQuery = new MatchPhrase($field, $value);
-                $searchFilter->addShould($matchQuery);
+                $nestedQuery->setQuery($matchQuery);
+                $searchFilter->addShould($nestedQuery);
             }
 
             if ($searchFilter->count() > 0) {
@@ -120,6 +126,18 @@ final class MapSearchController extends AbstractController
                 $filterDate = new \DateTime($value);
                 $rangeQuery->addField($field, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
                 $filterQuery->addFilter($rangeQuery);
+            }
+
+            $field = 'researchGroup.id';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $nestedQuery = new Nested();
+                $nestedQuery->setPath('researchGroup');
+                $termQuery = new Terms('researchGroup.id');
+                $valuesArray = explode(',', $value);
+                $termQuery->setTerms($valuesArray);
+                $nestedQuery->setQuery($termQuery);
+                $filterQuery->addFilter($nestedQuery);
             }
 
             if ($filterQuery->count() > 0) {
@@ -216,6 +234,22 @@ final class MapSearchController extends AbstractController
         ];
 
         return new JsonResponse($geoJson);
+    }
+
+    #[Route(path: '/map/research-groups', name: 'pelagos_map_all_researchgroups')]
+    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository) : Response
+    {
+        $researchGroups = $researchGroupRepository->findBy([], ['name' => 'ASC']);
+
+        $groups = [];
+        foreach ($researchGroups as $researchGroup) {
+            $groups[] = [
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+            ];
+        }
+
+        return new JsonResponse($groups);
     }
 
     /**

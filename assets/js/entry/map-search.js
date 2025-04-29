@@ -5,12 +5,14 @@ import 'devextreme/ui/data_grid';
 import 'devextreme/ui/toolbar';
 import 'devextreme/ui/button';
 import 'devextreme/ui/date_box';
+import 'devextreme/ui/select_box';
 import 'devextreme/scss/bundles/dx.light.scss';
 import CustomStore from 'devextreme/data/custom_store';
 
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
+import '../../css/custom-pm-icons.css';
 // import 'leaflet/dist/leaflet.css';
 // import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
@@ -55,6 +57,16 @@ const map = Leaflet.map('leaflet-map', {
   layers: [ArcGISImagery],
 });
 
+function goHome() {
+  map.setZoom(3, {
+    animate: true,
+  });
+  map.panTo([27.5, -97.5], {
+    animate: true,
+    duration: 1,
+  });
+}
+
 const styles = {
   'ArcGIS Imagery': ArcGISImagery,
   'ArcGIS Oceans': ArcGISOceans,
@@ -79,6 +91,25 @@ map.pm.addControls({
   removalMode: true,
   rotateMode: false,
 });
+
+map.pm.Toolbar.createCustomControl(
+  {
+    name: 'Home',
+    block: 'custom',
+    title: 'Navigate to Home',
+    className: 'custom-pm-icon-home',
+    onClick: () => {
+      goHome();
+    },
+  },
+);
+
+map.pm.Toolbar.changeControlOrder([
+  'Home',
+  'drawPolygon',
+  'drawRectangle',
+  'removalMode',
+]);
 
 let drawnLayer;
 // Function to handle the map filter drawn event
@@ -182,10 +213,6 @@ function hideAllGeometry() {
   });
 }
 
-function goHome() {
-  map.setView([27.5, -97.5], 3);
-}
-
 function clearFeatures() {
   features.clearLayers();
 }
@@ -223,7 +250,9 @@ $(() => {
         }
       });
 
-      $.getJSON('/map/search', params)
+      const searchUrl = Routing.generate('app_map_search_search');
+
+      $.getJSON(searchUrl, params)
         .done((response) => {
           d.resolve(response.data, {
             totalCount: response.totalCount,
@@ -267,6 +296,7 @@ $(() => {
         {
           location: 'before',
           widget: 'dxButton',
+          visible: false,
           options: {
             text: 'Show All',
             onClick() {
@@ -283,6 +313,7 @@ $(() => {
         {
           location: 'before',
           widget: 'dxButton',
+          visible: false,
           options: {
             icon: 'home',
             onClick() {
@@ -335,11 +366,34 @@ $(() => {
         {
           location: 'before',
           widget: 'dxButton',
+          visible: false,
           options: {
             icon: 'clear',
             onClick() {
               $('#datasets-grid').dxDataGrid('instance').clearSelection();
               clearFeatures();
+            },
+          },
+        },
+        {
+          location: 'before',
+          widget: 'dxSelectBox',
+          options: {
+            width: '20em',
+            wrapItemText: true,
+            dataSource: Routing.generate('pelagos_map_all_researchgroups'),
+            displayExpr: 'name',
+            valueExpr: 'id',
+            searchEnabled: true,
+            placeholder: 'Select Research Group',
+            showClearButton: true,
+            onValueChanged(e) {
+              let filter = null;
+              if (e.value) {
+                filter = e.value;
+              }
+              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              dataGrid.columnOption('researchgroup', 'filterValue', filter);
             },
           },
         },
@@ -418,6 +472,17 @@ $(() => {
         allowSearch: false,
         allowHeaderFiltering: true,
         dataType: 'string',
+        selectedFilterOperation: '=',
+        filterOperations: ['='],
+      },
+      {
+        id: 'researchgroup',
+        name: 'researchgroup',
+        dataField: 'researchGroup.id',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'number',
         selectedFilterOperation: '=',
         filterOperations: ['='],
       },
