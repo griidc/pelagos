@@ -74,7 +74,7 @@ map.pm.addControls({
   drawCircle: false,
   drawText: false,
   cutPolygon: false,
-  editMode: false,
+  editMode: true,
   dragMode: false,
   removalMode: true,
   rotateMode: false,
