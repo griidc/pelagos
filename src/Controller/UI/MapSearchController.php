@@ -38,7 +38,7 @@ final class MapSearchController extends AbstractController
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\d+)/', $filter, $matches);
+        preg_match('/^\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"||\[\d.+\])\]$/', $filter, $matches);
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -134,7 +134,7 @@ final class MapSearchController extends AbstractController
                 $nestedQuery = new Nested();
                 $nestedQuery->setPath('researchGroup');
                 $termQuery = new Terms('researchGroup.id');
-                $valuesArray = explode(',', $value);
+                $valuesArray = json_decode($value);
                 $termQuery->setTerms($valuesArray);
                 $nestedQuery->setQuery($termQuery);
                 $filterQuery->addFilter($nestedQuery);
@@ -165,7 +165,8 @@ final class MapSearchController extends AbstractController
 
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
 
-        $page = (int) ($skip ?? 0 / $take) + 1;
+        /** @psalm-suppress PossiblyNullOperand */
+        $page = (int) ($skip / $take) + 1;
 
         $find->setMaxPerPage($take);
         $find->setCurrentPage($page);
@@ -250,85 +251,6 @@ final class MapSearchController extends AbstractController
         }
 
         return new JsonResponse($groups);
-    }
-
-    /**
-     * Transform the filter array to a query.
-     */
-    private function filterArrayToQuery(array $filters): AbstractQuery
-    {
-        $query = new BoolQuery();
-
-        if (is_array($filters[0])) {
-            $searchFilter = new BoolQuery();
-            $filterQuery = new BoolQuery();
-            $lastOperation = 'or';
-            foreach ($filters as $filter) {
-                if (is_array($filter)) {
-                    $filterQuery = $this->filterArrayToQuery($filter);
-                } else {
-                    switch ($filter) {
-                        case 'and':
-                            $searchFilter->addMust($filterQuery);
-                            $lastOperation = 'and';
-                            break;
-                        case 'or':
-                            $searchFilter->addShould($filterQuery);
-                            $lastOperation = 'or';
-                            break;
-                        case 'lte':
-                            dd($filterQuery);
-                            // $filterQuery = new Range($filter[0]);
-                            // $searchFilter->addShould($filterQuery);
-                            // $lastOperation = 'or';
-                            break;
-                        default:
-                            throw new \InvalidArgumentException('Invalid filter operation');
-                    }
-                }
-
-                if ('and' === $lastOperation) {
-                    $searchFilter->addMust($filterQuery);
-                } else {
-                    $searchFilter->addShould($filterQuery);
-                }
-            }
-
-            return $searchFilter;
-        }
-
-        $fieldName = $filters[0];
-        $fieldOperation = $filters[1];
-        $fieldValue = $filters[2];
-
-        switch ($fieldOperation) {
-            case '=':
-                $query = new Term();
-                $query->setTerm($fieldName, $fieldValue);
-                break;
-            case '<=':
-                $filterQuery = new Range($fieldName);
-                $filterDate = new \DateTime($fieldValue);
-                $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
-                break;
-            case '<':
-                $filterQuery = new Range($fieldName);
-                $filterDate = new \DateTime($fieldValue);
-                $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
-                break;
-            case '>=':
-                $filterQuery = new Range($fieldName);
-                $filterDate = new \DateTime($fieldValue);
-                $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
-                break;
-            case 'contains':
-                $query = new Query\MatchPhrase($fieldName, $fieldValue);
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid filter operation');
-        }
-
-        return $query;
     }
 
     /**
