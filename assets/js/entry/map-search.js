@@ -109,9 +109,6 @@ map.pm.Toolbar.createCustomControl(
 
 map.pm.Toolbar.changeControlOrder([
   'Home',
-  'drawPolygon',
-  'drawRectangle',
-  'removalMode',
 ]);
 
 let drawnLayer;
