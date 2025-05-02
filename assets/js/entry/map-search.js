@@ -1,12 +1,15 @@
 import '../../scss/map-search.scss';
 import $ from 'jquery';
+
+import 'devextreme/scss/bundles/dx.light.scss';
 import 'devextreme/integration/jquery';
 import 'devextreme/ui/data_grid';
 import 'devextreme/ui/toolbar';
 import 'devextreme/ui/button';
 import 'devextreme/ui/date_box';
 import 'devextreme/ui/select_box';
-import 'devextreme/scss/bundles/dx.light.scss';
+import 'devextreme/ui/tree_list';
+import 'devextreme/ui/popup';
 import CustomStore from 'devextreme/data/custom_store';
 
 import * as Leaflet from 'leaflet';
@@ -222,6 +225,11 @@ function isNotEmpty(value) {
 }
 
 $(() => {
+  const selectedGroups = [{
+    id: 0,
+    name: 'None Selected',
+  }];
+
   const customDataSource = new CustomStore({
     key: 'udi',
     load(loadOptions) {
@@ -265,7 +273,107 @@ $(() => {
     },
   });
 
-  $('#datasets-grid').dxDataGrid({
+  $('#rg-tree').dxTreeList({
+    dataSource: Routing.generate('app_api_dataset_monitoring_groups'),
+    keyExpr: 'id',
+    parentIdExpr: 'parent',
+    filterRow: {
+      visible: false,
+    },
+    headerFilter: {
+      visible: false,
+    },
+    searchPanel: {
+      visible: false,
+    },
+    columns: [{
+      dataField: 'name',
+      caption: 'Research Group',
+      dataType: 'string',
+    },
+    {
+      dataType: 'number',
+      dataField: 'datasets',
+      visible: false,
+      allowSearch: false,
+    },
+    ],
+    disabled: false,
+    showRowLines: false,
+    showBorders: false,
+    showColumnHeaders: true,
+    columnAutoWidth: false,
+    wordWrapEnabled: true,
+    selection: {
+      allowSelectAll: true,
+      mode: 'multiple',
+      recursive: true,
+    },
+    onSelectionChanged(e) {
+      const selectedItems = [];
+      e.selectedRowsData.forEach((item) => {
+        const { researchGroup } = item;
+        if (Array.isArray(researchGroup)) {
+          item.researchGroup.forEach((group) => {
+            selectedItems.push(group);
+          });
+        } else {
+          selectedItems.push(researchGroup);
+        }
+      });
+
+      const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+      dataGrid.columnOption('researchgroup', 'filterValue', selectedItems);
+    },
+  });
+
+  const popup = $('#rg-popup').dxPopup({
+    width: 400,
+    height: 600,
+    visible: false,
+    title: 'Organization Filter',
+    hideOnOutsideClick: true,
+    showCloseButton: true,
+    position: {
+      my: 'top',
+      at: 'top',
+      of: '#rg-select',
+    },
+    toolbarItems: [
+      {
+        widget: 'dxButton',
+        toolbar: 'bottom',
+        location: 'center',
+        options: {
+          text: 'Reset',
+          type: 'default',
+          stylingMode: 'contained',
+          onClick() {
+            const treeList = $('#rg-tree').dxTreeList('instance');
+            treeList.deselectAll();
+            treeList.forEachNode((node) => {
+              treeList.collapseRow(node.key);
+            });
+          },
+        },
+      },
+      {
+        widget: 'dxButton',
+        toolbar: 'bottom',
+        location: 'center',
+        options: {
+          text: 'Close',
+          type: 'default',
+          stylingMode: 'contained',
+          onClick() {
+            popup.hide();
+          },
+        },
+      },
+    ],
+  }).dxPopup('instance');
+
+  const dataGrid = $('#datasets-grid').dxDataGrid({
     dataSource: customDataSource,
     remoteOperations: {
       groupPaging: true,
@@ -337,7 +445,7 @@ $(() => {
               if (e.value) {
                 filter = e.value;
               }
-              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              // const dataGrid = $('#datasets-grid').dxDataGrid('instance');
               dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
             },
           },
@@ -358,7 +466,7 @@ $(() => {
               if (e.value) {
                 filter = e.value;
               }
-              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+              // const dataGrid = $('#datasets-grid').dxDataGrid('instance');
               dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
             },
           },
@@ -379,21 +487,18 @@ $(() => {
           location: 'before',
           widget: 'dxSelectBox',
           options: {
-            width: '20em',
-            wrapItemText: true,
-            dataSource: Routing.generate('pelagos_map_all_researchgroups'),
+            elementAttr: {
+              id: 'rg-select',
+            },
+            dataSource: selectedGroups,
+            value: 0,
+            width: '14em',
             displayExpr: 'name',
             valueExpr: 'id',
-            searchEnabled: true,
             placeholder: 'Select Research Group',
-            showClearButton: true,
-            onValueChanged(e) {
-              let filter = null;
-              if (e.value) {
-                filter = e.value;
-              }
-              const dataGrid = $('#datasets-grid').dxDataGrid('instance');
-              dataGrid.columnOption('researchgroup', 'filterValue', filter);
+            onOpened(e) {
+              popup.show();
+              e.component.close();
             },
           },
         },
@@ -510,5 +615,5 @@ $(() => {
         }
       }
     },
-  });
+  }).dxDataGrid('instance');
 });
