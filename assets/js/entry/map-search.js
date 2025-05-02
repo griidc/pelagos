@@ -297,9 +297,10 @@ $(() => {
         {
           location: 'before',
           widget: 'dxDateBox',
-          type: 'date',
-          displayFormat: 'shortdate',
           options: {
+            type: 'date',
+            displayFormat: 'shortdate',
+            placeholder: 'mm/dd/yyyy',
             showClearButton: true,
             onValueChanged(e) {
               let filter = null;
@@ -321,6 +322,7 @@ $(() => {
           options: {
             type: 'date',
             displayFormat: 'shortdate',
+            placeholder: 'mm/dd/yyyy',
             showClearButton: true,
             onValueChanged(e) {
               let filter = null;
