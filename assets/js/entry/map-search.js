@@ -89,7 +89,7 @@ map.pm.addControls({
   drawCircle: false,
   drawText: false,
   cutPolygon: false,
-  editMode: false,
+  editMode: true,
   dragMode: false,
   removalMode: true,
   rotateMode: false,
@@ -436,9 +436,10 @@ $(() => {
         {
           location: 'before',
           widget: 'dxDateBox',
-          type: 'date',
-          displayFormat: 'shortdate',
           options: {
+            type: 'date',
+            displayFormat: 'shortdate',
+            placeholder: 'mm/dd/yyyy',
             showClearButton: true,
             onValueChanged(e) {
               let filter = null;
@@ -460,6 +461,7 @@ $(() => {
           options: {
             type: 'date',
             displayFormat: 'shortdate',
+            placeholder: 'mm/dd/yyyy',
             showClearButton: true,
             onValueChanged(e) {
               let filter = null;
