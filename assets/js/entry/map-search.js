@@ -16,11 +16,11 @@ import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
 import '../../css/custom-pm-icons.css';
-// import 'leaflet/dist/leaflet.css';
-// import '../../css/leaflet-custom.css';
-import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+// import 'leaflet/dist/leaflet.css';
+
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const esriApiKey = process.env.ESRI_API_KEY;
 const worldViewCode = process.env.WORLD_VIEW_CODE;
@@ -194,39 +194,11 @@ function zoomAndPanToFeature(id) {
   });
 }
 
-function showAllGeometry() {
-  if (geojsonLayer === null) {
-    return;
-  }
-  geojsonLayer.eachLayer((layer) => {
-    layer.bindTooltip(null);
-    features.addLayer(layer);
-  });
-}
-
-function hideAllGeometry() {
-  if (geojsonLayer === null) {
-    return;
-  }
-  geojsonLayer.eachLayer((layer) => {
-    features.removeLayer(layer);
-  });
-}
-
-function clearFeatures() {
-  features.clearLayers();
-}
-
 function isNotEmpty(value) {
   return value !== undefined && value !== null && value !== '';
 }
 
 $(() => {
-  const selectedGroups = [{
-    id: 0,
-    name: 'None Selected',
-  }];
-
   const customDataSource = new CustomStore({
     key: 'udi',
     load(loadOptions) {
@@ -270,7 +242,7 @@ $(() => {
     },
   });
 
-  $('#rg-tree').dxTreeList({
+  const treeList = $('#rg-tree').dxTreeList({
     dataSource: Routing.generate('app_api_dataset_monitoring_groups'),
     keyExpr: 'id',
     parentIdExpr: 'parent',
@@ -285,7 +257,7 @@ $(() => {
     },
     columns: [{
       dataField: 'name',
-      caption: 'Research Group',
+      caption: 'Select All',
       dataType: 'string',
     },
     {
@@ -322,7 +294,7 @@ $(() => {
       const dataGrid = $('#datasets-grid').dxDataGrid('instance');
       dataGrid.columnOption('researchgroup', 'filterValue', selectedItems);
     },
-  });
+  }).dxTreeList('instance');
 
   const popup = $('#rg-popup').dxPopup({
     width: 400,
@@ -330,7 +302,8 @@ $(() => {
     visible: false,
     title: 'Organization Filter',
     hideOnOutsideClick: true,
-    showCloseButton: true,
+    showCloseButton: false,
+    showTitle: false,
     position: {
       my: 'top',
       at: 'top',
@@ -346,7 +319,6 @@ $(() => {
           type: 'default',
           stylingMode: 'contained',
           onClick() {
-            const treeList = $('#rg-tree').dxTreeList('instance');
             treeList.deselectAll();
             treeList.forEachNode((node) => {
               treeList.collapseRow(node.key);
@@ -400,34 +372,6 @@ $(() => {
       items: [
         {
           location: 'before',
-          widget: 'dxButton',
-          visible: false,
-          options: {
-            text: 'Show All',
-            onClick() {
-              if (this.option('text') === 'Hide All') {
-                hideAllGeometry();
-                this.option('text', 'Show All');
-              } else if (this.option('text') === 'Show All') {
-                showAllGeometry();
-                this.option('text', 'Hide All');
-              }
-            },
-          },
-        },
-        {
-          location: 'before',
-          widget: 'dxButton',
-          visible: false,
-          options: {
-            icon: 'home',
-            onClick() {
-              goHome();
-            },
-          },
-        },
-        {
-          location: 'before',
           template: '<div>Start Date:</div>',
         },
         {
@@ -438,12 +382,14 @@ $(() => {
             displayFormat: 'shortdate',
             placeholder: 'mm/dd/yyyy',
             showClearButton: true,
+            elementAttr: {
+              id: 'start-date',
+            },
             onValueChanged(e) {
               let filter = null;
               if (e.value) {
                 filter = e.value;
               }
-              // const dataGrid = $('#datasets-grid').dxDataGrid('instance');
               dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
             },
           },
@@ -460,12 +406,14 @@ $(() => {
             displayFormat: 'shortdate',
             placeholder: 'mm/dd/yyyy',
             showClearButton: true,
+            elementAttr: {
+              id: 'end-date',
+            },
             onValueChanged(e) {
               let filter = null;
               if (e.value) {
                 filter = e.value;
               }
-              // const dataGrid = $('#datasets-grid').dxDataGrid('instance');
               dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
             },
           },
@@ -473,31 +421,29 @@ $(() => {
         {
           location: 'before',
           widget: 'dxButton',
-          visible: false,
-          options: {
-            icon: 'clear',
-            onClick() {
-              $('#datasets-grid').dxDataGrid('instance').clearSelection();
-              clearFeatures();
-            },
-          },
-        },
-        {
-          location: 'before',
-          widget: 'dxSelectBox',
           options: {
             elementAttr: {
               id: 'rg-select',
             },
-            dataSource: selectedGroups,
-            value: 0,
-            width: '14em',
-            displayExpr: 'name',
-            valueExpr: 'id',
-            placeholder: 'Select Research Group',
-            onOpened(e) {
+            text: 'Organization Filter',
+            onClick() {
               popup.show();
-              e.component.close();
+            },
+          },
+        },
+        {
+          location: 'after',
+          widget: 'dxButton',
+          options: {
+            text: 'Clear Filters',
+            onClick() {
+              dataGrid.clearFilter();
+              $('#start-date').dxDateBox('instance').reset();
+              $('#end-date').dxDateBox('instance').reset();
+              treeList.deselectAll();
+              treeList.forEachNode((node) => {
+                treeList.collapseRow(node.key);
+              });
             },
           },
         },
