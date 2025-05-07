@@ -1,5 +1,5 @@
 services:
-  database:
+  postgres:
     image: postgis/postgis:14-3.5
     container_name: postgis
     restart: no
