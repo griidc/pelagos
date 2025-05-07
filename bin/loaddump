@@ -152,14 +152,4 @@ if [ $ELASTICA_INDEX -eq 1 ]; then
 fi
 
 echo "DRMPizing current user"
-# drpm_username=$(grep "^DRPM_USERNAME" ./.env.dev.local)
-
-# if [ $drpm_username ]; then
-#     bin/console pelagos:DRPMize $drpm_username
-# else
-    bin/console pelagos:DRPMize `/usr/bin/whoami`
-#fi
-
-
-
-
+bin/console pelagos:DRPMize `/usr/bin/whoami`
