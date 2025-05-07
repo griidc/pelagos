@@ -12,6 +12,7 @@ use App\Entity\Account;
 use App\Entity\DataRepositoryRole;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
+use Symfony\Component\Process\Process;
 
 /**
  * Command to convert a user into a Pelagos DRPM.
@@ -47,7 +48,7 @@ class MakeDRPMCommand extends Command
     protected function configure()
     {
         $this->
-            addArgument('username', InputArgument::REQUIRED, 'User to make into DRPM.');
+            addArgument('username', InputArgument::OPTIONAL, 'User to make into DRPM.');
     }
 
     /**
@@ -64,6 +65,10 @@ class MakeDRPMCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
+
+        if (empty($username)) {
+            $username = $_ENV['DRPM_USERNAME'] ?? trim((new Process(['whoami']))->mustRun()->getOutput());
+        }
 
         $accountRepository = $this->entityManager->getRepository(Account::class);
         $account = $accountRepository->findOneBy(
