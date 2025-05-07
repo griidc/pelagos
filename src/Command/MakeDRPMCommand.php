@@ -2,16 +2,15 @@
 
 namespace App\Command;
 
+use App\Entity\Account;
+use App\Entity\DataRepositoryRole;
+use App\Entity\PersonDataRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Entity\Account;
-use App\Entity\DataRepositoryRole;
-use App\Entity\Person;
-use App\Entity\PersonDataRepository;
 use Symfony\Component\Process\Process;
 
 /**
@@ -21,22 +20,10 @@ use Symfony\Component\Process\Process;
 class MakeDRPMCommand extends Command
 {
     /**
-     * A Doctrine ORM EntityManager instance.
-     *
-     * @var EntityManagerInterface $entityManager
-     */
-    protected $entityManager;
-
-    /**
      * Class constructor for dependency injection.
-     *
-     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        // It is required to call parent constructor if
-        // using a constructon in a Symfony command.
         parent::__construct();
     }
 
@@ -54,12 +41,7 @@ class MakeDRPMCommand extends Command
     /**
      * Symfony command execute section.
      *
-     * @param InputInterface  $input  Required by Command.
-     * @param OutputInterface $output Required by Command.
-     *
-     * @throws \Exception If username not found.
-     *
-     * @return integer Return code.
+     * @throws \Exception if username not found
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
