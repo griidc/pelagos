@@ -1,5 +1,5 @@
 services:
-  postgres:
+  database:
     image: postgis/postgis:14-3.5
     container_name: postgis
     restart: no
@@ -7,6 +7,8 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 5432:5432
+    labels:
+      com.symfony.server.service-ignore: true
   elastic:
     image: elastic/elasticsearch:7.17.28
     container_name: elasticsearch
