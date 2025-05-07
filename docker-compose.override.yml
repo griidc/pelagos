@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 ###> symfony/mailer ###
   mailer:
@@ -13,7 +11,7 @@ services:
 ###< symfony/mailer ###
 
 ###> doctrine/doctrine-bundle ###
-  # database:
-  #   ports:
-  #     - "5432"
+  database:
+    ports:
+      - "5432"
 ###< doctrine/doctrine-bundle ###
