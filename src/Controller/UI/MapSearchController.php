@@ -38,7 +38,7 @@ final class MapSearchController extends AbstractController
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/^\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"||\[\d.+\])\]$/', $filter, $matches);
+        preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"||\[\d.+\])\]/', $filter, $matches);
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
