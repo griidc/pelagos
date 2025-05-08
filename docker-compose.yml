@@ -9,7 +9,7 @@ services:
       - 5432:5432
     labels:
       com.symfony.server.service-ignore: true
-  elastic:
+  elasticsearch:
     image: elastic/elasticsearch:7.17.28
     container_name: elasticsearch
     restart: no
