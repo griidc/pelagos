@@ -41,7 +41,7 @@ class MakeDRPMCommand extends Command
     /**
      * Symfony command execute section.
      *
-     * @throws \Exception if username not found
+     * @throws \Exception when the username is not found in the system.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
