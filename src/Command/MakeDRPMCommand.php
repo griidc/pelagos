@@ -35,7 +35,7 @@ class MakeDRPMCommand extends Command
     protected function configure()
     {
         $this->
-            addArgument('username', InputArgument::OPTIONAL, 'User to make into DRPM.');
+            addArgument('username', InputArgument::OPTIONAL, 'User to make into DRPM. If omitted, the username will default to the DRPM_USERNAME environment variable or the current system user.');
     }
 
     /**
