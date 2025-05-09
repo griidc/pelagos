@@ -5,7 +5,6 @@ namespace App\Controller\UI;
 use App\Enum\DatasetLifecycleStatus;
 use App\Repository\ResearchGroupRepository;
 use Elastica\Query;
-use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
 use Elastica\Query\MatchPhrase;
@@ -38,7 +37,7 @@ final class MapSearchController extends AbstractController
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"||\[\d.+\])\]/', $filter, $matches);
+        preg_match_all('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.+?(?=\])\])/', $filter, $matches);
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -60,6 +59,7 @@ final class MapSearchController extends AbstractController
         $query = new Query();
 
         if (is_array($sort) && !empty($sort)) {
+            // TODO: replace next function with json_decode
             $sort = $this->getParseParams($sort, true);
             foreach ($sort as $item) {
                 $query->addSort([$item[0]['selector'] => ['order' => $item[0]['desc'] ? 'DESC' : 'ASC']]);
