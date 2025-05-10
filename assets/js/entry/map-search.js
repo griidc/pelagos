@@ -253,7 +253,7 @@ $(() => {
       visible: false,
     },
     searchPanel: {
-      visible: false,
+      visible: true,
     },
     columns: [{
       dataField: 'name',
@@ -444,6 +444,7 @@ $(() => {
               treeList.forEachNode((node) => {
                 treeList.collapseRow(node.key);
               });
+              treeList.searchByText('');
             },
           },
         },
