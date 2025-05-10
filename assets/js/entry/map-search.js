@@ -253,7 +253,7 @@ $(() => {
       visible: false,
     },
     searchPanel: {
-      visible: false,
+      visible: true,
     },
     columns: [{
       dataField: 'name',
@@ -441,6 +441,7 @@ $(() => {
               $('#start-date').dxDateBox('instance').reset();
               $('#end-date').dxDateBox('instance').reset();
               treeList.deselectAll();
+              treeList.searchByText('');
               treeList.forEachNode((node) => {
                 treeList.collapseRow(node.key);
               });

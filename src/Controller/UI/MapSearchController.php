@@ -5,7 +5,6 @@ namespace App\Controller\UI;
 use App\Enum\DatasetLifecycleStatus;
 use App\Repository\ResearchGroupRepository;
 use Elastica\Query;
-use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
 use Elastica\Query\MatchPhrase;
@@ -38,7 +37,7 @@ final class MapSearchController extends AbstractController
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/^\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"||\[\d.+\])\]$/', $filter, $matches);
+        preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -60,6 +59,7 @@ final class MapSearchController extends AbstractController
         $query = new Query();
 
         if (is_array($sort) && !empty($sort)) {
+            // TODO: replace next function with json_decode
             $sort = $this->getParseParams($sort, true);
             foreach ($sort as $item) {
                 $query->addSort([$item[0]['selector'] => ['order' => $item[0]['desc'] ? 'DESC' : 'ASC']]);
@@ -110,7 +110,6 @@ final class MapSearchController extends AbstractController
             }
 
             $field = 'collectionStartDate';
-
             $value = $this->getValueFromFilterRegex($filter[0], 'collectionStartDate');
             if ($value !== null) {
                 $rangeQuery = new Range($field);
@@ -131,13 +130,16 @@ final class MapSearchController extends AbstractController
             $field = 'researchGroup.id';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
             if ($value !== null) {
-                $nestedQuery = new Nested();
-                $nestedQuery->setPath('researchGroup');
-                $termQuery = new Terms('researchGroup.id');
                 $valuesArray = json_decode($value);
-                $termQuery->setTerms($valuesArray);
-                $nestedQuery->setQuery($termQuery);
-                $filterQuery->addFilter($nestedQuery);
+                if (count($valuesArray) > 0) {
+                    $nestedQuery = new Nested();
+                    $nestedQuery->setPath('researchGroup');
+                    $termQuery = new Terms('researchGroup.id');
+                    $valuesArray = json_decode($value);
+                    $termQuery->setTerms($valuesArray);
+                    $nestedQuery->setQuery($termQuery);
+                    $filterQuery->addFilter($nestedQuery);
+                }
             }
 
             if ($filterQuery->count() > 0) {
