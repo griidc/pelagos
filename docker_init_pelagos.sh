@@ -17,5 +17,5 @@ yarn dev
 printf 'y\ny\ny\nn\n' | bin/loaddump /opt/newest-pelagos.sql
 
 # Start Webserver
-symfony server:start --port=8080 --allow-all-ip -d
+symfony server:start --port=8080 --allow-all-ip --no-tls
 
