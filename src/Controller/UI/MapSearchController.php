@@ -107,7 +107,7 @@ final class MapSearchController extends AbstractController
 
             $field = 'datasetLifecycleStatus';
             $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus', true);
-            if ($value !== null) {
+            if (!empty($value)) {
                 $termQuery = new Terms($field);
                 $termQuery->setTerms($value);
                 $filterQuery->addFilter($termQuery);
