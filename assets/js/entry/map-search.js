@@ -10,6 +10,7 @@ import 'devextreme/ui/date_box';
 import 'devextreme/ui/select_box';
 import 'devextreme/ui/tree_list';
 import 'devextreme/ui/popup';
+import 'devextreme/ui/text_box';
 import CustomStore from 'devextreme/data/custom_store';
 
 import * as Leaflet from 'leaflet';
@@ -406,6 +407,7 @@ $(() => {
     },
     filterSyncEnabled: true,
     toolbar: {
+      visible: false,
       items: [
         {
           location: 'before',
@@ -632,4 +634,132 @@ $(() => {
       }
     },
   }).dxDataGrid('instance');
+
+  $('#dg-toolbar').dxToolbar({
+    // multiline: true,
+    // height: '102px',
+    items: [
+      {
+        location: 'before',
+        locateInMenu: 'auto',
+        template: '<div>Start Date:</div>',
+      },
+      {
+        location: 'before',
+        widget: 'dxDateBox',
+        options: {
+          type: 'date',
+          displayFormat: 'shortdate',
+          placeholder: 'mm/dd/yyyy',
+          showClearButton: true,
+          elementAttr: {
+            id: 'start-date',
+          },
+          onValueChanged(e) {
+            let filter = null;
+            if (e.value) {
+              filter = e.value;
+            }
+            dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
+          },
+        },
+      },
+      {
+        location: 'before',
+        locateInMenu: 'auto',
+        template: '<div>End Date:</div>',
+      },
+      {
+        location: 'before',
+        widget: 'dxDateBox',
+        options: {
+          type: 'date',
+          displayFormat: 'shortdate',
+          placeholder: 'mm/dd/yyyy',
+          showClearButton: true,
+          elementAttr: {
+            id: 'end-date',
+          },
+          onValueChanged(e) {
+            let filter = null;
+            if (e.value) {
+              filter = e.value;
+            }
+            dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
+          },
+        },
+      },
+      {
+        location: 'before',
+        widget: 'dxButton',
+        options: {
+          elementAttr: {
+            id: 'rg-select',
+          },
+          text: 'Organization Filter',
+          onClick() {
+            popup.show();
+          },
+        },
+      },
+      {
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          text: 'Loading...',
+          stylingMode: 'text',
+          elementAttr: {
+            id: 'btnItems',
+          },
+        },
+      },
+      {
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          text: 'Clear Filters',
+          onClick() {
+            dataGrid.clearFilter();
+            dataGrid.deselectAll();
+            $('#start-date').dxDateBox('instance').reset();
+            $('#end-date').dxDateBox('instance').reset();
+            $('#search-text').dxTextBox('instance').reset();
+            treeList.deselectAll();
+            treeList.searchByText('');
+            treeList.forEachNode((node) => {
+              treeList.collapseRow(node.key);
+            });
+            resetFeatures();
+            popup.hide();
+          },
+        },
+      },
+      {
+        location: 'after',
+        widget: 'dxTextBox',
+        options: {
+          elementAttr: {
+            id: 'search-text',
+          },
+          placeholder: 'Search...',
+          showClearButton: true,
+          onContentReady(e) {
+            e.component.element().find('.dx-icon-clear').click(() => {
+              dataGrid.clearFilter();
+            });
+          },
+          onOptionChanged(e) {
+            if (e.name === 'text') {
+              const { value } = e;
+              if (value === '') {
+                dataGrid.clearFilter();
+              }
+              dataGrid.searchByText(value);
+            }
+          },
+        },
+      },
+      // 'searchPanel',
+    ],
+  }).dxToolbar('instance');
 });
