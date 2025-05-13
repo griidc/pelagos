@@ -3,14 +3,16 @@
 namespace App\Controller\UI;
 
 use App\Enum\DatasetLifecycleStatus;
+use App\Repository\ResearchGroupRepository;
 use Elastica\Query;
-use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
 use Elastica\Query\MatchPhrase;
 use Elastica\Query\MatchPhrasePrefix;
+use Elastica\Query\Nested;
 use Elastica\Query\Range;
 use Elastica\Query\Term;
+use Elastica\Query\Terms;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,7 +37,7 @@ final class MapSearchController extends AbstractController
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/"(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)")/', $filter, $matches);
+        preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -57,6 +59,7 @@ final class MapSearchController extends AbstractController
         $query = new Query();
 
         if (is_array($sort) && !empty($sort)) {
+            // TODO: replace next function with json_decode
             $sort = $this->getParseParams($sort, true);
             foreach ($sort as $item) {
                 $query->addSort([$item[0]['selector'] => ['order' => $item[0]['desc'] ? 'DESC' : 'ASC']]);
@@ -85,8 +88,11 @@ final class MapSearchController extends AbstractController
             $field = 'doi.doi';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
             if ($value !== null) {
+                $nestedQuery = new Nested();
+                $nestedQuery->setPath('doi');
                 $matchQuery = new MatchPhrase($field, $value);
-                $searchFilter->addShould($matchQuery);
+                $nestedQuery->setQuery($matchQuery);
+                $searchFilter->addShould($nestedQuery);
             }
 
             if ($searchFilter->count() > 0) {
@@ -104,7 +110,6 @@ final class MapSearchController extends AbstractController
             }
 
             $field = 'collectionStartDate';
-
             $value = $this->getValueFromFilterRegex($filter[0], 'collectionStartDate');
             if ($value !== null) {
                 $rangeQuery = new Range($field);
@@ -120,6 +125,21 @@ final class MapSearchController extends AbstractController
                 $filterDate = new \DateTime($value);
                 $rangeQuery->addField($field, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
                 $filterQuery->addFilter($rangeQuery);
+            }
+
+            $field = 'researchGroup.id';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if ($value !== null) {
+                $valuesArray = json_decode($value);
+                if (count($valuesArray) > 0) {
+                    $nestedQuery = new Nested();
+                    $nestedQuery->setPath('researchGroup');
+                    $termQuery = new Terms('researchGroup.id');
+                    $valuesArray = json_decode($value);
+                    $termQuery->setTerms($valuesArray);
+                    $nestedQuery->setQuery($termQuery);
+                    $filterQuery->addFilter($nestedQuery);
+                }
             }
 
             if ($filterQuery->count() > 0) {
@@ -147,7 +167,8 @@ final class MapSearchController extends AbstractController
 
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
 
-        $page = (int) ($skip ?? 0 / $take) + 1;
+        /** @psalm-suppress PossiblyNullOperand */
+        $page = (int) ($skip / $take) + 1;
 
         $find->setMaxPerPage($take);
         $find->setCurrentPage($page);
@@ -218,83 +239,20 @@ final class MapSearchController extends AbstractController
         return new JsonResponse($geoJson);
     }
 
-    /**
-     * Transform the filter array to a query.
-     */
-    private function filterArrayToQuery(array $filters): AbstractQuery
+    #[Route(path: '/map/research-groups', name: 'pelagos_map_all_researchgroups')]
+    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository) : Response
     {
-        $query = new BoolQuery();
+        $researchGroups = $researchGroupRepository->findBy([], ['name' => 'ASC']);
 
-        if (is_array($filters[0])) {
-            $searchFilter = new BoolQuery();
-            $filterQuery = new BoolQuery();
-            $lastOperation = 'or';
-            foreach ($filters as $filter) {
-                if (is_array($filter)) {
-                    $filterQuery = $this->filterArrayToQuery($filter);
-                } else {
-                    switch ($filter) {
-                        case 'and':
-                            $searchFilter->addMust($filterQuery);
-                            $lastOperation = 'and';
-                            break;
-                        case 'or':
-                            $searchFilter->addShould($filterQuery);
-                            $lastOperation = 'or';
-                            break;
-                        case 'lte':
-                            dd($filterQuery);
-                            // $filterQuery = new Range($filter[0]);
-                            // $searchFilter->addShould($filterQuery);
-                            // $lastOperation = 'or';
-                            break;
-                        default:
-                            throw new \InvalidArgumentException('Invalid filter operation');
-                    }
-                }
-
-                if ('and' === $lastOperation) {
-                    $searchFilter->addMust($filterQuery);
-                } else {
-                    $searchFilter->addShould($filterQuery);
-                }
-            }
-
-            return $searchFilter;
+        $groups = [];
+        foreach ($researchGroups as $researchGroup) {
+            $groups[] = [
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+            ];
         }
 
-        $fieldName = $filters[0];
-        $fieldOperation = $filters[1];
-        $fieldValue = $filters[2];
-
-        switch ($fieldOperation) {
-            case '=':
-                $query = new Term();
-                $query->setTerm($fieldName, $fieldValue);
-                break;
-            case '<=':
-                $filterQuery = new Range($fieldName);
-                $filterDate = new \DateTime($fieldValue);
-                $filterQuery->addField($fieldName, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
-                break;
-            case '<':
-                $filterQuery = new Range($fieldName);
-                $filterDate = new \DateTime($fieldValue);
-                $filterQuery->addField($fieldName, ['lt' => $filterDate->format('Y-m-d H:i:s')]);
-                break;
-            case '>=':
-                $filterQuery = new Range($fieldName);
-                $filterDate = new \DateTime($fieldValue);
-                $filterQuery->addField($fieldName, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
-                break;
-            case 'contains':
-                $query = new Query\MatchPhrase($fieldName, $fieldValue);
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid filter operation');
-        }
-
-        return $query;
+        return new JsonResponse($groups);
     }
 
     /**
