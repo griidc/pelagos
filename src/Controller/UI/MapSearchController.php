@@ -48,7 +48,7 @@ final class MapSearchController extends AbstractController
 
     #[Route('/map/search', name: 'app_map_search_search')]
     public function search(
-        #[MapQueryParameter] int $take,
+        #[MapQueryParameter] ?int $take = 9999,
         #[MapQueryParameter] ?int $skip = 0,
         #[MapQueryParameter] ?array $filter = [],
         #[MapQueryParameter] ?array $group = [],
