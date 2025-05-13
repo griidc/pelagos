@@ -597,7 +597,7 @@ $(() => {
       // change element btnItems value with items count
       $('#btnItems').text(`${items.length} Items`);
       if (e.component.getCombinedFilter() !== undefined) {
-        items().forEach((dataset) => {
+        items.forEach((dataset) => {
         // if dataset.geometery is undefined, skip it
           if (dataset.geometry === undefined) {
             return;
