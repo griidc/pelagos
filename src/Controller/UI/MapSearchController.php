@@ -33,11 +33,15 @@ final class MapSearchController extends AbstractController
         return $this->render('MapSearch/index.html.twig');
     }
 
-    private function getValueFromFilterRegex(string $filter, string $field): ?string
+    private function getValueFromFilterRegex(string $filter, string $field, bool $matchAll = false): mixed
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
+        if ($matchAll) {
+            preg_match_all('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
+        } else {
+            preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
+        }
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -102,10 +106,10 @@ final class MapSearchController extends AbstractController
             $filterQuery = new BoolQuery();
 
             $field = 'datasetLifecycleStatus';
-            $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus');
+            $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus', true);
             if ($value !== null) {
-                $termQuery = new Term();
-                $termQuery->setTerm($field, $value);
+                $termQuery = new Terms($field);
+                $termQuery->setTerms($value);
                 $filterQuery->addFilter($termQuery);
             }
 
