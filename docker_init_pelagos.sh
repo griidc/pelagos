@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Install Pelagos
-git clone https://github.com/griidc/pelagos /opt/pelagos
 cd /opt/pelagos
+git clone https://github.com/griidc/pelagos .
 git checkout develop
 
 cp /.env.local /opt/pelagos

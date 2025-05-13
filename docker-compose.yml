@@ -2,7 +2,7 @@ services:
   database:
     image: postgis/postgis:14-3.5
     container_name: postgis
-    restart: no
+    restart: "no"
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
@@ -12,7 +12,7 @@ services:
   elasticsearch:
     image: elastic/elasticsearch:7.17.28
     container_name: elasticsearch
-    restart: no
+    restart: "no"
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
@@ -21,11 +21,11 @@ services:
   application:
     image: rocky-pelagos:latest
     container_name: pelagos
-    restart: no
+    restart: "no"
     ports:
       - 8080:8080
     volumes:
       - ./docker_init_pelagos.sh:/usr/local/bin/docker_init_pelagos.sh
       - ./.env.local:/.env.local # yes, put at / for now.
       - ./newest-pelagos.sql:/opt/newest-pelagos.sql
-    entrypoint: ["/usr/local/bin/docker_init_pelagos.sh"]  # Run the script as the entrypoint
+    entrypoint: ["gosu", "devuser", "/usr/local/bin/docker_init_pelagos.sh"]  # Run the script as the entrypoint
