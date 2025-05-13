@@ -135,8 +135,8 @@ map.on('pm:drawstart', () => {
 });
 
 const features = Leaflet.featureGroup().addTo(map);
+const selectedFeatures = Leaflet.featureGroup().addTo(map);
 map.setView([27.5, -97.5], 3);
-
 let geojsonLayer = null;
 
 const url = `${Routing.generate('pelagos_map_all_geojson')}`;
@@ -152,6 +152,39 @@ fetch(url).then((response) => response.json()).then((response) => {
   });
   controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
+
+function addToSelectedLayer(list) {
+  selectedFeatures.clearLayers();
+  controlLayer.removeLayer(selectedFeatures);
+
+  list.forEach((geojson) => {
+    Leaflet.geoJSON(geojson, {
+      pointToLayer(feature, latlng) {
+        return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
+      },
+      style: {
+        color: 'green',
+        weight: 4,
+        opacity: 1,
+        fillOpacity: 0,
+      },
+      onEachFeature(feature, layer) {
+        layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
+      },
+    }).addTo(selectedFeatures);
+  });
+
+  if (selectedFeatures.getLayers().length > 0) {
+    controlLayer.addOverlay(selectedFeatures, 'Selected Features');
+    map.fitBounds(selectedFeatures.getBounds(), { padding: [20, 20] });
+  } else {
+    goHome();
+  }
+}
+
+function resetFeatures() {
+  features.clearLayers();
+}
 
 function showGeometryByUDI(id) {
   if (geojsonLayer === null) {
@@ -279,7 +312,7 @@ $(() => {
       recursive: true,
     },
     onSelectionChanged(e) {
-      const selectedItems = [];
+      let selectedItems = [];
       e.selectedRowsData.forEach((item) => {
         const { researchGroup } = item;
         if (Array.isArray(researchGroup)) {
@@ -290,6 +323,10 @@ $(() => {
           selectedItems.push(researchGroup);
         }
       });
+
+      if (selectedItems.length === 0) {
+        selectedItems = null;
+      }
 
       const dataGrid = $('#datasets-grid').dxDataGrid('instance');
       dataGrid.columnOption('researchgroup', 'filterValue', selectedItems);
@@ -351,13 +388,13 @@ $(() => {
     showColumnLines: true,
     showRowLines: true,
     paging: {
-      enabled: true,
-      pageSize: 18,
+      enabled: false,
+      pageSize: 9999,
     },
     filterRow: { visible: false },
     filterPanel: { visible: false },
     pager: {
-      visible: true,
+      visible: false,
       showInfo: true,
     },
     searchPanel: {
@@ -435,9 +472,21 @@ $(() => {
           location: 'after',
           widget: 'dxButton',
           options: {
+            text: 'Loading...',
+            stylingMode: 'text',
+            elementAttr: {
+              id: 'btnItems',
+            },
+          },
+        },
+        {
+          location: 'after',
+          widget: 'dxButton',
+          options: {
             text: 'Clear Filters',
             onClick() {
               dataGrid.clearFilter();
+              dataGrid.deselectAll();
               $('#start-date').dxDateBox('instance').reset();
               $('#end-date').dxDateBox('instance').reset();
               treeList.deselectAll();
@@ -445,6 +494,8 @@ $(() => {
               treeList.forEachNode((node) => {
                 treeList.collapseRow(node.key);
               });
+              resetFeatures();
+              popup.hide();
             },
           },
         },
@@ -539,6 +590,25 @@ $(() => {
       },
     ],
     hoverStateEnabled: true,
+    onContentReady(e) {
+      const datasource = e.component.getDataSource();
+      const filteredDatasets = [];
+      const items = datasource.items();
+      // change element btnItems value with items count
+      $('#btnItems').text(`${items.length} Items`);
+      if (e.component.getCombinedFilter() !== undefined) {
+        items().forEach((dataset) => {
+        // if dataset.geometery is undefined, skip it
+          if (dataset.geometry === undefined) {
+            return;
+          }
+          const geojson = JSON.parse(dataset.geometry);
+          filteredDatasets.push(geojson);
+        });
+      }
+      addToSelectedLayer(filteredDatasets);
+    },
+
     onSelectionChanged(e) {
       if (e.currentDeselectedRowKeys.length > 0) {
         hideGeometryByUDI(e.currentDeselectedRowKeys[0]);
