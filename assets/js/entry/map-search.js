@@ -185,6 +185,7 @@ function addToSelectedLayer(list) {
 
 function resetFeatures() {
   features.clearLayers();
+  map.removeLayer(drawnLayer);
 }
 
 function showGeometryByUDI(id) {
