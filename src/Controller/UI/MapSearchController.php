@@ -11,7 +11,6 @@ use Elastica\Query\MatchPhrase;
 use Elastica\Query\MatchPhrasePrefix;
 use Elastica\Query\Nested;
 use Elastica\Query\Range;
-use Elastica\Query\Term;
 use Elastica\Query\Terms;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -244,7 +243,7 @@ final class MapSearchController extends AbstractController
     }
 
     #[Route(path: '/map/research-groups', name: 'pelagos_map_all_researchgroups')]
-    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository) : Response
+    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
     {
         $researchGroups = $researchGroupRepository->findBy([], ['name' => 'ASC']);
 
