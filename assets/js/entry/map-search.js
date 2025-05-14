@@ -137,6 +137,8 @@ map.on('pm:drawstart', () => {
 
 const features = Leaflet.featureGroup().addTo(map);
 const selectedFeatures = Leaflet.featureGroup().addTo(map);
+// selectedFeatures.pm.disable();
+// features.pm.disable();
 map.setView([27.5, -97.5], 3);
 let geojsonLayer = null;
 
@@ -185,6 +187,9 @@ function addToSelectedLayer(list) {
 
 function resetFeatures() {
   features.clearLayers();
+  if (drawnLayer === null) {
+    return;
+  }
   map.removeLayer(drawnLayer);
 }
 
@@ -736,6 +741,9 @@ $(() => {
         location: 'after',
         widget: 'dxTextBox',
         options: {
+          // label: 'Search',
+          // labelMode: 'static',
+          stylingMode: 'underlined',
           elementAttr: {
             id: 'search-text',
           },
@@ -757,7 +765,6 @@ $(() => {
           },
         },
       },
-      // 'searchPanel',
     ],
   }).dxToolbar('instance');
 });
