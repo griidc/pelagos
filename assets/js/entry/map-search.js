@@ -400,111 +400,112 @@ $(() => {
       showInfo: true,
     },
     searchPanel: {
-      visible: true,
+      visible: false,
       placeholder: 'Search...',
     },
     selection: {
       mode: 'single',
     },
     filterSyncEnabled: true,
-    toolbar: {
-      visible: false,
-      items: [
-        {
-          location: 'before',
-          template: '<div>Start Date:</div>',
-        },
-        {
-          location: 'before',
-          widget: 'dxDateBox',
-          options: {
-            type: 'date',
-            displayFormat: 'shortdate',
-            placeholder: 'mm/dd/yyyy',
-            showClearButton: true,
-            elementAttr: {
-              id: 'start-date',
-            },
-            onValueChanged(e) {
-              let filter = null;
-              if (e.value) {
-                filter = e.value;
-              }
-              dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
-            },
-          },
-        },
-        {
-          location: 'before',
-          template: '<div>End Date:</div>',
-        },
-        {
-          location: 'before',
-          widget: 'dxDateBox',
-          options: {
-            type: 'date',
-            displayFormat: 'shortdate',
-            placeholder: 'mm/dd/yyyy',
-            showClearButton: true,
-            elementAttr: {
-              id: 'end-date',
-            },
-            onValueChanged(e) {
-              let filter = null;
-              if (e.value) {
-                filter = e.value;
-              }
-              dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
-            },
-          },
-        },
-        {
-          location: 'before',
-          widget: 'dxButton',
-          options: {
-            elementAttr: {
-              id: 'rg-select',
-            },
-            text: 'Organization Filter',
-            onClick() {
-              popup.show();
-            },
-          },
-        },
-        {
-          location: 'after',
-          widget: 'dxButton',
-          options: {
-            text: 'Loading...',
-            stylingMode: 'text',
-            elementAttr: {
-              id: 'btnItems',
-            },
-          },
-        },
-        {
-          location: 'after',
-          widget: 'dxButton',
-          options: {
-            text: 'Clear Filters',
-            onClick() {
-              dataGrid.clearFilter();
-              dataGrid.deselectAll();
-              $('#start-date').dxDateBox('instance').reset();
-              $('#end-date').dxDateBox('instance').reset();
-              treeList.deselectAll();
-              treeList.searchByText('');
-              treeList.forEachNode((node) => {
-                treeList.collapseRow(node.key);
-              });
-              resetFeatures();
-              popup.hide();
-            },
-          },
-        },
-        'searchPanel',
-      ],
-    },
+    wordWrapEnabled: true,
+    // toolbar: {
+    //   visible: false,
+    //   items: [
+    //     {
+    //       location: 'before',
+    //       template: '<div>Start Date:</div>',
+    //     },
+    //     {
+    //       location: 'before',
+    //       widget: 'dxDateBox',
+    //       options: {
+    //         type: 'date',
+    //         displayFormat: 'shortdate',
+    //         placeholder: 'mm/dd/yyyy',
+    //         showClearButton: true,
+    //         elementAttr: {
+    //           id: 'start-date',
+    //         },
+    //         onValueChanged(e) {
+    //           let filter = null;
+    //           if (e.value) {
+    //             filter = e.value;
+    //           }
+    //           dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
+    //         },
+    //       },
+    //     },
+    //     {
+    //       location: 'before',
+    //       template: '<div>End Date:</div>',
+    //     },
+    //     {
+    //       location: 'before',
+    //       widget: 'dxDateBox',
+    //       options: {
+    //         type: 'date',
+    //         displayFormat: 'shortdate',
+    //         placeholder: 'mm/dd/yyyy',
+    //         showClearButton: true,
+    //         elementAttr: {
+    //           id: 'end-date',
+    //         },
+    //         onValueChanged(e) {
+    //           let filter = null;
+    //           if (e.value) {
+    //             filter = e.value;
+    //           }
+    //           dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
+    //         },
+    //       },
+    //     },
+    //     {
+    //       location: 'before',
+    //       widget: 'dxButton',
+    //       options: {
+    //         elementAttr: {
+    //           id: 'rg-select',
+    //         },
+    //         text: 'Organization Filter',
+    //         onClick() {
+    //           popup.show();
+    //         },
+    //       },
+    //     },
+    //     {
+    //       location: 'after',
+    //       widget: 'dxButton',
+    //       options: {
+    //         text: 'Loading...',
+    //         stylingMode: 'text',
+    //         elementAttr: {
+    //           id: 'btnItems',
+    //         },
+    //       },
+    //     },
+    //     {
+    //       location: 'after',
+    //       widget: 'dxButton',
+    //       options: {
+    //         text: 'Clear Filters',
+    //         onClick() {
+    //           dataGrid.clearFilter();
+    //           dataGrid.deselectAll();
+    //           $('#start-date').dxDateBox('instance').reset();
+    //           $('#end-date').dxDateBox('instance').reset();
+    //           treeList.deselectAll();
+    //           treeList.searchByText('');
+    //           treeList.forEachNode((node) => {
+    //             treeList.collapseRow(node.key);
+    //           });
+    //           resetFeatures();
+    //           popup.hide();
+    //         },
+    //       },
+    //     },
+    //     'searchPanel',
+    //   ],
+    // },
     headerFilter: {
       visible: true,
     },
@@ -642,14 +643,12 @@ $(() => {
     items: [
       {
         location: 'before',
-        locateInMenu: 'auto',
-        template: '<div>Start Date:</div>',
-      },
-      {
-        location: 'before',
         widget: 'dxDateBox',
         options: {
           type: 'date',
+          stylingMode: 'underlined',
+          label: 'Start Date',
+          labelMode: 'static',
           displayFormat: 'shortdate',
           placeholder: 'mm/dd/yyyy',
           showClearButton: true,
@@ -667,13 +666,11 @@ $(() => {
       },
       {
         location: 'before',
-        locateInMenu: 'auto',
-        template: '<div>End Date:</div>',
-      },
-      {
-        location: 'before',
         widget: 'dxDateBox',
         options: {
+          label: 'End Date',
+          labelMode: 'static',
+          stylingMode: 'underlined',
           type: 'date',
           displayFormat: 'shortdate',
           placeholder: 'mm/dd/yyyy',
