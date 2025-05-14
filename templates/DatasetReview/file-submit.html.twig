@@ -21,57 +21,7 @@
                 </fieldset>
             </div> <!-- tabs-1 -->
 
-            {% set sftpuser=app.user.isPosix() %}
-            <div id="tabs-2"> <!-- Upload via SFTP/Ingest-->
-                <p>Dataset files that are too large via the normal Upload mechanism can be uploaded to the griidc-ingest
-                    server using Globus or SFTP and then the folder selected below.  See your
-<a style="all: revert;" href="{{ path('pelagos_app_ui_person_profile_page', {'id': app.user.id}) }}" TARGET="_NEW">user profile page</a>
-                    to enable griidc-ingest access.  For further instructions on using Globus or SFTP, see the
-                    <a style="all: revert" href="https://griidc.org/data-file-transfer-methods" TARGET="_NEW">Data File
-                        Transfer Methods</a> help page. </p>
-                <div>
-                    <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
-                        Your account has been configured for SFTP/Ingest access.
-                    </div>
-                    <div class="sftpNo {{ sftpuser ? 'sftphidden' : 'sftpshow' }}" style="color:red;">
-                        <p>
-                            Your account has not been configured for SFTP/Ingest access.
-                            If you wish to use SFTP/Ingest, please request SFTP/Ingest access from profile page:
-                            <a style="all: revert;" href='{{ path('pelagos_app_ui_person_profile_page', {'id': app.user.id}) }}' TARGET="_NEW">Go to Profile Page.</a>
-                        </p>
-                    </div>
-                </div>
-                <fieldset>
-                    <table class="tab-table">
-                        <tr>
-                            <td>
-                                <div class="helpSection">
-                                    <img class="info" src="{{ asset('build/images/info32.png') }}" alt="info image">
-                                    <div class="tooltiptext">
-                                        <p><strong>Dataset File Path:</strong></p>
-                                        <p>Select the folder associated with the dataset you uploaded via SFTP/Globus. This list contains the folders directly under your 'incoming' folder.</p>
-                                        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
-                                    </div>
-                                </div>
-                                <div class="fwtextboxcont">
-                                    <label for="largeFileUri"> User submitted:</label>
-                                    <input type="text" name="largeFileUri" id="largeFileUri" value="{{ form.largeFileUri.vars.value }}" class="valid files">
-                                    <hr>
-                                    <label for="datasetFilePath">Reviewer Ingest folders: </label>
-                                    <select name="datasetFilePath" id="datasetFilePath"
-                                            {% if sftpuser == false %}
-                                        disabled="disabled"
-                                            {% endif %}>
-                                    </select>
-                                    <button type="button" id="clearLargeFilePath">Clear</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-            </div> <!-- tabs-2 -->
-
-            <div id="tabs-3"> <!-- Remotely Hosted Tab -->
+            <div id="tabs-2"> <!-- Remotely Hosted Tab -->
                 If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
                 <fieldset>
                     <table class="tab-table">
@@ -115,7 +65,7 @@
                         </tr>
                     </table>
                 </fieldset>
-            </div> <!-- tabs-3 -->
+            </div> <!-- tabs-2 -->
 
         </div> <!-- tabs -->
     </fieldset> <!-- Dataset File Transfer Details -->
