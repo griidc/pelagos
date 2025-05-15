@@ -11,7 +11,6 @@ use Elastica\Query\MatchPhrase;
 use Elastica\Query\MatchPhrasePrefix;
 use Elastica\Query\Nested;
 use Elastica\Query\Range;
-use Elastica\Query\Term;
 use Elastica\Query\Terms;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,11 +32,15 @@ final class MapSearchController extends AbstractController
         return $this->render('MapSearch/index.html.twig');
     }
 
-    private function getValueFromFilterRegex(string $filter, string $field): ?string
+    private function getValueFromFilterRegex(string $filter, string $field, bool $matchAll = false): mixed
     {
         /* /"(geometry)","([^"]+)",(\{.*\})/ */
         /* /"(title)","([^"]+)","([^"]+)"/   */
-        preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
+        if ($matchAll) {
+            preg_match_all('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
+        } else {
+            preg_match('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
+        }
 
         if (count($matches) > 0) {
             return $matches[5] ?? $matches[3] ?? null;
@@ -48,7 +51,7 @@ final class MapSearchController extends AbstractController
 
     #[Route('/map/search', name: 'app_map_search_search')]
     public function search(
-        #[MapQueryParameter] int $take,
+        #[MapQueryParameter] ?int $take = 9999,
         #[MapQueryParameter] ?int $skip = 0,
         #[MapQueryParameter] ?array $filter = [],
         #[MapQueryParameter] ?array $group = [],
@@ -102,10 +105,10 @@ final class MapSearchController extends AbstractController
             $filterQuery = new BoolQuery();
 
             $field = 'datasetLifecycleStatus';
-            $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus');
-            if ($value !== null) {
-                $termQuery = new Term();
-                $termQuery->setTerm($field, $value);
+            $value = $this->getValueFromFilterRegex($filter[0], 'datasetLifecycleStatus', true);
+            if (!empty($value)) {
+                $termQuery = new Terms($field);
+                $termQuery->setTerms($value);
                 $filterQuery->addFilter($termQuery);
             }
 
@@ -240,7 +243,7 @@ final class MapSearchController extends AbstractController
     }
 
     #[Route(path: '/map/research-groups', name: 'pelagos_map_all_researchgroups')]
-    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository) : Response
+    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
     {
         $researchGroups = $researchGroupRepository->findBy([], ['name' => 'ASC']);
 

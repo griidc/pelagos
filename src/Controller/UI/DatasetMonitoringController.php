@@ -46,7 +46,7 @@ class DatasetMonitoringController extends AbstractController
         foreach ($fundingOrganizations as $fundingOrganization) {
             $fundingOrganizationName = $fundingOrganization->getName();
             $fundingOrganizationId = 'fundingOrganization' . $fundingOrganization->getId();
-            $researchGroups= [];
+            $researchGroups = [];
             foreach ($fundingOrganization->getResearchGroups() as $researchGroup) {
                 $researchGroups[] = $researchGroup->getId();
             }
@@ -64,7 +64,7 @@ class DatasetMonitoringController extends AbstractController
             foreach ($fundingCycles as $fundingCycle) {
                 $fundingCycleName = $fundingCycle->getName();
                 $fundingCycleId = 'fundingCycle' . $fundingCycle->getId();
-                $researchGroups= [];
+                $researchGroups = [];
                 foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
                     $researchGroups[] = $researchGroup->getId();
                 }
