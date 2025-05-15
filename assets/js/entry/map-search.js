@@ -743,7 +743,7 @@ $(() => {
         options: {
           // label: 'Search',
           // labelMode: 'static',
-          stylingMode: 'underlined',
+          // stylingMode: 'underlined',
           elementAttr: {
             id: 'search-text',
           },
