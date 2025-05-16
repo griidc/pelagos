@@ -396,7 +396,11 @@ $(() => {
     showRowLines: true,
     paging: {
       enabled: false,
-      pageSize: 9999,
+      pageSize: 100,
+    },
+    scrolling: {
+      mode: 'standard',
+      rowRenderingMode: 'standard',
     },
     filterRow: { visible: false },
     filterPanel: { visible: false },
