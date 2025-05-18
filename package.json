@@ -22,7 +22,7 @@
         "sass-embedded": "1.64",
         "sass-loader": "^13.0.0",
         "tailwindcss": "^3.4.3",
-        "vue": "^2.6.11",
+        "vue": "^3.5.14",
         "vue-loader": "^15.0.11",
         "vue-template-compiler": "^2.6.11",
         "webpack": "^5.99.7",
