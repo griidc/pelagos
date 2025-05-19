@@ -3859,10 +3859,10 @@ esri-leaflet-vector@^4.2.8:
   resolved "https://registry.yarnpkg.com/esri-leaflet-vector/-/esri-leaflet-vector-4.2.8.tgz#7ce007b769a32ac30db7db37a3952da05def7922"
   integrity sha512-ZK7YibhXNbYr2Toe2MVis+O5/zs20I3xXuxyGNUCw+BRQvtNn/wcZAmhVYZGAyc7ocjtDP6r6ZWmtlC98+nESg==
 
-esri-leaflet@^3.0.15:
-  version "3.0.15"
-  resolved "https://registry.yarnpkg.com/esri-leaflet/-/esri-leaflet-3.0.15.tgz#2b48ced97e76b0acbdcb31f212a70eb979df66aa"
-  integrity sha512-wk83SolCqy8POIlGnPVwI+OQao0HlFNQzUBeV4vYeoMimsjG7eihjNaCx18J+L2KIh6QGGuUx/EDOQ9PbMAMGg==
+esri-leaflet@^3.0.16:
+  version "3.0.16"
+  resolved "https://registry.yarnpkg.com/esri-leaflet/-/esri-leaflet-3.0.16.tgz#d7df1838242e2eae4ceba9481ef1b5f4ce31ffdb"
+  integrity sha512-Cjm2IF0xHbNpDqyOR6UtRYCPCpAUROpz2DRJVmNJShdP4Yx1glULGGF9P+WfxLcTgfJV34WCfikpIibOk108yQ==
   dependencies:
     "@terraformer/arcgis" "^2.1.0"
     tiny-binary-search "^1.0.3"
