@@ -121,6 +121,13 @@ map.on('pm:create', (e) => {
     const dataGrid = $('#datasets-grid').dxDataGrid('instance');
     dataGrid.columnOption('geometry', 'filterValue', geojson);
   }
+  drawnLayer.addEventListener('pm:disable', (event) => {
+    const editedGeojson = event.target.toGeoJSON();
+    if (editedGeojson) {
+      const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+      dataGrid.columnOption('geometry', 'filterValue', editedGeojson);
+    }
+  });
 });
 
 map.on('pm:remove', () => {
@@ -135,8 +142,8 @@ map.on('pm:drawstart', () => {
   }
 });
 
-const features = Leaflet.featureGroup().addTo(map);
-const selectedFeatures = Leaflet.featureGroup().addTo(map);
+const features = Leaflet.featureGroup({ pmIgnore: true }).addTo(map);
+const selectedFeatures = Leaflet.featureGroup({ pmIgnore: true }).addTo(map);
 map.setView([27.5, -97.5], 3);
 let geojsonLayer = null;
 
@@ -150,6 +157,8 @@ fetch(url).then((response) => response.json()).then((response) => {
       layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
     },
     style: GRIIDCStyle,
+    pmIgnore: true,
+    markersInheritOptions: true,
   });
   controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
@@ -169,6 +178,8 @@ function addToSelectedLayer(list) {
         opacity: 1,
         fillOpacity: 0,
       },
+      pmIgnore: true,
+      markersInheritOptions: true,
       onEachFeature(feature, layer) {
         layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
       },
