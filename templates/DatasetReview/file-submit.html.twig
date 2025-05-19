@@ -7,11 +7,11 @@
         <div style="background: transparent;" id="filetabs">
             <ul>
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Upload</a></li>
-                <li datasetFileTransferType="SFTP"><a href="#tabs-2">Large Files</a></li>
-                <li datasetFileTransferType="HTTP"><a href="#tabs-3">Enter URL</a></li>
+                <li datasetFileTransferType="HTTP"><a href="#tabs-2">Enter URL</a></li>
+                <li datasetFileTransferType="SFTP"><a href="#tabs-3">Large Files</a></li>
             </ul>
             <label for="files" class="error"></label>
-            <div id="tabs-1"> <!-- Upload -->
+            <div id="tabs-1"> <!-- tabs-1 Upload -->
                 You may upload files or folders using Drag and Drop or via the Upload Button.<br>
                 <fieldset>
                     <div id="dropzone-uploader">
@@ -20,8 +20,7 @@
                     </div>
                 </fieldset>
             </div> <!-- tabs-1 -->
-
-            <div id="tabs-2"> <!-- Remotely Hosted Tab -->
+            <div id="tabs-2"> <!-- tabs-2 Remotely Hosted Tab -->
                 If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
                 <fieldset>
                     <table class="tab-table">
@@ -66,7 +65,16 @@
                     </table>
                 </fieldset>
             </div> <!-- tabs-2 -->
-
+            <div id="tabs-3"> <!-- tabs-3 Large Dataset Instructions-->
+                <p>
+                    Dataset files that are too large to submit via the upload mechanism can be uploaded
+                    to the griidc-ingest server using SFTP or Globus. The dataset’s descriptive information
+                    collected via dataset submission is required before providing the data file(s). Please
+                    upload a text document containing a file listing of the dataset. Once you have submitted
+                    the dataset, please contact GRIIDC (help@griidc.org) for further instructions on uploading
+                    the data.
+                </p>
+            </div> <!-- tabs-3 -->
         </div> <!-- tabs -->
     </fieldset> <!-- Dataset File Transfer Details -->
     <fieldset>
