@@ -127,7 +127,7 @@ map.on('pm:create', (e) => {
     const dataGrid = $('#datasets-grid').dxDataGrid('instance');
     dataGrid.columnOption('geometry', 'filterValue', geojson);
   }
-  drawnLayer.addEventListener('pm:disable', (event) => {
+  drawnLayer.on('pm:disable', (event) => {
     const editedGeojson = event.target.toGeoJSON();
     if (editedGeojson) {
       const dataGrid = $('#datasets-grid').dxDataGrid('instance');
@@ -144,6 +144,7 @@ map.on('pm:remove', () => {
 // Listen for the drawstart event and clear the previously drawn features, if any.
 map.on('pm:drawstart', () => {
   if (drawnLayer) {
+    drawnLayer.off();
     map.removeLayer(drawnLayer);
   }
 });
