@@ -117,14 +117,6 @@ services:
     App\Util\IngestUtil:
         $ingestApiUrl: "%env(INGEST_API_URL)%"
 
-    App\Util\Ldap\Ldap:
-        $ldapBindDn: "%env(LDAP_BIND_DN)%"
-        $ldapBindPw: "%env(LDAP_BIND_PW)%"
-        $peopleOu: "%env(LDAP_PEOPLE_OU)%"
-
-    App\Util\Ldap\LdapClient:
-        $host: "%env(LDAP_HOST)%"
-
     App\Util\DatasetIndex:
         autowire: false
         arguments: ["@fos_elastica.index.pelagos"]
