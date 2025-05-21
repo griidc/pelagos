@@ -27,6 +27,7 @@ To install fullfill prerequisites then run:
 * `composer install`
 * `yarn install`
 * `yarn build`
+* 'docker compose up'
 
 ## Contributors
 
