@@ -12,7 +12,6 @@ use App\Exception\PasswordException;
 use App\Handler\EntityHandler;
 use App\Repository\PersonRepository;
 use App\Util\Factory\UserIdFactory;
-use App\Util\Ldap\Ldap;
 use App\Util\MailSender;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -258,7 +257,6 @@ class AccountController extends AbstractController
      * Post handler to create an account.
      *
      * @param Request $request The Symfony Request object.
-     * @param Ldap    $ldap    The Ldap Utility.
      *
      * @throws \Exception When password do not match.
      *
@@ -266,7 +264,7 @@ class AccountController extends AbstractController
      * @return Response A Symfony Response instance.
      */
     #[Route(path: '/account/create', methods: ['POST'], name: 'pelagos_app_ui_account_create')]
-    public function createAction(Request $request, Ldap $ldap)
+    public function createAction(Request $request)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -322,7 +320,6 @@ class AccountController extends AbstractController
             // Persist Account
             $account = $this->entityHandler->update($account);
 
-            $ldap->updatePerson($person);
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
@@ -343,14 +340,6 @@ class AccountController extends AbstractController
 
             // Persist Account
             $account = $this->entityHandler->create($account);
-
-            try {
-                // Try to add the person to LDAP.
-                $ldap->addPerson($person);
-            } catch (LdapException $exception) {
-                // If that fails, try to update the person in LDAP.
-                $ldap->updatePerson($person);
-            }
         }
 
         // Delete the person token.
@@ -392,7 +381,6 @@ class AccountController extends AbstractController
      * Post handler to change password.
      *
      * @param Request $request The Symfony Request object.
-     * @param Ldap    $ldap    The Ldap Utility.
      *
      * @throws \Exception When password do not match.
      *
@@ -400,7 +388,7 @@ class AccountController extends AbstractController
      * @return Response A Symfony Response instance.
      */
     #[Route(path: '/change-password', methods: ['POST'], name: 'pelagos_app_ui_account_changepasswordpost')]
-    public function changePasswordPostAction(Request $request, Ldap $ldap)
+    public function changePasswordPostAction(Request $request)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -444,15 +432,6 @@ class AccountController extends AbstractController
         $this->validateEntity($account);
 
         $account = $this->entityHandler->update($account);
-
-        // Update LDAP
-        try {
-            // Try to add the person to LDAP, incase it needs to re-create.
-            $ldap->addPerson($person);
-        } catch (\Exception $exception) {
-            // If that fails, try to update the person in LDAP.
-            $ldap->updatePerson($person);
-        }
 
         return $this->render('Account/AccountReset.html.twig');
     }
