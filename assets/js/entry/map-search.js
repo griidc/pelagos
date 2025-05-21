@@ -79,6 +79,9 @@ const styles = {
 
 const controlLayer = Leaflet.control.layers(styles).addTo(map);
 
+// Opt out for all layers for PM controls
+Leaflet.PM.setOptIn(true);
+
 // add Leaflet-Geoman controls with some options to the map
 map.pm.addControls({
   position: 'topleft',
@@ -116,6 +119,9 @@ let drawnLayer;
 // Function to handle the map filter drawn event
 map.on('pm:create', (e) => {
   drawnLayer = e.layer;
+  // Allow PM to manage the layer
+  drawnLayer.options.pmIgnore = false;
+  Leaflet.PM.reInitLayer(drawnLayer);
   const geojson = drawnLayer.toGeoJSON();
   if (geojson) {
     const dataGrid = $('#datasets-grid').dxDataGrid('instance');
@@ -142,8 +148,8 @@ map.on('pm:drawstart', () => {
   }
 });
 
-const features = Leaflet.featureGroup({ pmIgnore: true }).addTo(map);
-const selectedFeatures = Leaflet.featureGroup({ pmIgnore: true }).addTo(map);
+const features = Leaflet.featureGroup().addTo(map);
+const selectedFeatures = Leaflet.featureGroup().addTo(map);
 map.setView([27.5, -97.5], 3);
 let geojsonLayer = null;
 
@@ -157,7 +163,6 @@ fetch(url).then((response) => response.json()).then((response) => {
       layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
     },
     style: GRIIDCStyle,
-    pmIgnore: true,
     markersInheritOptions: true,
   });
   controlLayer.addOverlay(geojsonLayer, 'Show All Features');
@@ -178,7 +183,6 @@ function addToSelectedLayer(list) {
         opacity: 1,
         fillOpacity: 0,
       },
-      pmIgnore: true,
       markersInheritOptions: true,
       onEachFeature(feature, layer) {
         layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
