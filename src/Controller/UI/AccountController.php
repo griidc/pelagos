@@ -319,7 +319,6 @@ class AccountController extends AbstractController
 
             // Persist Account
             $account = $this->entityHandler->update($account);
-
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
