@@ -239,7 +239,7 @@ $(() => {
     load(loadOptions) {
       const d = $.Deferred();
       const params = {};
-      const customLoadOptions = loadOptions;
+      const customLoadOptions = { ...loadOptions };
       const dxButtonGroup = $('#geometry-method').dxButtonGroup('instance');
       customLoadOptions.userData.geometrySearchMode = dxButtonGroup.option('selectedItemKeys').toString();
 
