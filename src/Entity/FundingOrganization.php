@@ -223,6 +223,21 @@ class FundingOrganization extends Entity
     }
 
     /**
+     * Return the research groups associated with this Funding Organization.
+     */
+    public function getResearchGroups(): Collection
+    {
+        $researchGroups = new ArrayCollection();
+        foreach ($this->getFundingCycles() as $fundingCycle) {
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                $researchGroups->add($researchGroup);
+            }
+        }
+
+        return $researchGroups;
+    }
+
+    /**
      * Returns datasets by Dataset Lifecycle Status.
      */
     public function getDatasetsByLifecycleStatus(DatasetLifecycleStatus $datasetLifecycleStatus): Collection

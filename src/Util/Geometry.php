@@ -132,6 +132,8 @@ class Geometry
      * @param string $gml Textual GML of geometry.
      * @param string $udi Dataset UDI.
      * @param string $id  Identifier for feature.
+     *
+     * @throws InvalidGmlException When PG Driver cannot process the supplied GML.
      */
     public function convertGmlToGeoJSON(string $gml, string $udi = 'unknown', string $id = 'A'): mixed
     {

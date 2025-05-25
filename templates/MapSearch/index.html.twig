@@ -1,0 +1,37 @@
+{% extends "base.html.twig" %}
+{% block title %}Map Search{% endblock title %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    {{ encore_entry_link_tags('map-search') }}
+    <link href="/css/dx.generic.griidc-scheme.css" rel="stylesheet">
+{% endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('map-search') }}
+{% endblock javascripts %}
+
+{% block body %}
+    <div class="max-w-full mx-auto py-6">
+        <div class="max-w-screen-xl mx-auto content-center">
+            <div id="dg-toolbar" ></div>
+        </div>
+        <div class="flex flex-row m-4 gap-2 h-svh">
+            <div class="flex basis-1/2 h-3/4">
+                <div id="leaflet-map" class="h-full w-full"></div>
+            </div>
+            <div class="flex-1 mx-auto p-2 h-full">
+                <div class="h-3/4">
+                    <div id="datasets-grid" class="h-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="rg-popup" class="h-full">
+        <div id="rg-tree" class="overflow-y-clip h-full"></div>
+    </div>
+{% endblock %}
