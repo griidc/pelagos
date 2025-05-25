@@ -58,6 +58,7 @@ final class MapSearchController extends AbstractController
         #[MapQueryParameter] ?array $sort = [],
         #[MapQueryParameter] ?string $searchOperation = 'contains',
         #[MapQueryParameter] ?bool $requireTotalCount = false,
+        #[MapQueryParameter] ?string $userData = '{}',
     ): Response {
         $query = new Query();
 
@@ -149,6 +150,19 @@ final class MapSearchController extends AbstractController
                 $mainQuery->addMust($filterQuery);
             }
 
+            $userData = json_decode($userData, true);
+
+            switch ($userData['geometrySearchMode'] ?? null) {
+                case 'intersects':
+                    $geometrySearchMode = GeoShapeProvided::RELATION_INTERSECT;
+                    break;
+                case 'within':
+                    $geometrySearchMode = GeoShapeProvided::RELATION_WITHIN;
+                    break;
+                default:
+                    $geometrySearchMode = GeoShapeProvided::RELATION_WITHIN;
+            }
+
             $field = 'geometry';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
             if ($value !== null) {
@@ -159,7 +173,7 @@ final class MapSearchController extends AbstractController
                         $geoJson['geometry']['coordinates'],
                         GeoShapeProvided::TYPE_POLYGON
                     );
-                    $geoQuery->setRelation(GeoShapeProvided::RELATION_WITHIN);
+                    $geoQuery->setRelation($geometrySearchMode);
 
                     $mainQuery->addFilter($geoQuery);
                 }
