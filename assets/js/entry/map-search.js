@@ -255,6 +255,9 @@ $(() => {
     load(loadOptions) {
       const d = $.Deferred();
       const params = {};
+      const customLoadOptions = { ...loadOptions };
+      const dxButtonGroup = $('#geometry-method').dxButtonGroup('instance');
+      customLoadOptions.userData.geometrySearchMode = dxButtonGroup.option('selectedItemKeys').toString();
 
       [
         'filter',
@@ -273,8 +276,8 @@ $(() => {
         'totalSummary',
         'userData',
       ].forEach((i) => {
-        if (i in loadOptions && isNotEmpty(loadOptions[i])) {
-          params[i] = JSON.stringify(loadOptions[i]);
+        if (i in customLoadOptions && isNotEmpty(customLoadOptions[i])) {
+          params[i] = JSON.stringify(customLoadOptions[i]);
         }
       });
 
@@ -718,6 +721,37 @@ $(() => {
           onClick() {
             popup.show();
           },
+        },
+      },
+      {
+        location: 'before',
+        widget: 'dxButtonGroup',
+        options: {
+          elementAttr: {
+            id: 'geometry-method',
+          },
+          keyExpr: 'key',
+          selectedItemKeys: ['within'],
+          onSelectionChanged() {
+            const geojson = drawnLayer.toGeoJSON();
+            if (geojson) {
+              dataGrid.columnOption('geometry', 'filterValue', geojson);
+            }
+          },
+          items: [
+            {
+              text: 'Within',
+              key: 'within',
+            },
+            {
+              text: 'Intersects',
+              key: 'intersects',
+            },
+            // {
+            //   text: 'Contains',
+            //   key: 'contains',
+            // },
+          ],
         },
       },
       {
