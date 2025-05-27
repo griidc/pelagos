@@ -79,6 +79,9 @@ const styles = {
 
 const controlLayer = Leaflet.control.layers(styles).addTo(map);
 
+// Opt out for all layers for PM controls
+Leaflet.PM.setOptIn(true);
+
 // add Leaflet-Geoman controls with some options to the map
 map.pm.addControls({
   position: 'topleft',
@@ -116,11 +119,21 @@ let drawnLayer;
 // Function to handle the map filter drawn event
 map.on('pm:create', (e) => {
   drawnLayer = e.layer;
+  // Allow PM to manage the layer
+  drawnLayer.options.pmIgnore = false;
+  Leaflet.PM.reInitLayer(drawnLayer);
   const geojson = drawnLayer.toGeoJSON();
   if (geojson) {
     const dataGrid = $('#datasets-grid').dxDataGrid('instance');
     dataGrid.columnOption('geometry', 'filterValue', geojson);
   }
+  drawnLayer.on('pm:disable', (event) => {
+    const editedGeojson = event.target.toGeoJSON();
+    if (editedGeojson) {
+      const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+      dataGrid.columnOption('geometry', 'filterValue', editedGeojson);
+    }
+  });
 });
 
 map.on('pm:remove', () => {
@@ -131,6 +144,7 @@ map.on('pm:remove', () => {
 // Listen for the drawstart event and clear the previously drawn features, if any.
 map.on('pm:drawstart', () => {
   if (drawnLayer) {
+    drawnLayer.off();
     map.removeLayer(drawnLayer);
   }
 });
@@ -150,6 +164,7 @@ fetch(url).then((response) => response.json()).then((response) => {
       layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
     },
     style: GRIIDCStyle,
+    markersInheritOptions: true,
   });
   controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
@@ -169,6 +184,7 @@ function addToSelectedLayer(list) {
         opacity: 1,
         fillOpacity: 0,
       },
+      markersInheritOptions: true,
       onEachFeature(feature, layer) {
         layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
       },
