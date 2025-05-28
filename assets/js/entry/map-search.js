@@ -12,243 +12,8 @@ import 'devextreme/ui/tree_list';
 import 'devextreme/ui/popup';
 import 'devextreme/ui/text_box';
 import CustomStore from 'devextreme/data/custom_store';
-
-import * as Leaflet from 'leaflet';
-import 'esri-leaflet';
-import * as EsriLeafletVector from 'esri-leaflet-vector';
-import '../../css/custom-pm-icons.css';
-import '@geoman-io/leaflet-geoman-free';
-import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
-// import 'leaflet/dist/leaflet.css';
-
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-
-const esriApiKey = process.env.ESRI_API_KEY;
-const worldViewCode = process.env.WORLD_VIEW_CODE;
-
-const GRIIDCStyle = {
-  color: 'orange',
-  weight: 4,
-  opacity: 1,
-  fillOpacity: 0,
-};
-
-const geojsonMarkerOptions = {
-  radius: 12,
-  fill: false,
-  weight: 4,
-  opacity: 1,
-};
-
-function getV2BasemapLayer(style) {
-  return EsriLeafletVector.vectorBasemapLayer(style, {
-    token: esriApiKey,
-    version: 2,
-    worldview: worldViewCode,
-  });
-}
-
-const ArcGISImagery = getV2BasemapLayer('arcgis/imagery');
-const ArcGISOceans = getV2BasemapLayer('arcgis/oceans');
-const ArcGISTerrain = getV2BasemapLayer('arcgis/terrain');
-
-const map = Leaflet.map('leaflet-map', {
-  preferCanvas: true,
-  minZoom: 2,
-  maxZoom: 14,
-  attributionControl: true,
-  worldCopyJump: true,
-  layers: [ArcGISImagery],
-});
-
-function goHome() {
-  map.setZoom(3, {
-    animate: true,
-  });
-  map.panTo([27.5, -97.5], {
-    animate: true,
-    duration: 1,
-  });
-}
-
-const styles = {
-  'ArcGIS Imagery': ArcGISImagery,
-  'ArcGIS Oceans': ArcGISOceans,
-  'ArcGIS Terrain': ArcGISTerrain,
-};
-
-const controlLayer = Leaflet.control.layers(styles).addTo(map);
-
-// Opt out for all layers for PM controls
-Leaflet.PM.setOptIn(true);
-
-// add Leaflet-Geoman controls with some options to the map
-map.pm.addControls({
-  position: 'topleft',
-  drawCircleMarker: false,
-  drawMarker: false,
-  drawPolyline: false,
-  drawRectangle: true,
-  drawPolygon: true,
-  drawCircle: false,
-  drawText: false,
-  cutPolygon: false,
-  editMode: true,
-  dragMode: false,
-  removalMode: true,
-  rotateMode: false,
-});
-
-map.pm.Toolbar.createCustomControl(
-  {
-    name: 'Home',
-    block: 'custom',
-    title: 'Navigate to Home',
-    className: 'custom-pm-icon-home',
-    onClick: () => {
-      goHome();
-    },
-  },
-);
-
-map.pm.Toolbar.changeControlOrder([
-  'Home',
-]);
-
-let drawnLayer;
-// Function to handle the map filter drawn event
-map.on('pm:create', (e) => {
-  drawnLayer = e.layer;
-  // Allow PM to manage the layer
-  drawnLayer.options.pmIgnore = false;
-  Leaflet.PM.reInitLayer(drawnLayer);
-  const geojson = drawnLayer.toGeoJSON();
-  if (geojson) {
-    const dataGrid = $('#datasets-grid').dxDataGrid('instance');
-    dataGrid.columnOption('geometry', 'filterValue', geojson);
-  }
-  drawnLayer.on('pm:disable', (event) => {
-    const editedGeojson = event.target.toGeoJSON();
-    if (editedGeojson) {
-      const dataGrid = $('#datasets-grid').dxDataGrid('instance');
-      dataGrid.columnOption('geometry', 'filterValue', editedGeojson);
-    }
-  });
-});
-
-map.on('pm:remove', () => {
-  const dataGrid = $('#datasets-grid').dxDataGrid('instance');
-  dataGrid.columnOption('geometry', 'filterValue', null);
-});
-
-// Listen for the drawstart event and clear the previously drawn features, if any.
-map.on('pm:drawstart', () => {
-  if (drawnLayer) {
-    drawnLayer.off();
-    map.removeLayer(drawnLayer);
-  }
-});
-
-const features = Leaflet.featureGroup().addTo(map);
-const selectedFeatures = Leaflet.featureGroup().addTo(map);
-// selectedFeatures.pm.disable();
-// features.pm.disable();
-map.setView([27.5, -97.5], 3);
-let geojsonLayer = null;
-
-const url = `${Routing.generate('pelagos_map_all_geojson')}`;
-fetch(url).then((response) => response.json()).then((response) => {
-  geojsonLayer = Leaflet.geoJSON(response, {
-    pointToLayer(feature, latlng) {
-      return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
-    },
-    onEachFeature(feature, layer) {
-      layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
-    },
-    style: GRIIDCStyle,
-    markersInheritOptions: true,
-  });
-  controlLayer.addOverlay(geojsonLayer, 'Show All Features');
-});
-
-function addToSelectedLayer(list) {
-  selectedFeatures.clearLayers();
-  controlLayer.removeLayer(selectedFeatures);
-
-  list.forEach((geojson) => {
-    Leaflet.geoJSON(geojson, {
-      pointToLayer(feature, latlng) {
-        return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
-      },
-      style: {
-        color: 'green',
-        weight: 4,
-        opacity: 1,
-        fillOpacity: 0,
-      },
-      markersInheritOptions: true,
-      onEachFeature(feature, layer) {
-        layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
-      },
-    }).addTo(selectedFeatures);
-  });
-
-  if (selectedFeatures.getLayers().length > 0) {
-    controlLayer.addOverlay(selectedFeatures, 'Selected Features');
-    map.fitBounds(selectedFeatures.getBounds(), { padding: [20, 20] });
-  } else {
-    goHome();
-  }
-}
-
-function resetFeatures() {
-  features.clearLayers();
-  if (drawnLayer === null) {
-    return;
-  }
-  map.removeLayer(drawnLayer);
-}
-
-function showGeometryByUDI(id) {
-  if (geojsonLayer === null) {
-    return;
-  }
-  geojsonLayer.eachLayer((layer) => {
-    const { feature } = layer;
-    if (feature.properties.id === id) {
-      layer.bindTooltip(feature.properties.name.toString(), { permanent: true, className: 'label' });
-      if (!features.hasLayer(layer)) {
-        features.addLayer(layer);
-      }
-    }
-  });
-}
-
-function hideGeometryByUDI(id) {
-  if (geojsonLayer === null) {
-    return;
-  }
-  geojsonLayer.eachLayer((layer) => {
-    const { feature } = layer;
-    if (feature.properties.id === id) {
-      layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
-      features.removeLayer(layer);
-    }
-  });
-}
-
-function zoomAndPanToFeature(id) {
-  if (geojsonLayer === null) {
-    return;
-  }
-  geojsonLayer.eachLayer((layer) => {
-    if (layer.feature.properties.id === id) {
-      features.addLayer(layer);
-      layer.bringToFront();
-      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
-    }
-  });
-}
+import * as GeoViz from '../modules/geoViz-leaflet';
 
 function isNotEmpty(value) {
   return value !== undefined && value !== null && value !== '';
@@ -260,7 +25,7 @@ $(() => {
     load(loadOptions) {
       const d = $.Deferred();
       const params = {};
-      const customLoadOptions = loadOptions;
+      const customLoadOptions = { ...loadOptions };
       const dxButtonGroup = $('#geometry-method').dxButtonGroup('instance');
       customLoadOptions.userData.geometrySearchMode = dxButtonGroup.option('selectedItemKeys').toString();
 
@@ -436,104 +201,6 @@ $(() => {
     },
     filterSyncEnabled: true,
     wordWrapEnabled: true,
-    // toolbar: {
-    //   visible: false,
-    //   items: [
-    //     {
-    //       location: 'before',
-    //       template: '<div>Start Date:</div>',
-    //     },
-    //     {
-    //       location: 'before',
-    //       widget: 'dxDateBox',
-    //       options: {
-    //         type: 'date',
-    //         displayFormat: 'shortdate',
-    //         placeholder: 'mm/dd/yyyy',
-    //         showClearButton: true,
-    //         elementAttr: {
-    //           id: 'start-date',
-    //         },
-    //         onValueChanged(e) {
-    //           let filter = null;
-    //           if (e.value) {
-    //             filter = e.value;
-    //           }
-    //           dataGrid.columnOption('collectionStartDate', 'filterValue', filter);
-    //         },
-    //       },
-    //     },
-    //     {
-    //       location: 'before',
-    //       template: '<div>End Date:</div>',
-    //     },
-    //     {
-    //       location: 'before',
-    //       widget: 'dxDateBox',
-    //       options: {
-    //         type: 'date',
-    //         displayFormat: 'shortdate',
-    //         placeholder: 'mm/dd/yyyy',
-    //         showClearButton: true,
-    //         elementAttr: {
-    //           id: 'end-date',
-    //         },
-    //         onValueChanged(e) {
-    //           let filter = null;
-    //           if (e.value) {
-    //             filter = e.value;
-    //           }
-    //           dataGrid.columnOption('collectionEndDate', 'filterValue', filter);
-    //         },
-    //       },
-    //     },
-    //     {
-    //       location: 'before',
-    //       widget: 'dxButton',
-    //       options: {
-    //         elementAttr: {
-    //           id: 'rg-select',
-    //         },
-    //         text: 'Organization Filter',
-    //         onClick() {
-    //           popup.show();
-    //         },
-    //       },
-    //     },
-    //     {
-    //       location: 'after',
-    //       widget: 'dxButton',
-    //       options: {
-    //         text: 'Loading...',
-    //         stylingMode: 'text',
-    //         elementAttr: {
-    //           id: 'btnItems',
-    //         },
-    //       },
-    //     },
-    //     {
-    //       location: 'after',
-    //       widget: 'dxButton',
-    //       options: {
-    //         text: 'Clear Filters',
-    //         onClick() {
-    //           dataGrid.clearFilter();
-    //           dataGrid.deselectAll();
-    //           $('#start-date').dxDateBox('instance').reset();
-    //           $('#end-date').dxDateBox('instance').reset();
-    //           treeList.deselectAll();
-    //           treeList.searchByText('');
-    //           treeList.forEachNode((node) => {
-    //             treeList.collapseRow(node.key);
-    //           });
-    //           resetFeatures();
-    //           popup.hide();
-    //         },
-    //       },
-    //     },
-    //     'searchPanel',
-    //   ],
-    // },
     headerFilter: {
       visible: true,
     },
@@ -638,15 +305,15 @@ $(() => {
           filteredDatasets.push(geojson);
         });
       }
-      addToSelectedLayer(filteredDatasets);
+      GeoViz.addToSelectedLayer(filteredDatasets);
     },
 
     onSelectionChanged(e) {
       if (e.currentDeselectedRowKeys.length > 0) {
-        hideGeometryByUDI(e.currentDeselectedRowKeys[0]);
+        GeoViz.hideGeometryByUDI(e.currentDeselectedRowKeys[0]);
       }
       if (e.currentSelectedRowKeys.length > 0) {
-        zoomAndPanToFeature(e.currentSelectedRowKeys[0]);
+        GeoViz.zoomAndPanToFeature(e.currentSelectedRowKeys[0]);
       }
     },
     onCellHoverChanged(e) {
@@ -655,19 +322,17 @@ $(() => {
       }
       if (e.eventType === 'mouseover') {
         if (e.data && e.data.udi) {
-          showGeometryByUDI(e.data.udi);
+          GeoViz.showGeometryByUDI(e.data.udi);
         }
       } else if (e.eventType === 'mouseout') {
         if (e.data && e.data.udi) {
-          hideGeometryByUDI(e.data.udi);
+          GeoViz.hideGeometryByUDI(e.data.udi);
         }
       }
     },
   }).dxDataGrid('instance');
 
   $('#dg-toolbar').dxToolbar({
-    // multiline: true,
-    // height: '102px',
     items: [
       {
         location: 'before',
@@ -738,9 +403,9 @@ $(() => {
           keyExpr: 'key',
           selectedItemKeys: ['within'],
           onSelectionChanged() {
-            const geojson = drawnLayer.toGeoJSON();
+            const geojson = dataGrid.columnOption('geometry', 'filterValue');
             if (geojson) {
-              dataGrid.columnOption('geometry', 'filterValue', geojson);
+              dataGrid.refresh();
             }
           },
           items: [
@@ -752,10 +417,6 @@ $(() => {
               text: 'Intersects',
               key: 'intersects',
             },
-            // {
-            //   text: 'Contains',
-            //   key: 'contains',
-            // },
           ],
         },
       },
@@ -786,7 +447,7 @@ $(() => {
             treeList.forEachNode((node) => {
               treeList.collapseRow(node.key);
             });
-            resetFeatures();
+            GeoViz.resetFeatures();
             popup.hide();
           },
         },
@@ -821,4 +482,8 @@ $(() => {
       },
     ],
   }).dxToolbar('instance');
+
+  GeoViz.on('geojsonupdated', (e) => {
+    dataGrid.columnOption('geometry', 'filterValue', e.geojson);
+  });
 });
