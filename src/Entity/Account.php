@@ -396,34 +396,6 @@ class Account extends Entity implements UserInterface, EquatableInterface
     }
 
     /**
-     * Make this Account a POSIX account.
-     *
-     * @param integer     $uidNumber           The uid number for this account.
-     * @param integer     $gidNumber           The gid number for this account.
-     * @param string      $homeDirectoryPrefix The home dircectory prefix for this account.
-     * @param string|null $loginShell          The login shell for this account (default: /sbin/nologin).
-     *
-     * @throws \Exception When $uidNumber is not an integer.
-     * @throws \Exception When $gidNumber is not an integer.
-     *
-     * @return void
-     */
-    public function makePosix(int $uidNumber, int $gidNumber, string $homeDirectoryPrefix, string $loginShell = '/sbin/nologin')
-    {
-        if ('integer' !== gettype($uidNumber)) {
-            throw new \Exception("$uidNumber is not as valid uid number (must be an integer)");
-        }
-        if ('integer' !== gettype($gidNumber)) {
-            throw new \Exception("$gidNumber is not as valid gid number (must be an integer)");
-        }
-        $this->uidNumber = $uidNumber;
-        $this->gidNumber = $gidNumber;
-        $this->homeDirectory = preg_replace('/\/$/', '', $homeDirectoryPrefix) . '/' . $this->userId;
-        $this->loginShell = $loginShell;
-        $this->posix = true;
-    }
-
-    /**
      * Whether or not this account is POSIX.
      *
      * @return boolean
