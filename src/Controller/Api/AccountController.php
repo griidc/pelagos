@@ -11,7 +11,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Entity\Account;
 use App\Security\Voter\AccountVoter;
-use App\Util\POSIXifyAccount;
 
 /**
  * The Account API controller.

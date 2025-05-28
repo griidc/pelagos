@@ -168,12 +168,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
-    App\Util\POSIXifyAccount:
-        bind:
-            int $posixStartingUidNumber: "%env(POSIX_STARTING_UID)%"
-            int $posixGidNumber: "%env(POSIX_GID)%"
-            string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
-
     App\Controller\UI\AccountController:
         bind:
             bool $passwordRules: '%env(bool:ACCOUNT_LESS_STRICT_PASSWORD_RULES)%'
