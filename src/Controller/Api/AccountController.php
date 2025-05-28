@@ -130,39 +130,4 @@ class AccountController extends EntityController
 
         return $directoryData;
     }
-
-    /**
-     * Request a user to be converted to POSIX.
-     *
-     * @param POSIXifyAccount $posixifyAccount Posixify account instance.
-     *
-     * @throws AccessDeniedException   When the user is not logged in.
-     * @throws BadRequestHttpException When there was a problem.
-     *
-     *
-     *
-     *
-     * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
-     */
-    #[View]
-    #[Route(path: '/api/account/self/make-posix', name: 'pelagos_api_account_make_posix', methods: ['PATCH'], defaults: ['_format' => 'json'])]
-    public function makePosixAction(POSIXifyAccount $posixifyAccount)
-    {
-        if (!($this->getUser() instanceof Account)) {
-            throw new AccessDeniedException('User is either not logged in or does not have an account');
-        }
-
-        // Call utility class to POSIX-enable this Account.
-        try {
-            $posixifyAccount->POSIXifyAccount($this->getUser());
-        } catch (\Exception $e) {
-            throw new BadRequestHttpException(
-                'There was a problem. '
-                . $e->getMessage()
-            );
-        }
-
-        // Return a no content success response.
-        return $this->makeNoContentResponse();
-    }
 }
