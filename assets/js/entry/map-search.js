@@ -11,6 +11,7 @@ import 'devextreme/ui/select_box';
 import 'devextreme/ui/tree_list';
 import 'devextreme/ui/popup';
 import 'devextreme/ui/text_box';
+import 'devextreme/ui/button_group';
 import CustomStore from 'devextreme/data/custom_store';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import * as GeoViz from '../modules/geoViz-leaflet';
@@ -456,6 +457,7 @@ $(() => {
         location: 'after',
         widget: 'dxTextBox',
         options: {
+          width: '240px',
           elementAttr: {
             id: 'search-text',
           },
@@ -480,7 +482,21 @@ $(() => {
     ],
   }).dxToolbar('instance');
 
+  function highlightRow(id) {
+    const key = dataGrid.getRowIndexByKey(id);
+    const element = dataGrid.getRowElement(key);
+
+    $('tr.dx-data-row').removeClass('dx-selection');
+    element.addClass('dx-selection');
+    element.get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }
+
   GeoViz.on('geojsonupdated', (e) => {
     dataGrid.columnOption('geometry', 'filterValue', e.geojson);
+  });
+
+  GeoViz.on('featureselected', (e) => {
+    const { id } = e.feature.properties;
+    highlightRow(id);
   });
 });
