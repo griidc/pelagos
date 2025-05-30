@@ -12,18 +12,35 @@ const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
 const worldViewCode = process.env.WORLD_VIEW_CODE;
 
-const GRIIDCStyle = {
-  color: '#fcaf08',
-  // weight: 4,
-  opacity: 1,
-  fillOpacity: 0,
-};
-
-const geojsonMarkerOptions = {
-  radius: 6,
-  fill: false,
-  // weight: 4,
-  opacity: 1,
+const styles = {
+  defaultStyle:
+  {
+    color: '#fcaf08',
+    // weight: 4,
+    opacity: 1,
+    fillOpacity: 0,
+  },
+  selectedStyle:
+  {
+    color: '#08fcaf',
+    // weight: 4,
+    opacity: 1,
+    fillOpacity: 0,
+  },
+  hoverStyle:
+  {
+    color: '#af08fc',
+    // weight: 4,
+    opacity: 1,
+    fillOpacity: 0,
+  },
+  markerStyle:
+  {
+    radius: 6,
+    fill: false,
+    // weight: 4,
+    opacity: 1,
+  },
 };
 
 function getV2BasemapLayer(style) {
@@ -38,6 +55,12 @@ const ArcGISImagery = getV2BasemapLayer('arcgis/imagery');
 const ArcGISOceans = getV2BasemapLayer('arcgis/oceans');
 const ArcGISTerrain = getV2BasemapLayer('arcgis/terrain');
 
+const mapStyles = {
+  'ArcGIS Imagery': ArcGISImagery,
+  'ArcGIS Oceans': ArcGISOceans,
+  'ArcGIS Terrain': ArcGISTerrain,
+};
+
 const map = Leaflet.map('leaflet-map', {
   preferCanvas: true,
   minZoom: 2,
@@ -47,23 +70,12 @@ const map = Leaflet.map('leaflet-map', {
   layers: [ArcGISImagery],
 });
 
-function goHome() {
-  map.setZoom(3, {
-    animate: true,
-  });
-  map.panTo([27.5, -97.5], {
-    animate: true,
-    duration: 1,
-  });
-}
+const controlLayer = Leaflet.control.layers(mapStyles).addTo(map);
 
-const styles = {
-  'ArcGIS Imagery': ArcGISImagery,
-  'ArcGIS Oceans': ArcGISOceans,
-  'ArcGIS Terrain': ArcGISTerrain,
+const goHome = () => {
+  map.setZoom(3, { animate: true });
+  map.panTo([27.5, -97.5], { animate: true, duration: 1 });
 };
-
-const controlLayer = Leaflet.control.layers(styles).addTo(map);
 
 // Opt out for all layers for PM controls
 Leaflet.PM.setOptIn(true);
@@ -158,81 +170,64 @@ const url = `${Routing.generate('pelagos_map_all_geojson')}`;
 fetch(url).then((response) => response.json()).then((response) => {
   geojsonLayer = Leaflet.geoJSON(response, {
     pointToLayer(feature, latlng) {
-      return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
+      return Leaflet.circleMarker(latlng, styles.markerStyle);
     },
     onEachFeature(feature, layer) {
       layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
+      layer.on('mouseover', (e) => e.target.setStyle(styles.hoverStyle));
+      layer.on('mouseout', (e) => e.target.setStyle(styles.defaultStyle));
     },
-    style: GRIIDCStyle,
+    style: styles.defaultStyle,
     markersInheritOptions: true,
   });
   controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
 
-function addToSelectedLayer(list) {
+const addToSelectedLayer = (list) => {
   selectedFeatures.clearLayers();
   controlLayer.removeLayer(selectedFeatures);
 
   list.forEach((geojson) => {
     Leaflet.geoJSON(geojson, {
-      pointToLayer(feature, latlng) {
-        return Leaflet.circleMarker(latlng, geojsonMarkerOptions);
-      },
-      style: {
-        color: '#08fcaf',
-        // weight: 4,
-        opacity: 1,
-        fillOpacity: 0,
-      },
+      pointToLayer: (feature, latlng) => Leaflet.circleMarker(latlng, styles.markerStyle),
+      style: { color: '#08fcaf', opacity: 1, fillOpacity: 0 },
       markersInheritOptions: true,
-      onEachFeature(feature, layer) {
+      onEachFeature: (feature, layer) => {
         layer.bindTooltip(feature.properties.name.toString(), { permanent: false, className: 'label' });
-        layer.on('mouseover', (e) => {
-          e.target.setStyle({
-            color: '#af08fc',
-          });
-        });
-        layer.on('mouseout', (e) => {
-          e.target.setStyle({
-            color: '#08fcaf',
-          });
-        });
+        layer.on('click', (e) => geoVizEventEmitter.emit('featureselected', { feature: e.target.feature }));
+        layer.on('mouseover', (e) => e.target.setStyle(styles.hoverStyle));
+        layer.on('mouseout', (e) => e.target.setStyle(styles.selectedStyle));
       },
     }).addTo(selectedFeatures);
   });
 
-  if (selectedFeatures.getLayers().length > 0) {
+  if (selectedFeatures.getLayers().length) {
     controlLayer.addOverlay(selectedFeatures, 'Selected Features');
     map.fitBounds(selectedFeatures.getBounds(), { padding: [20, 20] });
   } else {
     goHome();
   }
-}
+};
 
-function resetFeatures() {
+const resetFeatures = () => {
   features.clearLayers();
+  selectedFeatures.clearLayers();
   map.removeLayer(drawnLayer);
-}
+};
 
-function showGeometryByUDI(id) {
-  if (geojsonLayer === null) {
-    return;
-  }
+const showGeometryByUDI = (id) => {
+  if (!geojsonLayer) return;
   geojsonLayer.eachLayer((layer) => {
-    const { feature } = layer;
-    if (feature.properties.id === id) {
-      layer.bindTooltip(feature.properties.name.toString(), { permanent: true, className: 'label' });
-      if (!features.hasLayer(layer)) {
-        features.addLayer(layer);
-      }
+    if (layer.feature.properties.id === id) {
+      layer.bindTooltip(layer.feature.properties.name.toString(), { permanent: true, className: 'label' });
+      layer.setStyle(styles.hoverStyle);
+      if (!features.hasLayer(layer)) features.addLayer(layer);
     }
   });
-}
+};
 
-function hideGeometryByUDI(id) {
-  if (geojsonLayer === null) {
-    return;
-  }
+const hideGeometryByUDI = (id) => {
+  if (!geojsonLayer) return;
   geojsonLayer.eachLayer((layer) => {
     const { feature } = layer;
     if (feature.properties.id === id) {
@@ -240,12 +235,10 @@ function hideGeometryByUDI(id) {
       features.removeLayer(layer);
     }
   });
-}
+};
 
-function zoomAndPanToFeature(id) {
-  if (geojsonLayer === null) {
-    return;
-  }
+const zoomAndPanToFeature = (id) => {
+  if (!geojsonLayer) return;
   geojsonLayer.eachLayer((layer) => {
     if (layer.feature.properties.id === id) {
       features.addLayer(layer);
@@ -253,7 +246,7 @@ function zoomAndPanToFeature(id) {
       map.fitBounds(layer.getBounds(), { padding: [20, 20] });
     }
   });
-}
+};
 
 const on = (eventName, callback) => geoVizEventEmitter.on(eventName, callback);
 const off = (eventName, callback) => geoVizEventEmitter.off(eventName, callback);
@@ -265,5 +258,7 @@ export {
   showGeometryByUDI,
   hideGeometryByUDI,
   zoomAndPanToFeature,
-  on, off, once,
+  on,
+  off,
+  once,
 };
