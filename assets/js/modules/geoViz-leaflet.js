@@ -137,18 +137,13 @@ map.on('pm:create', (e) => {
   });
 });
 
-map.on('pm:globaleditmodetoggled', () => {
-  if (drawnLayer) {
-    drawnLayer.bringToFront();
-  }
+['pm:globaleditmodetoggled', 'pm:globalremovalmodetoggled'].forEach((eventName) => {
+  map.on(eventName, () => {
+    if (drawnLayer) {
+      drawnLayer.bringToFront();
+    }
+  });
 });
-
-map.on('pm:globalremovalmodetoggled', () => {
-  if (drawnLayer) {
-    drawnLayer.bringToFront();
-  }
-});
-
 map.on('pm:remove', () => {
   geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
 });
