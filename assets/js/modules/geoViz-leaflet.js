@@ -11,6 +11,8 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
 const worldViewCode = process.env.WORLD_VIEW_CODE;
+const INITIAL_ZOOM = 3;
+const INITIAL_CENTER = [27.5, -97.5];
 
 const styles = {
   defaultStyle:
@@ -73,8 +75,8 @@ const map = Leaflet.map('leaflet-map', {
 const controlLayer = Leaflet.control.layers(mapStyles).addTo(map);
 
 const goHome = () => {
-  map.setZoom(3, { animate: true });
-  map.panTo([27.5, -97.5], { animate: true, duration: 1 });
+  map.setZoom(INITIAL_ZOOM, { animate: true });
+  map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
 };
 
 // Opt out for all layers for PM controls
@@ -144,6 +146,7 @@ map.on('pm:create', (e) => {
     }
   });
 });
+
 map.on('pm:remove', () => {
   geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
 });
@@ -208,6 +211,7 @@ const resetFeatures = () => {
   features.clearLayers();
   selectedFeatures.clearLayers();
   map.removeLayer(drawnLayer);
+  goHome();
 };
 
 const showGeometryByUDI = (id) => {
