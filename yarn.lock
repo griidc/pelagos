@@ -1280,18 +1280,6 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tanstack/react-virtual@^3.0.0-beta.60":
-  version "3.13.9"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.9.tgz#6f87bce08a65c8f4ec6d2c303646ca6b3897e9fe"
-  integrity sha512-SPWC8kwG/dWBf7Py7cfheAPOxuvIv4fFQ54PdmYbg7CpXfsKxkucak43Q0qKsxVthhUJQ1A7CIMAIplq4BjVwA==
-  dependencies:
-    "@tanstack/virtual-core" "3.13.9"
-
-"@tanstack/virtual-core@3.13.9":
-  version "3.13.9"
-  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.13.9.tgz#62b4d2d4351d658101664beacf088fbd061190bf"
-  integrity sha512-3jztt0jpaoJO5TARe2WIHC1UQC3VMLAFUW5mmMo0yrkwtDB2AQP0+sh10BVUpWrnvHjSLvzFizydtEGLCJKFoQ==
-
 "@terraformer/arcgis@^2.1.0":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@terraformer/arcgis/-/arcgis-2.1.2.tgz#9e05cc5e0ddc400e532f6ccb1d91bdf420e4a756"
