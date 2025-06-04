@@ -471,23 +471,6 @@ class Account extends Entity implements UserInterface, EquatableInterface
     }
 
     /**
-     * Remove an SSH public key from this account.
-     *
-     * @param string $keyName The name of the SSH public key to remove.
-     *
-     * @throws \Exception When the SSH public key referenced by $keyName does not exist.
-     *
-     * @return void
-     */
-    public function removeSshPublicKey(string $keyName)
-    {
-        if (!array_key_exists($number, $this->sshPublicKeys)) {
-            throw new \Exception("SSH pubilc key $keyName does not exist");
-        }
-        unset($this->sshPublicKeys[$keyName]);
-    }
-
-    /**
      * Get all SSH public keys for this account.
      *
      * @return array
@@ -581,6 +564,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      */
     public function isEqualTo(UserInterface $user): bool
     {
+        /** @var Account $user */
         if ($this->getUsername() === $user->getUsername()) {
             return true;
         }
