@@ -149,7 +149,6 @@ final class MapSearchController extends AbstractController
                     $nestedQuery = new Nested();
                     $nestedQuery->setPath('researchGroup');
                     $termQuery = new Terms('researchGroup.id');
-                    $valuesArray = json_decode($value);
                     $termQuery->setTerms($valuesArray);
                     $nestedQuery->setQuery($termQuery);
                     $filterQuery->addFilter($nestedQuery);
