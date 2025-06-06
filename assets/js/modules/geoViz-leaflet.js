@@ -6,7 +6,7 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import { EventEmitter } from 'events';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-// import 'leaflet/dist/leaflet.css';
+// import 'leaflet/dist/leaflet.css'; # This is broken due to webpack, but it is imported in the index.html.twig file.
 
 const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
@@ -18,21 +18,18 @@ const styles = {
   defaultStyle:
   {
     color: '#fcaf08',
-    // weight: 4,
     opacity: 1,
     fillOpacity: 0,
   },
   selectedStyle:
   {
     color: '#08fcaf',
-    // weight: 4,
     opacity: 1,
     fillOpacity: 0,
   },
   hoverStyle:
   {
     color: '#af08fc',
-    // weight: 4,
     opacity: 1,
     fillOpacity: 0,
   },
@@ -40,7 +37,6 @@ const styles = {
   {
     radius: 6,
     fill: false,
-    // weight: 4,
     opacity: 1,
   },
 };
@@ -79,7 +75,7 @@ const goHome = () => {
   map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
 };
 
-// Opt out for all layers for PM controls
+// Opt out for all layers for PM controls, so no layers can be edited by default
 Leaflet.PM.setOptIn(true);
 
 // add Leaflet-Geoman controls with some options to the map
@@ -111,14 +107,12 @@ map.pm.Toolbar.createCustomControl(
   },
 );
 
+// Change the order of the controls in the toolbar
+// This will place the Home control at the top of the toolbar
+// the rest of the controls will be below it
 map.pm.Toolbar.changeControlOrder([
   'Home',
 ]);
-
-// map.pm.setPathOptions({
-//   color: 'blue',
-//   fillOpacity: 0,
-// });
 
 let drawnLayer;
 // Function to handle the map filter drawn event
@@ -164,6 +158,7 @@ const selectedFeatures = Leaflet.featureGroup().addTo(map);
 map.setView([27.5, -97.5], 3);
 let geojsonLayer = null;
 
+// Fetch all geojson features and add them to the map
 const url = `${Routing.generate('pelagos_map_all_geojson')}`;
 fetch(url).then((response) => response.json()).then((response) => {
   geojsonLayer = Leaflet.geoJSON(response, {
@@ -181,6 +176,12 @@ fetch(url).then((response) => response.json()).then((response) => {
   controlLayer.addOverlay(geojsonLayer, 'Show All Features');
 });
 
+/**
+ * Adds the given list of geojson features to the selected layer on the map.
+ *
+ * @param {*} list An array of geojson features to add to the selected layer.
+ * @returns void
+ */
 const addToSelectedLayer = (list) => {
   selectedFeatures.clearLayers();
   controlLayer.removeLayer(selectedFeatures);
@@ -207,6 +208,9 @@ const addToSelectedLayer = (list) => {
   }
 };
 
+/**
+ * Resets the features layer and removes the drawn layer from the map.
+ */
 const resetFeatures = () => {
   features.clearLayers();
   selectedFeatures.clearLayers();
@@ -214,6 +218,12 @@ const resetFeatures = () => {
   goHome();
 };
 
+/**
+ * Shows the geometry with the given id on the map.
+ *
+ * @param {*} id The id of the feature to show, usually the UDI.
+ * @returns void
+ */
 const showGeometryByUDI = (id) => {
   if (!geojsonLayer) return;
   geojsonLayer.eachLayer((layer) => {
@@ -225,6 +235,12 @@ const showGeometryByUDI = (id) => {
   });
 };
 
+/**
+ * Hides the geometry with the given id from the map.
+ *
+ * @param {*} id The id of the feature to hide.
+ * @returns void
+ */
 const hideGeometryByUDI = (id) => {
   if (!geojsonLayer) return;
   geojsonLayer.eachLayer((layer) => {
@@ -236,6 +252,12 @@ const hideGeometryByUDI = (id) => {
   });
 };
 
+/**
+ * Zooms and pans the map to the feature with the given id.
+ *
+ * @param {*} id The id of the feature to zoom and pan to.
+ * @returns void
+ */
 const zoomAndPanToFeature = (id) => {
   if (!geojsonLayer) return;
   geojsonLayer.eachLayer((layer) => {
