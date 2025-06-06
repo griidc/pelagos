@@ -122,7 +122,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
                 // Set the original geometry as a GeoJSON array.
                 $json = $geometry->out('json');
             } else {
-                // Set the simpllified geometry as a GeoJSON array.
+                // Set the simplified geometry as a GeoJSON array.
                 $json = $simpleGeometry->out('json');
             }
 
