@@ -212,7 +212,6 @@ final class MapSearchController extends AbstractController
             $groupItems = array_map(function ($item) {
                 return [
                     'key' => $item,
-                    'items' => 12,
                 ];
             }, array_column(DatasetLifecycleStatus::cases(), 'value'));
 
