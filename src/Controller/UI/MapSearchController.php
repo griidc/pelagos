@@ -32,10 +32,21 @@ final class MapSearchController extends AbstractController
         return $this->render('MapSearch/index.html.twig');
     }
 
+    /**
+     * Parses the filter json string and returns the value for the specified field.
+     *
+     * @param string $filter   the filter string in JSON format
+     * @param string $field    the field to extract the value for
+     * @param bool   $matchAll whether to match all occurrences of the field in the filter
+     *
+     * @return mixed the value extracted from the filter for the specified field, or null if not found, will return an array if $matchAll is true
+     */
     private function getValueFromFilterRegex(string $filter, string $field, bool $matchAll = false): mixed
     {
-        /* /"(geometry)","([^"]+)",(\{.*\})/ */
-        /* /"(title)","([^"]+)","([^"]+)"/   */
+        /* Regex example patterns:
+         *  /"(geometry)","([^"]+)",(\{.*\})/
+         *  /"(title)","([^"]+)","([^"]+)"/
+         */
         if ($matchAll) {
             preg_match_all('/\["(' . $field . ')","([^"]+)",((\{.*\})|"([^"]+)"|\[.*?[^]]?(?=\])\])/', $filter, $matches);
         } else {
@@ -56,7 +67,6 @@ final class MapSearchController extends AbstractController
         #[MapQueryParameter] ?array $filter = [],
         #[MapQueryParameter] ?array $group = [],
         #[MapQueryParameter] ?array $sort = [],
-        #[MapQueryParameter] ?string $searchOperation = 'contains',
         #[MapQueryParameter] ?bool $requireTotalCount = false,
         #[MapQueryParameter] ?string $userData = '{}',
     ): Response {
@@ -77,21 +87,21 @@ final class MapSearchController extends AbstractController
 
             $field = 'udi';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
-            if ($value !== null) {
+            if (null !== $value) {
                 $matchQuery = new MatchPhrase($field, $value);
                 $searchFilter->addShould($matchQuery);
             }
 
             $field = 'title';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
-            if ($value !== null) {
+            if (null !== $value) {
                 $matchQuery = new MatchPhrasePrefix($field, $value);
                 $searchFilter->addShould($matchQuery);
             }
 
             $field = 'doi.doi';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
-            if ($value !== null) {
+            if (null !== $value) {
                 $nestedQuery = new Nested();
                 $nestedQuery->setPath('doi');
                 $matchQuery = new MatchPhrase($field, $value);
@@ -115,7 +125,7 @@ final class MapSearchController extends AbstractController
 
             $field = 'collectionStartDate';
             $value = $this->getValueFromFilterRegex($filter[0], 'collectionStartDate');
-            if ($value !== null) {
+            if (null !== $value) {
                 $rangeQuery = new Range($field);
                 $filterDate = new \DateTime($value);
                 $rangeQuery->addField($field, ['gte' => $filterDate->format('Y-m-d H:i:s')]);
@@ -124,7 +134,7 @@ final class MapSearchController extends AbstractController
 
             $field = 'collectionEndDate';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
-            if ($value !== null) {
+            if (null !== $value) {
                 $rangeQuery = new Range($field);
                 $filterDate = new \DateTime($value);
                 $rangeQuery->addField($field, ['lte' => $filterDate->format('Y-m-d H:i:s')]);
@@ -133,7 +143,7 @@ final class MapSearchController extends AbstractController
 
             $field = 'researchGroup.id';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
-            if ($value !== null) {
+            if (null !== $value) {
                 $valuesArray = json_decode($value);
                 if (count($valuesArray) > 0) {
                     $nestedQuery = new Nested();
@@ -165,7 +175,7 @@ final class MapSearchController extends AbstractController
 
             $field = 'geometry';
             $value = $this->getValueFromFilterRegex($filter[0], $field);
-            if ($value !== null) {
+            if (null !== $value) {
                 $geoJson = json_decode($value, true);
                 if (isset($geoJson['geometry']['coordinates'])) {
                     $geoQuery = new GeoShapeProvided(
@@ -256,6 +266,9 @@ final class MapSearchController extends AbstractController
         return new JsonResponse($geoJson);
     }
 
+    /**
+     * Get all research groups.
+     */
     #[Route(path: '/map/research-groups', name: 'pelagos_map_all_researchgroups')]
     public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
     {
