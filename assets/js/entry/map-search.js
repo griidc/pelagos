@@ -16,11 +16,9 @@ import CustomStore from 'devextreme/data/custom_store';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import * as GeoViz from '../modules/geoViz-leaflet';
 
-function isNotEmpty(value) {
-  return value !== undefined && value !== null && value !== '';
-}
-
 $(() => {
+  const isNotEmpty = (v) => v != null && v !== '';
+
   const customDataSource = new CustomStore({
     key: 'udi',
     load(loadOptions) {
@@ -482,14 +480,14 @@ $(() => {
     ],
   }).dxToolbar('instance');
 
-  function highlightRow(id) {
+  const highlightRow = (id) => {
     const key = dataGrid.getRowIndexByKey(id);
     const element = dataGrid.getRowElement(key);
 
     $('tr.dx-data-row').removeClass('dx-selection');
     element.addClass('dx-selection');
     element.get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-  }
+  };
 
   GeoViz.on('geojsonupdated', (e) => {
     dataGrid.columnOption('geometry', 'filterValue', e.geojson);
