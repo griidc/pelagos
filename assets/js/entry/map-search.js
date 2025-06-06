@@ -306,7 +306,6 @@ $(() => {
       }
       GeoViz.addToSelectedLayer(filteredDatasets);
     },
-
     onSelectionChanged(e) {
       if (e.currentDeselectedRowKeys.length > 0) {
         GeoViz.hideGeometryByUDI(e.currentDeselectedRowKeys[0]);
