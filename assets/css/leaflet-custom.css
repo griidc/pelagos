@@ -1,5 +1,5 @@
 .leaflet-control-attribution {
-    max-height: 3rem;
+    max-height: 1rem;
     overflow-x: auto;
 }
 
@@ -15,7 +15,7 @@
     color: black;
 }
 
-.leaflet-bar {
+.leaflet-bar a {
     background-color: rgba(0, 60, 136, 0.5);
 }
 
