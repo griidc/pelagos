@@ -26,7 +26,7 @@ final class MapSearchController extends AbstractController
     ) {
     }
 
-    #[Route('/map', name: 'app_map_search')]
+    #[Route('/map-search', name: 'app_map_search')]
     public function index(): Response
     {
         return $this->render('MapSearch/index.html.twig');
