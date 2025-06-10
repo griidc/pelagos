@@ -46,6 +46,11 @@ class DatasetMonitoringController extends AbstractController
         foreach ($fundingOrganizations as $fundingOrganization) {
             $fundingOrganizationName = $fundingOrganization->getName();
             $fundingOrganizationId = 'fundingOrganization' . $fundingOrganization->getId();
+            $researchGroups = [];
+            foreach ($fundingOrganization->getResearchGroups() as $researchGroup) {
+                $researchGroups[] = $researchGroup->getId();
+            }
+
             $list[] =
                 [
                     'id' => $fundingOrganizationId,
@@ -53,11 +58,16 @@ class DatasetMonitoringController extends AbstractController
                     'fundingOrganization' => $fundingOrganization->getId(),
                     'datasets' => $fundingOrganization->getDatasets()->count(),
                     'expanded' => 1 == count($fundingOrganizations),
+                    'researchGroup' => $researchGroups,
                 ];
             $fundingCycles = $fundingOrganization->getFundingCycles();
             foreach ($fundingCycles as $fundingCycle) {
                 $fundingCycleName = $fundingCycle->getName();
                 $fundingCycleId = 'fundingCycle' . $fundingCycle->getId();
+                $researchGroups = [];
+                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                    $researchGroups[] = $researchGroup->getId();
+                }
 
                 $list[] = [
                     'id' => $fundingCycleId,
@@ -66,6 +76,7 @@ class DatasetMonitoringController extends AbstractController
                     'fundingCycle' => $fundingCycle->getId(),
                     'datasets' => $fundingCycle->getDatasets()->count(),
                     'expanded' => 1 == count($fundingCycles) and 1 == count($fundingOrganizations),
+                    'researchGroup' => $researchGroups,
                 ];
                 foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
                     $researchGroupId = 'researchGroup' . $researchGroup->getId();
