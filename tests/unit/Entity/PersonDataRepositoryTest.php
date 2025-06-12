@@ -33,7 +33,7 @@ class PersonDataRepositoryTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockPerson = \Mockery::mock('\App\Entity\Person');
         $this->mockDataRepository = \Mockery::mock('\App\Entity\DataRepository');

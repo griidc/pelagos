@@ -77,7 +77,7 @@ class FundingCycleTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->testCreator = new Person;
         $this->fundingCycle = new FundingCycle;

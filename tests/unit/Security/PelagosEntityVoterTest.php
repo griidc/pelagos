@@ -135,7 +135,7 @@ abstract class PelagosEntityVoterTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         foreach ($this->roles as $type => $roleNames) {
             $this->mockTokens[$type] = array();
@@ -296,7 +296,7 @@ abstract class PelagosEntityVoterTest extends TestCase
             );
         return $person;
     }
-    
+
     /**
      * Creates a mock token with a mock Account and Person.
      *

@@ -39,7 +39,7 @@ class DataRepositoryRoleTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dataRepositoryRole = new DataRepositoryRole;
         $this->dataRepositoryRole->setName(self::$testName);
