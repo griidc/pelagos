@@ -15,7 +15,7 @@ class ProductTypeDescriptorTest extends TestCase
     */
     private $productTypeDescriptor;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->productTypeDescriptor = new ProductTypeDescriptor;
     }

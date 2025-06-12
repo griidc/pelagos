@@ -38,7 +38,7 @@ class FundingOrganizationRoleTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fundingOrganizationRole = new FundingOrganizationRole;
         $this->fundingOrganizationRole->setName(self::$testName);

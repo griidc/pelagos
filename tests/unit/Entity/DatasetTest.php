@@ -107,7 +107,7 @@ class DatasetTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->auxMockSpatialExtensionDif = 'LINESTRING (30 10, 10 30, 40 40)';
 
