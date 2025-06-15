@@ -98,7 +98,7 @@ class AccountTest extends TestCase
      *
      * @return void
      */
-    public function tearDow(): void
+    public function tearDown(): void
     {
     }
 }
