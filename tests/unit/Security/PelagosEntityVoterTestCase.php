@@ -20,7 +20,7 @@ use App\Entity\Entity;
 /**
  * Abstract class containing utility methods and tests shared by all Pelagos Entity voter tests.
  */
-abstract class PelagosEntityVoterTest extends TestCase
+abstract class PelagosEntityVoterTestCase extends TestCase
 {
     /**
      * An instance of the voter under test.

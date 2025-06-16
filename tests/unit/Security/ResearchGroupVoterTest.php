@@ -13,7 +13,7 @@ use App\Security\Voter\ResearchGroupVoter as Voter;
 /**
  * Unit tests for the Research Group voter.
  */
-class ResearchGroupVoterTest extends PelagosEntityVoterTest
+class ResearchGroupVoterTest extends PelagosEntityVoterTestCase
 {
     /**
      * The attributes that ResearchGroupVoter should support.

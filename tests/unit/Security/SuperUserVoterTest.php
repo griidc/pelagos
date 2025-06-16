@@ -11,7 +11,7 @@ use App\Security\Voter\SuperUserVoter as Voter;
 /**
  * Unit tests for the Research Group voter.
  */
-class SuperUserVoterTest extends PelagosEntityVoterTest
+class SuperUserVoterTest extends PelagosEntityVoterTestCase
 {
     /**
      * The attributes that SuperUserVoter should support.

@@ -17,7 +17,7 @@ use App\Entity\ResearchGroup;
 /**
  * Class PersonVoterTest.
  */
-class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
+class DatasetSubmissionVoterTest extends PelagosEntityVoterTestCase
 {
     /**
      * The attributes that ResearchGroupVoter should support.

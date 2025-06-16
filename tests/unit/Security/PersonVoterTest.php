@@ -11,7 +11,7 @@ use App\Security\Voter\PersonVoter as PersonVoter;
 /**
  * Class PersonVoterTest.
  */
-class PersonVoterTest extends PelagosEntityVoterTest
+class PersonVoterTest extends PelagosEntityVoterTestCase
 {
     /**
      * The attributes that ResearchGroupVoter should support.
