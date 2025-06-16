@@ -4047,10 +4047,10 @@ esrecurse@^4.3.0:
   dependencies:
     estraverse "^5.2.0"
 
-esri-leaflet-vector@^4.2.8:
-  version "4.2.8"
-  resolved "https://registry.yarnpkg.com/esri-leaflet-vector/-/esri-leaflet-vector-4.2.8.tgz#7ce007b769a32ac30db7db37a3952da05def7922"
-  integrity sha512-ZK7YibhXNbYr2Toe2MVis+O5/zs20I3xXuxyGNUCw+BRQvtNn/wcZAmhVYZGAyc7ocjtDP6r6ZWmtlC98+nESg==
+esri-leaflet-vector@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/esri-leaflet-vector/-/esri-leaflet-vector-4.3.0.tgz#8d880ab5c18dc79fee44de51784dc2e528905f89"
+  integrity sha512-AW5d6HNtreEKpoP2H3YOhegmjZJuhu2evY6ajNoiUIybzQ7uaY51ZCeLlgEYa8kGOh8JFQSB3jUjbEipfVyoxA==
 
 esri-leaflet@^3.0.16:
   version "3.0.16"
