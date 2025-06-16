@@ -321,7 +321,7 @@ class DatalandController extends AbstractController
     #[Route('/data/json/{dataset}', name: 'pelagos_app_ui_dataland_get_json', methods: ['GET', 'HEAD'])]
     public function getjson(Dataset $dataset, Geometry $geometryUtil): Response
     {
-        $geoJson = [];
+        $geoJson = '{}';
         $udi = $dataset->getUdi();
         $spatialExtent = $dataset->getSpatialExtentGeometry();
 
@@ -329,6 +329,9 @@ class DatalandController extends AbstractController
             $geoJson = $geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi);
         }
 
-        return new JsonResponse($geoJson, 200, [], true);
+        return new JsonResponse(
+            data: $geoJson,
+            json: true
+        );
     }
 }

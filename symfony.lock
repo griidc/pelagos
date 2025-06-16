@@ -592,9 +592,6 @@
     "symfony/string": {
         "version": "v5.4.3"
     },
-    "symfony/templating": {
-        "version": "v4.4.4"
-    },
     "symfony/translation": {
         "version": "6.4",
         "recipe": {

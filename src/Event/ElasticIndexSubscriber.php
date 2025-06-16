@@ -60,8 +60,10 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
     private function populateDatasetAttributes(PostTransformEvent $event)
     {
         $document = $event->getDocument();
+        $index = $document->getIndex();
         $dataset = $event->getObject();
         $wkt = null;
+        $geoJson = null;
 
         // Logic to get the spatialExtent is in Dataset Entity.
         try {
@@ -72,6 +74,18 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
             }
         } catch (InvalidGmlException $exception) {
             $wkt = null;
+        }
+
+        try {
+            if ($dataset->getSpatialExtentGeometry()) {
+                $geoJson = $this->geometryUtil->convertGmlToGeoJSON(
+                    gml: $dataset->getSpatialExtentGeometry(),
+                    udi: $dataset->getUdi(),
+                    id: $dataset->getUdi(),
+                );
+            }
+        } catch (InvalidGmlException $exception) {
+            $geoJson = null;
         }
 
         if (null !== $wkt) {
@@ -86,6 +100,35 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
                 // Set the simpllified geometry as a GeoJSON array.
                 $json = $simpleGeometry->out('json');
             }
+            $array = json_decode($json, true);
+
+            if (key_exists('coordinates', $array)) {
+                $array['coordinates'] = array_map(array($this, 'coordinatesToFloat'), $array['coordinates']);
+            }
+
+            $document->set('simpleGeometry', $array);
+        }
+
+        if ($index == 'search_pelagos') {
+            $document->set('datasetLifecycleStatus', $dataset->getDatasetLifecycleStatus());
+        }
+
+        if (null !== $geoJson and $index === 'search_pelagos') {
+            $document->set('geometry', $geoJson);
+            $geometry = \geoPHP::load($geoJson, 'json');
+            $simpleGeometry = $geometry->simplify(0.00001);
+            // If the geometry couldn't be simplified.
+            if (null == $simpleGeometry or $simpleGeometry->isEmpty()) {
+                // Set the original geometry as a GeoJSON array.
+                $json = $geometry->out('json');
+            } else {
+                // Set the simplified geometry as a GeoJSON array.
+                $json = $simpleGeometry->out('json');
+            }
+
+            // Although the geometry is already a JSON string, we need to decode it to
+            // the input containts a Feature, while geoPHP just outputs a geometry.
+
             $array = json_decode($json, true);
 
             if (key_exists('coordinates', $array)) {
