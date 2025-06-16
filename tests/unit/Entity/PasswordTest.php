@@ -161,7 +161,7 @@ class PasswordTest extends TestCase
      *
      * @return void
      */
-    public function tearDow(): void
+    public function tearDown(): void
     {
         // Unset the 'cryptoStrong' global so as not to interfere with any
         // other tests of code that uses openssl_random_pseudo_bytes
