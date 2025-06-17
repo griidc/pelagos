@@ -8,7 +8,7 @@
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
         "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
-        "core-js": "^3.42.0",
+        "core-js": "^3.43.0",
         "eslint": "^7.29.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-import-resolver-alias": "^1.1.2",
