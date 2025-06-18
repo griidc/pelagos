@@ -96,7 +96,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search'])]
     protected $udi;
 
     /**
@@ -106,7 +106,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     protected $title;
 
     /**
@@ -155,6 +155,7 @@ class Dataset extends Entity
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     #[Serializer\Groups(['card'])]
+    #[Groups(['remotely-hosted-dataset-report'])]
     protected $datasetSubmission;
 
     /**
@@ -454,7 +455,7 @@ class Dataset extends Entity
     /**
      * Get the DOI string for this Dataset.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     #[SerializedName('doi')]
     public function getDoiString(): string
     {
@@ -1092,6 +1093,7 @@ class Dataset extends Entity
     /**
      * Get the Dataset's Lifecycle Status.
      */
+    #[Groups(['remotely-hosted-dataset-report'])]
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
@@ -1121,7 +1123,7 @@ class Dataset extends Entity
     /**
      * Get Dataset Lifecycle Status as a string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'search'])]
     #[SerializedName('datasetLifecycleStatus')]
     public function getDatasetLifecycleStatusString(): string
     {

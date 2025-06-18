@@ -16,18 +16,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 /**
  * Command to re-queue zip files for a dataset.
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:re-queue-zip', description: 'Re-queue zip files by UDI')]
 class PelagosReQueueZipCommand extends Command
 {
-    /**
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:re-queue-zip';
-
-    /**
-     * @var string $defaultDescription
-     */
-    protected static $defaultDescription = 'Re-queue zip files by UDI';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -44,13 +35,10 @@ class PelagosReQueueZipCommand extends Command
 
     /**
      * The command configuration.
-     *
-     * @return void
      */
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('udi', InputArgument::REQUIRED, 'What is the UDI of the dataset?');
         ;
     }
@@ -80,8 +68,7 @@ class PelagosReQueueZipCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $udi = $input->getArgument('udi');
-        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array(
-            'udi' => $udi));
+        $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
 
         if ($dataset) {
             $datasetSubmission = $dataset->getLatestDatasetReview();
@@ -95,6 +82,6 @@ class PelagosReQueueZipCommand extends Command
 
         $io->success('Zip files re-queued for the dataset');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

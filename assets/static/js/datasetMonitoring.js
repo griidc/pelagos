@@ -224,7 +224,8 @@ $(() => {
     if (selectedItem.fundingCycle !== undefined) {
       parameters = Object.assign(parameters, { fundingCycle: selectedItem.fundingCycle });
     }
-    if (selectedItem.researchGroup !== undefined) {
+    if (selectedItem.researchGroup !== undefined && !Array.isArray(selectedItem.researchGroup))
+    {
       parameters = Object.assign(parameters, { researchGroup: selectedItem.researchGroup });
     }
 

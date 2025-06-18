@@ -15,15 +15,9 @@ use App\Entity\Dataset;
 /**
  * This command sets the issue ticket on a datset (submisison).
  */
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:dataset-set-issue-ticket', description: 'Sets the issue tracker ticket on a dataset.')]
 class SetIssueTrackerTicketCommand extends Command
 {
-    /**
-     * The Command name.
-     *
-     * @var string $defaultName
-     */
-    protected static $defaultName = 'pelagos:dataset-set-issue-ticket';
-
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -50,7 +44,6 @@ class SetIssueTrackerTicketCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Sets the issue tracker ticket on a dataset.')
             ->addOption('csvfile', null, InputOption::VALUE_REQUIRED, 'Filename of csv containing UDI, ticket')
             ;
     }
@@ -63,14 +56,14 @@ class SetIssueTrackerTicketCommand extends Command
      *
      * @return integer Return code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $filename = $input->getOption('csvfile');
 
         if (!file_exists($filename)) {
             $io->error('File not found: ' . $filename);
-            return 1;
+            return Command::FAILURE;
         }
 
         if (($fileHandle = fopen($filename, "r")) !== false) {
@@ -79,9 +72,9 @@ class SetIssueTrackerTicketCommand extends Command
                     $io->warning("Bad input, skipping entry");
                     continue;
                 }
-                $udi = trim($data[0]);
-                $issueTrackingTicket = trim($data[1]);
-                $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(array('udi' => $udi));
+                $udi = trim((string) $data[0]);
+                $issueTrackingTicket = trim((string) $data[1]);
+                $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
                 if (!($dataset instanceof Dataset)) {
                     $io->warning("Could not find a dataset with UDI ($udi)");
                     continue;
@@ -98,6 +91,6 @@ class SetIssueTrackerTicketCommand extends Command
             fclose($fileHandle);
         }
         $io->success('Done!');
-        return 0;
+        return Command::SUCCESS;
     }
 }

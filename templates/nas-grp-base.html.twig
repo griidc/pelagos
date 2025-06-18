@@ -21,7 +21,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block head %}
         <title>GRIIDC - GRP | {% block title %}Pelagos{% endblock %}</title>
-        <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}"/>
+        <link rel="icon" type="image/svg+xml" href="{{ asset('build/images/griidc_fav.svg') }}" />
+        <link rel="icon" type="image/png" href="{{ asset('build/images/griidc_fav-32x32.png') }}" />
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('nas-app') }}

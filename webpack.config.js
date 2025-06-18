@@ -53,6 +53,8 @@ Encore
   .addEntry('dataset-monitoring', './assets/js/entry/dataset-monitoring.js')
   .addEntry('landing-page', './assets/js/entry/landing-page.js')
   .addEntry('login', './assets/js/entry/login.js')
+  .addEntry('change-password', './assets/js/entry/change-password.js')
+  .addEntry('map-search', './assets/js/entry/map-search.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
