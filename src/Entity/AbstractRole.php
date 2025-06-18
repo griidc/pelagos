@@ -97,7 +97,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
     /**
      * Return the name of this role.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getName();
     }

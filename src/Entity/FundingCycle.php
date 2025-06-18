@@ -406,7 +406,7 @@ class FundingCycle extends Entity
     /**
      * The name of the Funding Cycle.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }

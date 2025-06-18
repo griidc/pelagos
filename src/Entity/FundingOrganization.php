@@ -720,7 +720,7 @@ class FundingOrganization extends Entity
     /**
      * The name of this Funding Organization.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }
