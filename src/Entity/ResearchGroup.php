@@ -171,7 +171,7 @@ class ResearchGroup extends Entity
      *
      * @var Collection $personResearchGroups
      */
-    #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
+    #[ORM\OneToMany(targetEntity: PersonResearchGroup::class, mappedBy: 'researchGroup', cascade: ['persist'])]
     #[Serializer\Groups(['overview'])]
     protected $personResearchGroups;
 
