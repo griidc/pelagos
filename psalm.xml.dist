@@ -17,6 +17,6 @@
     </fileExtensions>
 
     <plugins>
-        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin" />
     </plugins>
 </psalm>
