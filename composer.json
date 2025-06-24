@@ -78,7 +78,7 @@
         "symfony/phpunit-bridge": "7.3.*",
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*",
-        "vimeo/psalm": "^6.5"
+        "vimeo/psalm": "^6.0"
     },
     "config": {
         "preferred-install": {
@@ -88,9 +88,6 @@
         "allow-plugins": {
             "symfony/flex": true,
             "symfony/runtime": true
-        },
-        "platform": {
-            "php": "8.3"
         }
     },
     "autoload": {
