@@ -160,7 +160,7 @@ class FundingOrganizationTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->testCreator = new Person;
         $this->fundingOrganization = new FundingOrganization;

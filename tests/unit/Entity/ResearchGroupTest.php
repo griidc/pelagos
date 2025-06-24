@@ -124,7 +124,7 @@ class ResearchGroupTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->researchGroup = new ResearchGroup;
         $this->researchGroup->setName(self::$testName);

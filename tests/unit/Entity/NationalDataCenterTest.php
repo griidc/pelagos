@@ -36,7 +36,7 @@ class NationalDataCenterTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->nationalDataCenter = new NationalDataCenter();
     }

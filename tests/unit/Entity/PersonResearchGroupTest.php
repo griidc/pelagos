@@ -32,7 +32,7 @@ class PersonResearchGroupTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockPerson = \Mockery::mock('\App\Entity\Person');
         $this->mockResearchGroup = \Mockery::mock('\App\Entity\ResearchGroup');
