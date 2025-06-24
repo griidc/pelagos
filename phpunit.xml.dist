@@ -28,4 +28,8 @@
             <parameter name="dns-mock-namespaces" value="App" />
         </bootstrap>
     </extensions>
+
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
+    </listeners>
 </phpunit>
