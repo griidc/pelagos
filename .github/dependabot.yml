@@ -10,8 +10,6 @@ updates:
       day: "sunday"
       time: "16:00"
       timezone: "America/Chicago"
-    reviewers:
-      - "griidc/devs"
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
@@ -21,8 +19,6 @@ updates:
       day: "sunday"
       time: "16:00"
       timezone: "America/Chicago"
-    reviewers:
-      - "griidc/devs"
 
   # Maintain dependencies for Composer
   - package-ecosystem: "composer"
@@ -32,5 +28,3 @@ updates:
       day: "sunday"
       time: "16:00"
       timezone: "America/Chicago"
-    reviewers:
-      - "griidc/devs"
