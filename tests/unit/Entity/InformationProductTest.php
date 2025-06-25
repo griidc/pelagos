@@ -20,7 +20,7 @@ class InformationProductTest extends TestCase
     */
     private $infoProduct;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->infoProduct = new InformationProduct;
     }

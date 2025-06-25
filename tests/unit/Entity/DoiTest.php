@@ -33,7 +33,7 @@ class DoiTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->dateTime = new \DateTime();
         $this->doi = new DOI('doi:10.1234/TEST');

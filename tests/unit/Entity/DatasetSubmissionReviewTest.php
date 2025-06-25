@@ -42,7 +42,7 @@ class DatasetSubmissionReviewTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockPerson = \Mockery::mock(
             Person::class,
