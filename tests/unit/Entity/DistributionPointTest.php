@@ -24,7 +24,7 @@ class DistributionPointTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockDatasetSubmission = \Mockery::mock('\App\Entity\DatasetSubmission');
         $this->mockDataCenter = \Mockery::mock('\App\Entity\DataCenter');

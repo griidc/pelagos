@@ -15,7 +15,7 @@ class DigitalResourceTypeDescriptorTest extends TestCase
     */
     private $digitalResourceTypeDescriptor;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->digitalResourceTypeDescriptor = new DigitalResourceTypeDescriptor;
     }

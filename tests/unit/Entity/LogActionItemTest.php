@@ -47,7 +47,7 @@ class LogActionItemTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->logActionItem = new LogActionItem(self::$testActionName);
         $this->logActionItem->setSubjectEntityName(self::$testSubjectEntityName);
@@ -157,7 +157,7 @@ class LogActionItemTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 }
