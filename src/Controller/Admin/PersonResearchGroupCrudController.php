@@ -15,6 +15,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<PersonResearchGroup>
+ */
 class PersonResearchGroupCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -34,6 +37,7 @@ class PersonResearchGroupCrudController extends AbstractCrudController
         ];
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
