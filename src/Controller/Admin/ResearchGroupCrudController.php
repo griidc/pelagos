@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -34,6 +35,11 @@ class ResearchGroupCrudController extends AbstractCrudController
      */
     public function configureFields(string $pageName): iterable
     {
+        /** @var ResearchGroup $researchGroup */
+        $researchGroup = $this->getContext()?->getEntity()->getInstance();
+        $personResearchGroup = new PersonResearchGroup();
+        $personResearchGroup->setResearchGroup($researchGroup);
+
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('name'),
@@ -49,8 +55,14 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('country')->hideOnIndex(),
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
-            CollectionField::new('personResearchGroups')->hideOnIndex()
-            ->useEntryCrudForm(),
+            CollectionField::new('personResearchGroups')
+            ->setFormTypeOptions([
+               'prototype' => true,
+               'prototype_data' => $personResearchGroup,
+            ])
+            ->onlyOnForms()
+            ->useEntryCrudForm()
+            ,
         ];
     }
 }

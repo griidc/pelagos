@@ -31,7 +31,7 @@ class PersonResearchGroupCrudController extends AbstractCrudController
             IdField::new('id')
             ->onlyOnIndex(),
             AssociationField::new('person'),
-            AssociationField::new('researchGroup'),
+            AssociationField::new('researchGroup')->onlyWhenCreating(),
             AssociationField::new('role'),
             TextField::new('label'),
         ];

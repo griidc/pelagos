@@ -180,6 +180,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     public function __toString(): string
     {
         $person = $this->getPerson();
-        return $person->getFirstName() . ' ' . $person->getLastName();
+        return $person ? $person->getFirstName() . ' ' . $person->getLastName() : '';
     }
 }
