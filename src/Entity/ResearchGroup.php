@@ -171,7 +171,7 @@ class ResearchGroup extends Entity
      *
      * @var Collection $personResearchGroups
      */
-    #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
+    #[ORM\OneToMany(targetEntity: PersonResearchGroup::class, mappedBy: 'researchGroup', cascade: ['persist'])]
     #[Serializer\Groups(['overview'])]
     protected $personResearchGroups;
 
@@ -313,6 +313,11 @@ class ResearchGroup extends Entity
     public function getFundingCycleName(): string
     {
         return $this->fundingCycle->getName();
+    }
+
+    public function getFundingOrganization(): FundingOrganization
+    {
+        return $this->fundingCycle->getFundingOrganization();
     }
 
     /**
@@ -771,5 +776,13 @@ class ResearchGroup extends Entity
     public function getRestrictedDataset(): int
     {
         return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::RESTRICTED)->count();
+    }
+
+    /**
+     * The name of this Research Group.
+     */
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
