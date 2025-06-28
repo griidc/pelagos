@@ -108,9 +108,6 @@ services:
         $gcmdVersionYear: "%env(GCMD_VERSION_YEAR)%"
         $anzsrcVersion: "%env(ANZSRC_VERSION)%"
 
-    App\Util\IngestUtil:
-        $ingestApiUrl: "%env(INGEST_API_URL)%"
-
     App\Util\Ldap\Ldap:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
         $ldapBindPw: "%env(LDAP_BIND_PW)%"
