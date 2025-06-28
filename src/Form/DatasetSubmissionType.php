@@ -189,8 +189,8 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
-                // 'model_timezone' => 'UTC',
-                // 'view_timezone' => 'UTC',
+                
+                
             ])
             ->add('temporalExtentEndPosition', Type\DateType::class, [
                 'label' => 'End Date',
