@@ -189,8 +189,6 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
-                
-                
             ])
             ->add('temporalExtentEndPosition', Type\DateType::class, [
                 'label' => 'End Date',
@@ -199,8 +197,6 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
-                
-                
             ])
             ->add('distributionFormatName', Type\TextType::class, [
                 'label' => 'Distribution Format Name',
