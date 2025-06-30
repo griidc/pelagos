@@ -35,7 +35,7 @@ class NationalDataCenterCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, 'National Datacenter List')
+            ->setPageTitle(Crud::PAGE_INDEX, 'National Data Center List')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit National Data Center')
             ->setPageTitle(Crud::PAGE_NEW, 'Add National Data Center')
         ;
