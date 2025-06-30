@@ -171,7 +171,7 @@ class ResearchGroup extends Entity
      *
      * @var Collection $personResearchGroups
      */
-    #[ORM\OneToMany(targetEntity: PersonResearchGroup::class, mappedBy: 'researchGroup', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: PersonResearchGroup::class, mappedBy: 'researchGroup', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Serializer\Groups(['overview'])]
     protected $personResearchGroups;
 
@@ -315,9 +315,9 @@ class ResearchGroup extends Entity
         return $this->fundingCycle->getName();
     }
 
-    public function getFundingOrganization(): FundingOrganization
+    public function getFundingOrganization(): ?FundingOrganization
     {
-        return $this->fundingCycle->getFundingOrganization();
+        return $this->fundingCycle?->getFundingOrganization();
     }
 
     /**
