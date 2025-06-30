@@ -90,8 +90,9 @@ class ResearchGroupCrudController extends AbstractCrudController
                'prototype_data' => $personResearchGroup,
             ])
             ->hideOnIndex()
+            ->hideWhenCreating()
             ->useEntryCrudForm(),
-            CollectionField::new('datasets')->setDisabled()->hideOnIndex(),
+            CollectionField::new('datasets')->setDisabled()->hideOnIndex()->hideWhenCreating(),
         ];
     }
 
