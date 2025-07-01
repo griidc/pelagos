@@ -42,22 +42,22 @@ class ResearchGroupCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Create Research Group')
             ->setPageTitle(Crud::PAGE_DETAIL, 'Research Group Details')
             ->showEntityActionsInlined()
-            ;
+        ;
     }
 
     public function configureActions(Actions $actions): Actions
     {
         return $actions
         ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-            return $action
-                ->setIcon('fa fa-edit')
-                ->setLabel('Edit');
-        })
         ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
             return $action
                 ->setIcon('fa fa-eye')
                 ->setLabel('View');
+        })
+        ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-edit')
+                ->setLabel('Edit');
         })
         ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
             return $action

@@ -14,9 +14,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 
+/**
+ * @extends AbstractCrudController<NationalDataCenter>
+ */
 class NationalDataCenterCrudController extends AbstractCrudController
 {
+    use EasyAdminCrudTrait;
+
     /**
      * Class constructor, for EntityManager injection.
      */
@@ -35,9 +41,12 @@ class NationalDataCenterCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setEntityLabelInPlural('National Data Centers')
+            ->setEntityLabelInSingular('National Data Center')
             ->setPageTitle(Crud::PAGE_INDEX, 'National Data Center List')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit National Data Center')
             ->setPageTitle(Crud::PAGE_NEW, 'Add National Data Center')
+            ->showEntityActionsInlined()
         ;
     }
 
@@ -47,7 +56,7 @@ class NationalDataCenterCrudController extends AbstractCrudController
             IdField::new('id')->onlyOnIndex(),
             TextField::new('organizationName')->setLabel('Name'),
             UrlField::new('organizationURL')->setLabel('URL'),
-            TextField::new('phoneNumber'),
+            TelephoneField::new('phoneNumber'),
             TextField::new('deliveryPoint')->setLabel('Address'),
             TextField::new('city'),
             TextField::new('administrativeArea')->setLabel('State/Province')
@@ -64,6 +73,12 @@ class NationalDataCenterCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-eye')
+                    ->setLabel('View');
+            })
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-edit')
@@ -84,8 +99,6 @@ class NationalDataCenterCrudController extends AbstractCrudController
      */
     private function isNationalDataCenterInUse(NationalDataCenter $nationalDataCenter): bool
     {
-        $datacenters = $this->entityManager->getRepository(DistributionPoint::class)->findBy(['dataCenter' => $nationalDataCenter]);
-
-        return count($datacenters) > 0;
+        return $this->entityManager->getRepository(DistributionPoint::class)->count(['dataCenter' => $nationalDataCenter]) > 0;
     }
 }
