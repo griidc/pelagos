@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Exception\NotDeletableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -33,7 +34,7 @@ trait EasyAdminCrudTrait
     {
         try {
             $entityManager->remove($entityInstance);
-        } catch (\Exception $e) {
+        } catch (NotDeletableException $e) {
             throw new AccessDeniedHttpException('Unable to delete. Reason:' . $e->getMessage());
         }
 

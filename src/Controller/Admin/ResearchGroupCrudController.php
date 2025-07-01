@@ -25,6 +25,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
  */
 class ResearchGroupCrudController extends AbstractCrudController
 {
+    use EasyAdminCrudTrait;
+
     public static function getEntityFqcn(): string
     {
         return ResearchGroup::class;
@@ -47,12 +49,24 @@ class ResearchGroupCrudController extends AbstractCrudController
     {
         return $actions
         ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-edit')
+                ->setLabel('Edit');
+        })
+        ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-eye')
+                ->setLabel('View');
+        })
         ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-                return $action
-                    ->displayIf(function (ResearchGroup $researchGroup) {
-                        return !$this->isResearchGroupInUse($researchGroup);
-                    });
-            });
+            return $action
+                ->setIcon('fa fa-trash')
+                ->setLabel('Delete')
+                ->displayIf(function (ResearchGroup $researchGroup) {
+                    return !$this->isResearchGroupInUse($researchGroup);
+                });
+        });
         ;
     }
 
