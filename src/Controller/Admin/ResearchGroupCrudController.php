@@ -87,7 +87,7 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('name'),
             TextField::new('shortName')->onlyOnForms(),
             AssociationField::new('fundingCycle'),
-            TextField::new('fundingOrganization')->setDisabled(),
+            TextField::new('fundingOrganization')->setDisabled()->hideWhenCreating(),
             TelephoneField::new('phoneNumber')->hideOnIndex(),
             UrlField::new('url')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
