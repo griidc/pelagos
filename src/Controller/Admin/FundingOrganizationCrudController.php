@@ -4,13 +4,14 @@ namespace App\Controller\Admin;
 
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
-use App\Repository\FundingCycleRepository;
+use App\Form\PersonFundingOrganizationType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -18,9 +19,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
  * Funding Org Easy Admin controller.
+ *
+ * @extends AbstractCrudController<FundingOrganization>
  */
 class FundingOrganizationCrudController extends AbstractCrudController
 {
+
+    use EasyAdminCrudTrait;
+
     public function __construct(private EntityManagerInterface $entityManager)
     {
     }
@@ -38,14 +44,10 @@ class FundingOrganizationCrudController extends AbstractCrudController
      */
     public function configureFields(string $pageName): iterable
     {
-        $fields = [];
-        if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT])) {
-            $fields[] = AssociationField::new('dataRepository');
-            $fields[] = AssociationField::new('defaultFunder');
-        }
-
-        return array_merge($fields, [
+        return [
             IdField::new('id')->onlyOnIndex(),
+            AssociationField::new('dataRepository')->onlyOnForms(),
+            AssociationField::new('defaultFunder')->onlyOnForms(),
             TextField::new('name'),
             TextField::new('description')->onlyOnForms(),
             TextField::new('shortName'),
@@ -58,8 +60,10 @@ class FundingOrganizationCrudController extends AbstractCrudController
             TextField::new('postalCode')->onlyOnForms(),
             TextField::new('country')->onlyOnForms(),
             NumberField::new('sortOrder')->onlyOnForms(),
-            AssociationField::new('defaultFunder')->onlyOnIndex(),
-        ]);
+            CollectionField::new('personFundingOrganizations')
+                ->onlyOnForms()
+                ->useEntryCrudForm()
+        ];
     }
 
     /**
@@ -68,7 +72,9 @@ class FundingOrganizationCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, 'FO Editor List Page')
+            ->setEntityLabelInSingular('Funding Organization')
+            ->setEntityLabelInPlural('Funding Organizations')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Funding Organizations')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Funding Organization')
             ->setPageTitle(Crud::PAGE_NEW, 'Create Funding Organization')
             ->showEntityActionsInlined();
@@ -92,6 +98,17 @@ class FundingOrganizationCrudController extends AbstractCrudController
                     ->displayIf(function (FundingOrganization $fundingOrganization) {
                         return !$this->isFundingOrgInUse($fundingOrganization);
                     });
+            })
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-eye')
+                ->setLabel('View');
+            })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-edit')
+                    ->setLabel('Edit');
             });
     }
 
@@ -100,9 +117,6 @@ class FundingOrganizationCrudController extends AbstractCrudController
      */
     private function isFundingOrgInUse(FundingOrganization $fundingOrganization): bool
     {
-
-        $fundingCycles = $this->entityManager->getRepository(FundingCycle::class)->findBy(['fundingOrganization' => $fundingOrganization]);
-
-        return count($fundingCycles) > 0;
+        return $this->entityManager->getRepository(FundingCycle::class)->count(['fundingOrganization' => $fundingOrganization]) > 0 ;
     }
 }

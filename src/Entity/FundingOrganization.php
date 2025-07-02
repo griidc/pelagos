@@ -162,9 +162,9 @@ class FundingOrganization extends Entity
     /**
      * Funding Organization's PersonFundingOrganizations.
      *
-     * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
+     * @var Collection $personFundingOrganizations
      */
-    #[ORM\OneToMany(targetEntity: 'PersonFundingOrganization', mappedBy: 'fundingOrganization')]
+    #[ORM\OneToMany(targetEntity: PersonFundingOrganization::class, mappedBy: 'fundingOrganization', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $personFundingOrganizations;
 
     /**
