@@ -170,7 +170,7 @@ class DataRepository extends Entity
      *
      * @access protected
      */
-    #[ORM\OneToMany(targetEntity: 'PersonDataRepository', mappedBy: 'dataRepository')]
+    #[ORM\OneToMany(targetEntity: PersonDataRepository::class, mappedBy: 'dataRepository', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $personDataRepositories;
 
     /**
@@ -197,8 +197,6 @@ class DataRepository extends Entity
      * Setter for name.
      *
      * @param string $name Name of Data Repository.
-     *
-     * @access public Assign a name to object
      *
      * @return void
      */

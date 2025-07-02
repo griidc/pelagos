@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Account;
+use App\Entity\DataRepository;
 use App\Entity\NationalDataCenter;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
@@ -58,6 +59,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Research Groups', 'fas fa-list-alt', ResearchGroup::class);
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
+        yield MenuItem::linkToCrud('Data Respository', 'fas fa-list-alt', DataRepository::class);
         // yield MenuItem::linkToCrud('Person to Research Groups', 'fas fa-list-alt', PersonResearchGroup::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
