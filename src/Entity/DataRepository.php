@@ -171,11 +171,7 @@ class DataRepository extends Entity
      *
      * @access protected
      */
-<<<<<<< HEAD
-    #[ORM\OneToMany(targetEntity: PersonDataRepository::class, mappedBy: 'dataRepository')]
-=======
     #[ORM\OneToMany(targetEntity: PersonDataRepository::class, mappedBy: 'dataRepository', cascade: ['persist', 'remove'], orphanRemoval: true)]
->>>>>>> epic/PELAGOS-5516-pods-replacement-to-easyadmin
     protected $personDataRepositories;
 
     /**
