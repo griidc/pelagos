@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Exception\NotDeletableException;
 
 /**
@@ -166,21 +167,21 @@ class DataRepository extends Entity
     /**
      * Data Repository's relationship with Persons.
      *
-     * @var \Doctrine\Common\Collections\Collection $personDataRepositories
+     * @var Collection $personDataRepositories
      *
      * @access protected
      */
-    #[ORM\OneToMany(targetEntity: 'PersonDataRepository', mappedBy: 'dataRepository')]
+    #[ORM\OneToMany(targetEntity: PersonDataRepository::class, mappedBy: 'dataRepository')]
     protected $personDataRepositories;
 
     /**
      * Data Repositories collection of Funding Organization.
      *
-     * @var ArrayCollection
+     * @var Collection $fundingOrganizations
      *
      * @access protected
      */
-    #[ORM\OneToMany(targetEntity: 'FundingOrganization', mappedBy: 'dataRepository')]
+    #[ORM\OneToMany(targetEntity: FundingOrganization::class, mappedBy: 'dataRepository')]
     protected $fundingOrganizations;
 
     /**
@@ -190,6 +191,7 @@ class DataRepository extends Entity
      */
     public function __construct()
     {
+        $this->personDataRepositories = new ArrayCollection();
         $this->fundingOrganizations = new ArrayCollection();
     }
 
@@ -197,8 +199,6 @@ class DataRepository extends Entity
      * Setter for name.
      *
      * @param string $name Name of Data Repository.
-     *
-     * @access public Assign a name to object
      *
      * @return void
      */
@@ -463,6 +463,8 @@ class DataRepository extends Entity
      * @throws \Exception When $personDataRepositories is not an array or traversable object.
      * @throws \Exception When Non-PersonDataRepository found within $personDataRepositories.
      *
+     * @deprecated version 6.76.0 This method is deprecated and will be removed in a future version. Use `addPersonDataRepository` instead.
+     *
      * @return void
      */
     public function setPersonDataRepositories($personDataRepositories)
@@ -480,6 +482,28 @@ class DataRepository extends Entity
         } else {
             throw new \Exception('personDataRepositories must be either array or traversable objects.');
         }
+    }
+
+    public function addPersonDataRepository(PersonDataRepository $personDataRepository): static
+    {
+        if (!$this->personDataRepositories->contains($personDataRepository)) {
+            $this->personDataRepositories->add($personDataRepository);
+            $personDataRepository->setDataRepository($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonDataRepository(PersonDataRepository $personDataRepository): static
+    {
+        if ($this->personDataRepositories->removeElement($personDataRepository)) {
+            // set the owning side to null (unless already changed)
+            if ($personDataRepository->getDataRepository() === $this) {
+                $personDataRepository->setDataRepository(null);
+            }
+        }
+
+        return $this;
     }
 
     /**
