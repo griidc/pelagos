@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Entity;
 use App\Entity\Funder;
 use App\Entity\Dataset;
+use App\Repository\DatasetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -18,6 +19,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 /**
  * Funder Crud Controller.
+ *
+ *  @extends AbstractCrudController<Funder>
  */
 class FunderCrudController extends AbstractCrudController
 {
@@ -72,6 +75,7 @@ class FunderCrudController extends AbstractCrudController
         return $funder;
     }
 
+    #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
         /* @var Funder $entityInstance */
@@ -123,7 +127,6 @@ class FunderCrudController extends AbstractCrudController
      */
     private function isFunderBeingUsed(Funder $funder): bool
     {
-        /** @var DatasetRepository $datasetRepository */
         $datasetRepository = $this->entityManager->getRepository(Dataset::class);
 
         return count($datasetRepository->findByFunder($funder)) > 0;

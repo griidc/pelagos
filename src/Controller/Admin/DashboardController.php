@@ -6,6 +6,7 @@ use App\Entity\Account;
 use App\Entity\NationalDataCenter;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
+use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Entity\LogActionItem;
 use App\Entity\PersonResearchGroup;
@@ -57,6 +58,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Research Groups', 'fas fa-list-alt', ResearchGroup::class);
+        yield MenuItem::linkToCrud('Funding Cycle', 'fas fa-list-alt', FundingCycle::class);
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
         // yield MenuItem::linkToCrud('Person to Research Groups', 'fas fa-list-alt', PersonResearchGroup::class);
         yield MenuItem::section('Lists');
