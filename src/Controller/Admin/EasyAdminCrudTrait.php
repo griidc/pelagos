@@ -20,11 +20,11 @@ trait EasyAdminCrudTrait
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        /** @var ?Account $account */
-        $account = $this->getUser();
-        if ($account instanceof Account) {
-            $entityInstance->setModifier($account->getPerson());
-        }
+        $this->denyAccessUnlessGranted(
+            attribute:'IS_FULLY_AUTHENTICATED',
+            message:'You must be logged in to perform this action.'
+        );
+        $entityInstance->setModifier($this->getUser()->getPerson());
         $entityManager->persist($entityInstance);
         $entityManager->flush();
     }
