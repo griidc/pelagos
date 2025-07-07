@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Exception\NotDeletableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -19,7 +20,11 @@ trait EasyAdminCrudTrait
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $entityInstance->setModifier($this->getUser()->getPerson());
+        /** @var ?Account $account */
+        $account = $this->getUser();
+        if ($account instanceof Account) {
+            $entityInstance->setModifier($account->getPerson());
+        }
         $entityManager->persist($entityInstance);
         $entityManager->flush();
     }
