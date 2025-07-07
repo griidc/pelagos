@@ -1,6 +1,6 @@
 {
     "devDependencies": {
-        "@babel/core": "^7.27.4",
+        "@babel/core": "^7.27.7",
         "@babel/preset-env": "7.27.2",
         "@babel/preset-react": "^7.27.1",
         "@fortawesome/fontawesome-free": "^6.7.2",
@@ -51,9 +51,9 @@
         "clsx": "^2.1.1",
         "devextreme": "^21.1.6",
         "devextreme-vue": "^21.1.6",
-        "dotenv-webpack": "^8.1.0",
+        "dotenv-webpack": "^8.1.1",
         "dropzone": "^5.7.2",
-        "esri-leaflet": "^3.0.16",
+        "esri-leaflet": "^3.0.17",
         "esri-leaflet-vector": "^4.3.0",
         "exceljs": "^4.3.0",
         "file-saver": "^2.0.5",
