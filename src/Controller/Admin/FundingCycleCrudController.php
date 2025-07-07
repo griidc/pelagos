@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\FundingCycle;
 use App\Form\ResearchGroupType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -12,13 +13,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * @extends AbstractCrudController<FundingCycle>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class FundingCycleCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
@@ -72,7 +75,7 @@ class FundingCycleCrudController extends AbstractCrudController
             TextField::new('name'),
             TextField::new('udiPrefix'),
             AssociationField::new('fundingOrganization'),
-            TextEditorField::new('description')->hideOnIndex(),
+            TextareaField::new('description')->hideOnIndex(),
             UrlField::new('url'),
             DateField::new('startDate')->hideOnIndex(),
             DateField::new('endDate')->hideOnIndex(),
