@@ -62,7 +62,10 @@ class FundingOrganizationCrudController extends AbstractCrudController
             NumberField::new('sortOrder')->onlyOnForms(),
             CollectionField::new('personFundingOrganizations')
                 ->onlyOnForms()
-                ->useEntryCrudForm()
+                ->useEntryCrudForm(),
+            CollectionField::new('fundingCycles')
+                ->setDisabled()
+                ->hideOnIndex(),
         ];
     }
 
