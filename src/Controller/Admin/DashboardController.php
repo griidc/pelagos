@@ -10,6 +10,7 @@ use App\Entity\Funder;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Entity\LogActionItem;
+use App\Entity\Person;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ProductTypeDescriptor;
 use App\Entity\ResearchGroup;
@@ -62,6 +63,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Funding Cycle', 'fas fa-list-alt', FundingCycle::class);
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
         yield MenuItem::linkToCrud('Data Respository', 'fas fa-list-alt', DataRepository::class);
+        yield MenuItem::linkToCrud('Person', 'fas fa-list-alt', Person::class); 
         // yield MenuItem::linkToCrud('Person to Research Groups', 'fas fa-list-alt', PersonResearchGroup::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));
