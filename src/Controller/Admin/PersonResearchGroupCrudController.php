@@ -41,8 +41,6 @@ class PersonResearchGroupCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            
-            ->setDefaultSort(['person.lastName' => 'ASC'])
-            ;
+            ->setDefaultSort(['person.lastName' => 'ASC']);
     }
 }
