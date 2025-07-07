@@ -117,6 +117,6 @@ class FundingOrganizationCrudController extends AbstractCrudController
      */
     private function isFundingOrgInUse(FundingOrganization $fundingOrganization): bool
     {
-        return $this->entityManager->getRepository(FundingCycle::class)->count(['fundingOrganization' => $fundingOrganization]) > 0 ;
+        return $this->entityManager->getRepository(FundingCycle::class)->count(['fundingOrganization' => $fundingOrganization]) > 0;
     }
 }

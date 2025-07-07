@@ -613,7 +613,7 @@ class FundingOrganization extends Entity
 
     public function removePersonFundingOrganization(PersonFundingOrganization $personFundingOrganization): static
     {
-        if ($this->personFundingOrganizations->removeElement($personFundingOrganization )) {
+        if ($this->personFundingOrganizations->removeElement($personFundingOrganization)) {
             // set the owning side to null (unless already changed)
             if ($personFundingOrganization->getFundingOrganization() === $this) {
                 $personFundingOrganization->setFundingOrganization(null);
