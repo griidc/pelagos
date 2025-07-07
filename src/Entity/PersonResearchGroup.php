@@ -179,6 +179,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
 
     public function __toString(): string
     {
-        return $this->getPerson()?->getFullName() . ' - ' . $this->getResearchGroup()?->getName() ?? '';
+        return ($this->getPerson()?->getFullName() ?? '') . ' - ' . ($this->getResearchGroup()?->getName() ?? '');
     }
 }
