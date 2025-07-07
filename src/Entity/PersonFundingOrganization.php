@@ -154,6 +154,6 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
 
     public function __toString(): string
     {
-        return $this->getPerson() ? $this->getPerson()->getLastName() . ', ' . $this->getPerson()->getFirstName() : '';
+        return $this->getPerson()?->getFullName() ?? '';
     }
 }
