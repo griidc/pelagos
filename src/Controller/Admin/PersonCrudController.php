@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Person;
-use Collection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -81,6 +80,8 @@ class PersonCrudController extends AbstractCrudController
             UrlField::new('url'),
             TextField::new('organization'),
             TextField::new('position'),
+            AssociationField::new('account')
+                ->setDisabled(),
             CollectionField::new('personFundingOrganizations')
                 ->hideOnIndex()
                 ->setDisabled(),
@@ -89,8 +90,6 @@ class PersonCrudController extends AbstractCrudController
                 ->setDisabled(),
             CollectionField::new('personDataRepositories')
                 ->hideOnIndex()
-                ->setDisabled(),
-            AssociationField::new('account')
                 ->setDisabled(),
             CollectionField::new('Datasets')
                 ->hideOnIndex()
