@@ -24,7 +24,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class FundingOrganizationCrudController extends AbstractCrudController
 {
-
     use EasyAdminCrudTrait;
 
     public function __construct(private EntityManagerInterface $entityManager)
@@ -104,9 +103,9 @@ class FundingOrganizationCrudController extends AbstractCrudController
             })
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-            return $action
-                ->setIcon('fa fa-eye')
-                ->setLabel('View');
+                return $action
+                    ->setIcon('fa fa-eye')
+                    ->setLabel('View');
             })
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action

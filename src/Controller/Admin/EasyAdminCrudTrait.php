@@ -19,6 +19,7 @@ trait EasyAdminCrudTrait
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
+        $this->denyAccessUnlessGranted('IS_FULLY_AUTHENTICATED');
         $entityInstance->setModifier($this->getUser()->getPerson());
         $entityManager->persist($entityInstance);
         $entityManager->flush();
