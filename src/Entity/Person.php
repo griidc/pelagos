@@ -559,35 +559,6 @@ class Person extends Entity
     }
 
     /**
-     * Setter for personFundingOrganizations.
-     *
-     * @param array|\Traversable $personFundingOrganizations Set of PersonFundingOrganization objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When $personFundingOrganizations is not an array or traversable object.
-     * @throws \Exception When Non-PersonFundingOrganization found in $personFundingOrganizations.
-     *
-     * @return void
-     */
-    public function setPersonFundingOrganizations($personFundingOrganizations)
-    {
-        if (is_array($personFundingOrganizations) || $personFundingOrganizations instanceof \Traversable) {
-            foreach ($personFundingOrganizations as $personFundingOrganization) {
-                if (!$personFundingOrganization instanceof PersonFundingOrganization) {
-                    throw new \Exception('Non-PersonFundingOrganization found in personFundingOrganizations.');
-                }
-            }
-            $this->personFundingOrganizations = $personFundingOrganizations;
-            foreach ($this->personFundingOrganizations as $personFundingOrganization) {
-                $personFundingOrganization->setPerson($this);
-            }
-        } else {
-            throw new \Exception('personFundingOrganizations must be either array or traversable objects.');
-        }
-    }
-
-    /**
      * Getter for personFundingOrganizations.
      *
      * @access public
@@ -600,35 +571,6 @@ class Person extends Entity
     }
 
     /**
-     * Setter for personResearchGroups.
-     *
-     * @param array|\Traversable $personResearchGroups Set of PersonResearchGroup objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-PersonResearchGroup found in $personResearchGroups.
-     * @throws \Exception When $personResearchGroups is not an array or traversable object.
-     *
-     * @return void
-     */
-    public function setPersonResearchGroups($personResearchGroups)
-    {
-        if (is_array($personResearchGroups) || $personResearchGroups instanceof \Traversable) {
-            foreach ($personResearchGroups as $personResearchGroup) {
-                if (!$personResearchGroup instanceof PersonResearchGroup) {
-                    throw new \Exception('Non-PersonResearchGroup found in personResearchGroups.');
-                }
-            }
-            $this->personResearchGroups = $personResearchGroups;
-            foreach ($this->personResearchGroups as $personResearchGroup) {
-                $personResearchGroup->setPerson($this);
-            }
-        } else {
-            throw new \Exception('personResearchGroups must be either array or traversable objects.');
-        }
-    }
-
-    /**
      * Getter for personResearchGroups.
      *
      * @access public
@@ -638,35 +580,6 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
-    }
-
-    /**
-     * Setter for personDataRepositories.
-     *
-     * @param array|\Traversable $personDataRepositories Set of PersonDataRepository objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-PersonDataRepository found in $personDataRepositories.
-     * @throws \Exception When $personDataRepositories is not an array or traversable object.
-     *
-     * @return void
-     */
-    public function setPersonDataRepositories($personDataRepositories)
-    {
-        if (is_array($personDataRepositories) || $personDataRepositories instanceof \Traversable) {
-            foreach ($personDataRepositories as $personDataRepository) {
-                if (!$personDataRepository instanceof PersonDataRepository) {
-                    throw new \Exception('Non-PersonDataRepository found in personDataRepositories.');
-                }
-            }
-            $this->personDataRepositories = $personDataRepositories;
-            foreach ($this->personDataRepositories as $personDataRepository) {
-                $personDataRepository->setPerson($this);
-            }
-        } else {
-            throw new \Exception('personDataRepositories must be either array or traversable objects.');
-        }
     }
 
     /**
@@ -820,6 +733,11 @@ class Person extends Entity
         }
     }
 
+    public function getFullName(): string
+    {
+        return trim($this->getLastName() . ', ' . $this->getFirstName());
+    }
+
     /**
      * Return the id as a string when converting a Person to a string.
      *
@@ -829,7 +747,7 @@ class Person extends Entity
      */
     public function __toString()
     {
-        return (string) $this->getFirstName() . ' ' . $this->getLastName();
+        return $this->getFullName();
     }
 
     /**

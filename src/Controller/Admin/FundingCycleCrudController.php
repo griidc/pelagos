@@ -54,6 +54,14 @@ class FundingCycleCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-edit')
                     ->setLabel('Edit');
+            })
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-trash')
+                    ->setLabel('Delete')
+                    ->displayIf(function (FundingCycle $fundingCycle) {
+                        return $fundingCycle->isDeletable();
+                    });
             });
     }
 
