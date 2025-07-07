@@ -158,6 +158,6 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
 
     public function __toString()
     {
-        return $this->getPerson()?->getFullName() . ' - ' . $this->getDataRepository()?->getName() ?? '';
+        return ($this->getPerson()?->getFullName() ?? '') . ' - ' . ($this->getDataRepository()?->getName() ?? '');
     }
 }
