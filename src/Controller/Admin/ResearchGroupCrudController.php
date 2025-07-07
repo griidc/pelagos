@@ -67,7 +67,6 @@ class ResearchGroupCrudController extends AbstractCrudController
                     return !$this->isResearchGroupInUse($researchGroup);
                 });
         });
-        ;
     }
 
     /**

@@ -41,8 +41,8 @@ class PersonResearchGroupCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setSearchFields(['person.lastName', 'label', 'researchGroup.name', 'role.name'])
-            // ->setDefaultSort(['person' => 'ASC', 'researchGroup' => 'ASC'])
+            
+            ->setDefaultSort(['person.lastName' => 'ASC'])
             ;
     }
 }

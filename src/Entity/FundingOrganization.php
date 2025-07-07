@@ -162,9 +162,9 @@ class FundingOrganization extends Entity
     /**
      * Funding Organization's PersonFundingOrganizations.
      *
-     * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
+     * @var Collection $personFundingOrganizations
      */
-    #[ORM\OneToMany(targetEntity: 'PersonFundingOrganization', mappedBy: 'fundingOrganization')]
+    #[ORM\OneToMany(targetEntity: PersonFundingOrganization::class, mappedBy: 'fundingOrganization', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $personFundingOrganizations;
 
     /**
@@ -172,7 +172,7 @@ class FundingOrganization extends Entity
      *
      * @var DataRepository
      */
-    #[ORM\ManyToOne(targetEntity: 'DataRepository', inversedBy: 'fundingOrganizations')]
+    #[ORM\ManyToOne(targetEntity: DataRepository::class, inversedBy: 'fundingOrganizations')]
     #[Assert\NotBlank(message: 'Data Repository is required')]
     protected $dataRepository;
 
@@ -193,6 +193,11 @@ class FundingOrganization extends Entity
     #[ORM\ManyToOne(targetEntity: Funder::class)]
     #[Assert\NotBlank(message: 'Default Funder is required')]
     protected $defaultFunder;
+
+    public function __construct()
+    {
+        $this->personFundingOrganizations = new ArrayCollection();
+    }
 
     /**
      * Getter for fundingCycles.
@@ -256,6 +261,8 @@ class FundingOrganization extends Entity
      *
      * @throws \Exception when Non-funding cycle found in $fundingCycles
      * @throws \Exception when $fundingCycles is not an array or traversable object
+     *
+     * @deprecated version 6.76.0 This method is deprecated and will be removed in a future version. There will be no replacement for this method.
      */
     public function setFundingCycles($fundingCycles)
     {
@@ -574,6 +581,8 @@ class FundingOrganization extends Entity
      *
      * @throws \Exception when $personFundingOrganizations is not an array or traversable object
      * @throws \Exception when Non-PersonFundingOrganization found within $personFundingOrganizations
+     *
+     * @deprecated 6.76.0 This method is deprecated and will be removed in a future version. Use addPersonResearchGroup() instead.
      */
     public function setPersonFundingOrganizations($personFundingOrganizations)
     {
@@ -590,6 +599,28 @@ class FundingOrganization extends Entity
         } else {
             throw new \Exception('personFundingOrganizations must be either array or traversable objects.');
         }
+    }
+
+    public function addPersonFundingOrganization(PersonFundingOrganization $personFundingOrganization): static
+    {
+        if (!$this->personFundingOrganizations->contains($personFundingOrganization)) {
+            $this->personFundingOrganizations->add($personFundingOrganization);
+            $personFundingOrganization->setFundingOrganization($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonFundingOrganization(PersonFundingOrganization $personFundingOrganization): static
+    {
+        if ($this->personFundingOrganizations->removeElement($personFundingOrganization)) {
+            // set the owning side to null (unless already changed)
+            if ($personFundingOrganization->getFundingOrganization() === $this) {
+                $personFundingOrganization->setFundingOrganization(null);
+            }
+        }
+
+        return $this;
     }
 
     /**
