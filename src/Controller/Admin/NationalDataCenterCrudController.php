@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\NationalDataCenter;
@@ -15,10 +16,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * @extends AbstractCrudController<NationalDataCenter>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class NationalDataCenterCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
