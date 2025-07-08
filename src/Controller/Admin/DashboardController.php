@@ -24,12 +24,12 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Easy Admin Main Dashboard Class.
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DashboardController extends AbstractDashboardController
 {
     /**
      * Main dashboard page.
      */
-    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     #[Route(path: '/admin', name: 'admin')]
     public function index(): Response
     {
@@ -63,7 +63,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
         yield MenuItem::linkToCrud('Data Respository', 'fas fa-list-alt', DataRepository::class);
-        yield MenuItem::linkToCrud('Person', 'fas fa-list-alt', Person::class); 
+        yield MenuItem::linkToCrud('Person', 'fas fa-list-alt', Person::class);
         // yield MenuItem::linkToCrud('Person to Research Groups', 'fas fa-list-alt', PersonResearchGroup::class);
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));

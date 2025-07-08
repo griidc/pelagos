@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\InformationProduct;
 use App\Entity\ProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
@@ -12,10 +13,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Information Product Type Descriptor controller.
+ *
+ * @extends AbstractCrudController<ProductTypeDescriptor>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class ProductTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;

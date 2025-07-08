@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\DataRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,14 +16,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * DataRepositoryCrudController class.
  *
  * @extends AbstractCrudController<DataRepository>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DataRepositoryCrudController extends AbstractCrudController
 {
+    use EasyAdminCrudTrait;
+
     public static function getEntityFqcn(): string
     {
         return DataRepository::class;

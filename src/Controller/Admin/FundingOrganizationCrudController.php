@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Form\PersonFundingOrganizationType;
@@ -16,12 +17,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Funding Org Easy Admin controller.
  *
  * @extends AbstractCrudController<FundingOrganization>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class FundingOrganizationCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
