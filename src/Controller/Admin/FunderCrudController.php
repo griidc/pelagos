@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\Entity;
 use App\Entity\Funder;
 use App\Entity\Dataset;
@@ -16,12 +17,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Funder Crud Controller.
  *
  *  @extends AbstractCrudController<Funder>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class FunderCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
@@ -62,27 +65,13 @@ class FunderCrudController extends AbstractCrudController
         ;
     }
 
-    /**
-     * Overwrite for when entity is created.
-     *
-     * @param string $entityFqcn entity class name
-     */
-    public function createEntity(string $entityFqcn): Entity
-    {
-        $funder = new $entityFqcn();
-        $funder->setCreator($this->getUser()->getPerson());
-
-        return $funder;
-    }
-
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
         /* @var Funder $entityInstance */
         $entityInstance->setSource(Funder::SOURCE_DRPM);
         $entityInstance->setModifier($this->getUser()->getPerson());
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     /**

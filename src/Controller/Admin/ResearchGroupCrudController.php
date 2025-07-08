@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Repository\ResearchGroupRepository;
@@ -19,10 +20,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * @extends AbstractCrudController<ResearchGroup>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class ResearchGroupCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
