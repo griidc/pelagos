@@ -55,6 +55,7 @@ class DataRepositoryCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('Data Repositories')
             ->setEntityLabelInSingular('Data Repository')
             ->setPageTitle(Crud::PAGE_INDEX, 'Data Repository List')

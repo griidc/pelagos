@@ -37,7 +37,8 @@ class ResearchGroupCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setDefaultSort(['modificationTimeStamp' => 'DESC'])
+        return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('Research Groups')
             ->setEntityLabelInSingular('Research Group')
             ->setPageTitle(Crud::PAGE_INDEX, 'Research Groups')
@@ -51,6 +52,7 @@ class ResearchGroupCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+        ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
         ->add(Crud::PAGE_INDEX, Action::DETAIL)
         ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
             return $action
@@ -69,7 +71,16 @@ class ResearchGroupCrudController extends AbstractCrudController
                 ->displayIf(function (ResearchGroup $researchGroup) {
                     return !$this->isResearchGroupInUse($researchGroup);
                 });
-        });
+        })
+        ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-trash')
+                ->setLabel('Delete')
+                ->displayIf(function (ResearchGroup $researchGroup) {
+                    return !$this->isResearchGroupInUse($researchGroup);
+                });
+        })
+        ;
     }
 
     /**

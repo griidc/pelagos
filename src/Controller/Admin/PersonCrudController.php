@@ -36,7 +36,8 @@ class PersonCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setDefaultSort(['modificationTimeStamp' => 'DESC'])
+        return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('People')
             ->setEntityLabelInSingular('Person')
             ->setPageTitle(Crud::PAGE_INDEX, 'People')
@@ -50,25 +51,35 @@ class PersonCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-        ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-            return $action
-                ->setIcon('fa fa-eye')
-                ->setLabel('View');
-        })
-        ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-            return $action
-                ->setIcon('fa fa-edit')
-                ->setLabel('Edit');
-        })
-        ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-            return $action
-                ->setIcon('fa fa-trash')
-                ->setLabel('Delete')
-                ->displayIf(function (Person $person) {
-                    return $person->isDeletable();
-                });
-        });
+            ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-eye')
+                    ->setLabel('View');
+            })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-edit')
+                    ->setLabel('Edit');
+            })
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-trash')
+                    ->setLabel('Delete')
+                    ->displayIf(function (Person $person) {
+                        return $person->isDeletable();
+                    });
+            })
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-trash')
+                    ->setLabel('Delete')
+                    ->displayIf(function (Person $person) {
+                        return $person->isDeletable();
+                    });
+            })
+        ;
     }
 
     public function configureFields(string $pageName): iterable
