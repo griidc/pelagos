@@ -21,7 +21,7 @@ class DoiMessageHandler
      */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $doiIssueLogger,
         private readonly DOIutil $doiUtil,
     ) {
     }
@@ -39,17 +39,17 @@ class DoiMessageHandler
 
         if (DoiMessage::DELETE_ACTION === $doiMessageAction) {
             $loggingContext = ['doi' => $doiMessageId];
-            $this->logger->info('DOI Consumer Started', $loggingContext);
+            $this->doiIssueLogger->info('DOI Consumer Started', $loggingContext);
             $this->deleteDoi($doiMessageId, $loggingContext);
         } elseif (DoiMessage::ISSUE_OR_UPDATE === $doiMessageAction) {
             $loggingContext = ['dataset_id' => $doiMessageId];
-            $this->logger->info('DOI Consumer Started', $loggingContext);
+            $this->doiIssueLogger->info('DOI Consumer Started', $loggingContext);
             // Clear Doctrine's cache to force loading from persistence.
             $dataset = $this->entityManager
                 ->getRepository(Dataset::class)
                 ->find($doiMessageId);
             if (!$dataset instanceof Dataset) {
-                $this->logger->warning('No dataset found', $loggingContext);
+                $this->doiIssueLogger->warning('No dataset found', $loggingContext);
 
                 return;
             }
@@ -57,7 +57,7 @@ class DoiMessageHandler
                 $loggingContext['udi'] = $dataset->getUdi();
             }
             if ($this->doiAlreadyExists($dataset, $loggingContext)) {
-                $this->logger->info('DOI Already issued for this dataset', $loggingContext);
+                $this->doiIssueLogger->info('DOI Already issued for this dataset', $loggingContext);
                 $this->updateDoi($dataset, $loggingContext);
             } else {
                 $this->issueDoi($dataset, $loggingContext);
@@ -65,7 +65,7 @@ class DoiMessageHandler
 
             $this->entityManager->flush();
         } else {
-            $this->logger->warning("Unknown message action: $doiMessageAction");
+            $this->doiIssueLogger->warning("Unknown message action: $doiMessageAction");
         }
     }
 
@@ -78,7 +78,7 @@ class DoiMessageHandler
     protected function issueDoi(Dataset $dataset, array $loggingContext): void
     {
         // Log processing start.
-        $this->logger->info('Attempting to issue DOI', $loggingContext);
+        $this->doiIssueLogger->info('Attempting to issue DOI', $loggingContext);
 
         $generatedDOI = $this->doiUtil->generateDoi();
 
@@ -102,9 +102,9 @@ class DoiMessageHandler
 
             $loggingContext['doi'] = $doi->getDoi();
             // Log processing complete.
-            $this->logger->info('DOI Issued', $loggingContext);
+            $this->doiIssueLogger->info('DOI Issued', $loggingContext);
         } catch (HttpClientErrorException | HttpServerErrorException $exception) {
-            $this->logger->error('Error issuing DOI: ' . $exception->getMessage(), $loggingContext);
+            $this->doiIssueLogger->error('Error issuing DOI: ' . $exception->getMessage(), $loggingContext);
         }
     }
 
@@ -117,7 +117,7 @@ class DoiMessageHandler
     protected function updateDoi(Dataset $dataset, array $loggingContext): void
     {
         // Log processing start.
-        $this->logger->info('Attempting to update DOI', $loggingContext);
+        $this->doiIssueLogger->info('Attempting to update DOI', $loggingContext);
         $doi = $dataset->getDoi();
 
         try {
@@ -172,9 +172,9 @@ class DoiMessageHandler
             $loggingContext['doi'] = $doi->getDoi();
 
             // Log processing complete.
-            $this->logger->info('DOI Updated', $loggingContext);
+            $this->doiIssueLogger->info('DOI Updated', $loggingContext);
         } catch (HttpClientErrorException | HttpServerErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+            $this->doiIssueLogger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
         }
     }
 
@@ -187,11 +187,11 @@ class DoiMessageHandler
     protected function deleteDoi(string $doi, array $loggingContext): void
     {
         // Log processing start.
-        $this->logger->info('Attempting to delete DOI', $loggingContext);
+        $this->doiIssueLogger->info('Attempting to delete DOI', $loggingContext);
         try {
             $this->doiUtil->deleteDOI($doi);
         } catch (HttpClientErrorException | HttpServerErrorException $exception) {
-            $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
+            $this->doiIssueLogger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
         }
     }
 
@@ -212,12 +212,12 @@ class DoiMessageHandler
                     $this->doiUtil->getDOIMetadata($doi->getDoi());
                 } catch (HttpClientErrorException $exception) {
                     // DOI exist, but is not found in REST API/Datacite.
-                    $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
+                    $this->doiIssueLogger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
 
                     return false;
                 } catch (HttpServerErrorException $exception) {
                     // server down. wait for 10 minutes and retry.
-                    $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
+                    $this->doiIssueLogger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
                     $exceptionType = $exception::class;
                     continue;
                 }
