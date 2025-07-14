@@ -36,6 +36,7 @@ class DataRepositoryCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+            ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
@@ -54,6 +55,7 @@ class DataRepositoryCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('Data Repositories')
             ->setEntityLabelInSingular('Data Repository')
             ->setPageTitle(Crud::PAGE_INDEX, 'Data Repository List')
@@ -68,19 +70,16 @@ class DataRepositoryCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('name'),
-            EmailField::new('emailAddress'),
+            EmailField::new('emailAddress')->setLabel('Email'),
             TextareaField::new('description'),
             UrlField::new('url'),
             TelephoneField::new('phoneNumber'),
             TextareaField::new('deliveryPoint'),
             TextField::new('city'),
-            TextField::new('administrativeArea')->setLabel('state'),
+            TextField::new('administrativeArea')->setLabel('State'),
             TextField::new('postalCode'),
             TextField::new('country'),
-            CollectionField::new('personDataRepositories')
-                ->useEntryCrudForm()
-
-
+            CollectionField::new('personDataRepositories')->useEntryCrudForm()
         ];
     }
 }

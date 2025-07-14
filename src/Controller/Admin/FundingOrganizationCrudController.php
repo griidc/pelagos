@@ -77,6 +77,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInSingular('Funding Organization')
             ->setEntityLabelInPlural('Funding Organizations')
             ->setPageTitle(Crud::PAGE_INDEX, 'Funding Organizations')
@@ -90,13 +91,22 @@ class FundingOrganizationCrudController extends AbstractCrudController
      */
     public function configureActions(Actions $actions): Actions
     {
-        return $actions
+        return parent::configureActions($actions)
+            ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-plus-circle')
                     ->setLabel('Create Funding Organization');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-trash')
+                    ->setLabel('Delete')
+                    ->displayIf(function (FundingOrganization $fundingOrganization) {
+                        return !$this->isFundingOrgInUse($fundingOrganization);
+                    });
+            })
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
                     ->setLabel('Delete')

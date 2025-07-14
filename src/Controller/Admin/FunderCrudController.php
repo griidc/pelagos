@@ -82,19 +82,39 @@ class FunderCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
-                return $action
-                    ->setIcon('fa fa-plus-circle')
-                    ->setLabel('Create New Funder');
-            })
-            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setIcon('fa fa-trash')
-                    ->setLabel('Delete')
-                    ->displayIf(function (Funder $funder) {
-                        return !$this->isFunderBeingUsed($funder);
-                    });
-            });
+        ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
+        ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-plus-circle')
+                ->setLabel('Create New Funder');
+        })
+        ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-eye')
+                ->setLabel('View');
+        })
+        ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-edit')
+                ->setLabel('Edit');
+        })
+        ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-trash')
+                ->setLabel('Delete')
+                ->displayIf(function (Funder $funder) {
+                    return !$this->isFunderBeingUsed($funder);
+                });
+        })
+        ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-trash')
+                ->setLabel('Delete')
+                ->displayIf(function (Funder $funder) {
+                    return !$this->isFunderBeingUsed($funder);
+                });
+        });
     }
 
     /**
@@ -104,11 +124,15 @@ class FunderCrudController extends AbstractCrudController
      */
     public function configureCrud(Crud $crud): Crud
     {
-        return parent::configureCrud($crud)
-            ->setPageTitle(Crud::PAGE_INDEX, 'Funders')
+         return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
+            ->setEntityLabelInPlural('Funders')
+            ->setEntityLabelInSingular('Funder')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Funder List')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Funder')
-            ->setPageTitle(Crud::PAGE_NEW, 'Create Funder')
-            ->showEntityActionsInlined();
+            ->setPageTitle(Crud::PAGE_NEW, 'Add Funder')
+            ->showEntityActionsInlined()
+        ;
     }
 
     /**
