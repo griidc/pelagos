@@ -34,7 +34,8 @@ class FundingCycleCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('Funding Cycles')
             ->setEntityLabelInSingular('Funding Cycle')
             ->setPageTitle(Crud::PAGE_INDEX, 'Funding Cycles')
@@ -47,6 +48,7 @@ class FundingCycleCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+            ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
@@ -59,6 +61,14 @@ class FundingCycleCrudController extends AbstractCrudController
                     ->setLabel('Edit');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-trash')
+                    ->setLabel('Delete')
+                    ->displayIf(function (FundingCycle $fundingCycle) {
+                        return $fundingCycle->isDeletable();
+                    });
+            })
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
                     ->setLabel('Delete')

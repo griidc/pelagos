@@ -44,6 +44,7 @@ class NationalDataCenterCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('National Data Centers')
             ->setEntityLabelInSingular('National Data Center')
             ->setPageTitle(Crud::PAGE_INDEX, 'National Data Center List')
@@ -62,11 +63,10 @@ class NationalDataCenterCrudController extends AbstractCrudController
             TelephoneField::new('phoneNumber'),
             TextField::new('deliveryPoint')->setLabel('Address'),
             TextField::new('city'),
-            TextField::new('administrativeArea')->setLabel('State/Province')
-                ->setHelp('State or Province, if applicable. Use 2-letter code for US states.'),
+            TextField::new('administrativeArea')->setLabel('State'),
             TextField::new('postalCode'),
             TextField::new('country'),
-            EmailField::new('emailAddress')->setLabel('email'),
+            EmailField::new('emailAddress')->setLabel('Email'),
         ];
     }
 
@@ -76,6 +76,7 @@ class NationalDataCenterCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+            ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
@@ -88,6 +89,13 @@ class NationalDataCenterCrudController extends AbstractCrudController
                     ->setLabel('Edit');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-trash')
+                    ->displayIf(function (NationalDataCenter $nationalDataCenter) {
+                        return !$this->isNationalDataCenterInUse($nationalDataCenter);
+                    });
+            })
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
                     ->displayIf(function (NationalDataCenter $nationalDataCenter) {
