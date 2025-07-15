@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -29,11 +28,13 @@ class PersonCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Person::class;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -48,6 +49,7 @@ class PersonCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions
@@ -82,6 +84,7 @@ class PersonCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -115,6 +118,18 @@ class PersonCrudController extends AbstractCrudController
             CollectionField::new('Publications')
                 ->hideOnIndex()
                 ->setDisabled(),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy MM-dd HH:mm:ss zzz'),
+            AssociationField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy MM-dd HH:mm:ss zzz'),
+            AssociationField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
         ];
     }
 }
