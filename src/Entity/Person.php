@@ -582,7 +582,10 @@ class Person extends Entity
     {
         $fundingOrganizations = new ArrayCollection();
         foreach ($this->getResearchGroups() as $researchGroup) {
-            $fundingOrganizations->add($researchGroup->getFundingOrganization());
+            $fundingOrganization = $researchGroup->getFundingOrganization();
+            if (!$fundingOrganizations->contains($fundingOrganization)) {
+                $fundingOrganizations->add($fundingOrganization);
+            }
         }
         return $fundingOrganizations;
     }
