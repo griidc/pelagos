@@ -95,21 +95,19 @@ class PersonCrudController extends AbstractCrudController
             TelephoneField::new('phoneNumber')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city'),
-            TextField::new('administrativeArea'),
+            TextField::new('administrativeArea')->setLabel('State'),
             TextField::new('postalCode')->hideOnIndex(),
             TextField::new('country'),
             UrlField::new('url'),
             TextField::new('organization'),
             TextField::new('position'),
-            CollectionField::new('personFundingOrganizations')
-                ->hideOnIndex()
+            CollectionField::new('fundingOrganizations')->setHelp('Expand to see Funding Cycle(s)')
+                ->onlyOnForms()
                 ->setDisabled(),
-            ArrayField::new('ResearchGroups')
-                ->hideOnIndex()
-                ->setDisabled(),
-            CollectionField::new('personDataRepositories')
-                ->hideOnIndex()
-                ->setDisabled(),
+            ArrayField::new('ResearchGroupNames')->setLabel('Research Groups')
+                ->onlyOnForms()
+                ->setDisabled()
+                ->setColumns(40),
             AssociationField::new('account')
                 ->setDisabled(),
             CollectionField::new('Datasets')

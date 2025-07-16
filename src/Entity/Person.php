@@ -559,7 +559,8 @@ class Person extends Entity
     }
 
     /**
-     * Getter for personFundingOrganizations.
+     * Getter for personFundingOrganizations. This is seldom used and was originally created
+     * to be able to give permissions at a more granular level.
      *
      * @access public
      *
@@ -568,6 +569,22 @@ class Person extends Entity
     public function getPersonFundingOrganizations()
     {
         return $this->personFundingOrganizations;
+    }
+
+    /**
+     * Getter for fundingOrganizations.
+     *
+     * @access public
+     *
+     * @return ArrayCollection The Funding Organizations this Person is associated with.
+     */
+    public function getFundingOrganizations()
+    {
+        $fundingOrganizations = new ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            $fundingOrganizations->add($researchGroup->getFundingOrganization());
+        }
+        return $fundingOrganizations;
     }
 
     /**
