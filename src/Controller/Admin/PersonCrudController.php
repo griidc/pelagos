@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\Person;
-use Collection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
