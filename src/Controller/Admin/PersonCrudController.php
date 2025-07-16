@@ -103,13 +103,13 @@ class PersonCrudController extends AbstractCrudController
             TextField::new('organization'),
             TextField::new('position'),
             CollectionField::new('fundingOrganizations')
-                ->onlyOnForms()
+                ->hideOnIndex()
                 ->setDisabled(),
             CollectionField::new('FundingCycles')
-                ->onlyOnForms()
+                ->hideOnIndex()
                 ->setDisabled(),
             ArrayField::new('ResearchGroupNames')->setLabel('Research Groups')
-                ->onlyOnForms()
+                ->hideOnIndex()
                 ->setDisabled()
                 ->setColumns(40),
             AssociationField::new('account')
