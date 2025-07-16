@@ -171,7 +171,7 @@ class ResearchGroup extends Entity
      *
      * @var Collection $personResearchGroups
      */
-    #[ORM\OneToMany(targetEntity: 'PersonResearchGroup', mappedBy: 'researchGroup')]
+    #[ORM\OneToMany(targetEntity: PersonResearchGroup::class, mappedBy: 'researchGroup', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Serializer\Groups(['overview'])]
     protected $personResearchGroups;
 
@@ -180,7 +180,7 @@ class ResearchGroup extends Entity
      *
      * @var Collection $datasets
      */
-    #[ORM\OneToMany(targetEntity: 'Dataset', mappedBy: 'researchGroup')]
+    #[ORM\OneToMany(targetEntity: Dataset::class, mappedBy: 'researchGroup')]
     #[ORM\OrderBy(['udi' => 'ASC'])]
     #[Serializer\Groups(['overview'])]
     protected $datasets;
@@ -313,6 +313,11 @@ class ResearchGroup extends Entity
     public function getFundingCycleName(): string
     {
         return $this->fundingCycle->getName();
+    }
+
+    public function getFundingOrganization(): ?FundingOrganization
+    {
+        return $this->fundingCycle?->getFundingOrganization();
     }
 
     /**
@@ -581,6 +586,8 @@ class ResearchGroup extends Entity
      *
      * @throws \Exception when Non-PersonResearchGroup found in $personResearchGroups
      * @throws \Exception when $personResearchGroups is not an array or traversable object
+     *
+     * @deprecated 6.76.0 This method is deprecated and will be removed in a future version. Use addPersonResearchGroup() instead.
      */
     public function setPersonResearchGroups($personResearchGroups)
     {
@@ -595,6 +602,28 @@ class ResearchGroup extends Entity
         } else {
             throw new \Exception('personResearchGroups must be either array or traversable objects.');
         }
+    }
+
+    public function addPersonResearchGroup(PersonResearchGroup $personResearchGroups): static
+    {
+        if (!$this->personResearchGroups->contains($personResearchGroups)) {
+            $this->personResearchGroups->add($personResearchGroups);
+            $personResearchGroups->setResearchGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonResearchGroup(PersonResearchGroup $personResearchGroups): static
+    {
+        if ($this->personResearchGroups->removeElement($personResearchGroups)) {
+            // set the owning side to null (unless already changed)
+            if ($personResearchGroups->getResearchGroup() === $this) {
+                $personResearchGroups->setResearchGroup(null);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -771,5 +800,13 @@ class ResearchGroup extends Entity
     public function getRestrictedDataset(): int
     {
         return $this->getDatasetsByLifecycleStatus(DatasetLifecycleStatus::RESTRICTED)->count();
+    }
+
+    /**
+     * The name of this Research Group.
+     */
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
