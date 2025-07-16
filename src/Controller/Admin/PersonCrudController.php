@@ -94,13 +94,13 @@ class PersonCrudController extends AbstractCrudController
             EmailField::new('emailAddress'),
             TelephoneField::new('phoneNumber')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
-            TextField::new('city'),
-            TextField::new('administrativeArea'),
+            TextField::new('city')->hideOnIndex(),
+            TextField::new('administrativeArea')->hideOnIndex(),
             TextField::new('postalCode')->hideOnIndex(),
-            TextField::new('country'),
-            UrlField::new('url'),
+            TextField::new('country')->hideOnIndex(),
+            UrlField::new('url')->hideOnIndex(),
             TextField::new('organization'),
-            TextField::new('position'),
+            TextField::new('position')->hideOnIndex(),
             CollectionField::new('personFundingOrganizations')
                 ->hideOnIndex()
                 ->setDisabled(),
@@ -111,6 +111,7 @@ class PersonCrudController extends AbstractCrudController
                 ->hideOnIndex()
                 ->setDisabled(),
             AssociationField::new('account')
+                ->hideOnIndex()
                 ->setDisabled(),
             CollectionField::new('Datasets')
                 ->hideOnIndex()
