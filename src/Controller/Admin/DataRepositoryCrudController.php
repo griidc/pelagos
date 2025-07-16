@@ -94,7 +94,7 @@ class DataRepositoryCrudController extends AbstractCrudController
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
             TextField::new('modifier')->setLabel('Last Modified By')
-                ->onlyOnDetail()
+                ->onlyOnDetail(),
         ];
     }
 }
