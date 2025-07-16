@@ -120,13 +120,13 @@ class PersonCrudController extends AbstractCrudController
                 ->setDisabled(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
-                ->setFormat('yyyy MM-dd HH:mm:ss zzz'),
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
             AssociationField::new('creator')->setLabel('Created By')
                 ->onlyOnDetail()
                 ->setTemplateName('crud/field/generic'),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->onlyOnDetail()
-                ->setFormat('yyyy MM-dd HH:mm:ss zzz'),
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
             AssociationField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail()
                 ->setTemplateName('crud/field/generic'),
