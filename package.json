@@ -1,14 +1,14 @@
 {
     "devDependencies": {
-        "@babel/core": "^7.27.7",
-        "@babel/preset-env": "7.27.2",
+        "@babel/core": "^7.28.0",
+        "@babel/preset-env": "7.28.0",
         "@babel/preset-react": "^7.27.1",
         "@fortawesome/fontawesome-free": "^6.7.2",
         "@symfony/webpack-encore": "^4.6.1",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
         "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
-        "core-js": "^3.43.0",
+        "core-js": "^3.44.0",
         "eslint": "^7.29.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-import-resolver-alias": "^1.1.2",
@@ -25,7 +25,7 @@
         "vue": "^2.6.11",
         "vue-loader": "^15.0.11",
         "vue-template-compiler": "^2.6.11",
-        "webpack": "^5.99.9",
+        "webpack": "^5.100.1",
         "webpack-cli": "^5.1.4",
         "webpack-notifier": "^1.6.0"
     },
