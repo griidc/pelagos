@@ -45,11 +45,11 @@ class FundingOrganizationCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnIndex(),
+            TextField::new('name'),
+            TextField::new('shortName'),
             AssociationField::new('dataRepository')->onlyOnForms(),
             AssociationField::new('defaultFunder')->onlyOnForms(),
-            TextField::new('name'),
             TextField::new('description')->onlyOnForms(),
-            TextField::new('shortName'),
             EmailField::new('emailAddress')->onlyOnForms(),
             TextField::new('url')->onlyOnForms(),
             TextField::new('phoneNumber')->onlyOnForms(),
