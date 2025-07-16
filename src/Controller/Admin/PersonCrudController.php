@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\Person;
+use Collection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -101,7 +102,10 @@ class PersonCrudController extends AbstractCrudController
             UrlField::new('url'),
             TextField::new('organization'),
             TextField::new('position'),
-            CollectionField::new('fundingOrganizations')->setHelp('Expand to see Funding Cycle(s)')
+            CollectionField::new('fundingOrganizations')
+                ->onlyOnForms()
+                ->setDisabled(),
+            CollectionField::new('FundingCycles')
                 ->onlyOnForms()
                 ->setDisabled(),
             ArrayField::new('ResearchGroupNames')->setLabel('Research Groups')

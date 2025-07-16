@@ -593,6 +593,27 @@ class Person extends Entity
     }
 
     /**
+     * Get a list of Funding Cycles this person is associated with through their Research Groups.
+     *
+     * @access public
+     *
+     * @return ArrayCollection Funding Cycles this Person is associated with.
+     */
+    public function getFundingCycles()
+    {
+        $fundingCycles = new ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            $fundingCycle = $researchGroup->getFundingCycle();
+            if ($fundingCycle instanceof FundingCycle) {
+                if (!$fundingCycles->contains($fundingCycle)) {
+                    $fundingCycles->add($fundingCycle);
+                }
+            }
+        }
+        return $fundingCycles;
+    }
+
+    /**
      * Getter for personResearchGroups.
      *
      * @access public
