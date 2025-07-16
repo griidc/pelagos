@@ -32,6 +32,7 @@ class FundingCycleCrudController extends AbstractCrudController
         return FundingCycle::class;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -45,6 +46,7 @@ class FundingCycleCrudController extends AbstractCrudController
             ->showEntityActionsInlined();
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions
@@ -78,6 +80,7 @@ class FundingCycleCrudController extends AbstractCrudController
             });
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -94,6 +97,18 @@ class FundingCycleCrudController extends AbstractCrudController
                 ->setEntryType(ResearchGroupType::class)
                 ->setEntryIsComplex(true)
                 ->hideOnIndex(),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            AssociationField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            AssociationField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
         ];
     }
 }

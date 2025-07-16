@@ -13,7 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
@@ -33,19 +35,14 @@ class FunderCrudController extends AbstractCrudController
     {
     }
 
-    /**
-     * Returns Entity Class Name.
-     */
+
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Funder::class;
     }
 
-    /**
-     * Configure fields for EZAdmin CRUD Controller.
-     *
-     * @param string $pageName default param for parent method (not used)
-     */
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -55,9 +52,22 @@ class FunderCrudController extends AbstractCrudController
             TextField::new('shortName'),
             TextField::new('referenceUri'),
             ChoiceField::new('source')->setChoices(Funder::SOURCES),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            AssociationField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            AssociationField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
         ];
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
@@ -68,17 +78,14 @@ class FunderCrudController extends AbstractCrudController
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        /* @var Funder $entityInstance */
         $entityInstance->setSource(Funder::SOURCE_DRPM);
-        $entityInstance->setModifier($this->getUser()->getPerson());
+        /** @var Account $account */
+        $account = $this->getUser();
+        $entityInstance->setModifier($account->getPerson());
         parent::updateEntity($entityManager, $entityInstance);
     }
 
-    /**
-     * Configure the Crud actions.
-     *
-     * @param Actions $actions actions object that need to be configured
-     */
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions
@@ -117,11 +124,7 @@ class FunderCrudController extends AbstractCrudController
         });
     }
 
-    /**
-     * CRUD configuration function.
-     *
-     * @param Crud $crud instance for crud controller to add additional configuration
-     */
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
          return parent::configureCrud($crud)

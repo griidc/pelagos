@@ -15,6 +15,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -33,14 +35,13 @@ class NationalDataCenterCrudController extends AbstractCrudController
     {
     }
 
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return NationalDataCenter::class;
     }
 
-    /**
-     * CRUD configuration function.
-     */
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -54,6 +55,7 @@ class NationalDataCenterCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -67,12 +69,22 @@ class NationalDataCenterCrudController extends AbstractCrudController
             TextField::new('postalCode'),
             TextField::new('country'),
             EmailField::new('emailAddress')->setLabel('Email'),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            AssociationField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            AssociationField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail()
+                ->setTemplateName('crud/field/generic'),
         ];
     }
 
-    /**
-     * Configure Crud Actions.
-     */
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions
