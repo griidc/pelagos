@@ -45,11 +45,11 @@ class FundingOrganizationCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnIndex(),
+            TextField::new('name'),
+            TextField::new('shortName'),
             AssociationField::new('dataRepository')->onlyOnForms(),
             AssociationField::new('defaultFunder')->onlyOnForms(),
-            TextField::new('name'),
             TextField::new('description')->onlyOnForms(),
-            TextField::new('shortName'),
             EmailField::new('emailAddress')->onlyOnForms(),
             TextField::new('url')->onlyOnForms(),
             TextField::new('phoneNumber')->onlyOnForms(),
@@ -68,15 +68,13 @@ class FundingOrganizationCrudController extends AbstractCrudController
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('creator')->setLabel('Created By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('modifier')->setLabel('Last Modified By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 

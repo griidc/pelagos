@@ -101,7 +101,14 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('shortName')->onlyOnForms(),
             AssociationField::new('fundingCycle'),
             TextField::new('fundingOrganization')->setDisabled()->hideWhenCreating(),
-            TelephoneField::new('phoneNumber')->hideOnIndex(),
+            CollectionField::new('personResearchGroups')
+            ->setFormTypeOptions([
+               'prototype' => true,
+               'prototype_data' => $personResearchGroup,
+            ])
+            ->hideOnIndex()
+            ->hideWhenCreating()
+            ->useEntryCrudForm(),
             UrlField::new('url')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city')->hideOnIndex(),
@@ -111,27 +118,18 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
             BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
-            CollectionField::new('personResearchGroups')
-            ->setFormTypeOptions([
-               'prototype' => true,
-               'prototype_data' => $personResearchGroup,
-            ])
-            ->hideOnIndex()
-            ->hideWhenCreating()
-            ->useEntryCrudForm(),
+            TelephoneField::new('phoneNumber')->hideOnIndex(),
             CollectionField::new('datasets')->setDisabled()->hideOnIndex()->hideWhenCreating(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('creator')->setLabel('Created By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('modifier')->setLabel('Last Modified By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 

@@ -94,13 +94,13 @@ class PersonCrudController extends AbstractCrudController
             EmailField::new('emailAddress'),
             TelephoneField::new('phoneNumber')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
-            TextField::new('city'),
-            TextField::new('administrativeArea')->setLabel('State'),
+            TextField::new('city')->hideOnIndex(),
+            TextField::new('administrativeArea')->setLabel('State')->hideOnIndex(),
             TextField::new('postalCode')->hideOnIndex(),
-            TextField::new('country'),
-            UrlField::new('url'),
+            TextField::new('country')->hideOnIndex(),
+            UrlField::new('url')->hideOnIndex(),
             TextField::new('organization'),
-            TextField::new('position'),
+            TextField::new('position')->hideOnIndex(),
             ArrayField::new('fundingOrganizations')
                 ->hideOnIndex()
                 ->setDisabled(),
@@ -112,6 +112,7 @@ class PersonCrudController extends AbstractCrudController
                 ->setDisabled()
                 ->setColumns(40),
             AssociationField::new('account')
+                ->hideOnIndex()
                 ->setDisabled(),
             ArrayField::new('Datasets')
                 ->hideOnIndex()
@@ -122,15 +123,13 @@ class PersonCrudController extends AbstractCrudController
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('creator')->setLabel('Created By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('modifier')->setLabel('Last Modified By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 }
