@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -33,26 +34,22 @@ class FundingOrganizationCrudController extends AbstractCrudController
     {
     }
 
-    /**
-     * Returns Fully Qualified Class Name.
-     */
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return FundingOrganization::class;
     }
 
-    /**
-     * Configure Crud Actions.
-     */
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->onlyOnIndex(),
+            TextField::new('name'),
+            TextField::new('shortName'),
             AssociationField::new('dataRepository')->onlyOnForms(),
             AssociationField::new('defaultFunder')->onlyOnForms(),
-            TextField::new('name'),
             TextField::new('description')->onlyOnForms(),
-            TextField::new('shortName'),
             EmailField::new('emailAddress')->onlyOnForms(),
             TextField::new('url')->onlyOnForms(),
             TextField::new('phoneNumber')->onlyOnForms(),
@@ -68,12 +65,20 @@ class FundingOrganizationCrudController extends AbstractCrudController
             CollectionField::new('fundingCycles')
                 ->setDisabled()
                 ->hideOnIndex(),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 
-    /**
-     * CRUD configuration function.
-     */
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -86,9 +91,7 @@ class FundingOrganizationCrudController extends AbstractCrudController
             ->showEntityActionsInlined();
     }
 
-    /**
-     * Configure Crud Actions.
-     */
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return parent::configureActions($actions)

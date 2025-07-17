@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Account;
-use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\NationalDataCenter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +14,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -33,46 +34,54 @@ class NationalDataCenterCrudController extends AbstractCrudController
     {
     }
 
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return NationalDataCenter::class;
     }
 
-    /**
-     * CRUD configuration function.
-     */
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
             ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('National Data Centers')
             ->setEntityLabelInSingular('National Data Center')
-            ->setPageTitle(Crud::PAGE_INDEX, 'National Data Center List')
+            ->setPageTitle(Crud::PAGE_INDEX, 'National Data Center')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit National Data Center')
             ->setPageTitle(Crud::PAGE_NEW, 'Add National Data Center')
             ->showEntityActionsInlined()
         ;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('organizationName')->setLabel('Name'),
-            UrlField::new('organizationURL')->setLabel('URL'),
-            TelephoneField::new('phoneNumber'),
-            TextField::new('deliveryPoint')->setLabel('Address'),
+            TextField::new('organizationURL')->setLabel('URL'),
+            TextField::new('phoneNumber')->hideOnIndex(),
+            TextareaField::new('deliveryPoint')->setLabel('Address')->hideOnIndex(),
             TextField::new('city'),
             TextField::new('administrativeArea')->setLabel('State'),
-            TextField::new('postalCode'),
+            TextField::new('postalCode')->hideOnIndex(),
             TextField::new('country'),
-            EmailField::new('emailAddress')->setLabel('Email'),
+            TextField::new('emailAddress')->setLabel('Email'),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 
-    /**
-     * Configure Crud Actions.
-     */
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions

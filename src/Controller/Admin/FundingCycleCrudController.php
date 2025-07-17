@@ -32,6 +32,7 @@ class FundingCycleCrudController extends AbstractCrudController
         return FundingCycle::class;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -45,6 +46,7 @@ class FundingCycleCrudController extends AbstractCrudController
             ->showEntityActionsInlined();
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions
@@ -78,13 +80,17 @@ class FundingCycleCrudController extends AbstractCrudController
             });
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
-            TextField::new('udiPrefix'),
-            AssociationField::new('fundingOrganization'),
+            TextField::new('udiPrefix')->setLabel('UDI Prefix'),
+            AssociationField::new('fundingOrganization')
+                ->setQueryBuilder(function ($queryBuilder) {
+                    return $queryBuilder->orderBy('entity.name', 'ASC');
+                }),
             TextareaField::new('description')->hideOnIndex(),
             UrlField::new('url'),
             DateField::new('startDate')->hideOnIndex(),
@@ -94,6 +100,16 @@ class FundingCycleCrudController extends AbstractCrudController
                 ->setEntryType(ResearchGroupType::class)
                 ->setEntryIsComplex(true)
                 ->hideOnIndex(),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 }

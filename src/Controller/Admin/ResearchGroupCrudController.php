@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
@@ -30,11 +31,13 @@ class ResearchGroupCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return ResearchGroup::class;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -49,6 +52,7 @@ class ResearchGroupCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         return $actions
@@ -83,11 +87,7 @@ class ResearchGroupCrudController extends AbstractCrudController
         ;
     }
 
-    /**
-     * Configure fields for EZAdmin CRUD Controller.
-     *
-     * @param string $pageName default param for parent method (not used)
-     */
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         /** @var ResearchGroup $researchGroup */
@@ -101,7 +101,14 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('shortName')->onlyOnForms(),
             AssociationField::new('fundingCycle'),
             TextField::new('fundingOrganization')->setDisabled()->hideWhenCreating(),
-            TelephoneField::new('phoneNumber')->hideOnIndex(),
+            CollectionField::new('personResearchGroups')
+            ->setFormTypeOptions([
+               'prototype' => true,
+               'prototype_data' => $personResearchGroup,
+            ])
+            ->hideOnIndex()
+            ->hideWhenCreating()
+            ->useEntryCrudForm(),
             UrlField::new('url')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city')->hideOnIndex(),
@@ -111,15 +118,18 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
             BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
-            CollectionField::new('personResearchGroups')
-            ->setFormTypeOptions([
-               'prototype' => true,
-               'prototype_data' => $personResearchGroup,
-            ])
-            ->hideOnIndex()
-            ->hideWhenCreating()
-            ->useEntryCrudForm(),
+            TelephoneField::new('phoneNumber')->hideOnIndex(),
             CollectionField::new('datasets')->setDisabled()->hideOnIndex()->hideWhenCreating(),
+            DateField::new('creationTimeStamp')->setLabel('Created At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->onlyOnDetail()
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 
