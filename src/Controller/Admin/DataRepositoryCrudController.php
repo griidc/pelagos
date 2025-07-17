@@ -62,7 +62,7 @@ class DataRepositoryCrudController extends AbstractCrudController
             ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('Data Repositories')
             ->setEntityLabelInSingular('Data Repository')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Data Repository List')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Data Repository')
             ->setPageTitle(Crud::PAGE_EDIT, 'Edit Data Repository')
             ->setPageTitle(Crud::PAGE_NEW, 'Add Data Repository')
             ->showEntityActionsInlined()
@@ -75,28 +75,26 @@ class DataRepositoryCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('name'),
-            EmailField::new('emailAddress')->setLabel('Email'),
-            TextareaField::new('description'),
-            UrlField::new('url'),
-            TelephoneField::new('phoneNumber'),
+            TextField::new('emailAddress')->setLabel('Email'),
+            TextareaField::new('description')->hideOnIndex(),
+            TextField::new('url'),
+            TextField::new('phoneNumber'),
             TextareaField::new('deliveryPoint'),
             TextField::new('city'),
             TextField::new('administrativeArea')->setLabel('State'),
             TextField::new('postalCode'),
             TextField::new('country'),
-            CollectionField::new('personDataRepositories')->useEntryCrudForm(),
+            CollectionField::new('personDataRepositories')->useEntryCrudForm()->hideOnIndex(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('creator')->setLabel('Created By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('creator')->setLabel('Created By')
+                ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
-            AssociationField::new('modifier')->setLabel('Last Modified By')
-                ->onlyOnDetail()
-                ->setTemplateName('crud/field/generic'),
+            TextField::new('modifier')->setLabel('Last Modified By')
+                ->onlyOnDetail(),
         ];
     }
 }
