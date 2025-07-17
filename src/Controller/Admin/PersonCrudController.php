@@ -101,10 +101,10 @@ class PersonCrudController extends AbstractCrudController
             UrlField::new('url'),
             TextField::new('organization'),
             TextField::new('position'),
-            CollectionField::new('fundingOrganizations')
+            ArrayField::new('fundingOrganizations')
                 ->hideOnIndex()
                 ->setDisabled(),
-            CollectionField::new('FundingCycles')
+            ArrayField::new('FundingCycles')
                 ->hideOnIndex()
                 ->setDisabled(),
             ArrayField::new('ResearchGroupNames')->setLabel('Research Groups')
@@ -113,10 +113,10 @@ class PersonCrudController extends AbstractCrudController
                 ->setColumns(40),
             AssociationField::new('account')
                 ->setDisabled(),
-            CollectionField::new('Datasets')
+            ArrayField::new('Datasets')
                 ->hideOnIndex()
                 ->setDisabled(),
-            CollectionField::new('Publications')
+            ArrayField::new('Publications')
                 ->hideOnIndex()
                 ->setDisabled(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
