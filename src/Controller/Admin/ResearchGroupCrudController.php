@@ -101,7 +101,14 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('shortName')->onlyOnForms(),
             AssociationField::new('fundingCycle'),
             TextField::new('fundingOrganization')->setDisabled()->hideWhenCreating(),
-            TelephoneField::new('phoneNumber')->hideOnIndex(),
+            CollectionField::new('personResearchGroups')
+            ->setFormTypeOptions([
+               'prototype' => true,
+               'prototype_data' => $personResearchGroup,
+            ])
+            ->hideOnIndex()
+            ->hideWhenCreating()
+            ->useEntryCrudForm(),
             UrlField::new('url')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city')->hideOnIndex(),
@@ -111,14 +118,7 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
             BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
-            CollectionField::new('personResearchGroups')
-            ->setFormTypeOptions([
-               'prototype' => true,
-               'prototype_data' => $personResearchGroup,
-            ])
-            ->hideOnIndex()
-            ->hideWhenCreating()
-            ->useEntryCrudForm(),
+            TelephoneField::new('phoneNumber')->hideOnIndex(),
             CollectionField::new('datasets')->setDisabled()->hideOnIndex()->hideWhenCreating(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
