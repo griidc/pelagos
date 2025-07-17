@@ -95,28 +95,29 @@ class PersonCrudController extends AbstractCrudController
             TelephoneField::new('phoneNumber')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city')->hideOnIndex(),
-            TextField::new('administrativeArea')->hideOnIndex(),
+            TextField::new('administrativeArea')->setLabel('State')->hideOnIndex(),
             TextField::new('postalCode')->hideOnIndex(),
             TextField::new('country')->hideOnIndex(),
             UrlField::new('url')->hideOnIndex(),
             TextField::new('organization'),
             TextField::new('position')->hideOnIndex(),
-            CollectionField::new('personFundingOrganizations')
+            ArrayField::new('fundingOrganizations')
                 ->hideOnIndex()
                 ->setDisabled(),
-            ArrayField::new('ResearchGroups')
+            ArrayField::new('FundingCycles')
                 ->hideOnIndex()
                 ->setDisabled(),
-            CollectionField::new('personDataRepositories')
+            ArrayField::new('ResearchGroupNames')->setLabel('Research Groups')
                 ->hideOnIndex()
-                ->setDisabled(),
+                ->setDisabled()
+                ->setColumns(40),
             AssociationField::new('account')
                 ->hideOnIndex()
                 ->setDisabled(),
-            CollectionField::new('Datasets')
+            ArrayField::new('Datasets')
                 ->hideOnIndex()
                 ->setDisabled(),
-            CollectionField::new('Publications')
+            ArrayField::new('Publications')
                 ->hideOnIndex()
                 ->setDisabled(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
