@@ -559,8 +559,7 @@ class Person extends Entity
     }
 
     /**
-     * Getter for personFundingOrganizations. This is seldom used and was originally created
-     * to be able to give permissions at a more granular level.
+     * Getter for personFundingOrganizations.
      *
      * @access public
      *
@@ -573,12 +572,8 @@ class Person extends Entity
 
     /**
      * Getter for fundingOrganizations.
-     *
-     * @access public
-     *
-     * @return ArrayCollection The Funding Organizations this Person is associated with.
      */
-    public function getFundingOrganizations()
+    public function getFundingOrganizations(): Collection
     {
         $fundingOrganizations = new ArrayCollection();
         foreach ($this->getResearchGroups() as $researchGroup) {
@@ -594,12 +589,8 @@ class Person extends Entity
 
     /**
      * Get a list of Funding Cycles this person is associated with through their Research Groups.
-     *
-     * @access public
-     *
-     * @return ArrayCollection Funding Cycles this Person is associated with.
      */
-    public function getFundingCycles()
+    public function getFundingCycles(): Collection
     {
         $fundingCycles = new ArrayCollection();
         foreach ($this->getResearchGroups() as $researchGroup) {
