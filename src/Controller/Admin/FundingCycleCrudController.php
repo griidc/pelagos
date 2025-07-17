@@ -86,8 +86,11 @@ class FundingCycleCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
-            TextField::new('udiPrefix'),
-            AssociationField::new('fundingOrganization'),
+            TextField::new('udiPrefix')->setLabel('UDI Prefix'),
+            AssociationField::new('fundingOrganization')
+                ->setQueryBuilder(function ($queryBuilder) {
+                    return $queryBuilder->orderBy('entity.name', 'ASC');
+                }),
             TextareaField::new('description')->hideOnIndex(),
             UrlField::new('url'),
             DateField::new('startDate')->hideOnIndex(),
