@@ -74,8 +74,8 @@ class NationalDataCenterCrudController extends AbstractCrudController
             TextField::new('creator')->setLabel('Created By')
                 ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
-                ->onlyOnDetail()
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+                ->setDisabled(),
             TextField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail(),
         ];

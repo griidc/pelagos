@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -79,6 +80,9 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
             IdField::new('id')
             ->onlyOnIndex(),
             TextField::new('description'),
+            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+                ->setDisabled(),
         ];
     }
 
