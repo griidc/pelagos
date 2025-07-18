@@ -92,7 +92,7 @@ class FundingCycleCrudController extends AbstractCrudController
                     return $queryBuilder->orderBy('entity.name', 'ASC');
                 }),
             TextareaField::new('description')->hideOnIndex(),
-            UrlField::new('url'),
+            UrlField::new('url')->hideOnIndex(),
             DateField::new('startDate')->hideOnIndex(),
             DateField::new('endDate')->hideOnIndex(),
             CollectionField::new('researchGroups')
