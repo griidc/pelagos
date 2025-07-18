@@ -77,7 +77,12 @@ class FundingCycleCrudController extends AbstractCrudController
                     ->displayIf(function (FundingCycle $fundingCycle) {
                         return $fundingCycle->isDeletable();
                     });
-            });
+            })
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-save')
+                ->setLabel('Save and Close');
+        });
     }
 
     #[\Override]

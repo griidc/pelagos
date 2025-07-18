@@ -48,6 +48,11 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
                     ->setIcon('fa fa-plus-circle')
                     ->setLabel('Create New Product Type Descriptor');
             })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-edit')
+                    ->setLabel('Edit');
+            })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
@@ -55,7 +60,12 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
                     ->displayIf(function (ProductTypeDescriptor $productTypeDescriptor) {
                         return !$this->isProductTypeInUse($productTypeDescriptor);
                     });
-            });
+            })
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-save')
+                ->setLabel('Save and Close');
+        });
     }
 
     /**
