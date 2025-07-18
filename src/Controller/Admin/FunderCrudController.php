@@ -118,9 +118,9 @@ class FunderCrudController extends AbstractCrudController
                 });
         })
         ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
-        return $action
-            ->setIcon('fa fa-save')
-            ->setLabel('Save and Close');
+            return $action
+                ->setIcon('fa fa-save')
+                ->setLabel('Save and Close');
         });
     }
 
