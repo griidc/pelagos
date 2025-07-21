@@ -108,8 +108,8 @@ class PersonCrudController extends AbstractCrudController
             TextField::new('organization')
                 ->addHtmlContentsToBody(
                     '<datalist id="organizationList">'
-                    . implode('', array_map(fn($org) => '<option value="' . htmlspecialchars($org)
-                    . '">' . htmlspecialchars($org) . '</option>', $personRepository->getUniqueOrganizations()))
+                    . implode('', array_map(fn($organization) => '<option value="' . htmlspecialchars($organization)
+                    . '">' . htmlspecialchars($organization) . '</option>', $personRepository->getUniqueOrganizations()))
                     . '</datalist>')
                 ->setHtmlAttributes([
                     'list' => 'organizationList'
@@ -117,8 +117,8 @@ class PersonCrudController extends AbstractCrudController
             TextField::new('position')->hideOnIndex()
                 ->addHtmlContentsToBody(
                     '<datalist id="positionList">'
-                    . implode('', array_map(fn($pos) => '<option value="' . htmlspecialchars($pos['position'])
-                    . '">' . htmlspecialchars($pos['position']) . '</option>', $personRepository->getUniquePositions()))
+                    . implode('', array_map(fn($position) => '<option value="' . htmlspecialchars($position)
+                    . '">' . htmlspecialchars($position) . '</option>', $personRepository->getUniquePositions()))
                     . '</datalist>')
                 ->setHtmlAttributes([
                     'list' => 'positionList'
