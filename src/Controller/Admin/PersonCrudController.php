@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\Person;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -26,6 +27,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PersonCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
 
     #[\Override]
     public static function getEntityFqcn(): string
@@ -90,6 +95,8 @@ class PersonCrudController extends AbstractCrudController
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        $personRepository = $this->entityManager->getRepository(Person::class);
+
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('firstName'),
@@ -102,27 +109,39 @@ class PersonCrudController extends AbstractCrudController
             TextField::new('postalCode')->hideOnIndex(),
             TextField::new('country')->hideOnIndex(),
             UrlField::new('url')->hideOnIndex(),
-            TextField::new('organization'),
-            TextField::new('position')->hideOnIndex(),
+            TextField::new('organization')
+                ->addHtmlContentsToBody(
+                    '<datalist id="organizationList">'
+                    . implode('', array_map(fn($organization) => '<option value="' . htmlspecialchars($organization)
+                    . '">' . htmlspecialchars($organization) . '</option>', $personRepository->getUniqueOrganizations()))
+                    . '</datalist>')
+                ->setHtmlAttributes([
+                    'list' => 'organizationList'
+                ]),
+            TextField::new('position')->hideOnIndex()
+                ->addHtmlContentsToBody(
+                    '<datalist id="positionList">'
+                    . implode('', array_map(fn($position) => '<option value="' . htmlspecialchars($position)
+                    . '">' . htmlspecialchars($position) . '</option>', $personRepository->getUniquePositions()))
+                    . '</datalist>')
+                ->setHtmlAttributes([
+                    'list' => 'positionList'
+                ]),
             ArrayField::new('fundingOrganizations')
-                ->hideOnIndex()
+                ->onlyOnDetail()
                 ->setDisabled(),
             ArrayField::new('FundingCycles')
-                ->hideOnIndex()
+                ->onlyOnDetail()
                 ->setDisabled(),
             ArrayField::new('ResearchGroupNames')->setLabel('Research Groups')
-                ->hideOnIndex()
-                ->setDisabled()
+                ->onlyOnDetail()
                 ->setColumns(40),
             AssociationField::new('account')
-                ->hideOnIndex()
-                ->setDisabled(),
+                ->onlyOnDetail(),
             ArrayField::new('Datasets')
-                ->hideOnIndex()
-                ->setDisabled(),
+                ->onlyOnDetail(),
             ArrayField::new('Publications')
-                ->hideOnIndex()
-                ->setDisabled(),
+                ->onlyOnDetail(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
