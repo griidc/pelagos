@@ -6,6 +6,7 @@ deleteButtons.forEach(function(deleteButton) {
         e.preventDefault();
         var confirmation = confirm('Are you sure you want to delete this item?');
         if (!confirmation) {
+            e.preventDefault();
             e.stopImmediatePropagation();
         }
     });
