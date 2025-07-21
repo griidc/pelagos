@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\Account;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
-use App\Form\PersonFundingOrganizationType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -71,8 +70,8 @@ class FundingOrganizationCrudController extends AbstractCrudController
             TextField::new('creator')->setLabel('Created By')
                 ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
-                ->onlyOnDetail()
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+                ->hideOnForm(),
             TextField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail(),
         ];
@@ -127,6 +126,11 @@ class FundingOrganizationCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-edit')
                     ->setLabel('Edit');
+            })
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-save')
+                    ->setLabel('Save and Close');
             });
     }
 

@@ -3,17 +3,14 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Account;
-use App\Entity\Entity;
 use App\Entity\Funder;
 use App\Entity\Dataset;
-use App\Repository\DatasetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -58,8 +55,8 @@ class FunderCrudController extends AbstractCrudController
             TextField::new('creator')->setLabel('Created By')
                 ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
-                ->onlyOnDetail()
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+                ->hideOnForm(),
             TextField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail(),
         ];
@@ -119,6 +116,11 @@ class FunderCrudController extends AbstractCrudController
                 ->displayIf(function (Funder $funder) {
                     return !$this->isFunderBeingUsed($funder);
                 });
+        })
+        ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-save')
+                ->setLabel('Save and Close');
         });
     }
 

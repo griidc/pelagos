@@ -9,13 +9,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -74,8 +71,8 @@ class NationalDataCenterCrudController extends AbstractCrudController
             TextField::new('creator')->setLabel('Created By')
                 ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
-                ->onlyOnDetail()
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz'),
+                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+                ->hideOnForm(),
             TextField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail(),
         ];
@@ -111,7 +108,11 @@ class NationalDataCenterCrudController extends AbstractCrudController
                         return !$this->isNationalDataCenterInUse($nationalDataCenter);
                     });
             })
-        ;
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-save')
+                    ->setLabel('Save and Close');
+            });
     }
 
     /**
