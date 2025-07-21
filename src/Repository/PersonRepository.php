@@ -86,6 +86,6 @@ class PersonRepository extends ServiceEntityRepository
         ->select('DISTINCT person.position')
         ->orderBy('person.position', 'ASC');
 
-        return $queryBuilder->getQuery()->getArrayResult();
+        return $queryBuilder->getQuery()->getSingleColumnResult();
     }
 }
