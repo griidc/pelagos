@@ -127,7 +127,7 @@ class PersonCrudController extends AbstractCrudController
                 ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setDisabled(),
+                ->hideOnForm(),
             TextField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail(),
         ];

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Account;
 use App\Entity\FundingCycle;
 use App\Form\ResearchGroupType;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -88,7 +89,7 @@ class FundingCycleCrudController extends AbstractCrudController
             TextField::new('name'),
             TextField::new('udiPrefix')->setLabel('UDI Prefix'),
             AssociationField::new('fundingOrganization')
-                ->setQueryBuilder(function ($queryBuilder) {
+                ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
                     return $queryBuilder->orderBy('entity.name', 'ASC');
                 }),
             TextareaField::new('description')->hideOnIndex(),
@@ -107,7 +108,7 @@ class FundingCycleCrudController extends AbstractCrudController
                 ->onlyOnDetail(),
             DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setDisabled(),
+                ->hideOnForm(),
             TextField::new('modifier')->setLabel('Last Modified By')
                 ->onlyOnDetail(),
         ];
