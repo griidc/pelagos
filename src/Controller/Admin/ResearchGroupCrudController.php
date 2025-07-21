@@ -7,6 +7,8 @@ use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -141,5 +143,11 @@ class ResearchGroupCrudController extends AbstractCrudController
     private function isResearchGroupInUse(ResearchGroup $researchGroup): bool
     {
         return $researchGroup->getDatasets()->count() > 0 or $researchGroup->getPersonResearchGroups()->count() > 0;
+    }
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets
+            ->addJsFile(Asset::new('build/js/person-research-group-pods.js')->defer());
     }
 }
