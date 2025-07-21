@@ -81,9 +81,6 @@ class ProductTypeDescriptorCrudController extends AbstractCrudController
             IdField::new('id')
             ->onlyOnIndex(),
             TextField::new('description'),
-            DateField::new('modificationTimeStamp')->setLabel('Last Modified At')
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setDisabled(),
         ];
     }
 
