@@ -8,6 +8,7 @@ use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
 use App\Entity\ResearchGroupRole;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -33,7 +34,12 @@ class PersonResearchGroupCrudController extends AbstractCrudController
         return [
             IdField::new('id')
             ->onlyOnIndex(),
-            AssociationField::new('person'),
+            AssociationField::new('person')
+            ->setQueryBuilder(
+                function (QueryBuilder $queryBuilder) {
+                    $queryBuilder->orderBy('entity.lastName', 'ASC');
+                }
+            ),
             AssociationField::new('researchGroup')->onlyWhenCreating(),
             AssociationField::new('role'),
             TextField::new('label'),
