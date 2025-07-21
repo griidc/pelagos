@@ -1,7 +1,7 @@
-var deleteButton = document.querySelector('.field-collection-delete-button');
+var deleteButtons = document.querySelectorAll('.field-collection-delete-button');
 
-// add event listener to the delete button
-if (deleteButton) {
+// add event listener to each delete button
+deleteButtons.forEach(function(deleteButton) {
     deleteButton.addEventListener('click', function(e) {
         e.preventDefault();
         var confirmation = confirm('Are you sure you want to delete this item?');
