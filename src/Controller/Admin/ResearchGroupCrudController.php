@@ -59,10 +59,10 @@ class ResearchGroupCrudController extends AbstractCrudController
         ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
         ->add(Crud::PAGE_INDEX, Action::DETAIL)
         ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
-                return $action
-                    ->setIcon('fa fa-plus-circle')
-                    ->setLabel('Create New Research Group');
-            })
+            return $action
+                ->setIcon('fa fa-plus-circle')
+                ->setLabel('Create New Research Group');
+        })
         ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
             return $action
                 ->setIcon('fa fa-eye')
