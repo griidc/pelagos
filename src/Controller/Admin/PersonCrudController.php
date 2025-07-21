@@ -109,7 +109,7 @@ class PersonCrudController extends AbstractCrudController
                 ->addHtmlContentsToBody(
                     '<datalist id="organizationList">'
                     . implode('', array_map(fn($org) => '<option value="' . htmlspecialchars($org)
-                    . '">', $personRepository->getUniqueOrganizations()))
+                    . '">' . htmlspecialchars($org) . '</option>', $personRepository->getUniqueOrganizations()))
                     . '</datalist>')
                 ->setHtmlAttributes([
                     'list' => 'organizationList'
