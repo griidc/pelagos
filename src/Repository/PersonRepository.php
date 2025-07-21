@@ -86,6 +86,8 @@ class PersonRepository extends ServiceEntityRepository
 
         $queryBuilder
         ->select('DISTINCT person.position')
+        ->where($queryBuilder->expr()->isNotNull('person.position'))
+        ->andWhere($queryBuilder->expr()->neq('person.position', $queryBuilder->expr()->literal('')))
         ->orderBy('person.position', 'ASC');
 
         return $queryBuilder->getQuery()->getSingleColumnResult();
