@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\Account;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
-use App\Form\PersonFundingOrganizationType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -127,6 +126,11 @@ class FundingOrganizationCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-edit')
                     ->setLabel('Edit');
+            })
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-save')
+                    ->setLabel('Save and Close');
             });
     }
 

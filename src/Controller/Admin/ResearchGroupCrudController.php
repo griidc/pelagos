@@ -5,14 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\Account;
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
-use App\Repository\ResearchGroupRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -84,7 +82,11 @@ class ResearchGroupCrudController extends AbstractCrudController
                     return !$this->isResearchGroupInUse($researchGroup);
                 });
         })
-        ;
+        ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-save')
+                ->setLabel('Save and Close');
+        });
     }
 
     #[\Override]
