@@ -84,6 +84,11 @@ class NationalDataCenterCrudController extends AbstractCrudController
         return $actions
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-plus-circle')
+                    ->setLabel('Create New National Data Center');
+            })
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-eye')
