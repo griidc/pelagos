@@ -117,8 +117,8 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('country')->hideOnIndex(),
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
-            BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
             TelephoneField::new('phoneNumber')->hideOnIndex(),
+            BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
             CollectionField::new('datasets')->setDisabled()->hideOnIndex()->hideWhenCreating(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
