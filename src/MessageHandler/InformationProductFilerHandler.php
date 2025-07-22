@@ -92,7 +92,7 @@ final class InformationProductFilerHandler
 
         try {
             unlink($filePath);
-            rmdir(dirname((string) $filePath));
+            // rmdir(dirname((string) $filePath));
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()), $loggingContext);
         }

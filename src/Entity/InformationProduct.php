@@ -419,6 +419,23 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    public function getFilePathName(): ?string
+    {
+        if (!$this->file instanceof File) {
+            return null;
+        }
+        return $this->file->getFilePathName();
+    }
+
+    public function setFilePathName(?string $filePathName): self
+    {
+        if ($this->file instanceof File) {
+            $this->file->setFilePathName($filePathName);
+        }
+
+        return $this;
+    }
+
     /**
      * Adder for Information Product type.
      *

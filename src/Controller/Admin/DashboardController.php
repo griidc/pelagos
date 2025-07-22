@@ -9,6 +9,7 @@ use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
+use App\Entity\InformationProduct;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ProductTypeDescriptor;
@@ -51,10 +52,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Viewers');
         yield MenuItem::linkToCrud('Logged Actions', 'fas fa-search', LogActionItem::class);
 
-        yield MenuItem::section('Editors');
-        yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', ProductTypeDescriptor::class);
-        yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
-
         yield MenuItem::section('PODS');
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Funding Cycle', 'fas fa-list-alt', FundingCycle::class);
@@ -64,6 +61,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
         yield MenuItem::linkToCrud('Data Respository', 'fas fa-list-alt', DataRepository::class);
 
+        yield MenuItem::section('Information Products');
+        yield MenuItem::linkToCrud('Information Product', 'fas fa-list-alt', InformationProduct::class);
+        yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', ProductTypeDescriptor::class);
+        yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
 
         yield MenuItem::section('Lists');
         yield MenuItem::linkToUrl('Information Products', 'fas fa-list-alt', $this->generateUrl('pelagos_app_ui_information_products'));

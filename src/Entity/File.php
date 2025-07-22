@@ -351,4 +351,9 @@ class File extends Entity
         }
         return explode('/', $filepath);
     }
+
+    public function __toString(): string
+    {
+        return $this->getFilePathName() ?? '';
+    }
 }
