@@ -59,6 +59,11 @@ class PersonCrudController extends AbstractCrudController
         return $actions
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-plus-circle')
+                    ->setLabel('Create New Person');
+            })
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-eye')
@@ -114,7 +119,8 @@ class PersonCrudController extends AbstractCrudController
                     '<datalist id="organizationList">'
                     . implode('', array_map(fn($organization) => '<option value="' . htmlspecialchars($organization)
                     . '">' . htmlspecialchars($organization) . '</option>', $personRepository->getUniqueOrganizations()))
-                    . '</datalist>')
+                    . '</datalist>'
+                )
                 ->setHtmlAttributes([
                     'list' => 'organizationList'
                 ]),
@@ -123,7 +129,8 @@ class PersonCrudController extends AbstractCrudController
                     '<datalist id="positionList">'
                     . implode('', array_map(fn($position) => '<option value="' . htmlspecialchars($position)
                     . '">' . htmlspecialchars($position) . '</option>', $personRepository->getUniquePositions()))
-                    . '</datalist>')
+                    . '</datalist>'
+                )
                 ->setHtmlAttributes([
                     'list' => 'positionList'
                 ]),

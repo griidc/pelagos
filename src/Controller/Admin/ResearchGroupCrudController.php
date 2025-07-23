@@ -58,6 +58,11 @@ class ResearchGroupCrudController extends AbstractCrudController
         return $actions
         ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
         ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-plus-circle')
+                ->setLabel('Create New Research Group');
+        })
         ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
             return $action
                 ->setIcon('fa fa-eye')
@@ -121,8 +126,8 @@ class ResearchGroupCrudController extends AbstractCrudController
             TextField::new('country')->hideOnIndex(),
             TextareaField::new('description')->hideOnIndex(),
             EmailField::new('emailAddress')->hideOnIndex(),
-            BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
             TelephoneField::new('phoneNumber')->hideOnIndex(),
+            BooleanField::new('locked')->renderAsSwitch(false)->setLabel('Closed Out'),
             CollectionField::new('datasets')->setDisabled()->hideOnIndex()->hideWhenCreating(),
             DateField::new('creationTimeStamp')->setLabel('Created At')
                 ->onlyOnDetail()
