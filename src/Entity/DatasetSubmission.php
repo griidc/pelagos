@@ -619,6 +619,7 @@ class DatasetSubmission extends Entity
      * @var string
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     protected $datasetFileColdStorageOriginalFilename;
 
     /**
@@ -891,12 +892,14 @@ class DatasetSubmission extends Entity
      * For cold-stored, the total unpacked filecount (not dirs).
      */
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     private $coldStorageTotalUnpackedCount;
 
     /**
      * For cold-stored, the total unpacked bytecount.
      */
     #[ORM\Column(type: 'bigint', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     private $coldStorageTotalUnpackedSize;
 
     /**

@@ -39,7 +39,7 @@ class DOI extends Entity
      */
     #[ORM\Column(type: 'text', nullable: false)]
     #[Serializer\Groups(['doi'])]
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'cold-stored-report'])]
     protected $doi;
 
     /**
