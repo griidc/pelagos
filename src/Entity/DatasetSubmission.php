@@ -619,6 +619,7 @@ class DatasetSubmission extends Entity
      * @var string
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     protected $datasetFileColdStorageOriginalFilename;
 
     /**
