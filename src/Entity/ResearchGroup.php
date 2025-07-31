@@ -6,6 +6,7 @@ use App\Enum\DatasetLifecycleStatus;
 use App\Exception\NotDeletableException;
 use App\Repository\ResearchGroupRepository;
 use App\Twig\Extensions as TwigExtentions;
+use App\Util\CustomResearchGroupGenerator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,7 +49,7 @@ class ResearchGroup extends Entity
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class:'App\Util\CustomResearchGroupGenerator')]
+    #[ORM\CustomIdGenerator(class: CustomResearchGroupGenerator::class)]
     #[Serializer\Groups(["id", "search"])]
     #[Groups(["id", "search"])]
     #[Assert\Range(min: 1, max: 999, notInRangeMessage: 'ID must be in between 1 and 999', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
