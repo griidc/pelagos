@@ -96,7 +96,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search'])]
+    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search', 'cold-storage-candidate'])]
     protected $udi;
 
     /**
@@ -155,7 +155,7 @@ class Dataset extends Entity
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     #[Serializer\Groups(['card'])]
-    #[Groups(['remotely-hosted-dataset-report'])]
+    #[Groups(['remotely-hosted-dataset-report', 'cold-storage-candidate'])]
     protected $datasetSubmission;
 
     /**
@@ -991,6 +991,7 @@ class Dataset extends Entity
      */
     #[Serializer\VirtualProperty]
     #[Serializer\SerializedName('totalFileSize')]
+    #[Groups(['cold-storage-candidate'])]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -1011,6 +1012,7 @@ class Dataset extends Entity
      */
     #[Serializer\VirtualProperty]
     #[Serializer\SerializedName('numberOfFiles')]
+    #[Groups(['cold-storage-candidate'])]
     public function getNumberOfFiles(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -1123,7 +1125,7 @@ class Dataset extends Entity
     /**
      * Get Dataset Lifecycle Status as a string.
      */
-    #[Groups(['grp-dk-report', 'search'])]
+    #[Groups(['grp-dk-report', 'search', 'cold-storage-candidate'])]
     #[SerializedName('datasetLifecycleStatus')]
     public function getDatasetLifecycleStatusString(): string
     {
