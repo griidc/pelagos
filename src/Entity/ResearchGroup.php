@@ -41,6 +41,20 @@ class ResearchGroup extends Entity
     public const MIN_ID = 1;
 
     /**
+     * Entity identifier.
+     *
+     * @var int
+     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class:'App\Util\CustomResearchGroupGenerator')]
+    #[Serializer\Groups(["id", "search"])]
+    #[Groups(["id", "search"])]
+    #[Assert\Range(min: 1, max: 999, notInRangeMessage: 'ID must be in between 1 and 999', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
+    protected $id;
+
+    /**
      * Name of a research group.
      *
      * @var string $name
