@@ -145,7 +145,7 @@ class Dataset extends Entity
      *
      * @var DIF
      */
-    #[ORM\OneToOne(targetEntity: 'DIF', inversedBy: 'dataset')]
+    #[ORM\OneToOne(targetEntity: DIF::class, inversedBy: 'dataset')]
     #[Serializer\Groups(['card'])]
     protected $dif;
 

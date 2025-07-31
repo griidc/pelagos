@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\DataRepository;
+use App\Entity\DIF;
 use App\Entity\NationalDataCenter;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
@@ -50,6 +51,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Viewers');
         yield MenuItem::linkToCrud('Logged Actions', 'fas fa-search', LogActionItem::class);
+        yield MenuItem::linkToCrud('DIFs', 'fas fa-search', DIF::class);
 
         yield MenuItem::section('Editors');
         yield MenuItem::linkToCrud('IP Product Descriptor', 'fas fa-list-alt', ProductTypeDescriptor::class);
