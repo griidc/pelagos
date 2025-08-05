@@ -37,7 +37,7 @@ class FilesetTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fileset = new Fileset;
         $this->mockFile = \Mockery::mock(

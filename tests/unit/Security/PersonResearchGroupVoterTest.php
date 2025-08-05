@@ -13,7 +13,7 @@ use App\Security\Voter\PersonResearchGroupVoter as Voter;
 /**
  * Unit tests for the Person Research Group voter.
  */
-class PersonResearchGroupVoterTest extends PelagosEntityVoterTest
+class PersonResearchGroupVoterTest extends PelagosEntityVoterTestCase
 {
     /**
      * The attributes that PersonResearchGroupVoter should support.
@@ -31,7 +31,7 @@ class PersonResearchGroupVoterTest extends PelagosEntityVoterTest
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
