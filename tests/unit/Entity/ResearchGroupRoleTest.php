@@ -38,7 +38,7 @@ class ResearchGroupRoleTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->researchGroupRole = new ResearchGroupRole;
         $this->researchGroupRole->setName(self::$testName);

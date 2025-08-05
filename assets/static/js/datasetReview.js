@@ -267,12 +267,11 @@ $(document).ready(function(){
         case "upload":
             fileTabs.tabs("option", "active", 0);
             break;
-        case "SFTP":
+        case "HTTP":
             fileTabs.tabs("option", "active", 1);
             break;
-        case "HTTP":
-            fileTabs.tabs("option", "active", 2);
-            break;
+        default:
+            fileTabs.tabs("option", "active", 0);
     }
 
     var btnPrevious = $("#btn-previous");

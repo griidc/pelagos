@@ -114,7 +114,7 @@ class PersonTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = Validation::createValidatorBuilder()
             ->enableAttributeMapping(true)
