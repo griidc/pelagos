@@ -10,7 +10,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
+/**
+ * @extends AbstractCrudController<DatasetSubmission>
+ */
 class DatasetSubmissionCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -24,7 +28,19 @@ class DatasetSubmissionCrudController extends AbstractCrudController
             IdField::new('id'),
             TextField::new('title'),
             TextEditorField::new('description'),
+            AssociationField::new('dataset'),
         ];
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return parent::configureCrud($crud)
+            ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
+            ->setEntityLabelInPlural('Dataset Submissions')
+            ->setEntityLabelInSingular('Dataset Submission')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Dataset Submissions')
+            ->showEntityActionsInlined()
+        ;
     }
 
     #[\Override]
