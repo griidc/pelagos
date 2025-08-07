@@ -34,7 +34,6 @@ use Symfony\Component\Validator\Constraints\Choice;
 #[AdminCrud(routePath: 'dif')]
 class DIFCrudController extends AbstractCrudController
 {
-
     public function __construct(private EntityManagerInterface $entityManager)
     {
     }
@@ -43,7 +42,6 @@ class DIFCrudController extends AbstractCrudController
     {
         return DIF::class;
     }
-
 
     public function configureFields(string $pageName): iterable
     {
@@ -211,7 +209,6 @@ class DIFCrudController extends AbstractCrudController
             ->add('modificationTimeStamp')
         ;
     }
-
 
     public function configureCrud(Crud $crud): Crud
     {

@@ -22,4 +22,9 @@ class PersonDatasetSubmissionMetadataContact extends PersonDatasetSubmission
      */
     #[ORM\ManyToOne(targetEntity: 'DatasetSubmission', inversedBy: 'metadataContacts')]
     protected $datasetSubmission;
+
+    public function __toString()
+    {
+        return (string)$this->getPerson();
+    }
 }
