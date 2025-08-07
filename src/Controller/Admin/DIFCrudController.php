@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -33,6 +34,11 @@ use Symfony\Component\Validator\Constraints\Choice;
 #[AdminCrud(routePath: 'dif')]
 class DIFCrudController extends AbstractCrudController
 {
+
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return DIF::class;
@@ -180,6 +186,10 @@ class DIFCrudController extends AbstractCrudController
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $researchGroupRepository = $this->entityManager->getRepository(ResearchGroup::class);
+
+        $researchGroups = $researchGroupRepository->getResearchGroupList();
+
         return parent::configureFilters($filters)
             ->add(ChoiceFilter::new('status')
                 ->canSelectMultiple(true)
@@ -188,7 +198,14 @@ class DIFCrudController extends AbstractCrudController
                     'Submitted' => DIF::STATUS_SUBMITTED,
                     'Approved' => DIF::STATUS_APPROVED,
                 ]))
-            ->add(ResearchGroupFilter::new('researchGroup'))
+            ->add(ResearchGroupFilter::new('researchGroup')
+                ->setChoices($researchGroups)
+                ->canSelectMultiple(true))
+            ->add(ChoiceFilter::new('isLocked')
+                ->setChoices([
+                    'Yes' => true,
+                    'No' => false,
+                ]))
             ->add('creator')
             ->add('creationTimeStamp')
             ->add('modificationTimeStamp')
