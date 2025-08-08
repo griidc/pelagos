@@ -3,7 +3,7 @@ $(() => {
 
   const datasetFilters = [{
     id: 'all',
-    text: 'Show All Datasets',
+    text: 'Show All Groups',
   }, {
     id: 'only',
     text: 'Show Groups With Datasets',
@@ -91,7 +91,7 @@ $(() => {
     }
 
     const searchValue = dsmSearch.option("value");
-    if (searchValue.length > 3) {
+    if (searchValue.length > 0) {
       var searchArray = [["name", "contains", searchValue], "or", ["list", "contains", searchValue]];
       if (filterArray !== null) {
         filterArray.push("and");
@@ -154,7 +154,7 @@ $(() => {
   }).dxToolbar('instance');
 
   const dsmSearch = $('#dsm-search').dxTextBox({
-    placeholder: 'Search Groups',
+    placeholder: 'Search',
     showClearButton: true,
     mode: 'search',
     valueChangeEvent: ["keyup", "blur", "change", "input"],
