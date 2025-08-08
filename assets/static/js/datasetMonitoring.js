@@ -91,8 +91,8 @@ $(() => {
     }
 
     const searchValue = dsmSearch.option("value");
-    if (searchValue.length > 0) {
-      var searchArray = ['name', 'contains', searchValue];
+    if (searchValue.length > 3) {
+      var searchArray = [["name", "contains", searchValue], "or", ["list", "contains", searchValue]];
       if (filterArray !== null) {
         filterArray.push("and");
         filterArray.push(searchArray);
