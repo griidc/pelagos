@@ -105,7 +105,8 @@ class ResearchGroupCrudController extends AbstractCrudController
         $personResearchGroup->setResearchGroup($researchGroup);
 
         return [
-            IdField::new('id')->onlyOnIndex(),
+            IdField::new('id')
+                ->hideOnForm(),
             TextField::new('name'),
             TextField::new('shortName')->onlyOnForms(),
             AssociationField::new('fundingCycle'),
