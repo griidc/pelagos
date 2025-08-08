@@ -329,4 +329,9 @@ class DataCenter extends Entity
     {
         $this->emailAddress = $emailAddress;
     }
+
+    public function __toString(): string
+    {
+        return $this->getOrganizationName() ?: 'No Organization Name';
+    }
 }

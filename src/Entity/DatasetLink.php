@@ -289,4 +289,9 @@ class DatasetLink extends Entity
             )
         );
     }
+
+    public function __toString()
+    {
+        return (string) $this->getName() . ' (' . $this->getUrl() . ')';
+    }
 }

@@ -101,4 +101,22 @@ class ResearchGroupRepository extends ServiceEntityRepository
         $availableIds = array_values(array_diff(range(ResearchGroup::MIN_ID, ResearchGroup::MAX_ID), $existingIds));
         return reset($availableIds);
     }
+
+    public function getResearchGroupList(): array
+    {
+        $researchGroups = $this->createQueryBuilder('researchGroup')
+            ->select('researchGroup.name, researchGroup.id')
+            ->orderBy('researchGroup.name', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        // Return as an associative array with id as key
+        $researchGroups = array_column($researchGroups, 'id', 'name');
+        // If array_column fails, return an empty array
+        if ($researchGroups === false) {
+            $researchGroups = [];
+        }
+
+        return $researchGroups;
+    }
 }
