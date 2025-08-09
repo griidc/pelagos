@@ -60,4 +60,36 @@ class PersonRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * Get unique organizations from the Person entity.
+     */
+    public function getUniqueOrganizations(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('person');
+
+        $queryBuilder
+        ->select('DISTINCT person.organization')
+        ->where($queryBuilder->expr()->isNotNull('person.organization'))
+        ->andWhere($queryBuilder->expr()->neq('person.organization', $queryBuilder->expr()->literal('')))
+        ->orderBy('person.organization', 'ASC');
+
+        return $queryBuilder->getQuery()->getSingleColumnResult();
+    }
+
+    /**
+     * Get unique positions from the Person entity.
+     */
+    public function getUniquePositions(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('person');
+
+        $queryBuilder
+        ->select('DISTINCT person.position')
+        ->where($queryBuilder->expr()->isNotNull('person.position'))
+        ->andWhere($queryBuilder->expr()->neq('person.position', $queryBuilder->expr()->literal('')))
+        ->orderBy('person.position', 'ASC');
+
+        return $queryBuilder->getQuery()->getSingleColumnResult();
+    }
 }

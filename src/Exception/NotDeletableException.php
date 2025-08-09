@@ -12,7 +12,7 @@ class NotDeletableException extends \Exception
      *
      * @var array
      */
-    protected $reasons;
+    protected $reasons = [];
 
     /**
      * Set the list of reasons an entity is not deletable.
@@ -24,6 +24,7 @@ class NotDeletableException extends \Exception
     public function setReasons(array $reasons)
     {
         $this->reasons = $reasons;
+        $this->message = 'Entity is not deletable: ' . implode(', ', $reasons);
     }
 
     /**

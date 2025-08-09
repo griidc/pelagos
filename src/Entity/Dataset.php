@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\DatasetLifecycleStatus;
 use App\Enum\KeywordType;
+use App\Repository\DatasetRepository;
 use App\Util\DatasetCitationUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,7 +16,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 /**
  * Dataset Entity class.
  */
-#[ORM\Entity(repositoryClass: 'App\Repository\DatasetRepository')]
+#[ORM\Entity(repositoryClass: DatasetRepository::class)]
 class Dataset extends Entity
 {
     /**

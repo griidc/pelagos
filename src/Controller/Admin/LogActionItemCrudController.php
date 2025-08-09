@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\LogActionItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -10,7 +11,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * Class for LogActionItem CRUD Controller.
+ *
+ * @extends AbstractCrudController<LogActionItem>
+ */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class LogActionItemCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

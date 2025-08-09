@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Exception\NotDeletableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -19,8 +20,7 @@ trait EasyAdminCrudTrait
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         $entityInstance->setModifier($this->getUser()->getPerson());
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     /**
@@ -33,10 +33,23 @@ trait EasyAdminCrudTrait
     {
         try {
             $entityManager->remove($entityInstance);
-        } catch (\Exception $e) {
+        } catch (NotDeletableException $e) {
             throw new AccessDeniedHttpException('Unable to delete. Reason:' . $e->getMessage());
         }
 
-        $entityManager->flush();
+        parent::deleteEntity($entityManager, $entityInstance);
+    }
+
+    /**
+     * Crud update an entity.
+     *
+     * @param string $entityFqcn entity class name
+     */
+    public function createEntity(string $entityFqcn)
+    {
+        $entity = parent::createEntity($entityFqcn);
+        $entity->setCreator($this->getUser()->getPerson());
+
+        return $entity;
     }
 }

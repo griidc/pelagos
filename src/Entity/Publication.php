@@ -110,4 +110,9 @@ class Publication extends Entity
         }
         return null;
     }
+
+    public function __toString(): string
+    {
+        return $this->getDoi() ? $this->getDoi() : '';
+    }
 }
