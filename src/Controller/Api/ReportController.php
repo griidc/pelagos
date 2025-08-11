@@ -277,4 +277,48 @@ class ReportController extends AbstractController
 
         return $response;
     }
+
+    /**
+     * Creates a CSV report of the hot-stored datasets that should be moved to cold storage
+     */
+    #[Route(path: '/api/cold-storage-candidates', name: 'pelagos_api_cold_storage_candidate_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    public function coldStorageCandidatesCSV(DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
+    {
+        $datasets = $datasetRepository->findAll();
+
+        $array = [];
+        foreach ($datasets as $dataset) {
+            // Criteria for cold storage candidates: > 25TB or > 5000 files
+            if ($dataset->getTotalFileSize() > 25000000000 || $dataset->getNumberOfFiles() > 5000) {
+                $array[] = $dataset;
+            }
+        }
+
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups(['cold-storage-candidate']);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+        ->withContext($contextBuilder)
+        ->withOutputUtf8Bom(false)
+        ->withAsCollection(false);
+
+        $data = $serializer->serialize($array, 'csv', $contextBuilder->toArray());
+
+        $csvFilename = 'ColdStorageCandidateReport-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+
+        $response = new Response($data);
+
+        $response->headers->set(
+            'Content-disposition',
+            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
+        );
+
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Encoding', 'UTF-8');
+
+        return $response;
+    }
 }
