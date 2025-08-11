@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
@@ -22,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Easy Admin CRUD Controller for DIF Entity.
@@ -29,6 +31,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
  * @extends AbstractCrudController<DIF>
  */
 #[AdminCrud(routePath: 'dif')]
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DIFCrudController extends AbstractCrudController
 {
     public function __construct(private EntityManagerInterface $entityManager)

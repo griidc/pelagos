@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
@@ -23,10 +24,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * @extends AbstractCrudController<DatasetSubmission>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DatasetSubmissionCrudController extends AbstractCrudController
 {
     public function __construct(private EntityManagerInterface $entityManager)
