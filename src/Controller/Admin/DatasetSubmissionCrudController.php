@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\ResearchGroup;
+use App\Filter\ResearchGroupFilter;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -15,10 +18,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
@@ -27,6 +29,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
  */
 class DatasetSubmissionCrudController extends AbstractCrudController
 {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return DatasetSubmission::class;
@@ -40,8 +46,8 @@ class DatasetSubmissionCrudController extends AbstractCrudController
                 ChoiceField::new('status')
                     ->setChoices([
                         'Unsubmitted' => DatasetSubmission::STATUS_UNSUBMITTED,
-                        'Incomplete' => DatasetSubmission::STATUS_INCOMPLETE,
-                        'Complete' => DatasetSubmission::STATUS_COMPLETE,
+                        'Draft' => DatasetSubmission::STATUS_INCOMPLETE,
+                        'Submitted' => DatasetSubmission::STATUS_COMPLETE,
                         'In Review' => DatasetSubmission::STATUS_IN_REVIEW,
                     ]),
                 IntegerField::new('sequence'),
@@ -58,8 +64,8 @@ class DatasetSubmissionCrudController extends AbstractCrudController
             ChoiceField::new('status')
                 ->setChoices([
                     'Unsubmitted' => DatasetSubmission::STATUS_UNSUBMITTED,
-                    'Incomplete' => DatasetSubmission::STATUS_INCOMPLETE,
-                    'Complete' => DatasetSubmission::STATUS_COMPLETE,
+                    'Draft' => DatasetSubmission::STATUS_INCOMPLETE,
+                    'Submitted' => DatasetSubmission::STATUS_COMPLETE,
                     'In Review' => DatasetSubmission::STATUS_IN_REVIEW,
                 ]),
             AssociationField::new('datasetSubmissionReview'),
@@ -68,7 +74,6 @@ class DatasetSubmissionCrudController extends AbstractCrudController
             TextField::new('shortTitle'),
             TextEditorField::new('abstract'),
             AssociationField::new('dataset'),
-
             TextField::new('authors'),
             TextField::new('pointOfContactName'),
             TextField::new('pointOfContactEmail'),
@@ -128,11 +133,6 @@ class DatasetSubmissionCrudController extends AbstractCrudController
             IntegerField::new('coldStorageTotalUnpackedCount'),
             IntegerField::new('coldStorageTotalUnpackedSize'),
             TextField::new('additionalFunders'),
-
-
-
-
-
             AssociationField::new('creator')
                 ->setLabel('Created By'),
             DateField::new('creationTimeStamp')
@@ -144,8 +144,6 @@ class DatasetSubmissionCrudController extends AbstractCrudController
             DateField::new('modificationTimeStamp')
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
                 ->setLabel('Modification Timestamp'),
-
-
             ];
     }
 
@@ -177,11 +175,24 @@ class DatasetSubmissionCrudController extends AbstractCrudController
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->getResearchGroupList();
+
         return parent::configureFilters($filters)
             ->add(EntityFilter::new('dataset'))
+            ->add(ResearchGroupFilter::new('researchGroup')
+                ->setChoices($researchGroups)
+                ->canSelectMultiple(true))
+            ->add(ChoiceFilter::new('status')
+                 ->setChoices([
+                    'Unsubmitted' => DatasetSubmission::STATUS_UNSUBMITTED,
+                    'Draft' => DatasetSubmission::STATUS_INCOMPLETE,
+                    'Submitted' => DatasetSubmission::STATUS_COMPLETE,
+                    'In Review' => DatasetSubmission::STATUS_IN_REVIEW,
+                ]))
             ->add(EntityFilter::new('creator'))
             ->add(DateTimeFilter::new('creationTimeStamp'))
             ->add(DateTimeFilter::new('modificationTimeStamp'))
+
         ;
     }
 }

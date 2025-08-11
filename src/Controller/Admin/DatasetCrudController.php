@@ -10,20 +10,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\TextConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
 /**
- * @extemds AbstractCrudController<Dataset>
+ * @extends AbstractCrudController<Dataset>
  */
 class DatasetCrudController extends AbstractCrudController
 {
@@ -38,6 +35,8 @@ class DatasetCrudController extends AbstractCrudController
             return [
                 IdField::new('id'),
                 TextField::new('udi'),
+                TextField::new('datasetLifecycleStatusString')
+                    ->setLabel('Lifecycle Status'),
                 TextField::new('title'),
                 AssociationField::new('researchGroup'),
                 AssociationField::new('datasetSubmission'),
@@ -50,6 +49,9 @@ class DatasetCrudController extends AbstractCrudController
 
         return [
             IdField::new('id'),
+            TextField::new('udi'),
+            TextField::new('datasetLifecycleStatusString')
+                    ->setLabel('Lifecycle Status'),
             TextField::new('title'),
             TextField::new('abstract'),
             AssociationField::new('doi'),
