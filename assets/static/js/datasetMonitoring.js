@@ -103,6 +103,15 @@ $(() => {
 
     dsmTreeList.filter(filterArray);
 
+    const udiRegex = /\w\w\.x\d{3}\.\d{3}\:\d{4}/;
+    if (searchValue.match(udiRegex)) {
+      const expandedKeys = groupStore.items().filter(({ expanded }) => expanded === true).map(key => key.id);
+      const researchGroupItem = groups.find(group => group.list.includes(searchValue));
+      expandedKeys.push(researchGroupItem.id);
+      dsmTreeList.selectRows([researchGroupItem.id], false);
+      dsmTreeList.option("expandedRowKeys", expandedKeys);
+    }
+
     if (typeof selectedItem !== 'undefined') {
       loadGroupHtml(selectedItem);
     }
