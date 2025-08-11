@@ -113,7 +113,18 @@ $(() => {
     }
 
     if (typeof selectedItem !== 'undefined') {
-      loadGroupHtml(selectedItem);
+      loadGroupHtml(selectedItem)
+      .then(() => {
+        const element = document.querySelector('td[data-tippy-content="' + searchValue + '"]');
+        if (element) {
+          const clickHandler = element.getAttribute('@click');
+          if (clickHandler) {
+            setTimeout(() => {
+              eval(clickHandler);
+            }, 100);
+          }
+        }
+      });
     }
   }
 
@@ -249,7 +260,7 @@ $(() => {
     currentUrl.search = queryParams.toString();
     window.history.pushState({}, '', currentUrl);
 
-    $.ajax({
+    return $.ajax({
       url: Routing.generate("app_api_dataset_monitoring_datasets",
         parameters
       ),
