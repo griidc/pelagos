@@ -20,11 +20,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Symfony\Component\Validator\Constraints\Choice;
 
 /**
  * Easy Admin CRUD Controller for DIF Entity.
@@ -55,23 +52,17 @@ class DIFCrudController extends AbstractCrudController
                     'Submitted' => DIF::STATUS_SUBMITTED,
                     'Approved' => DIF::STATUS_APPROVED,
                 ]),
-
             BooleanField::new('isLocked')
                 ->renderAsSwitch(false)
                 ->setLabel('Locked'),
-
             TextField::new('researchGroup')
                 ->setLabel('Research Group'),
-
             CollectionField::new('Funders')
                 ->hideOnIndex()
                 ->setLabel('Funders'),
             TextField::new('additionalFunders')
                 ->hideOnIndex()
                 ->setLabel('Additional Funders'),
-
-
-
             AssociationField::new('primaryPointOfContact')
                 ->hideOnIndex(),
             AssociationField::new('secondaryPointOfContact')
@@ -133,6 +124,7 @@ class DIFCrudController extends AbstractCrudController
             CodeEditorField::new('spatialExtentGeometry')
                 ->hideOnIndex()
                 ->hideLineNumbers()
+                ->setLanguage('xml')
                 ->setLabel('Spatial Extent Geometry'),
             BooleanField::new('nationalDataArchiveNODC')
                 ->hideOnIndex()
@@ -165,8 +157,6 @@ class DIFCrudController extends AbstractCrudController
             CollectionField::new('keywords')
                 ->hideOnIndex()
                 ->setLabel('Keywords'),
-
-
             AssociationField::new('creator')
                 ->setLabel('Created By'),
             DateField::new('creationTimeStamp')
@@ -184,9 +174,7 @@ class DIFCrudController extends AbstractCrudController
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $researchGroupRepository = $this->entityManager->getRepository(ResearchGroup::class);
-
-        $researchGroups = $researchGroupRepository->getResearchGroupList();
+        $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->getResearchGroupList();
 
         return parent::configureFilters($filters)
             ->add(ChoiceFilter::new('status')

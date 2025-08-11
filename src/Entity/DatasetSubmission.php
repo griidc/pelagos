@@ -2818,4 +2818,9 @@ class DatasetSubmission extends Entity
     {
         return $this->additionalFunders;
     }
+
+    public function getResearchGroup(): ?string
+    {
+        return $this->getDataset()->getResearchGroup();
+    }
 }
