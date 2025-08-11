@@ -236,6 +236,6 @@ class DistributionPoint extends Entity
 
     public function __toString(): string
     {
-       return (string) $this->getDataCenter();
+        return (string) $this->getDataCenter();
     }
 }
