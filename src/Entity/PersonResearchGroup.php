@@ -50,9 +50,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
 
     /**
      * Role for this association.
-     *
-     * @var ResearchGroupRole
-     *
      */
     #[ORM\ManyToOne(targetEntity: 'ResearchGroupRole')]
     #[Assert\NotBlank(message: 'Role is required')]
@@ -178,5 +175,10 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     public function getFundingCycleName(): string
     {
         return $this->researchGroup->getFundingCycle()->getName();
+    }
+
+    public function __toString(): string
+    {
+        return ($this->getPerson()?->getFullName() ?? '') . ' - ' . ($this->getResearchGroup()?->getName() ?? '');
     }
 }

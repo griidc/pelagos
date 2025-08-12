@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Account;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\InformationProduct;
 use App\Repository\InformationProductRepository;
@@ -10,12 +11,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Digital Resource Type Crud Controller.
+ *
+ * @extends AbstractCrudController<DigitalResourceTypeDescriptor>
  */
+#[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
@@ -43,6 +49,11 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
                     ->setIcon('fa fa-plus-circle')
                     ->setLabel('Create New Digital Resource Type Descriptor');
             })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-edit')
+                    ->setLabel('Edit');
+            })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-trash')
@@ -50,6 +61,11 @@ class DigitalResourceTypeDescriptorCrudController extends AbstractCrudController
                     ->displayIf(function (DigitalResourceTypeDescriptor $digitalResourceTypeDescriptor) {
                         return !$this->isDigitalResourceTypeInUse($digitalResourceTypeDescriptor);
                     });
+            })
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-save')
+                    ->setLabel('Save and Close');
             });
     }
 
