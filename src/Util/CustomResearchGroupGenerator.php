@@ -5,7 +5,6 @@ namespace App\Util;
 use App\Entity\ResearchGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Id\AbstractIdGenerator;
-use InvalidArgumentException;
 
 class CustomResearchGroupGenerator extends AbstractIdGenerator
 {
