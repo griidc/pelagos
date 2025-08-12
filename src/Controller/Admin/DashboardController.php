@@ -68,7 +68,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Person', 'fas fa-list-alt', Person::class);
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
-        yield MenuItem::linkToCrud('Data Respository', 'fas fa-list-alt', DataRepository::class);
+        yield MenuItem::linkToCrud('Data Repository', 'fas fa-list-alt', DataRepository::class);
 
 
         yield MenuItem::section('Lists');
