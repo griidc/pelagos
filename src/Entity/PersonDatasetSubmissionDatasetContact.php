@@ -30,4 +30,9 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
     {
         $this->primaryContact = false;
     }
+
+    public function __toString(): string
+    {
+        return (string)$this->getPerson();
+    }
 }

@@ -69,8 +69,11 @@ class DoctrineDataCenterListener
                             $dataCenter->setOrganizationUrl($dataRepository->getUrl());
                             break;
                         default:
-                            $reflectionClass->getMethod('set' . ucfirst($key))
-                                ->invoke($dataCenter, $changeSet[$key][1]);
+                            if ($reflectionClass->hasMethod('set' . ucfirst($key))) {
+                                //invoke the setter method for the key
+                                $reflectionClass->getMethod('set' . ucfirst($key))
+                                    ->invoke($dataCenter, $changeSet[$key][1]);
+                            }
                             break;
                     }
                 }

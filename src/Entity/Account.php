@@ -622,4 +622,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
     {
         return $this->getCreationTimeStamp();
     }
+
+    public function __toString(): string
+    {
+        return $this->getUserId() . ' (' . $this->getPerson()->getFullName() . ')';
+    }
 }
