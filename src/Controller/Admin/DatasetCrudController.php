@@ -49,7 +49,6 @@ class DatasetCrudController extends AbstractCrudController
             ];
         }
 
-
         return [
             IdField::new('id'),
             TextField::new('udi'),
@@ -62,7 +61,6 @@ class DatasetCrudController extends AbstractCrudController
             AssociationField::new('dif'),
             AssociationField::new('datasetSubmission'),
             CollectionField::new('datasetSubmissionHistory'),
-
             DateField::new('acceptedDate'),
             ChoiceField::new('identifiedStatus')
                 ->setChoices([
@@ -92,8 +90,6 @@ class DatasetCrudController extends AbstractCrudController
             CollectionField::new('datasetPublications'),
             TextField::new('issueTrackingTicket'),
             CollectionField::new('funders'),
-
-
             AssociationField::new('creator')
                 ->setLabel('Created By'),
             DateField::new('creationTimeStamp')
@@ -105,7 +101,6 @@ class DatasetCrudController extends AbstractCrudController
             DateField::new('modificationTimeStamp')
                 ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
                 ->setLabel('Modification Timestamp'),
-
         ];
     }
 
