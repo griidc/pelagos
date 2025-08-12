@@ -156,7 +156,6 @@ class DIFCrudController extends AbstractCrudController
             DateField::new('approvedDate')
                 ->hideOnIndex()
                 ->setLabel('Approved Date'),
-
             CollectionField::new('keywords')
                 ->hideOnIndex()
                 ->setLabel('Keywords'),
