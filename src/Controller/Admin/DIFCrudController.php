@@ -47,7 +47,7 @@ class DIFCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id'),
-            TextField::new('udi')->setLabel('UDI'),
+            AssociationField::new('dataset'),
             TextField::new('title'),
             ChoiceField::new('status')
                 ->setChoices([
