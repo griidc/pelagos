@@ -230,20 +230,4 @@ class DatasetSubmissionController extends EntityController
 
         return $urlValidation->validateUrl($erddapUrl);
     }
-
-    /**
-     * Returns a list of global ingest folders.
-     *
-     *
-     * @return Response
-     */
-    #[View]
-    #[Route(path: '/api/dataset_submission_folder_list', name: 'pelagos_api_get_folder_list_dataset_submission', methods: ['GET'], defaults: ['_format' => 'json'])]
-    public function getGlobalIngestFolders(IngestUtil $ingestUtil): Response
-    {
-        if (!($this->getUser() instanceof Account)) {
-            throw new AccessDeniedException('Must be logged in');
-        }
-        return $this->makeJsonResponse($ingestUtil->getUsersIngestFoldersInIncomingDir($this->getUser()->getUserID()));
-    }
 }
