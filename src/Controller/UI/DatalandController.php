@@ -14,6 +14,7 @@ use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
 use App\Util\GmlUtil;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * The Dataset Monitoring controller.
@@ -216,10 +217,22 @@ class DatalandController extends AbstractController
         $rawXml = null;
         $wkt = null;
 
+        $boundingBox = null;
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
             $boundingBoxArray = $this->getBoundingBox($dataset);
+            if (count($boundingBoxArray) === 4) {
+                $boundingBox =
+                    $boundingBoxArray['southBoundLatitude']
+                    . ' '
+                    . $boundingBoxArray['westBoundLongitude']
+                    . ' '
+                    . $boundingBoxArray['northBoundLatitude']
+                    . ' '
+                    . $boundingBoxArray['eastBoundLongitude'];
+            }
             $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
         }
+
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
         if (!empty($dataset->getSpatialExtentGeometry())) {
             try {
@@ -269,6 +282,8 @@ class DatalandController extends AbstractController
                 'wkt' => $wkt,
                 'datasetSubmissionLockStatus' => true,
                 'issuetracker' => $this->issueTrackingBaseUrl,
+                'boundingBox' => $boundingBox,
+                'esri_api_key' => $mainsite = $this->getParameter('esri_api_key'),
             )
         );
     }
@@ -300,6 +315,23 @@ class DatalandController extends AbstractController
             array(
                 'rawxml' => $rawXml,
             )
+        );
+    }
+
+    #[Route('/data/json/{dataset}', name: 'pelagos_app_ui_dataland_get_json', methods: ['GET', 'HEAD'])]
+    public function getjson(Dataset $dataset, Geometry $geometryUtil): Response
+    {
+        $geoJson = '{}';
+        $udi = $dataset->getUdi();
+        $spatialExtent = $dataset->getSpatialExtentGeometry();
+
+        if ($spatialExtent !== null) {
+            $geoJson = $geometryUtil->convertGmlToGeoJSON(gml:$spatialExtent, udi:$udi, id:$udi);
+        }
+
+        return new JsonResponse(
+            data: $geoJson,
+            json: true
         );
     }
 }

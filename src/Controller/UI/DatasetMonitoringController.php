@@ -7,6 +7,7 @@ use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
 use App\Repository\ResearchGroupRepository;
 use App\Util\FundingOrgFilter;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,6 +47,11 @@ class DatasetMonitoringController extends AbstractController
         foreach ($fundingOrganizations as $fundingOrganization) {
             $fundingOrganizationName = $fundingOrganization->getName();
             $fundingOrganizationId = 'fundingOrganization' . $fundingOrganization->getId();
+            $researchGroups = [];
+            foreach ($fundingOrganization->getResearchGroups() as $researchGroup) {
+                $researchGroups[] = $researchGroup->getId();
+            }
+
             $list[] =
                 [
                     'id' => $fundingOrganizationId,
@@ -53,11 +59,17 @@ class DatasetMonitoringController extends AbstractController
                     'fundingOrganization' => $fundingOrganization->getId(),
                     'datasets' => $fundingOrganization->getDatasets()->count(),
                     'expanded' => 1 == count($fundingOrganizations),
+                    'researchGroup' => $researchGroups,
+                    'list' => [],
                 ];
             $fundingCycles = $fundingOrganization->getFundingCycles();
             foreach ($fundingCycles as $fundingCycle) {
                 $fundingCycleName = $fundingCycle->getName();
                 $fundingCycleId = 'fundingCycle' . $fundingCycle->getId();
+                $researchGroups = [];
+                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                    $researchGroups[] = $researchGroup->getId();
+                }
 
                 $list[] = [
                     'id' => $fundingCycleId,
@@ -66,6 +78,8 @@ class DatasetMonitoringController extends AbstractController
                     'fundingCycle' => $fundingCycle->getId(),
                     'datasets' => $fundingCycle->getDatasets()->count(),
                     'expanded' => 1 == count($fundingCycles) and 1 == count($fundingOrganizations),
+                    'researchGroup' => $researchGroups,
+                    'list' => [],
                 ];
                 foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
                     $researchGroupId = 'researchGroup' . $researchGroup->getId();
@@ -76,6 +90,7 @@ class DatasetMonitoringController extends AbstractController
                         'parent' => $fundingCycleId,
                         'researchGroup' => $researchGroup->getId(),
                         'datasets' => $researchGroup->getDatasets()->count(),
+                        'list' => $this->getListOfDatasets($researchGroup->getDatasets()),
                     ];
                 }
             }
@@ -131,5 +146,18 @@ class DatasetMonitoringController extends AbstractController
         );
 
         return new JsonResponse($datasets);
+    }
+
+    private function getListOfDatasets(Collection $datasets): string
+    {
+        $list = [];
+        foreach ($datasets as $dataset) {
+            array_push(
+                $list,
+                $dataset->getUdi(),
+            );
+        }
+
+        return join(',', $list);
     }
 }

@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -36,7 +35,6 @@ class FundingCycle extends Entity
     #[ORM\Column(type: 'citext')]
     #[Serializer\Groups(['organization'])]
     #[Assert\NotBlank(message: 'Name is required')]
-    #[Groups(['grp-dp-report', 'grp-dk-report'])]
     protected $name;
 
     /**
@@ -403,5 +401,13 @@ class FundingCycle extends Entity
             $notDeletableException->setReasons($notDeletableReasons);
             throw $notDeletableException;
         }
+    }
+
+    /**
+     * The name of the Funding Cycle.
+     */
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

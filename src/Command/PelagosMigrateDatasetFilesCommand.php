@@ -43,7 +43,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
     /**
      * Configure function to allow for options and parameters.
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption('qf', null, InputOption::VALUE_NONE, 'Queue Dataset to Filer')

@@ -28,7 +28,7 @@
                 Research Groups <span class="badge badge-pill badge-secondary absolute end-4">{{ person.researchGroups|length }}</span>
             </li>
             <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
-                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ person.datasets|length }}</span>
+                Datasets <span class="badge badge-pill badge-secondary absolute end-4">{{ person.datasets|approvedDIFs|length }}</span>
             </li>
             <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 Publications <span class="badge badge-pill badge-secondary absolute end-4">{{ person.publications|length }}</span>
@@ -51,7 +51,7 @@
                 {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': person.researchGroups} %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'" class="opacity-0">
-                {% include 'LandingPages/datasets.html.twig' with {'datasets': person.datasets|sortBy(["udi"])}  %}
+                {% include 'LandingPages/datasets.html.twig' with {'datasets': person.datasets|approvedDIFs|sortBy(["udi"])}  %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'" class="opacity-0">
                 {% include 'LandingPages/publications.html.twig' with {'publications': person.getPublications} %}

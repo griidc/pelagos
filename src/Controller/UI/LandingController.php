@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\Entity\FundingCycle;
+use App\Entity\FundingOrganization;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Repository\InformationProductRepository;
@@ -52,6 +53,17 @@ class LandingController extends AbstractController
             [
                 'researchGroup' => $researchGroup,
                 'informationProducts' => $informationProducts,
+            ]
+        );
+    }
+
+    #[Route('/funding-organization/about/{fundingOrganization}', name: 'app_funding_organization_land')]
+    public function fundingOrganizationLand(FundingOrganization $fundingOrganization): Response
+    {
+        return $this->render(
+            'LandingPages/funding-organization-land.html.twig',
+            [
+                'fundingOrganization' => $fundingOrganization,
             ]
         );
     }

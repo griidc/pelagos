@@ -5,89 +5,45 @@ namespace App\MessageHandler;
 use App\Entity\File;
 use App\Entity\Person;
 use App\Message\InformationProductFiler;
-use App\Message\ScanFileForVirus;
 use App\Repository\InformationProductRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
+use League\Flysystem\FilesystemException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class InformationProductFilerHandler implements MessageHandlerInterface
+#[AsMessageHandler()]
+final class InformationProductFilerHandler
 {
     /**
-     * The information product repository.
-     *
-     * @var InformationProductRepository
-     */
-    private $informationProductRepository;
-
-    /**
-     * The monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Instance of symfony messenger message bus.
-     *
-     * @var MessageBusInterface
-     */
-    private $messageBus;
-
-    /**
-     * The entity manager.
-     *
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * Instance of Pelagos datastore.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-    /**
      * Information Product Filer constructor.
-     *
-     * @param InformationProductRepository $datasetSubmissionRepository Dataset Submission Repository.
-     * @param LoggerInterface              $ipFileLogger                Name hinted filer logger.
-     * @param EntityManagerInterface       $entityManager               The entity manager.
-     * @param string                       $downloadDirectory           Temporary download directory path.
      */
     public function __construct(
-        InformationProductRepository $informationProductRepository,
-        LoggerInterface $ipFilerLogger,
-        MessageBusInterface $messageBus,
-        EntityManagerInterface $entityManager,
-        Datastore $datastore
+        private readonly InformationProductRepository $informationProductRepository,
+        private readonly LoggerInterface $logger,
+        private readonly MessageBusInterface $messageBus,
+        protected EntityManagerInterface $entityManager,
+        private readonly Datastore $datastore,
     ) {
-        $this->informationProductRepository = $informationProductRepository;
-        $this->logger = $ipFilerLogger;
-        $this->messageBus = $messageBus;
-        $this->entityManager = $entityManager;
-        $this->datastore = $datastore;
     }
+
     public function __invoke(InformationProductFiler $informationProductFiler)
     {
         $informationProductId = $informationProductFiler->getInformationProductId();
         $informationProduct = $this->informationProductRepository->find($informationProductId);
 
-        $loggingContext = array(
-            'information_product_id' => $informationProductId,
-        );
+        $loggingContext = ['information_product_id' => $informationProductId];
 
         $file = $informationProduct->getFile();
         if (!$file instanceof File) {
-            $this->logger->error("No file for this IP, bye!", $loggingContext);
+            $this->logger->error('No file for this IP, bye!', $loggingContext);
+
             return;
         }
-        $fileId = $file->getId();
+        $file->getId();
         $filePath = $file->getPhysicalFilePath();
         $systemPerson = $this->entityManager->find(Person::class, 0);
         $file->setModifier($systemPerson);
@@ -95,7 +51,7 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         $this->logger->info('Information Product process started', $loggingContext);
 
         $destinationPath = 'information_products'
-            . DIRECTORY_SEPARATOR .  $informationProductId
+            . DIRECTORY_SEPARATOR . $informationProductId
             . DIRECTORY_SEPARATOR . $file->getFilePathName();
 
         try {
@@ -106,6 +62,7 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
             $this->logger->error(sprintf('Unreadable File: "%s"', $lastErrorMessage), $loggingContext);
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
+
             return;
         }
 
@@ -115,16 +72,17 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
         try {
             $newFileDestination = $this->datastore->addFile($fileStream, $destinationPath);
             $file->setPhysicalFilePath($newFileDestination);
-        } catch (\League\Flysystem\Exception $fileExistException) {
+        } catch (FilesystemException $fileExistException) {
             $this->logger->warning(sprintf('Rejecting: Unable to add file to datastore. Message: "%s"', $fileExistException->getMessage()), $loggingContext);
-            $file->setDescription("Error writing to store:" . $fileExistException->getMessage());
+            $file->setDescription('Error writing to store:' . $fileExistException->getMessage());
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
             throw new \Exception($fileExistException->getMessage());
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
-            $file->setDescription("Error writing to store:" . $exception->getMessage());
+            $file->setDescription('Error writing to store:' . $exception->getMessage());
             $file->setStatus(File::FILE_ERROR);
+
             return;
         }
 
@@ -134,14 +92,10 @@ final class InformationProductFilerHandler implements MessageHandlerInterface
 
         try {
             unlink($filePath);
-            rmdir(dirname($filePath));
+            rmdir(dirname((string) $filePath));
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()), $loggingContext);
         }
-
-        // File virus Scan
-        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
-        $this->messageBus->dispatch(new ScanFileForVirus($fileId, "INFORMATION.PRODUCT:$informationProductId"));
 
         $file->setDescription('Information Product');
         $file->setStatus(File::FILE_DONE);

@@ -1,0 +1,25 @@
+.leaflet-control-attribution {
+    max-height: 1rem;
+    overflow-x: auto;
+}
+
+.leaflet-control-zoom-in span,
+.leaflet-control-zoom-out span {
+    color: white;
+}
+
+.leaflet-control-zoom-in:focus span,
+.leaflet-control-zoom-in:hover span,
+.leaflet-control-zoom-out:focus span,
+.leaflet-control-zoom-out:hover span {
+    color: black;
+}
+
+.leaflet-bar a {
+    background-color: rgba(0, 60, 136, 0.5);
+}
+
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+    background-color: rgba(0, 60, 136, 0.5);
+}

@@ -7,102 +7,39 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use App\Event\EntityEventDispatcher;
 use App\Message\DatasetSubmissionFiler;
-use App\Message\ScanFileForVirus;
 use App\Repository\DatasetSubmissionRepository;
 use App\Util\Datastore;
 use App\Util\StreamInfo;
-use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
+use League\Flysystem\FilesystemException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Handler for dataset submission filer.
  */
-class DatasetSubmissionFilerHandler implements MessageHandlerInterface
+#[AsMessageHandler()]
+class DatasetSubmissionFilerHandler
 {
     /**
-     * Dataset Submission repository instance.
-     *
-     * @var DatasetSubmissionRepository
-     */
-    private $datasetSubmissionRepository;
-
-    /**
-     * The monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Instance of symfony messenger message bus.
-     *
-     * @var MessageBusInterface
-     */
-    private $messageBus;
-
-    /**
-     * The entity manager.
-     *
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * The entity event dispatcher.
-     *
-     * @var EntityEventDispatcher
-     */
-    protected $entityEventDispatcher;
-
-    /**
-     * Pelagos Datastore.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-
-    /**
-     * Download directory for the zip file.
-     *
-     * @var string
-     */
-    private $downloadDirectory;
-
-    /**
      * DatasetSubmissionFilerHandler constructor.
-     *
-     * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
-     * @param LoggerInterface             $filerLogger                 Name hinted filer logger.
-     * @param MessageBusInterface         $messageBus                  Symfony messenger bus interface instance.
-     * @param EntityManagerInterface      $entityManager               The entity manager.
-     * @param string                      $downloadDirectory           Temporary download directory path.
-     * @param ZipFiles                    $zipFiles                    Zip files utility instance.
      */
     public function __construct(
-        DatasetSubmissionRepository $datasetSubmissionRepository,
-        LoggerInterface $filerLogger,
-        MessageBusInterface $messageBus,
-        EntityManagerInterface $entityManager,
-        EntityEventDispatcher $entityEventDispatcher,
-        Datastore $datastore
+        private readonly DatasetSubmissionRepository $datasetSubmissionRepository,
+        private readonly LoggerInterface $logger,
+        private readonly MessageBusInterface $messageBus,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EntityEventDispatcher $entityEventDispatcher,
+        private readonly Datastore $datastore,
     ) {
-        $this->datasetSubmissionRepository = $datasetSubmissionRepository;
-        $this->logger = $filerLogger;
-        $this->messageBus = $messageBus;
-        $this->entityManager = $entityManager;
-        $this->entityEventDispatcher = $entityEventDispatcher;
-        $this->datastore = $datastore;
     }
 
     /**
      * Invoke function to process dataset submission filer.
      *
-     * @param DatasetSubmissionFiler $datasetSubmissionFiler Dataset submission filer message to be handled.
+     * @param DatasetSubmissionFiler $datasetSubmissionFiler dataset submission filer message to be handled
      */
     public function __invoke(DatasetSubmissionFiler $datasetSubmissionFiler)
     {
@@ -110,16 +47,12 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $datasetSubmission = $this->datasetSubmissionRepository->find($datasetSubmissionId);
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $this->logger->error(sprintf('Can not find submission with ID: "%d"', $datasetSubmissionId));
+
             return;
         }
         $dataset = $datasetSubmission?->getDataset();
         $udi = $dataset?->getUdi();
-        $loggingContext = array(
-            'dataset_id' => $dataset?->getId(),
-            'udi' => $udi,
-            'dataset_submission_id' => $datasetSubmissionId,
-            'process_id' => getmypid()
-        );
+        $loggingContext = ['dataset_id' => $dataset?->getId(), 'udi' => $udi, 'dataset_submission_id' => $datasetSubmissionId, 'process_id' => getmypid()];
         // Log processing start.
         $this->logger->info('Dataset submission process started', $loggingContext);
 
@@ -152,13 +85,10 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     /**
      * Function to process file.
      *
-     * Add a file to the datastore, and calculates hash,
-     * and queue's for virus scan.
+     * Add a file to the datastore, and calculates hash.
      *
-     * @param File  $file           The File.
-     * @param array $loggingContext Logging Context.
-     *
-     * @return void
+     * @param File  $file           the File
+     * @param array $loggingContext logging Context
      */
     private function processFile(File $file, array $loggingContext): void
     {
@@ -174,6 +104,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->error(sprintf('Unreadable Queued File: "%s"', $lastErrorMessage), $loggingContext);
             $file->setDescription('Unreadable Queued File:' . $lastErrorMessage);
             $file->setStatus(File::FILE_ERROR);
+
             return;
         }
 
@@ -186,17 +117,19 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                 $fileset->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
-        } catch (\League\Flysystem\Exception $fileExistException) {
+        } catch (FilesystemException $fileExistException) {
             $this->logger->warning(sprintf('Rejecting: Unable to add file to datastore. Message: "%s"', $fileExistException->getMessage()), $loggingContext);
-            $file->setDescription("Error writing to store:" . $fileExistException->getMessage());
+            $file->setDescription('Error writing to store:' . $fileExistException->getMessage());
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
+
             return;
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
-            $file->setDescription("Error writing to store:" . $exception->getMessage());
+            $file->setDescription('Error writing to store:' . $exception->getMessage());
             $file->setStatus(File::FILE_ERROR);
             $this->entityManager->flush();
+
             return;
         }
 
@@ -207,14 +140,12 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
 
         try {
             unlink($filePath);
-            rmdir(dirname($filePath));
+            rmdir(dirname((string) $filePath));
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()), $loggingContext);
         }
 
-         // File virus Scan
-         $localLogContext = array_merge($loggingContext, array('fileId' => $fileId, 'filePathName' => $file->getFilePathName()));
-         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
-         $this->logger->info('Done processing file.', $localLogContext);
+        $localLogContext = array_merge($loggingContext, ['fileId' => $fileId, 'filePathName' => $file->getFilePathName()]);
+        $this->logger->info('Done processing file.', $localLogContext);
     }
 }

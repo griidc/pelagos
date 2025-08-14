@@ -28,7 +28,7 @@ class DifTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->dif = new DIF();
         $this->mockResearchGroup = \Mockery::mock(ResearchGroup::class,
@@ -59,7 +59,7 @@ class DifTest extends TestCase
 
     /**
      * Test getter and setter for status.
-     * 
+     *
      * @return void
      */
     public function testCanGetAndSetStatus()
@@ -103,7 +103,7 @@ class DifTest extends TestCase
 
     /**
      * Test getter and setter for secondary point of contact.
-     * 
+     *
      * @return void
      */
     public function testCanGetAndSetPrimaryPointOfContact()
@@ -153,7 +153,7 @@ class DifTest extends TestCase
         $this->dif->setFieldOfStudyOther($bool);
         $this->dif->setFieldOfStudyPhysicalOceanography($bool);
         $this->dif->setFieldOfStudySocialCulturalPolitical($bool);
-        
+
         $this->assertEquals($bool, $this->dif->getFieldOfStudyOther());
         $this->assertEquals($bool, $this->dif->hasFieldOfStudyAtmospheric());
         $this->assertEquals($bool, $this->dif->hasFieldOfStudyChemical());
@@ -322,7 +322,7 @@ class DifTest extends TestCase
 
     /**
      * Test getter and setter for approved date.
-     * 
+     *
      * @return void
      */
     public function testCanGetAndSetApprovedDate()

@@ -5,11 +5,14 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
 use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Exception\NotDeletableException;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 /**
  * Entity class to represent a Person.
@@ -40,6 +43,7 @@ class Person extends Entity
     #[ORM\Column(type: 'text')]
     #[Serializer\Groups(['director', 'person'])]
     #[Assert\NotBlank(message: 'First name is required')]
+    #[Groups('grp-people-accounts-report')]
     protected $firstName;
 
     /**
@@ -54,6 +58,7 @@ class Person extends Entity
     #[ORM\Column(type: 'citext')]
     #[Serializer\Groups(['director', 'person'])]
     #[Assert\NotBlank(message: 'Last name is required')]
+    #[Groups('grp-people-accounts-report')]
     protected $lastName;
 
     /**
@@ -554,35 +559,6 @@ class Person extends Entity
     }
 
     /**
-     * Setter for personFundingOrganizations.
-     *
-     * @param array|\Traversable $personFundingOrganizations Set of PersonFundingOrganization objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When $personFundingOrganizations is not an array or traversable object.
-     * @throws \Exception When Non-PersonFundingOrganization found in $personFundingOrganizations.
-     *
-     * @return void
-     */
-    public function setPersonFundingOrganizations($personFundingOrganizations)
-    {
-        if (is_array($personFundingOrganizations) || $personFundingOrganizations instanceof \Traversable) {
-            foreach ($personFundingOrganizations as $personFundingOrganization) {
-                if (!$personFundingOrganization instanceof PersonFundingOrganization) {
-                    throw new \Exception('Non-PersonFundingOrganization found in personFundingOrganizations.');
-                }
-            }
-            $this->personFundingOrganizations = $personFundingOrganizations;
-            foreach ($this->personFundingOrganizations as $personFundingOrganization) {
-                $personFundingOrganization->setPerson($this);
-            }
-        } else {
-            throw new \Exception('personFundingOrganizations must be either array or traversable objects.');
-        }
-    }
-
-    /**
      * Getter for personFundingOrganizations.
      *
      * @access public
@@ -595,32 +571,37 @@ class Person extends Entity
     }
 
     /**
-     * Setter for personResearchGroups.
-     *
-     * @param array|\Traversable $personResearchGroups Set of PersonResearchGroup objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-PersonResearchGroup found in $personResearchGroups.
-     * @throws \Exception When $personResearchGroups is not an array or traversable object.
-     *
-     * @return void
+     * Getter for fundingOrganizations.
      */
-    public function setPersonResearchGroups($personResearchGroups)
+    public function getFundingOrganizations(): Collection
     {
-        if (is_array($personResearchGroups) || $personResearchGroups instanceof \Traversable) {
-            foreach ($personResearchGroups as $personResearchGroup) {
-                if (!$personResearchGroup instanceof PersonResearchGroup) {
-                    throw new \Exception('Non-PersonResearchGroup found in personResearchGroups.');
+        $fundingOrganizations = new ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            $fundingOrganization = $researchGroup->getFundingOrganization();
+            if ($fundingOrganization instanceof FundingOrganization) {
+                if (!$fundingOrganizations->contains($fundingOrganization)) {
+                    $fundingOrganizations->add($fundingOrganization);
                 }
             }
-            $this->personResearchGroups = $personResearchGroups;
-            foreach ($this->personResearchGroups as $personResearchGroup) {
-                $personResearchGroup->setPerson($this);
-            }
-        } else {
-            throw new \Exception('personResearchGroups must be either array or traversable objects.');
         }
+        return $fundingOrganizations;
+    }
+
+    /**
+     * Get a list of Funding Cycles this person is associated with through their Research Groups.
+     */
+    public function getFundingCycles(): Collection
+    {
+        $fundingCycles = new ArrayCollection();
+        foreach ($this->getResearchGroups() as $researchGroup) {
+            $fundingCycle = $researchGroup->getFundingCycle();
+            if ($fundingCycle instanceof FundingCycle) {
+                if (!$fundingCycles->contains($fundingCycle)) {
+                    $fundingCycles->add($fundingCycle);
+                }
+            }
+        }
+        return $fundingCycles;
     }
 
     /**
@@ -633,35 +614,6 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
-    }
-
-    /**
-     * Setter for personDataRepositories.
-     *
-     * @param array|\Traversable $personDataRepositories Set of PersonDataRepository objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-PersonDataRepository found in $personDataRepositories.
-     * @throws \Exception When $personDataRepositories is not an array or traversable object.
-     *
-     * @return void
-     */
-    public function setPersonDataRepositories($personDataRepositories)
-    {
-        if (is_array($personDataRepositories) || $personDataRepositories instanceof \Traversable) {
-            foreach ($personDataRepositories as $personDataRepository) {
-                if (!$personDataRepository instanceof PersonDataRepository) {
-                    throw new \Exception('Non-PersonDataRepository found in personDataRepositories.');
-                }
-            }
-            $this->personDataRepositories = $personDataRepositories;
-            foreach ($this->personDataRepositories as $personDataRepository) {
-                $personDataRepository->setPerson($this);
-            }
-        } else {
-            throw new \Exception('personDataRepositories must be either array or traversable objects.');
-        }
     }
 
     /**
@@ -815,6 +767,11 @@ class Person extends Entity
         }
     }
 
+    public function getFullName(): string
+    {
+        return trim($this->getLastName() . ', ' . $this->getFirstName());
+    }
+
     /**
      * Return the id as a string when converting a Person to a string.
      *
@@ -824,7 +781,7 @@ class Person extends Entity
      */
     public function __toString()
     {
-        return (string) $this->getFirstName() . ' ' . $this->getLastName();
+        return $this->getFullName() . ' (' . ($this->getEmailAddress()) . ')';
     }
 
     /**
@@ -885,5 +842,25 @@ class Person extends Entity
             }
         }
         return $publications;
+    }
+
+    /**
+     * Does this person have an account?
+     */
+    #[Groups(['grp-people-accounts-report'])]
+    #[SerializedName('hasAccount')]
+    public function getHasAccount(): string
+    {
+        return ($this->getAccount() instanceof Account) ? 'yes' : 'no';
+    }
+
+    /**
+     * Get the account creation time.
+     */
+    #[Groups(['grp-people-accounts-report'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    public function getAccountCreationDate(): ?\DateTime
+    {
+        return $this->getAccount()?->getCreationTimeStamp();
     }
 }

@@ -3,7 +3,7 @@
 {% for dataset in datasets %}
     <url>
         <loc>{{ vanityurl('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) }}</loc>
-        <lastmod>{{ dataset.modificationTimeStamp|date('Y-m-d') }}</lastmod>
+        <lastmod>{{ (sitemapMinDate is not empty and sitemapMinDate > dataset.modificationTimeStamp) ? sitemapMinDate|date('Y-m-d') : dataset.modificationTimeStamp|date('Y-m-d') }}</lastmod>
     </url>
 {% endfor %}
 </urlset>

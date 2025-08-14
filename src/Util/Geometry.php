@@ -125,4 +125,26 @@ class Geometry
 
         return $wkt[0];
     }
+
+    /**
+     * Convert GML to GeoJSON representation
+     *
+     * @param string $gml Textual GML of geometry.
+     * @param string $udi Dataset UDI.
+     * @param string $id  Identifier for feature.
+     *
+     * @throws InvalidGmlException When PG Driver cannot process the supplied GML.
+     */
+    public function convertGmlToGeoJSON(string $gml, string $udi = 'unknown', string $id = 'A'): mixed
+    {
+        $sql = "SELECT ST_AsGeoJSON(t.*) FROM (VALUES(:id, :name, ST_GeomFromGML(:gml))) AS t(id, name, geom)";
+        $connection = $this->entityManager->getConnection();
+        $statement = $connection->prepare($sql);
+        try {
+            $result = $statement->executeQuery(array('gml' => $gml, 'id' => $id, 'name' => $udi));
+        } catch (DriverException $e) {
+            throw new InvalidGmlException($e->getMessage());
+        }
+        return $result->fetchOne();
+    }
 }

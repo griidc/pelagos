@@ -114,7 +114,8 @@ class DefaultController extends AbstractController
         $mainsite = $this->getParameter('main_site');
         $mainsite = is_string($mainsite) ? $mainsite : '/';
 
-        if ($request->getHost() == "data.griidc.org") {
+        if (($request->getHost() === "data.griidc.org") and (false === stripos($request->headers->get('User-Agent'), 'googlebot'))) {
+            // redirect for main site except for googlebots, due to google indexing behavior incorrectly skipping sitemap entries based on this redirect.
             return $this->redirect($mainsite, 302);
         } else {
             return $this->render('Default/index.html.twig');
@@ -138,12 +139,9 @@ class DefaultController extends AbstractController
      *
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
      * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
-     *
-     *
-     * @return StreamedResponse
      */
     #[Route(path: '/sitemap.xml', name: 'pelagos_sitemap')]
-    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter)
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter): Response
     {
         $criteria = array(
             'availabilityStatus' =>
@@ -162,11 +160,19 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
-        $response = new StreamedResponse(function () use ($datasets) {
+        $sitemapMinDateParam = $this->getParameter('sitemap_min_date');
+        if (!empty($sitemapMinDateParam)) {
+            $sitemapMinDate = \DateTime::createFromFormat('Y-m-d', $sitemapMinDateParam);
+        } else {
+            $sitemapMinDate = null;
+        }
+
+        $response = new StreamedResponse(function () use ($datasets, $sitemapMinDate) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
                 array(
-                    'datasets' => $datasets
+                    'datasets' => $datasets,
+                    'sitemapMinDate' => $sitemapMinDate,
                 )
             );
         });

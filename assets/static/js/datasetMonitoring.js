@@ -3,7 +3,7 @@ $(() => {
 
   const datasetFilters = [{
     id: 'all',
-    text: 'Show All Datasets',
+    text: 'Show All Groups',
   }, {
     id: 'only',
     text: 'Show Groups With Datasets',
@@ -92,7 +92,7 @@ $(() => {
 
     const searchValue = dsmSearch.option("value");
     if (searchValue.length > 0) {
-      var searchArray = ['name', 'contains', searchValue];
+      var searchArray = [["name", "contains", searchValue], "or", ["list", "contains", searchValue]];
       if (filterArray !== null) {
         filterArray.push("and");
         filterArray.push(searchArray);
@@ -103,8 +103,28 @@ $(() => {
 
     dsmTreeList.filter(filterArray);
 
+    const udiRegex = /\w\w\.x\d{3}\.\d{3}\:\d{4}/;
+    if (searchValue.match(udiRegex)) {
+      const expandedKeys = groupStore.items().filter(({ expanded }) => expanded === true).map(key => key.id);
+      const researchGroupItem = groups.find(group => group.list.includes(searchValue));
+      expandedKeys.push(researchGroupItem.id);
+      dsmTreeList.selectRows([researchGroupItem.id], false);
+      dsmTreeList.option("expandedRowKeys", expandedKeys);
+    }
+
     if (typeof selectedItem !== 'undefined') {
-      loadGroupHtml(selectedItem);
+      loadGroupHtml(selectedItem)
+      .then(() => {
+        const element = document.querySelector('td[data-tippy-content="' + searchValue + '"]');
+        if (element) {
+          const clickHandler = element.getAttribute('@click');
+          if (clickHandler) {
+            setTimeout(() => {
+              eval(clickHandler);
+            }, 100);
+          }
+        }
+      });
     }
   }
 
@@ -154,7 +174,7 @@ $(() => {
   }).dxToolbar('instance');
 
   const dsmSearch = $('#dsm-search').dxTextBox({
-    placeholder: 'Search Groups',
+    placeholder: 'Search',
     showClearButton: true,
     mode: 'search',
     valueChangeEvent: ["keyup", "blur", "change", "input"],
@@ -224,7 +244,8 @@ $(() => {
     if (selectedItem.fundingCycle !== undefined) {
       parameters = Object.assign(parameters, { fundingCycle: selectedItem.fundingCycle });
     }
-    if (selectedItem.researchGroup !== undefined) {
+    if (selectedItem.researchGroup !== undefined && !Array.isArray(selectedItem.researchGroup))
+    {
       parameters = Object.assign(parameters, { researchGroup: selectedItem.researchGroup });
     }
 
@@ -239,7 +260,7 @@ $(() => {
     currentUrl.search = queryParams.toString();
     window.history.pushState({}, '', currentUrl);
 
-    $.ajax({
+    return $.ajax({
       url: Routing.generate("app_api_dataset_monitoring_datasets",
         parameters
       ),

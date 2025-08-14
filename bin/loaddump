@@ -97,7 +97,9 @@ fi
 if [ "$#" -eq 2 ]; then
     export SYMFONY_ENV="$2"
 fi
-
+# Create users
+echo "CREATE USER pelagos_user" | psql -h $parameters__database_host -U postgres || exit
+echo "CREATE USER pelagos_reader" | psql -h $parameters__database_host -U postgres || exit
 
 # Drop existing database
 echo "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$parameters__database_name' AND pid <> pg_backend_pid();" | psql -h $parameters__database_host -U postgres || exit
@@ -150,5 +152,4 @@ if [ $ELASTICA_INDEX -eq 1 ]; then
 fi
 
 echo "DRMPizing current user"
-bin/console pelagos:DRPMize `/usr/bin/whoami`
-
+bin/console pelagos:DRPMize

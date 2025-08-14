@@ -7,6 +7,8 @@
      UDI: {{ datasetSubmission.dataset.udi }}<br>
      Dataset Title: {{ datasetSubmission.dataset.title }}<br>
      Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+     Funding Cycle: {{ datasetSubmission.dataset.researchGroup.fundingCycle.name }}<br>
+     Funding Organization: {{ datasetSubmission.dataset.researchGroup.fundingCycle.fundingOrganization.name }}<br>
      SubmissionTimeStamp: {{ datasetSubmission.submissionTimeStamp.format('c') }}<br>
      <h3>Files</h3>
      {% if datasetSubmission.fileset is defined and datasetSubmission.fileset is not null %}
@@ -39,6 +41,8 @@
     UDI: {{ datasetSubmission.dataset.udi }}
     Dataset Title: {{ datasetSubmission.dataset.title }}
     Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+    Funding Cycle: {{ datasetSubmission.dataset.researchGroup.fundingCycle.name }}
+    Funding Organization: {{ datasetSubmission.dataset.researchGroup.fundingCycle.fundingOrganization.name }}
     SubmissionTimeStamp: {{ datasetSubmission.submissionTimeStamp.format('c') }}
 
     Files

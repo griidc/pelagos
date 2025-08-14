@@ -12,102 +12,49 @@ use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Handler for zipping files for download.
  */
-class ZipDatasetFilesHandler implements MessageHandlerInterface
+#[AsMessageHandler()]
+class ZipDatasetFilesHandler
 {
     /**
-     * The monolog logger.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Zip files utility class.
-     *
-     * @var ZipFiles
-     */
-    private $zipFiles;
-
-    /**
-     * Download directory for the zip file.
-     *
-     * @var string
-     */
-    private $downloadDirectory;
-
-    /**
-     * The File Repository.
-     *
-     * @var FileRepository
-     */
-    private $fileRepository;
-
-    /**
-     * Entity Manager interface instance.
-     *
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * Datastore utility instance.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-    /**
      * ZipDatasetFilesHandler constructor.
-     *
-     * @param LoggerInterface        $zipperLogger      A name hinted "<monologhandlername>Logger" Monolog logger interface.
-     * @param ZipFiles               $zipFiles          Zip files utility instance.
-     * @param string                 $downloadDirectory Temporary download directory path.
-     * @param FileRepository         $fileRepository    File repository to query objects.
-     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
-     * @param Datastore              $datastore         Datastore utility instance.
      */
     public function __construct(
-        LoggerInterface $zipperLogger,
-        ZipFiles $zipFiles,
-        string $downloadDirectory,
-        FileRepository $fileRepository,
-        EntityManagerInterface $entityManager,
-        Datastore $datastore
+        private readonly LoggerInterface $logger,
+        private readonly ZipFiles $zipFiles,
+        private readonly string $downloadDirectory,
+        private readonly FileRepository $fileRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly Datastore $datastore,
     ) {
-        $this->logger = $zipperLogger;
-        $this->zipFiles = $zipFiles;
-        $this->downloadDirectory = $downloadDirectory;
-        $this->fileRepository = $fileRepository;
-        $this->entityManager = $entityManager;
-        $this->datastore = $datastore;
     }
 
     /**
      * Invoke function to zip files for download.
      *
-     * @param ZipDatasetFiles $zipDatasetFiles  Symfony message for zip dataset files.
+     * @param ZipDatasetFiles $zipDatasetFiles symfony message for zip dataset files
      */
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
         $loggingContext['process_id'] = getmypid();
-        $this->logger->info("ZipDatasetFilesHandler worker starting.", $loggingContext);
+        $this->logger->info('ZipDatasetFilesHandler worker starting.', $loggingContext);
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
         $udi = $datasetSubmission->getDataset()->getUdi();
-        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $udi) . '.zip';
+        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . str_replace(':', '.', $udi) . '.zip';
         $loggingContext['UDI'] = $udi;
         $loggingContext['destination_path'] = $destinationPath;
         $fileset = $datasetSubmission->getFileset();
         if (!$fileset instanceof Fileset) {
             $this->logger->info('Not a fileset', $loggingContext);
+
             return;
         }
-        $fileIds = array();
+        $fileIds = [];
         foreach ($fileset->getProcessedFiles() as $file) {
             $fileIds[] = $file->getId();
         }
@@ -118,7 +65,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $outputStream = Utils::streamFor($resource);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
-                $this->logger->info("adding file: " . $fileItemInfo['filePathName'] . '.', $loggingContext);
+                $this->logger->info('adding file: ' . $fileItemInfo['filePathName'] . '.', $loggingContext);
                 $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
             $this->zipFiles->finish();
@@ -131,8 +78,9 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $this->entityManager->flush();
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()), $loggingContext);
+
             return;
         }
-        $this->logger->info("ZipDatasetFilesHandler worker finished.", $loggingContext);
+        $this->logger->info('ZipDatasetFilesHandler worker finished.', $loggingContext);
     }
 }

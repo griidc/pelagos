@@ -10,6 +10,9 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 use App\Exception\PasswordException;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 /**
  * Entity class to represent an Account.
@@ -611,5 +614,17 @@ class Account extends Entity implements UserInterface, EquatableInterface
         }
 
         return false;
+    }
+
+    #[Groups('grp-people-accounts-report')]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    public function getCreationDate(): \DateTime
+    {
+        return $this->getCreationTimeStamp();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getUserId() . ' (' . $this->getPerson()->getFullName() . ')';
     }
 }

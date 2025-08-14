@@ -28,7 +28,7 @@ class FileTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockFileset = \Mockery::mock('\App\Entity\Fileset');
         $this->file = new File;

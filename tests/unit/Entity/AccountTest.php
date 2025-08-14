@@ -43,7 +43,7 @@ class AccountTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockPerson = \Mockery::mock(
             '\App\Entity\Person',
@@ -98,7 +98,7 @@ class AccountTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 }
