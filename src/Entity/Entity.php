@@ -31,7 +31,7 @@ abstract class Entity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[Serializer\Groups(["id", "search"])]
-    #[Groups(["id", "search"])]
+    #[Groups(["id", "search", "cold-storage-candidate"])]
     #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'ID must be in between 1 and 2147483647', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
     protected $id;
 
