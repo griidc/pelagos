@@ -10,8 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
  * Funder class.
  */
 #[ORM\Entity(repositoryClass: FunderRepository::class)]
-class Funder extends Entity
+class Funder
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     public const SOURCE_IMPORTED = 'imported';
     public const SOURCE_USER = 'user';
     public const SOURCE_DRPM = 'drpm';

@@ -27,7 +27,6 @@ abstract class Entity
      *
      * @var int
      */
-    #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[Serializer\Groups(["id", "search"])]

@@ -4,13 +4,19 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Entity class to represent a Data Repository Role.
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\LogActionItemRepository')]
-class LogActionItem extends Entity
+#[UniqueEntity(fields: ['id'], errorPath: 'id', message: 'This id has already been assigned', groups: ['unique_id'])]
+class LogActionItem
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
     */

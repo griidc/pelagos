@@ -9,6 +9,8 @@ use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Exception\NotDeletableException;
+use Gedmo\Timestampable\Traits\Timestampable;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
@@ -24,8 +26,14 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 #[ORM\Entity(repositoryClass: 'App\Repository\PersonRepository')]
 #[Assert\GroupSequence(['id', 'unique_id', 'Person', 'Entity'])]
 #[UniqueEntity(fields: ['emailAddress'], errorPath: 'emailAddress', message: 'A Person with this email address already exists')]
-class Person extends Entity
+class Person
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
+    // use TimestampableEntity;
+
     /**
      * A friendly name for this type of entity.
      */

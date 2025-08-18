@@ -9,8 +9,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * DatasetSubmission to Data Center association abstract class.
  */
 #[ORM\Entity]
-class DistributionPoint extends Entity
+class DistributionPoint
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

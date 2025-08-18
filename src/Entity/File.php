@@ -9,8 +9,12 @@ use JMS\Serializer\Annotation as Serializer;
  * File Entity class.
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\FileRepository')]
-class File extends Entity
+class File
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Status value for a File that has been newly uploaded, not yet proccessed by "Filer".
      */

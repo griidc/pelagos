@@ -13,8 +13,12 @@ use App\Validator\Constraints as CustomAssert;
  */
 #[ORM\Entity]
 #[UniqueEntity(fields: ['person', 'fundingOrganization'], errorPath: 'person', message: 'A Person can have only one association with a Funding Organization')]
-class PersonFundingOrganization extends Entity implements PersonAssociationInterface
+class PersonFundingOrganization implements PersonAssociationInterface
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

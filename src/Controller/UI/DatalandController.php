@@ -49,6 +49,8 @@ class DatalandController extends AbstractController
      */
     protected $issueTrackingBaseUrl;
 
+    private EntityManagerInterface $entityManager;
+
     /**
      * Dataland Controller constructor.
      *
@@ -57,12 +59,13 @@ class DatalandController extends AbstractController
      * @param Metadata      $metadataUtil         The Metadata Util.
      * @param string        $issueTrackingBaseUrl The base URL for the GRIIDC issuetracker (Jira).
      */
-    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
+    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl, EntityManagerInterface $entityManager)
     {
         $this->entityHandler = $entityHandler;
         $this->geoUtil = $geoUtil;
         $this->metadataUtil = $metadataUtil;
         $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -163,7 +166,8 @@ class DatalandController extends AbstractController
      */
     protected function getDataset(string $udi)
     {
-        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(['udi' => $udi]);
 
         if (count($datasets) == 0) {
             throw new NotFoundHttpException("No dataset found for UDI: $udi");

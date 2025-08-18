@@ -12,8 +12,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * DIF Entity class.
  */
 #[ORM\Entity]
-class DIF extends Entity
+class DIF
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

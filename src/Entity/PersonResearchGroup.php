@@ -17,8 +17,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\PersonResearchGroupRepository')]
 #[UniqueEntity(fields: ['person', 'researchGroup'], errorPath: 'person', message: 'A Person can have only one association with a Research Group')]
-class PersonResearchGroup extends Entity implements PersonAssociationInterface
+class PersonResearchGroup implements PersonAssociationInterface
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

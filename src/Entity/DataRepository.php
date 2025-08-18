@@ -16,8 +16,12 @@ use App\Exception\NotDeletableException;
  */
 #[ORM\Entity]
 #[UniqueEntity(fields: ['name'], errorPath: 'name', message: 'A Data Repository with this name already exists')]
-class DataRepository extends Entity
+class DataRepository
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

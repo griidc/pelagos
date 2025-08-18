@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Util\ArrayFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -35,8 +36,12 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\DatasetSubmissionRepository')]
-class DatasetSubmission extends Entity
+class DatasetSubmission
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Indicates the algorithm used to produce the MD hash.
      *
@@ -2039,7 +2044,7 @@ class DatasetSubmission extends Entity
      */
     public function setThemeKeywords(array $themeKeywords)
     {
-        $this->themeKeywords = $this->filterArrayBlanks($themeKeywords);
+        $this->themeKeywords = ArrayFilter::filterArrayBlanks($themeKeywords);
     }
 
     /**
@@ -2067,7 +2072,7 @@ class DatasetSubmission extends Entity
      */
     public function setPlaceKeywords(array $placeKeywords)
     {
-        $this->placeKeywords = $this->filterArrayBlanks($placeKeywords);
+        $this->placeKeywords = ArrayFilter::filterArrayBlanks($placeKeywords);
     }
 
     /**

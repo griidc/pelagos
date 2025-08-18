@@ -8,8 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
  * Entity class to log a collection of Login Attemps.
  */
 #[ORM\Entity]
-class LoginAttempts extends Entity
+class LoginAttempts
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

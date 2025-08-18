@@ -19,8 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FundingOrganizationRepository::class)]
 #[UniqueEntity(fields: ['name'], errorPath: 'name', message: 'A Funding Organization with this name already exists')]
 #[UniqueEntity('shortName', message: 'A Funding Organization with this Short name already exists')]
-class FundingOrganization extends Entity
+class FundingOrganization
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

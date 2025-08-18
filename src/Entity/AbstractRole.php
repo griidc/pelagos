@@ -12,8 +12,12 @@ use App\Validator\Constraints as CustomAssert;
  * Classes of the type XxxRole can extend this base class.
  */
 #[ORM\MappedSuperclass]
-abstract class AbstractRole extends Entity implements RoleInterface
+abstract class AbstractRole implements RoleInterface
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

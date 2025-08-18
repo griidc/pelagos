@@ -13,8 +13,12 @@ use App\Exception\PasswordException;
  * This class defines an Password, which consists of a type, hash, and salt.
  */
 #[ORM\Entity]
-class Password extends Entity
+class Password
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

@@ -10,8 +10,23 @@ use JMS\Serializer\Annotation as Serializer;
  * Enitity class to represent a Person Token.
  */
 #[ORM\Entity]
-class PersonToken extends Entity
+// #[ORM\HasLifecycleCallbacks]
+class PersonToken
 {
+    use EntityTrait;
+    // use EntityIdTrait;
+    use EntityDateTimeTrait;
+
+    /**
+     * The name of the entity.
+     */
+    public const ENTITY_NAME = 'PersonToken';
+
+    /**
+     * The name of the entity in plural form.
+     */
+    public const ENTITY_NAME_PLURAL = 'PersonTokens';
+
     /**
      * A friendly name for this type of entity.
      */
@@ -41,7 +56,8 @@ class PersonToken extends Entity
      *
      */
     #[ORM\OneToOne(targetEntity: Person::class, inversedBy: 'token')]
-    #[ORM\Column(type: "integer", name:"person_token_id", columnDefinition:"INT AUTO_INCREMENT")]
+    // #[ORM\Column(type: "integer", name:"person_token_id", columnDefinition:"INT AUTO_INCREMENT")]
+    #[ORM\Id]
     #[Assert\NotBlank(message: 'Person is required')]
     protected $person;
 
@@ -81,6 +97,18 @@ class PersonToken extends Entity
         $this->setUse($use);
         $this->setValidFor($validFor);
         $this->generateTokenText();
+    }
+
+    /**
+     * Override Account's getId() method with Person's Id.
+     */
+    public function getId(): ?int
+    {
+        if ($this->getPerson() instanceof Person) {
+            return $this->getPerson()->getId();
+        }
+
+        return null;
     }
 
     /**
@@ -207,5 +235,10 @@ class PersonToken extends Entity
         } else {
             return false;
         }
+    }
+
+    public function checkDeletable(): void
+    {
+        # TODO
     }
 }

@@ -12,8 +12,12 @@ use Doctrine\Common\Collections\Expr\Comparison;
  * Fileset Entity class.
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\FilesetRepository')]
-class Fileset extends Entity
+class Fileset
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Collection of files.
      *

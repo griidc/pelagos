@@ -13,8 +13,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Information Product Entity class.
  */
 #[ORM\Entity(repositoryClass: InformationProductRepository::class)]
-class InformationProduct extends Entity
+class InformationProduct
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

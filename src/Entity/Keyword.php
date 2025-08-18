@@ -12,8 +12,12 @@ use JMS\Serializer\Annotation as Serializer;
  * Keywords class for Standardized keywords.
  */
 #[ORM\Entity(repositoryClass: KeywordRepository::class)]
-class Keyword extends Entity
+class Keyword
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Type of the Keyword.
      */

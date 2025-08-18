@@ -20,8 +20,12 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
  * This class defines an Account, which is a set of credentials for a Person.
  */
 #[ORM\Entity]
-class Account extends Entity implements UserInterface, EquatableInterface
+class Account implements UserInterface, EquatableInterface
 {
+    use EntityTrait;
+    // use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -67,8 +71,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      * @var Person
      *
      */
-    #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
-    #[ORM\Column(type: "integer", name:"person_id", columnDefinition:"INT AUTO_INCREMENT")]
+    #[ORM\OneToOne(targetEntity: Person::class, inversedBy: 'account')]
+    #[ORM\Id]
+    // #[ORM\Column(type: "integer", name:"person_id", columnDefinition:"INT AUTO_INCREMENT")]
     #[Assert\NotBlank(message: 'An account must be attached to a Person')]
     protected $person;
 
@@ -186,14 +191,14 @@ class Account extends Entity implements UserInterface, EquatableInterface
 
     /**
      * Override Account's getId() method with Person's Id.
-     *
-     * @return int The EntityID of the Person associated with this Account.
      */
-    public function getId()
+    public function getId(): ?int
     {
         if ($this->getPerson() instanceof Person) {
             return $this->getPerson()->getId();
         }
+
+        return null;
     }
 
     /**
@@ -626,5 +631,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
     public function __toString(): string
     {
         return $this->getUserId() . ' (' . $this->getPerson()->getFullName() . ')';
+    }
+
+    public function checkDeletable(): void
+    {
+       # TODO
     }
 }

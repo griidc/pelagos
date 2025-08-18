@@ -13,8 +13,12 @@ use JMS\Serializer\Annotation as Serializer;
 #[ORM\Table]
 #[ORM\UniqueConstraint(name: 'uniq_dataset_publication', columns: ['publication_id', 'dataset_id'])]
 #[ORM\Entity]
-class DatasetPublication extends Entity
+class DatasetPublication
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A Pelagos Publication entity.
      *

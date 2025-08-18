@@ -10,8 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'discr')]
-abstract class PersonDatasetSubmission extends Entity
+abstract class PersonDatasetSubmission
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Valid values for self::$role.
      *

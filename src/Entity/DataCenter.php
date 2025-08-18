@@ -28,8 +28,12 @@ use App\Validator\Constraints as CustomAssert;
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\DiscriminatorMap(['datacenter' => 'DataCenter', 'nationaldatacenter' => 'NationalDataCenter'])]
-class DataCenter extends Entity
+class DataCenter
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Name of the Data Center.
      *
@@ -61,6 +65,7 @@ class DataCenter extends Entity
      */
     #[Assert\Regex(pattern: '/[<>]/', match: false, message: 'Phone number cannot contain angle brackets (< or >)')]
     #[ORM\Column(type: 'text', nullable: true)]
+
     protected $phoneNumber;
 
     /**

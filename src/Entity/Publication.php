@@ -11,8 +11,12 @@ use Pelagos\HTTPStatus;
  * This class generates a Publication object,* which holds the DOI an a Citation object.
  */
 #[ORM\Entity]
-class Publication extends Entity
+class Publication
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Friendly name for Publication Entity.
      */

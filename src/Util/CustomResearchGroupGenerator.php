@@ -14,6 +14,9 @@ class CustomResearchGroupGenerator extends AbstractIdGenerator
         if (!$entity instanceof ResearchGroup) {
             throw new \InvalidArgumentException('Expected $entity to be an instance of ResearchGroup.');
         }
+
+        $entityRepository = $em->getRepository(get_class($entity));
+
         // Generate a unique ID for the Research Group
         $nextId = $em->getRepository(ResearchGroup::class)->getNextAvailableId();
 

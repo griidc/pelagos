@@ -8,6 +8,7 @@ use App\Repository\DatasetRepository;
 use App\Util\DatasetCitationUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -17,8 +18,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
  * Dataset Entity class.
  */
 #[ORM\Entity(repositoryClass: DatasetRepository::class)]
-class Dataset extends Entity
+class Dataset
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -172,11 +177,11 @@ class Dataset extends Entity
     /**
      * Accepted Date Timestamp for Dataset.
      *
-     * @var \DateTime;
+     * @var \DateTime
      */
-    #[ORM\Column(type: 'datetimetz', nullable: true)]
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE, nullable: true)]
     #[Serializer\Groups(['card'])]
-    protected $acceptedDate;
+    protected \DateTime $acceptedDate;
 
     /**
      * The identified status of this Dataset.

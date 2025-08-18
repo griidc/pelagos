@@ -8,8 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
  * Dataset Links Entity class.
  */
 #[ORM\Entity(repositoryClass: 'App\Repository\DatasetLinksRepository')]
-class DatasetLink extends Entity
+class DatasetLink
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * Valid values for self::$functionCode.
      *

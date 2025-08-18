@@ -19,8 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Assert\GroupSequence(['id', 'unique_id', 'FundingCycle', 'Entity'])]
 #[UniqueEntity(fields: ['fundingOrganization', 'name'], errorPath: 'name', message: 'Name must be unique within a FundingOrganization')]
 #[UniqueEntity(fields: ['udiPrefix'], message: 'This UDI prefix is already used.')]
-class FundingCycle extends Entity
+class FundingCycle
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

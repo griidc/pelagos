@@ -10,8 +10,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
  * DOI Entity class.
  */
 #[ORM\Entity]
-class DOI extends Entity
+class DOI
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */

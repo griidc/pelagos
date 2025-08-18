@@ -6,8 +6,12 @@ use App\Repository\DigitalResourceTypeDescriptorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DigitalResourceTypeDescriptorRepository::class)]
-class DigitalResourceTypeDescriptor extends Entity
+class DigitalResourceTypeDescriptor
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     use DescriptorTypeTrait;
 
     /**

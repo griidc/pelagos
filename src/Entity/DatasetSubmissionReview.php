@@ -10,8 +10,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  * This class represents Pelagos DatasetSubmission Review information.
  */
 #[ORM\Entity]
-class DatasetSubmissionReview extends Entity
+class DatasetSubmissionReview
 {
+    use EntityTrait;
+    use EntityIdTrait;
+    use EntityDateTimeTrait;
+
     /**
      * A friendly name for this type of entity.
      */
