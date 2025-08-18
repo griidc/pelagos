@@ -97,7 +97,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search'])]
+    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search', 'cold-stored-report'])]
     protected $udi;
 
     /**
@@ -124,7 +124,8 @@ class Dataset extends Entity
      * @var DOI
      */
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
-    #[Serializer\Groups(['card'])]
+    #[Serializer\Groups(['card','cold-stored-report'])]
+    #[Groups(['cold-stored-report'])]
     protected $doi;
 
     /**
@@ -156,7 +157,7 @@ class Dataset extends Entity
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     #[Serializer\Groups(['card'])]
-    #[Groups(['remotely-hosted-dataset-report'])]
+    #[Groups(['remotely-hosted-dataset-report','cold-stored-report'])]
     protected $datasetSubmission;
 
     /**
@@ -176,6 +177,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'datetimetz', nullable: true)]
     #[Serializer\Groups(['card'])]
+    #[Groups(['cold-stored-report'])]
     protected $acceptedDate;
 
     /**
@@ -1094,7 +1096,7 @@ class Dataset extends Entity
     /**
      * Get the Dataset's Lifecycle Status.
      */
-    #[Groups(['remotely-hosted-dataset-report'])]
+    #[Groups(['remotely-hosted-dataset-report', 'cold-stored-report'])]
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
