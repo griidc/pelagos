@@ -232,4 +232,49 @@ class ReportController extends AbstractController
 
         return $response;
     }
+
+    /**
+     * Creates a CSV of the cold-stored datasets
+     */
+    #[Route(path: '/api/cold-stored-dataset-report', name: 'pelagos_api_cold_stored_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    public function coldStoredReportCSV(DatasetRepository $datasetRepository, SerializerInterface $serializer): Response
+    {
+        $datasets = array_filter(
+            $datasetRepository->findAll(),
+            fn(Dataset $dataset): bool => $dataset->isColdStored()
+        );
+
+        $array = [];
+        foreach ($datasets as $dataset) {
+            $array[] = $dataset;
+        }
+
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+            ->withGroups(['cold-stored-report']);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+            ->withContext($contextBuilder)
+            ->withOutputUtf8Bom(true)
+            ->withAsCollection(false)
+        ;
+
+        $data = $serializer->serialize($array, 'csv', $contextBuilder->toArray());
+
+        $csvFilename = 'ColdStoredDatasetReport-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+
+        $response = new Response($data);
+
+        $response->headers->set(
+            'Content-disposition',
+            HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $csvFilename)
+        );
+
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Encoding', 'UTF-8');
+
+        return $response;
+    }
 }

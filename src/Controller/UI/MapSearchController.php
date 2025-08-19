@@ -3,7 +3,6 @@
 namespace App\Controller\UI;
 
 use App\Enum\DatasetLifecycleStatus;
-use App\Repository\ResearchGroupRepository;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
@@ -26,7 +25,7 @@ final class MapSearchController extends AbstractController
     ) {
     }
 
-    #[Route('/map', name: 'app_map_search')]
+    #[Route('/map-search', name: 'app_map_search')]
     public function index(): Response
     {
         return $this->render('MapSearch/index.html.twig');
@@ -262,25 +261,6 @@ final class MapSearchController extends AbstractController
         ];
 
         return new JsonResponse($geoJson);
-    }
-
-    /**
-     * Get all research groups.
-     */
-    #[Route(path: '/map/research-groups', name: 'pelagos_map_all_researchgroups')]
-    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
-    {
-        $researchGroups = $researchGroupRepository->findBy([], ['name' => 'ASC']);
-
-        $groups = [];
-        foreach ($researchGroups as $researchGroup) {
-            $groups[] = [
-                'id' => $researchGroup->getId(),
-                'name' => $researchGroup->getName(),
-            ];
-        }
-
-        return new JsonResponse($groups);
     }
 
     /**

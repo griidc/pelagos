@@ -36,7 +36,7 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      * @var FundingOrganization
      *
      */
-    #[ORM\ManyToOne(targetEntity: 'FundingOrganization', inversedBy: 'personFundingOrganizations')]
+    #[ORM\ManyToOne(targetEntity: FundingOrganization::class, inversedBy: 'personFundingOrganizations')]
     #[Assert\NotBlank(message: 'Funding Organization is required')]
     protected $fundingOrganization;
 
@@ -150,5 +150,10 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
     public function getLabel()
     {
         return $this->label;
+    }
+
+    public function __toString(): string
+    {
+        return ($this->getPerson()?->getFullName() ?? '') . ' - ' . ($this->getFundingOrganization()?->getName() ?? '');
     }
 }

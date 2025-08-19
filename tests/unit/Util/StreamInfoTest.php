@@ -24,7 +24,7 @@ class StreamInfoTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $file = vfsStream::newFile('test.txt')
                 ->withContent('test')

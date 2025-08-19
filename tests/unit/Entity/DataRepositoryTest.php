@@ -137,7 +137,7 @@ class DataRepositoryTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->testCreator = new Person;
         $this->dataRepository = new DataRepository;

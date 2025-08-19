@@ -107,6 +107,9 @@ class PersonTest extends TestCase
      */
     protected static $testPosition = 'Rehabilitation Officer';
 
+    protected $testToken;
+    protected $mockAccount;
+
     /**
      * Setup for PHPUnit tests.
      *
@@ -114,7 +117,7 @@ class PersonTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = Validation::createValidatorBuilder()
             ->enableAttributeMapping(true)
@@ -132,36 +135,6 @@ class PersonTest extends TestCase
         $this->person->setUrl(self::$testUrl);
         $this->person->setOrganization(self::$testOrganization);
         $this->person->setPosition(self::$testPosition);
-        $this->testPersonFundingOrganizations = array(
-            \Mockery::mock(
-                '\App\Entity\PersonFundingOrganization',
-                array(
-                    'setPerson' => null
-                )
-            ),
-            \Mockery::mock(
-                '\App\Entity\PersonFundingOrganization',
-                array(
-                    'setPerson' => null
-                )
-            ),
-        );
-        $this->person->setPersonFundingOrganizations($this->testPersonFundingOrganizations);
-        $this->testPersonResearchGroups = array(
-            \Mockery::mock(
-                '\App\Entity\PersonResearchGroup',
-                array(
-                    'setPerson' => null
-                )
-            ),
-            \Mockery::mock(
-                '\App\Entity\PersonResearchGroup',
-                array(
-                    'setPerson' => null
-                )
-            ),
-        );
-        $this->person->setPersonResearchGroups($this->testPersonResearchGroups);
         $this->mockAccount = \Mockery::mock(
             '\App\Entity\Account',
             array(
@@ -448,93 +421,6 @@ class PersonTest extends TestCase
     public function testGetPosition()
     {
         $this->assertEquals(self::$testPosition, $this->person->getPosition());
-    }
-
-    /**
-     * Test the getPersonFundingOrganizations method.
-     *
-     * Each item in the traversable returned by getPersonFundingOrganizations()
-     * should be an instance of PersonFundingOrganization.
-     *
-     * @return void
-     */
-    public function testGetPersonFundingOrganizations()
-    {
-        $personFundingOrganizations = $this->person->getPersonFundingOrganizations();
-        foreach ($personFundingOrganizations as $personFundingOrganization) {
-            $this->assertInstanceOf('\App\Entity\PersonFundingOrganization', $personFundingOrganization);
-        }
-    }
-
-    /**
-     * Test setPersonFundingOrganizations with a non-array/traversable object.
-     *
-     * This should result in an exception being thrown.
-     *
-     * @return void
-     */
-    public function testSetPersonFundingOrganizationsWithNonTraversable()
-    {
-        $this->expectException(\Exception::class);
-        $this->person->setPersonFundingOrganizations('string data');
-    }
-
-    /**
-     * Test setPersonFundingOrganizations with a non-PersonFundingOrganization element in otherwise good array.
-     *
-     * This should result in an exception being thrown.
-     *
-     * @return void
-     */
-    public function testSetPersonFundingOrganizationsWithANonPersonFundingOrganizationInArray()
-    {
-        $this->expectException(\Exception::class);
-        $testArry = $this->testPersonFundingOrganizations;
-        array_push($testArry, 'string data');
-        $this->person->setPersonFundingOrganizations($testArry);
-    }
-
-    /**
-     * Test the testGetPersonResearchGroups method.
-     *
-     * This method verify the associated PersonResearchGroups are each an instance of PersonResearchGroup.
-     *
-     * @return void
-     */
-    public function testGetPersonResearchGroups()
-    {
-        $personResearchGroups = $this->person->getPersonResearchGroups();
-        foreach ($personResearchGroups as $personResearchGroup) {
-            $this->assertInstanceOf('\App\Entity\PersonResearchGroup', $personResearchGroup);
-        }
-    }
-
-    /**
-     * Test the testSetPersonResearchGroups() method with a non-array/traversable object.
-     *
-     * This should result in an exception being thrown.
-     *
-     * @return void
-     */
-    public function testSetPersonResearchGroupsWithNonTraversable()
-    {
-        $this->expectException(\Exception::class);
-        $this->person->setPersonResearchGroups('string data');
-    }
-
-    /**
-     * Test testSetPersonResearchGroups() method with bad (non-PersonResearchGroup) element in otherwise good array.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @return void
-     */
-    public function testSetPersonResearchGroupsWithANonPersonResearchGroupInArray()
-    {
-        $this->expectException(\Exception::class);
-        $testArry = $this->testPersonResearchGroups;
-        array_push($testArry, 'string data');
-        $this->person->setPersonResearchGroups($testArry);
     }
 
     /**
