@@ -96,12 +96,6 @@ final class StatusController extends AbstractController
     {
         try {
             $queryBuilder = $this->entityManager->createQueryBuilder();
-            $query = $queryBuilder
-                ->select('dataset')
-                ->from(Dataset::class, 'dataset')
-                ->getQuery();
-
-            $datasets = new ArrayCollection($query->getResult());
             $count = $queryBuilder
                 ->select('COUNT(dataset.id)')
                 ->from(Dataset::class, 'dataset')
