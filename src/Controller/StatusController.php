@@ -19,55 +19,120 @@ final class StatusController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TransformedFinder $searchPelagosFinder,
         private readonly Client $elasticaClient,
+
     ) {
     }
 
+    /**
+     * This route returns JSON status information about the application component and
+     * returns an overall response code for external monitoring of aggregate system
+     * health.
+     *
+     * @return JsonResponse
+     */
     #[Route('/status', name: 'app_status')]
     public function index(): Response
     {
+        $databaseStatus = $this->getDatabaseEngineStatus();
+        $elasticsearchStatus = $this->getElasticStatus();
+        $pelagosDatasetCount = $this->getPelagosDatasetCount();
+        $expectedDatasetCountMin = isset($_ENV['EXPECTED_DATASET_COUNT_MIN']) ? (int) $_ENV['EXPECTED_DATASET_COUNT_MIN'] : 0;
+
+        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $expectedDatasetCountMin ? 'ok' : 'error';
+        $returnCode = $overallStatus === 'ok' ? 200 : 500;
+
         $status = [
-            'status' => 'ok',
+            'status' => $overallStatus,
             'version' => '1.0.0',
             'timestamp' => (new \DateTime())->format('c'),
-            'database' => $this->getDatabaseStatus(),
-            'elasticsearch' => $this->getElasticStatus(),
+            'database' => $databaseStatus,
+            'elasticsearch' => $elasticsearchStatus,
+            'pelagosDatasetCount' => $pelagosDatasetCount,
         ];
 
         return new JsonResponse(
             data: $status,
+            status: $returnCode
         );
     }
 
-    private function getDatabaseStatus(): string
+    /**
+     * Checks the database connection by executing a simple query.
+     *
+     * @return bool True if the database is reachable, false otherwise.
+     */
+    private function getDatabaseEngineStatus(): bool
     {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $query = $queryBuilder
-            ->select('dataset')
-            ->from(Dataset::class, 'dataset')
-            ->getQuery();
+        try {
+            $databaseUrl = $_ENV['DATABASE_URL'];
+            $parsedUrl = parse_url($databaseUrl);
+            $dbUser = $parsedUrl['user'] ?? 'postgres';
+            $dbPassword = $parsedUrl['pass'] ?? '';
 
-        $datasets = new ArrayCollection($query->getResult());
-        $status = $this->entityManager->getConnection()->isConnected() ? 'connected' : 'disconnected';
+            $host = $parsedUrl['host'] ?? 'localhost';
+            $port = $parsedUrl['port'] ?? 5432;
 
-        return $status . ' with ' . $datasets->count() . ' datasets';
+            if ($parsedUrl === false || !isset($parsedUrl['path'])) {
+                return false;
+            }
+
+            $databaseName = ltrim($parsedUrl['path'], '/');
+
+            // Try a simple non-data query.
+            $connection = new \PDO("pgsql:host=$host;port=$port;dbname=$databaseName", $dbUser, $dbPassword);
+            $connection->query('SELECT 1');
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
-    private function getElasticStatus(): string
+    /**
+     * Gets the count of datasets in the Pelagos system.
+     *
+     * @return int The number of datasets.
+     */
+    private function getPelagosDatasetCount(): int
     {
-        $client = new Client();
+        try {
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $query = $queryBuilder
+                ->select('dataset')
+                ->from(Dataset::class, 'dataset')
+                ->getQuery();
 
-        // Get the status of a specific index
-        $index = new Index($client, 'pelagos_mvde');
-        $indexStatus = $index->getStats()->getResponse()->getStatus();
+            $datasets = new ArrayCollection($query->getResult());
+            return $datasets->count();
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
 
-        // Get cluster health
-        $clusterHealth = $client->getCluster()->getHealth();
-        // Get data from the cluster health object
-        $clusterHealthData = $clusterHealth->getData();
+    /**
+     * Checks the status of the Elasticsearch service.
+     *
+     * @return bool True if Elasticsearch is reachable and healthy, false otherwise.
+     */
+    private function getElasticStatus(): bool
+    {
+        try {
+            $client = new Client();
 
-        // Accessing specific data within the cluster health data:
-        $status = $clusterHealthData['status']; // e.g., green, yellow, red
+            // Get the status of a specific index
+            $index = new Index($client, $_ENV['SEARCH_TOOL_INDEX']);
+            $indexStatus = $index->getStats()->getResponse()->getStatus();
 
-        return $indexStatus . ' cluster health is ' . $status;
+            // Get cluster health
+            $clusterHealth = $client->getCluster()->getHealth();
+            // Get data from the cluster health object
+            $clusterHealthData = $clusterHealth->getData();
+
+            // Accessing specific data within the cluster health data:
+            $status = $clusterHealthData['status']; // e.g., green, yellow, red
+
+            return $indexStatus === 200 && ($status === 'green' || $status === 'yellow');
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }
