@@ -63,23 +63,9 @@ final class StatusController extends AbstractController
     private function getDatabaseEngineStatus(): bool
     {
         try {
-            $databaseUrl = $_ENV['DATABASE_URL'];
-            $parsedUrl = parse_url($databaseUrl);
-            $dbUser = $parsedUrl['user'] ?? 'postgres';
-            $dbPassword = $parsedUrl['pass'] ?? '';
 
-            $host = $parsedUrl['host'] ?? 'localhost';
-            $port = $parsedUrl['port'] ?? 5432;
-
-            if ($parsedUrl === false || !isset($parsedUrl['path'])) {
-                return false;
-            }
-
-            $databaseName = ltrim($parsedUrl['path'], '/');
-
-            // Try a simple non-data query.
-            $connection = new \PDO("pgsql:host=$host;port=$port;dbname=$databaseName", $dbUser, $dbPassword);
-            $connection->query('SELECT 1');
+            $connection = $this->entityManager->getConnection();
+            $connection->executeQuery('SELECT 1');
             return true;
         } catch (\Throwable $e) {
             return false;
