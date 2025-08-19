@@ -19,6 +19,8 @@ final class StatusController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TransformedFinder $searchPelagosFinder,
         private readonly Client $elasticaClient,
+        private readonly string $expectedDatasetCountMin,
+        private readonly string $indexName
     ) {
     }
 
@@ -35,9 +37,8 @@ final class StatusController extends AbstractController
         $databaseStatus = $this->getDatabaseEngineStatus();
         $elasticsearchStatus = $this->getElasticStatus();
         $pelagosDatasetCount = $this->getPelagosDatasetCount();
-        $expectedDatasetCountMin = isset($_ENV['EXPECTED_DATASET_COUNT_MIN']) ? (int) $_ENV['EXPECTED_DATASET_COUNT_MIN'] : 0;
 
-        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $expectedDatasetCountMin ? 'ok' : 'error';
+        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $this->expectedDatasetCountMin ? 'ok' : 'error';
         $returnCode = $overallStatus === 'ok' ? 200 : 500;
 
         $status = [
@@ -103,7 +104,7 @@ final class StatusController extends AbstractController
             $client = $this->elasticaClient;
 
             // Get the status of a specific index
-            $index = new Index($client, $_ENV['SEARCH_TOOL_INDEX']);
+            $index = new Index($client, $this->indexName);
             $indexStatus = $index->getStats()->getResponse()->getStatus();
 
             // Get cluster health
