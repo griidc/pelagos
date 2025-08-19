@@ -116,7 +116,7 @@ final class StatusController extends AbstractController
     private function getElasticStatus(): bool
     {
         try {
-            $client = new Client();
+            $client = $this->elasticaClient;
 
             // Get the status of a specific index
             $index = new Index($client, $_ENV['SEARCH_TOOL_INDEX']);
