@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Dataset;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Client;
 use Elastica\Index;
@@ -15,6 +14,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class StatusController extends AbstractController
 {
+    private const STATUS_TOOL_VERSION = '1.0.0';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TransformedFinder $searchPelagosFinder,
@@ -43,7 +44,7 @@ final class StatusController extends AbstractController
 
         $status = [
             'status' => $overallStatus,
-            'version' => '1.0.0',
+            'version' => self::STATUS_TOOL_VERSION,
             'timestamp' => (new \DateTime())->format('c'),
             'database' => $databaseStatus,
             'elasticsearch' => $elasticsearchStatus,
