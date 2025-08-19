@@ -19,7 +19,6 @@ final class StatusController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TransformedFinder $searchPelagosFinder,
         private readonly Client $elasticaClient,
-
     ) {
     }
 
