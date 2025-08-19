@@ -63,7 +63,6 @@ final class StatusController extends AbstractController
     private function getDatabaseEngineStatus(): bool
     {
         try {
-
             $connection = $this->entityManager->getConnection();
             $connection->executeQuery('SELECT 1');
             return true;
