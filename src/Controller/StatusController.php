@@ -102,7 +102,13 @@ final class StatusController extends AbstractController
                 ->getQuery();
 
             $datasets = new ArrayCollection($query->getResult());
-            return $datasets->count();
+            $count = $queryBuilder
+                ->select('COUNT(dataset.id)')
+                ->from(Dataset::class, 'dataset')
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            return (int) $count;
         } catch (\Throwable $e) {
             return 0;
         }
