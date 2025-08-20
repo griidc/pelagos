@@ -19,7 +19,7 @@ final class StatusController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TransformedFinder $searchPelagosFinder,
         private readonly Client $elasticaClient,
-        private readonly string $expectedDatasetCountMin,
+        private readonly int $expectedDatasetCountMin,
         private readonly string $indexName,
         private readonly string $storageDir,
         private readonly string $uploadBaseDir
