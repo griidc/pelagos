@@ -24,6 +24,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ReportController extends AbstractController
 {
+    private const COLD_STORAGE_SIZE_THRESHOLD = 25000000000; // 25TB
+    private const COLD_STORAGE_FILE_COUNT_THRESHOLD = 5000; // 5000 files
+
     /**
      * Datasets and People Report.
      */
@@ -245,7 +248,7 @@ class ReportController extends AbstractController
         $array = [];
         foreach ($datasets as $dataset) {
             // Criteria for cold storage candidates: > 25TB or > 5000 files
-            if ($dataset->getTotalFileSize() > 25000000000 || $dataset->getNumberOfFiles() > 5000) {
+            if ($dataset->getTotalFileSize() > self::COLD_STORAGE_SIZE_THRESHOLD || $dataset->getNumberOfFiles() > self::COLD_STORAGE_FILE_COUNT_THRESHOLD) {
                 $array[] = $dataset;
             }
         }
