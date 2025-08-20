@@ -26,6 +26,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 #[UniqueEntity(fields: ['emailAddress'], errorPath: 'emailAddress', message: 'A Person with this email address already exists')]
 class Person extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -232,7 +234,7 @@ class Person extends Entity
      * @access protected
      *
      */
-    #[ORM\OneToOne(targetEntity: 'Account', mappedBy: 'person')]
+    #[ORM\OneToOne(targetEntity: Account::class, mappedBy: 'person')]
     #[Serializer\Exclude]
     protected $account;
 

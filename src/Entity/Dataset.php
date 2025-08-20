@@ -19,6 +19,8 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 #[ORM\Entity(repositoryClass: DatasetRepository::class)]
 class Dataset extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
