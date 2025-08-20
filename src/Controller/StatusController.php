@@ -9,7 +9,6 @@ use Elastica\Index;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class StatusController extends AbstractController
@@ -23,7 +22,7 @@ final class StatusController extends AbstractController
         private readonly string $expectedDatasetCountMin,
         private readonly string $indexName,
         private readonly string $storageDir,
-        private readonly string $uploadDir
+        private readonly string $uploadBaseDir
     ) {
     }
 
@@ -133,11 +132,12 @@ final class StatusController extends AbstractController
     private function testFilesystemsPaths(): bool
     {
         try {
-            if (!is_dir($this->storageDir) || !is_dir($this->uploadDir)) {
+            $uploadDirectory = $this->uploadBaseDir . '/upload';
+            if (!is_dir($this->storageDir) || !is_dir($uploadDirectory)) {
                 return false;
             }
 
-            if (!is_writable($this->uploadDir)) {
+            if (!is_writable($uploadDirectory)) {
                 return false;
             }
 
