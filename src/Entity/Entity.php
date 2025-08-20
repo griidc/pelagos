@@ -13,27 +13,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
  */
 #[ORM\MappedSuperclass]
-#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['id'], errorPath: 'id', message: 'This id has already been assigned', groups: ['unique_id'])]
-abstract class Entity
+#[ORM\HasLifecycleCallbacks]
+abstract class Entity implements EntityInterface
 {
-    /**
-     * A friendly name for this type of entity.
-     */
-    public const FRIENDLY_NAME = 'Pelagos Entity';
+    // use TrackingTrait;
 
-    /**
-     * Entity identifier.
-     *
-     * @var int
-     */
-    #[ORM\Column(type: 'integer')]
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[Serializer\Groups(["id", "search"])]
-    #[Groups(["id", "search"])]
-    #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'ID must be in between 1 and 2147483647', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
-    protected $id;
+    // /**
+    //  * Entity identifier.
+    //  *
+    //  * @var int
+    //  */
+    // #[ORM\Column(type: 'integer')]
+    // #[ORM\Id]
+    // #[ORM\GeneratedValue]
+    // #[Serializer\Groups(["id", "search"])]
+    // #[Groups(["id", "search"])]
+    // #[Assert\Range(min: 1, max: 2147483647, notInRangeMessage: 'ID must be in between 1 and 2147483647', invalidMessage: 'ID must be a positive integer', groups: ['id'])]
+    // protected $id;
 
     /**
      * The Person who created this Entity.
@@ -81,12 +78,15 @@ abstract class Entity
     /**
      * Setter for identifier.
      *
+     * @deprecated version 7.0.0
+     *
      * @param int|null $id this entity's Identifier
      *
      * @return void
      *
      * @throws \InvalidArgumentException when $id id not an integer or null
      */
+    #[\Deprecated(message: "Don't use this method anymore.", since: "7.0.0")]
     public function setId($id = null)
     {
         // Must be an integer or null.
@@ -99,15 +99,15 @@ abstract class Entity
         }
     }
 
-    /**
-     * Getter for id property.
-     *
-     * @return int persistent identifier for the Entity
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+    // /**
+    //  * Getter for id property.
+    //  *
+    //  * @return int persistent identifier for the Entity
+    //  */
+    // public function getId(): ?int
+    // {
+    //     return $this->id;
+    // }
 
     /**
      * Setter for creator.
@@ -204,10 +204,13 @@ abstract class Entity
     /**
      * Get the creationTimeStamp property as an ISO8601 string.
      *
+     * @deprecated version 7.0.0
+     *
      * @param bool $localized whether to convert time stamp to the local timezone
      *
      * @return string ISO8601 string representing creationTimeStamp
      */
+    #[\Deprecated(message: "use getCreationTimeStamp and convert to desired timezone", since: "7.0.0")]
     public function getCreationTimeStampAsISO(bool $localized = false)
     {
         if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
@@ -283,10 +286,13 @@ abstract class Entity
     /**
      * Get the modificationTimeStamp property as an ISO8601 string.
      *
+     * @deprecated version 7.0.0
+     *
      * @param bool $localized whether to convert time stamp to the local timezone
      *
      * @return string ISO8601 string representing modificationTimeStamp
      */
+    #[\Deprecated(message: "use getModificationTimeStamp and convert to desired timezone", since: "7.0.0")]
     public function getModificationTimeStampAsISO(bool $localized = false)
     {
         if (isset($this->modificationTimeStamp) and $this->modificationTimeStamp instanceof \DateTime) {
@@ -298,6 +304,8 @@ abstract class Entity
 
     /**
      * Setter for $timeZone.
+     *
+     * @deprecated version 7.0.0
      *
      * @param string $timeZone the time zone to set
      *
