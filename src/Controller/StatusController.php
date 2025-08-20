@@ -21,7 +21,9 @@ final class StatusController extends AbstractController
         private readonly TransformedFinder $searchPelagosFinder,
         private readonly Client $elasticaClient,
         private readonly string $expectedDatasetCountMin,
-        private readonly string $indexName
+        private readonly string $indexName,
+        private readonly string $storageDir,
+        private readonly string $uploadDir
     ) {
     }
 
@@ -33,13 +35,15 @@ final class StatusController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/status', name: 'app_status')]
-    public function index(): Response
+    public function index(): JsonResponse
     {
         $databaseStatus = $this->getDatabaseEngineStatus();
         $elasticsearchStatus = $this->getElasticStatus();
         $pelagosDatasetCount = $this->getPelagosDatasetCount();
+        $fileSystemStatus = $this->testFilesystemsPaths();
 
-        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $this->expectedDatasetCountMin ? 'ok' : 'error';
+        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $this->expectedDatasetCountMin && $fileSystemStatus ? 'ok' : 'error';
+
         $returnCode = $overallStatus === 'ok' ? 200 : 500;
 
         $status = [
@@ -49,6 +53,7 @@ final class StatusController extends AbstractController
             'database' => $databaseStatus,
             'elasticsearch' => $elasticsearchStatus,
             'pelagosDatasetCount' => $pelagosDatasetCount,
+            'fileSystems' => $fileSystemStatus
         ];
 
         return new JsonResponse(
@@ -117,6 +122,26 @@ final class StatusController extends AbstractController
             $status = $clusterHealthData['status']; // e.g., green, yellow, red
 
             return $indexStatus === 200 && ($status === 'green' || $status === 'yellow');
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Test critical filesystem paths.
+     */
+    private function testFilesystemsPaths(): bool
+    {
+        try {
+            if (!is_dir($this->storageDir) || !is_dir($this->uploadDir)) {
+                return false;
+            }
+
+            if (!is_writable($this->uploadDir)) {
+                return false;
+            }
+
+            return true;
         } catch (\Throwable $e) {
             return false;
         }

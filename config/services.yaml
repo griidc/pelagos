@@ -201,6 +201,8 @@ services:
         bind:
             string $expectedDatasetCountMin: "%env(EXPECTED_DATASET_COUNT_MIN)%"
             string $indexName: "%env(SEARCH_TOOL_INDEX)%"
+            string $storageDir: "%env(DATA_STORE_DIRECTORY)%"
+            string $uploadDir: "%env(HOMEDIR_PREFIX)%"
 
     App\Controller\UI\SearchPageController:
         bind:
