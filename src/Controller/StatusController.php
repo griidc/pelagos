@@ -42,7 +42,13 @@ final class StatusController extends AbstractController
         $pelagosDatasetCount = $this->getPelagosDatasetCount();
         $fileSystemStatus = $this->testFilesystemsPaths();
 
-        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $this->expectedDatasetCountMin && $fileSystemStatus ? 'ok' : 'error';
+        if ($this->getParameter('kernel.environment') === 'prod') {
+            $errorQueueStatus = $this->checkErrorQueueHasMessages();
+        } else {
+            $errorQueueStatus = false; // The normal state of false means the error queue is empty.
+        }
+
+        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $this->expectedDatasetCountMin && $fileSystemStatus && !$errorQueueStatus ? 'ok' : 'error';
 
         $returnCode = $overallStatus === 'ok' ? 200 : 500;
 
@@ -53,7 +59,8 @@ final class StatusController extends AbstractController
             'database' => $databaseStatus,
             'elasticsearch' => $elasticsearchStatus,
             'pelagosDatasetCount' => $pelagosDatasetCount,
-            'fileSystems' => $fileSystemStatus
+            'fileSystems' => $fileSystemStatus,
+            'errorMessageQueue' => $errorQueueStatus
         ];
 
         return new JsonResponse(
@@ -145,5 +152,18 @@ final class StatusController extends AbstractController
         } catch (\Throwable $e) {
             return false;
         }
+    }
+
+    private function checkErrorQueueHasMessages(): bool
+    {
+        // Assuming a service or method exists to interact with the message queue system
+        // Replace the following with actual logic to check the error queue
+        $errorQueue = $this->get('messenger.transport.failed');
+
+        if ($errorQueue->getMessageCount() > 0) {
+            return true;
+        }
+
+        return false;
     }
 }
