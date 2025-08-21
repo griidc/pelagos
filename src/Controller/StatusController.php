@@ -3,17 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Dataset;
+use App\Util\ServiceStatus;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Client;
 use Elastica\Index;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class StatusController extends AbstractController
 {
-    private const STATUS_TOOL_VERSION = '1.0.0';
+    private const STATUS_TOOL_VERSION = '1.0.3';
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -22,7 +25,7 @@ final class StatusController extends AbstractController
         private readonly int $expectedDatasetCountMin,
         private readonly string $indexName,
         private readonly string $storageDir,
-        private readonly string $uploadBaseDir
+        private readonly string $uploadBaseDir,
     ) {
     }
 
@@ -30,60 +33,69 @@ final class StatusController extends AbstractController
      * This route returns JSON status information about the application component and
      * returns an overall response code for external monitoring of aggregate system
      * health.
-     *
-     * @return JsonResponse
      */
     #[Route('/status', name: 'app_status')]
-    public function index(): JsonResponse
+    public function index(): Response
     {
         $databaseStatus = $this->getDatabaseEngineStatus();
         $elasticsearchStatus = $this->getElasticStatus();
         $pelagosDatasetCount = $this->getPelagosDatasetCount();
         $fileSystemStatus = $this->testFilesystemsPaths();
 
-        $overallStatus = $databaseStatus && $elasticsearchStatus && $pelagosDatasetCount >= $this->expectedDatasetCountMin && $fileSystemStatus ? 'ok' : 'error';
+        /**
+         * @var ArrayCollection<array-key, ServiceStatus> $services
+         */
+        $services = new ArrayCollection();
 
-        $returnCode = $overallStatus === 'ok' ? 200 : 500;
+        $services->add($databaseStatus);
+        $services->add($elasticsearchStatus);
+        $services->add($fileSystemStatus);
+        $services->add($pelagosDatasetCount);
+
+        $allServicesOk = 0 === $services->filter(function (ServiceStatus $serviceStatus) {
+            return ServiceStatus::STATUS_ERROR === $serviceStatus->getStatus();
+        })->count();
 
         $status = [
-            'status' => $overallStatus,
+            'overallStatus' => $allServicesOk ? ServiceStatus::STATUS_OK : ServiceStatus::STATUS_ERROR,
             'version' => self::STATUS_TOOL_VERSION,
             'timestamp' => (new \DateTime())->format('c'),
-            'database' => $databaseStatus,
-            'elasticsearch' => $elasticsearchStatus,
-            'pelagosDatasetCount' => $pelagosDatasetCount,
-            'fileSystems' => $fileSystemStatus
+            'database' => $databaseStatus->getResults(),
+            'elasticsearch' => $elasticsearchStatus->getResults(),
+            'pelagosDatasetCount' => $pelagosDatasetCount->getResults(),
+            'fileSystems' => $fileSystemStatus->getResults(),
         ];
 
         return new JsonResponse(
             data: $status,
-            status: $returnCode
+            status: $allServicesOk ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
 
     /**
      * Checks the database connection by executing a simple query.
-     *
-     * @return bool True if the database is reachable, false otherwise.
      */
-    private function getDatabaseEngineStatus(): bool
+    private function getDatabaseEngineStatus(): ServiceStatus
     {
+        $serviceStatus = new ServiceStatus();
         try {
             $connection = $this->entityManager->getConnection();
             $connection->executeQuery('SELECT 1');
-            return true;
+            $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
+            $serviceStatus->setData(['Database connection' => 'Successful']);
         } catch (\Throwable $e) {
-            return false;
+            $serviceStatus->setThrowable($e);
         }
+
+        return $serviceStatus;
     }
 
     /**
      * Gets the count of datasets in the Pelagos system.
-     *
-     * @return int The number of datasets.
      */
-    private function getPelagosDatasetCount(): int
+    private function getPelagosDatasetCount(): ServiceStatus
     {
+        $serviceStatus = new ServiceStatus();
         try {
             $queryBuilder = $this->entityManager->createQueryBuilder();
             $count = $queryBuilder
@@ -92,19 +104,21 @@ final class StatusController extends AbstractController
                 ->getQuery()
                 ->getSingleScalarResult();
 
-            return (int) $count;
+            $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
+            $serviceStatus->setData(['Number of Datasets' => (int) $count]);
         } catch (\Throwable $e) {
-            return 0;
+            $serviceStatus->setThrowable($e);
         }
+
+        return $serviceStatus;
     }
 
     /**
      * Checks the status of the Elasticsearch service.
-     *
-     * @return bool True if Elasticsearch is reachable and healthy, false otherwise.
      */
-    private function getElasticStatus(): bool
+    private function getElasticStatus(): ServiceStatus
     {
+        $serviceStatus = new ServiceStatus();
         try {
             $client = $this->elasticaClient;
 
@@ -120,30 +134,53 @@ final class StatusController extends AbstractController
             // Accessing specific data within the cluster health data:
             $status = $clusterHealthData['status']; // e.g., green, yellow, red
 
-            return $indexStatus === 200 && ($status === 'green' || $status === 'yellow');
+            $result = [];
+            $result['index'] = $indexStatus;
+            $result['status'] = $status;
+            $serviceStatus->setData($result);
+
+            if (200 === $indexStatus && ('green' == $status || 'yellow' == $status)) {
+                $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
+            }
         } catch (\Throwable $e) {
-            return false;
+            $serviceStatus->setThrowable($e);
         }
+
+        return $serviceStatus;
     }
 
     /**
      * Test critical filesystem paths.
      */
-    private function testFilesystemsPaths(): bool
+    private function testFilesystemsPaths(): ServiceStatus
     {
+        $serviceStatus = new ServiceStatus();
         try {
             $uploadDirectory = $this->uploadBaseDir . '/upload';
-            if (!is_dir($this->storageDir) || !is_dir($uploadDirectory)) {
-                return false;
+            if (!is_dir($this->storageDir)) {
+                $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
+                $serviceStatus->setData(['error' => "Required storage directory is missing: {$this->storageDir}"]);
+            } else {
+                $serviceStatus->setData(['info' => "Storage directory is present: {$this->storageDir}"]);
+            }
+
+            if (!is_dir($uploadDirectory)) {
+                $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
+                $serviceStatus->setData(['error' => "Required upload directory is missing: {$uploadDirectory}"]);
+            } else {
+                $serviceStatus->setData(['info' => "Upload directory is present: {$uploadDirectory}"]);
             }
 
             if (!is_writable($uploadDirectory)) {
-                return false;
+                $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
+                $serviceStatus->setData(['error' => "Upload directory is not writable: {$uploadDirectory}"]);
+            } else {
+                $serviceStatus->setData(['info' => "Upload directory is writable: {$uploadDirectory}"]);
             }
-
-            return true;
         } catch (\Throwable $e) {
-            return false;
+            $serviceStatus->setThrowable($e);
         }
+
+        return $serviceStatus;
     }
 }
