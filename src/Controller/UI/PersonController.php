@@ -76,20 +76,4 @@ class PersonController extends AbstractController
 
         return $this->render('template/Person.html.twig', $ui);
     }
-
-    /**
-     * The Person profile page.
-     *
-     * @param Person $person The id of the entity to retrieve.
-     *
-     * @throws NotFoundHttpException When the person is not found.
-     *
-     *
-     * @return Response A Response instance.
-     */
-    #[Route(path: '/profile/{id}', name: 'pelagos_app_ui_person_profile_page', requirements: ['id' => '\d+'])]
-    public function personProfilePage(Person $person): Response
-    {
-        return $this->render('Person/index.html.twig', ['person' => $person]);
-    }
 }
