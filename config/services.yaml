@@ -197,6 +197,13 @@ services:
         bind:
             FOS\ElasticaBundle\Persister\ObjectPersister $objectPersister: "@fos_elastica.object_persister.search_pelagos"
 
+    App\Controller\StatusController:
+        bind:
+            int $expectedDatasetCountMin: "%env(EXPECTED_DATASET_COUNT_MIN)%"
+            string $indexName: "%env(SEARCH_TOOL_INDEX)%"
+            string $storageDir: "%env(DATA_STORE_DIRECTORY)%"
+            string $uploadBaseDir: "%env(HOMEDIR_PREFIX)%"
+
     App\Controller\UI\SearchPageController:
         bind:
             string $customTemplate: '%env(CUSTOM_BASE_TEMPLATE)%'
