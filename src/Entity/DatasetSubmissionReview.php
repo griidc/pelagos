@@ -12,6 +12,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 #[ORM\Entity]
 class DatasetSubmissionReview extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

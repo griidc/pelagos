@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Assert\GroupSequence(['id', 'unique_id', 'ResearchGroup', 'Entity'])]
 #[UniqueEntity(fields: ['name', 'fundingCycle'], errorPath: 'name', message: 'A Research Group with this name already exists')]
 #[UniqueEntity('shortName', message: 'A Research Group with this Short name already exists')]
-class ResearchGroup extends Entity
+class ResearchGroup extends Entity implements EntityInterface
 {
     /**
      * A friendly name for this type of entity.
@@ -46,7 +46,7 @@ class ResearchGroup extends Entity
      *
      * @var int
      */
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', name: 'id')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: CustomResearchGroupGenerator::class)]
@@ -209,6 +209,11 @@ class ResearchGroup extends Entity
     #[Serializer\Groups(['data'])]
     #[Assert\NotNull(message: 'Please select Yes or No')]
     protected $locked = false;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     /**
      * Getter for Datasets.

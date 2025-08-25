@@ -14,6 +14,8 @@ use JMS\Serializer\Annotation as Serializer;
 #[ORM\Entity(repositoryClass: KeywordRepository::class)]
 class Keyword extends Entity
 {
+    use IdTrait;
+
     /**
      * Type of the Keyword.
      */

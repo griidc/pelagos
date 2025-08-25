@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 class DOI extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

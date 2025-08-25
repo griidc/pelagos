@@ -45,7 +45,9 @@ class Geometry
         $connection = $this->entityManager->getConnection();
         $statement = $connection->prepare($sql);
         try {
-            $result = $statement->executeQuery(array('gml' => $gml, 'srid' => 4326));
+            $statement->bindValue('gml', $gml);
+            $statement->bindValue('srid', 4326);
+            $result = $statement->executeQuery();
         } catch (DriverException $e) {
             if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
                 $err = 'unknown spatial reference system in GML';
@@ -81,7 +83,8 @@ class Geometry
         $connection = $this->entityManager->getConnection();
         $statement = $connection->prepare($sql);
         try {
-            $result = $statement->executeQuery(array('gml' => $gml));
+            $statement->bindValue('gml', $gml);
+            $result = $statement->executeQuery();
         } catch (DriverException $e) {
             if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
                 $err = 'unknown spatial reference system in GML';
@@ -112,7 +115,9 @@ class Geometry
         $connection = $this->entityManager->getConnection();
         $statement = $connection->prepare($sql);
         try {
-            $result = $statement->executeQuery(array('gml' => $gml, 'srid' => 4326));
+            $statement->bindValue('gml', $gml);
+            $statement->bindValue('srid', 4326);
+            $result = $statement->executeQuery();
         } catch (DriverException $e) {
             if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
                 $err = 'unknown spatial reference system in GML';
@@ -141,7 +146,10 @@ class Geometry
         $connection = $this->entityManager->getConnection();
         $statement = $connection->prepare($sql);
         try {
-            $result = $statement->executeQuery(array('gml' => $gml, 'id' => $id, 'name' => $udi));
+            $statement->bindValue('gml', $gml);
+            $statement->bindValue('id', $id);
+            $statement->bindValue('name', $udi);
+            $result = $statement->executeQuery();
         } catch (DriverException $e) {
             throw new InvalidGmlException($e->getMessage());
         }

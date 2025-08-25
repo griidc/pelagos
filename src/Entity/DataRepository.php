@@ -18,6 +18,8 @@ use App\Exception\NotDeletableException;
 #[UniqueEntity(fields: ['name'], errorPath: 'name', message: 'A Data Repository with this name already exists')]
 class DataRepository extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

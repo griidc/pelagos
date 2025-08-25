@@ -21,29 +21,16 @@ class CITextType extends Type
 
     /**
      * Gets the SQL declaration snippet for a field of this type.
-     *
-     * @param array            $fieldDeclaration The field declaration.
-     * @param AbstractPlatform $platform         The currently used database platform.
-     *
-     * @return string The SQL snippet to create a column of type citype.
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'citext';
     }
 
     /**
      * Converts a value from its PHP representation to its database representation of this type.
-     *
-     * @param mixed            $value    The value to convert.
-     * @param AbstractPlatform $platform The currently used database platform.
-     *
-     * @throws DBALException::notSupported When attempting to convert from anything
-     *                                     other than a PHP DateInterval.
-     *
-     * @return string The database representation of the value.
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         // pass null values through and do no further checks.  Useful in case a null is allowed in DB.
         if ($value === null) {

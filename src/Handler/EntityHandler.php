@@ -176,7 +176,10 @@ class EntityHandler
         // Get the query.
         $query = $qb->getQuery();
         // Return the result using the requested hydrator.
-        return $query->getResult($hydrator);
+        if ($hydrator !== null) {
+            $query->setHydrationMode($hydrator);
+        }
+        return $query->getResult();
     }
 
     private function filterByFundingOrganization(QueryBuilder $qb, string $entityClass)

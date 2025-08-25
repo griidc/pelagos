@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ProductTypeDescriptorRepository::class)]
 class ProductTypeDescriptor extends Entity
 {
+    use IdTrait;
     use DescriptorTypeTrait;
 
     /**

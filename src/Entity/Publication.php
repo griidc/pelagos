@@ -13,6 +13,8 @@ use Pelagos\HTTPStatus;
 #[ORM\Entity]
 class Publication extends Entity
 {
+    use IdTrait;
+
     /**
      * Friendly name for Publication Entity.
      */

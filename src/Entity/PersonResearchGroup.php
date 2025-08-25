@@ -19,6 +19,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[UniqueEntity(fields: ['person', 'researchGroup'], errorPath: 'person', message: 'A Person can have only one association with a Research Group')]
 class PersonResearchGroup extends Entity implements PersonAssociationInterface
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

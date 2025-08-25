@@ -239,11 +239,11 @@ class DatasetRepository extends ServiceEntityRepository
      *
      * @return QueryBuilder
      */
-    public function createSortedQueryBuilder(string $alias, string $indexBy = null)
+    public function createSortedQueryBuilder(string $alias, ?string $indexBy = null)
     {
-        $qb = $this->_em->createQueryBuilder()
-        ->select($alias)
-        ->from($this->_entityName, $alias, $indexBy);
+        $qb = $this->createQueryBuilder($alias)
+        ->select($alias);
+        // ->from($entityName, $alias, $indexBy);
 
         if ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
@@ -18,20 +20,11 @@ class PersonToken extends Entity
     const FRIENDLY_NAME = 'Person Token';
 
     /**
-     * This is defined here to override the base class id.
-     *
-     * This is not used by the PersonToken Entity because it gets its identity through Person.
-     *
-     * @var null
-     */
-    protected $id;
-
-    /**
      * Property containing a \DateInterval of validity of token.
      *
      * @var \DateInterval $validFor
      */
-    #[ORM\Column(type: 'dateinterval')]
+    #[ORM\Column(type: Types::DATEINTERVAL)]
     protected $validFor;
 
     /**
@@ -40,8 +33,9 @@ class PersonToken extends Entity
      * @var Person
      *
      */
-    #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'token')]
+    #[ORM\OneToOne(targetEntity: Person::class, inversedBy: 'token')]
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[Assert\NotBlank(message: 'Person is required')]
     protected $person;
 
@@ -81,6 +75,14 @@ class PersonToken extends Entity
         $this->setUse($use);
         $this->setValidFor($validFor);
         $this->generateTokenText();
+    }
+
+    public function getId(): ?int
+    {
+        if ($this->getPerson() instanceof Person) {
+            return $this->getPerson()->getId();
+        }
+        return null;
     }
 
     /**

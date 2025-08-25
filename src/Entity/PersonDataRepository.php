@@ -15,6 +15,8 @@ use App\Validator\Constraints as CustomAssert;
 #[UniqueEntity(fields: ['person', 'dataRepository'], errorPath: 'person', message: 'A Person can have only one association with a Data Repository')]
 class PersonDataRepository extends Entity implements PersonAssociationInterface
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

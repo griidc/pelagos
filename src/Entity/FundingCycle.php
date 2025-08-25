@@ -21,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['udiPrefix'], message: 'This UDI prefix is already used.')]
 class FundingCycle extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Attributes\FriendlyName;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -53,22 +54,14 @@ class Account extends Entity implements UserInterface, EquatableInterface
     public const ROLE_DEVELOPER = 'ROLE_DEVELOPER';
 
     /**
-     * This is defined here to override the base class id.
-     *
-     * This is not used by the Account Entity because it gets its identity through Person.
-     *
-     * @var null
-     */
-    protected $id;
-
-    /**
      * Person this account is attached to.
      *
      * @var Person
      *
      */
-    #[ORM\OneToOne(targetEntity: 'Person', inversedBy: 'account')]
+    #[ORM\OneToOne(targetEntity: Person::class, inversedBy: 'account')]
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[Assert\NotBlank(message: 'An account must be attached to a Person')]
     protected $person;
 
@@ -189,11 +182,12 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return int The EntityID of the Person associated with this Account.
      */
-    public function getId()
+    public function getId(): ?int
     {
         if ($this->getPerson() instanceof Person) {
             return $this->getPerson()->getId();
         }
+        return null;
     }
 
     /**
@@ -609,7 +603,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      */
     public function isEqualTo(UserInterface $user): bool
     {
-        if ($this->getUsername() === $user->getUsername()) {
+        if ($this->getUsername() === $user->getUserIdentifier()) {
             return true;
         }
 

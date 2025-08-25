@@ -21,7 +21,7 @@ class DoctrineDataCenterListener
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $unitOfWork = $entityManager->getUnitOfWork();
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             $this->updateDataCenter($entity, $entityManager);
