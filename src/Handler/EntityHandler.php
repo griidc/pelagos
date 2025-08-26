@@ -177,7 +177,7 @@ class EntityHandler
         $query = $qb->getQuery();
         // Return the result using the requested hydrator.
         if ($hydrator !== null) {
-            $query->setHydrationMode($hydrator);
+            return $query->getResult($hydrator);
         }
         return $query->getResult();
     }
