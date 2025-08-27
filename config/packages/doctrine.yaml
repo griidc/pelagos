@@ -24,7 +24,6 @@ doctrine:
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: sequence
         auto_mapping: true
-        enable_lazy_ghost_objects: true
         mappings:
             App:
                 type: attribute
