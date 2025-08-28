@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class LoginAttempts extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

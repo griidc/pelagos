@@ -15,6 +15,8 @@ use App\Exception\PasswordException;
 #[ORM\Entity]
 class Password extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
