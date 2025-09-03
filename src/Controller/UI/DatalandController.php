@@ -178,7 +178,7 @@ class DatalandController extends AbstractController
         $dataset = $datasets[0];
 
         if ($dataset->getDatasetLifecycleStatus() === DatasetLifecycleStatus::NONE) {
-            throw new NotFoundHttpException("Dataset is not yet accepted: $udi");
+            throw new NotFoundHttpException("This Dataset is not yet approved: $udi");
         }
 
         return $dataset;
