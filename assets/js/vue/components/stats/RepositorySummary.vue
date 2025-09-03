@@ -102,6 +102,6 @@ export default {
 }
 
 #program-resources .col-sm img.inline-block {
-    margin: 0 auto 6px;
+    margin-bottom: 6px;
 }
 </style>
