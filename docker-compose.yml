@@ -18,3 +18,17 @@ services:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ports:
       - 9200:9200
+  openldap:
+    image: bitnami/openldap:latest
+    container_name: openldap
+    ports:
+      - 389:389
+    environment:
+      - LDAP_PORT_NUMBER=389
+      - LDAP_ROOT=dc=griidc,dc=org
+      - LDAP_BASE=dc=griidc,dc=org
+      - LDAP_BIND_DN=${LDAP_BIND_DN}
+      - LDAP_BIND_PASSWORD=${LDAP_BIND_PW}
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=${LDAP_ADMIN_PW}
+
