@@ -93,4 +93,16 @@ export default {
     font-size: 18px;
     text-transform: uppercase;
 }
+
+/* Center icons above counts/labels */
+#program-resources .col-sm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#program-resources .col-sm img.inline-block {
+    display: block;
+    margin: 0 auto 6px;
+}
 </style>
