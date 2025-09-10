@@ -40,13 +40,16 @@ class KeywordRepository extends ServiceEntityRepository
         }
     }
 
-    public function getKeywords(?KeywordType $keywordType)
+    public function getKeywords(?KeywordType $keywordType = null): array
     {
         $qb = $this->createQueryBuilder('k');
 
-        $qb
-        ->where('k.type = :type')
-        ->setParameter('type', $keywordType);
+        if ($keywordType instanceof KeywordType) {
+            $qb
+            ->where('k.type = :type')
+            ->setParameter('type', $keywordType);
+        }
+
         if ($keywordType === KeywordType::TYPE_GCMD) {
             $qb->andWhere($qb->expr()->notLike('k.displayPath', ':path'))
             ->orWhere('k.label = :science')
