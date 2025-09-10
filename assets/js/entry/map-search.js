@@ -123,6 +123,64 @@ $(() => {
     },
   }).dxTreeList('instance');
 
+  const kwTreeList = $('#kw-tree').dxTreeList({
+    dataSource: Routing.generate('api_keywords_level2'),
+    keyExpr: 'id',
+    parentIdExpr: 'parent',
+    filterRow: {
+      visible: false,
+    },
+    headerFilter: {
+      visible: false,
+    },
+    searchPanel: {
+      visible: true,
+    },
+    columns: [{
+      dataField: 'label',
+      caption: 'Select All',
+      dataType: 'string',
+    },
+    {
+      dataType: 'number',
+      dataField: 'datasets',
+      visible: false,
+      allowSearch: false,
+    },
+    ],
+    disabled: false,
+    showRowLines: false,
+    showBorders: false,
+    showColumnHeaders: true,
+    columnAutoWidth: false,
+    wordWrapEnabled: true,
+    selection: {
+      allowSelectAll: true,
+      mode: 'multiple',
+      recursive: true,
+    },
+    onSelectionChanged(e) {
+      let selectedItems = [];
+      e.selectedRowsData.forEach((item) => {
+        const { researchGroup } = item;
+        if (Array.isArray(researchGroup)) {
+          item.researchGroup.forEach((group) => {
+            selectedItems.push(group);
+          });
+        } else {
+          selectedItems.push(researchGroup);
+        }
+      });
+
+      if (selectedItems.length === 0) {
+        selectedItems = null;
+      }
+
+      const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+      dataGrid.columnOption('researchgroup', 'filterValue', selectedItems);
+    },
+  }).dxTreeList('instance');
+
   const popup = $('#rg-popup').dxPopup({
     width: 400,
     height: 600,
@@ -149,6 +207,52 @@ $(() => {
             treeList.deselectAll();
             treeList.forEachNode((node) => {
               treeList.collapseRow(node.key);
+            });
+          },
+        },
+      },
+      {
+        widget: 'dxButton',
+        toolbar: 'bottom',
+        location: 'center',
+        options: {
+          text: 'Close',
+          type: 'default',
+          stylingMode: 'contained',
+          onClick() {
+            popup.hide();
+          },
+        },
+      },
+    ],
+  }).dxPopup('instance');
+
+  const keywordPopup = $('#kw-popup').dxPopup({
+    width: 400,
+    height: 600,
+    visible: false,
+    title: 'Keyword Filter',
+    hideOnOutsideClick: true,
+    showCloseButton: false,
+    showTitle: false,
+    position: {
+      my: 'top',
+      at: 'top',
+      of: '#rg-select',
+    },
+    toolbarItems: [
+      {
+        widget: 'dxButton',
+        toolbar: 'bottom',
+        location: 'center',
+        options: {
+          text: 'Reset',
+          type: 'default',
+          stylingMode: 'contained',
+          onClick() {
+            kwTreeList.deselectAll();
+            kwTreeList.forEachNode((node) => {
+              kwTreeList.collapseRow(node.key);
             });
           },
         },
@@ -388,6 +492,19 @@ $(() => {
           text: 'Organization Filter',
           onClick() {
             popup.show();
+          },
+        },
+      },
+      {
+        location: 'before',
+        widget: 'dxButton',
+        options: {
+          elementAttr: {
+            id: 'kw-select',
+          },
+          text: 'Keyword Filter',
+          onClick() {
+            keywordPopup.show();
           },
         },
       },

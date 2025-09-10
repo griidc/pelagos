@@ -44,6 +44,14 @@ fos_elastica:
                         restrictions: ~
                         placeKeywords: { boost: 3 }
                         themeKeywords: { boost: 3 }
+                        keywords:
+                            type: nested
+                            include_in_parent: true
+                            properties:
+                                displayPath:
+                                    type: 'text'
+                                type:
+                                    type: 'keyword'
                 doi:
                     type: 'nested'
                     properties:
@@ -140,6 +148,8 @@ fos_elastica:
                             properties:
                                 displayPath:
                                     type: 'text'
+                                type:
+                                    type: 'keyword'
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:
