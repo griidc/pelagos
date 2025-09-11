@@ -4,7 +4,7 @@ namespace App\Controller\UI;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
-use App\Handler\EntityHandler;
+use App\Entity\DatasetSubmission;
 use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -72,28 +72,26 @@ class DatasetRestrictionsController extends AbstractController
      * This updates the dataset submission restrictions property.Dataset Submission PATCH API exists,
      * but doesn't work with Symfony.
      *
-     * @param Request       $request       The HTTP request.
-     * @param integer       $id            The entity ID of a Dataset.
-     * @param EntityHandler $entityHandler A Pelagos entity handler.
-     *
+     * @param Request                $request       The HTTP request.
+     * @param integer                $id            The entity ID of a Dataset.
+     * @param EntityManagerInterface $entityManager A Doctrine ORM entity manager.
      *
      * @throws PersistenceException    Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
      * @return Response
      */
     #[Route(path: '/dataset-restrictions/{id}', name: 'pelagos_app_ui_datasetrestrictions_post', methods: ['POST'])]
-    public function postAction(Request $request, int $id, EntityHandler $entityHandler, TokenStorageInterface $tokenStorage)
+    public function postAction(Request $request, int $id, EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage)
     {
         $restrictionKey = $request->request->get('restrictions');
 
-        $datasets = $entityHandler->getBy(Dataset::class, array('id' => $id));
+        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array('id' => $id));
 
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
-            $datasetStatus = $dataset->getDatasetStatus();
 
-            if ($restrictionKey) {
+            if ($restrictionKey !== null) {
                 // Record the original state for logging purposes before changing it.
                 $from = $datasetSubmission->getRestrictions();
                 /** @var Account $account */
@@ -104,9 +102,10 @@ class DatasetRestrictionsController extends AbstractController
                 $datasetSubmission->setRestrictions($restrictionKey);
 
                 try {
-                    $entityHandler->update($datasetSubmission);
-                } catch (PersistenceException $exception) {
-                    throw new PersistenceException($exception->getMessage());
+                    $entityManager->persist($datasetSubmission);
+                    $entityManager->flush();
+                } catch (\Exception $exception) {
+                    throw new \Exception($exception->getMessage());
                 }
             } else {
                 // Send 500 response code if restriction key is null
