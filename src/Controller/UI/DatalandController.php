@@ -2,7 +2,6 @@
 
 namespace App\Controller\UI;
 
-use App\Handler\EntityHandler;
 use App\Util\Geometry;
 use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,11 +35,11 @@ class DatalandController extends AbstractController
     protected $metadataUtil;
 
     /**
-     * Entity Handler.
+     * Entity Manager.
      *
-     * @var entityHandler
+     * @var EntityManagerInterface
      */
-    protected $entityHandler;
+    protected $entityManager;
 
     /**
      * Base URL of Issue Tracker (Currenty JIRA)
@@ -52,14 +51,14 @@ class DatalandController extends AbstractController
     /**
      * Dataland Controller constructor.
      *
-     * @param EntityHandler $entityHandler        The Entity Handler.
-     * @param Geometry      $geoUtil              The Geomtery Util.
-     * @param Metadata      $metadataUtil         The Metadata Util.
-     * @param string        $issueTrackingBaseUrl The base URL for the GRIIDC issuetracker (Jira).
+     * @param EntityManagerInterface $entityManager        The Entity Manager.
+     * @param Geometry               $geoUtil              The Geometry Util.
+     * @param Metadata               $metadataUtil         The Metadata Util.
+     * @param string                 $issueTrackingBaseUrl The base URL for the GRIIDC issuetracker (Jira).
      */
-    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
+    public function __construct(EntityManagerInterface $entityManager, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
     {
-        $this->entityHandler = $entityHandler;
+        $this->entityManager = $entityManager;
         $this->geoUtil = $geoUtil;
         $this->metadataUtil = $metadataUtil;
         $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
@@ -163,7 +162,7 @@ class DatalandController extends AbstractController
      */
     protected function getDataset(string $udi)
     {
-        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
 
         if (count($datasets) == 0) {
             throw new NotFoundHttpException("No dataset found for UDI: $udi");
