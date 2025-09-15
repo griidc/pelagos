@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
+use App\Enum\DatasetLifecycleStatus;
 use App\Util\GmlUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -173,7 +174,14 @@ class DatalandController extends AbstractController
             throw new \Exception("Got more than one return for UDI: $udi");
         }
 
-        return $datasets[0];
+        /** @var Dataset $dataset */
+        $dataset = $datasets[0];
+
+        if ($dataset->getDatasetLifecycleStatus() === DatasetLifecycleStatus::NONE) {
+            throw new NotFoundHttpException("This Dataset is not yet approved: $udi");
+        }
+
+        return $dataset;
     }
 
     /**
@@ -242,7 +250,6 @@ class DatalandController extends AbstractController
             }
         }
 
-        $downloadCount = null;
         $downloads = [];
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
         if ($dataset->isAvailable()) {
@@ -283,7 +290,7 @@ class DatalandController extends AbstractController
                 'datasetSubmissionLockStatus' => true,
                 'issuetracker' => $this->issueTrackingBaseUrl,
                 'boundingBox' => $boundingBox,
-                'esri_api_key' => $mainsite = $this->getParameter('esri_api_key'),
+                'esri_api_key' => $this->getParameter('esri_api_key'),
             )
         );
     }
