@@ -12,10 +12,10 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@alpinejs/collapse@^3.14.9":
-  version "3.14.9"
-  resolved "https://registry.yarnpkg.com/@alpinejs/collapse/-/collapse-3.14.9.tgz#90b3b0c35543ce2cc8380a8d941dfed4536def4a"
-  integrity sha512-cUjbBVo4KR/CfFg0cLB+Q7a8SnjmD4MdxmtZvFjh25Dlf/ZWYPSPx/28b+aAykuX/SUoDPQRmdFiVVvq+iILHw==
+"@alpinejs/collapse@^3.15.0":
+  version "3.15.0"
+  resolved "https://registry.yarnpkg.com/@alpinejs/collapse/-/collapse-3.15.0.tgz#668188c5989db1aead243bcce4b6c61ab2b28bf2"
+  integrity sha512-RREZVE67/2E7rDZIxw3B5BGAFBm1x/16+3jeyjj+Fky4wPBqnhGCQZujkiggrOmdU6mcZPixYxkKFlhKfQMAXw==
 
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"
