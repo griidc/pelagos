@@ -20,7 +20,8 @@ class KeywordUtil
         $keywordsByLevel = $keywords->filter(
             function (Keyword $keyword) use ($level) {
                 return $keyword->getLevel() === $level;
-            });
+            }
+        );
 
         return $keywordsByLevel->toArray();
     }
