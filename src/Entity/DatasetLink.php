@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: 'App\Repository\DatasetLinksRepository')]
 class DatasetLink extends Entity
 {
+    use IdTrait;
+
     /**
      * Valid values for self::$functionCode.
      *

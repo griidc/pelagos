@@ -15,6 +15,8 @@ use JMS\Serializer\Annotation as Serializer;
 #[ORM\Entity]
 class DatasetPublication extends Entity
 {
+    use IdTrait;
+
     /**
      * A Pelagos Publication entity.
      *
