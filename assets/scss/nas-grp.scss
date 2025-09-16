@@ -209,6 +209,11 @@
   }
 }
 
+img,video {
+  height: auto;
+  max-width: 100%;
+}
+
 /* Font for applications */
 #pelagos-content {
   font-family: var(--type-font--lato) !important;
