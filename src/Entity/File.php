@@ -11,6 +11,8 @@ use JMS\Serializer\Annotation as Serializer;
 #[ORM\Entity(repositoryClass: 'App\Repository\FileRepository')]
 class File extends Entity
 {
+    use IdTrait;
+
     /**
      * Status value for a File that has been newly uploaded, not yet proccessed by "Filer".
      */

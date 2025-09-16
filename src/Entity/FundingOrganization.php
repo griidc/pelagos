@@ -21,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('shortName', message: 'A Funding Organization with this Short name already exists')]
 class FundingOrganization extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
