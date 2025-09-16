@@ -124,7 +124,7 @@ $(() => {
   }).dxTreeList('instance');
 
   const kwTreeList = $('#kw-tree').dxTreeList({
-    dataSource: Routing.generate('api_keywords_level2'),
+    dataSource: `${Routing.generate('api_keywords_level2')}/anzsrc`,
     keyExpr: 'id',
     parentIdExpr: 'parent',
     filterRow: {
@@ -140,10 +140,11 @@ $(() => {
       dataField: 'label',
       caption: 'Select All',
       dataType: 'string',
+      allowSearch: true,
     },
     {
-      dataType: 'number',
-      dataField: 'datasets',
+      dataType: 'string',
+      dataField: 'type',
       visible: false,
       allowSearch: false,
     },
@@ -162,14 +163,8 @@ $(() => {
     onSelectionChanged(e) {
       let selectedItems = [];
       e.selectedRowsData.forEach((item) => {
-        const { researchGroup } = item;
-        if (Array.isArray(researchGroup)) {
-          item.researchGroup.forEach((group) => {
-            selectedItems.push(group);
-          });
-        } else {
-          selectedItems.push(researchGroup);
-        }
+        const { id } = item;
+        selectedItems.push(id);
       });
 
       if (selectedItems.length === 0) {
@@ -177,7 +172,7 @@ $(() => {
       }
 
       const dataGrid = $('#datasets-grid').dxDataGrid('instance');
-      dataGrid.columnOption('researchgroup', 'filterValue', selectedItems);
+      dataGrid.columnOption('keywords', 'filterValue', selectedItems);
     },
   }).dxTreeList('instance');
 
@@ -266,7 +261,7 @@ $(() => {
           type: 'default',
           stylingMode: 'contained',
           onClick() {
-            popup.hide();
+            keywordPopup.hide();
           },
         },
       },
@@ -383,6 +378,17 @@ $(() => {
         id: 'researchgroup',
         name: 'researchgroup',
         dataField: 'researchGroup.id',
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'number',
+        selectedFilterOperation: '=',
+        filterOperations: ['='],
+      },
+      {
+        id: 'keywords',
+        name: 'keywords',
+        dataField: null,
         visible: false,
         allowSearch: false,
         allowHeaderFiltering: true,

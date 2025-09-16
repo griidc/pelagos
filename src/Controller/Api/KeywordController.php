@@ -22,16 +22,18 @@ class KeywordController extends AbstractController
         $keywords = $keywordRepository->getKeywords($keywordType);
         $level2Keywords = $keywordUtil->getKeywordsByLevel($keywords, 2);
 
-        $context = (new ObjectNormalizerContextBuilder())
-        ->withAttributes(['id', 'type', 'shortDisplayPath', 'displayPath', 'label']);
+        $data = [];
 
-        $json = $serializer->serialize($level2Keywords, 'json', $context->toArray());
+        foreach ($level2Keywords as $keyword) {
+            $data[] = [
+                'id' => $keyword->getId(),
+                'type' => $keyword->getType(),
+                'shortDisplayPath' => $keyword->getShortDisplayPath(),
+                'displayPath' => $keyword->getDisplayPath(),
+                'label' => $keyword->getLabel(),
+            ];
+        }
 
-        $data = json_decode($json, true);
-
-        return new JsonResponse(
-            data: $data,
-            json: true
-        );
+        return new JsonResponse(data: $data);
     }
 }
