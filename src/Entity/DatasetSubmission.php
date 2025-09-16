@@ -37,6 +37,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Entity(repositoryClass: 'App\Repository\DatasetSubmissionRepository')]
 class DatasetSubmission extends Entity
 {
+    use IdTrait;
+
     /**
      * Indicates the algorithm used to produce the MD hash.
      *

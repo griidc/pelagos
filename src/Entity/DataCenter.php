@@ -30,6 +30,8 @@ use App\Validator\Constraints as CustomAssert;
 #[ORM\DiscriminatorMap(['datacenter' => 'DataCenter', 'nationaldatacenter' => 'NationalDataCenter'])]
 class DataCenter extends Entity
 {
+    use IdTrait;
+
     /**
      * Name of the Data Center.
      *
