@@ -40,7 +40,7 @@ class KeywordRepository extends ServiceEntityRepository
         }
     }
 
-    public function getKeywords(?KeywordType $keywordType = null): array
+    public function getKeywordsByType(?KeywordType $keywordType = null): array
     {
         $qb = $this->createQueryBuilder('k');
 
@@ -61,6 +61,20 @@ class KeywordRepository extends ServiceEntityRepository
 
         return $qb->getQuery()
         ->getResult();
+    }
+
+    public function getKeywordByParent(int $parentId): array
+    {
+        $parentKeyword = $this->find($parentId);
+
+        return $this->createQueryBuilder('k')
+            ->select('k.id')
+            ->andWhere('k.displayPath LIKE :val')
+            ->setParameter('val', $parentKeyword?->getDisplayPath() . ' > %')
+            ->orderBy('k.label', 'ASC')
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
     }
 
 //    /**
