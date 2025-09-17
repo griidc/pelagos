@@ -598,8 +598,14 @@ $(() => {
             treeList.forEachNode((node) => {
               treeList.collapseRow(node.key);
             });
+            kwTreeList.deselectAll();
+            kwTreeList.searchByText('');
+            kwTreeList.forEachNode((node) => {
+              kwTreeList.collapseRow(node.key);
+            });
             GeoViz.resetFeatures();
             popup.hide();
+            keywordPopup.hide();
           },
         },
       },
