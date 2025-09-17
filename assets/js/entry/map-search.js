@@ -17,6 +17,17 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 import * as GeoViz from '../modules/geoViz-leaflet';
 
 $(() => {
+  const keywordFilters = [{
+    id: '',
+    text: 'Show All Keywords',
+  }, {
+    id: 'gcmd',
+    text: 'GCMD Keywords',
+  }, {
+    id: 'anzsrc',
+    text: 'ANZSRC Keywords',
+  }];
+
   const isNotEmpty = (v) => v != null && v !== '';
 
   const customDataSource = new CustomStore({
@@ -124,7 +135,7 @@ $(() => {
   }).dxTreeList('instance');
 
   const kwTreeList = $('#kw-tree').dxTreeList({
-    dataSource: `${Routing.generate('api_keywords_level2')}/anzsrc`,
+    dataSource: `${Routing.generate('api_keywords_level2')}/all`,
     keyExpr: 'id',
     parentIdExpr: 'parent',
     filterRow: {
@@ -136,16 +147,35 @@ $(() => {
     searchPanel: {
       visible: true,
     },
+    toolbar: {
+        enabled: true,
+        items: [
+          {
+            widget: 'dxSelectBox',
+            options: {
+              items: keywordFilters,
+              valueExpr: 'id',
+              displayExpr: 'text',
+              value: keywordFilters[0].id,
+              onValueChanged(e) {
+                kwTreeList.columnOption('type', 'filterValue', e.value);
+              },
+            }
+          },
+          "searchPanel",
+        ]
+    },
     columns: [{
       dataField: 'label',
-      caption: 'Select All',
+      caption: 'Keyword',
       dataType: 'string',
       allowSearch: true,
     },
     {
       dataType: 'string',
       dataField: 'type',
-      visible: false,
+      caption: 'Type',
+      visible: true,
       allowSearch: false,
     },
     ],
@@ -153,7 +183,7 @@ $(() => {
     showRowLines: false,
     showBorders: false,
     showColumnHeaders: true,
-    columnAutoWidth: false,
+    columnAutoWidth: true,
     wordWrapEnabled: true,
     selection: {
       allowSelectAll: true,
