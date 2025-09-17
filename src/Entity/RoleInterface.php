@@ -17,7 +17,7 @@ interface RoleInterface
     /**
      * Require that implementing classes provide a getName() function that returns the display weight of the Role.
      *
-     * @return string Return the display weight of this object.
+     * @return int Return the display weight of this object.
      */
     public function getWeight();
 }
