@@ -19,7 +19,7 @@ class KeywordController extends AbstractController
     public function getLevel2Keywords(KeywordRepository $keywordRepository, KeywordUtil $keywordUtil, SerializerInterface $serializer, string $type): Response
     {
         $keywordType = KeywordType::tryFrom($type);
-        $keywords = $keywordRepository->getKeywords($keywordType);
+        $keywords = $keywordRepository->getKeywordsByType($keywordType);
         $level2Keywords = $keywordUtil->getKeywordsByLevel($keywords, 2);
 
         $data = [];
