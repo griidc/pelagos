@@ -214,6 +214,9 @@ final class MapSearchController extends AbstractController
             $query->setQuery($mainQuery);
         }
 
+        // Only return these fields
+        $query->setSource(['title', 'udi', 'datasetLifecycleStatus', 'doi.doi']);
+
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
 
         /** @psalm-suppress PossiblyNullOperand */

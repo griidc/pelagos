@@ -148,22 +148,22 @@ $(() => {
       visible: true,
     },
     toolbar: {
-        enabled: true,
-        items: [
-          {
-            widget: 'dxSelectBox',
-            options: {
-              items: keywordFilters,
-              valueExpr: 'id',
-              displayExpr: 'text',
-              value: keywordFilters[0].id,
-              onValueChanged(e) {
-                kwTreeList.columnOption('type', 'filterValue', e.value);
-              },
-            }
+      enabled: true,
+      items: [
+        {
+          widget: 'dxSelectBox',
+          options: {
+            items: keywordFilters,
+            valueExpr: 'id',
+            displayExpr: 'text',
+            value: keywordFilters[0].id,
+            onValueChanged(e) {
+              kwTreeList.columnOption('type', 'filterValue', e.value);
+            },
           },
-          "searchPanel",
-        ]
+        },
+        'searchPanel',
+      ],
     },
     columns: [{
       dataField: 'label',
