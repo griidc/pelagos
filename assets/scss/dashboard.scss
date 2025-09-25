@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'components/buttons.scss';
+@import 'components/badge.scss';
+
+@source inline("{badge-none}");

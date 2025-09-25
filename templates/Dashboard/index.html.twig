@@ -1,0 +1,119 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dataset Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('dashboard') }}
+
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table thead tr {
+            /* background-color: #555555; */
+            /* color: #ffffff; */
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        /* .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        } */
+
+        /* .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid var(--color-primary);
+        } */
+
+        .styled-table tbody tr:hover {
+            background-color: #f3f3f3;);
+        }
+
+        .second-header {
+            background-color: var(--color-secondary);
+        }
+
+
+    </style>
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('dashboard') }}
+{% endblock javascripts %}
+
+{% block body %}
+    <div class="max-w-screen-xl mx-auto py-6">
+        <span class="text-4xl py-4 font-bold text-center block">Datasets for: {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span>
+
+        {% for researchGroup in researchGroups %}
+        <div class="shadow-lg border rounded-lg">
+            <div class="block second-header">
+                <span class="p-2 text-black font-bold block text-lg bg-gray-200" @click="expanded = ! expanded">
+                    <div class="float-end px-2">
+                        <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: white;"></i>
+                    </div>
+                    <div class="mr-10">
+                        Research Group: {{ researchGroup.name }}
+                    </div>
+                </span>
+            </div>
+        </div>
+
+
+        {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
+        <div class="ml-8">
+            <table class="table-auto w-full mt-4 border-none styled-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">UDI</th>
+                        <th style="width: 180px;">Point of Contact</th>
+                        <th style="width: 320px;">Title</th>
+                        <th style="width: 120px;">Status</th>
+                        <th style="width: 220px;">Details</th>
+                        <th style="width: 100px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dataset in datasets %}
+                    <tr>
+                        <td>{{ dataset.udi }}</td>
+                        <td>{{ dataset.getPrimaryPointOfContact }}</td>
+                        <td>{{ dataset.title }}</td>
+                        <td>
+                            <span class="badge-pill badge-{{ dataset.getDatasetLifecycleStatus.value|lower }}">{{ dataset.getDatasetLifecycleStatus.value }}</span>
+                        </td>
+                        <td>{{ dataset.getDatasetLifecycleStatus.description }}</td>
+                        <td>
+                            <button class="button button-pill h-50">View</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not loop.last %}
+            <hr class="border-t-4 py-6 border-dashed border-gray-400 opacity-70" style="height: 0;">
+        {% endif %}
+
+        {% endfor %}
+    </div>
+{% endblock %}

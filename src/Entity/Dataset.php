@@ -294,7 +294,7 @@ class Dataset extends Entity
     /**
      * Gets the Research Group this Dataset is attached to.
      *
-     * @return ResearchGroup the Research Group this DIF is attached to
+     * @return ResearchGroup the Research Group this Dataset is attached to
      */
     public function getResearchGroup()
     {
