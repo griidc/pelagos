@@ -17,7 +17,7 @@
     <p>
         Once accepted, the dataset will be publicly available on the dataset's landing page
         ({{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}).
-        The dataset has been assigned a digital object identifier ({{ datasetSubmission.dataset.doi.doi|default }})
+        The dataset has been assigned a digital object identifier https://doi.org/{{ datasetSubmission.dataset.doi.doi|default }}
         that will resolve to the landing page once accepted.
     </p>
     <p>
@@ -39,7 +39,7 @@
     about the dataset.
 
     Once accepted, the dataset will be publicly available on the dataset's landing page ({{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}). The dataset
-    has been assigned a digital object identifier ({{ datasetSubmission.dataset.doi.doi|default }}) that will resolve to the landing page once accepted.
+    has been assigned a digital object identifier https://doi.org/{{ datasetSubmission.dataset.doi.doi|default }} that will resolve to the landing page once accepted.
 
     If you have any questions regarding this dataset submission please email help@griidc.org.
 
