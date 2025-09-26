@@ -3,54 +3,54 @@
 {% block title %}Dataset Dashboard{% endblock %}
 
 {% block stylesheets %}
+    <style>
+        .datasets-table {
+            overflow: auto;
+            width: 100%;
+        }
+
+        .datasets-table table {
+            table-layout: fixed;
+            border: 1px solid #dededf;
+            height: 100%;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border-spacing: 1px;
+            text-align: left;
+        }
+
+        .datasets-table caption {
+            caption-side: top;
+            text-align: left;
+        }
+
+        .datasets-table th {
+            border: 1px solid #dededf;
+            background-color: #eceff1;
+            color: #000000;
+            padding: 5px;
+        }
+
+        .datasets-table td {
+            border: 1px solid #dededf;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 5px;
+            overflow: hidden; /* Hides content that overflows */
+            text-overflow: ellipsis; /* Displays an ellipsis (...) for truncated text */
+        }
+
+        .second-header {
+            background-color: #dededf;
+        }
+    </style>
+
     {{ parent() }}
 
     {{ encore_entry_link_tags('dashboard') }}
 
-    <style>
-        .styled-table {
-            border-collapse: collapse;
-            border: 1px solid #ccc;
-            margin: 25px 0;
-            font-size: 0.9em;
-            font-family: sans-serif;
-            min-width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-        }
 
-        .styled-table thead tr {
-            /* background-color: #555555; */
-            /* color: #ffffff; */
-            text-align: left;
-        }
-
-        .styled-table th,
-        .styled-table td {
-            padding: 12px 15px;
-        }
-
-        .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
-
-        /* .styled-table tbody tr:nth-of-type(even) {
-            background-color: #f3f3f3;
-        } */
-
-        /* .styled-table tbody tr:last-of-type {
-            border-bottom: 2px solid var(--color-primary);
-        } */
-
-        .styled-table tbody tr:hover {
-            background-color: #f3f3f3;);
-        }
-
-        .second-header {
-            background-color: var(--color-secondary);
-        }
-
-
-    </style>
 {% endblock stylesheets %}
 
 {% block javascripts %}
@@ -61,7 +61,7 @@
 
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
-        <span class="text-4xl py-4 font-bold text-center block">Datasets for: {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span>
+        <span class="text-4xl py-4 font-bold text-center block">Datasets for {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span>
 
         {% for researchGroup in researchGroups %}
         <div class="shadow-lg border rounded-lg">
@@ -80,29 +80,37 @@
 
         {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
         <div class="ml-8">
-            <table class="table-auto w-full mt-4 border-none styled-table">
+            <table class="table-auto w-full mt-4 border-none datasets-table">
+                <colgroup>
+                    <col style="width: 140px;">
+                    <col style="width: 180px;">
+                    <col style="width: 320px;">
+                    <col style="width: 120px;">
+                    <col style="width: 220px;">
+                    <col style="width: 100px;">
+                </colgroup>
                 <thead>
                     <tr>
-                        <th style="width: 140px;">UDI</th>
-                        <th style="width: 180px;">Point of Contact</th>
-                        <th style="width: 320px;">Title</th>
-                        <th style="width: 120px;">Status</th>
-                        <th style="width: 220px;">Details</th>
-                        <th style="width: 100px;">Action</th>
+                        <th>Unique Dataset Identifier</th>
+                        <th>Point of Contact</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Details</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for dataset in datasets %}
                     <tr>
                         <td>{{ dataset.udi }}</td>
-                        <td>{{ dataset.getPrimaryPointOfContact }}</td>
+                        <td>{{ dataset.getPrimaryPointOfContact.fullName|default }}</td>
                         <td>{{ dataset.title }}</td>
-                        <td>
-                            <span class="badge-pill badge-{{ dataset.getDatasetLifecycleStatus.value|lower }}">{{ dataset.getDatasetLifecycleStatus.value }}</span>
+                        <td class="text-center">
+                            {% include 'Dashboard/datasetLifecycleStatus.html.twig' with {'datasetLifecycleStatus': dataset.getDatasetLifecycleStatus} only %}
                         </td>
                         <td>{{ dataset.getDatasetLifecycleStatus.description }}</td>
-                        <td>
-                            <button class="button button-pill h-50">View</button>
+                        <td class="text-center">
+                            <button class="button button-regular h-2">View</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -110,9 +118,7 @@
             </table>
         </div>
 
-        {% if not loop.last %}
-            <hr class="border-t-4 py-6 border-dashed border-gray-400 opacity-70" style="height: 0;">
-        {% endif %}
+        <div class="py-6"></div>
 
         {% endfor %}
     </div>
