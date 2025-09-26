@@ -882,18 +882,14 @@ class Dataset extends Entity
         $dif = $this->getDif();
 
         // If we have a submission, use its POC.
-        if (
-            $datasetSubmission instanceof DatasetSubmission
-            and DatasetSubmission::STATUS_COMPLETE == $datasetSubmission->getStatus()
-        ) {
+        if ($datasetSubmission instanceof DatasetSubmission) {
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
             } else {
                 return null;
             }
-        // Otherwise, use the POC from a dif.
-        } else {
+        } else { // Otherwise, use the POC from a dif.
             return $dif->getPrimaryPointOfContact();
         }
     }
