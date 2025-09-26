@@ -892,12 +892,9 @@ class Dataset extends Entity
             } else {
                 return null;
             }
-        // Otherwise, use the POC from an approved dif.
-        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
-            return $dif->getPrimaryPointOfContact();
+        // Otherwise, use the POC from a dif.
         } else {
-            // And if we don't have an approved DIF, return nothing.
-            return null;
+            return $dif->getPrimaryPointOfContact();
         }
     }
 
