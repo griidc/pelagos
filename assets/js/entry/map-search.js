@@ -17,6 +17,17 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 import * as GeoViz from '../modules/geoViz-leaflet';
 
 $(() => {
+  const keywordFilters = [{
+    id: '',
+    text: 'Show All Keywords',
+  }, {
+    id: 'gcmd',
+    text: 'GCMD Keywords',
+  }, {
+    id: 'anzsrc',
+    text: 'ANZSRC Keywords',
+  }];
+
   const isNotEmpty = (v) => v != null && v !== '';
 
   const customDataSource = new CustomStore({
@@ -123,6 +134,78 @@ $(() => {
     },
   }).dxTreeList('instance');
 
+  const kwTreeList = $('#kw-tree').dxTreeList({
+    dataSource: `${Routing.generate('api_keywords_level2')}/all`,
+    keyExpr: 'id',
+    parentIdExpr: 'parent',
+    filterRow: {
+      visible: false,
+    },
+    headerFilter: {
+      visible: false,
+    },
+    searchPanel: {
+      visible: true,
+    },
+    toolbar: {
+      enabled: true,
+      items: [
+        {
+          widget: 'dxSelectBox',
+          options: {
+            items: keywordFilters,
+            valueExpr: 'id',
+            displayExpr: 'text',
+            value: keywordFilters[0].id,
+            onValueChanged(e) {
+              kwTreeList.columnOption('type', 'filterValue', e.value);
+            },
+          },
+        },
+        'searchPanel',
+      ],
+    },
+    columns: [{
+      dataField: 'label',
+      caption: 'Keyword',
+      dataType: 'string',
+      allowSearch: true,
+    },
+    {
+      dataType: 'string',
+      dataField: 'type',
+      caption: 'Type',
+      visible: true,
+      allowSearch: false,
+    },
+    ],
+    disabled: false,
+    showRowLines: false,
+    showBorders: false,
+    showColumnHeaders: true,
+    columnAutoWidth: true,
+    wordWrapEnabled: true,
+    selection: {
+      allowSelectAll: true,
+      mode: 'multiple',
+      recursive: true,
+    },
+    onSelectionChanged(e) {
+      let selectedItems = [];
+      e.selectedRowsData.forEach((item) => {
+        const { id } = item;
+        selectedItems.push(id);
+      });
+
+      if (selectedItems.length === 0) {
+        selectedItems = null;
+      }
+
+      const dataGrid = $('#datasets-grid').dxDataGrid('instance');
+      dataGrid.columnOption('keywords', 'filterValue', selectedItems);
+    },
+  }).dxTreeList('instance');
+
   const popup = $('#rg-popup').dxPopup({
     width: 400,
     height: 600,
@@ -163,6 +246,52 @@ $(() => {
           stylingMode: 'contained',
           onClick() {
             popup.hide();
+          },
+        },
+      },
+    ],
+  }).dxPopup('instance');
+
+  const keywordPopup = $('#kw-popup').dxPopup({
+    width: 400,
+    height: 600,
+    visible: false,
+    title: 'Keyword Filter',
+    hideOnOutsideClick: true,
+    showCloseButton: false,
+    showTitle: false,
+    position: {
+      my: 'top',
+      at: 'top',
+      of: '#rg-select',
+    },
+    toolbarItems: [
+      {
+        widget: 'dxButton',
+        toolbar: 'bottom',
+        location: 'center',
+        options: {
+          text: 'Reset',
+          type: 'default',
+          stylingMode: 'contained',
+          onClick() {
+            kwTreeList.deselectAll();
+            kwTreeList.forEachNode((node) => {
+              kwTreeList.collapseRow(node.key);
+            });
+          },
+        },
+      },
+      {
+        widget: 'dxButton',
+        toolbar: 'bottom',
+        location: 'center',
+        options: {
+          text: 'Close',
+          type: 'default',
+          stylingMode: 'contained',
+          onClick() {
+            keywordPopup.hide();
           },
         },
       },
@@ -286,6 +415,17 @@ $(() => {
         selectedFilterOperation: '=',
         filterOperations: ['='],
       },
+      {
+        id: 'keywords',
+        name: 'keywords',
+        dataField: null,
+        visible: false,
+        allowSearch: false,
+        allowHeaderFiltering: true,
+        dataType: 'number',
+        selectedFilterOperation: '=',
+        filterOperations: ['='],
+      },
     ],
     hoverStateEnabled: true,
     onContentReady(e) {
@@ -393,6 +533,19 @@ $(() => {
       },
       {
         location: 'before',
+        widget: 'dxButton',
+        options: {
+          elementAttr: {
+            id: 'kw-select',
+          },
+          text: 'Keyword Filter',
+          onClick() {
+            keywordPopup.show();
+          },
+        },
+      },
+      {
+        location: 'before',
         widget: 'dxButtonGroup',
         options: {
           elementAttr: {
@@ -445,8 +598,14 @@ $(() => {
             treeList.forEachNode((node) => {
               treeList.collapseRow(node.key);
             });
+            kwTreeList.deselectAll();
+            kwTreeList.searchByText('');
+            kwTreeList.forEachNode((node) => {
+              kwTreeList.collapseRow(node.key);
+            });
             GeoViz.resetFeatures();
             popup.hide();
+            keywordPopup.hide();
           },
         },
       },

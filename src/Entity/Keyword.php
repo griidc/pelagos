@@ -240,6 +240,22 @@ class Keyword extends Entity
     }
 
     /**
+     * Gets the level of the keyword.
+     *
+     * @param boolean|null $correctForType If the keyword is type GCMD, then the first level doesn't count.
+     */
+    public function getLevel(?bool $correctForType = true): int
+    {
+        $levels = explode(' > ', $this->getDisplayPath() ?? '');
+        if ($correctForType) {
+            if ($this->getType() === KeywordType::TYPE_GCMD) {
+                array_shift($levels);
+            }
+        }
+        return count($levels);
+    }
+
+    /**
      * Stringifier, show label.
      */
     public function __toString(): string
