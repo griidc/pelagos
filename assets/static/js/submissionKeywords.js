@@ -167,6 +167,17 @@ $(() => {
           const itemId = event.currentTarget.attributes.getNamedItem('item').value;
           selectedAnzsrcKeywords = selectedAnzsrcKeywords.filter(function (item) { return item.id != itemId });
           keywordList.option('dataSource', selectedAnzsrcKeywords);
+          var keywordListArray = [];
+          const keyWordListValue = $("#keywordList").val();
+          if (keyWordListValue !== "") {
+            keywordListArray = keyWordListValue.split(',');
+          }
+          const index = keywordListArray.indexOf(String(item.itemData.id));
+          if (index > -1) {
+            keywordListArray.splice(index, 1);
+          }
+          $("#keywordList").val(keywordListArray.toString()).trigger('change');
+          $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
           keywordList.reload();
           keywordList.repaint();
         });
@@ -176,20 +187,6 @@ $(() => {
             copyToClipboard(item.itemData.displayPath);
           });
       },
-      onItemDeleted(item) {
-        var keywordListArray = [];
-        const keyWordListValue = $("#keywordList").val();
-        if (keyWordListValue !== "") {
-          keywordListArray = keyWordListValue.split(',');
-        }
-
-        const index = keywordListArray.indexOf(String(item.itemData.id));
-        if (index > -1) {
-          keywordListArray.splice(index, 1);
-        }
-        $("#keywordList").val(keywordListArray.toString()).trigger('change');
-        $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
-      }
     }).dxList('instance');
 
     const keywordListGcmd = $('#selectedList-gcmd').dxList({
@@ -206,29 +203,27 @@ $(() => {
           const itemId = event.currentTarget.attributes.getNamedItem('item').value;
           selectedGcmdKeywords = selectedGcmdKeywords.filter(function (item) { return item.id != itemId });
           keywordListGcmd.option('dataSource', selectedGcmdKeywords);
-          keywordListGcmd.reload();
-          keywordListGcmd.repaint();
-        });
+          var keywordListArray = [];
+          const keyWordListValue = $("#keywordList").val();
+          if (keyWordListValue !== "") {
+            keywordListArray = keyWordListValue.split(',');
+          }
+
+          const index = keywordListArray.indexOf(String(item.itemData.id));
+          if (index > -1) {
+            keywordListArray.splice(index, 1);
+          }
+          $("#keywordList").val(keywordListArray.toString()).trigger('change');
+          $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+            keywordListGcmd.reload();
+            keywordListGcmd.repaint();
+          });
         $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
           .parents('.dx-list-item')
           .on('dblclick', (event) => {
             copyToClipboard(item.itemData.displayPath);
           });
       },
-      onItemDeleted(item) {
-        var keywordListArray = [];
-        const keyWordListValue = $("#keywordList").val();
-        if (keyWordListValue !== "") {
-          keywordListArray = keyWordListValue.split(',');
-        }
-
-        const index = keywordListArray.indexOf(String(item.itemData.id));
-        if (index > -1) {
-          keywordListArray.splice(index, 1);
-        }
-        $("#keywordList").val(keywordListArray.toString()).trigger('change');
-        $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
-      }
     }).dxList('instance');
 
     $("#keywordList").on('keywordsAdded', function(event, { disabled }) {
