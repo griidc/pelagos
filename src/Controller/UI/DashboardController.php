@@ -33,7 +33,6 @@ final class DashboardController extends AbstractController
         $researchGroups = $researchGroups->toArray();
 
         return $this->render('Dashboard/index.html.twig', [
-            // 'datasets' => $datasets,
             'person' => $person,
             'researchGroups' => $researchGroups,
         ]);
