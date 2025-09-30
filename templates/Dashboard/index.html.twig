@@ -1,0 +1,124 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dataset Dashboard{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .datasets-table {
+            overflow: auto;
+            width: 100%;
+        }
+
+        .datasets-table table {
+            border: 1px solid #dededf;
+            height: 100%;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border-spacing: 1px;
+            text-align: left;
+        }
+
+        .datasets-table caption {
+            caption-side: top;
+            text-align: left;
+        }
+
+        .datasets-table th {
+            border: 1px solid #dededf;
+            background-color: #eceff1;
+            color: #000000;
+            padding: 5px;
+        }
+
+        .datasets-table td {
+            border: 1px solid #dededf;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 5px;
+            overflow: hidden; /* Hides content that overflows */
+            text-overflow: ellipsis; /* Displays an ellipsis (...) for truncated text */
+        }
+
+        .second-header {
+            background-color: #dededf;
+        }
+    </style>
+
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('dashboard') }}
+
+
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('dashboard') }}
+{% endblock javascripts %}
+
+{% block body %}
+    <div class="max-w-screen-xl mx-auto py-6">
+        <span class="text-4xl py-4 font-bold text-center block">Datasets for {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span>
+
+        {% for researchGroup in researchGroups %}
+        <div class="shadow-lg border rounded-lg">
+            <div class="block second-header">
+                <span class="p-2 text-black font-bold block text-lg bg-gray-200" @click="expanded = ! expanded">
+                    <div class="float-end px-2">
+                        <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: white;"></i>
+                    </div>
+                    <div class="mr-10">
+                        Research Group: {{ researchGroup.name }}
+                    </div>
+                </span>
+            </div>
+        </div>
+
+
+        {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
+        <div class="ml-8">
+            <table class="table-auto w-full mt-4 border-none datasets-table">
+                <colgroup>
+                    <col style="width: 140px;">
+                    <col style="width: 180px;">
+                    <col style="width: 320px;">
+                    <col style="width: 120px;">
+                    <col style="width: 220px;">
+                    <col style="width: 100px;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Unique Dataset Identifier</th>
+                        <th>Point of Contact</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dataset in datasets %}
+                    <tr>
+                        <td>{{ dataset.udi }}</td>
+                        <td>{{ dataset.getPrimaryPointOfContact.fullName|default }}</td>
+                        <td>{{ dataset.title }}</td>
+                        <td class="text-center">
+                            {% include 'Dashboard/datasetLifecycleStatus.html.twig' with {'datasetLifecycleStatus': dataset.getDatasetLifecycleStatus} only %}
+                        </td>
+                        <td>{{ dataset.getDatasetLifecycleStatus.description }}</td>
+                        <td class="text-center">
+                            <button class="button button-regular h-2">View</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="py-6"></div>
+
+        {% endfor %}
+    </div>
+{% endblock %}
