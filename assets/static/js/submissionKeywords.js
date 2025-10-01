@@ -153,6 +153,25 @@ $(() => {
       toast.show();
     }
 
+    const resetKeywordList = () => {
+      const selectedAnzsrcKeywords = keywordList.getDataSource().items();
+      const selectedGcmdKeywords = keywordListGcmd.getDataSource().items();
+
+      var keywordListArray = [];
+      selectedAnzsrcKeywords.forEach(function(keyword) {
+        if (selectedAnzsrcKeywords.includes(keyword)) {
+          keywordListArray.push(keyword.id);
+        }
+      });
+      selectedGcmdKeywords.forEach(function(keyword) {
+        if (selectedGcmdKeywords.includes(keyword)) {
+          keywordListArray.push(keyword.id);
+        }
+      });
+
+      $("#keywordList").val(keywordListArray.toString()).trigger("change");
+    }
+
     const keywordList = $('#selectedList').dxList({
       dataSource: selectedAnzsrcKeywords,
       allowItemDeleting: false,
@@ -169,17 +188,7 @@ $(() => {
           keywordList.option('dataSource', selectedAnzsrcKeywords);
           keywordList.reload();
           keywordList.repaint();
-          var keywordListArray = [];
-          const keyWordListValue = $("#keywordList").val();
-          if (keyWordListValue !== "") {
-            keywordListArray = keyWordListValue.split(',');
-          }
-          const index = keywordListArray.indexOf(String(item.itemData.id));
-          if (index > -1) {
-            keywordListArray.splice(index, 1);
-          }
-          $("#keywordList").val(keywordListArray.toString()).trigger('change');
-          $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+          resetKeywordList();
         });
         $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
           .parents('.dx-list-item')
@@ -205,19 +214,7 @@ $(() => {
           keywordListGcmd.option('dataSource', selectedGcmdKeywords);
           keywordListGcmd.reload();
           keywordListGcmd.repaint();
-
-          var keywordListArray = [];
-          const keyWordListValue = $("#keywordList").val();
-          if (keyWordListValue !== "") {
-            keywordListArray = keyWordListValue.split(',');
-          }
-
-          const index = keywordListArray.indexOf(String(item.itemData.id));
-          if (index > -1) {
-            keywordListArray.splice(index, 1);
-          }
-          $("#keywordList").val(keywordListArray.toString()).trigger('change');
-          $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
+          resetKeywordList();
         });
         $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
           .parents('.dx-list-item')
