@@ -167,6 +167,8 @@ $(() => {
           const itemId = event.currentTarget.attributes.getNamedItem('item').value;
           selectedAnzsrcKeywords = selectedAnzsrcKeywords.filter(function (item) { return item.id != itemId });
           keywordList.option('dataSource', selectedAnzsrcKeywords);
+          keywordList.reload();
+          keywordList.repaint();
           var keywordListArray = [];
           const keyWordListValue = $("#keywordList").val();
           if (keyWordListValue !== "") {
@@ -178,8 +180,6 @@ $(() => {
           }
           $("#keywordList").val(keywordListArray.toString()).trigger('change');
           $("#keywordListAnzsrc").val(keywordList.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
-          keywordList.reload();
-          keywordList.repaint();
         });
         $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
           .parents('.dx-list-item')
@@ -203,6 +203,9 @@ $(() => {
           const itemId = event.currentTarget.attributes.getNamedItem('item').value;
           selectedGcmdKeywords = selectedGcmdKeywords.filter(function (item) { return item.id != itemId });
           keywordListGcmd.option('dataSource', selectedGcmdKeywords);
+          keywordListGcmd.reload();
+          keywordListGcmd.repaint();
+
           var keywordListArray = [];
           const keyWordListValue = $("#keywordList").val();
           if (keyWordListValue !== "") {
@@ -215,9 +218,7 @@ $(() => {
           }
           $("#keywordList").val(keywordListArray.toString()).trigger('change');
           $("#keywordListGcmd").val(keywordListGcmd.getDataSource().items().map(item => {return item.id}).toString()).trigger("change");
-            keywordListGcmd.reload();
-            keywordListGcmd.repaint();
-          });
+        });
         $(item.element).find('.dx-tag-remove-button[item=' + item.itemData.id + ']')
           .parents('.dx-list-item')
           .on('dblclick', (event) => {
