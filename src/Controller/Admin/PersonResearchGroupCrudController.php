@@ -39,10 +39,10 @@ class PersonResearchGroupCrudController extends AbstractCrudController
                 function (QueryBuilder $queryBuilder) {
                     $queryBuilder->orderBy('entity.lastName', 'ASC');
                 }
-            ),
+            )->setRequired(true)->setFormTypeOption('placeholder', 'Select a person'),
             AssociationField::new('researchGroup')->onlyWhenCreating(),
-            AssociationField::new('role'),
-            TextField::new('label'),
+            AssociationField::new('role')->setRequired(true)->setFormTypeOption('placeholder', 'Select a role'),
+            TextField::new('label')->setRequired(true)->setFormTypeOption('attr', ['placeholder' => 'Enter a label'])->onlyOnForms()
         ];
     }
 
