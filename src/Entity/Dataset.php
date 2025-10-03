@@ -294,7 +294,7 @@ class Dataset extends Entity
     /**
      * Gets the Research Group this Dataset is attached to.
      *
-     * @return ResearchGroup the Research Group this DIF is attached to
+     * @return ResearchGroup the Research Group this Dataset is attached to
      */
     public function getResearchGroup()
     {
@@ -882,22 +882,15 @@ class Dataset extends Entity
         $dif = $this->getDif();
 
         // If we have a submission, use its POC.
-        if (
-            $datasetSubmission instanceof DatasetSubmission
-            and DatasetSubmission::STATUS_COMPLETE == $datasetSubmission->getStatus()
-        ) {
+        if ($datasetSubmission instanceof DatasetSubmission) {
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
             } else {
                 return null;
             }
-        // Otherwise, use the POC from an approved dif.
-        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
+        } else { // Otherwise, use the POC from a dif.
             return $dif->getPrimaryPointOfContact();
-        } else {
-            // And if we don't have an approved DIF, return nothing.
-            return null;
         }
     }
 

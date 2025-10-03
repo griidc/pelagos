@@ -1,0 +1,11 @@
+{% if datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE') %}
+    <span class='badge-pill badge-available'>{{ datasetLifecycleStatus.value }}</span>
+{% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED') %}
+    <span class='badge-pill badge-restricted'>{{ datasetLifecycleStatus.value }}</span>
+{% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED') %}
+    <span class='badge-pill badge-submitted'>{{ datasetLifecycleStatus.value }}</span>
+{% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED') %}
+    <span class='badge-pill badge-identified'>{{ datasetLifecycleStatus.value }}</span>
+{% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::NONE') %}
+    <span class='badge-pill badge-none'>{{ datasetLifecycleStatus.value }}</span>
+{% endif %}
