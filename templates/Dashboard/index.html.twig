@@ -105,11 +105,13 @@
                         <td>{{ dataset.getPrimaryPointOfContact.fullName|default }}</td>
                         <td>{{ dataset.title }}</td>
                         <td class="text-center">
-                            {% include 'Dashboard/datasetLifecycleStatus.html.twig' with {'datasetLifecycleStatus': dataset.getDatasetLifecycleStatus} only %}
+                            {% include 'Dashboard/badge.html.twig' with {'dataset': dataset} only %}
                         </td>
-                        <td>{{ dataset.getDatasetLifecycleStatus.description }}</td>
+                        <td>
+                            {% include 'Dashboard/statusText.html.twig' with {'dataset': dataset} only %}
+                        </td>
                         <td class="text-center">
-                            <button class="button button-regular h-2">View</button>
+                            {% include 'Dashboard/nextAction.html.twig' with {'dataset': dataset} only %}
                         </td>
                     </tr>
                     {% endfor %}
