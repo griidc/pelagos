@@ -30,6 +30,8 @@ module.exports = {
         restricted: 'var(--restricted)',
         submitted: 'var(--submitted)',
         identified: 'var(--identified)',
+        incomplete: 'var(--incomplete)',
+        pending: 'var(--pending)',
         remotlyhosted: 'var(--remotlyhosted)',
         erddap: 'var(--erddap)',
         ncei: 'var(--ncei)',
