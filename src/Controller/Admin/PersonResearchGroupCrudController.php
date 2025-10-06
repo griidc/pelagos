@@ -42,7 +42,7 @@ class PersonResearchGroupCrudController extends AbstractCrudController
             )->setRequired(true)->setFormTypeOption('placeholder', 'Select a person'),
             AssociationField::new('researchGroup')->onlyWhenCreating(),
             AssociationField::new('role')->setRequired(true)->setFormTypeOption('placeholder', 'Select a role'),
-            TextField::new('label')->setRequired(true)->setFormTypeOption('attr', ['placeholder' => 'Enter a label'])->onlyOnForms()
+            TextField::new('label')->setRequired(true)->setFormTypeOption('attr', ['placeholder' => 'Enter a label'])
         ];
     }
 
