@@ -18,5 +18,7 @@
     .badge-coldstorage {@apply bg-coldstorage text-black;}
     .badge-ncei {@apply bg-ncei text-white;}
     .badge-erddap {@apply bg-erddap text-black;}
+    .badge-incomplete {@apply bg-incomplete text-white;}
+    .badge-pending {@apply bg-pending text-black;}
     .badge-none {@apply bg-alternate text-white;}
 }

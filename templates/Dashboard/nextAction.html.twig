@@ -1,0 +1,9 @@
+{% extends 'Dashboard/datasetLifecycleStatus.html.twig' %}
+
+{% block status %}
+    {% if buttonUrl == '' %}
+        <button disabled="disabled" class="button button-regular opacity-50 !h-1">{{ buttonText }}</button>
+    {% else %}
+        <a href="{{ buttonUrl }}" target="_blank" class="button button-regular !h-1">{{ buttonText }}</a>
+    {% endif %}
+{% endblock status %}
