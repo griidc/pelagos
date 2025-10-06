@@ -531,7 +531,7 @@ $(() => {
           },
         },
       },
-      {
+      ...('GRP' === global.baseTemplateName ? [{
         location: 'before',
         widget: 'dxButton',
         options: {
@@ -543,7 +543,7 @@ $(() => {
             keywordPopup.show();
           },
         },
-      },
+      }] : []),
       {
         location: 'before',
         widget: 'dxButtonGroup',
