@@ -15,6 +15,8 @@ import 'devextreme/ui/button_group';
 import CustomStore from 'devextreme/data/custom_store';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import * as GeoViz from '../modules/geoViz-leaflet';
+import templateSwitch from '../vue/utils/template-switch';
+
 
 $(() => {
   const keywordFilters = [{
@@ -531,9 +533,10 @@ $(() => {
           },
         },
       },
-      ...('GRP' === global.baseTemplateName ? [{
+      {
         location: 'before',
         widget: 'dxButton',
+        visible: templateSwitch.getProperty('showSearchKeywordOption'),
         options: {
           elementAttr: {
             id: 'kw-select',
@@ -543,7 +546,7 @@ $(() => {
             keywordPopup.show();
           },
         },
-      }] : []),
+      },
       {
         location: 'before',
         widget: 'dxButtonGroup',
