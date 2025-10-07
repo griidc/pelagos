@@ -18,6 +18,7 @@ const templateVariables = {
     typeExpanded: true,
     statusExpanded: true,
     tagsExpanded: true,
+    showSearchKeywordOption: false,
   },
   GRP: {
     fundingCycle: 'Grant Awards',
@@ -27,6 +28,7 @@ const templateVariables = {
     showFunderFacet: false,
     researchAwardOption: 'Grant Award',
     cardHeadingText: 'View Project Overview By',
+    showSearchKeywordOption: true,
   },
   HRI: {
     showFundingCycles: false,
