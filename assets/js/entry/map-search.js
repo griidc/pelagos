@@ -17,7 +17,6 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 import * as GeoViz from '../modules/geoViz-leaflet';
 import templateSwitch from '../vue/utils/template-switch';
 
-
 $(() => {
   const keywordFilters = [{
     id: '',
