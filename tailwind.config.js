@@ -31,6 +31,7 @@ module.exports = {
         submitted: 'var(--submitted)',
         identified: 'var(--identified)',
         incomplete: 'var(--incomplete)',
+        saved: 'var(--saved)',
         pending: 'var(--pending)',
         remotlyhosted: 'var(--remotlyhosted)',
         erddap: 'var(--erddap)',
