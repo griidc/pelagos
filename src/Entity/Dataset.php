@@ -1097,15 +1097,22 @@ class Dataset extends Entity
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
+        $datasetStatus = $this->getDatasetStatus();
+        $isRestricted = $this->isRestricted();
+        $difStatus = $this->getDif()->getStatus();
 
-        if ((Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) and (true === $this->isRestricted())) {
+        if ((Dataset::DATASET_STATUS_ACCEPTED === $datasetStatus) and (true === $isRestricted)) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::RESTRICTED;
-        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
+        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $datasetStatus) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::AVAILABLE;
         } elseif ($this->hasDatasetSubmission()) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::SUBMITTED;
-        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $this->getDif()->getStatus()) {
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $difStatus) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::IDENTIFIED;
+        } elseif ($this->hasDif() and DIF::STATUS_SUBMITTED == $difStatus) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::PENDING;
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED != $difStatus) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::INCOMPLETE;
         }
 
         return $datasetLifeCycleStatus;
