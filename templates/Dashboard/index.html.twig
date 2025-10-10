@@ -61,7 +61,7 @@
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
     {% include 'LandingPages/changeTab.html.twig' %}
-    <h2>Datasets for {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</h2>
+    <h2>Profile: {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }} Profile</h2>
     <div class="md:flex border border-gray-300">
         <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 relative text-sm font-medium w-1/5">
             <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
@@ -76,14 +76,15 @@
             <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-users"></i><span class="ms-2">Research Groups</span>
             </li>
-            <li @click="#" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+            {# <li @click="#" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
                 <i class="fa-solid fa-home"></i><span class="ms-2">Home</span>
-            </li>
+            </li> #}
         </ul>
 
         <div class="p-6 rounded-lg w-full">
             <div :class="openTab === 1 ? 'active' : 'inactive'" class="w-full">
-               {% include 'Dashboard/dashboard.html.twig' with {'researchGroups': researchGroups, 'person': app.user.person} %}
+                {# <span class="text-4xl py-4 font-bold text-center block">Datasets for {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span> #}
+                {% include 'Dashboard/dashboard.html.twig' with {'researchGroups': researchGroups, 'person': app.user.person} %}
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'">
                 <span>Account Tab</span>
