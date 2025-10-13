@@ -668,6 +668,11 @@ class Dataset extends Entity
         return $this->datasetSubmission instanceof DatasetSubmission;
     }
 
+    public function hasDatasetSubmissionHistory(): bool
+    {
+        return $this->datasetSubmissionHistory->count() > 0;
+    }
+
     /**
      * Update the availability status based on current dataset submission.
      *

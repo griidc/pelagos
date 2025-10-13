@@ -60,67 +60,43 @@
 
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
-        <span class="text-4xl py-4 font-bold text-center block">Datasets for {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span>
+    {% include 'LandingPages/changeTab.html.twig' %}
+    <h2>{{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }} Profile</h2>
+    <div class="md:flex border border-gray-300">
+        <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 relative text-sm font-medium w-1/5">
+            <li @click="changeTab(1)" :class="openTab === 1 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-table-columns"></i><span class="ms-2">Dashboard</span>
+            </li>
+            <li @click="changeTab(2)" :class="openTab === 2 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-user"></i><span class="ms-2">Account</span>
+            </li>
+            <li @click="changeTab(3)" :class="openTab === 3 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-envelope"></i><span class="ms-2">Contact</span>
+            </li>
+            <li @click="changeTab(4)" :class="openTab === 4 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-users"></i><span class="ms-2">Research Groups</span>
+            </li>
+            {# <li @click="#" :class="openTab === 5 ? activeClasses : inactiveClasses" class="inline-flex items-center px-4 py-3 rounded-lg w-full">
+                <i class="fa-solid fa-home"></i><span class="ms-2">Home</span>
+            </li> #}
+        </ul>
 
-        {% for researchGroup in researchGroups %}
-        <div class="shadow-lg border rounded-lg">
-            <div class="block second-header">
-                <span class="p-2 text-black font-bold block text-lg bg-gray-200" @click="expanded = ! expanded">
-                    <div class="float-end px-2">
-                        <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: white;"></i>
-                    </div>
-                    <div class="mr-10">
-                        Research Group: {{ researchGroup.name }}
-                    </div>
-                </span>
+        <div class="p-6 rounded-lg w-full">
+            <div :class="openTab === 1 ? 'active' : 'inactive'" class="w-full">
+                {# <span class="text-4xl py-4 font-bold text-center block">Datasets for {{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }}</span> #}
+                {% include 'Dashboard/dashboard.html.twig' with {'researchGroups': researchGroups, 'person': app.user.person} %}
+            </div>
+            <div :class="openTab === 2 ? 'active' : 'inactive'">
+                <span>Account Tab</span>
+            </div>
+            <div :class="openTab === 3 ? 'active' : 'inactive'">
+                <span>Contact Tab</span>
+            </div>
+            <div :class="openTab === 4 ? 'active' : 'inactive'">
+                {% include 'LandingPages/research-groups.html.twig' with {'researchGroups': person.researchGroups} %}
             </div>
         </div>
+    </div>
 
-
-        {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
-        <div class="ml-8">
-            <table class="table-auto w-full mt-4 border-none datasets-table">
-                <colgroup>
-                    <col style="width: 140px;">
-                    <col style="width: 180px;">
-                    <col style="width: 320px;">
-                    <col style="width: 120px;">
-                    <col style="width: 220px;">
-                    <col style="width: 100px;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>Unique Dataset Identifier</th>
-                        <th>Point of Contact</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Details</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for dataset in datasets %}
-                    <tr>
-                        <td>{{ dataset.udi }}</td>
-                        <td>{{ dataset.getPrimaryPointOfContact.fullName|default }}</td>
-                        <td>{{ dataset.title }}</td>
-                        <td class="text-center">
-                            {% include 'Dashboard/badge.html.twig' with {'dataset': dataset} only %}
-                        </td>
-                        <td>
-                            {% include 'Dashboard/statusText.html.twig' with {'dataset': dataset} only %}
-                        </td>
-                        <td class="text-center">
-                            {% include 'Dashboard/nextAction.html.twig' with {'dataset': dataset} only %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="py-6"></div>
-
-        {% endfor %}
     </div>
 {% endblock %}
