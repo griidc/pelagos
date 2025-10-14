@@ -237,7 +237,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         if (!isset($targetPath) and !empty($destination)) {
             $targetPath = $destination;
         } elseif (!isset($targetPath)) {
-            $targetPath = $this->router->generate('app_ui_dashboard');
+            $targetPath = $this->router->generate('pelagos_homepage');
         }
 
         $response = new RedirectResponse($targetPath);
