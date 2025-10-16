@@ -87,10 +87,9 @@
                 {% include 'Dashboard/dashboard.html.twig' with {'researchGroups': researchGroups, 'person': app.user.person} %}
             </div>
             <div :class="openTab === 2 ? 'active' : 'inactive'">
-                <h3>Account Tab</h3>
+                {% include 'Dashboard/account.html.twig' with {'person': person} %}
             </div>
             <div :class="openTab === 3 ? 'active' : 'inactive'">
-                <h3>Contact Information</h3>
                 {% include 'Dashboard/contact.html.twig' with {'person': person} %}
             </div>
             <div :class="openTab === 4 ? 'active' : 'inactive'">
