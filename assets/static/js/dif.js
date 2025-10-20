@@ -322,14 +322,15 @@ $(document).ready(function()
     }
 
     var select = $('select#researchGroup');
-        select.html(select.find('option').sort(function(x, y) {
-            if ($(x).text() > $(y).text()) {
-                return 1;
-            } else {
-                return -1;
-            }
+    select.html(select.find('option').sort(function(x, y) {
+        if ($(x).text() > $(y).text()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }));
     $("select option:contains(PLEASE SELECT A PROJECT)").prependTo($("select#researchGroup"));
+    $('select#researchGroup').prop('selectedIndex', 0).trigger('change');
 });
 
 

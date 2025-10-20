@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Controller\Api;
+
+use App\Enum\KeywordType;
+use App\Repository\KeywordRepository;
+use App\Util\KeywordUtil;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use Symfony\Component\Serializer\SerializerInterface;
+
+class KeywordController extends AbstractController
+{
+    #[Route(path: '/api/keywords/level2/{type}', name: 'api_keywords_level2')]
+    public function getLevel2Keywords(KeywordRepository $keywordRepository, KeywordUtil $keywordUtil, SerializerInterface $serializer, string $type): Response
+    {
+        $keywordType = KeywordType::tryFrom($type);
+        $keywords = $keywordRepository->getKeywordsByType($keywordType);
+        $level2Keywords = $keywordUtil->getKeywordsByLevel($keywords, 2);
+
+        $data = [];
+
+        foreach ($level2Keywords as $keyword) {
+            $data[] = [
+                'id' => $keyword->getId(),
+                'type' => $keyword->getType(),
+                'shortDisplayPath' => $keyword->getShortDisplayPath(),
+                'displayPath' => $keyword->getDisplayPath(),
+                'label' => $keyword->getLabel(),
+            ];
+        }
+
+        return new JsonResponse(data: $data);
+    }
+}

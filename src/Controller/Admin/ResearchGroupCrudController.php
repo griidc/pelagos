@@ -118,7 +118,8 @@ class ResearchGroupCrudController extends AbstractCrudController
             ])
             ->hideOnIndex()
             ->hideWhenCreating()
-            ->useEntryCrudForm(),
+            ->useEntryCrudForm()
+            ->setRequired(true),
             UrlField::new('url')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city')->hideOnIndex(),
