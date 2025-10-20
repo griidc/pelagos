@@ -5,6 +5,8 @@ namespace App\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\FundingOrgFilter;
@@ -85,11 +87,11 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                 GROUP BY subDatasetSubmission.dataset
             )')
             ->setParameters(
-                array(
-                    'metadatastatus' => Dataset::DATASET_STATUS_ACCEPTED,
-                    'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
-                    'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-                )
+                new ArrayCollection(array(
+                    new Parameter('metadatastatus', Dataset::DATASET_STATUS_ACCEPTED),
+                    new Parameter('restrictedstatus', DatasetSubmission::RESTRICTION_NONE),
+                    new Parameter('transerstatuscompleted', DatasetSubmission::TRANSFER_STATUS_COMPLETED),
+                ))
             )
             ->orderBy('datasetSubmission.creationTimeStamp');
 
