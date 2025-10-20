@@ -83,14 +83,14 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                 FROM ' . DatasetSubmission::class . ' subDatasetSubmission
                 WHERE subDatasetSubmission.datasetStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
-                AND subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
+                AND subDatasetSubmission.datasetFileTransferStatus = :transferstatuscompleted
                 GROUP BY subDatasetSubmission.dataset
             )')
             ->setParameters(
                 new ArrayCollection(array(
                     new Parameter('metadatastatus', Dataset::DATASET_STATUS_ACCEPTED),
                     new Parameter('restrictedstatus', DatasetSubmission::RESTRICTION_NONE),
-                    new Parameter('transerstatuscompleted', DatasetSubmission::TRANSFER_STATUS_COMPLETED),
+                    new Parameter('transferstatuscompleted', DatasetSubmission::TRANSFER_STATUS_COMPLETED),
                 ))
             )
             ->orderBy('datasetSubmission.creationTimeStamp');
