@@ -1,9 +1,26 @@
 <div>
-    <h3>{{ person.firstname ~ ' ' ~ person.lastname }}</h3>
-    <span class="block">{{ person.position }}</span>
-    <span class="block">{{ person.organization }}</span>
-    <span class="block">{{ person.emailAddress }}</span>
-    <span class="block">{{ person.deliveryPoint|nl2br }}</span>
-    <span class="block">{{ person.city ~ ', ' ~ person.administrativeArea ~ ' ' ~ person.postalCode }}</span>
-    <span class="block">{{ person.country }}</span>
+    <h1 class="text-3xl font-bold mb-6">Contact Information</h1>
+
+    <div class="pb-4">
+        <span class="block font-bold text-lg">Position:</span>
+        <span class="block">{{ person.position }}</span>
+    </div>
+
+    <div class="pb-4">
+        <span class="block font-bold text-lg">Email:</span>
+        <span class="block">{{ person.emailAddress }}</span>
+    </div>
+
+    <div class="pb-4">
+        <span class="block font-bold text-lg">Phone:</span>
+        <span class="block">{{ person.phoneNumber }}</span>
+    </div>
+
+    <div class="pb-4">
+        <span class="block font-bold text-lg">Mailing Address:</span>
+        <span class="block">{{ person.organization }}</span>
+        <span class="block">{{ person.deliveryPoint|nl2br }}</span>
+        <span class="block">{{ person.city ~ ', ' ~ person.administrativeArea ~ ' ' ~ person.postalCode }}</span>
+        <span class="block">{{ person.country }}</span>
+    </div>
 </div>
