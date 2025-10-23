@@ -1,0 +1,35 @@
+@layer components {
+  .button,
+  a.button {
+    @apply rounded-lg font-medium py-[0.875rem] px-[1.5rem] h-[3.25rem] inline-flex items-center text-base whitespace-nowrap transition bg-blue-600;
+  }
+
+  .button-regular,
+  a.button-regular {
+    @apply bg-blue-600 text-white focus-visible:bg-blue-800 hover:bg-blue-800;
+  }
+
+  /*
+  Button inverted
+  */
+
+  .button-inverted,
+  a.button-inverted {
+    @apply bg-white border border-[3px] border-blue-600 text-blue-600 focus-visible:bg-blue-800 hover:bg-blue-800 hover:text-white hover:border-blue-800;
+  }
+
+  /*
+  Button flat white
+  */
+  .button-flat-white,
+  a.button-flat-white {
+    @apply bg-white text-blue-800 focus-visible:bg-blue-900 focus-visible:text-white hover:bg-blue-900 hover:text-white hover:border-blue-900;
+  }
+
+  /*
+  Button pill
+  */
+  .button-pill {
+    @apply rounded-full bg-blue-500 text-white focus-visible:bg-blue-800 hover:bg-blue-800 py-[0.78rem] px-[1.875rem] h-[2.688rem] text-sm;
+  }
+}
