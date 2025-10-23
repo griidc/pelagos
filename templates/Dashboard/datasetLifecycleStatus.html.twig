@@ -1,55 +1,77 @@
 {% set datasetLifecycleStatus = dataset.getDatasetLifecycleStatus() %}
 
 {% if datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::AVAILABLE') %}
-    {% set className = 'badge-pill badge-available' %}
-    {% set buttonUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
-    {% set buttonText = 'View' %}
+    {# Available Dataset #}
+    {% set badgeClass = 'badge-pill badge-available' %}
+    {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
+    {% set linkText = 'View' %}
     {% set statusText = datasetLifecycleStatus.description %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Submission' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::RESTRICTED') %}
-    {% set className = 'badge-pill badge-restricted' %}
-    {% set buttonUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
-    {% set buttonText = 'View' %}
+    {# Restricted Dataset #}
+    {% set badgeClass = 'badge-pill badge-restricted' %}
+    {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
+    {% set linkText = 'View' %}
     {% set statusText = datasetLifecycleStatus.description %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Submission' %}
+    {% set badgeClass = 'badge-pill badge-restricted' %}
+    {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
+    {% set linkText = 'View' %}
+    {% set statusText = datasetLifecycleStatus.description %}
+    {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Submission' %}
+    {% set status = 'Restricted' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::SUBMITTED') %}
-    {% set className = 'badge-pill badge-submitted' %}
-    {% set buttonUrl = '' %}
-    {% set buttonText = 'No action required' %}
+    {# Submitted Dataset #}
+    {% set badgeClass = 'badge-pill badge-submitted' %}
+    {% set linkUrl = '' %}
+    {% set linkText = 'None' %}
     {% set statusText = 'Submitted dataset, in GRIIDC review' %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Submission' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED') and dataset.hasDatasetSubmissionHistory %}
-    {% set className = 'badge-pill badge-saved' %}
-    {% set buttonUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?regid=' ~ dataset.udi %}
-    {% set buttonText = 'Submit your dataset' %}
+    {# Saved Identified Dataset Needs to be Submitted #}
+    {% set badgeClass = 'badge-pill badge-saved' %}
+    {% set linkUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?regid=' ~ dataset.udi %}
+    {% set linkText = 'Submit' %}
     {% set statusText = 'Saved submission' %}
     {% set badgeText = 'Saved' %}
+    {% set typeText = 'Submission' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED') %}
-    {% set className = 'badge-pill badge-identified' %}
-    {% set buttonUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?regid=' ~ dataset.udi %}
-    {% set buttonText = 'Submit your dataset' %}
+    {# DIF Approved #}
+    {% set badgeClass = 'badge-pill badge-identified' %}
+    {% set linkUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?regid=' ~ dataset.udi %}
+    {% set linkText = 'Submit' %}
     {% set statusText = 'Identified dataset approved' %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Plan' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::INCOMPLETE') %}
-    {% set className = 'badge-pill badge-incomplete' %}
-    {% set buttonUrl = url('pelagos_app_ui_dif_default', {'id': dataset.dif.id}) %}
-    {% set buttonText = 'Submit your identified dataset' %}
+    {# DIF Not yet Approved #}
+    {% set badgeClass = 'badge-pill badge-incomplete' %}
+    {% set linkUrl = url('pelagos_app_ui_dif_default', {'id': dataset.dif.id}) %}
+    {% set linkText = 'Submit' %}
     {% set statusText = 'Identified dataset saved, but not submitted' %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Plan' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::PENDING') %}
-    {% set className = 'badge-pill badge-pending' %}
-    {% set buttonUrl = '' %}
-    {% set buttonText = 'No action required' %}
+    {# DIF Submitted, Pending Submission to GRIIDC #}
+    {% set badgeClass = 'badge-pill badge-pending' %}
+    {% set linkUrl = '' %}
+    {% set linkText = 'None' %}
     {% set statusText = 'Identified dataset submitted, in GRIIDC review' %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Plan' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::NONE') %}
-    {% set className = 'badge-pill badge-none' %}
-    {% set buttonUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
-    {% set buttonText = 'View' %}
+    {% set badgeClass = 'badge-pill badge-none' %}
+    {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
+    {% set linkText = 'View' %}
     {% set statusText = datasetLifecycleStatus.description %}
     {% set badgeText = datasetLifecycleStatus.value %}
+    {% set typeText = 'Plan' %}
 {% endif %}
 
 {% block status %}
-
+    <span>{{ statusText }}</span>
 {% endblock status %}
