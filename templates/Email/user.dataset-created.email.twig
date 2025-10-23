@@ -3,28 +3,46 @@
 {% endblock %}
 
 {% block body_html %}
-    Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
-    <br>
-    The GRIIDC has received your dataset submission {{ datasetSubmission.dataset.udi }}.
-    The dataset landing page is <a href="{{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi})}}</a>.<br>
-    This dataset has been assigned the doi: {{datasetSubmission.dataset.doi.doi|default}} .<br><br>
-    The dataset package will be reviewed by GRIIDC.<br><br>
-    If you have any questions regarding this dataset submission please email help@griidc.org.<br>
-    <br>
-    Thank you,<br>
-    The GRIIDC Team<br>
+    <p>
+        Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
+    </p>
+    <p>
+        GRIIDC has received your dataset submission for {{ datasetSubmission.dataset.udi }}.
+    </p>
+    <p>
+        The dataset will be reviewed by GRIIDC. Please note that the review process can take anywhere from a
+        couple of weeks to a few months. During the review process we will likely contact you with questions
+        about the dataset.
+    </p>
+    <p>
+        Once accepted, the dataset will be publicly available on the dataset's landing page
+        ({{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}).
+        The dataset has been assigned a digital object identifier https://doi.org/{{ datasetSubmission.dataset.doi.doi|default }}
+        that will resolve to the landing page once accepted.
+    </p>
+    <p>
+        If you have any questions regarding this dataset submission please email help@griidc.org.
+    </p>
+    <p>
+        Thank you,<br />
+        The GRIIDC Team
+    </p>
 {% endblock %}
 
 {% block body_text %}
-Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
+    Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-    The GRIIDC has received your dataset submission {{ datasetSubmission.dataset.udi }}. The dataset landing page is The dataset landing page is {{  vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}.
-    This dataset has been assigned the doi: {{datasetSubmission.dataset.doi.doi|default}}.
+    GRIIDC has received your dataset submission for {{ datasetSubmission.dataset.udi }}.
 
-    The dataset package will be reviewed by GRIIDC.
+    The dataset will be reviewed by GRIIDC. Please note that the review process can take anywhere from a
+    couple of weeks to a few months. During the review process we will likely contact you with questions
+    about the dataset.
+
+    Once accepted, the dataset will be publicly available on the dataset's landing page ({{ vanityurl('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}). The dataset
+    has been assigned a digital object identifier https://doi.org/{{ datasetSubmission.dataset.doi.doi|default }} that will resolve to the landing page once accepted.
 
     If you have any questions regarding this dataset submission please email help@griidc.org.
 
-Thank you,
-The GRIIDC Team
+    Thank you,
+    The GRIIDC Team
 {% endblock %}

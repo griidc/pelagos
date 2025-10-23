@@ -140,6 +140,10 @@ fos_elastica:
                             properties:
                                 displayPath:
                                     type: 'text'
+                                id:
+                                    type: 'keyword'
+                                type:
+                                    type: 'keyword'
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:
