@@ -57,11 +57,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     private $router;
 
     /**
-     * A Monolog logger.
+     * An instance of monolog AccountLogger.
      *
      * @var LoggerInterface
      */
-    protected $logger;
+    protected $accountLogger;
 
     /**
      * String describing max PW age.
@@ -76,20 +76,20 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
      * @param FormFactoryInterface   $formFactory        A Form Factory.
      * @param EntityManagerInterface $entityManager      An Entity Manager.
      * @param RouterInterface        $router             A Router.
-     * @param LoggerInterface        $logger             A Monolog logger.
+     * @param LoggerInterface        $accountLogger      A Monolog AccountLogger.
      * @param string|null            $maximumPasswordAge The max age for password, 0 or null means never expires.
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         RouterInterface $router,
-        LoggerInterface $logger,
+        LoggerInterface $accountLogger,
         ?string $maximumPasswordAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
-        $this->logger = $logger;
+        $this->accountLogger = $accountLogger;
         $this->maximumPasswordAge = $maximumPasswordAge;
     }
 
@@ -130,7 +130,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $password = $credentials['_password'];
 
         return new Passport(
-            new UserBadge($username, function ($userIdentifier) {
+            new UserBadge($username, function ($userIdentifier) use ($request) {
                 // Try to find the user by e-mail.
                 $thePerson = $this->entityManager->getRepository(Person::class)
                     ->findOneBy(['emailAddress' => $userIdentifier]);
@@ -143,6 +143,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 }
 
                 if (null == $theUser) {
+                    $this->logAttemptStatus($request, 'User specified is unknown user.');
                     throw new AuthenticationException('Invalid Credentials');
                 }
 
@@ -263,6 +264,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         if ($exception->getMessage() === 'Password is expired.') {
             $credentials = $this->getCredentials($request);
             $username = $credentials['_username'];
+            $this->logAttemptStatus($request, 'Login failed due to expired password.');
 
             $user = $this->entityManager->getRepository(Account::class)
                 ->findOneBy(['userId' => $username]);
@@ -294,6 +296,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         } else {
             $destination = $request->query->get('destination');
             $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
+            $this->logAttemptStatus($request, 'Login failed due to: ' . $exception->getMessage());
             $url = $this->router->generate(
                 'security_login',
                 ['destination' => $destination]
@@ -321,9 +324,25 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     /**
-     * Logs the attemps to log.
+     * Logs attempt status results.
      *
-     * @param Request $request The home directory.
+     * @param Request $request
+     */
+    private function logAttemptStatus(Request $request, string $annotationNote): void
+    {
+
+        $loggingContext = array(
+            'userName' => $this->getCredentials($request)['_username'],
+            'status' => $annotationNote
+        );
+
+        $this->accountLogger->info('Login Attempt:', $loggingContext);
+    }
+
+    /**
+     * Logs the attemps to login, regardless of success.
+     *
+     * @param Request $request
      *
      * @return void
      */
@@ -331,10 +350,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
         $loggingContext = array(
             'ipAddress' => $request->getClientIp(),
-            'userName' => $request->request->get('_username'),
+            'userName' => $this->getCredentials($request)['_username'],
             'user-agent' => $request->headers->get('User-Agent'),
         );
-        $this->logger->info('Login Attempt:', $loggingContext);
+
+        $this->accountLogger->info('Login Attempt:', $loggingContext);
     }
 
     /**

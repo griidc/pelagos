@@ -240,15 +240,10 @@ class Person extends Entity
 
     /**
      * Person's Token.
-     *
-     * @var PersonToken $token
-     *
-     * @access protected
-     *
      */
-    #[ORM\OneToOne(targetEntity: 'PersonToken', mappedBy: 'person')]
+    #[ORM\OneToOne(targetEntity: PersonToken::class, mappedBy: 'person')]
     #[Serializer\Exclude]
-    protected $token;
+    protected ?PersonToken $token = null;
 
     /**
      * Constructor that initializes Collections as empty ArrayCollections.
@@ -712,7 +707,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return PersonToken Person's token.
+     * @return ?PersonToken Person's token.
      */
     public function getToken()
     {
@@ -755,11 +750,8 @@ class Person extends Entity
                 ($personDataRepositoriesCount > 1 ? 'Repositories' : 'Repository');
         }
 
-        if (is_countable($this->getAccount())) {
-            $personAccountCount = count($this->getAccount());
-            if ($personAccountCount > 0) {
-                $notDeletableReasons[] = 'there is an associated Account';
-            }
+        if ($this->getAccount() instanceof Account) {
+            $notDeletableReasons[] = 'there is an associated Account';
         }
 
         if (count($notDeletableReasons) > 0) {

@@ -13,6 +13,7 @@ monolog:
         - rename_file
         - delete_folder
         - ip_filer
+        - account
 
     handlers:
         mailer:
@@ -87,6 +88,11 @@ monolog:
             level: info
             channels: [ip_filer]
 
+        account:
+            type: stream
+            path: "%kernel.logs_dir%/account.log"
+            level: info
+            channels: [account]
 
 when@dev:
     monolog:
