@@ -83,6 +83,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset.delete_doi, method: onDeleteDoi }
 
+    App\Event\LoginListener:
+        tags:
+            - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LoginSuccessEvent, method: onLoginSuccess }
+            - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LogoutEvent, method: onLogout }
+            - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LoginFailureEvent, method: onLoginFailure }
+
     App\Event\LogActionItemEventListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
