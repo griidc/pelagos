@@ -47,10 +47,15 @@ class LoginListener implements EventSubscriberInterface
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
         $request = $event->getRequest();
+        if ($request->get('person_token')) {
+            $username = 'Token User: $' . $request->get('person_token');
+        } else {
+            $username = $this->getCredentials($request)['_username'];
+        }
 
         $loggingContext = [
             'ipAddress' => $request->getClientIp(),
-            'userName' => $this->getCredentials($request)['_username'],
+            'userName' => $username,
         ];
 
         $this->logger->info('(listener) Login success.', $loggingContext);

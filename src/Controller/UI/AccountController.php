@@ -237,7 +237,11 @@ class AccountController extends AbstractController
             $reset = ($person->getToken()->getUse() === 'PASSWORD_RESET') ? true : false;
         }
 
-        $this->accountLogger->info('Email verification for person ' . $person->getFullName(), ['reset' => $reset, 'personId' => $person->getId()]);
+        $this->accountLogger->info('Email verification for person ' . $person->getFullName(), [
+            'reset' => $reset,
+            'personId' => $person->getId(),
+            'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
 
         // If a password has been set.
         if ($account->getPassword() !== null and $reset === false) {
@@ -427,6 +431,10 @@ class AccountController extends AbstractController
             return $this->redirectToRoute('pelagos_app_ui_account_passwordreset');
         }
 
+        $this->accountLogger->info('Change password requested page loaded.', [
+            'username' => $this->getUser()->getUsername(),
+            'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
         // Send back the set password screen.
         return $this->render('Account/changePassword.html.twig');
     }
@@ -448,11 +456,21 @@ class AccountController extends AbstractController
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // User is not logged in, or doesn't have a token.
+            $this->accountLogger->info('Password change failed.', [
+                'username' => $this->getUser()->getUsername(),
+                'reason' => 'Not authenticated on POST.',
+                'ipAddress' => $request->getClientIp() ?? 'unknown'
+            ]);
             return $this->render('template/NotLoggedIn.html.twig');
         }
 
         // If the supplied passwords don't match.
         if ($request->request->get('password') !== $request->request->get('verify_password')) {
+            $this->accountLogger->info('Password change failed.', [
+                'username' => $this->getUser()->getUsername(),
+                'reason' => 'Passwords do not match.',
+                'ipAddress' => $request->getClientIp() ?? 'unknown'
+            ]);
             // Throw an exception.
             throw new \Exception('Passwords do not match!');
         }
@@ -499,6 +517,7 @@ class AccountController extends AbstractController
             $ldap->updatePerson($person);
         }
 
+        $this->accountLogger->info('Password successfully changed.', ['username' => $this->getUser()->getUsername(), 'ipAddress' => $request->getClientIp() ?? 'unknown']);
         return $this->render('Account/AccountReset.html.twig');
     }
 
