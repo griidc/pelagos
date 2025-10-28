@@ -136,7 +136,10 @@ class AccountController extends AbstractController
         $this->accountLogger->info('Account request for ' . (string) $emailAddress, ['reset' => $reset, 'people_found' => count($people)]);
 
         if (count($people) === 0) {
-            return $this->render('Account/EmailNotFound.html.twig');
+            $this->accountLogger->info('No person found for email address during password reset attempt for: ' . (string) $emailAddress);
+            return $this->render('Account/EmailFound.html.twig', array(
+                'reset' => $reset,
+            ));
         }
 
         if (count($people) > 1) {
@@ -517,7 +520,7 @@ class AccountController extends AbstractController
             /** @var Account $account */
             $account = $this->getUser();
 
-            $this->accountLogger->info('The "forgot username" lookup was attempted by logged in user:' . $account->getUsername(). '.');
+            $this->accountLogger->info('The "forgot username" lookup was attempted by logged in user:' . $account->getUsername() . '.');
             return $this->render('template/AlreadyLoggedIn.html.twig');
         }
 
