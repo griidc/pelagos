@@ -508,7 +508,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    #[Route(path: '/account/forgot-username', methods: ['GET'], name: 'pelagos_app_ui_account_forgotusername')]
+    #[Route(path: '/forgot-username', methods: ['GET'], name: 'pelagos_app_ui_account_forgotusername')]
     public function forgotUsernameAction(Request $request, EntityEventDispatcher $entityEventDispatcher, PersonRepository $personRepository)
     {
         // If the user is already authenticated.
