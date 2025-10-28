@@ -1,14 +1,13 @@
 <div class="mx-auto text-base leading-7 text-gray-700">
-    <p class="mb-4 prose prose-sm">
-    The dashboard displays all datasets you have created and their status within the GRIIDC system.
-    The GRIIDC submisssion process consists of two steps: submitting a plan before you collect data and completing a submission.
-    After a plan has been submitted and approved, you will collect or generate your data.
-    When you are ready to upload your data to GRIIDC, you will use submission.
-    Once the data are submitted, the dataset will be reviewed by GRIIDC personnel.
-    You may be contacted with questions about the dataset.
-    Please respond to questions/requests in a timely manner.
-    Once the dataset has been approved by GRIIDC, the data will be in the Accepted state and will be downloadable if not set to Restricted.
+    <p class="mb-4 prose prose-sm leading-relaxed">
+        The dashboard displays datasets you have created and their status within the GRIIDC system.
+        The GRIIDC submisssion process consists of two steps: submitting a plan before you collect data and completing a submission.
+        After a plan has been submitted and approved, you will collect or generate your data.
+        When you are ready to upload your data to GRIIDC, you will use submission.
+        Once submitted, the dataset will be reviewed by GRIIDC personnel.
+        See <a href="{{ mainsite }}/submitdata" class="pagelink">How to Submit Data</a> for more information.
     </p>
+
 </div>
 
 {% set researchGroups = researchGroups|sort((a, b) => b.creationTimeStamp <=> a.creationTimeStamp) %}
