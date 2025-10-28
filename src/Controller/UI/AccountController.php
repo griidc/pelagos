@@ -511,8 +511,13 @@ class AccountController extends AbstractController
     #[Route(path: '/forgot-username', methods: ['GET'], name: 'pelagos_app_ui_account_forgotusername')]
     public function forgotUsernameAction(Request $request, EntityEventDispatcher $entityEventDispatcher, PersonRepository $personRepository)
     {
+
         // If the user is already authenticated.
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if ($this->isGranted('ROLE_USER')) {
+            /** @var Account $account */
+            $account = $this->getUser();
+
+            $this->accountLogger->info('The "forgot username" lookup was attempted by logged in user:' . $account->getUsername(). '.');
             return $this->render('template/AlreadyLoggedIn.html.twig');
         }
 
@@ -520,13 +525,16 @@ class AccountController extends AbstractController
 
         $person = $personRepository->findOneBy(['emailAddress' => $userEmailAddr]);
 
+        $usernameFound = null;
         if ($person instanceof Person) {
             $entityEventDispatcher->dispatch(
                 $person,
                 'forgot_username'
             );
+            $usernameFound = $person->getAccount()?->getUsername();
         }
 
+        $this->accountLogger->info('Username lookup made using email ' . ($userEmailAddr ?? '') . ' returning ' . ($usernameFound ?? 'not found'));
         return $this->render(
             'Account/forgotUsername.html.twig',
             array(
