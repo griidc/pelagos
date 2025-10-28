@@ -2,7 +2,7 @@
     "devDependencies": {
         "@babel/core": "^7.28.4",
         "@babel/preset-env": "7.28.0",
-        "@babel/preset-react": "^7.27.1",
+        "@babel/preset-react": "^7.28.5",
         "@fortawesome/fontawesome-free": "^6.7.2",
         "@symfony/webpack-encore": "^4.6.1",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
