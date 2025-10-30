@@ -63,7 +63,11 @@
             <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
                 {% if is_granted('ROLE_USER') %}
                     <a style="text-decoration: underline;">
-                        Logged in as: {{ app.session.get('_security.last_username') }}
+                        Logged in as: {{ app.user.username }}
+                    </a>
+                    &nbsp; | &nbsp;
+                    <a href="{{ path('app_ui_dashboard') }}" style="text-decoration: underline; color: inherit">
+                        My Dashboard
                     </a>
                     &nbsp; | &nbsp;
                     <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit"> Log
