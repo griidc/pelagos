@@ -1,10 +1,23 @@
-{% for researchGroup in researchGroups %}
+<div class="mx-auto text-base leading-7 text-gray-700">
+    <p class="mb-4 prose prose-sm leading-relaxed">
+        The dashboard displays datasets you have created and their status within the GRIIDC system.
+        The GRIIDC submisssion process consists of two steps: submitting a plan before you collect data and completing a submission.
+        After a plan has been submitted and approved, you will collect or generate your data.
+        When you are ready to upload your data to GRIIDC, you will use submission.
+        Once submitted, the dataset will be reviewed by GRIIDC personnel.
+        See <a href="{{ mainsite }}/submitdata" class="pagelink">How to Submit Data</a> for more information.
+    </p>
 
+</div>
+
+{% set researchGroups = researchGroups|sort((a, b) => b.creationTimeStamp <=> a.creationTimeStamp) %}
+
+{% for researchGroup in researchGroups %}
 <div x-data="{ expanded: true }">
 
 <div class="shadow-lg border rounded-lg">
     <div class="block second-header">
-        <span class="p-2 text-black font-bold block text-sm font-medium bg-gray-200" @click="expanded = ! expanded">
+        <span class="p-2 text-black font-bold block bg-gray-200" @click="expanded = ! expanded">
             <div class="float-end px-2">
                 <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: gray-800;"></i>
             </div>
@@ -18,38 +31,29 @@
 <div x-show="expanded" x-collapse>
     {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
     <div class="relative overflow-x-auto">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 table-auto mt-4 text-sm font-medium">
-            <colgroup>
-                <col style="width: 140px;">
-                <col style="width: 180px;">
-                <col style="width: 320px;">
-                <col style="width: 120px;">
-                <col style="width: 220px;">
-                <col style="width: 100px;">
-            </colgroup>
+        <table class="w-full text-left rtl:text-right text-gray-500 table-fixed mt-4">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
-                    <th scope="col">Unique Dataset Identifier</th>
-                    <th scope="col">Point of Contact</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Details</th>
+                    <th scope="col" class="w-48" title="Unique Dataset Identifier">UDI</th>
+                    <th scope="col" class="w-96">Title</th>
+                    <th scope="col" class="w-32">Type</th>
+                    <th scope="col" class="w-32">Status</th>
+                    {# <th scope="col">Details</th> #}
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for dataset in datasets %}
                 <tr class="bg-white border-b border-gray-200">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ dataset.udi }}</th>
-                    <td class="px-6 py-4">{{ dataset.getPrimaryPointOfContact.fullName|default }}</td>
-                    <td class="px-6 py-4">{{ dataset.title }}</td>
-                    <td class="text-center">
-                        {% include 'Dashboard/badge.html.twig' with {'dataset': dataset} only %}
+                    <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
+                    <td class="text-left">{{ dataset.title }}</td>
+                    <td class="text-left">
+                        {% include 'Dashboard/typeText.html.twig' with {'dataset': dataset} only %}
                     </td>
-                    <td>
+                    <td class="text-left">
                         {% include 'Dashboard/statusText.html.twig' with {'dataset': dataset} only %}
                     </td>
-                    <td class="text-center">
+                    <td class="text-left">
                         {% include 'Dashboard/nextAction.html.twig' with {'dataset': dataset} only %}
                     </td>
                 </tr>

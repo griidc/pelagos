@@ -1,9 +1,9 @@
 {% extends 'Dashboard/datasetLifecycleStatus.html.twig' %}
 
 {% block status %}
-    {% if buttonUrl is empty %}
-        <button disabled="disabled" class="button button-regular opacity-50 !h-1">{{ buttonText }}</button>
+    {% if linkUrl is empty %}
+        <span disabled="disabled">{{ linkText }}</span>
     {% else %}
-        <a href="{{ buttonUrl }}" target="_blank" class="button button-regular !h-1">{{ buttonText }}</a>
+        <a href="{{ linkUrl }}" class="pagelink" target="_blank">{{ linkText }}</a>
     {% endif %}
 {% endblock status %}
