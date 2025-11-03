@@ -12,10 +12,10 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@alpinejs/collapse@^3.15.0":
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/@alpinejs/collapse/-/collapse-3.15.0.tgz#668188c5989db1aead243bcce4b6c61ab2b28bf2"
-  integrity sha512-RREZVE67/2E7rDZIxw3B5BGAFBm1x/16+3jeyjj+Fky4wPBqnhGCQZujkiggrOmdU6mcZPixYxkKFlhKfQMAXw==
+"@alpinejs/collapse@^3.15.1":
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/@alpinejs/collapse/-/collapse-3.15.1.tgz#0b9922649fea9d53a4f0783d57d806fc2401bbfb"
+  integrity sha512-p3ejDFk8VWdrHa6+Fq3NQp6X4LxWoj2TFRgKEKPQPmVyJMV+Zf5m4ZUFk3Z54zIsgOM9JkAZE0Xany00ntTTng==
 
 "@babel/code-frame@7.12.11":
   version "7.12.11"
