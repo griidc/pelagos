@@ -760,7 +760,17 @@ class Dataset extends Entity
      */
     public function isCompleted(): bool
     {
-        return $this->isAvailable() || $this->isRestricted();
+        return
+            $this->status === DatasetSubmission::DATASET_STATUS_ACCEPTED
+            && in_array(
+                $this->availabilityStatus,
+                [
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                ]
+            );
     }
 
     /**
