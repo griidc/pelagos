@@ -756,6 +756,24 @@ class Dataset extends Entity
     }
 
     /**
+     * Whether this Dataset is completed.
+     */
+    public function isCompleted(): bool
+    {
+        return
+            $this->datasetStatus  === Dataset::DATASET_STATUS_ACCEPTED
+            && in_array(
+                $this->availabilityStatus,
+                [
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                ]
+            );
+    }
+
+    /**
      * Check if dataset is Identified.
      */
     public function isIdentified(): bool
