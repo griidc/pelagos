@@ -757,6 +757,9 @@ class Dataset extends Entity
 
     /**
      * Whether this Dataset is completed.
+     *
+     * A dataset is considered completed when it is either publicly available
+     * (including remotely hosted) or restricted and accepted.
      */
     public function isCompleted(): bool
     {
