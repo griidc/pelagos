@@ -756,6 +756,14 @@ class Dataset extends Entity
     }
 
     /**
+     * Whether this Dataset is completed.
+     */
+    public function isCompleted(): bool
+    {
+        return $this->isAvailable() || $this->isRestricted();
+    }
+
+    /**
      * Check if dataset is Identified.
      */
     public function isIdentified(): bool
