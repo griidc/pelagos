@@ -52,7 +52,7 @@
                             x-data="{ isCompleted: {{dataset.isCompleted ? 'true' : 'false'}} }"
                             class="bg-white border-b border-gray-200"
                             x-transition.duration.500ms
-                            x-show="!(!showCompleted && isCompleted)"
+                            x-show="showCompleted || !isCompleted"
                         >
                             <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
                             <td class="text-left">{{ dataset.title }}</td>
