@@ -12,10 +12,10 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@alpinejs/collapse@^3.15.0":
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/@alpinejs/collapse/-/collapse-3.15.0.tgz#668188c5989db1aead243bcce4b6c61ab2b28bf2"
-  integrity sha512-RREZVE67/2E7rDZIxw3B5BGAFBm1x/16+3jeyjj+Fky4wPBqnhGCQZujkiggrOmdU6mcZPixYxkKFlhKfQMAXw==
+"@alpinejs/collapse@^3.15.1":
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/@alpinejs/collapse/-/collapse-3.15.1.tgz#0b9922649fea9d53a4f0783d57d806fc2401bbfb"
+  integrity sha512-p3ejDFk8VWdrHa6+Fq3NQp6X4LxWoj2TFRgKEKPQPmVyJMV+Zf5m4ZUFk3Z54zIsgOM9JkAZE0Xany00ntTTng==
 
 "@babel/code-frame@7.12.11":
   version "7.12.11"
@@ -2159,10 +2159,10 @@ ajv@^8.9.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-alpinejs@^3.15.0:
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/alpinejs/-/alpinejs-3.15.0.tgz#f65e0a4683f28718910e0319ae25301533ee1e7d"
-  integrity sha512-lpokA5okCF1BKh10LG8YjqhfpxyHBk4gE7boIgVHltJzYoM7O9nK3M7VlntLEJGsVmu7U/RzUWajmHREGT38Eg==
+alpinejs@^3.15.1:
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/alpinejs/-/alpinejs-3.15.1.tgz#d188dd27a68e30a32a5fa851c54c807456b11cd8"
+  integrity sha512-HLO1TtiE92VajFHtLLPK8BWaK1YepV/uj31UrfoGnQ00lyFOJZ+oVY3F0DghPAwvg8sLU79pmjGQSytERa2gEg==
   dependencies:
     "@vue/reactivity" "~3.1.1"
 
@@ -2463,10 +2463,10 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-axios@^1.12.2:
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.12.2.tgz#6c307390136cf7a2278d09cec63b136dfc6e6da7"
-  integrity sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==
+axios@^1.13.1:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.1.tgz#45b62dc8fe04e0e92274e08b98e910ba3d7963a7"
+  integrity sha512-hU4EGxxt+j7TQijx1oYdAjw4xuIp1wRQSsbMFwSthCWeBQur1eF+qJ5iQ5sN3Tw8YRzQNKb8jszgBdMDVqwJcw==
   dependencies:
     follow-redirects "^1.15.6"
     form-data "^4.0.4"
