@@ -97,19 +97,4 @@ class AccountListener extends EventListener
             );
         }
     }
-
-    /**
-     * Get the authentication credentials from the request and return them.
-     *
-     * @param Request $request A Request object.
-     *
-     * @return mixed Return the credentials array.
-     */
-    public function getCredentials(Request $request)
-    {
-        $form = $this->formFactory->create(LoginForm::class);
-        $form->handleRequest($request);
-
-        return $form->getData();
-    }
 }
