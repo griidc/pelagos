@@ -7,63 +7,74 @@
         Once submitted, the dataset will be reviewed by GRIIDC personnel.
         See <a href="{{ mainsite }}/submitdata" class="pagelink">How to Submit Data</a> for more information.
     </p>
-
 </div>
+
+<div x-data="{ showCompleted: true }">
+<button
+    @click="showCompleted = ! showCompleted"
+    class="button button-regular mb-4"
+>
+    <i :class="showCompleted ? 'fa-eye' : 'fa-eye-slash'" class="fa-solid pr-4"></i>
+    <span x-text="showCompleted ? 'Hide Completed Datasets': 'Show Completed Datasets'">Hide Completed Datasets</span>
+</button>
 
 {% set researchGroups = researchGroups|sort((a, b) => b.creationTimeStamp <=> a.creationTimeStamp) %}
 
 {% for researchGroup in researchGroups %}
-<div x-data="{ expanded: true }">
-
-<div class="shadow-lg border rounded-lg">
-    <div class="block second-header">
-        <span class="p-2 text-black font-bold block bg-gray-200" @click="expanded = ! expanded">
-            <div class="float-end px-2">
-                <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: gray-800;"></i>
+    <div x-data="{ expanded: true }" >
+        <div class="shadow-lg border rounded-lg">
+            <div class="block second-header">
+                <span class="p-2 text-black font-bold block bg-gray-200" @click="expanded = ! expanded">
+                    <div class="float-end px-2">
+                        <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: gray-800;"></i>
+                    </div>
+                    <div class="mr-10">
+                        Research Group: {{ researchGroup.name }}
+                    </div>
+                </span>
             </div>
-            <div class="mr-10">
-                Research Group: {{ researchGroup.name }}
-            </div>
-        </span>
-    </div>
-</div>
+        </div>
 
-<div x-show="expanded" x-collapse>
+        <div x-show="expanded" x-collapse>
     {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
-    <div class="relative overflow-x-auto">
-        <table class="w-full text-left rtl:text-right text-gray-500 table-fixed mt-4">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                    <th scope="col" class="w-48" title="Unique Dataset Identifier">UDI</th>
-                    <th scope="col" class="w-96">Title</th>
-                    <th scope="col" class="w-32">Type</th>
-                    <th scope="col" class="w-32">Status</th>
-                    {# <th scope="col">Details</th> #}
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dataset in datasets %}
-                <tr class="bg-white border-b border-gray-200">
-                    <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
-                    <td class="text-left">{{ dataset.title }}</td>
-                    <td class="text-left">
-                        {% include 'Dashboard/typeText.html.twig' with {'dataset': dataset} only %}
-                    </td>
-                    <td class="text-left">
-                        {% include 'Dashboard/statusText.html.twig' with {'dataset': dataset} only %}
-                    </td>
-                    <td class="text-left">
-                        {% include 'Dashboard/nextAction.html.twig' with {'dataset': dataset} only %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <div class="relative overflow-x-auto">
+                <table class="w-full text-left rtl:text-right text-gray-500 table-fixed mt-4">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="w-48" title="Unique Dataset Identifier">UDI</th>
+                            <th scope="col" class="w-96">Title</th>
+                            <th scope="col" class="w-32">Type</th>
+                            <th scope="col" class="w-32">Status</th>
+                            {# <th scope="col">Details</th> #}
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for dataset in datasets %}
+                        <tr
+                            x-data="{ isCompleted: {{dataset.isCompleted ? 'true' : 'false'}} }"
+                            class="bg-white border-b border-gray-200"
+                            x-transition.duration.500ms
+                            x-show="!(!showCompleted && isCompleted)"
+                        >
+                            <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
+                            <td class="text-left">{{ dataset.title }}</td>
+                            <td class="text-left">
+                                {% include 'Dashboard/typeText.html.twig' with {'dataset': dataset} only %}
+                            </td>
+                            <td class="text-left">
+                                {% include 'Dashboard/statusText.html.twig' with {'dataset': dataset} only %}
+                            </td>
+                            <td class="text-left">
+                                {% include 'Dashboard/nextAction.html.twig' with {'dataset': dataset} only %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        <div class="py-6"></div>
     </div>
-
-    <div class="py-6"></div>
 </div>
-</div>
-
 {% endfor %}
+</div>
