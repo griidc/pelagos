@@ -764,7 +764,7 @@ class Dataset extends Entity
     public function isCompleted(): bool
     {
         return
-            $this->status === DatasetSubmission::DATASET_STATUS_ACCEPTED
+            $this->datasetStatus === Dataset::DATASET_STATUS_ACCEPTED
             && in_array(
                 $this->availabilityStatus,
                 [
