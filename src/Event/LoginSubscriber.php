@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 
-class LoginListener implements EventSubscriberInterface
+class LoginSubscriber implements EventSubscriberInterface
 {
     /**
      * An instance of FormFactory.
