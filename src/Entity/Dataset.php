@@ -757,10 +757,23 @@ class Dataset extends Entity
 
     /**
      * Whether this Dataset is completed.
+     *
+     * A dataset is considered completed when it is either publicly available
+     * (including remotely hosted) or restricted and accepted.
      */
     public function isCompleted(): bool
     {
-        return $this->isAvailable() || $this->isRestricted();
+        return
+            $this->datasetStatus === Dataset::DATASET_STATUS_ACCEPTED
+            && in_array(
+                $this->availabilityStatus,
+                [
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                ]
+            );
     }
 
     /**
