@@ -36,7 +36,6 @@ class LoginSubscriber implements EventSubscriberInterface
     {
         return [
             LoginSuccessEvent::class => 'onLoginSuccess',
-            LogoutEvent::class => 'onLogout',
             LoginFailureEvent::class => 'onLoginFailure'
         ];
     }
@@ -59,22 +58,6 @@ class LoginSubscriber implements EventSubscriberInterface
         ];
 
         $this->logger->info('(listener) Login success.', $loggingContext);
-    }
-
-    /**
-     * Logs logout events.
-     */
-    public function onLogout(LogoutEvent $event): void
-    {
-        $request = $event->getRequest();
-        $username = $request->server->get('USERNAME');
-
-        $loggingContext = [
-            'ipAddress' => $request->getClientIp(),
-            'userName' => $username
-        ];
-
-        $this->logger->info('(listener) User logged out.', $loggingContext);
     }
 
     /**
