@@ -277,7 +277,7 @@ class AccountController extends AbstractController
         $account = $this->getUser();
         $person = $account->getPerson();
 
-        $this->accountLogger->info('Password expired change for person ' . $person->getFullName(), ['personId' => $person->getId()]);
+        $this->accountLogger->info('Password expired change page displayed for person ' . $person->getFullName(), ['personId' => $person->getId()]);
 
         // Send back the set password screen.
         return $this->render(

@@ -86,7 +86,7 @@ class LoginSubscriber implements EventSubscriberInterface
 
         $loggingContext = [
             'ipAddress' => $request->getClientIp(),
-            'userName' => $request->request->get('_username'),
+            'userName' => $request->request->all()['login_form']['_username'] ?? 'unknown',
             'errorMessage' => $event->getException()->getMessage(),
         ];
 
