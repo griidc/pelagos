@@ -5,6 +5,7 @@ namespace App\Event;
 use App\Entity\Account;
 use App\Entity\Person;
 use App\Entity\ResearchGroupRole;
+
 /**
  * Listener class for Account-related events.
  */
