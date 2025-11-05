@@ -5,9 +5,6 @@ namespace App\Event;
 use App\Entity\Account;
 use App\Entity\Person;
 use App\Entity\ResearchGroupRole;
-use App\Form\LoginForm;
-use Symfony\Component\HttpFoundation\Request;
-
 /**
  * Listener class for Account-related events.
  */
