@@ -460,7 +460,7 @@ class AccountController extends AbstractController
 
         $this->accountLogger->info('Change password requested page loaded.', [
             'username' => $this->getUser()->getUsername(),
-            'ipAddress'=> $request->getClientIp() ?? 'unknown'
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
         ]);
         // Send back the set password screen.
         return $this->render('Account/changePassword.html.twig');
