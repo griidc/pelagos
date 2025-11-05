@@ -133,10 +133,16 @@ class AccountController extends AbstractController
 
         $people = $personRepository->findBy(['emailAddress' => $emailAddress]);
 
-        $this->accountLogger->info('Account request for ' . (string) $emailAddress, ['reset' => $reset, 'people_found' => count($people)]);
+        $this->accountLogger->info('Account request for ' . (string) $emailAddress, [
+            'reset' => $reset,
+            'people_found' => count($people),
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
 
         if (count($people) === 0) {
-            $this->accountLogger->info('No person found for email address during password reset attempt for: ' . (string) $emailAddress);
+            $this->accountLogger->info('No person found for email address during password reset attempt for: ' . (string) $emailAddress, [
+                'ipAddress' => $request->getClientIp() ?? 'unknown'
+            ]);
             return $this->render('Account/EmailFound.html.twig', array(
                 'reset' => $reset,
             ));
@@ -148,7 +154,10 @@ class AccountController extends AbstractController
 
         $person = $people[0];
 
-        $this->accountLogger->info('Account request matched to person ID ' . $person->getFullName(), ['personId' => $person->getId()]);
+        $this->accountLogger->info('Account request matched to person ID ' . $person->getFullName(), [
+            'personId' => $person->getId(),
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
 
         // Get personToken
         $personToken = $person->getToken();
@@ -161,7 +170,10 @@ class AccountController extends AbstractController
 
         $hasAccount = $person->getAccount() instanceof Account;
 
-        $this->accountLogger->info('Person has account: ' . ($hasAccount ? 'yes' : 'no'), ['personId' => $person->getId()]);
+        $this->accountLogger->info('Person has account: ' . ($hasAccount ? 'yes' : 'no'), [
+            'personId' => $person->getId(),
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
 
         if ($hasAccount and !$reset) {
             return $this->render('Account/AccountExists.html.twig');
@@ -199,7 +211,10 @@ class AccountController extends AbstractController
             array(new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName()))
         );
 
-        $this->accountLogger->info('Account email sent to ' . (string) $emailAddress, ['reset' => $reset, 'personId' => $person->getId()]);
+        $this->accountLogger->info('Account email sent to ' . (string) $emailAddress, [
+            'reset' => $reset,
+            'personId' => $person->getId()
+        ]);
 
         return $this->render(
             'Account/EmailFound.html.twig',
@@ -219,7 +234,7 @@ class AccountController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/account/verify-email', methods: ['GET'], name: 'pelagos_app_ui_account_verifyemail')]
-    public function verifyEmailAction()
+    public function verifyEmailAction(Request $request)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -240,7 +255,7 @@ class AccountController extends AbstractController
         $this->accountLogger->info('Email verification for person ' . $person->getFullName(), [
             'reset' => $reset,
             'personId' => $person->getId(),
-            'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
         ]);
 
         // If a password has been set.
@@ -265,7 +280,7 @@ class AccountController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/account/password-expired', methods: ['GET'], name: 'pelagos_app_ui_account_passwordexpired')]
-    public function passwordExpiredAction()
+    public function passwordExpiredAction(Request $request)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -277,7 +292,11 @@ class AccountController extends AbstractController
         $account = $this->getUser();
         $person = $account->getPerson();
 
-        $this->accountLogger->info('Password expired change page displayed for person ' . $person->getFullName(), ['personId' => $person->getId()]);
+        $this->accountLogger->info('Password expired change page displayed for person ' . $person->getFullName(), [
+            'username' => $this->getUser()->getUsername(),
+            'personId' => $person->getId(),
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
 
         // Send back the set password screen.
         return $this->render(
@@ -327,7 +346,11 @@ class AccountController extends AbstractController
             $reset = ($person->getToken()->getUse() === 'PASSWORD_RESET') ? true : false;
         }
 
-        $this->accountLogger->info('Account creation for person ' . $person->getFullName(), ['reset' => $reset, 'personId' => $person->getId()]);
+        $this->accountLogger->info('Account creation for person ' . $person->getFullName(), [
+            'reset' => $reset,
+            'personId' => $person->getId(),
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
 
         // If a password has been set.
         if ($account->getPassword() !== null and $reset === false) {
@@ -390,7 +413,6 @@ class AccountController extends AbstractController
 
             // Persist Account
             $account = $this->entityHandler->create($account);
-
             try {
                 // Try to add the person to LDAP.
                 $ldap->addPerson($person);
@@ -407,6 +429,11 @@ class AccountController extends AbstractController
         if ($reset === true) {
             return $this->render('Account/AccountReset.html.twig');
         } else {
+            $this->accountLogger->info('Account successfully created for person ' . $person->getFullName(), [
+                'username' => $account->getUsername(),
+                'personId' => $person->getId(),
+                'ipAddress' => $request->getClientIp() ?? 'unknown'
+            ]);
             return $this->render(
                 'Account/AccountCreated.html.twig',
                 array(
@@ -423,7 +450,7 @@ class AccountController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/change-password', methods: ['GET'], name: 'pelagos_app_ui_account_changepassword')]
-    public function changePasswordAction()
+    public function changePasswordAction(Request $request)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -433,7 +460,7 @@ class AccountController extends AbstractController
 
         $this->accountLogger->info('Change password requested page loaded.', [
             'username' => $this->getUser()->getUsername(),
-            'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            'ipAddress'=> $request->getClientIp() ?? 'unknown'
         ]);
         // Send back the set password screen.
         return $this->render('Account/changePassword.html.twig');
@@ -517,7 +544,10 @@ class AccountController extends AbstractController
             $ldap->updatePerson($person);
         }
 
-        $this->accountLogger->info('Password successfully changed.', ['username' => $this->getUser()->getUsername(), 'ipAddress' => $request->getClientIp() ?? 'unknown']);
+        $this->accountLogger->info('Password successfully changed.', [
+            'username' => $this->getUser()->getUsername(),
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
         return $this->render('Account/AccountReset.html.twig');
     }
 
@@ -539,7 +569,10 @@ class AccountController extends AbstractController
             /** @var Account $account */
             $account = $this->getUser();
 
-            $this->accountLogger->info('The "forgot username" lookup was attempted by logged in user:' . $account->getUsername() . '.');
+            $this->accountLogger->info('The "forgot username" lookup was attempted by logged in user:' . $account->getUsername() . '.', [
+                'username' => $this->getUser()->getUsername(),
+                'ipAddress' => $request->getClientIp() ?? 'unknown'
+            ]);
             return $this->render('template/AlreadyLoggedIn.html.twig');
         }
 
@@ -556,7 +589,9 @@ class AccountController extends AbstractController
             $usernameFound = $person->getAccount()?->getUsername();
         }
 
-        $this->accountLogger->info('Username lookup made using email ' . ($userEmailAddr ?? '') . ' returning ' . ($usernameFound ?? 'not found'));
+        $this->accountLogger->info('Username lookup made using email ' . ($userEmailAddr ?? '') . ' returning ' . ($usernameFound ?? 'not found'), [
+            'ipAddress' => $request->getClientIp() ?? 'unknown'
+        ]);
         return $this->render(
             'Account/forgotUsername.html.twig',
             array(
