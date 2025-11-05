@@ -86,7 +86,8 @@ class LoginSubscriber implements EventSubscriberInterface
 
         $loggingContext = [
             'ipAddress' => $request->getClientIp(),
-            'userName' => $this->getCredentials($request)['_username'],
+            'userName' => $request->request->get('_username'),
+            'errorMessage' => $event->getException()->getMessage(),
         ];
 
         $this->logger->info('(listener) Login failure.', $loggingContext);
