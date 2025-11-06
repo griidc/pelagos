@@ -21,7 +21,7 @@
 {% for researchGroup in researchGroups %}
     <div x-data="{ expanded: true }" class="mb-6">
         <div class="shadow-lg border rounded-lg">
-            <div class="block second-header">
+            <div class="block bg-gray-300">
                 <span class="p-2 text-black font-bold block bg-gray-200" @click="expanded = ! expanded">
                     <div class="float-end px-2">
                         <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: gray-800;"></i>
@@ -73,7 +73,7 @@
             <div class="flex justify-start mt-4">
                 {% if researchGroup.isLocked %}
                     <span
-                        class="text-gray-600 border border-gray-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center cursor-not-allowed"
+                        class="opacity-50 text-gray-600 border border-gray-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center cursor-not-allowed"
                         data-tippy-content="This research group is locked. You cannot create a new dataset in this group."
                     >
                         <i class="fa-solid fa-plus"></i>
