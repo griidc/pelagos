@@ -13,12 +13,6 @@
     {% set badgeClass = 'badge-pill badge-restricted' %}
     {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
     {% set linkText = 'View' %}
-    {% set statusText = datasetLifecycleStatus.description ~ '.'%}
-    {% set badgeText = datasetLifecycleStatus.value %}
-    {% set typeText = 'Submission' %}
-    {% set badgeClass = 'badge-pill badge-restricted' %}
-    {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
-    {% set linkText = 'View' %}
     {% set statusText = datasetLifecycleStatus.description ~ '.' %}
     {% set badgeText = datasetLifecycleStatus.value %}
     {% set typeText = 'Submission' %}
