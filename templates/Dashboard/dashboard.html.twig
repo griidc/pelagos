@@ -39,11 +39,11 @@
                 <table class="w-full text-left rtl:text-right text-gray-500 table-fixed mt-4">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
-                            <th scope="col" class="w-48" title="Unique Dataset Identifier">UDI</th>
-                            <th scope="col" class="w-96">Title</th>
-                            <th scope="col" class="w-32">Type</th>
-                            <th scope="col" class="w-32">Status</th>
-                            <th scope="col">Action</th>
+                            <th scope="col" class="w-[11rem]" title="Unique Dataset Identifier">UDI</th>
+                            <th scope="col">Title</th>
+                            <th scope="col" class="w-[8rem]">Type</th>
+                            <th scope="col" class="w-[7rem]">Status</th>
+                            <th scope="col" class="w-[6rem]">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,7 +55,7 @@
                             x-show="showCompleted || !isCompleted"
                         >
                             <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
-                            <td class="text-left">{{ dataset.title }}</td>
+                            <td class="text-left pr-4">{{ dataset.title }}</td>
                             <td class="text-left">
                                 {% include 'Dashboard/typeText.html.twig' with {'dataset': dataset} only %}
                             </td>
@@ -71,6 +71,14 @@
                 </table>
             </div>
             <div class="flex justify-start mt-4">
+                {% if researchGroup.isLocked %}
+                    <span
+                        class="text-gray-600 border border-gray-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center cursor-not-allowed"
+                        data-tippy-content="This research group is locked. You cannot create a new dataset in this group."
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                    </span>
+                {% else %}
                 <a
                     href="{{ path('pelagos_app_ui_dif_default') }}"
                     class="text-blue-800 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
@@ -79,6 +87,7 @@
                     <i class="fa-solid fa-plus"></i>
                     <span class="sr-only">Create New Dataset</span>
                 </a>
+                {% endif %}
             </div>
         <div class="py-6"></div>
     </div>
