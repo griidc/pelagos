@@ -17,3 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
         //options
     });
 });
+
+const toggleAllExpanded = (expanded) => {
+    const expandElements = document.querySelectorAll('.expandme:has(.fa-chevron-down)');
+    const collapseElements = document.querySelectorAll('.expandme:has(.fa-chevron-up)');
+
+    if (expanded) {
+        expandElements.forEach((element) => {
+            element.click();
+        });
+    } else {
+        collapseElements.forEach((element) => {
+            element.click();
+        });
+    }
+};
+
+window.toggleAllExpanded = toggleAllExpanded;
