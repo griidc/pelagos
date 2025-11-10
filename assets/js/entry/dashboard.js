@@ -33,4 +33,19 @@ const toggleAllExpanded = (expanded) => {
     }
 };
 
+const isAllExpanded = () => {
+    const expandMe = document.querySelectorAll('.expandme');
+    const expandElements = document.querySelectorAll('.expandme:has(.fa-chevron-down)');
+
+    let isExpanded = expandElements.length === expandMe.length;
+
+    return isExpanded;
+}
+
+document.querySelectorAll('.expandme').forEach((element) => {
+    element.addEventListener('click', () => {
+        console.log('Toggled all expanded to:', isAllExpanded());
+    });
+});
+
 window.toggleAllExpanded = toggleAllExpanded;
