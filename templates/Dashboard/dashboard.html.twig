@@ -66,7 +66,7 @@
                             x-show="showCompleted || !isCompleted"
                         >
                             <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
-                            <td class="text-left pr-4">{{ dataset.title }}</td>
+                            <td class="text-left pr-4 break-all">{{ dataset.title }}</td>
                             <td class="text-left">
                                 {% include 'Dashboard/typeText.html.twig' with {'dataset': dataset} only %}
                             </td>
