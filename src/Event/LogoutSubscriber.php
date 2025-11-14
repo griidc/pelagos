@@ -40,7 +40,7 @@ class LogoutSubscriber implements EventSubscriberInterface
             'userName' => $username
         ];
 
-        $this->accountLogger->info('(listener) User logged out.', $loggingContext);
+        $this->accountLogger->info($username . ' logged out.', $loggingContext);
 
         if (!empty($response)) {
             $response->headers->clearCookie('GRIIDC_USERNAME');

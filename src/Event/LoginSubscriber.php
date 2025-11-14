@@ -54,7 +54,7 @@ class LoginSubscriber implements EventSubscriberInterface
             'userName' => $username,
         ];
 
-        $this->logger->info('(listener) Login success.', $loggingContext);
+        $this->logger->info($username . ' logged in.', $loggingContext);
     }
 
     /**
