@@ -136,7 +136,7 @@ $(() => {
   }).dxTreeList('instance');
 
   const kwTreeList = $('#kw-tree').dxTreeList({
-    dataSource: `${Routing.generate('api_keywords_level2')}/all`,
+    dataSource: `${Routing.generate('api_keywords_level2')}/anzsrc`,
     keyExpr: 'id',
     parentIdExpr: 'parent',
     filterRow: {
@@ -151,34 +151,35 @@ $(() => {
     toolbar: {
       enabled: true,
       items: [
-        {
-          widget: 'dxSelectBox',
-          options: {
-            items: keywordFilters,
-            valueExpr: 'id',
-            displayExpr: 'text',
-            value: keywordFilters[0].id,
-            onValueChanged(e) {
-              kwTreeList.columnOption('type', 'filterValue', e.value);
-            },
-          },
-        },
+        // {
+        //   widget: 'dxSelectBox',
+        //   options: {
+        //     items: keywordFilters,
+        //     valueExpr: 'id',
+        //     displayExpr: 'text',
+        //     value: keywordFilters[0].id,
+        //     onValueChanged(e) {
+        //       kwTreeList.columnOption('type', 'filterValue', e.value);
+        //     },
+        //   },
+        // },
         'searchPanel',
       ],
     },
-    columns: [{
-      dataField: 'label',
-      caption: 'Keyword',
-      dataType: 'string',
-      allowSearch: true,
-    },
-    {
-      dataType: 'string',
-      dataField: 'type',
-      caption: 'Type',
-      visible: true,
-      allowSearch: false,
-    },
+    columns: [
+      {
+        dataField: 'label',
+        caption: 'Keyword',
+        dataType: 'string',
+        allowSearch: true,
+      },
+      {
+        dataType: 'integer',
+        dataField: 'count',
+        caption: 'Count',
+        visible: true,
+        allowSearch: false,
+      },
     ],
     disabled: false,
     showRowLines: false,

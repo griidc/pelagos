@@ -139,10 +139,12 @@ fos_elastica:
                             include_in_parent: true
                             properties:
                                 displayPath:
-                                    type: 'text'
+                                    type: 'keyword'
                                 id:
                                     type: 'keyword'
                                 type:
+                                    type: 'keyword'
+                                levelTwo:
                                     type: 'keyword'
                 availabilityStatus:
                     type: 'integer'
