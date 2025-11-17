@@ -13,12 +13,6 @@
     {% set badgeClass = 'badge-pill badge-restricted' %}
     {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
     {% set linkText = 'View' %}
-    {% set statusText = datasetLifecycleStatus.description ~ '.'%}
-    {% set badgeText = datasetLifecycleStatus.value %}
-    {% set typeText = 'Submission' %}
-    {% set badgeClass = 'badge-pill badge-restricted' %}
-    {% set linkUrl = url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) %}
-    {% set linkText = 'View' %}
     {% set statusText = datasetLifecycleStatus.description ~ '.' %}
     {% set badgeText = datasetLifecycleStatus.value %}
     {% set typeText = 'Submission' %}
@@ -50,7 +44,7 @@
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::INCOMPLETE') %}
     {# DIF Not yet Approved #}
     {% set badgeClass = 'badge-pill badge-incomplete' %}
-    {% set linkUrl = url('pelagos_app_ui_dif_default', {'id': dataset.dif.id}) %}
+    {% set linkUrl = url('pelagos_app_ui_dif_default') ~ '?id=' ~ dataset.dif.id %}
     {% set linkText = 'Submit' %}
     {% set statusText = 'Identified dataset saved, but not submitted.' %}
     {% set badgeText = 'Draft' %}
