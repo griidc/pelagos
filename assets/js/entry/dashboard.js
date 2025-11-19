@@ -13,39 +13,39 @@ Alpine.plugin(collapse);
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
-     tippy('[data-tippy-content]', {
-        //options
-    });
+  tippy('[data-tippy-content]', {
+    // options
+  });
 });
 
 const toggleAllExpanded = (expanded) => {
-    const expandElements = document.querySelectorAll('.expandme:has(.fa-chevron-down)');
-    const collapseElements = document.querySelectorAll('.expandme:has(.fa-chevron-up)');
+  const expandElements = document.querySelectorAll('.expandme:has(.fa-chevron-down)');
+  const collapseElements = document.querySelectorAll('.expandme:has(.fa-chevron-up)');
 
-    if (expanded) {
-        expandElements.forEach((element) => {
-            element.click();
-        });
-    } else {
-        collapseElements.forEach((element) => {
-            element.click();
-        });
-    }
+  if (expanded) {
+    expandElements.forEach((element) => {
+      element.click();
+    });
+  } else {
+    collapseElements.forEach((element) => {
+      element.click();
+    });
+  }
 };
 
 const isAllExpanded = () => {
-    const expandMe = document.querySelectorAll('.expandme');
-    const expandElements = document.querySelectorAll('.expandme:has(.fa-chevron-down)');
+  const expandMe = document.querySelectorAll('.expandme');
+  const expandElements = document.querySelectorAll('.expandme:has(.fa-chevron-down)');
 
-    let isExpanded = expandElements.length === expandMe.length;
+  const isExpanded = expandElements.length === expandMe.length;
 
-    return isExpanded;
-}
+  return isExpanded;
+};
 
 document.querySelectorAll('.expandme').forEach((element) => {
-    element.addEventListener('click', () => {
-        console.log('Toggled all expanded to:', isAllExpanded());
-    });
+  element.addEventListener('click', () => {
+    console.log('Toggled all expanded to:', isAllExpanded());
+  });
 });
 
 window.toggleAllExpanded = toggleAllExpanded;
