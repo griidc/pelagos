@@ -58,7 +58,7 @@ class LoginSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Get the authentication credentials from the request and return them.
+     * Logs the failed login attempts.
      */
     public function onLoginFailure(LoginFailureEvent $event): void
     {

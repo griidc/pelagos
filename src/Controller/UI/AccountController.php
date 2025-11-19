@@ -70,7 +70,11 @@ class AccountController extends AbstractController
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param boolean            $passwordRules Boolean value for account_less_strict_password_rules.
+     * @param boolean                $passwordRules Boolean value relaxing the password minimum age restriction, used only for dev/testing.
+     * @param EntityHandler          $entityHandler An instance of the now deprecated EntityHandler service.
+     * @param EntityManagerInterface $entityManager An instance of the EntityManagerInterface service, eventually replacing EntityHandler.
+     * @param ValidatorInterface     $validator An instance of the ValidatorInterface service.
+     * @param LoggerInterface        $accountLogger An instance of the LoggerInterface service specifically for account-related logging.
      *
      * @return void
      */
