@@ -10,20 +10,11 @@ use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 class LoginSubscriber implements EventSubscriberInterface
 {
-    /**
-     * An instance of FormFactory.
-     *
-     * @var FormFactoryInterface
-     */
-    private $formFactory;
-
-
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $accountLogger, FormFactoryInterface $formFactory)
+    public function __construct(LoggerInterface $accountLogger)
     {
         $this->logger = $accountLogger;
-        $this->formFactory = $formFactory;
     }
 
     /**
