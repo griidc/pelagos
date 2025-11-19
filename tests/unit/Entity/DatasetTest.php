@@ -357,7 +357,7 @@ class DatasetTest extends TestCase
         // Case: Unapproved DIF
         $this->dataset->setDif($this->mockDifNStatusUnsubmitted);
         $this->assertEquals(
-            DatasetLifecycleStatus::NONE,
+            DatasetLifecycleStatus::INCOMPLETE,
             $this->dataset->getDatasetLifecycleStatus()
         );
 
