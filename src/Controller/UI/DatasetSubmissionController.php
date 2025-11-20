@@ -31,6 +31,7 @@ use App\Exception\InvalidMetadataException;
 use App\Message\DatasetSubmissionFiler;
 use App\Util\ISOMetadataExtractorUtil;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -99,16 +100,10 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
+    #[IsGranted('ROLE_USER')]
     #[Route(path: '/dataset-submission', name: 'pelagos_app_ui_datasetsubmission_default', methods: ['GET', 'POST'])]
     public function defaultAction(Request $request, EntityManagerInterface $entityManager)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect(
-                $this->generateUrl('security_login') . '?destination='
-                . $this->generateUrl('pelagos_app_ui_datasetsubmission_default')
-            );
-        }
-
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
         $dataset = null;

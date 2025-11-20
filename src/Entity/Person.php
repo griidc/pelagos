@@ -26,6 +26,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 #[UniqueEntity(fields: ['emailAddress'], errorPath: 'emailAddress', message: 'A Person with this email address already exists')]
 class Person extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -232,21 +234,16 @@ class Person extends Entity
      * @access protected
      *
      */
-    #[ORM\OneToOne(targetEntity: 'Account', mappedBy: 'person')]
+    #[ORM\OneToOne(targetEntity: Account::class, mappedBy: 'person')]
     #[Serializer\Exclude]
     protected $account;
 
     /**
      * Person's Token.
-     *
-     * @var PersonToken $token
-     *
-     * @access protected
-     *
      */
-    #[ORM\OneToOne(targetEntity: 'PersonToken', mappedBy: 'person')]
+    #[ORM\OneToOne(targetEntity: PersonToken::class, mappedBy: 'person')]
     #[Serializer\Exclude]
-    protected $token;
+    protected ?PersonToken $token = null;
 
     /**
      * Constructor that initializes Collections as empty ArrayCollections.
@@ -710,7 +707,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return PersonToken Person's token.
+     * @return ?PersonToken Person's token.
      */
     public function getToken()
     {
@@ -753,11 +750,8 @@ class Person extends Entity
                 ($personDataRepositoriesCount > 1 ? 'Repositories' : 'Repository');
         }
 
-        if (is_countable($this->getAccount())) {
-            $personAccountCount = count($this->getAccount());
-            if ($personAccountCount > 0) {
-                $notDeletableReasons[] = 'there is an associated Account';
-            }
+        if ($this->getAccount() instanceof Account) {
+            $notDeletableReasons[] = 'there is an associated Account';
         }
 
         if (count($notDeletableReasons) > 0) {

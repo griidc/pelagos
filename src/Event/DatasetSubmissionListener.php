@@ -43,10 +43,10 @@ class DatasetSubmissionListener extends EventListener
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
-            $this->getDMs($dataset, $datasetSubmission->getSubmitter())
+            $this->getDatasetDMs($dataset)
         );
 
-        // email DRPMS(s)
+        // email DRPM(s)
         $template = $this->twig->load('Email/data-managers.dataset-submitted.email.twig');
         $this->sendMailMsg(
             $template,
@@ -85,7 +85,7 @@ class DatasetSubmissionListener extends EventListener
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
-            $this->getDMs($dataset, $datasetSubmission->getSubmitter())
+            $this->getDatasetDMs($dataset)
         );
 
         // email DRPM(s)
@@ -115,7 +115,7 @@ class DatasetSubmissionListener extends EventListener
             $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
             and $datasetSubmission->getDataset()->getDatasetStatus() === Dataset::DATASET_STATUS_SUBMITTED
         ) {
-            //email DRMs
+            //email DRPM(s)
             $this->sendMailMsg(
                 $this->twig->load('Email/data-repository-managers.dataset-files-processed.email.twig'),
                 array('datasetSubmission' => $datasetSubmission),
@@ -136,7 +136,7 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
 
-        // email DRMs
+        // email DRPM(s)
         $this->sendMailMsg(
             $this->twig->load(
                 'Email/data-repository-managers.dataset-unprocessable.email.twig'
