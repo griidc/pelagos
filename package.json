@@ -4,7 +4,7 @@
         "@babel/preset-env": "7.28.5",
         "@babel/preset-react": "^7.28.5",
         "@fortawesome/fontawesome-free": "^6.7.2",
-        "@symfony/webpack-encore": "^4.6.1",
+        "@symfony/webpack-encore": "^5.3.1",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
         "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
