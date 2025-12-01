@@ -255,6 +255,15 @@ class Keyword extends Entity
         return count($levels);
     }
 
+    public function getLevelTwo(): ?string
+    {
+        $levels = explode(' > ', $this->getDisplayPath() ?? '');
+        if (count($levels) >= 2) {
+            return $levels[0] . ' > ' . $levels[1];
+        }
+        return null;
+    }
+
     /**
      * Stringifier, show label.
      */

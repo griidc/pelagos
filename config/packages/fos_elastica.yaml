@@ -144,6 +144,9 @@ fos_elastica:
                                     type: 'keyword'
                                 type:
                                     type: 'keyword'
+                anzsrcLevelTwo:
+                    type: 'keyword'
+                    property_path: false
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:
