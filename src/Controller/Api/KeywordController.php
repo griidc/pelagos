@@ -26,7 +26,7 @@ class KeywordController extends AbstractController
         $query = new Query();
 
         $keywordAgg = new AggregationTerms('levelTwoKeywordTerms');
-        $keywordAgg->setField('levelTwo');
+        $keywordAgg->setField('anzsrcLevelTwo');
         $keywordAgg->setSize(99999);
         $query->addAggregation($keywordAgg);
 
