@@ -7,16 +7,12 @@ use App\Repository\KeywordRepository;
 use App\Search\Elastica\ExtendedTransformedFinder;
 use App\Util\KeywordUtil;
 use Doctrine\Common\Collections\ArrayCollection;
-use Elastica\Aggregation\Nested as AggregationNested;
 use Elastica\Aggregation\Terms as AggregationTerms;
 use Elastica\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class KeywordController extends AbstractController
 {
@@ -28,15 +24,14 @@ class KeywordController extends AbstractController
         $level2Keywords = new ArrayCollection($keywordUtil->getKeywordsByLevel($keywords, 2));
 
         $query = new Query();
-        $keywordAgg = new AggregationNested('keywordsAgg', 'datasetSubmission.keywords');
-        $keywordTerms = new AggregationTerms('levelTwoKeywordTerms');
-        $keywordTerms->setField('datasetSubmission.keywords.levelTwo');
-        $keywordTerms->setSize(99999);
-        $keywordAgg->addAggregation($keywordTerms);
+
+        $keywordAgg = new AggregationTerms('levelTwoKeywordTerms');
+        $keywordAgg->setField('levelTwo');
+        $keywordAgg->setSize(99999);
         $query->addAggregation($keywordAgg);
 
         $results = $searchPelagosFinder->getSearch()->search($query);
-        $buckets = $results->getAggregation('keywordsAgg')['levelTwoKeywordTerms']['buckets'];
+        $buckets = $results->getAggregation('levelTwoKeywordTerms')['buckets'];
 
         $data = [];
 
@@ -58,18 +53,6 @@ class KeywordController extends AbstractController
                 'count' => $bucket['doc_count'],
             ];
         }
-
-
-
-        // foreach ($level2Keywords as $keyword) {
-        //     $data[] = [
-        //         'id' => $keyword->getId(),
-        //         'type' => $keyword->getType(),
-        //         'shortDisplayPath' => $keyword->getShortDisplayPath(),
-        //         'displayPath' => $keyword->getDisplayPath(),
-        //         'label' => $keyword->getLabel(),
-        //     ];
-        // }
 
         return new JsonResponse(data: $data);
     }
