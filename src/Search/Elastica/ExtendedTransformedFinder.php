@@ -16,5 +16,4 @@ class ExtendedTransformedFinder extends TransformedFinder
     {
         return $this->searchable;
     }
-
 }
