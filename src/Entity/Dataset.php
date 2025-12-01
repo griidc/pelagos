@@ -1225,11 +1225,11 @@ class Dataset extends Entity
     /**
      * Get keywords by type.
      */
-    private function getKeywordsByType(KeywordType $type): ?Collection
+    public function getKeywordsByType(KeywordType $type): ?Collection
     {
         $keywords = $this->getDatasetSubmission()?->getKeywords();
 
-        return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
+        return $keywords?->filter(function (Keyword $keyword) use ($type) {
                 return $keyword->getType() === $type;
         });
     }
