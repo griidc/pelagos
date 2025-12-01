@@ -139,7 +139,7 @@ fos_elastica:
                             include_in_parent: true
                             properties:
                                 displayPath:
-                                    type: 'keyword'
+                                    type: 'text'
                                 id:
                                     type: 'keyword'
                                 type:
