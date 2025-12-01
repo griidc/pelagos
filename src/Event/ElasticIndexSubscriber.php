@@ -4,9 +4,11 @@ namespace App\Event;
 
 use App\Entity\Dataset;
 use App\Entity\InformationProduct;
+use App\Enum\KeywordType;
 use App\Exception\InvalidGmlException;
 use App\Twig\Extensions as TwigExtentions;
 use App\Util\Geometry;
+use Doctrine\Common\Collections\ArrayCollection;
 use FOS\ElasticaBundle\Event\PostTransformEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -61,6 +63,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
     {
         $document = $event->getDocument();
         $index = $document->getIndex();
+        /** @var Dataset $dataset */
         $dataset = $event->getObject();
         $wkt = null;
         $geoJson = null;
@@ -185,6 +188,23 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
         } else {
             $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
         }
+
+        $anzsrcKeywords = $dataset->getKeywordsByType(KeywordType::TYPE_ANZSRC);
+
+        $level2keywords = new ArrayCollection();
+
+        if (null === $anzsrcKeywords) {
+            $anzsrcKeywords = new ArrayCollection();
+        }
+
+        foreach ($anzsrcKeywords as $keyword) {
+            $level2 = $keyword->getLevelTwo();
+            if (!$level2keywords->contains($level2)) {
+                $level2keywords->add($level2);
+            }
+        }
+
+        $document->set('anzsrcLevelTwo', $level2keywords->toArray());
     }
 
     /**
