@@ -36,15 +36,15 @@ class KeywordController extends AbstractController
         $data = [];
 
         foreach ($buckets as $bucket) {
-           $keyword = $level2Keywords->filter(function ($keyword) use ($bucket) {
-               return $keyword->getShortDisplayPath() === $bucket['key'];
-           })->first();
+            $keyword = $level2Keywords->filter(function ($keyword) use ($bucket) {
+                return $keyword->getShortDisplayPath() === $bucket['key'];
+            })->first();
 
-           if (!$keyword) {
-               continue;
-           }
+            if (!$keyword) {
+                continue;
+            }
 
-           $data[] = [
+            $data[] = [
                 'id' => $keyword->getId(),
                 'type' => $keyword->getType(),
                 'shortDisplayPath' => $keyword->getShortDisplayPath(),
