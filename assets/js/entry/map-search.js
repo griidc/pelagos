@@ -151,18 +151,19 @@ $(() => {
     toolbar: {
       enabled: true,
       items: [
-        // {
-        //   widget: 'dxSelectBox',
-        //   options: {
-        //     items: keywordFilters,
-        //     valueExpr: 'id',
-        //     displayExpr: 'text',
-        //     value: keywordFilters[0].id,
-        //     onValueChanged(e) {
-        //       kwTreeList.columnOption('type', 'filterValue', e.value);
-        //     },
-        //   },
-        // },
+        {
+          widget: 'dxSelectBox',
+          options: {
+            visible: false,
+            items: keywordFilters,
+            valueExpr: 'id',
+            displayExpr: 'text',
+            value: keywordFilters[0].id,
+            onValueChanged(e) {
+              kwTreeList.columnOption('type', 'filterValue', e.value);
+            },
+          },
+        },
         'searchPanel',
       ],
     },
