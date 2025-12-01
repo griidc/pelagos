@@ -2,31 +2,19 @@
 
 namespace App\Event;
 
-use App\Form\LoginForm;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
-use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class LoginSubscriber implements EventSubscriberInterface
 {
-    /**
-     * An instance of FormFactory.
-     *
-     * @var FormFactoryInterface
-     */
-    private $formFactory;
-
-
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $accountLogger, FormFactoryInterface $formFactory)
+    public function __construct(LoggerInterface $accountLogger)
     {
         $this->logger = $accountLogger;
-        $this->formFactory = $formFactory;
     }
 
     /**
@@ -47,9 +35,9 @@ class LoginSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         if ($request->get('person_token')) {
-            $username = 'Token User: $' . $request->get('person_token');
+            $username = 'Token User: ' . $request->get('person_token');
         } else {
-            $username = $this->getCredentials($request)['_username'];
+            $username = $request->request->all()['login_form']['_username'];
         }
 
         $loggingContext = [
@@ -57,11 +45,11 @@ class LoginSubscriber implements EventSubscriberInterface
             'userName' => $username,
         ];
 
-        $this->logger->info('(listener) Login success.', $loggingContext);
+        $this->logger->info($username . ' logged in.', $loggingContext);
     }
 
     /**
-     * Get the authentication credentials from the request and return them.
+     * Logs the failed login attempts.
      */
     public function onLoginFailure(LoginFailureEvent $event): void
     {
@@ -74,16 +62,5 @@ class LoginSubscriber implements EventSubscriberInterface
         ];
 
         $this->logger->info('(listener) Login failure.', $loggingContext);
-    }
-
-    /**
-     * Digs the login out of the request object.
-     */
-    private function getCredentials(Request $request): mixed
-    {
-        $form = $this->formFactory->create(LoginForm::class);
-        $form->handleRequest($request);
-
-        return $form->getData();
     }
 }

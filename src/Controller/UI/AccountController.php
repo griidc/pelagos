@@ -70,7 +70,11 @@ class AccountController extends AbstractController
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param boolean            $passwordRules Boolean value for account_less_strict_password_rules.
+     * @param boolean                $passwordRules Boolean value relaxing the password minimum age restriction, used only for dev/testing.
+     * @param EntityHandler          $entityHandler An instance of the now deprecated EntityHandler service.
+     * @param EntityManagerInterface $entityManager An instance of the EntityManagerInterface service, eventually replacing EntityHandler.
+     * @param ValidatorInterface     $validator An instance of the ValidatorInterface service.
+     * @param LoggerInterface        $accountLogger An instance of the LoggerInterface service specifically for account-related logging.
      *
      * @return void
      */
@@ -371,8 +375,6 @@ class AccountController extends AbstractController
         $password->setCreator($person);
 
         if ($reset === true) {
-            // $account = $person->getAccount();
-
             try {
                 $account->setPassword(
                     $password,
@@ -458,10 +460,6 @@ class AccountController extends AbstractController
             return $this->redirectToRoute('pelagos_app_ui_account_passwordreset');
         }
 
-        $this->accountLogger->info('Change password requested page loaded.', [
-            'username' => $this->getUser()->getUsername(),
-            'ipAddress' => $request->getClientIp() ?? 'unknown'
-        ]);
         // Send back the set password screen.
         return $this->render('Account/changePassword.html.twig');
     }
@@ -484,8 +482,8 @@ class AccountController extends AbstractController
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // User is not logged in, or doesn't have a token.
             $this->accountLogger->info('Password change failed.', [
-                'username' => $this->getUser()->getUsername(),
-                'reason' => 'Not authenticated on POST.',
+                'username' => 'unknown',
+                'reason' => 'User not logged in',
                 'ipAddress' => $request->getClientIp() ?? 'unknown'
             ]);
             return $this->render('template/NotLoggedIn.html.twig');
@@ -544,8 +542,8 @@ class AccountController extends AbstractController
             $ldap->updatePerson($person);
         }
 
-        $this->accountLogger->info('Password successfully changed.', [
-            'username' => $this->getUser()->getUsername(),
+        $this->accountLogger->info('Password for ' . $user->getUsername() . ' successfully changed.', [
+            'username' => $user->getUsername(),
             'ipAddress' => $request->getClientIp() ?? 'unknown'
         ]);
         return $this->render('Account/AccountReset.html.twig');
@@ -565,7 +563,7 @@ class AccountController extends AbstractController
     {
 
         // If the user is already authenticated.
-        if ($this->isGranted('ROLE_USER')) {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             /** @var Account $account */
             $account = $this->getUser();
 
