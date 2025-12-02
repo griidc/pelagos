@@ -10,6 +10,8 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 class ExtendedTransformedFinder extends TransformedFinder
 {
     /**
+     * Return the SearchableInterface which is used to perform searches.
+     *
      * @return \Elastica\SearchableInterface
      */
     public function getSearch()
