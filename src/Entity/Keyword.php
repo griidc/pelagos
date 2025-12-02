@@ -255,6 +255,9 @@ class Keyword extends Entity
         return count($levels);
     }
 
+    /**
+     * Get the level two display path for this keyword, if it exists.
+     */
     public function getLevelTwo(): ?string
     {
         $levels = explode(' > ', $this->getDisplayPath() ?? '');
