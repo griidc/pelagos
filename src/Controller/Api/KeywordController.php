@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Keyword;
 use App\Enum\KeywordType;
 use App\Repository\KeywordRepository;
 use App\Search\Elastica\ExtendedTransformedFinder;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class KeywordController extends AbstractController
 {
+    private const MAX_AGGREGATION_SIZE = 99999;
+
     #[Route(path: '/api/keywords/level2/{type}', name: 'api_keywords_level2')]
     public function getLevel2Keywords(string $type, KeywordRepository $keywordRepository, KeywordUtil $keywordUtil, ExtendedTransformedFinder $searchPelagosFinder): Response
     {
@@ -27,7 +30,7 @@ class KeywordController extends AbstractController
 
         $keywordAgg = new AggregationTerms('levelTwoKeywordTerms');
         $keywordAgg->setField('anzsrcLevelTwo');
-        $keywordAgg->setSize(99999);
+        $keywordAgg->setSize(self::MAX_AGGREGATION_SIZE);
         $query->addAggregation($keywordAgg);
 
         $results = $searchPelagosFinder->getSearch()->search($query);
@@ -36,7 +39,7 @@ class KeywordController extends AbstractController
         $data = [];
 
         foreach ($buckets as $bucket) {
-            $keyword = $level2Keywords->filter(function ($keyword) use ($bucket) {
+            $keyword = $level2Keywords->filter(function (Keyword $keyword) use ($bucket) {
                 return $keyword->getShortDisplayPath() === $bucket['key'];
             })->first();
 
