@@ -199,7 +199,7 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
 
         foreach ($anzsrcKeywords as $keyword) {
             $level2 = $keyword->getLevelTwo();
-            if (!$level2keywords->contains($level2)) {
+            if ($level2 !== null && !$level2keywords->contains($level2)) {
                 $level2keywords->add($level2);
             }
         }
