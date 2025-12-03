@@ -22,12 +22,14 @@ class DIFController extends AbstractController
      *
      * @param Request              $request          The Symfony request object.
      * @param FormFactoryInterface $formFactory      The form factory.
+     * @param string|null          $id               The id of the DIF to load.
      * @param FundingOrgFilter     $fundingOrgFilter Utility to filter by funding organization.
+     *
      *
      * @return Response A Response instance.
      */
-    #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
-    public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter)
+    #[Route(path: '/dif/{id}', name: 'pelagos_app_ui_dif_default')]
+    public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter, $id = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
