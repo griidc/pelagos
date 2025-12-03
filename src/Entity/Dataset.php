@@ -294,7 +294,7 @@ class Dataset extends Entity
     /**
      * Gets the Research Group this Dataset is attached to.
      *
-     * @return ResearchGroup the Research Group this DIF is attached to
+     * @return ResearchGroup the Research Group this Dataset is attached to
      */
     public function getResearchGroup()
     {
@@ -668,11 +668,6 @@ class Dataset extends Entity
         return $this->datasetSubmission instanceof DatasetSubmission;
     }
 
-    public function hasDatasetSubmissionHistory(): bool
-    {
-        return $this->datasetSubmissionHistory->count() > 0;
-    }
-
     /**
      * Update the availability status based on current dataset submission.
      *
@@ -757,11 +752,14 @@ class Dataset extends Entity
 
     /**
      * Whether this Dataset is completed.
+     *
+     * A dataset is considered completed when it is either publicly available
+     * (including remotely hosted) or restricted and accepted.
      */
     public function isCompleted(): bool
     {
         return
-            $this->datasetStatus  === Dataset::DATASET_STATUS_ACCEPTED
+            $this->datasetStatus === Dataset::DATASET_STATUS_ACCEPTED
             && in_array(
                 $this->availabilityStatus,
                 [
@@ -905,22 +903,15 @@ class Dataset extends Entity
         $dif = $this->getDif();
 
         // If we have a submission, use its POC.
-        if (
-            $datasetSubmission instanceof DatasetSubmission
-            and DatasetSubmission::STATUS_COMPLETE == $datasetSubmission->getStatus()
-        ) {
+        if ($datasetSubmission instanceof DatasetSubmission) {
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
             } else {
                 return null;
             }
-        // Otherwise, use the POC from an approved dif.
-        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
+        } else { // Otherwise, use the POC from a dif.
             return $dif->getPrimaryPointOfContact();
-        } else {
-            // And if we don't have an approved DIF, return nothing.
-            return null;
         }
     }
 
@@ -1127,15 +1118,22 @@ class Dataset extends Entity
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
+        $datasetStatus = $this->getDatasetStatus();
+        $isRestricted = $this->isRestricted();
+        $difStatus = $this->getDif()->getStatus();
 
-        if ((Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) and (true === $this->isRestricted())) {
+        if ((Dataset::DATASET_STATUS_ACCEPTED === $datasetStatus) and (true === $isRestricted)) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::RESTRICTED;
-        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
+        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $datasetStatus) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::AVAILABLE;
         } elseif ($this->hasDatasetSubmission()) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::SUBMITTED;
-        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $this->getDif()->getStatus()) {
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $difStatus) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::IDENTIFIED;
+        } elseif ($this->hasDif() and DIF::STATUS_SUBMITTED == $difStatus) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::PENDING;
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED != $difStatus) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::INCOMPLETE;
         }
 
         return $datasetLifeCycleStatus;
