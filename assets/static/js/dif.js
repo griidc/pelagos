@@ -968,16 +968,6 @@ function makeTree(Status, Person, ShowEmpty, json)
         var searchValue = $("#fltResults").val();
         $("#diftree").jstree(true).search(searchValue);
         $("#btnSearch").button("enable");
-
-        const queryString = getQueryParams(document.location.search);
-        const id = queryString["id"];
-        if (typeof id !== "undefined") {
-            formHash = undefined;
-            const node = data.instance.get_node(id);
-            if (node) {
-                eval(node.a_attr.onclick);
-            }
-        }
     });
 }
 

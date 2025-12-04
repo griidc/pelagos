@@ -11,8 +11,6 @@ enum DatasetLifecycleStatus: string
     case RESTRICTED = 'Restricted';
     case SUBMITTED = 'Submitted';
     case IDENTIFIED = 'Identified';
-    case INCOMPLETE = 'Incomplete';
-    case PENDING = 'Pending';
     case NONE = 'None';
 
     /**
@@ -25,8 +23,6 @@ enum DatasetLifecycleStatus: string
             DatasetLifecycleStatus::RESTRICTED => 'This dataset is restricted for download.',
             DatasetLifecycleStatus::SUBMITTED => 'This dataset has been submitted and is in the GRIIDC data package review process.',
             DatasetLifecycleStatus::IDENTIFIED => 'This dataset has been identified via a dataset information form. The dataset has not been submitted.',
-            DatasetLifecycleStatus::INCOMPLETE => 'A DIF is created, but has not been completed.',
-            DatasetLifecycleStatus::PENDING => 'This DIF is pending approval.',
             DatasetLifecycleStatus::NONE => 'The dataset is in an unknown state.',
         };
     }
@@ -41,8 +37,6 @@ enum DatasetLifecycleStatus: string
             DatasetLifecycleStatus::RESTRICTED => '#dc3545',
             DatasetLifecycleStatus::SUBMITTED => '#007bff',
             DatasetLifecycleStatus::IDENTIFIED => '#ffc107',
-            DatasetLifecycleStatus::INCOMPLETE => '#6c757d',
-            DatasetLifecycleStatus::PENDING => '#ced4da',
             DatasetLifecycleStatus::NONE => 'black',
         };
     }

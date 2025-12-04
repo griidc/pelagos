@@ -341,12 +341,51 @@ class DatasetTest extends TestCase
             $this->dataset->getSpatialExtentGeometry()
         );
 
+        // Case: We have an incomplete submission and an approved DIF.
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionIncomplete);
+        $this->assertEquals(
+            'approved.dif@test.null',
+            $this->dataset->getPrimaryPointOfContact()->getEmailAddress()
+        );
+        $this->assertEquals(
+            $this->auxMockSpatialExtensionDif,
+            $this->dataset->getDif()->getSpatialExtentGeometry()
+        );
+
+        // Case: We have an incomplete submission and a submitted (but not approved) DIF.
+        $this->dataset->setDif($this->mockSubmittedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionIncomplete);
+        $this->assertNull(
+            $this->dataset->getPrimaryPointOfContact()
+        );
+
+        // Case: We have no submission but have an approved DIF
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->assertEquals(
+            'approved.dif@test.null',
+            $this->dataset->getPrimaryPointOfContact()->getEmailAddress()
+        );
+
+        // Case: We have no submission but have a submitted (not approved) DIF.
+        $this->dataset->setDif($this->mockSubmittedDif);
+        $this->assertNull(
+            $this->dataset->getPrimaryPointOfContact()
+        );
+
         // Case: We have a complete submission and no DIF.
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionComplete);
         $this->assertEquals(
             'complete-submission.person@test.null',
             $this->dataset->getPrimaryPointOfContact()->getEmailAddress()
         );
+
+        // Case: We have an incomplete submission and no DIF.
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionIncomplete);
+        $this->assertNull(
+            $this->dataset->getPrimaryPointOfContact()
+        );
+
     }
 
     /**
@@ -357,7 +396,7 @@ class DatasetTest extends TestCase
         // Case: Unapproved DIF
         $this->dataset->setDif($this->mockDifNStatusUnsubmitted);
         $this->assertEquals(
-            DatasetLifecycleStatus::INCOMPLETE,
+            DatasetLifecycleStatus::NONE,
             $this->dataset->getDatasetLifecycleStatus()
         );
 
