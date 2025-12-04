@@ -38,7 +38,7 @@
     {% set typeText = 'Plan' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::INCOMPLETE') %}
     {# DIF Not yet Approved #}
-    {% set linkUrl = url('pelagos_app_ui_dif_default') ~ '?id=' ~ dataset.dif.id %}
+    {% set linkUrl = url('pelagos_app_ui_dif_default') ~ '?udi=' ~ dataset.udi %}
     {% set linkText = 'Submit' %}
     {% set statusText = 'Identified dataset saved, but not submitted.' %}
     {% set badgeText = 'Draft' %}
