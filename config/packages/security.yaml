@@ -29,7 +29,6 @@ security:
             # use a Person Token, if present
             custom_authenticator:
                 - App\Security\PersonTokenAuthenticator
-            # activate different ways to authenticate
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
 
