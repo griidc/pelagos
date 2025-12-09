@@ -136,7 +136,7 @@ $(() => {
   }).dxTreeList('instance');
 
   const kwTreeList = $('#kw-tree').dxTreeList({
-    dataSource: `${Routing.generate('api_keywords_level2')}/all`,
+    dataSource: `${Routing.generate('api_keywords_level2')}/anzsrc`,
     keyExpr: 'id',
     parentIdExpr: 'parent',
     filterRow: {
@@ -154,6 +154,7 @@ $(() => {
         {
           widget: 'dxSelectBox',
           options: {
+            visible: false,
             items: keywordFilters,
             valueExpr: 'id',
             displayExpr: 'text',
@@ -166,19 +167,20 @@ $(() => {
         'searchPanel',
       ],
     },
-    columns: [{
-      dataField: 'label',
-      caption: 'Keyword',
-      dataType: 'string',
-      allowSearch: true,
-    },
-    {
-      dataType: 'string',
-      dataField: 'type',
-      caption: 'Type',
-      visible: true,
-      allowSearch: false,
-    },
+    columns: [
+      {
+        dataField: 'label',
+        caption: 'Keyword',
+        dataType: 'string',
+        allowSearch: true,
+      },
+      {
+        dataType: 'integer',
+        dataField: 'count',
+        caption: 'Count',
+        visible: true,
+        allowSearch: false,
+      },
     ],
     disabled: false,
     showRowLines: false,

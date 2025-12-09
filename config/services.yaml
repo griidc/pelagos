@@ -138,6 +138,11 @@ services:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.info_products"
 
+    App\Search\Elastica\ExtendedTransformedFinder:
+        arguments:
+            - '@fos_elastica.index.search_pelagos'
+            - '@fos_elastica.elastica_to_model_transformer.search_pelagos'
+
     App\Search\Elastica\MultiIndex:
         arguments:
             $name: 'multi'
