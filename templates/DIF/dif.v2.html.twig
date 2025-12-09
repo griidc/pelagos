@@ -12,11 +12,119 @@
     {{ parent() }}
 
     {{ encore_entry_script_tags('dif') }}
+
+<script>
+    // Source - https://stackoverflow.com/a
+    // Posted by Scott Dowding, modified by community. See post 'Timeline' for change history
+    // Retrieved 2025-12-09, License - CC BY-SA 3.0
+
+    function isScrolledIntoView(elem)
+    {
+        var docViewTop = $(window).scrollTop();
+        var docViewBottom = docViewTop + $(window).height();
+
+        var elemTop = $(elem).offset().top;
+        var elemBottom = elemTop + $(elem).height();
+
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const element = document.querySelector('#formcontent');
+
+        if (element) {
+            element.addEventListener('scroll', function(event) {
+                if (isScrolledIntoView(document.querySelector('#fieldOfStudyEcologicalBiological'))) {
+                    console.log('Element is in view!');
+                }
+            });
+        }
+
+        var el2 = document.querySelector('#fieldOfStudyEcologicalBiological');
+
+        console.log(el2);
+
+        el2.addEventListener("visibilitychange", () => {
+            console.log(document.visibilityState);
+            // Modify behavior…
+        });
+
+        console.log('DIF v2 script loaded');
+    });
+
+</script>
+
 {% endblock javascripts %}
 
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
-    <h2>Dataset Information Form</h2>
+        <h2>Dataset Information Form</h2>
+
+
+        <div class="flex flex-1 gap-6 not-prose h-[80dvh]">
+            <div class="w-1/4">
+
+
+
+
+                <ol class="relative text-gray-500 border-s border-gray-200">
+                    <li class="mb-10 ms-6 0 rounded-lg">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white">
+                            <svg class="w-3.5 h-3.5 text-green-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                            </svg>
+                        </span>
+                        <div class="text-blue-600">
+                            <h3 class="font-medium leading-tight">Project Title</h3>
+                            <p class="text-sm">Enter the title of your project</p>
+                        </div>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                           <i class="fa-solid fa-address-card"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Contact</h3>
+                        <p class="text-sm">Enter your contact information</p>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Information</h3>
+                        <p class="text-sm">Detailed information about your dataset</p>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-rectangle-list"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Keywords</h3>
+                        <p class="text-sm">Enter relevant keywords for your dataset</p>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-globe"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Data Extent</h3>
+                        <p class="text-sm">Spatial and temporal extent of your dataset</p>
+                    </li>
+                    <li class="ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Submit</h3>
+                        <p class="text-sm">Submit your dataset information</p>
+                    </li>
+                </ol>
+
+
+
+            </div>
+            <div id="formcontent"class="w-3/4 overflow-y-auto">
+               {% include 'DIF/difForm.html.twig' %}
+            </div>
+        </div>
+
 
 
     </div>
