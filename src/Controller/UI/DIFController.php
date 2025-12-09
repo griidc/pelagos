@@ -60,7 +60,7 @@ class DIFController extends AbstractController
         }
 
         return $this->render(
-            'DIF/dif.html.twig',
+            'DIF/dif.v2.html.twig',
             array(
                 'form' => $form->createView(),
                 'research_groups' => implode(',', $researchGroupIds),
