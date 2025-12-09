@@ -88,6 +88,9 @@
         "allow-plugins": {
             "symfony/flex": true,
             "symfony/runtime": true
+        },
+        "platform": {
+            "php": "8.3.16"
         }
     },
     "autoload": {

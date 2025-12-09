@@ -72,5 +72,6 @@
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0",
         "xbytes": "^1.9.1"
-    }
+    },
+    "packageManager": "yarn@4.12.0"
 }
