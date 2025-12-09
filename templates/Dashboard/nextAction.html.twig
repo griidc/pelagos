@@ -1,0 +1,9 @@
+{% extends 'Dashboard/datasetLifecycleStatus.html.twig' %}
+
+{% block status %}
+    {% if linkUrl is empty %}
+        <span disabled="disabled">{{ linkText }}</span>
+    {% else %}
+        <a href="{{ linkUrl }}" class="pagelink" target="_blank">{{ linkText }}</a>
+    {% endif %}
+{% endblock status %}
