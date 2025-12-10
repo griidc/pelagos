@@ -21,7 +21,8 @@
         <span class="legacy-h1">Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span>
     </div>
     <div id="imgwarning" src="{{ asset('build/images/warning.png') }}"></div>
-    <div class="frmSection">
+    <div >
+    <div class="frmSection tab-section" data-section="project">
         <fieldset>
             <span class="helpSection">
                 <img class="info" src="{{ asset('build/images/info32.png') }}">
@@ -81,11 +82,11 @@
                     <p>This is a required field. Please provide a descriptive title that briefly explains the contents of your dataset. This will be similar to titles used in publications, and may include location where, and time period when the research was completed. It should be understandable by a user unfamiliar with your methods, site collections or research platforms.</p>
                 </div>
             </span>
-            {{ form_row(form.title) }}
+                {{ form_row(form.title) }}
         </fieldset>
     </div>
 
-    <table width="100%">
+    <table width="100%" class="tab-section" data-section="contact">
         <tr>
             <td width="50%" >
                 <div class="frmSection">
@@ -116,7 +117,7 @@
         </tr>
     </table>
 
-    <div class="frmSection">
+    <div class="frmSection" >
         <fieldset>
             <span class="helpSection">
                 <img class="info" src="{{ asset('build/images/info32.png') }}">
@@ -124,7 +125,9 @@
                     <p>This is a required field. This field should summarize the rationale for collecting the dataset, methods that will be used to collect or generate the dataset, period of data collection and what the dataset will contain. This may be similar to a publication abstract, however, it does not need to include details about conclusions drawn or statistical analysis completed using the dataset.</p>
                 </div>
             </span>
+            <div class="tab-section" data-section="information">
             {{ form_row(form.abstract) }}
+            </div>
         </fieldset>
     </div>
 
