@@ -25,7 +25,7 @@
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^3.0",
-        "easycorp/easyadmin-bundle": "^4.12.0",
+        "easycorp/easyadmin-bundle": "< 4.26.0",
         "easyrdf/easyrdf": "^1.1",
         "fdekker/log-viewer-bundle": "^2.0",
         "friendsofsymfony/elastica-bundle": "^6.1.0",
@@ -88,6 +88,9 @@
         "allow-plugins": {
             "symfony/flex": true,
             "symfony/runtime": true
+        },
+        "platform": {
+            "php": "8.3.16"
         }
     },
     "autoload": {
