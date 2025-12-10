@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35f0729aa7ad6fd4cdc615be2b71a792",
+    "content-hash": "26d2d3408a53d716f0cb6cab319dddc8",
     "packages": [
         {
             "name": "brick/math",
@@ -1351,66 +1351,65 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.27.4",
+            "version": "v4.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "6d94c62bca8393bbedbcf66112066e763cd1d20b"
+                "reference": "954e88c9cb004c3861b6ec6ae52241642995fb86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/6d94c62bca8393bbedbcf66112066e763cd1d20b",
-                "reference": "6d94c62bca8393bbedbcf66112066e763cd1d20b",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/954e88c9cb004c3861b6ec6ae52241642995fb86",
+                "reference": "954e88c9cb004c3861b6ec6ae52241642995fb86",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "^2.5|^3.0",
+                "doctrine/doctrine-bundle": "^2.5",
                 "doctrine/orm": "^2.12|^3.0",
                 "ext-json": "*",
                 "php": ">=8.1",
-                "symfony/asset": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/cache": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/config": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/dependency-injection": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/asset": "^5.4|^6.0|^7.0",
+                "symfony/cache": "^5.4|^6.0|^7.0",
+                "symfony/config": "^5.4|^6.0|^7.0",
+                "symfony/dependency-injection": "^5.4|^6.0|^7.0",
                 "symfony/deprecation-contracts": "^3.0",
-                "symfony/doctrine-bridge": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/event-dispatcher": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/filesystem": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/form": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/framework-bundle": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/http-foundation": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/http-kernel": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/intl": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/property-access": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/security-bundle": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/string": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/translation": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/twig-bridge": "^5.4.48|^6.4.16|^7.1.9|^8.0",
-                "symfony/twig-bundle": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/uid": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/doctrine-bridge": "^5.4|^6.0|^7.0",
+                "symfony/event-dispatcher": "^5.4|^6.0|^7.0",
+                "symfony/filesystem": "^5.4|^6.0|^7.0",
+                "symfony/form": "^5.4|^6.0|^7.0",
+                "symfony/framework-bundle": "^5.4|^6.0|^7.0",
+                "symfony/http-foundation": "^5.4|^6.0|^7.0",
+                "symfony/http-kernel": "^5.4|^6.0|^7.0",
+                "symfony/intl": "^5.4|^6.0|^7.0",
+                "symfony/property-access": "^5.4|^6.0|^7.0",
+                "symfony/security-bundle": "^5.4|^6.0|^7.0",
+                "symfony/string": "^5.4|^6.0|^7.0",
+                "symfony/translation": "^5.4|^6.0|^7.0",
+                "symfony/twig-bridge": "^5.4.48|^6.4.16|^7.1.9",
+                "symfony/twig-bundle": "^5.4|^6.0|^7.0",
+                "symfony/uid": "^5.4|^6.0|^7.0",
                 "symfony/ux-twig-component": "^2.21",
-                "symfony/validator": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/validator": "^5.4|^6.0|^7.0",
                 "twig/extra-bundle": "^3.17",
                 "twig/html-extra": "^3.17",
                 "twig/twig": "^3.20"
             },
             "require-dev": {
-                "doctrine/doctrine-fixtures-bundle": "^3.4|3.5.x-dev|^4.0",
+                "doctrine/doctrine-fixtures-bundle": "^3.4|3.5.x-dev",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpstan/phpstan-symfony": "^2.0",
-                "psr/log": "^1.0|^2.0|^3.0",
-                "symfony/browser-kit": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/css-selector": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/debug-bundle": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/dom-crawler": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/expression-language": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/phpunit-bridge": "^6.1|^7.0|^8.0",
-                "symfony/process": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/web-link": "^5.4|^6.0|^7.0|^8.0",
-                "vincentlanglet/twig-cs-fixer": "^3.10"
+                "psr/log": "^1.0",
+                "symfony/browser-kit": "^5.4|^6.0|^7.0",
+                "symfony/css-selector": "^5.4|^6.0|^7.0",
+                "symfony/debug-bundle": "^5.4|^6.0|^7.0",
+                "symfony/dom-crawler": "^5.4|^6.0|^7.0",
+                "symfony/expression-language": "^5.4|^6.0|^7.0",
+                "symfony/phpunit-bridge": "^6.1|^7.0",
+                "symfony/process": "^5.4|^6.0|^7.0",
+                "symfony/web-link": "^5.4|^6.0|^7.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -1442,7 +1441,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.27.4"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.25.1"
             },
             "funding": [
                 {
@@ -1450,7 +1449,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-20T19:08:03+00:00"
+            "time": "2025-09-10T05:00:12+00:00"
         },
         {
             "name": "easyrdf/easyrdf",
@@ -3100,16 +3099,16 @@
         },
         {
             "name": "maennchen/zipstream-php",
-            "version": "3.2.0",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maennchen/ZipStream-PHP.git",
-                "reference": "9712d8fa4cdf9240380b01eb4be55ad8dcf71416"
+                "reference": "682f1098a8fddbaf43edac2306a691c7ad508ec5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/9712d8fa4cdf9240380b01eb4be55ad8dcf71416",
-                "reference": "9712d8fa4cdf9240380b01eb4be55ad8dcf71416",
+                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/682f1098a8fddbaf43edac2306a691c7ad508ec5",
+                "reference": "682f1098a8fddbaf43edac2306a691c7ad508ec5",
                 "shasum": ""
             },
             "require": {
@@ -3120,7 +3119,7 @@
             "require-dev": {
                 "brianium/paratest": "^7.7",
                 "ext-zip": "*",
-                "friendsofphp/php-cs-fixer": "^3.16",
+                "friendsofphp/php-cs-fixer": "^3.86",
                 "guzzlehttp/guzzle": "^7.5",
                 "mikey179/vfsstream": "^1.6",
                 "php-coveralls/php-coveralls": "^2.5",
@@ -3166,7 +3165,7 @@
             ],
             "support": {
                 "issues": "https://github.com/maennchen/ZipStream-PHP/issues",
-                "source": "https://github.com/maennchen/ZipStream-PHP/tree/3.2.0"
+                "source": "https://github.com/maennchen/ZipStream-PHP/tree/3.2.1"
             },
             "funding": [
                 {
@@ -3174,7 +3173,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-17T11:15:13+00:00"
+            "time": "2025-12-10T09:58:31+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14386,16 +14385,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "6.13.1",
+            "version": "6.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51"
+                "reference": "cf26e6debc366836754f359ece5b68629a1ee185"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51",
-                "reference": "1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/cf26e6debc366836754f359ece5b68629a1ee185",
+                "reference": "cf26e6debc366836754f359ece5b68629a1ee185",
                 "shasum": ""
             },
             "require": {
@@ -14418,7 +14417,7 @@
                 "fidry/cpu-core-counter": "^0.4.1 || ^0.5.1 || ^1.0.0",
                 "netresearch/jsonmapper": "^5.0",
                 "nikic/php-parser": "^5.0.0",
-                "php": "~8.1.31 || ~8.2.27 || ~8.3.16 || ~8.4.3",
+                "php": "~8.1.31 || ~8.2.27 || ~8.3.16 || ~8.4.3 || ~8.5.0",
                 "sebastian/diff": "^4.0 || ^5.0 || ^6.0 || ^7.0",
                 "spatie/array-to-xml": "^2.17.0 || ^3.0",
                 "symfony/console": "^6.0 || ^7.0",
@@ -14500,7 +14499,7 @@
                 "issues": "https://github.com/vimeo/psalm/issues",
                 "source": "https://github.com/vimeo/psalm"
             },
-            "time": "2025-08-06T10:10:28+00:00"
+            "time": "2025-12-10T09:31:26+00:00"
         },
         {
             "name": "webmozart/assert",
