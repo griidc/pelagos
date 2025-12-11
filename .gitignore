@@ -50,3 +50,13 @@ pnpm-lock.yaml
 ###> rector/rector ###
 rector.php
 ###< rector/rector ###
+
+###> yarn ###
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+###< yarn ###
