@@ -256,6 +256,18 @@ class Keyword extends Entity
     }
 
     /**
+     * Get the level two display path for this keyword, if it exists.
+     */
+    public function getLevelTwo(): ?string
+    {
+        $levels = explode(' > ', $this->getDisplayPath() ?? '');
+        if (count($levels) >= 2) {
+            return $levels[0] . ' > ' . $levels[1];
+        }
+        return null;
+    }
+
+    /**
      * Stringifier, show label.
      */
     public function __toString(): string

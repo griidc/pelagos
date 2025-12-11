@@ -70,7 +70,7 @@ class KeywordRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('k')
             ->select('k.id')
             ->andWhere('k.displayPath LIKE :val')
-            ->setParameter('val', $parentKeyword?->getDisplayPath() . ' > %')
+            ->setParameter('val', $parentKeyword?->getDisplayPath() . '%')
             ->orderBy('k.label', 'ASC')
             ->getQuery()
             ->getSingleColumnResult()

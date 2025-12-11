@@ -25,7 +25,7 @@
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^3.0",
-        "easycorp/easyadmin-bundle": "^4.12.0",
+        "easycorp/easyadmin-bundle": "< 4.26.0",
         "easyrdf/easyrdf": "^1.1",
         "fdekker/log-viewer-bundle": "^2.0",
         "friendsofsymfony/elastica-bundle": "^6.1.0",
@@ -40,25 +40,25 @@
         "opensoft/doctrine-postgres-types": "^1.2",
         "phayes/geophp": "^1.2",
         "ramsey/uuid": "^4.1",
-        "symfony/asset": "7.3.*",
-        "symfony/console": "7.3.*",
-        "symfony/doctrine-messenger": "7.3.*",
-        "symfony/dotenv": "7.3.*",
+        "symfony/asset": "7.4.*",
+        "symfony/console": "7.4.*",
+        "symfony/doctrine-messenger": "7.4.*",
+        "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2.4",
-        "symfony/form": "7.3.*",
-        "symfony/framework-bundle": "7.3.*",
-        "symfony/ldap": "7.3.*",
-        "symfony/mailer": "7.3.*",
+        "symfony/form": "7.4.*",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/ldap": "7.4.*",
+        "symfony/mailer": "7.4.*",
         "symfony/maker-bundle": "^1.13",
-        "symfony/messenger": "7.3.*",
+        "symfony/messenger": "7.4.*",
         "symfony/monolog-bundle": "^3.0",
-        "symfony/runtime": "7.3.*",
-        "symfony/security-bundle": "7.3.*",
-        "symfony/translation": "7.3.*",
-        "symfony/twig-bundle": "7.3.*",
-        "symfony/validator": "7.3.*",
+        "symfony/runtime": "7.4.*",
+        "symfony/security-bundle": "7.4.*",
+        "symfony/translation": "7.4.*",
+        "symfony/twig-bundle": "7.4.*",
+        "symfony/validator": "7.4.*",
         "symfony/webpack-encore-bundle": "^2.0",
-        "symfony/yaml": "7.3.*",
+        "symfony/yaml": "7.4.*",
         "twig/extra-bundle": "^3.0",
         "twig/twig": "^3.0"
     },
@@ -72,12 +72,12 @@
         "psalm/plugin-symfony": "^5.0",
         "rector/rector": "^1.2",
         "squizlabs/php_codesniffer": "^3.4",
-        "symfony/browser-kit": "7.3.*",
-        "symfony/css-selector": "7.3.*",
-        "symfony/debug-bundle": "7.3.*",
-        "symfony/phpunit-bridge": "7.3.*",
-        "symfony/stopwatch": "7.3.*",
-        "symfony/web-profiler-bundle": "7.3.*",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/debug-bundle": "7.4.*",
+        "symfony/phpunit-bridge": "7.4.*",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*",
         "vimeo/psalm": "^6.0"
     },
     "config": {
@@ -88,6 +88,9 @@
         "allow-plugins": {
             "symfony/flex": true,
             "symfony/runtime": true
+        },
+        "platform": {
+            "php": "8.3.16"
         }
     },
     "autoload": {
@@ -129,7 +132,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "7.3.*"
+            "require": "7.4.*"
         }
     }
 }

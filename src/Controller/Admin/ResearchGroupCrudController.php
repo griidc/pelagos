@@ -108,7 +108,7 @@ class ResearchGroupCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             TextField::new('name'),
-            TextField::new('shortName')->onlyOnForms(),
+            TextField::new('shortName')->hideOnIndex(),
             AssociationField::new('fundingCycle'),
             TextField::new('fundingOrganization')->setDisabled()->hideWhenCreating(),
             CollectionField::new('personResearchGroups')
