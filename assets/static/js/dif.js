@@ -968,6 +968,16 @@ function makeTree(Status, Person, ShowEmpty, json)
         var searchValue = $("#fltResults").val();
         $("#diftree").jstree(true).search(searchValue);
         $("#btnSearch").button("enable");
+
+        const queryString = getQueryParams(document.location.search);
+        const id = queryString["id"];
+        if (typeof id !== "undefined") {
+            formHash = undefined;
+            const node = data.instance.get_node(id);
+            if (node) {
+                eval(node.a_attr.onclick);
+            }
+        }
     });
 }
 
@@ -1042,7 +1052,7 @@ function formChanged()
 {
     return $.Deferred(function() {
         var self = this;
-        if (formHash != $("#difForm").serialize() && typeof formHash !="undefined")
+        if (formHash != $("#difForm").serialize() && formHash)
         {
             $('<div><img src="' + imgWarning +'"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
                 title: "Warning!",
