@@ -28,7 +28,7 @@
         "easycorp/easyadmin-bundle": "< 4.26.0",
         "easyrdf/easyrdf": "^1.1",
         "fdekker/log-viewer-bundle": "^2.0",
-        "friendsofsymfony/elastica-bundle": "^6.1.0",
+        "friendsofsymfony/elastica-bundle": "^7.0.0",
         "friendsofsymfony/jsrouting-bundle": "^3.0",
         "friendsofsymfony/rest-bundle": "^3.0",
         "guzzlehttp/guzzle": "^7.6",
