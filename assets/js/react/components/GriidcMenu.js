@@ -166,6 +166,12 @@ const GriidcMenu = ({ mainsite, showAdmin = false }) => (
                 href="/dataset-monitoring">
                   Monitor Data
                 </a>
+                <a className={clsx(
+                  'm-1.5 block hover:text-blue-600 p-2 text-sm leading-[1.25rem] text-gray-500',
+                )}
+                href="/dashboard">
+                  My Dashboard
+                </a>
               </Popover.Panel>
             </Transition>
           </Fragment>

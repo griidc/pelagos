@@ -1,0 +1,5 @@
+{% extends 'Dashboard/datasetLifecycleStatus.html.twig' %}
+
+{% block status %}
+    <span data-tippy-content="{{ statusText }}">{{ badgeText }}</span>
+{% endblock status %}
