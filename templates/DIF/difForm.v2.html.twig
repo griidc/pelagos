@@ -1,0 +1,32 @@
+<form id="difForm"
+      action="{{ path('pelagos_api_difs_post') }}"
+      method="post"
+      researchgroup="{{ path('pelagos_api_research_groups_get_collection') }}"
+      personresearchgroup="{{ path('pelagos_api_person_research_groups_get_collection') }}"
+      dataset="{{ path('pelagos_api_datasets_get_collection') }}"
+>
+
+    <div class="flex flex-col space-y-4 max-w-full mx-auto p-6">
+        <div class="flex flex-col">
+            <label for="countries" class="input-label">Research Group</label>
+            <select id="countries" class="input-base">
+                <option selected>Select a Research Group</option>
+                <option value="1">Group 1</option>
+                <option value="2">Group 2</option>
+                <option value="3">Group 3</option>
+                <option value="4">Group 4</option>
+            </select>
+        </div>
+
+        <div class="flex flex-col">
+            {{ form_row(form.funders, { attr: { class: 'input-base'} }) }}
+        </div>
+
+        <div class="flex flex-col">
+            {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
+        </div>
+
+
+    </div>
+
+</form>

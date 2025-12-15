@@ -14,56 +14,55 @@
     {{ encore_entry_script_tags('dif') }}
 
 <script>
-    // Source - https://stackoverflow.com/a
-    // Posted by Scott Dowding, modified by community. See post 'Timeline' for change history
-    // Retrieved 2025-12-09, License - CC BY-SA 3.0
+    // Source - https://stackoverflow.com/a/46165582
+    // Posted by John Doherty
+    // Retrieved 2025-12-11, License - CC BY-SA 3.0
+    // Modified by Mickel
 
-    function isScrolledIntoView(elem)
-    {
-        var docViewTop = $(window).scrollTop();
-        var docViewBottom = docViewTop + $(window).height()/1.5;
-
-        var elemTop = $(elem).offset().top;
-        var elemBottom = elemTop + $(elem).height();
-
-        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-    }
-
-    function highLightTabs() {
-        const elements = document.querySelectorAll('#formcontent .tab-section');
-        elements.forEach(element => {
-            if (isScrolledIntoView(element)) {
-                const id = element.id;
-                const section = element.dataset.section;
-                const tab = document.getElementById(section);
-                tab.classList.add('text-blue-600');
-            } else {
-                const id = element.id;
-                const section = element.dataset.section;
-                const tab = document.getElementById(section);
-                tab.classList.remove('text-blue-600');
-            }
-        });
+    /**
+     * Is element within visible region of a scrollable container
+     * @param {HTMLElement} el - element to test
+     * @returns {boolean} true if within visible region, otherwise false
+     */
+    function isScrolledIntoView(el, comparisonElement) {
+        if (comparisonElement) {
+            const rect = el.getBoundingClientRect();
+            const parentRect = comparisonElement.getBoundingClientRect();
+            return (rect.top >= parentRect.top) && (rect.bottom <= parentRect.bottom);
+        }
+        var rect = el.getBoundingClientRect();
+        return (rect.top >= 0) && (rect.bottom <= window.innerHeight);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         const element = document.querySelector('#formcontent');
         if (element) {
             element.addEventListener('scroll', function(event) {
-                highLightTabs();
+                const formcontent = document.getElementById('formcontent');
+                const elements = document.querySelectorAll('#formcontent .tab-section');
+                elements.forEach(element => {
+                    if (isScrolledIntoView(element, formcontent)) {
+                        const id = element.id;
+                        const section = element.dataset.section;
+                        const tab = document.getElementById(section);
+                        tab.classList.add('text-blue-600', 'font-semibold');
+                    } else {
+                        const id = element.id;
+                        const section = element.dataset.section;
+                        const tab = document.getElementById(section);
+                        tab.classList.remove('text-blue-600', 'font-semibold');
+                    }
+                });
             });
         }
     });
-
-
-
 </script>
 
 {% endblock javascripts %}
 
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
-        <h2>Dataset Information Form</h2>
+        <h2 class="pb-4">Dataset Information Form</h2>
 
 
         <div class="flex flex-1 gap-6 not-prose h-[80dvh]">
@@ -72,16 +71,16 @@
 
 
 
-                <ol class="relative text-gray-500 border-s border-gray-200">
-                    <li class="mb-10 ms-6 0 rounded-lg">
+                <ol class="relative text-gray-500 border-s border-gray-200 text-lg">
+                    <li class="mb-10 ms-6 rounded-lg">
                         <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white">
                             <svg class="w-3.5 h-3.5 text-green-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
                             </svg>
                         </span>
-                        <div id="project" class="text-blue-600 font-semibold">
+                        <div id="project" class="pt-2 text-blue-600 font-semibold">
                             <h3 class="leading-tight">Project Title</h3>
-                            <p class="text-sm">Enter the title of your project</p>
+                            {# <p class="text-sm">Enter the title of your project</p> #}
                         </div>
                     </li>
                     <li class="mb-10 ms-6">
@@ -90,7 +89,7 @@
                         </span>
                         <div id="contact">
                             <h3 class="leading-tight">Contact</h3>
-                            <p class="text-sm">Enter your contact information</p>
+                            {# <p class="text-sm">Enter your contact information</p> #}
                         </div>
                     </li>
                     <li class="mb-10 ms-6">
@@ -99,7 +98,7 @@
                         </span>
                         <div id="information">
                             <h3 class="leading-tight">Dataset Information</h3>
-                            <p class="text-sm">Enter basic information about your dataset</p>
+                            {# <p class="text-sm">Enter basic information about your dataset</p> #}
                         </div>
                     </li>
                     <li class="mb-10 ms-6">
@@ -107,21 +106,21 @@
                             <i class="fa-solid fa-rectangle-list"></i>
                         </span>
                         <h3 class="font-medium leading-tight">Keywords</h3>
-                        <p class="text-sm">Enter relevant keywords for your dataset</p>
+                        {# <p class="text-sm">Enter relevant keywords for your dataset</p> #}
                     </li>
                     <li class="mb-10 ms-6">
                         <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
                             <i class="fa-solid fa-globe"></i>
                         </span>
                         <h3 class="font-medium leading-tight">Data Extent</h3>
-                        <p class="text-sm">Spatial and temporal extent of your dataset</p>
+                        {# <p class="text-sm">Spatial and temporal extent of your dataset</p> #}
                     </li>
                     <li class="ms-6">
                         <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
                             <i class="fa-solid fa-clipboard-check"></i>
                         </span>
                         <h3 class="font-medium leading-tight">Submit</h3>
-                        <p class="text-sm">Submit your dataset information</p>
+                        {# <p class="text-sm">Submit your dataset information</p> #}
                     </li>
                 </ol>
 
@@ -129,7 +128,7 @@
 
             </div>
             <div id="formcontent"class="w-3/4 overflow-y-auto">
-               {% include 'DIF/difForm.html.twig' %}
+               {% include 'DIF/difForm.v2.html.twig' %}
             </div>
         </div>
 
