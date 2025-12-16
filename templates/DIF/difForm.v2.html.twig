@@ -6,27 +6,82 @@
       dataset="{{ path('pelagos_api_datasets_get_collection') }}"
 >
 
-    <div class="flex flex-col space-y-4 max-w-full mx-auto p-6">
-        <div class="flex flex-col">
-            <label for="countries" class="input-label">Research Group</label>
-            <select id="countries" class="input-base">
-                <option selected>Select a Research Group</option>
-                <option value="1">Group 1</option>
-                <option value="2">Group 2</option>
-                <option value="3">Group 3</option>
-                <option value="4">Group 4</option>
-            </select>
+    <div class="grid gap-4">
+        <div>
+            {{ form_row(form.researchGroup, { attr: { class: 'input-base'} }) }}
         </div>
 
-        <div class="flex flex-col">
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <legend class="text-lg font-semibold px-2">Contact</legend>
+            <div>
+                {{ form_row(form.primaryPointOfContact, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base'} }) }}
+            </div>
+        </fieldset>
+
+        <div>
             {{ form_row(form.funders, { attr: { class: 'input-base'} }) }}
         </div>
 
-        <div class="flex flex-col">
+        <div>
             {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
         </div>
 
+        <div>
+            {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
+        </div>
 
-    </div>
+        <div>
+            {{ form_row(form.abstract, { attr: { class: 'input-base'} }) }}
+        </div>
+
+
+        <!-- Field of Study Section -->
+        <fieldset class="border border-gray-300 p-4 rounded-lg">
+             <legend class="text-lg font-semibold px-2">Field of Study</legend>
+            {# <label><h2>Field of Study:</h2></label> #}
+            <div class="grid grid-cols-3">
+                <div>
+                    {{ form_row(form.fieldOfStudyEcologicalBiological, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.fieldOfStudyPhysicalOceanography, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.fieldOfStudyAtmospheric, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.fieldOfStudyChemical, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.fieldOfStudyHumanHealth, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.fieldOfStudySocialCulturalPolitical, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.fieldOfStudyEconomics, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div class="grid-col-span-2">
+                    {{ form_row(form.fieldOfStudyOther, { attr: { class: 'input-base'} }) }}
+                </div>
+            </div>
+        </fieldset>
+        <!-- Field of Study Section -->
+
+        <div>
+            {{ form_row(form.dataSize, { attr: { class: 'input-base'} }) }}
+        </div>
 
 </form>
