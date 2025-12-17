@@ -119,4 +119,29 @@ class ResearchGroupRepository extends ServiceEntityRepository
 
         return $researchGroups;
     }
+
+    /**
+     * Returns list of all research groups, filtered by any funding org filter in effect.
+     *
+     * @return array
+     */
+    public function getFilteredResearchGroups()
+    {
+        $qb = $this->createQueryBuilder('rg')
+            ->select('rg')
+            ->orderBy('rg.shortName', 'ASC');
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            if (empty($researchGroupIds)) {
+                return [];
+            }
+
+            $qb->andWhere('rg.id IN (:rgs)')
+               ->setParameter('rgs', $researchGroupIds);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

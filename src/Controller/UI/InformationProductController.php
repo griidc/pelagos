@@ -28,10 +28,10 @@ class InformationProductController extends AbstractController
      */
     #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
     #[Route(path: '/information-product', name: 'pelagos_app_ui_information_product')]
-    public function index(SerializerInterface $serializer, EntityManagerInterface $entityManager): Response
+    public function index(SerializerInterface $serializer, EntityManagerInterface $entityManager, ResearchGroupRepository $researchGroupRepository): Response
     {
         $researchGroupList = [];
-        $researchGroups = $entityManager->getRepository(ResearchGroup::class)->findAll();
+        $researchGroups = $researchGroupRepository->getFilteredResearchGroups();
         $productTypeDescriptors = $entityManager->getRepository(ProductTypeDescriptor::class)->findAll();
         $digitalResourceTypeDescriptors = $entityManager->getRepository(DigitalResourceTypeDescriptor::class)->findAll();
         $funders = $entityManager->getRepository(Funder::class)->findAll();
@@ -100,7 +100,7 @@ class InformationProductController extends AbstractController
     public function list(ResearchGroupRepository $researchGroupRepository, ProductTypeDescriptorRepository $productTypeDescriptorRepository): Response
     {
         $researchGroupList = [];
-        $researchGroups = $researchGroupRepository->findAll();
+        $researchGroups = $researchGroupRepository->getFilteredResearchGroups();
         $productTypeDescriptors = $productTypeDescriptorRepository->findAll();
         foreach ($researchGroups as $researchGroup) {
             $researchGroupList[] = [
