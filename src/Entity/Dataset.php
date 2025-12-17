@@ -370,6 +370,14 @@ class Dataset extends Entity
     }
 
     /**
+     * Whether this Dataset has any Dataset Submission history.
+     */
+    public function hasDatasetSubmissionHistory(): bool
+    {
+        return !$this->datasetSubmissionHistory->isEmpty();
+    }
+
+    /**
      * Update the title for this Dataset.
      *
      * @return void
