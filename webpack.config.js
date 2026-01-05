@@ -54,6 +54,7 @@ Encore
   .addEntry('login', './assets/js/entry/login.js')
   .addEntry('change-password', './assets/js/entry/change-password.js')
   .addEntry('map-search', './assets/js/entry/map-search.js')
+  .addEntry('dashboard', './assets/js/entry/dashboard.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()

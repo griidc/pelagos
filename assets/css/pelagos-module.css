@@ -31,10 +31,6 @@
     /* font-family: "Times New Roman", Times, serif; */
 }
 
-#pelagos-content table {
-    border-collapse: separate;
-}
-
 #pelagos-dev-toolbar {
     position: fixed;
     bottom: 0;
