@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\Account;
 use App\Entity\File;
 use App\Entity\InformationProduct;
-use App\Message\InformationProductFiler;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,22 +14,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextAlign;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\ChoiceConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FileUploadType;
-use Elastica\Aggregation\Max;
-use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\File as FileConstraint;
 
@@ -40,10 +31,9 @@ use Symfony\Component\Validator\Constraints\File as FileConstraint;
 #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class InformationProductCrudController extends AbstractCrudController
 {
-
     use EasyAdminCrudTrait;
 
-    public function __construct(private readonly KernelInterface $kernel, private string $homedirPrefix)
+    public function __construct(private string $homedirPrefix)
     {
     }
 

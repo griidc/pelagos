@@ -2,7 +2,6 @@
 
 namespace App\Event;
 
-use App\Controller\Admin\EasyAdminCrudTrait;
 use App\Entity\InformationProduct;
 use App\Message\InformationProductFiler;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
