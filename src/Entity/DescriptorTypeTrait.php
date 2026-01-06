@@ -41,8 +41,6 @@ trait DescriptorTypeTrait
 
     /**
      * String representation of the description.
-     *
-     * @return string
      */
     public function __toString(): string
     {

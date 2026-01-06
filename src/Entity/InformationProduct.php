@@ -423,8 +423,6 @@ class InformationProduct extends Entity
 
     /**
      * Getter for file path name.
-     *
-     * @return string|null
      */
     public function getFilePathName(): ?string
     {
@@ -438,8 +436,6 @@ class InformationProduct extends Entity
      * Setter for file path name.
      *
      * @param string|null $filePathName The file path name.
-     *
-     * @return self
      */
     public function setFilePathName(?string $filePathName): self
     {

@@ -354,6 +354,9 @@ class File extends Entity
         return explode('/', $filepath);
     }
 
+    /**
+     * String representation of the file path name.
+     */
     public function __toString(): string
     {
         return $this->getFilePathName() ?? '';
