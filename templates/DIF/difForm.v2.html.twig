@@ -6,7 +6,7 @@
       dataset="{{ path('pelagos_api_datasets_get_collection') }}"
 >
 
-    <div class="grid gap-4">
+    <div class="grid gap-4 max-w-[90%] mx-auto">
         <div>
             {{ form_row(form.researchGroup, { attr: { class: 'input-base'} }) }}
         </div>
@@ -36,8 +36,7 @@
         </div>
 
         <div>
-            {{ form_row(form.abstract, { attr: { class: 'input-base'} }) }}
-        </div>
+            {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
 
 
         <!-- Field of Study Section -->
@@ -80,8 +79,95 @@
         </fieldset>
         <!-- Field of Study Section -->
 
-        <div>
-            {{ form_row(form.dataSize, { attr: { class: 'input-base'} }) }}
+        <div class="">
+            {{ form_row(form.dataSize, { attr: { class: 'radio-base flex items-center gap-10'} }) }}
         </div>
+
+        <div>
+            {{ form_row(form.variablesObserved, { attr: { class: 'textarea-base'} }) }}
+        </div>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg">
+             <legend class="text-lg font-semibold px-2">Method(s) for Collecting or Generating the Data</legend>
+            {# <label><h2>Field of Study:</h2></label> #}
+            <div class="grid grid-cols-3">
+                <div>
+                    {{ form_row(form.collectionMethodFieldSampling, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.collectionMethodSimulatedGenerated, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.collectionMethodLaboratory, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.collectionMethodLiteratureBased, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.collectionMethodRemoteSensing, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div class="grid-col-span-2">
+                    {{ form_row(form.collectionMethodOther, { attr: { class: 'input-base'} }) }}
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <legend class="text-lg font-semibold px-2">Estimated Data Sampling/Generation Period</legend>
+            <div>
+                {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base'} }) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <legend class="text-lg font-semibold px-2">Geographic/Study Area</legend>
+
+             <div class="grid-col-span-2">
+                    {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
+                </div>
+
+                 <div class="grid-col-span-2">
+                    {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
+                </div>
+        </fieldset>
+
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <legend class="text-lg font-semibold px-2">Identify a National Data Archive for your Dataset, if applicable</legend>
+            <div class="grid grid-cols-3">
+                <div>
+                    {{ form_row(form.nationalDataArchiveNODC, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.nationalDataArchiveStoret, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.nationalDataArchiveGBIF, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.nationalDataArchiveNCBI, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.nationalDataArchiveDataGov, { attr: { class: 'checkbox-base'} }) }}
+                </div>
+
+                <div class="grid-col-span-2">
+                    {{ form_row(form.nationalDataArchiveOther, { attr: { class: 'input-base'} }) }}
+                </div>
+            </div>
+        </fieldset>
 
 </form>
