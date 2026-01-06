@@ -128,7 +128,7 @@ class InformationProductCrudController extends AbstractCrudController
                 ->setFormTypeOptions([
                     'upload_dir' => $this->homedirPrefix . '/upload',
                     'file_constraints' => [new FileConstraint(maxSize: '100m')],
-                    'upload_new' => static function (UploadedFile $uploadedFile, string $uploadDir, string $fileName) use ($informationProduct) {
+                    'upload_new' => function (UploadedFile $uploadedFile, string $uploadDir, string $fileName) use ($informationProduct) {
                         $fileSize = $uploadedFile->getSize();
                         $uploadedFile->move($uploadDir, $fileName);
                         $file = $informationProduct?->getFile();
