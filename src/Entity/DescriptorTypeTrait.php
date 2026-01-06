@@ -39,6 +39,11 @@ trait DescriptorTypeTrait
         return $this;
     }
 
+    /**
+     * String representation of the description.
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->getDescription() ?? '';

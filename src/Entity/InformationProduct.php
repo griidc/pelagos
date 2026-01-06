@@ -421,6 +421,11 @@ class InformationProduct extends Entity
         return $this;
     }
 
+    /**
+     * Getter for file path name.
+     *
+     * @return string|null
+     */
     public function getFilePathName(): ?string
     {
         if (!$this->file instanceof File) {
@@ -429,6 +434,13 @@ class InformationProduct extends Entity
         return $this->file->getFilePathName();
     }
 
+    /**
+     * Setter for file path name.
+     *
+     * @param string|null $filePathName The file path name.
+     *
+     * @return self
+     */
     public function setFilePathName(?string $filePathName): self
     {
         if ($this->file instanceof File) {
