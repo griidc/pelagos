@@ -11,8 +11,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class EasyAdminPersistSubscriber implements EventSubscriberInterface
 {
-    use EasyAdminCrudTrait;
-
     public function __construct(private MessageBusInterface $messageBus)
     {
     }
@@ -21,12 +19,10 @@ class EasyAdminPersistSubscriber implements EventSubscriberInterface
     {
         $informationProduct = $event->getEntityInstance();
 
-        if (!$informationProduct instanceof InformationProduct) {
-            return;
+        if ($informationProduct instanceof InformationProduct) {
+            // Dispatch a message to process the information product after it has been persisted
+            $this->messageBus->dispatch(new InformationProductFiler($informationProduct->getId()));
         }
-
-        // Dispatch a message to process the information product after it has been persisted
-        $this->messageBus->dispatch(new InformationProductFiler($informationProduct->getId()));
     }
 
     public static function getSubscribedEvents(): array

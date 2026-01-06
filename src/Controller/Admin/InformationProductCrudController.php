@@ -43,7 +43,7 @@ class InformationProductCrudController extends AbstractCrudController
 
     use EasyAdminCrudTrait;
 
-    public function __construct(private readonly KernelInterface $kernel)
+    public function __construct(private readonly KernelInterface $kernel, private string $homedirPrefix)
     {
     }
 
@@ -136,7 +136,7 @@ class InformationProductCrudController extends AbstractCrudController
                 ->setTextAlign(TextAlign::CENTER)
                 ->setHelp('Upload the file associated with this information product.')
                 ->setFormTypeOptions([
-                    'upload_dir' => 'var/',
+                    'upload_dir' => $this->homedirPrefix . '/upload',
                     'file_constraints' => [new FileConstraint(maxSize: '100m')],
                     'upload_new' => static function (UploadedFile $uploadedFile, string $uploadDir, string $fileName) use ($informationProduct) {
                         $fileSize = $uploadedFile->getSize();
@@ -144,6 +144,7 @@ class InformationProductCrudController extends AbstractCrudController
                         $file = $informationProduct?->getFile();
                         if (!$file instanceof File) {
                             $file = new File();
+                            $file->setStatus(File::FILE_IN_QUEUE);
                             $informationProduct?->setFile($file);
                         }
                         $file->setFileSize($fileSize);

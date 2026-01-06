@@ -127,6 +127,10 @@ services:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
 
+    App\Controller\Admin\InformationProductCrudController:
+        bind:
+            $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
     App\Command\AccountExpirationNotifyCommand:
         bind:
             string $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
