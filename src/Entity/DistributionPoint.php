@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class DistributionPoint extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -232,5 +234,10 @@ class DistributionPoint extends Entity
                 static::ROLECODES
             )
         );
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->getDataCenter();
     }
 }

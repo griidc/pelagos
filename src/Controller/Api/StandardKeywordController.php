@@ -17,7 +17,7 @@ class StandardKeywordController extends AbstractController
     {
         $type = KeywordType::tryFrom($request->query->get('type') ?? '');
 
-        $keywords = $keywordRepository->getKeywords($type);
+        $keywords = $keywordRepository->getKeywordsByType($type);
 
         return $jsonSerializer->serialize(
             data: $keywords,

@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FunderRepository::class)]
 class Funder extends Entity
 {
+    use IdTrait;
+
     public const SOURCE_IMPORTED = 'imported';
     public const SOURCE_USER = 'user';
     public const SOURCE_DRPM = 'drpm';

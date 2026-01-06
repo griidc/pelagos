@@ -78,7 +78,7 @@
                                 <button type="reset" id="search-clear" class="btn btn-primary clear-button">Clear</button>
                                 <div class="mt-3 pt-3 empty-button-div"></div>
                                 <button type="button" id="map-search" class="btn btn-primary map-search-button"
-                                        @click="dataDiscovery()">Map Search
+                                        @click="mapSearch()">Map Search
                                 </button>
                             </div>
                         </div>
@@ -230,9 +230,9 @@ export default {
       this.route = window.location.hash;
       this.submitted = false;
     },
-    dataDiscovery() {
+    mapSearch() {
       // eslint-disable-next-line no-undef
-      window.location.href = Routing.generate('pelagos_app_ui_datadiscovery_default');
+      window.location.href = Routing.generate('app_map_search');
     },
   },
   mounted() {

@@ -54,3 +54,8 @@
     --atlassion-button-bg: var(--color-dark-cyan);
     --color-table-striped:  var(--color-light-cyan);
 }
+
+img,video {
+  height: auto;
+  max-width: 100%;
+}

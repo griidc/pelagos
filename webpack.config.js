@@ -41,7 +41,6 @@ Encore
   .addEntry('grp-home', './assets/js/grp-home.js')
   .addEntry('stats', './assets/js/stats.js')
   .addEntry('file-manager', './assets/js/file-manager.js')
-  .addEntry('person-profile', './assets/js/entry/person-profile.js')
   .addEntry('how-to-submit-data', './assets/js/entry/how-to-submit-data.js')
   .addEntry('data-land', './assets/js/entry/data-land.js')
   .addEntry('hri-app', './assets/js/main/hri-app.js')
@@ -55,6 +54,7 @@ Encore
   .addEntry('login', './assets/js/entry/login.js')
   .addEntry('change-password', './assets/js/entry/change-password.js')
   .addEntry('map-search', './assets/js/entry/map-search.js')
+  .addEntry('dashboard', './assets/js/entry/dashboard.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()

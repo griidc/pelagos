@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\DiscriminatorColumn(name: 'discr')]
 abstract class PersonDatasetSubmission extends Entity
 {
+    use IdTrait;
+
     /**
      * Valid values for self::$role.
      *

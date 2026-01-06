@@ -31,7 +31,7 @@ class DIFListener extends EventListener
         // email Data Managers
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-submitted.email.twig');
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
     }
 
     /**
@@ -51,7 +51,7 @@ class DIFListener extends EventListener
 
         // email DM
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-approved.email.twig');
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
     }
 
     /**
@@ -71,7 +71,7 @@ class DIFListener extends EventListener
 
         // email data managers
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-unlocked.email.twig');
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
     }
 
     /**
@@ -92,7 +92,7 @@ class DIFListener extends EventListener
 
         // email DM
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-unlock-requested.email.twig');
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
     }
 
     /**
@@ -109,7 +109,7 @@ class DIFListener extends EventListener
         // email DM
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-created.email.twig');
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
     }
 
     /**

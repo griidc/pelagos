@@ -14,6 +14,8 @@ use Doctrine\Common\Collections\Expr\Comparison;
 #[ORM\Entity(repositoryClass: 'App\Repository\FilesetRepository')]
 class Fileset extends Entity
 {
+    use IdTrait;
+
     /**
      * Collection of files.
      *

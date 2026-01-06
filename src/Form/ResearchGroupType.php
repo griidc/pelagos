@@ -49,7 +49,7 @@ class ResearchGroupType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $nextId = $this->researchGroupRepository->getNextAvailableId(ResearchGroup::MIN_ID, ResearchGroup::MAX_ID);
+        $nextId = $this->researchGroupRepository->getNextAvailableId();
         $builder
             ->add('id', TextType::class, array(
                 'label' => 'Research Group ID:',

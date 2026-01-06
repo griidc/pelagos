@@ -9,6 +9,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -42,7 +43,7 @@ class DoctrineDatasetListener
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $unitOfWork = $entityManager->getUnitOfWork();
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             $this->updateDataset($entity, $entityManager);
@@ -84,12 +85,12 @@ class DoctrineDatasetListener
     /**
      * Post update method for dataset entity, to publish/update Doi.
      *
-     * @param Dataset            $dataset An instance of Dataset entity.
-     * @param LifecycleEventArgs $args    Doctrine life cycle event args.
+     * @param Dataset             $dataset An instance of Dataset entity.
+     * @param PostUpdateEventArgs $args    Doctrine life cycle event args.
      *
      * @return void
      */
-    public function postUpdate(Dataset $dataset, LifecycleEventArgs $args): void
+    public function postUpdate(Dataset $dataset, PostUpdateEventArgs $args): void
     {
         $entity = $args->getObject();
         if ($entity instanceof Dataset) {

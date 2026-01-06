@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: 'App\Repository\DatasetLinksRepository')]
 class DatasetLink extends Entity
 {
+    use IdTrait;
+
     /**
      * Valid values for self::$functionCode.
      *
@@ -288,5 +290,10 @@ class DatasetLink extends Entity
                 static::LINK_NAME_CODES
             )
         );
+    }
+
+    public function __toString()
+    {
+        return (string) $this->getName() . ' (' . $this->getUrl() . ')';
     }
 }

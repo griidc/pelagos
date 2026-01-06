@@ -14,6 +14,8 @@ use JMS\Serializer\Annotation as Serializer;
 #[ORM\Entity(repositoryClass: KeywordRepository::class)]
 class Keyword extends Entity
 {
+    use IdTrait;
+
     /**
      * Type of the Keyword.
      */
@@ -235,6 +237,34 @@ class Keyword extends Entity
         $this->expanded = $expanded;
 
         return $this;
+    }
+
+    /**
+     * Gets the level of the keyword.
+     *
+     * @param boolean|null $correctForType If the keyword is type GCMD, then the first level doesn't count.
+     */
+    public function getLevel(?bool $correctForType = true): int
+    {
+        $levels = explode(' > ', $this->getDisplayPath() ?? '');
+        if ($correctForType) {
+            if ($this->getType() === KeywordType::TYPE_GCMD) {
+                array_shift($levels);
+            }
+        }
+        return count($levels);
+    }
+
+    /**
+     * Get the level two display path for this keyword, if it exists.
+     */
+    public function getLevelTwo(): ?string
+    {
+        $levels = explode(' > ', $this->getDisplayPath() ?? '');
+        if (count($levels) >= 2) {
+            return $levels[0] . ' > ' . $levels[1];
+        }
+        return null;
     }
 
     /**

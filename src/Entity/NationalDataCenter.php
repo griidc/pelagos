@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['organizationUrl'], errorPath: 'organizationUrl', message: 'A National data center with this Url already exists')]
 class NationalDataCenter extends DataCenter
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

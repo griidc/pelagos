@@ -66,6 +66,10 @@
                         Logged in as: {{ app.session.get('_security.last_username') }}
                     </a>
                     &nbsp; | &nbsp;
+                    <a href="{{ path('app_ui_dashboard') }}" style="text-decoration: underline; color: inherit">
+                        My Dashboard
+                    </a>
+                    &nbsp; | &nbsp;
                     <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit"> Log
                         out</a>
                 {% else %}
@@ -89,7 +93,7 @@
                                      class="mw-100 logo">
                             </a>
                             <a class="navbar-brand" href="https://griidc.org" target="_blank">
-                                <img src="{{ asset('build/images/griidc-logo.svg') }}" alt="logo" class="mw-100 griidc-logo">
+                                <img width="213" height="59" src="{{ asset('build/images/griidc-logo.svg') }}" alt="logo">
                             </a>
                             <button class="navbar-toggler border border-white" type="button" data-toggle="collapse"
                                     data-target="#navbarNav"

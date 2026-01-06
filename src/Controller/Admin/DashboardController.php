@@ -4,6 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\DataRepository;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 use App\Entity\NationalDataCenter;
 use App\Entity\DigitalResourceTypeDescriptor;
 use App\Entity\Funder;
@@ -51,6 +54,9 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Viewers');
         yield MenuItem::linkToCrud('Logged Actions', 'fas fa-search', LogActionItem::class);
+        yield MenuItem::linkToCrud('DIFs', 'fas fa-search', DIF::class);
+        yield MenuItem::linkToCrud('Datasets', 'fas fa-search', Dataset::class);
+        yield MenuItem::linkToCrud('Dataset Submissions', 'fas fa-search', DatasetSubmission::class);
 
         yield MenuItem::section('PODS');
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
@@ -59,7 +65,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Person', 'fas fa-list-alt', Person::class);
         yield MenuItem::linkToCrud('Funders', 'fas fa-list-alt', Funder::class);
         yield MenuItem::linkToCrud('National Data Center', 'fas fa-list-alt', NationalDataCenter::class);
-        yield MenuItem::linkToCrud('Data Respository', 'fas fa-list-alt', DataRepository::class);
+        yield MenuItem::linkToCrud('Data Repository', 'fas fa-list-alt', DataRepository::class);
 
         yield MenuItem::section('Information Products');
         yield MenuItem::linkToCrud('Information Product', 'fas fa-list-alt', InformationProduct::class);

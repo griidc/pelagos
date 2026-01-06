@@ -8,6 +8,7 @@ use App\Entity\ProductTypeDescriptor;
 use App\Repository\InformationProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
 
 /**
  * Listener class for Information Product and Types related events.
@@ -17,20 +18,16 @@ class InformationProductListener
     /**
      * Listener on Pre-Remove event.
      *
-     * @param LifecycleEventArgs $args The Lifecycle event arguments.
-     *
-     * @throws Exception When the entity can/should not be deleted.
+     * @throws \Exception When the entity can/should not be deleted.
      *
      * @return void
      */
-    public function preRemove(LifecycleEventArgs $args): void
+    public function preRemove(PreRemoveEventArgs $args): void
     {
         $entity = $args->getObject();
 
-        /** @var EntityManagerInterface $entityManager */
         $entityManager = $args->getObjectManager();
 
-        /** @var InformationProductRepository $repository */
         $repository = $entityManager->getRepository(InformationProduct::class);
 
         if ($entity instanceof DigitalResourceTypeDescriptor) {

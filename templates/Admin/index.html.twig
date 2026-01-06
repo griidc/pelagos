@@ -7,7 +7,7 @@
 {% block main %}
     <ul>
         <li><a href="{{ path("pelagos_app_ui_account_default") }}">Request Account</a></li>
-        <li><a href="{{ path("pelagos_app_ui_datarepository_default", {id:1}) }}">Data Repository</a></li>
+        <!-- <li><a href="{{ path("pelagos_app_ui_datarepository_default", {id:1}) }}">Data Repository</a></li> -->
         <li><a href="{{ path("pelagos_app_ui_mdapp_default") }}">Metadata Approval Tool (MDApp)</a></li>
         <li><a href="{{ path("pelagos_app_ui_datasetsummary_default") }}">Dataset Summary and Deletion</a></li>
         <li><a href="{{ path("pelagos_app_ui_datasetrestrictions_default") }}">Dataset Restrictions</a></li>
@@ -21,25 +21,25 @@
         <li>
             Lists
             <ul>
-                <li><a href="{{ path("pelagos_app_list_fundingorganizations") }}">Funding Organizations</a></li>
-                <li><a href="{{ path("pelagos_app_list_researchgroups") }}">Research Groups</a></li>
-                <li><a href="{{ path("pelagos_app_list_people") }}">People</a></li>
+                <!-- <li><a href="{{ path("pelagos_app_list_fundingorganizations") }}">Funding Organizations</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_list_researchgroups") }}">Research Groups</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_list_people") }}">People</a></li> -->
                 <li><a href="{{ path("pelagos_app_ui_publicationdatasetlink_list") }}">Dataset - Publication Links</a></li>
-                <li><a href="{{ path("pelagos_app_list_nationaldatacenters") }}">National Data Centers</a></li>
-                <li><a href="{{ path("pelagos_app_ui_information_products") }}">Information Products</a></li>
+                <!-- <li><a href="{{ path("pelagos_app_list_nationaldatacenters") }}">National Data Centers</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_ui_information_products") }}">Information Products</a></li> -->
             </ul>
         </li>
         <li>
             Create New:
             <ul>
-                <li><a href="{{ path("pelagos_app_ui_fundingorganization_default") }}">Funding Organization</a></li>
-                <li><a href="{{ path("pelagos_app_ui_fundingcycle_default") }}">Funding Cycle</a></li>
-                <li><a href="{{ path("pelagos_app_ui_researchgroup_default") }}">Research Group</a></li>
-                <li><a href="{{ path("pelagos_app_ui_person_default") }}">Person</a></li>
-                <li><a href="{{ path("pelagos_app_ui_persondatarepository_default") }}">Person to Data Repository Association</a></li>
-                <li><a href="{{ path("pelagos_app_ui_personfundingorganization_default") }}">Person to Funding Organization Association</a></li>
+                <!-- <li><a href="{{ path("pelagos_app_ui_fundingorganization_default") }}">Funding Organization</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_ui_fundingcycle_default") }}">Funding Cycle</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_ui_researchgroup_default") }}">Research Group</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_ui_person_default") }}">Person</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_ui_persondatarepository_default") }}">Person to Data Repository Association</a></li> -->
+                <!-- <li><a href="{{ path("pelagos_app_ui_personfundingorganization_default") }}">Person to Funding Organization Association</a></li> -->
                 <li><a href="{{ path("pelagos_app_ui_publicationdatasetlink_default") }}">Dataset - Publication Link</a></li>
-                <li><a href="{{ path("pelagos_app_ui_nationaldatacenter_default") }}">National Data Center</a></li>
+                <!-- <li><a href="{{ path("pelagos_app_ui_nationaldatacenter_default") }}">National Data Center</a></li> -->
                 <li><a href="{{ path("pelagos_app_ui_information_product") }}">Information Product</a></li>
             </ul>
         </li>
@@ -62,6 +62,8 @@
                 <li><a href="{{ path('pelagos_api_grp_datasets_keywords_report') }}">GRP Datasets and Keywords Report (CSV)</a></li>
                 <li><a href="{{ path('pelagos_api_grp_accounts_people_report') }}">GRP Account and People Report (CSV)</a></li>
                 <li><a href="{{ path('pelagos_api_remotely_hosted_report') }}">Remotely Hosted Dataset Report (CSV)</a></li>
+                <li><a href="{{ path('pelagos_api_cold_storage_candidate_report') }}">Cold Storage Candidate Report (CSV)</a></li>
+                <li><a href="{{ path('pelagos_api_cold_stored_report') }}">Cold Stored Dataset Report (CSV)</a></li>
             </ul>
         </li>
     </ul>

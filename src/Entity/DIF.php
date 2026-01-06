@@ -14,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class DIF extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -49,7 +51,7 @@ class DIF extends Entity
      *
      * @var Dataset
      */
-    #[ORM\OneToOne(targetEntity: 'Dataset', mappedBy: 'dif', cascade: ['persist'])]
+    #[ORM\OneToOne(targetEntity: Dataset::class, mappedBy: 'dif', cascade: ['persist'])]
     #[Serializer\MaxDepth(2)]
     protected $dataset;
 
@@ -409,6 +411,14 @@ class DIF extends Entity
     public function getDataset()
     {
         return $this->dataset;
+    }
+
+    public function getUDI(): ?string
+    {
+        if (!$this->dataset instanceof Dataset) {
+            return null;
+        }
+        return $this->dataset->getUDI();
     }
 
     /**

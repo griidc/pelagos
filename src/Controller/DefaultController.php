@@ -123,18 +123,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * The admin action.
-     *
-     *
-     * @return Response
-     */
-    #[Route(path: '/pelagos-admin', name: 'pelagos_admin')]
-    public function admin()
-    {
-        return $this->render('Default/admin.html.twig');
-    }
-
-    /**
      * Get the sitemap.xml containing all dataset urls.
      *
      * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.

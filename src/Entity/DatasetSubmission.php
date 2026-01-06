@@ -37,6 +37,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Entity(repositoryClass: 'App\Repository\DatasetSubmissionRepository')]
 class DatasetSubmission extends Entity
 {
+    use IdTrait;
+
     /**
      * Indicates the algorithm used to produce the MD hash.
      *
@@ -619,6 +621,7 @@ class DatasetSubmission extends Entity
      * @var string
      */
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     protected $datasetFileColdStorageOriginalFilename;
 
     /**
@@ -891,12 +894,14 @@ class DatasetSubmission extends Entity
      * For cold-stored, the total unpacked filecount (not dirs).
      */
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     private $coldStorageTotalUnpackedCount;
 
     /**
      * For cold-stored, the total unpacked bytecount.
      */
     #[ORM\Column(type: 'bigint', nullable: true)]
+    #[Groups(['cold-stored-report'])]
     private $coldStorageTotalUnpackedSize;
 
     /**
@@ -2814,5 +2819,10 @@ class DatasetSubmission extends Entity
     public function getAdditionalFunders(): ?string
     {
         return $this->additionalFunders;
+    }
+
+    public function getResearchGroup(): ?string
+    {
+        return $this->getDataset()->getResearchGroup();
     }
 }

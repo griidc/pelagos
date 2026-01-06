@@ -322,14 +322,15 @@ $(document).ready(function()
     }
 
     var select = $('select#researchGroup');
-        select.html(select.find('option').sort(function(x, y) {
-            if ($(x).text() > $(y).text()) {
-                return 1;
-            } else {
-                return -1;
-            }
+    select.html(select.find('option').sort(function(x, y) {
+        if ($(x).text() > $(y).text()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }));
     $("select option:contains(PLEASE SELECT A PROJECT)").prependTo($("select#researchGroup"));
+    $('select#researchGroup').prop('selectedIndex', 0).trigger('change');
 });
 
 
@@ -1041,7 +1042,7 @@ function formChanged()
 {
     return $.Deferred(function() {
         var self = this;
-        if (formHash != $("#difForm").serialize() && typeof formHash !="undefined")
+        if (formHash != $("#difForm").serialize() && formHash)
         {
             $('<div><img src="' + imgWarning +'"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
                 title: "Warning!",

@@ -140,6 +140,13 @@ fos_elastica:
                             properties:
                                 displayPath:
                                     type: 'text'
+                                id:
+                                    type: 'keyword'
+                                type:
+                                    type: 'keyword'
+                anzsrcLevelTwo:
+                    type: 'keyword'
+                    property_path: false
                 availabilityStatus:
                     type: 'integer'
                 collectionStartDate:

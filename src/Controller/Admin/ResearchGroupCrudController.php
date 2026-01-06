@@ -105,9 +105,10 @@ class ResearchGroupCrudController extends AbstractCrudController
         $personResearchGroup->setResearchGroup($researchGroup);
 
         return [
-            IdField::new('id')->onlyOnIndex(),
+            IdField::new('id')
+                ->hideOnForm(),
             TextField::new('name'),
-            TextField::new('shortName')->onlyOnForms(),
+            TextField::new('shortName')->hideOnIndex(),
             AssociationField::new('fundingCycle'),
             TextField::new('fundingOrganization')->setDisabled()->hideWhenCreating(),
             CollectionField::new('personResearchGroups')
@@ -117,7 +118,8 @@ class ResearchGroupCrudController extends AbstractCrudController
             ])
             ->hideOnIndex()
             ->hideWhenCreating()
-            ->useEntryCrudForm(),
+            ->useEntryCrudForm()
+            ->setRequired(true),
             UrlField::new('url')->hideOnIndex(),
             TextareaField::new('deliveryPoint')->hideOnIndex(),
             TextField::new('city')->hideOnIndex(),

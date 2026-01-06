@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 class DOI extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -39,7 +41,7 @@ class DOI extends Entity
      */
     #[ORM\Column(type: 'text', nullable: false)]
     #[Serializer\Groups(['doi'])]
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-dk-report', 'cold-stored-report'])]
     protected $doi;
 
     /**

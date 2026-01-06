@@ -1,0 +1,108 @@
+<div class="mx-auto text-base leading-7 text-gray-700">
+    <p class="mb-4 prose prose-sm leading-relaxed">
+        The dashboard displays datasets you have created and their status within the GRIIDC system.
+        The GRIIDC submission process consists of two steps: submitting a plan before you collect data and completing a submission.
+        After a plan has been submitted and approved, you will collect or generate your data.
+        When you are ready to upload your data to GRIIDC, you will use submission.
+        Once submitted, the dataset will be reviewed by GRIIDC personnel.
+        See <a href="{{ mainsite }}/how-submit-data" class="pagelink" target="_blank">How to Submit Data</a> for more information.
+    </p>
+</div>
+
+<div x-data="{ showCompleted: true, allExpanded: true }">
+
+<div class="flex justify-between items-center px-2 mb-4">
+    <div class="flex inline-flex items-center">
+        <input id="completed-checkbox" x-model="showCompleted" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-800 focus:ring-2">
+        <label for="completed-checkbox" class="ms-2 text-gray-900">Show Completed Datasets</label>
+    </div>
+
+    <div class="flex inline-flex items-center">
+        <button
+            @click="allExpanded = ! allExpanded; toggleAllExpanded(allExpanded)"
+            type="button"
+            class="w-9 h-9 text-gray-700 bg-white border border-gray-200 rounded-lg toggle-full-view hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-300 focus:outline-none">
+            <i :class="allExpanded ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up'" style="color: gray-800;"></i>
+        </button>
+    </div>
+</div>
+
+{% set researchGroups = researchGroups|sort((a, b) => b.creationTimeStamp <=> a.creationTimeStamp) %}
+
+{% for researchGroup in researchGroups %}
+    <div x-data="{ expanded: true }" class="mb-6">
+        <div class="shadow-lg border rounded-lg">
+            <div class="block bg-gray-300">
+                <span class="expandme p-2 text-black font-bold block bg-gray-200" @click="expanded = ! expanded">
+                    <div class="float-end px-2">
+                        <i :class="expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" style="color: gray-800;"></i>
+                    </div>
+                    <div class="mr-10">
+                        Research Group: {{ researchGroup.name }}
+                    </div>
+                </span>
+            </div>
+        </div>
+
+        <div x-show="expanded" x-collapse>
+    {% set datasets = researchGroup.datasets|filter(dataset => dataset.researchGroup == researchGroup)|filter(dataset => dataset.creator == person)|sort((a, b) => a.udi <=> b.udi) %}
+            <div class="relative overflow-x-auto">
+                <table class="w-full text-left rtl:text-right text-gray-500 table-fixed mt-4">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="w-[11rem]" title="Unique Dataset Identifier">UDI</th>
+                            <th scope="col">Title</th>
+                            <th scope="col" class="w-[8rem]">Type</th>
+                            <th scope="col" class="w-[7rem]">Status</th>
+                            <th scope="col" class="w-[6rem]">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for dataset in datasets %}
+                        <tr
+                            x-data="{ isCompleted: {{dataset.isCompleted ? 'true' : 'false'}} }"
+                            class="bg-white border-b border-gray-200"
+                            x-transition.duration.500ms
+                            x-show="showCompleted || !isCompleted"
+                        >
+                            <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap text-left">{{ dataset.udi }}</th>
+                            <td class="text-left pr-4 break-all">{{ dataset.title }}</td>
+                            <td class="text-left">
+                                {% include 'Dashboard/typeText.html.twig' with {'dataset': dataset} only %}
+                            </td>
+                            <td class="text-left">
+                                {% include 'Dashboard/statusText.html.twig' with {'dataset': dataset} only %}
+                            </td>
+                            <td class="text-left">
+                                {% include 'Dashboard/nextAction.html.twig' with {'dataset': dataset} only %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-start mt-4">
+                {% if researchGroup.isLocked %}
+                    <span
+                        class="opacity-50 text-gray-600 border border-gray-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center cursor-not-allowed"
+                        data-tippy-content="This research group is locked. You cannot create a new dataset in this group."
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="sr-only">Create New Dataset (Disabled - Research Group Locked)</span>
+                    </span>
+                {% else %}
+                <a
+                    href="{{ path('pelagos_app_ui_dif_default') }}"
+                    class="text-blue-800 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                    data-tippy-content="Create New Dataset"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="sr-only">Create New Dataset</span>
+                </a>
+                {% endif %}
+            </div>
+        <div class="py-6"></div>
+    </div>
+</div>
+{% endfor %}
+</div>

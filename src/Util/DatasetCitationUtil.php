@@ -36,7 +36,7 @@ class DatasetCitationUtil
         $citationString .= 'Distributed by: GRIIDC, Harte Research Institute, Texas A&M University–Corpus Christi. ';
 
         if ($doi instanceof DOI) {
-            $citationString .= 'doi:' . $doi->getDoi();
+            $citationString .= 'https://doi.org/' . $doi->getDoi();
         } else {
             $citationString .= "Available from: https://data.griidc.org/data/$udi";
         }

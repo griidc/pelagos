@@ -30,6 +30,8 @@ use App\Validator\Constraints as CustomAssert;
 #[ORM\DiscriminatorMap(['datacenter' => 'DataCenter', 'nationaldatacenter' => 'NationalDataCenter'])]
 class DataCenter extends Entity
 {
+    use IdTrait;
+
     /**
      * Name of the Data Center.
      *
@@ -328,5 +330,10 @@ class DataCenter extends Entity
     public function setEmailAddress(?string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getOrganizationName() ?: 'No Organization Name';
     }
 }

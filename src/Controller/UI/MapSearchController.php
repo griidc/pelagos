@@ -2,7 +2,9 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Keyword;
 use App\Enum\DatasetLifecycleStatus;
+use App\Repository\KeywordRepository;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\GeoShapeProvided;
@@ -21,7 +23,8 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MapSearchController extends AbstractController
 {
     public function __construct(
-        private TransformedFinder $searchPelagosFinder,
+        private readonly TransformedFinder $searchPelagosFinder,
+        private readonly KeywordRepository $keywordRepository,
     ) {
     }
 
@@ -154,6 +157,27 @@ final class MapSearchController extends AbstractController
                 }
             }
 
+            $field = 'keywords';
+            $value = $this->getValueFromFilterRegex($filter[0], $field);
+            if (null !== $value) {
+                $valuesArray = json_decode($value);
+
+                $searchArray = [];
+                foreach ($valuesArray as $parent) {
+                    $results = $this->keywordRepository->getKeywordByParent((int) $parent);
+                    $searchArray = array_unique(array_merge($searchArray, $results));
+                }
+
+                if (count($searchArray) > 0) {
+                    $nestedQuery = new Nested();
+                    $nestedQuery->setPath('datasetSubmission.keywords');
+                    $termQuery = new Terms('datasetSubmission.keywords.id');
+                    $termQuery->setTerms($searchArray);
+                    $nestedQuery->setQuery($termQuery);
+                    $filterQuery->addFilter($nestedQuery);
+                }
+            }
+
             if ($filterQuery->count() > 0) {
                 $mainQuery->addMust($filterQuery);
             }
@@ -189,6 +213,9 @@ final class MapSearchController extends AbstractController
 
             $query->setQuery($mainQuery);
         }
+
+        // Only return these fields
+        $query->setSource(['title', 'udi', 'datasetLifecycleStatus', 'doi.doi']);
 
         $find = $this->searchPelagosFinder->findHybridPaginated($query);
 

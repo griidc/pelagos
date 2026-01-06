@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: InformationProductRepository::class)]
 class InformationProduct extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */

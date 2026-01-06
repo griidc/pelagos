@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: 'App\Repository\LogActionItemRepository')]
 class LogActionItem extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
     */

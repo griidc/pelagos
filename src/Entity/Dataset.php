@@ -19,6 +19,8 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 #[ORM\Entity(repositoryClass: DatasetRepository::class)]
 class Dataset extends Entity
 {
+    use IdTrait;
+
     /**
      * A friendly name for this type of entity.
      */
@@ -97,7 +99,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search'])]
+    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search', 'cold-stored-report', 'cold-storage-candidate'])]
     protected $udi;
 
     /**
@@ -124,7 +126,8 @@ class Dataset extends Entity
      * @var DOI
      */
     #[ORM\OneToOne(targetEntity: 'DOI', cascade: ['persist'])]
-    #[Serializer\Groups(['card'])]
+    #[Serializer\Groups(['card','cold-stored-report'])]
+    #[Groups(['cold-stored-report'])]
     protected $doi;
 
     /**
@@ -144,7 +147,7 @@ class Dataset extends Entity
      *
      * @var DIF
      */
-    #[ORM\OneToOne(targetEntity: 'DIF', inversedBy: 'dataset')]
+    #[ORM\OneToOne(targetEntity: DIF::class, inversedBy: 'dataset')]
     #[Serializer\Groups(['card'])]
     protected $dif;
 
@@ -156,7 +159,7 @@ class Dataset extends Entity
     #[ORM\OneToOne(targetEntity: 'DatasetSubmission', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     #[Serializer\Groups(['card'])]
-    #[Groups(['remotely-hosted-dataset-report'])]
+    #[Groups(['remotely-hosted-dataset-report','cold-stored-report', 'cold-storage-candidate'])]
     protected $datasetSubmission;
 
     /**
@@ -176,6 +179,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'datetimetz', nullable: true)]
     #[Serializer\Groups(['card'])]
+    #[Groups(['cold-stored-report'])]
     protected $acceptedDate;
 
     /**
@@ -290,7 +294,7 @@ class Dataset extends Entity
     /**
      * Gets the Research Group this Dataset is attached to.
      *
-     * @return ResearchGroup the Research Group this DIF is attached to
+     * @return ResearchGroup the Research Group this Dataset is attached to
      */
     public function getResearchGroup()
     {
@@ -363,6 +367,14 @@ class Dataset extends Entity
     public function getDatasetSubmissionHistory()
     {
         return $this->datasetSubmissionHistory;
+    }
+
+    /**
+     * Whether this Dataset has any Dataset Submission history.
+     */
+    public function hasDatasetSubmissionHistory(): bool
+    {
+        return !$this->datasetSubmissionHistory->isEmpty();
     }
 
     /**
@@ -747,6 +759,27 @@ class Dataset extends Entity
     }
 
     /**
+     * Whether this Dataset is completed.
+     *
+     * A dataset is considered completed when it is either publicly available
+     * (including remotely hosted) or restricted and accepted.
+     */
+    public function isCompleted(): bool
+    {
+        return
+            $this->datasetStatus === Dataset::DATASET_STATUS_ACCEPTED
+            && in_array(
+                $this->availabilityStatus,
+                [
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                ]
+            );
+    }
+
+    /**
      * Check if dataset is Identified.
      */
     public function isIdentified(): bool
@@ -878,22 +911,15 @@ class Dataset extends Entity
         $dif = $this->getDif();
 
         // If we have a submission, use its POC.
-        if (
-            $datasetSubmission instanceof DatasetSubmission
-            and DatasetSubmission::STATUS_COMPLETE == $datasetSubmission->getStatus()
-        ) {
+        if ($datasetSubmission instanceof DatasetSubmission) {
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
             } else {
                 return null;
             }
-        // Otherwise, use the POC from an approved dif.
-        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
+        } else { // Otherwise, use the POC from a dif.
             return $dif->getPrimaryPointOfContact();
-        } else {
-            // And if we don't have an approved DIF, return nothing.
-            return null;
         }
     }
 
@@ -992,6 +1018,7 @@ class Dataset extends Entity
      */
     #[Serializer\VirtualProperty]
     #[Serializer\SerializedName('totalFileSize')]
+    #[Groups(['cold-storage-candidate'])]
     public function getTotalFileSize(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -1012,6 +1039,7 @@ class Dataset extends Entity
      */
     #[Serializer\VirtualProperty]
     #[Serializer\SerializedName('numberOfFiles')]
+    #[Groups(['cold-storage-candidate'])]
     public function getNumberOfFiles(): ?int
     {
         $datasetSubmission = $this->getDatasetSubmission();
@@ -1094,19 +1122,26 @@ class Dataset extends Entity
     /**
      * Get the Dataset's Lifecycle Status.
      */
-    #[Groups(['remotely-hosted-dataset-report'])]
+    #[Groups(['remotely-hosted-dataset-report', 'cold-stored-report'])]
     public function getDatasetLifecycleStatus(): DatasetLifecycleStatus
     {
         $datasetLifeCycleStatus = DatasetLifecycleStatus::NONE;
+        $datasetStatus = $this->getDatasetStatus();
+        $isRestricted = $this->isRestricted();
+        $difStatus = $this->getDif()->getStatus();
 
-        if ((Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) and (true === $this->isRestricted())) {
+        if ((Dataset::DATASET_STATUS_ACCEPTED === $datasetStatus) and (true === $isRestricted)) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::RESTRICTED;
-        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $this->getDatasetStatus()) {
+        } elseif (Dataset::DATASET_STATUS_ACCEPTED === $datasetStatus) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::AVAILABLE;
         } elseif ($this->hasDatasetSubmission()) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::SUBMITTED;
-        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $this->getDif()->getStatus()) {
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED == $difStatus) {
             $datasetLifeCycleStatus = DatasetLifecycleStatus::IDENTIFIED;
+        } elseif ($this->hasDif() and DIF::STATUS_SUBMITTED == $difStatus) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::PENDING;
+        } elseif ($this->hasDif() and DIF::STATUS_APPROVED != $difStatus) {
+            $datasetLifeCycleStatus = DatasetLifecycleStatus::INCOMPLETE;
         }
 
         return $datasetLifeCycleStatus;
@@ -1124,7 +1159,7 @@ class Dataset extends Entity
     /**
      * Get Dataset Lifecycle Status as a string.
      */
-    #[Groups(['grp-dk-report', 'search'])]
+    #[Groups(['grp-dk-report', 'search', 'cold-storage-candidate'])]
     #[SerializedName('datasetLifecycleStatus')]
     public function getDatasetLifecycleStatusString(): string
     {
@@ -1219,11 +1254,11 @@ class Dataset extends Entity
     /**
      * Get keywords by type.
      */
-    private function getKeywordsByType(KeywordType $type): ?Collection
+    public function getKeywordsByType(KeywordType $type): ?Collection
     {
         $keywords = $this->getDatasetSubmission()?->getKeywords();
 
-        return $keywords = $keywords?->filter(function (Keyword $keyword) use ($type) {
+        return $keywords?->filter(function (Keyword $keyword) use ($type) {
                 return $keyword->getType() === $type;
         });
     }
