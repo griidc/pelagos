@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FileUploadType;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\File as FileConstraint;
@@ -33,8 +34,11 @@ class InformationProductCrudController extends AbstractCrudController
 {
     use EasyAdminCrudTrait;
 
+    private string $uploadDirectory;
+
     public function __construct(private string $homedirPrefix)
     {
+        $this->uploadDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . Uuid::uuid4()->toString();;
     }
 
     public function createEntity(string $entityFqcn)
@@ -126,7 +130,7 @@ class InformationProductCrudController extends AbstractCrudController
                 ->setTextAlign(TextAlign::CENTER)
                 ->setHelp('Upload the file associated with this information product.')
                 ->setFormTypeOptions([
-                    'upload_dir' => $this->homedirPrefix . '/upload',
+                    'upload_dir' => $this->homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files',
                     'file_constraints' => [new FileConstraint(maxSize: '100m')],
                     'upload_new' => function (UploadedFile $uploadedFile, string $uploadDir, string $fileName) use ($informationProduct) {
                         $fileSize = $uploadedFile->getSize();
