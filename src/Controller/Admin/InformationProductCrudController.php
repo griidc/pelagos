@@ -185,6 +185,7 @@ class InformationProductCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Create Information Product')
             ->setPageTitle(Crud::PAGE_DETAIL, 'Information Product Details')
             ->showEntityActionsInlined()
+            ->setSearchFields(['title', 'creators', 'publisher', 'externalDoi'])
         ;
     }
 
