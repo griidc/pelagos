@@ -38,7 +38,7 @@ class InformationProductCrudController extends AbstractCrudController
 
     public function __construct(private string $homedirPrefix)
     {
-        $this->uploadDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . Uuid::uuid4()->toString();;
+        $this->uploadDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . Uuid::uuid4()->toString();
     }
 
     public function createEntity(string $entityFqcn)
