@@ -18,7 +18,7 @@
         "eslint-plugin-vue": "^9.33.0",
         "file-loader": "^6.0.0",
         "react": "^18.3.1",
-        "react-dom": "^18.3.1",
+        "react-dom": "^19.2.3",
         "regenerator-runtime": "^0.14.1",
         "sass-embedded": "1.64",
         "sass-loader": "^13.0.0",
