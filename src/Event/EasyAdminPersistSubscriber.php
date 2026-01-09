@@ -2,6 +2,7 @@
 
 namespace App\Event;
 
+use App\Entity\File;
 use App\Entity\InformationProduct;
 use App\Message\InformationProductFiler;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
@@ -18,7 +19,7 @@ class EasyAdminPersistSubscriber implements EventSubscriberInterface
     {
         $informationProduct = $event->getEntityInstance();
 
-        if ($informationProduct instanceof InformationProduct) {
+        if ($informationProduct instanceof InformationProduct && $informationProduct->getFile()?->getStatus() === File::FILE_IN_QUEUE) {
             // Dispatch a message to process the information product after it has been persisted
             $this->messageBus->dispatch(new InformationProductFiler($informationProduct->getId()));
         }
