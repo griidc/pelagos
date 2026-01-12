@@ -7,7 +7,6 @@ use App\Entity\Fileset;
 use App\Repository\FileRepository;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Psr7\Stream;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,6 +23,9 @@ class PelagosExportFilesCommand extends Command
     private EntityManagerInterface $entityManager;
     private FileRepository $fileRepository;
     private Datastore $datastore;
+
+    const string EXPORT_PATH = '/mnt/inspect-review-dataset';
+    const string DATASTORE_PATH = '/san/data/store';
 
     public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository, Datastore $datastore)
     {
@@ -58,7 +60,7 @@ class PelagosExportFilesCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->success('Export complete. Review in /san/data/download/');
+        $io->success('Export complete. Review in ' . self::EXPORT_PATH . '/' . str_replace(':', '.', $udi));
 
         return Command::SUCCESS;
     }
@@ -72,15 +74,15 @@ class PelagosExportFilesCommand extends Command
         }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
 
-        @mkdir('/san_mwilliamson/data/download/exports-to-review/' . $nudi, 0755, true);
-        $destinationPath = '/san_mwilliamson/data/download/exports-to-review/';
+        @mkdir(self::EXPORT_PATH . '/' . $nudi, 0755, true);
+        $destinationPath = self::EXPORT_PATH . '/' . $nudi;
 
         foreach ($filesInfo as $fileItemInfo) {
-            if (!is_dir(dirname($destinationPath . '/' . dirname($fileItemInfo['filePathName'])))) {
+	    if (!is_dir(dirname($destinationPath . '/' . dirname($fileItemInfo['filePathName'])))) {
                 @mkdir(dirname($destinationPath . '/' . dirname($fileItemInfo['filePathName'])) , 0755, true);
-            }
-            echo 'copying ' . $fileItemInfo['physicalFilePath'] . ' to: ' . $destinationPath . '/' . $nudi . '/' . $fileItemInfo['filePathName'] . "\n";
-            stream_copy_to_stream(fopen('/san_mwilliamson/data/store/' . $fileItemInfo['physicalFilePath'], 'r'), fopen($destinationPath . '/' . $nudi . '/' . $fileItemInfo['filePathName'], 'w'));
+	    }
+            echo 'copying ' . self::DATASTORE_PATH . '/' . $fileItemInfo['physicalFilePath'] . ' to: ' . $destinationPath . '/' . $fileItemInfo['filePathName'] . "\n";
+            copy(self::DATASTORE_PATH . '/' . $fileItemInfo['physicalFilePath'], $destinationPath . '/' . $fileItemInfo['filePathName']);
         }
     }
 }
