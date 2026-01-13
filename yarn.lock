@@ -9012,12 +9012,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.3.1":
-  version: 18.3.1
-  resolution: "react@npm:18.3.1"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+"react@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 
@@ -9404,7 +9402,7 @@ __metadata:
     postcss-loader: "npm:^8.2.0"
     prop-types: "npm:^15.8.1"
     qtip2: "npm:2.2.0"
-    react: "npm:^18.3.1"
+    react: "npm:^19.2.3"
     react-dom: "npm:^18.3.1"
     regenerator-runtime: "npm:^0.14.1"
     sass-embedded: "npm:1.64"
