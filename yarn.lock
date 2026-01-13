@@ -6844,12 +6844,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery-migrate@npm:^3.5.2":
-  version: 3.5.2
-  resolution: "jquery-migrate@npm:3.5.2"
+"jquery-migrate@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "jquery-migrate@npm:3.6.0"
   peerDependencies:
     jquery: ">=3 <4"
-  checksum: 10c0/0993280da985b496297fab148322be523bb9e60fc1822c89765ce40dc7dddce93c46f2352db76aa67e7628ed63cf18694e4b8b5bebdc60a5c2b4ba2a221016a6
+  checksum: 10c0/e663dd104708ca262207e3f790814db83934e59615d4f0654e215ac76f0fc7a0db5fec20d0f85fed0f1c04f5acfb51eacfd4e3b07165fffd98985dde9fbfda73
   languageName: node
   linkType: hard
 
@@ -8909,11 +8909,11 @@ __metadata:
   linkType: hard
 
 "qs@npm:~6.14.0":
-  version: 6.14.0
-  resolution: "qs@npm:6.14.0"
+  version: 6.14.1
+  resolution: "qs@npm:6.14.1"
   dependencies:
     side-channel: "npm:^1.1.0"
-  checksum: 10c0/8ea5d91bf34f440598ee389d4a7d95820e3b837d3fd9f433871f7924801becaa0cd3b3b4628d49a7784d06a8aea9bc4554d2b6d8d584e2d221dc06238a42909c
+  checksum: 10c0/0e3b22dc451f48ce5940cbbc7c7d9068d895074f8c969c0801ac15c1313d1859c4d738e46dc4da2f498f41a9ffd8c201bd9fb12df67799b827db94cc373d2613
   languageName: node
   linkType: hard
 
@@ -9396,7 +9396,7 @@ __metadata:
     file-loader: "npm:^6.0.0"
     file-saver: "npm:^2.0.5"
     jquery: "npm:^3.5.1"
-    jquery-migrate: "npm:^3.5.2"
+    jquery-migrate: "npm:^3.6.0"
     jquery-ui: "npm:^1.13.2"
     jquery.cookie: "npm:^1.4.1"
     leaflet: "npm:^1.9.4"
