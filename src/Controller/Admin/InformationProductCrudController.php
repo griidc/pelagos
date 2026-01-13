@@ -47,8 +47,6 @@ class InformationProductCrudController extends AbstractCrudController
         /** @var Account $account */
         $account = $this->getUser();
         $informationProduct->setCreator($account->getPerson());
-        $file = new File();
-        $informationProduct->setFile($file);
 
         return $informationProduct;
     }
@@ -130,7 +128,7 @@ class InformationProductCrudController extends AbstractCrudController
                 ->setTextAlign(TextAlign::CENTER)
                 ->setHelp('Upload the file associated with this information product.')
                 ->setFormTypeOptions([
-                    'upload_dir' => $this->homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files',
+                    'upload_dir' => $this->uploadDirectory,
                     'file_constraints' => [new FileConstraint(maxSize: '100m')],
                     'upload_new' => function (UploadedFile $uploadedFile, string $uploadDir, string $fileName) use ($informationProduct) {
                         $fileSize = $uploadedFile->getSize();
@@ -138,9 +136,9 @@ class InformationProductCrudController extends AbstractCrudController
                         $file = $informationProduct?->getFile();
                         if (!$file instanceof File) {
                             $file = new File();
-                            $file->setStatus(File::FILE_IN_QUEUE);
                             $informationProduct?->setFile($file);
                         }
+                        $file->setStatus(File::FILE_NEW);
                         $file->setFileSize($fileSize);
                         $file->setFilePathName($fileName);
                         $file->setPhysicalFilePath($uploadDir . $fileName);
