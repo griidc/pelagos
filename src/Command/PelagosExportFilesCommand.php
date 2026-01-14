@@ -77,12 +77,19 @@ class PelagosExportFilesCommand extends Command
         @mkdir(self::EXPORT_PATH . '/' . $nudi, 0755, true);
         $destinationPath = self::EXPORT_PATH . '/' . $nudi;
 
-        foreach ($filesInfo as $fileItemInfo) {
-	    if (!is_dir(dirname($destinationPath . '/' . dirname($fileItemInfo['filePathName'])))) {
-                @mkdir(dirname($destinationPath . '/' . dirname($fileItemInfo['filePathName'])) , 0755, true);
+	foreach ($filesInfo as $fileItemInfo) {
+	    $sourceFileName = basename($fileItemInfo['physicalFilePath']);
+	    $sourcePath = SELF::DATASTORE_PATH . DIRECTORY_SEPARATOR . dirname($fileItemInfo['physicalFilePath']);
+	    $source = $sourcePath . DIRECTORY_SEPARATOR . $sourceFileName;
+            $targetFileName = basename($fileItemInfo['filePathName']);
+	    $targetPath = $destinationPath . DIRECTORY_SEPARATOR . dirname($fileItemInfo['filePathName']);
+	    $target = $targetPath . DIRECTORY_SEPARATOR . $targetFileName;
+
+	    if (!is_dir($targetPath)) {
+	        @mkdir($targetPath , 0755, true);
 	    }
-            echo 'copying ' . self::DATASTORE_PATH . '/' . $fileItemInfo['physicalFilePath'] . ' to: ' . $destinationPath . '/' . $fileItemInfo['filePathName'] . "\n";
-            copy(self::DATASTORE_PATH . '/' . $fileItemInfo['physicalFilePath'], $destinationPath . '/' . $fileItemInfo['filePathName']);
+            copy($source, $target);
         }
+
     }
 }
