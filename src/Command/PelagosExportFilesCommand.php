@@ -5,7 +5,6 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\Fileset;
 use App\Repository\FileRepository;
-use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -13,7 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-
 #[AsCommand(
     name: 'pelagos:export-dataset-files',
     description: 'Generates an export of files for a dataset specified by UDI for review purposes.',
@@ -22,17 +20,15 @@ class PelagosExportFilesCommand extends Command
 {
     private EntityManagerInterface $entityManager;
     private FileRepository $fileRepository;
-    private Datastore $datastore;
 
     const string EXPORT_PATH = '/mnt/inspect-review-dataset';
     const string DATASTORE_PATH = '/san/data/store';
 
-    public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository, Datastore $datastore)
+    public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->fileRepository = $fileRepository;
-        $this->datastore = $datastore;
     }
 
     protected function configure(): void
@@ -77,19 +73,18 @@ class PelagosExportFilesCommand extends Command
         @mkdir(self::EXPORT_PATH . '/' . $nudi, 0755, true);
         $destinationPath = self::EXPORT_PATH . '/' . $nudi;
 
-	foreach ($filesInfo as $fileItemInfo) {
-	    $sourceFileName = basename($fileItemInfo['physicalFilePath']);
-	    $sourcePath = SELF::DATASTORE_PATH . DIRECTORY_SEPARATOR . dirname($fileItemInfo['physicalFilePath']);
-	    $source = $sourcePath . DIRECTORY_SEPARATOR . $sourceFileName;
+        foreach ($filesInfo as $fileItemInfo) {
+            $sourceFileName = basename($fileItemInfo['physicalFilePath']);
+            $sourcePath = SELF::DATASTORE_PATH . DIRECTORY_SEPARATOR . dirname($fileItemInfo['physicalFilePath']);
+            $source = $sourcePath . DIRECTORY_SEPARATOR . $sourceFileName;
             $targetFileName = basename($fileItemInfo['filePathName']);
-	    $targetPath = $destinationPath . DIRECTORY_SEPARATOR . dirname($fileItemInfo['filePathName']);
-	    $target = $targetPath . DIRECTORY_SEPARATOR . $targetFileName;
+            $targetPath = $destinationPath . DIRECTORY_SEPARATOR . dirname($fileItemInfo['filePathName']);
+            $target = $targetPath . DIRECTORY_SEPARATOR . $targetFileName;
 
-	    if (!is_dir($targetPath)) {
-	        @mkdir($targetPath , 0755, true);
-	    }
-            copy($source, $target);
+            if (!is_dir($targetPath)) {
+                @mkdir($targetPath , 0755, true);
+            }
+                copy($source, $target);
+            }
         }
-
-    }
 }
