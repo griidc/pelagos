@@ -6844,12 +6844,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery-migrate@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "jquery-migrate@npm:3.6.0"
+"jquery-migrate@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "jquery-migrate@npm:4.0.1"
   peerDependencies:
-    jquery: ">=3 <4"
-  checksum: 10c0/e663dd104708ca262207e3f790814db83934e59615d4f0654e215ac76f0fc7a0db5fec20d0f85fed0f1c04f5acfb51eacfd4e3b07165fffd98985dde9fbfda73
+    jquery: ">=4 <5"
+  checksum: 10c0/95991af5488ede5cc4188b3f465ef5675900219b14671873aff30332aa3f46b47fc51cf968e5aa65970f015e7114ade2b6b15194d23d4d554287e7376b22a465
   languageName: node
   linkType: hard
 
@@ -9396,7 +9396,7 @@ __metadata:
     file-loader: "npm:^6.0.0"
     file-saver: "npm:^2.0.5"
     jquery: "npm:^3.5.1"
-    jquery-migrate: "npm:^3.6.0"
+    jquery-migrate: "npm:^4.0.1"
     jquery-ui: "npm:^1.13.2"
     jquery.cookie: "npm:^1.4.1"
     leaflet: "npm:^1.9.4"
