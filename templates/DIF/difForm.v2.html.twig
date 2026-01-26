@@ -120,11 +120,11 @@
         <fieldset class="border border-gray-300 p-4 rounded-lg">
             <legend class="text-lg font-semibold px-2">Estimated Data Sampling/Generation Period</legend>
             <div>
-                {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base'} }) }}
+                {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base', 'datepicker': ''} }) }}
             </div>
 
             <div>
-                {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base'} }) }}
+                {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base', 'datepicker': ''} }) }}
             </div>
         </fieldset>
 
