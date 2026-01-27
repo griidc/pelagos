@@ -49,6 +49,8 @@ final class ExportFilesetMessageHandler
     public function __invoke(ExportFilesetMessage $exportFilesetMessage)
     {
         $exportFilesetMessageId = $exportFilesetMessage->getFilesetId();
+        $exportUserEmail = $exportFilesetMessage->getExportUserEmail();
+
         $fileset = $this->filesetRepository->find($exportFilesetMessageId);
         if (!$fileset instanceof Fileset) {
             $this->logger->error(sprintf('Cannot find fileset with ID: "%d"', $exportFilesetMessageId));
@@ -94,61 +96,24 @@ final class ExportFilesetMessageHandler
         }
     }
 
-    private function notifyLoggedInUserExportReady(Fileset $fileset, string $destinationPath): void
+    private function notifyLoggedInUserExportReady($udi, $email): void
     {
-        $datasetSubmission = $fileset->getDatasetSubmission();
-        $dataset = $datasetSubmission->getDataset();
-        if (!$dataset instanceof Dataset) {
-            return;
-        }
 
-        $token = $this->tokenStorage->getToken();
-        if (!$token instanceof TokenInterface) {
-            $this->logger->warning(sprintf(
-                'No security token available; skipping export-ready email. UDI: %s, NFS path: %s',
-                $dataset->getUdi(),
-                $destinationPath
-            ));
-            return;
-        }
-
-        $user = $token->getUser();
-        if (!$user instanceof Account) {
-            $this->logger->warning(sprintf(
-                'Current token user is not an Account; skipping export-ready email. UDI: %s, NFS path: %s',
-                $dataset->getUdi(),
-                $destinationPath
-            ));
-            return;
-        }
-
-        $person = $user->getPerson();
-        if (null === $person || null === $person->getEmailAddress()) {
-            $this->logger->warning(sprintf(
-                'Logged-in user missing email; skipping export-ready email. UDI: %s, NFS path: %s',
-                $dataset->getUdi(),
-                $destinationPath
-            ));
-            return;
-        }
-
-        $addresses = [new Address($person->getEmailAddress(), $person->getFirstName() . ' ' . $person->getLastName())];
+        $addresses = [new Address($email)];
 
         $template = $this->twig->load('Email/data-repository-managers.dataset-export-ready.email.twig');
         $this->mailer->sendEmailMessage(
             $template,
             [
-                'datasetSubmission' => $datasetSubmission,
-                'nfsPath' => $destinationPath,
+                'udi' => $udi
             ],
             $addresses,
         );
 
         $this->logger->info(sprintf(
-            'Export-ready email sent to %s for UDI %s. NFS path: %s',
-            $person->getEmailAddress(),
-            $dataset->getUdi(),
-            $destinationPath
+            'Export-ready email sent to %s for UDI %s.',
+            $email,
+            $udi
         ));
     }
 

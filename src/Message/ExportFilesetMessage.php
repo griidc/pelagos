@@ -5,29 +5,35 @@ namespace App\Message;
 class ExportFilesetMessage
 {
     /**
-     * The ID of the fileset to be exported.
-     *
-     * @var integer
-     */
-    protected $filesetId;
-
-    /**
      * Constructor.
      *
      * @param integer $filesetId Fileset Id it is associated with.
+     * @param string $exportUserEmail Email of the user requesting the export.
+     *
      */
-    public function __construct(int $filesetId)
+    public function __construct(private int $filesetId, private string $exportUserEmail)
     {
         $this->filesetId = $filesetId;
+        $this->exportUserEmail = $exportUserEmail;
     }
 
     /**
-     * Getter for filesetId.
+     * Get Fileset Id.
      *
-     * @return integer
+     * @return int
      */
     public function getFilesetId(): int
     {
         return $this->filesetId;
     }
+    /**
+     * Get User Email Address.
+     *
+     * @return string
+     */
+    public function getExportUserEmail(): string
+    {
+        return $this->exportUserEmail;
+    }
+
 }

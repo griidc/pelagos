@@ -53,8 +53,11 @@ class InspectFilesetController extends AbstractController
                 if ($submission) {
                     $fileset = $submission->getFileset();
                     if ($fileset) {
-                        $filesetId = $fileset->getId();
-                        $exportFilesetMessage = new ExportFilesetMessage($filesetId);
+                        $exportFilesetMessage = new ExportFilesetMessage(
+                            $fileset->getId(),
+                            $this->getUser()->getPerson()->getEmailAddress(),
+                            $this->getUser()->getPerson()->getLastName() . ', ' . $this->getUser()->getPerson()->getFirstName()
+                        );
                         $this->messageBus->dispatch($exportFilesetMessage);
                         return $this->render('InspectFileset/copy-started.html.twig', array('datasetUdi' => $udi));
                     }
