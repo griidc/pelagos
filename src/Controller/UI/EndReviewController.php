@@ -68,7 +68,7 @@ class EndReviewController extends AbstractController
 
         $form->handleRequest($request);
 
-        $udi = $form->getData()['datasetUdi'];
+        $udi = $form->getData()['datasetUdi'] ?? null;
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->validateAndEndReview($udi, $request);
