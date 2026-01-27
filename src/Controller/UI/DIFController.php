@@ -2,7 +2,7 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,7 +10,11 @@ use Symfony\Component\Form\FormFactoryInterface;
 use App\Form\DIFType;
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\ResearchGroup;
+use App\Repository\ResearchGroupRepository;
 use App\Util\FundingOrgFilter;
+use App\Util\PersonUtil;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -65,5 +69,32 @@ class DIFController extends AbstractController
                 'issueTrackingBaseUrl' => $_ENV['ISSUE_TRACKING_BASE_URL'],
             )
         );
+    }
+
+    #[Route(path: '/dif/get-research-groups', name: 'pelagos_dif_get_research_groups')]
+    public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
+    {
+        $researchGroups = [];
+        $researchGroupsArray = [];
+
+        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            $researchGroups = $researchGroupRepository->findAll();
+         } elseif ($this->getUser() instanceof Account) {
+            $person = PersonUtil::getPersonFromUser($this->getUser());
+            $researchGroups = $person?->getResearchGroups() ?? [];
+        }
+
+        $researchGroupsArray['ResearchGroups'] = array_map(function (ResearchGroup $rg) {
+            return [
+                'id' => $rg->getId(),
+                'name' => $rg->getName(),
+            ];
+        }, $researchGroups);
+
+        usort($researchGroupsArray['ResearchGroups'], function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        return new JsonResponse($researchGroupsArray);
     }
 }

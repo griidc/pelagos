@@ -7,6 +7,12 @@
 >
 
     <div class="grid gap-4 max-w-[90%] mx-auto">
+
+        <div>
+            {{ form_label(form.researchGroup) }}
+            <select id="research-group" placeholder="Select Research Group"></select>
+        </div>
+
         <div>
             {{ form_row(form.researchGroup, { attr: { class: 'input-base'} }) }}
         </div>
