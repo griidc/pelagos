@@ -59,10 +59,10 @@ final class ExportFilesetMessageHandler
 
         $datasetUdi = $fileset->getDatasetSubmission()->getDataset()->getUdi();
         $this->logger->info('Processing ExportFilesetMessage for ID: ' . $exportFilesetMessageId . ' associated with UDI: ' . $datasetUdi);
-        $this->exportFiles($fileset, $datasetUdi);
+        $this->exportFiles($fileset, $datasetUdi, $exportUserEmail);
     }
 
-    private function exportFiles($fileset, $udi)
+    private function exportFiles($fileset, $udi, $exportUserEmail): void
     {
         $nudi = str_replace(':', '.', $udi);
         $fileIds = [];
@@ -90,7 +90,7 @@ final class ExportFilesetMessageHandler
 
         // After successful export, notify the currently logged-in user
         try {
-            $this->notifyLoggedInUserExportReady($fileset, $destinationPath);
+            $this->notifyLoggedInUserExportReady($udi, $exportUserEmail);
         } catch (\Throwable $e) {
             $this->logger->error('Failed to send export-ready notification: ' . $e->getMessage());
         }
