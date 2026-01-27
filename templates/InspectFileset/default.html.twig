@@ -1,0 +1,17 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}Inspect Dataset Fileset{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/inspectFileset.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <h2> Inspect Dataset Fileset</h2>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+{% endblock %}
