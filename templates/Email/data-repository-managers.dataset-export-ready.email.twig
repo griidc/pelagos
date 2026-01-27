@@ -1,0 +1,33 @@
+{% block subject 'Dataset export ready for ' ~ datasetSubmission.dataset.udi %}
+
+{% block body_html %}
+Dataset export completed for {{ datasetSubmission.dataset.udi }}.<br>
+<br>
+Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+UDI: {{ datasetSubmission.dataset.udi }}<br>
+Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+Funding Cycle: {{ datasetSubmission.dataset.researchGroup.fundingCycle.name }}<br>
+Funding Organization: {{ datasetSubmission.dataset.researchGroup.fundingCycle.fundingOrganization.name }}<br>
+<br>
+Inspection NFS Path:<br>
+<code>{{ nfsPath }}</code><br>
+<br>
+Please inspect the exported files on the NFS share when convenient.<br>
+{% endblock %}
+
+{% block body_text %}
+Dataset export completed for {{ datasetSubmission.dataset.udi }}.
+
+Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+UDI: {{ datasetSubmission.dataset.udi }}
+Dataset Title: {{ datasetSubmission.dataset.title }}
+Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+Funding Cycle: {{ datasetSubmission.dataset.researchGroup.fundingCycle.name }}
+Funding Organization: {{ datasetSubmission.dataset.researchGroup.fundingCycle.fundingOrganization.name }}
+
+Inspection NFS Path:
+{{ nfsPath }}
+
+Please inspect the exported files on the NFS share when convenient.
+{% endblock %}
