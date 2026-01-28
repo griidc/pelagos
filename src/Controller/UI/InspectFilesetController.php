@@ -17,7 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class InspectFilesetController extends AbstractController
 {
-
     public function __construct(private DatasetRepository $datasetRepository, private MessageBusInterface $messageBus)
     {
     }

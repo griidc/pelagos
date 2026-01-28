@@ -35,5 +35,4 @@ class ExportFilesetMessage
     {
         return $this->exportUserEmail;
     }
-
 }

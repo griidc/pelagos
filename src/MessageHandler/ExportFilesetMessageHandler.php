@@ -71,10 +71,10 @@ final class ExportFilesetMessageHandler
             $target = $targetPath . DIRECTORY_SEPARATOR . $targetFileName;
 
             if (!is_dir($targetPath)) {
-                @mkdir($targetPath , 0755, true);
+                @mkdir($targetPath, 0755, true);
             }
-                copy($source, $target);
-            }
+            copy($source, $target);
+        }
 
         // After successful export, notify the currently logged-in user
         try {
@@ -97,11 +97,12 @@ final class ExportFilesetMessageHandler
             $addresses,
         );
 
-        $this->logger->info(sprintf(
-            'Export-ready email sent to %s for UDI %s.',
-            $email,
-            $udi
-        ));
+        $this->logger->info(
+            sprintf(
+                'Export-ready email sent to %s for UDI %s.',
+                $email,
+                $udi
+            )
+        );
     }
-
 }
