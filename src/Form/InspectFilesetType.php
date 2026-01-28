@@ -27,12 +27,10 @@ class InspectFilesetType extends AbstractType
     {
         $builder
             ->add('datasetUdi', TextType::class, array(
-                'label' => 'Enter the dataset',
                 'required' => true
             ))
             ->add('submit', SubmitType::class, array(
-                'label' => 'Initiate Copy to Mimir',
-                    'attr' => array('class' => 'submitButton')
+                'attr' => array('class' => 'submitButton')
             ));
     }
 

@@ -1,17 +1,53 @@
 {% extends "template/UI.html.twig" %}
 {% block title %}Inspect Dataset Fileset{% endblock %}
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/inspectFileset.js') }}"></script>
 {% endblock %}
 
 {% block body %}
-    <h2> Inspect Dataset Fileset</h2>
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        {{ form_end(form) }}
+    <div class="w-75 mx-auto" style="width:66%">
+        {% for message in app.flashes('error') %}
+            <div class="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-800">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <table width="100%" border="0">
+            <tr>
+                <td width="50%">
+                    <h3>Initiate Copy of a Fileset to Mimir for Review</h3>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    {{ form_start(form, {
+                        action: path('pelagos_app_ui_inspectfileset_default'),
+                        method: 'POST',
+                        attr: { id: 'inspectForm' }
+                    }) }}
+                        {{ form_label(form.datasetUdi, 'Dataset UDI:') }}
+                        {{ form_widget(form.datasetUdi, {
+                            attr: {
+                                class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                            }
+                        }) }}
+                        <div class="py-2">
+                            {{ form_widget(form.submit, {
+                                attr: {
+                                    class: 'submitButton flex w-small justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                                }
+                            }) }}
+                        </div>
+                    {{ form_end(form) }}
+                </td>
+            </tr>
+        </table>
+    </div>
 {% endblock %}

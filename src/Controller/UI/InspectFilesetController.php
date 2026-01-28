@@ -45,24 +45,57 @@ class InspectFilesetController extends AbstractController
 
         $udi = $form->getData()['datasetUdi'] ?? null;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // enqueue export fileset message for async processing
+        if ($form->isSubmitted()) {
+            if (!$udi) {
+                $this->addFlash('error', 'Please enter a Dataset UDI.');
+                return $this->render('InspectFileset/default.html.twig', array('form' => $form->createView()));
+            }
+
             $dataset = $this->datasetRepository->findOneByUdi($udi);
-            if ($dataset) {
-                $submission = $dataset->getDatasetSubmission();
-                if ($submission) {
-                    $fileset = $submission->getFileset();
-                    if ($fileset) {
-                        $exportFilesetMessage = new ExportFilesetMessage(
-                            $fileset->getId(),
-                            $this->getUser()->getPerson()->getEmailAddress(),
-                            $this->getUser()->getPerson()->getLastName() . ', ' . $this->getUser()->getPerson()->getFirstName()
-                        );
-                        $this->messageBus->dispatch($exportFilesetMessage);
-                        return $this->render('InspectFileset/copy-started.html.twig', array('datasetUdi' => $udi));
+
+            // If not found, handle UDIs where the colon is replaced by a period
+            if (!$dataset) {
+                $normalizedUdi = $udi;
+                if (!str_contains($normalizedUdi, ':') && str_contains($normalizedUdi, '.')) {
+                    $lastDotPos = strrpos($normalizedUdi, '.');
+                    if ($lastDotPos !== false) {
+                        $normalizedUdi = substr_replace($normalizedUdi, ':', $lastDotPos, 1);
+                    }
+                }
+
+                if ($normalizedUdi !== $udi) {
+                    $dataset = $this->datasetRepository->findOneByUdi($normalizedUdi);
+                    // If found using normalized UDI, continue with normalized value
+                    if ($dataset) {
+                        $udi = $normalizedUdi;
                     }
                 }
             }
+
+            if (!$dataset) {
+                $this->addFlash('error', sprintf('No dataset found for UDI "%s".', $udi));
+                return $this->render('InspectFileset/default.html.twig', array('form' => $form->createView()));
+            }
+
+            $submission = $dataset->getDatasetSubmission();
+            if (!$submission) {
+                $this->addFlash('error', 'Dataset submission not found for the provided UDI.');
+                return $this->render('InspectFileset/default.html.twig', array('form' => $form->createView()));
+            }
+
+            $fileset = $submission->getFileset();
+            if (!$fileset) {
+                $this->addFlash('error', 'No fileset is associated with this dataset.');
+                return $this->render('InspectFileset/default.html.twig', array('form' => $form->createView()));
+            }
+
+            // enqueue export fileset message for async processing
+            $exportFilesetMessage = new ExportFilesetMessage(
+                $fileset->getId(),
+                $this->getUser()->getPerson()->getEmailAddress()
+            );
+            $this->messageBus->dispatch($exportFilesetMessage);
+            return $this->render('InspectFileset/copy-started.html.twig', array('datasetUdi' => $udi));
         }
 
         return $this->render('InspectFileset/default.html.twig', array('form' => $form->createView()));

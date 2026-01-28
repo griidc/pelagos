@@ -6,6 +6,19 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Fileset Copy has been queued for dataset {{ datasetUdi }}</h2>
-    <p>The fileset copy to Mimir has been initiated. You will receive an email when the copy is complete and ready for inspection.</p>
+<div class="w-75 mx-auto" style="width:66%">
+    <table width="100%" border="0">
+        <tr>
+            <td width="50%">
+                <h3>Filecopy Starting</h3>
+            </td>
+        </tr>
+        <tr>
+            <td width="50%">
+                <p>The copy of the fileset for Dataset UDI "{{ datasetUdi }}" has been initiated.
+                You will receive an email when the copy is complete and ready for review on Mimir.</p>
+            </td>
+        </tr>
+    </table>
+</div>
 {% endblock %}
