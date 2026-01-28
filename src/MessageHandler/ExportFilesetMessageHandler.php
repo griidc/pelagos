@@ -3,38 +3,27 @@
 namespace App\MessageHandler;
 
 use App\Entity\Fileset;
-use App\Entity\Dataset;
-use App\Entity\Account;
-use App\Event\EntityEventDispatcher;
 use App\Message\ExportFilesetMessage;
-use App\Repository\DatasetRepository;
 use App\Repository\FileRepository;
 use App\Repository\FilesetRepository;
 use App\Util\MailSender;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Twig\Environment as TwigEnvironment;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class ExportFilesetMessageHandler
 {
-
     /**
      * ExportFilesetMessageHandler constructor.
      */
     public function __construct(
-        private readonly DatasetRepository $datasetRepository,
         private readonly FilesetRepository $filesetRepository,
         private readonly FileRepository $fileRepository,
         private readonly LoggerInterface $logger,
         private readonly MailSender $mailer,
         private readonly TwigEnvironment $twig,
-        private readonly TokenStorageInterface $tokenStorage,
         private readonly string $exportPath,
         private readonly string $datastorePath
     ) {
@@ -97,7 +86,6 @@ final class ExportFilesetMessageHandler
 
     private function notifyLoggedInUserExportReady($udi, $email): void
     {
-
         $addresses = [new Address($email)];
 
         $template = $this->twig->load('Email/data-repository-managers.dataset-export-ready.email.twig');
