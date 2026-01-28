@@ -24,9 +24,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class ExportFilesetMessageHandler
 {
 
-    const string EXPORT_PATH = '/mnt/inspect-review-dataset';
-    const string DATASTORE_PATH = '/san/data/store';
-
     /**
      * ExportFilesetMessageHandler constructor.
      */
@@ -37,7 +34,9 @@ final class ExportFilesetMessageHandler
         private readonly LoggerInterface $logger,
         private readonly MailSender $mailer,
         private readonly TwigEnvironment $twig,
-        private readonly TokenStorageInterface $tokenStorage
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly string $exportPath,
+        private readonly string $datastorePath
     ) {
     }
 
@@ -71,12 +70,12 @@ final class ExportFilesetMessageHandler
         }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
 
-        @mkdir(self::EXPORT_PATH . '/' . $nudi, 0755, true);
-        $destinationPath = self::EXPORT_PATH . '/' . $nudi;
+        @mkdir($this->exportPath . '/' . $nudi, 0755, true);
+        $destinationPath = $this->exportPath . '/' . $nudi;
 
         foreach ($filesInfo as $fileItemInfo) {
             $sourceFileName = basename($fileItemInfo['physicalFilePath']);
-            $sourcePath = SELF::DATASTORE_PATH . DIRECTORY_SEPARATOR . dirname($fileItemInfo['physicalFilePath']);
+            $sourcePath = $this->datastorePath . DIRECTORY_SEPARATOR . dirname($fileItemInfo['physicalFilePath']);
             $source = $sourcePath . DIRECTORY_SEPARATOR . $sourceFileName;
             $targetFileName = basename($fileItemInfo['filePathName']);
             $targetPath = $destinationPath . DIRECTORY_SEPARATOR . dirname($fileItemInfo['filePathName']);
