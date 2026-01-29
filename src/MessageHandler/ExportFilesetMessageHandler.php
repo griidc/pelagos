@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class ExportFilesetMessageHandler
+class ExportFilesetMessageHandler
 {
     /**
      * ExportFilesetMessageHandler constructor.
@@ -47,10 +47,14 @@ final class ExportFilesetMessageHandler
 
         $datasetUdi = $fileset->getDatasetSubmission()->getDataset()->getUdi();
         $this->logger->info('Processing ExportFilesetMessage for ID: ' . $exportFilesetMessageId . ' associated with UDI: ' . $datasetUdi);
-        $this->exportFiles($fileset, $datasetUdi, $exportUserEmail);
+        $this->exportFiles($fileset, $datasetUdi);
+        $this->notifyUserExportReady(udi: $datasetUdi, email: $exportUserEmail);
     }
 
-    private function exportFiles($fileset, $udi, $exportUserEmail): void
+    /**
+     * Export the files associated with the fileset to the export path (NFS share).
+     */
+    private function exportFiles(Fileset $fileset, string $udi): void
     {
         $nudi = str_replace(':', '.', $udi);
         $fileIds = [];
@@ -75,34 +79,40 @@ final class ExportFilesetMessageHandler
             }
             copy($source, $target);
         }
-
-        // After successful export, notify the currently logged-in user
-        try {
-            $this->notifyLoggedInUserExportReady($udi, $exportUserEmail);
-        } catch (\Throwable $e) {
-            $this->logger->error('Failed to send export-ready notification: ' . $e->getMessage());
-        }
     }
 
-    private function notifyLoggedInUserExportReady($udi, $email): void
+    /**
+     * Notify user that the export is ready to review on Mimir.
+     */
+    private function notifyUserExportReady(string $udi, string $email): void
     {
-        $addresses = [new Address($email)];
+        $addresses = [new Address(address: $email, name:'Fileset Reviewer')];
 
-        $template = $this->twig->load('Email/data-repository-managers.dataset-export-ready.email.twig');
-        $this->mailer->sendEmailMessage(
-            $template,
-            [
-                'udi' => $udi
-            ],
-            $addresses,
-        );
-
-        $this->logger->info(
-            sprintf(
-                'Export-ready email sent to %s for UDI %s.',
-                $email,
-                $udi
-            )
-        );
+        try {
+            $template = $this->twig->load('Email/data-repository-managers.dataset-export-ready.email.twig');
+            $this->mailer->sendEmailMessage(
+                $template,
+                [
+                    'udi' => $udi
+                ],
+                $addresses,
+            );
+            $this->logger->info(
+                sprintf(
+                    'Export-ready email sent to %s for UDI %s.',
+                    $email,
+                    $udi
+                )
+            );
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to send export-ready email to %s for UDI %s. Error: %s',
+                    $email,
+                    $udi,
+                    $e->getMessage()
+                )
+            );
+        }
     }
 }
