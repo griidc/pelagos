@@ -9,12 +9,12 @@ label:not(.button)
 }
 
 .choice-label label {
-    font-weight: normal !important;
-    display: inline !important;
+    font-weight: normal;
+    display: inline;
 }
 
 .choice-label input[type=text] {
-    width:100% !important;
+    width:100%;
 }
 
 .ui-dialog {
