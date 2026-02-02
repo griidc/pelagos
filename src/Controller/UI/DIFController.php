@@ -11,6 +11,7 @@ use App\Form\DIFType;
 use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
+use App\Repository\FunderRepository;
 use App\Repository\ResearchGroupRepository;
 use App\Util\FundingOrgFilter;
 use App\Util\PersonUtil;
@@ -75,7 +76,6 @@ class DIFController extends AbstractController
     public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
     {
         $researchGroups = [];
-        $researchGroupsArray = [];
 
         if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             $researchGroups = $researchGroupRepository->findAll();
@@ -84,17 +84,50 @@ class DIFController extends AbstractController
             $researchGroups = $person?->getResearchGroups() ?? [];
         }
 
-        $researchGroupsArray['ResearchGroups'] = array_map(function (ResearchGroup $rg) {
+        $researchGroupsArray = array_map(function (ResearchGroup $rg) {
             return [
                 'id' => $rg->getId(),
                 'name' => $rg->getName(),
             ];
         }, $researchGroups);
 
-        usort($researchGroupsArray['ResearchGroups'], function ($a, $b) {
+        usort($researchGroupsArray, function ($a, $b) {
             return strcmp($a['name'], $b['name']);
         });
 
-        return new JsonResponse($researchGroupsArray);
+        return new JsonResponse( ['ResearchGroups' => $researchGroupsArray]);
+    }
+
+    #[Route(path: '/dif/get-research-group-contacts/{id}', name: 'pelagos_dif_get_research_group_contacts')]
+    public function getResearchGroupContacts(ResearchGroup $researchGroup): Response
+    {
+        $contacts = [];
+        foreach ($researchGroup->getPeople() as $person) {
+            $contacts[] = [
+                'id' => $person->getId(),
+                'name' => $person->getFullName(),
+                'email' => $person->getEmailAddress(),
+            ];
+        }
+
+        usort($contacts, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        return new JsonResponse(['Contacts' => $contacts]);
+    }
+
+    #[Route(path: '/dif/get-funders', name: 'pelagos_dif_get_funders')]
+    public function getFunders(FunderRepository $funderRepository): Response
+    {
+        $funders = $funderRepository->findAll();
+        $funderArray = array_map(function ($funder) {
+            return [
+                'id' => $funder->getId(),
+                'name' => $funder->getName(),
+            ];
+        }, $funders);
+
+        return new JsonResponse(['Funders' => $funderArray]);
     }
 }

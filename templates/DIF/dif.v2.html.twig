@@ -11,15 +11,32 @@
 
     <style>
         .ts-control {
-            background-color: var(--color-gray-50);
-            border-color: var(--color-gray-300);
-            border-radius: var(--radius-lg);
             border-style: var(--tw-border-style);
+            display: block;
+            width: 100%;
+            border-radius: 0.5rem;
             border-width: 1px;
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-            background-position: right .75rem center;
-            background-repeat: no-repeat;
-            background-size: 16px 12px;
+            --tw-border-opacity: 1;
+            border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+            --tw-bg-opacity: 1;
+            background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+            padding: 0.625rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+        }
+
+        .ts-control:focus {
+            --tw-border-opacity: 1;
+            border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
+        }
+
+        .choice-label {
+            font-weight: normal;
+            display: inline;
         }
     </style>
 
