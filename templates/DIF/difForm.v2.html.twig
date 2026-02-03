@@ -10,7 +10,7 @@
 
         <div>
             {{ form_label(form.researchGroup) }}
-            <select id="researchGroup" placeholder="Select Research Group"></select>
+            <select id="researchGroup" name="{{ form.researchGroup.vars.full_name }}" placeholder="Select Research Group"></select>
         </div>
 
             {# <div>
@@ -31,7 +31,7 @@
 
         <div>
             {{ form_label(form.funders) }}
-            <select id="funders" placeholder="Select Funders" multiple></select>
+            <select id="funders" name="{{ form.funders.vars.full_name }}" placeholder="Select Funders" multiple></select>
         </div>
 
         {# <div>
@@ -232,4 +232,23 @@
                 </div>
             </div>
         </fieldset>
+
+        <div>
+            {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
+        </div>
+
+        {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+        <div>
+            {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
+        </div>
+        {% endif %}
+
+        <div class="flex justify-between max-w-[90%] mx-auto mb-8 mt-4">
+            <button class="button button-regular" type="button">Save and Continue Later</button>
+
+            <button type="submit" class="button button-regular">Submit to GRIIDC</button>
+
+            <button type="reset" class="button button-regular">Reset Form</button>
+        </div>
+    </div>
 </form>
