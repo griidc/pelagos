@@ -96,4 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
   researchGroupSelect.on('change', (value) => {
     loadResearchGroupDowndowns(value);
   });
+
+  // on form reset event
+  const difForm = document.getElementById('difForm');
+  difForm.addEventListener('reset', () => {
+    // reset tomselects
+    setTimeout(() => {
+      researchGroupSelect.clear();
+      fundersSelect.clear();
+      populateResearchGroupContacts([]);
+    });
+  });
 });
