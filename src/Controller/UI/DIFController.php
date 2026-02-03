@@ -79,7 +79,7 @@ class DIFController extends AbstractController
 
         if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             $researchGroups = $researchGroupRepository->findAll();
-         } elseif ($this->getUser() instanceof Account) {
+        } elseif ($this->getUser() instanceof Account) {
             $person = PersonUtil::getPersonFromUser($this->getUser());
             $researchGroups = $person?->getResearchGroups() ?? [];
         }
@@ -95,7 +95,7 @@ class DIFController extends AbstractController
             return strcmp($a['name'], $b['name']);
         });
 
-        return new JsonResponse( ['ResearchGroups' => $researchGroupsArray]);
+        return new JsonResponse(['ResearchGroups' => $researchGroupsArray]);
     }
 
     #[Route(path: '/dif/get-research-group-contacts/{id}', name: 'pelagos_dif_get_research_group_contacts')]

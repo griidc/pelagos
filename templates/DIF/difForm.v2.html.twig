@@ -13,11 +13,6 @@
             <select id="researchGroup" name="{{ form.researchGroup.vars.full_name }}" placeholder="Select Research Group"></select>
         </div>
 
-            {# <div>
-                {{ form_row(form.researchGroup, { attr: { class: 'input-base'} }) }}
-            </div> #}
-
-
         <fieldset class="border border-gray-300 p-4 rounded-lg">
             <legend class="text-lg font-semibold px-2">Contact</legend>
             <div>
@@ -34,10 +29,6 @@
             <select id="funders" name="{{ form.funders.vars.full_name }}" placeholder="Select Funders" multiple></select>
         </div>
 
-        {# <div>
-            {{ form_row(form.funders, { attr: { class: 'input-base'} }) }}
-        </div> #}
-
         <div>
             {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
         </div>
@@ -48,7 +39,6 @@
 
         <div>
             {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
-
 
         <!-- Field of Study Section -->
         <fieldset class="border border-gray-300 p-4 rounded-lg">
@@ -101,7 +91,6 @@
         <fieldset class="border border-gray-300 p-4 rounded-lg">
              <legend class="text-lg font-semibold px-2">Approximate Dataset Size:</legend>
             <div class="flex">
-
                 {% for key, dataSizeItem in form.dataSize.children %}
                     <div class="flex items-center me-4">
                         {{ form_widget(dataSizeItem, { attr: { class: 'radio-base'} }) }}
@@ -172,7 +161,6 @@
                     {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
                 </div>
         </fieldset>
-
 
         <fieldset class="border border-gray-300 p-4 rounded-lg">
             <legend class="text-lg font-semibold px-2">Identify a National Data Archive for your Dataset, if applicable</legend>
