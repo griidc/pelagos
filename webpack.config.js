@@ -57,7 +57,10 @@ Encore
   .addEntry('dashboard', './assets/js/entry/dashboard.js')
 
   // enables Sass/SCSS support
-  .enableSassLoader()
+  .enableSassLoader((options) => {
+    // Speed up Sass by using the embedded implementation
+    options.implementation = require('sass-embedded');
+  })
   .enablePostCssLoader()
 
 // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
@@ -89,8 +92,7 @@ Encore
   // enables hashed filenames (e.g. app.abc123.css)
   .enableVersioning(Encore.isProduction())
 
-  .configureBabel((config) => {
-  })
+  .configureBabel((config) => {})
 
   // enables @babel/preset-env polyfills
   .configureBabelPresetEnv((config) => {
@@ -119,5 +121,18 @@ Encore
     },
   )
 
-  .enableIntegrityHashes();
-module.exports = Encore.getWebpackConfig();
+  // Generate integrity hashes only in production (skip in dev for speed)
+  .enableIntegrityHashes(Encore.isProduction());
+
+// Retrieve and tweak the final Webpack config for performance
+const webpackConfig = Encore.getWebpackConfig();
+webpackConfig.cache = {
+  type: 'filesystem',
+  buildDependencies: {
+    config: [__filename],
+  },
+};
+if (!Encore.isProduction()) {
+  webpackConfig.devtool = 'eval-cheap-module-source-map';
+}
+module.exports = webpackConfig;
