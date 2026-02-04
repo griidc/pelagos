@@ -63,7 +63,7 @@ class DIFController extends AbstractController
         }
 
         return $this->render(
-            'DIF/dif.v2.html.twig',
+            'DIF/dif.html.twig',
             array(
                 'form' => $form->createView(),
                 'research_groups' => implode(',', $researchGroupIds),
@@ -71,6 +71,21 @@ class DIFController extends AbstractController
             )
         );
     }
+
+    #[Route(path: '/dif2', name: 'pelagos_app_ui_dif_two')]
+    public function difTwo(Request $request, FormFactoryInterface $formFactory)
+    {
+        $dif = new DIF();
+        $form = $formFactory->createNamed('', DIFType::class, $dif);
+
+        return $this->render(
+            'DIF/dif.v2.html.twig',
+            array(
+                'form' => $form->createView(),
+            )
+        );
+    }
+
 
     #[Route(path: '/dif/get-research-groups', name: 'pelagos_dif_get_research_groups')]
     public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
