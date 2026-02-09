@@ -5,9 +5,7 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-use App\Entity\LogActionItem;
-use App\Repository\LogActionItemRepository;
-use App\Util\FundingOrgFilter;
+use App\Service\StatisticsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Component\Console\Command\Command;
@@ -25,15 +23,15 @@ class GetGoMRIStatisticsCommand extends Command
     public const HARVEST2019COUNT = 7100; // count
     public const HARVEST2019DATA = 3600; // GB
 
-    public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
+    // Kept for backward compatibility; prefer StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW
+    public const NUMBEROFTOPDOWNLOADSTOSHOW = StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW;
 
     /**
      * Class constructor for dependency injection.
      */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly LogActionItemRepository $logActionItemRepository,
-        private readonly FundingOrgFilter $fundingOrgFilter,
+        private readonly StatisticsService $statistics,
     ) {
         parent::__construct();
     }
@@ -75,7 +73,7 @@ class GetGoMRIStatisticsCommand extends Command
             if ('GoMRI' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
                 ++$gomriDatasetCount;
                 if ($datasetSubmission instanceof DatasetSubmission) {
-                    $this->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGomriDatasetsSubmittedByQuarter);
+                    $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGomriDatasetsSubmittedByQuarter);
 
                     if ($datasetSubmission->getSubmissionTimeStamp()->format('U') >= \DateTime::createFromFormat('d/m/Y', '01/01/2021', new \DateTimeZone('America/Chicago'))->format('U')) {
                         ++$totalGomriDatasetSubmittedSince2021Count;
@@ -125,12 +123,12 @@ class GetGoMRIStatisticsCommand extends Command
         $anonymousDownloadCountByYearAndQuarter = [];
         $loggedInDownloadCountByYearAndQuarter = [];
 
-        foreach ($this->getDownloads() as $datasetDownload) {
+        foreach ($this->statistics->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
             $loginType = $datasetDownload[2];
 
-            $yearQuarter = $this->determineQuarter($timestamp);
+            $yearQuarter = $this->statistics->determineQuarter($timestamp);
             $year = $yearQuarter['year'];
             $quarter = $yearQuarter['quarter'];
 
@@ -190,7 +188,7 @@ class GetGoMRIStatisticsCommand extends Command
             $yearCountTotal = 0;
             $yearSizeTotal = 0;
             for ($quarter = 1; $quarter <= 4; $quarter++) {
-                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
+                $popularDownloads = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
                 $io->writeln(
                     $year
                     . '/Q'
@@ -234,7 +232,7 @@ class GetGoMRIStatisticsCommand extends Command
         $io->writeln('Data Downloaded: ' . round($totalDownloadSize) . ' GB');
 
         // Show most popular downloads of all time.
-        $popularDownloadsOfAllTime = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
+        $popularDownloadsOfAllTime = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
         $allTimePopular = '';
         $io->writeln('Top ' . self::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
         foreach ($popularDownloadsOfAllTime as $udi => $count) {
@@ -254,177 +252,5 @@ class GetGoMRIStatisticsCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * Returns Year and Quarter given a timestamp.
-     *
-     * @return array $yearQuarter
-     */
-    protected function determineQuarter(\DateTime $timestamp): array
-    {
-        // Quarters are normal calendar quarters (Jan-Mar, Apr-Jun, Jul-Sep, Oct-Dec)
-        $year = $timestamp->format('Y');   // returns 4 digit year
-        $month = $timestamp->format('n');  // returns 1-12
-        $quarter = ceil($month / 3);
 
-        return ["year" => $year, "quarter" => $quarter];
-    }
-
-    /**
-     * Maintains array of quarter counts.
-     */
-    protected function quarterize(\DateTime $timestamp, array &$quarterCounts): void
-    {
-        $yearAndQuarter = $this->determineQuarter($timestamp);
-        $year = $yearAndQuarter['year'];
-        $quarter = $yearAndQuarter['quarter'];
-
-        // Initialize
-        if (!array_key_exists($year, $quarterCounts)) {
-            $quarterCounts[$year] = [];
-            $quarterCounts[$year][0] = 0; // Q1
-            $quarterCounts[$year][1] = 0;
-            $quarterCounts[$year][2] = 0;
-            $quarterCounts[$year][3] = 0;
-        }
-
-        $quarterCounts[$year][$quarter - 1] += 1;
-    }
-
-    /**
-     * Returns array of UDIs of top downloads in date range.
-     *
-     * @param  int|null   $year            The year to get top downloads from.
-     * @param  int|null   $quarter         The quarter to get top downloads from.
-     * @return array      $topDownloadUdis An associative array of top UDIs with counts as value.
-     *
-     * @throws \Exception If quarter value used other than (1, 2, 3, 4)
-     */
-    public function getTopDatasetsDownloadedByYearAndQuarter(int $count, int $year = null, int $quarter = null): array
-    {
-        if ($quarter !== null && !(in_array($quarter, [1, 2, 3, 4]))) {
-            throw new \Exception("Bad quarter specified, use 1-4.");
-        }
-
-        if ($year === null && $quarter !== null) {
-            throw new \Exception("If quarter is specified, year must be too.");
-        }
-
-        // Create DB compatible strings from DateTime objects.
-        if ($year !== null && $quarter == 1) {
-            $from = "$year-01-01";
-            $to = "$year-03-31";
-        } elseif ($year !== null && $quarter == 2) {
-            $from = "$year-04-01";
-            $to = "$year-06-30";
-        } elseif ($year !== null && $quarter == 3) {
-            $from = "$year-07-01";
-            $to = "$year-09-30";
-        } elseif ($year !== null && $quarter == 4) {
-            $from = "$year-10-01";
-            $to = "$year-12-31";
-        } elseif ($year !== null && $quarter === null) {
-            // entire year
-            $from = "$year-01-01";
-            $to = "$year-12-31";
-        }
-
-        $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
-        ->select('count(log.subjectEntityId), log.subjectEntityId')
-        ->where('log.subjectEntityName = :entityName')
-        ->andWhere('log.actionName = :actionName')
-        ->orderBy('count(log.subjectEntityId)', 'DESC')
-        ->groupBy('log.subjectEntityId')
-        ->setMaxResults($count)
-        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
-        ->setParameter('actionName', 'File Download');
-
-        if ($year !== null) {
-            $qb
-            ->andWhere('log.creationTimeStamp >= :from')
-            ->andWhere('log.creationTimeStamp <= :to')
-            ->setParameter('from', $from)
-            ->setParameter('to', $to);
-        }
-
-        if ($this->fundingOrgFilter->isActive()) {
-            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
-
-            $qb
-            ->join(Dataset::class, 'dataset', Query\Expr\Join::WITH, 'log.subjectEntityId = dataset.id')
-            ->innerJoin('dataset.researchGroup', 'rg')
-            ->andWhere('rg.id IN (:rgs)')
-            ->setParameter('rgs', $researchGroupIds);
-        }
-
-        $query = $qb->getQuery();
-        $results = $query->getResult();
-
-        $topDownloadUdis = [];
-        foreach ($results as $row) {
-            $count = $row[1];
-            $id = $row['subjectEntityId'];
-            $dataset = $this->entityManager->find(Dataset::class, $id);
-            if ($dataset instanceof Dataset) {
-                $udi = $dataset->getUdi();
-                $topDownloadUdis[$udi] = $count;
-            }
-        }
-        return $topDownloadUdis;
-    }
-
-    /**
-     * Generates array of funding-org filter-aware download events.
-     *
-     * @return array of dataset download events, per FAIR guidelines
-     */
-    public function getDownloads(): array
-    {
-
-        $qb = $this->entityManager->getRepository(LogActionItem::class)->createQueryBuilder('log')
-        ->select('log.creationTimeStamp, log.subjectEntityId, log.payLoad')
-        ->where('log.subjectEntityName = :entityName')
-        ->andWhere('log.actionName = :actionName')
-        ->orderBy('log.subjectEntityId', 'ASC')
-        ->addOrderBy('log.creationTimeStamp', 'ASC')
-        ->setParameter('entityName', 'Pelagos\Entity\Dataset')
-        ->setParameter('actionName', 'File Download');
-
-        if ($this->fundingOrgFilter->isActive()) {
-            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
-
-            $qb
-            ->join(Dataset::class, 'dataset', Query\Expr\Join::WITH, 'log.subjectEntityId = dataset.id')
-            ->innerJoin('dataset.researchGroup', 'rg')
-            ->andWhere('rg.id IN (:rgs)')
-            ->setParameter('rgs', $researchGroupIds);
-        }
-
-        $query = $qb->getQuery();
-        $downloads = $query->getResult();
-
-        $currentTimeStamp = 0;
-        $downloadArray = [];
-        $currentId = 0;
-        foreach ($downloads as $key => $timeStamp) {
-            $id = $timeStamp['subjectEntityId'];
-            $dateTime = $timeStamp['creationTimeStamp'];
-            $epochTime = (int) $dateTime->format('U');
-            $displayTime = $dateTime->format('Y-m-d');
-
-            if (($displayTime === '2014-09-27') or $key === array_key_first($downloads) or ($epochTime - $currentTimeStamp) > 30 or $currentId != $id) {
-                $currentTimeStamp = $epochTime;
-
-                if (($timeStamp['payLoad']['userId'] ?? 'anonymous') === 'anonymous') {
-                    $user = 'anonymous';
-                } else {
-                    $user = 'logged-in';
-                }
-
-                $downloadArray[] = [$id, $dateTime, $user];
-            }
-
-            $currentId = $id;
-        }
-        return $downloadArray;
-    }
 }

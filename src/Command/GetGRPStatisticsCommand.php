@@ -4,9 +4,7 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-use App\Entity\LogActionItem;
-use App\Repository\LogActionItemRepository;
-use App\Util\FundingOrgFilter;
+use App\Service\StatisticsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Component\Console\Command\Command;
@@ -16,14 +14,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:get-grp-statistics', description: 'Produce GRP report artifacts.')]
-class GetGRPStatisticsCommand extends GetGoMRIStatisticsCommand
+class GetGRPStatisticsCommand extends Command
 {
-    #[Override]
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly StatisticsService $statistics,
+    ) {
+        parent::__construct();
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $datasets = $this->getEntityManager()->getRepository(Dataset::class)->findAll();
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
         $datasetCount = 0;
         $grpDatasetCount = 0;
@@ -42,7 +46,7 @@ class GetGRPStatisticsCommand extends GetGoMRIStatisticsCommand
             if ('NAS' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
                 ++$grpDatasetCount;
                 if ($datasetSubmission instanceof DatasetSubmission) {
-                    $this->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGrpDatasetsSubmittedByQuarter);
+                    $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGrpDatasetsSubmittedByQuarter);
 
 
                     if ($datasetSubmission->isDatasetFileInColdStorage()) {
@@ -83,12 +87,12 @@ class GetGRPStatisticsCommand extends GetGoMRIStatisticsCommand
         $anonymousDownloadCountByYearAndQuarter = [];
         $loggedInDownloadCountByYearAndQuarter = [];
 
-        foreach ($this->getDownloads() as $datasetDownload) {
+        foreach ($this->statistics->getDownloads() as $datasetDownload) {
             $id = $datasetDownload[0];
             $timestamp = $datasetDownload[1];
             $loginType = $datasetDownload[2];
 
-            $yearQuarter = $this->determineQuarter($timestamp);
+            $yearQuarter = $this->statistics->determineQuarter($timestamp);
             $year = $yearQuarter['year'];
             $quarter = $yearQuarter['quarter'];
 
@@ -116,7 +120,7 @@ class GetGRPStatisticsCommand extends GetGoMRIStatisticsCommand
                 $downloadSizeByYearAndQuarter[$year][4] = 0;
             }
 
-            $dataset = $this->getEntityManager()->find(Dataset::class, $id);
+            $dataset = $this->entityManager->find(Dataset::class, $id);
             // We may also need to consider using the right size for the external-logged download requests
             // that also get counted here, but end up getting the stub sizes. There aren't many though.
             if ($dataset instanceof Dataset) {
@@ -144,7 +148,7 @@ class GetGRPStatisticsCommand extends GetGoMRIStatisticsCommand
             $yearCountTotal = 0;
             $yearSizeTotal = 0;
             for ($quarter = 1; $quarter <= 4; $quarter++) {
-                $popularDownloads = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
+                $popularDownloads = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
                 $io->writeln(
                     $year
                     . '/Q'
@@ -188,9 +192,9 @@ class GetGRPStatisticsCommand extends GetGoMRIStatisticsCommand
         $io->writeln('Data Downloaded: ' . round($totalDownloadSize) . ' GB');
 
         // Show most popular downloads of all time.
-        $popularDownloadsOfAllTime = $this->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
+        $popularDownloadsOfAllTime = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW);
         $allTimePopular = '';
-        $io->writeln('Top ' . self::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
+        $io->writeln('Top ' . StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
         foreach ($popularDownloadsOfAllTime as $udi => $count) {
             $allTimePopular .= "$udi:$count, ";
         }
