@@ -4,6 +4,7 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Enum\DatasetLifecycleStatus;
 use App\Service\StatisticsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
@@ -31,25 +32,31 @@ class GetGRPStatisticsCommand extends Command
 
         $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
-        $datasetCount = 0;
         $grpDatasetCount = 0;
+        $grpDifCount = 0;
+        $grpAvailableCount = 0;
+        $grpSubmittedCount = 0;
+        $grpRestrictedCount = 0;
         $grpDatasetColdStorageCount = 0;
         $grpDatasetTotalSize = 0;
         $grpColdStorageDatasetTotalSize = 0;
         $totalPostGrpDatasetsSubmittedByQuarter = [];
+        $totalGrpDifByQuarter = [];
+        $totalGrpAvailableByQuarter = [];
+        $totalGrpRestrictedByQuarter = [];
+        $totalGrpSubmittedByQuarter = [];
         $skipCount = 0;
 
         foreach ($datasets as $dataset) {
             if (DIF::STATUS_UNSUBMITTED === $dataset->getDif()->getStatus()) {
                 continue;
             }
-            ++$datasetCount;
             $datasetSubmission = $dataset->getDatasetSubmission();
             if ('NAS' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
+                $datasetLifecycleStatus = $dataset->getDatasetLifecycleStatus();
                 ++$grpDatasetCount;
                 if ($datasetSubmission instanceof DatasetSubmission) {
                     $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGrpDatasetsSubmittedByQuarter);
-
 
                     if ($datasetSubmission->isDatasetFileInColdStorage()) {
                         ++$grpDatasetColdStorageCount;
@@ -58,11 +65,30 @@ class GetGRPStatisticsCommand extends Command
                         $grpDatasetTotalSize += $datasetSubmission->getFileset()?->getFileSize() ?? 0;
                     }
                 }
+                if (DatasetLifecycleStatus::IDENTIFIED === $datasetLifecycleStatus) {
+                    ++$grpDifCount;
+                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpDifByQuarter);
+                }
+                if (DatasetLifecycleStatus::SUBMITTED === $datasetLifecycleStatus) {
+                    ++$grpSubmittedCount;
+                }
+                if (DatasetLifecycleStatus::AVAILABLE === $datasetLifecycleStatus) {
+                    ++$grpAvailableCount;
+                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpAvailableByQuarter);
+                }
+                if (DatasetLifecycleStatus::RESTRICTED === $datasetLifecycleStatus) {
+                    ++$grpRestrictedCount;
+                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpRestrictedByQuarter);
+                }
             }
 
         }
 
-        $io->writeln("Total number of GRP Datasets: $grpDatasetCount");
+        $io->writeln("Total number of GRP Datasets with some sort of submission: $grpDatasetCount");
+        $io->writeln("Total number of GRP Datasets that DIF-only (approved and submitted difs, excludes pending): $grpDifCount");
+        $io->writeln("Total number of GRP Datasets that are SUBMITTED for review: $grpSubmittedCount");
+        $io->writeln("Total number of GRP Datasets that are AVAILABLE: $grpAvailableCount");
+        $io->writeln("Total number of GRP Datasets that are RESTRICTED: $grpRestrictedCount");
         $io->writeln('Total Size of GRP Datasets: ' . round(($grpDatasetTotalSize + $grpColdStorageDatasetTotalSize) / 1000000000000, 1) . ' TB');
         $io->writeln("Number of GRP Datasets in cold storage: $grpDatasetColdStorageCount");
         $io->writeln('Total size of GRP Datasets in cold storage: ' . round($grpColdStorageDatasetTotalSize / 1000000000000, 1) . ' TB');
@@ -81,6 +107,58 @@ class GetGRPStatisticsCommand extends Command
                 . ' Q2:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][1]
                 . ' Q3:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][2]
                 . ' Q4:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][3]);
+            }
+        }
+
+        // GRP DIFs by quarter:
+        $years = array_keys($totalGrpDifByQuarter);
+        sort($years);
+        $minYear = $years[0];
+        $maxYear = $years[sizeof($years) - 1];
+        $io->writeln("\nGRP DIF-only datasets\n");
+        for ($i = $minYear; $i <= $maxYear; $i++) {
+            if (in_array($i, $years)) {
+                $io->writeln("GRP DIFs $i"
+                . ' Q1:' . $totalGrpDifByQuarter[$i][0]
+                . ' Q2:' . $totalGrpDifByQuarter[$i][1]
+                . ' Q3:' . $totalGrpDifByQuarter[$i][2]
+                . ' Q4:' . $totalGrpDifByQuarter[$i][3]);
+            }
+        }
+
+        // GRP AVAILABLE datasets by quarter:
+        $years = array_keys($totalGrpAvailableByQuarter);
+        sort($years);
+        $minYear = $years[0];
+        $maxYear = $years[sizeof($years) - 1];
+        $io->writeln("\nGRP AVAILABLE datasets\n");
+        for ($i = $minYear; $i <= $maxYear; $i++) {
+            if (in_array($i, $years)) {
+                $io->writeln("GRP AVAILABLE datasets $i"
+                . ' Q1:' . $totalGrpAvailableByQuarter[$i][0]
+                . ' Q2:' . $totalGrpAvailableByQuarter[$i][1]
+                . ' Q3:' . $totalGrpAvailableByQuarter[$i][2]
+                . ' Q4:' . $totalGrpAvailableByQuarter[$i][3]);
+            }
+        }
+
+        // GRP RESTRICTED datasets by quarter:
+        if ($totalGrpRestrictedByQuarter === []) {
+            $io->writeln("\nNo GRP RESTRICTED datasets\n");
+        } else {
+            $years = array_keys($totalGrpRestrictedByQuarter);
+            sort($years);
+            $minYear = $years[0];
+            $maxYear = $years[sizeof($years) - 1];
+            $io->writeln("\nGRP RESTRICTED datasets\n");
+            for ($i = $minYear; $i <= $maxYear; $i++) {
+                if (in_array($i, $years)) {
+                    $io->writeln("GRP RESTRICTED datasets $i"
+                    . ' Q1:' . $totalGrpRestrictedByQuarter[$i][0]
+                    . ' Q2:' . $totalGrpRestrictedByQuarter[$i][1]
+                    . ' Q3:' . $totalGrpRestrictedByQuarter[$i][2]
+                    . ' Q4:' . $totalGrpRestrictedByQuarter[$i][3]);
+                }
             }
         }
 
