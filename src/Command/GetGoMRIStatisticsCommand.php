@@ -23,8 +23,7 @@ class GetGoMRIStatisticsCommand extends Command
     public const HARVEST2019COUNT = 7100; // count
     public const HARVEST2019DATA = 3600; // GB
 
-    // Kept for backward compatibility; prefer StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW
-    public const NUMBEROFTOPDOWNLOADSTOSHOW = StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW;
+    public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
 
     /**
      * Class constructor for dependency injection.

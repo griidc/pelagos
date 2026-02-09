@@ -9,8 +9,6 @@ use Doctrine\ORM\Query;
 
 class StatisticsService
 {
-    public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly FundingOrgFilter $fundingOrgFilter,

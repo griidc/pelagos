@@ -16,6 +16,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:get-grp-statistics', description: 'Produce GRP report artifacts.')]
 class GetGRPStatisticsCommand extends Command
 {
+    public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly StatisticsService $statistics,
@@ -148,7 +150,7 @@ class GetGRPStatisticsCommand extends Command
             $yearCountTotal = 0;
             $yearSizeTotal = 0;
             for ($quarter = 1; $quarter <= 4; $quarter++) {
-                $popularDownloads = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
+                $popularDownloads = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW, $year, $quarter);
                 $io->writeln(
                     $year
                     . '/Q'
@@ -192,9 +194,9 @@ class GetGRPStatisticsCommand extends Command
         $io->writeln('Data Downloaded: ' . round($totalDownloadSize) . ' GB');
 
         // Show most popular downloads of all time.
-        $popularDownloadsOfAllTime = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW);
+        $popularDownloadsOfAllTime = $this->statistics->getTopDatasetsDownloadedByYearAndQuarter(self::NUMBEROFTOPDOWNLOADSTOSHOW);
         $allTimePopular = '';
-        $io->writeln('Top ' . StatisticsService::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
+        $io->writeln('Top ' . self::NUMBEROFTOPDOWNLOADSTOSHOW . ' downloads of all time:');
         foreach ($popularDownloadsOfAllTime as $udi => $count) {
             $allTimePopular .= "$udi:$count, ";
         }
