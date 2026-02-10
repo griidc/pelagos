@@ -117,6 +117,7 @@ function loadDatasetOverTimeChart() {
       // Get chart colors from CSS variables
       const primaryColor = getThemeProperty('chart-primary').trim() || '#0066cc';
       const secondaryColor = getThemeProperty('chart-secondary').trim() || '#003366';
+      const mainFonts = getThemeProperty('main-fonts').trim() || 'Arial';
 
       // Create chart
       const ctx = document.getElementById('dataset-over-time-chart');
@@ -153,7 +154,7 @@ function loadDatasetOverTimeChart() {
               display: true,
               text: 'Total Datasets Over Time',
               font: {
-                family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                family: mainFonts,
                 size: 16,
               },
             },
@@ -162,7 +163,7 @@ function loadDatasetOverTimeChart() {
               position: 'top',
               align: 'start',
               font: {
-                family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                family: mainFonts,
               },
             },
             tooltip: {
@@ -183,7 +184,7 @@ function loadDatasetOverTimeChart() {
               },
               ticks: {
                 font: {
-                  family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                  family: mainFonts,
                 },
               },
               grid: {
@@ -196,12 +197,12 @@ function loadDatasetOverTimeChart() {
                 display: true,
                 text: 'Total Datasets Over Time',
                 font: {
-                  family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                  family: mainFonts,
                 },
               },
               ticks: {
                 font: {
-                  family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                  family: mainFonts,
                 },
               },
             },
@@ -229,6 +230,7 @@ function loadDatasetSizeRangesChart() {
 
       // Get chart colors from CSS variables
       const secondaryColor = getThemeProperty('chart-secondary').trim() || '#003366';
+      const mainFonts = getThemeProperty('main-fonts').trim() || 'Arial';
 
       // Create chart
       const ctx = document.getElementById('dataset-size-ranges-chart');
@@ -255,7 +257,7 @@ function loadDatasetSizeRangesChart() {
               display: true,
               text: 'Dataset Size Ranges',
               font: {
-                family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                family: mainFonts,
                 size: 16,
               },
             },
@@ -265,15 +267,12 @@ function loadDatasetSizeRangesChart() {
             tooltip: {
               enabled: true,
             },
-            datalabels: {
-              display: false,
-            },
           },
           scales: {
             x: {
               ticks: {
                 font: {
-                  family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                  family: mainFonts,
                 },
               },
             },
@@ -282,12 +281,12 @@ function loadDatasetSizeRangesChart() {
                 display: true,
                 text: 'Number of Datasets',
                 font: {
-                  family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                  family: mainFonts,
                 },
               },
               ticks: {
                 font: {
-                  family: getComputedStyle(document.body).getPropertyValue('--main-fonts') || 'Arial',
+                  family: mainFonts,
                 },
                 precision: 0,
               },
