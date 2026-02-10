@@ -1,0 +1,227 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dataset Information Form{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('dif') }}
+
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+
+    <style>
+        .ts-control {
+            border-style: var(--tw-border-style);
+            display: block;
+            width: 100%;
+            border-radius: 0.5rem;
+            border-width: 1px;
+            --tw-border-opacity: 1;
+            border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+            --tw-bg-opacity: 1;
+            background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+            padding: 0.625rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+        }
+
+        .ts-control:focus {
+            --tw-border-opacity: 1;
+            border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
+        }
+
+        .choice-label {
+            font-weight: normal;
+            display: inline;
+        }
+    </style>
+
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('dif') }}
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+    <script>
+        function highlightRow(elementId) {
+            // find element by selector
+
+            const element = document.querySelector(elementId);
+            element.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+        }
+    </script>
+
+<script>
+    // Source - https://stackoverflow.com/a/46165582
+    // Posted by John Doherty
+    // Retrieved 2025-12-11, License - CC BY-SA 3.0
+    // Modified by Mickel
+
+    /**
+     * Is element within visible region of a scrollable container
+     * @param {HTMLElement} el - element to test
+     * @returns {boolean} true if within visible region, otherwise false
+     */
+    function isScrolledIntoView(el, comparisonElement) {
+        if (comparisonElement) {
+            const rect = el.getBoundingClientRect();
+            const parentRect = comparisonElement.getBoundingClientRect();
+            return (rect.top >= parentRect.top) && (rect.bottom <= parentRect.bottom);
+        }
+        var rect = el.getBoundingClientRect();
+        return (rect.top >= 0) && (rect.bottom <= window.innerHeight);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const element = document.querySelector('#formcontent');
+        if (element) {
+            element.addEventListener('scroll', function(event) {
+                const formcontent = document.getElementById('formcontent');
+                const elements = document.querySelectorAll('#formcontent .tab-section');
+                elements.forEach(element => {
+                    if (isScrolledIntoView(element, formcontent)) {
+                        const id = element.id;
+                        const section = element.dataset.section;
+                        const tab = document.getElementById(section);
+                        tab.classList.add('text-blue-600', 'font-semibold');
+                    } else {
+                        const id = element.id;
+                        const section = element.dataset.section;
+                        const tab = document.getElementById(section);
+                        tab.classList.remove('text-blue-600', 'font-semibold');
+                    }
+                });
+            });
+        }
+    });
+</script>
+
+{% endblock javascripts %}
+
+{% block body %}
+    <div class="max-w-screen-xl mx-auto py-6">
+        <h2 class="pb-4">Dataset Information Form</h2>
+
+        <div class="flex flex-1 gap-6 not-prose h-[80dvh]">
+            <div class="w-1/5">
+
+            <ol class="space-y-4 w-72">
+                <li onclick="highlightRow('#researchGroup')" style="cursor: pointer;">
+                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Project Title</h3>
+                        </div>
+                    </div>
+                </li>
+                <li onclick="highlightRow('#primaryPointOfContact')" style="cursor: pointer;">
+                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">Contact</h3>
+                        </div>
+                    </div>
+                </li>
+                <li onclick="highlightRow('#title')" style="cursor: pointer;">
+                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">Dataset Information</h3>
+                        </div>
+                    </div>
+                </li>
+                <li onclick="highlightRow('#keywords')" style="cursor: pointer;">
+                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">Keywords</h3>
+                        </div>
+                    </div>
+                </li>
+                <li onclick="highlightRow('#spatialExtentDescription')" style="cursor: pointer;">
+                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">Data Extent</h3>
+                        </div>
+                    </div>
+                </li>
+                <li onclick="highlightRow('#submit')" style="cursor: pointer;">
+                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">Submit</h3>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+
+                <!--
+                <ol class="relative text-gray-500 border-s border-gray-200 text-lg">
+                    <li class="mb-10 ms-6 rounded-lg">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white">
+                            <svg class="w-3.5 h-3.5 text-green-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                            </svg>
+                        </span>
+                        <div id="project" class="pt-2 text-blue-600 font-semibold">
+                            <h3 class="leading-tight">Project Title</h3>
+                            {# <p class="text-sm">Enter the title of your project</p> #}
+                        </div>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                           <i class="fa-solid fa-address-card"></i>
+                        </span>
+                        <div id="contact">
+                            <h3 class="leading-tight">Contact</h3>
+                            {# <p class="text-sm">Enter your contact information</p> #}
+                        </div>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </span>
+                        <div id="information">
+                            <h3 class="leading-tight">Dataset Information</h3>
+                            {# <p class="text-sm">Enter basic information about your dataset</p> #}
+                        </div>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-rectangle-list"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Keywords</h3>
+                        {# <p class="text-sm">Enter relevant keywords for your dataset</p> #}
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-globe"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Data Extent</h3>
+                        {# <p class="text-sm">Spatial and temporal extent of your dataset</p> #}
+                    </li>
+                    <li class="ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </span>
+                        <h3 class="font-medium leading-tight">Submit</h3>
+                        {# <p class="text-sm">Submit your dataset information</p> #}
+                    </li>
+            </ol>
+
+
+            -->
+
+            </div>
+
+            <div id="formcontent"class="w-3/4 overflow-y-auto">
+               {% include 'DIF/difForm.v2.html.twig' %}
+            </div>
+        </div>
+
+
+
+    </div>
+{% endblock %}
