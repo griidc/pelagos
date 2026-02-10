@@ -1,0 +1,41 @@
+/* Stats page styles */
+#repository-summary {
+    padding-bottom: 20px;
+    font-family: var(--main-fonts);
+}
+
+.summaryLabel {
+    font-size: 28px;
+    cursor: default;
+    padding: 20px;
+}
+
+#repository-summary .count {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.33em;
+}
+
+#repository-summary .label {
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+/* Center icons above counts/labels */
+.stats-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stats-icons img {
+    margin-bottom: 10px;
+}
+
+/* Chart containers */
+#dataset-over-time-container,
+#dataset-size-ranges-container {
+    padding: 20px;
+    background: white;
+    border-radius: 4px;
+}
