@@ -148,7 +148,7 @@ function loadDatasetOverTimeChart() {
         },
         options: {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
@@ -168,6 +168,17 @@ function loadDatasetOverTimeChart() {
             },
             tooltip: {
               enabled: true,
+              callbacks: {
+                title: (context) => {
+                  // Format date without time
+                  const date = new Date(context[0].parsed.x);
+                  return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  });
+                },
+              },
             },
           },
           scales: {
@@ -251,7 +262,7 @@ function loadDatasetSizeRangesChart() {
         },
         options: {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,

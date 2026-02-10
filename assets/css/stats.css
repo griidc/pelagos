@@ -39,3 +39,9 @@
     background: white;
     border-radius: 4px;
 }
+
+/* Chart canvases - reduced height by 50% */
+#dataset-over-time-chart,
+#dataset-size-ranges-chart {
+    height: 200px !important;
+}
