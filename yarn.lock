@@ -3460,20 +3460,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^9.7.4":
-  version: 9.8.8
-  resolution: "autoprefixer@npm:9.8.8"
+"autoprefixer@npm:^10.4.24":
+  version: 10.4.24
+  resolution: "autoprefixer@npm:10.4.24"
   dependencies:
-    browserslist: "npm:^4.12.0"
-    caniuse-lite: "npm:^1.0.30001109"
-    normalize-range: "npm:^0.1.2"
-    num2fraction: "npm:^1.2.2"
-    picocolors: "npm:^0.2.1"
-    postcss: "npm:^7.0.32"
-    postcss-value-parser: "npm:^4.1.0"
+    browserslist: "npm:^4.28.1"
+    caniuse-lite: "npm:^1.0.30001766"
+    fraction.js: "npm:^5.3.4"
+    picocolors: "npm:^1.1.1"
+    postcss-value-parser: "npm:^4.2.0"
+  peerDependencies:
+    postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 10c0/9b2688cd0ef7252ae1a565ca935a83ddd5c38b9b4c7bf895f36d88e91dbc36d2e7ccb2d34270e436498d8f372d7320a83af6ceb5d1c3bff8f8cbeb6ff33ac837
+  checksum: 10c0/16737dfc865afed338f3166718ece0f77539e53c1ba9f064f2e6369b9dec9ea0542f3fb98bcb7ab37e64897dc3304bae6b2004fbf79ada8b2aeaa3db336e4b77
   languageName: node
   linkType: hard
 
@@ -3727,7 +3727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.23.0, browserslist@npm:^4.24.0, browserslist@npm:^4.28.0, browserslist@npm:^4.28.1":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.23.0, browserslist@npm:^4.24.0, browserslist@npm:^4.28.0, browserslist@npm:^4.28.1":
   version: 4.28.1
   resolution: "browserslist@npm:4.28.1"
   dependencies:
@@ -3885,10 +3885,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001759":
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001759":
   version: 1.0.30001760
   resolution: "caniuse-lite@npm:1.0.30001760"
   checksum: 10c0/cee26dff5c5b15ba073ab230200e43c0d4e88dc3bac0afe0c9ab963df70aaa876c3e513dde42a027f317136bf6e274818d77b073708b74c5807dfad33c029d3c
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001766":
+  version: 1.0.30001769
+  resolution: "caniuse-lite@npm:1.0.30001769"
+  checksum: 10c0/161b8c30ab967371807d45d361f0d5bc06e38ef2dbf811493d70cd97c21e1522f5b91fd944c419a00047ee09c931ca64627f125a9ffa7a17a9fdff8dad9765b0
   languageName: node
   linkType: hard
 
@@ -5883,6 +5890,13 @@ __metadata:
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
   checksum: 10c0/9b67c3fac86acdbc9ae47ba1ddd5f2f81526fa4c8226863ede5600a3f7c7416ef451f6f1e240a3cc32d0fd79fcfe6beb08fd0da454f360032bde70bf80afbb33
+  languageName: node
+  linkType: hard
+
+"fraction.js@npm:^5.3.4":
+  version: 5.3.4
+  resolution: "fraction.js@npm:5.3.4"
+  checksum: 10c0/f90079fe9bfc665e0a07079938e8ff71115bce9462f17b32fc283f163b0540ec34dc33df8ed41bb56f028316b04361b9a9995b9ee9258617f8338e0b05c5f95a
   languageName: node
   linkType: hard
 
@@ -8048,13 +8062,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"normalize-range@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "normalize-range@npm:0.1.2"
-  checksum: 10c0/bf39b73a63e0a42ad1a48c2bd1bda5a07ede64a7e2567307a407674e595bcff0fa0d57e8e5f1e7fa5e91000797c7615e13613227aaaa4d6d6e87f5bd5cc95de6
-  languageName: node
-  linkType: hard
-
 "npm-run-path@npm:^4.0.1":
   version: 4.0.1
   resolution: "npm-run-path@npm:4.0.1"
@@ -8070,13 +8077,6 @@ __metadata:
   dependencies:
     boolbase: "npm:^1.0.0"
   checksum: 10c0/5fee7ff309727763689cfad844d979aedd2204a817fbaaf0e1603794a7c20db28548d7b024692f953557df6ce4a0ee4ae46cd8ebd9b36cfb300b9226b567c479
-  languageName: node
-  linkType: hard
-
-"num2fraction@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "num2fraction@npm:1.2.2"
-  checksum: 10c0/3bf17b44af00508a2b0370146629710645c3e3ff3c052893680efe3f4a6ff5c953ce9e54734013b02b35744a49352d54fbc5d8b455fac979047ef17dd8ec74bd
   languageName: node
   linkType: hard
 
@@ -9041,7 +9041,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^7.0.32, postcss@npm:^7.0.36":
+"postcss@npm:^7.0.36":
   version: 7.0.39
   resolution: "postcss@npm:7.0.39"
   dependencies:
@@ -9630,7 +9630,7 @@ __metadata:
     "@vue/babel-helper-vue-jsx-merge-props": "npm:^1.0.0"
     "@vue/babel-preset-jsx": "npm:^1.1.2"
     alpinejs: "npm:^3.15.4"
-    autoprefixer: "npm:^9.7.4"
+    autoprefixer: "npm:^10.4.24"
     axios: "npm:^1.13.5"
     baseline-browser-mapping: "npm:^2.9.5"
     bootstrap: "npm:^4.4.1"
