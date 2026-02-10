@@ -218,9 +218,10 @@ let myFileManager;
 let myDropzone;
 
 const getItems = (pathInfo) => new Promise((resolve, reject) => {
+  const routeUrl = Routing.generate('pelagos_api_get_files_dataset_submission');
+  // eslint-disable-next-line no-undef
   getApi(
-    // eslint-disable-next-line no-undef
-    `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${encodeURIComponent(pathInfo.path)}`,
+    `${routeUrl}/${datasetSubmissionId}?path=${encodeURIComponent(pathInfo.path)}`,
   ).then((response) => {
     resolve(response.data);
     const filesUploaded = document.getElementById('filesUploaded');
@@ -295,9 +296,10 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
   myFileManager.$parent.downloadPopup = true;
 
   items.forEach((item, key) => {
+    const routeUrl = Routing.generate('pelagos_api_get_file_dataset_submission');
     getApi(
       // eslint-disable-next-line no-undef
-      `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${encodeURIComponent(item.path)}`,
+      `${routeUrl}/${datasetSubmissionId}?path=${encodeURIComponent(item.path)}`,
     ).then((response) => {
       progressItems[key] = [];
       const config = {

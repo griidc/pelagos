@@ -18,6 +18,9 @@ module.exports = {
   ignorePatterns: [
     'assets/static/js/*.js',
   ],
+  globals: {
+    Routing: 'readonly',
+  },
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'max-len': ['warn', { code: 120 }],
@@ -29,6 +32,12 @@ module.exports = {
         vue: 'never',
       },
     ],
+    'import/no-unresolved': ['error', {
+      ignore: [
+        '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min',
+        '../../../public/js/fos_js_routes.json',
+      ],
+    }],
   },
   settings: {
     "react": {

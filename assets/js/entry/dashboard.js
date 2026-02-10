@@ -44,7 +44,8 @@ const isAllExpanded = () => {
 
 document.querySelectorAll('.expandme').forEach((element) => {
   element.addEventListener('click', () => {
-    console.log('Toggled all expanded to:', isAllExpanded());
+    // Toggle expansion state
+    isAllExpanded();
   });
 });
 

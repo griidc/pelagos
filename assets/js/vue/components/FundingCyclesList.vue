@@ -8,9 +8,15 @@
                         Grant Awards
                     </label>
                     <br>
-                    <b-form-select v-model="selectedFundingCycle" :options="fundingCycleOptions" class="w-75">
+                    <b-form-select
+                        v-model="selectedFundingCycle"
+                        :options="fundingCycleOptions"
+                        class="w-75"
+                    >
                         <template v-slot:first>
-                            <b-form-select-option :value="null" disabled>-- Please select a Grant Award --</b-form-select-option>
+                            <b-form-select-option :value="null" disabled>
+                                -- Please select a Grant Award --
+                            </b-form-select-option>
                         </template>
                     </b-form-select>
                 </b-form-group>
@@ -18,12 +24,26 @@
                     Projects
                 </label>
                 <div class="form-inline">
-                    <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" :disabled="disableResearchGroups" class="w-75">
+                    <b-form-select
+                        v-model="selectedResearchGroup"
+                        :options="researchGroupOptions"
+                        :disabled="disableResearchGroups"
+                        class="w-75"
+                    >
                         <template v-slot:first>
-                            <b-form-select-option :value="null" disabled>-- Please select a Project --</b-form-select-option>
+                            <b-form-select-option :value="null" disabled>
+                                -- Please select a Project --
+                            </b-form-select-option>
                         </template>
                     </b-form-select>
-                    <b-button class="form-control ml-3" variant="secondary" @click="researchGroupButton" :disabled="disableResGrpBtn">Go</b-button>
+                    <b-button
+                        class="form-control ml-3"
+                        variant="secondary"
+                        @click="researchGroupButton"
+                        :disabled="disableResGrpBtn"
+                    >
+                        Go
+                    </b-button>
                 </div>
 
             </div>
@@ -32,12 +52,25 @@
                     Project Director
                 </label>
                 <div class="form-inline">
-                    <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions" class="w-75">
+                    <b-form-select
+                        v-model="selectedProjectDirector"
+                        :options="projectDirectorsOptions"
+                        class="w-75"
+                    >
                         <template v-slot:first>
-                            <b-form-select-option :value="null" disabled>-- Please select an associated Project Director --</b-form-select-option>
+                            <b-form-select-option :value="null" disabled>
+                                -- Please select an associated Project Director --
+                            </b-form-select-option>
                         </template>
                     </b-form-select>
-                    <b-button class="form-control ml-3" variant="secondary" @click="projectDirectorButton" :disabled="disableProjDirBtn">Go</b-button>
+                    <b-button
+                        class="form-control ml-3"
+                        variant="secondary"
+                        @click="projectDirectorButton"
+                        :disabled="disableProjDirBtn"
+                    >
+                        Go
+                    </b-button>
                 </div>
             </div>
         </div>

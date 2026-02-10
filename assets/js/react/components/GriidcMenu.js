@@ -119,7 +119,8 @@ const GriidcMenu = ({ mainsite, showAdmin = false }) => (
                     <div className={clsx('m-1.5 rounded', open && 'bg-gray-100')}>
                       <Disclosure.Button
                         className={clsx(
-                          'flex w-full items-center justify-between px-2 py-1 text-sm leading-[1.25rem] hover:text-blue-600',
+                          'flex w-full items-center justify-between px-2 py-1',
+                          'text-sm leading-[1.25rem] hover:text-blue-600',
                           open ? 'text-blue-600 font-medium' : 'text-gray-500',
                         )}
                       >

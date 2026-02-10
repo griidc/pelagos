@@ -539,9 +539,12 @@ export default {
       this.form.selectedFunders = this.getFunderIds();
       this.form.published = window.informationProduct.published;
       this.form.remoteResource = window.informationProduct.remoteResource;
-      this.form.file = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.id : null;
+      const ipFile = window.informationProduct.file;
+      this.form.file = (typeof ipFile === 'object' && ipFile !== null)
+        ? ipFile.id : null;
       this.form.remoteUri = window.informationProduct.remoteUri;
-      this.fileName = (typeof window.informationProduct.file === 'object' && window.informationProduct.file !== null) ? window.informationProduct.file.filePathName : null;
+      this.fileName = (typeof ipFile === 'object' && ipFile !== null)
+        ? ipFile.filePathName : null;
     },
 
     showDeleteDialog() {
@@ -692,9 +695,12 @@ const initDropzone = () => {
     },
     removedfile: (file) => {
       if (typeof file.fileId !== 'undefined') {
+        const routeUrl = Routing.generate('pelagos_api_ip_file_delete');
+        const ipId = thisComponent.informationProductId;
+        const fileId = thisComponent.form.file;
         deleteApi(
           // eslint-disable-next-line no-undef
-          `${Routing.generate('pelagos_api_ip_file_delete')}?informationProductId=${thisComponent.informationProductId}&fileId=${thisComponent.form.file}`,
+          `${routeUrl}?informationProductId=${ipId}&fileId=${fileId}`,
         ).then(() => {
           thisComponent.form.file = '';
         }).catch(() => {

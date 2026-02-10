@@ -3,7 +3,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import VTooltip from 'v-tooltip';
-import ResearchGroupApp from './vue/ResearchGroupApp.vue';
+import ResearchGroupApp from './vue/ResearchGroupApp';
 import filters from './vue/utils/filters';
 import '../css/search-ui.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';

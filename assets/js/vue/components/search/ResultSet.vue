@@ -36,15 +36,47 @@
             <div class="row">
                 <aside class="col-lg-3">
                     <div class="card card-filter">
-                        <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
-                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet"/>
-                        <Facet :facet-info="results.facetInfo.funderInfo" :facet-name="facetLabels.funder" v-on="$listeners" :formValues="formValues" v-show="showFunderFacet"/>
-                        <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showProjectDirectorFacet"/>
-                        <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
+                        <Facet
+                            :facet-info="results.facetInfo.statusInfo"
+                            :facet-name="facetLabels.status"
+                            v-on="$listeners"
+                            :formValues="formValues"
+                        />
+                        <Facet
+                            :facet-info="results.facetInfo.fundingCycleInfo"
+                            :facet-name="facetLabels.fundingCycle"
+                            v-on="$listeners"
+                            :formValues="formValues"
+                            v-show="showFundingCycleFacet"
+                        />
+                        <Facet
+                            :facet-info="results.facetInfo.funderInfo"
+                            :facet-name="facetLabels.funder"
+                            v-on="$listeners"
+                            :formValues="formValues"
+                            v-show="showFunderFacet"
+                        />
+                        <Facet
+                            :facet-info="results.facetInfo.projectDirectorInfo"
+                            :facet-name="facetLabels.projectDirector"
+                            v-on="$listeners"
+                            :formValues="formValues"
+                            v-show="showProjectDirectorFacet"
+                        />
+                        <Facet
+                            :facet-info="results.facetInfo.researchGroupsInfo"
+                            :facet-name="facetLabels.researchGroup"
+                            v-on="$listeners"
+                            :formValues="formValues"
+                        />
                     </div>
                 </aside>
                 <main class="col-lg-9 overflow-auto">
-                    <DatasetRow :datasetRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
+                    <DatasetRow
+                        :datasetRowData="resultRow"
+                        v-for="resultRow in results.resultData"
+                        v-bind:key="resultRow.udi"
+                    />
                 </main>
             </div>
             <div class="row d-flex flex-row justify-content-between mb-2">

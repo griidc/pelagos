@@ -6,11 +6,11 @@ import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
 import '../../css/leaflet-custom.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-import FileManager from '../vue/FileManager.vue';
+import FileManager from '../vue/FileManager';
 import '../../css/file-manager.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
-import HelpModal from '../vue/components/data-land/HelpModal.vue';
+import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn';
+import HelpModal from '../vue/components/data-land/HelpModal';
 import '../../scss/data-land.scss';
 
 const leafletMap = document.getElementById('leaflet-map');
