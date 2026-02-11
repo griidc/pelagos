@@ -6,7 +6,7 @@
     "homepage": "https://github.com/griidc/pelagos/",
     "license": "BSD-2-Clause",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",
@@ -90,7 +90,7 @@
             "symfony/runtime": true
         },
         "platform": {
-            "php": "8.3.16"
+            "php": "8.4.17"
         }
     },
     "autoload": {
