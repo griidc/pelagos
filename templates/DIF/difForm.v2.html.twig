@@ -1,245 +1,205 @@
 <form id="difForm"
-      action="{{ path('pelagos_api_difs_post') }}"
+      action="{{ path('pelagos_app_ui_dif_two') }}"
       method="post"
       researchgroup="{{ path('pelagos_api_research_groups_get_collection') }}"
       personresearchgroup="{{ path('pelagos_api_person_research_groups_get_collection') }}"
       dataset="{{ path('pelagos_api_datasets_get_collection') }}"
 >
 
-    <div class="grid gap-4 max-w-[90%] mx-auto">
+    <div class="max-w-[85%] mx-auto">
 
-        <div>
-            {{ form_label(form.researchGroup) }}
-            <select id="researchGroup" name="{{ form.researchGroup.vars.full_name }}" placeholder="Select Research Group" required="required"></select>
-        </div>
-
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-            <legend class="text-lg font-semibold px-2">Contact</legend>
+        <label>Dataset Contact</label>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4" id="contact">
+        {# <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <legend class="text-lg font-semibold px-2">Research Group</legend> #}
             <div>
-                {{ form_row(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                {{ form_label(form.researchGroup) }}
+                <select id="researchGroup" name="{{ form.researchGroup.vars.full_name }}" placeholder="Select Research Group" required="required"></select>
+                <div class="text-red-600 text-sm font-semibold">
+                    {{ form_errors(form.researchGroup) }}
+                </div>
+
+            </div>
+        {# </fieldset> #}
+
+
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(form.primaryPointOfContact) }}
+                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                    <div class="text-red-600 text-sm font-semibold">
+                        {{ form_errors(form.primaryPointOfContact) }}
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                </div>
             </div>
 
             <div>
-                {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                {{ form_label(form.funders) }}
+                <select id="funders" name="{{ form.funders.vars.full_name }}" placeholder="Select Funders" multiple></select>
             </div>
-        </fieldset>
 
-        <div>
-            {{ form_label(form.funders) }}
-            <select id="funders" name="{{ form.funders.vars.full_name }}" placeholder="Select Funders" multiple></select>
-        </div>
-
-        <div>
-            {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
-        </div>
-
-        <div>
-            {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
-        </div>
-
-        <div>
-            {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
-
-        <div id="keywords">
-        </div>
-
-        <!-- Field of Study Section -->
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-             <legend class="text-lg font-semibold px-2">Field of Study</legend>
-            {# <label><h2>Field of Study:</h2></label> #}
-            <div class="grid grid-cols-3">
-                <div>
-                    {{ form_label(form.fieldOfStudyEcologicalBiological, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyEcologicalBiological, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.fieldOfStudyPhysicalOceanography, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyPhysicalOceanography, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.fieldOfStudyAtmospheric, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyAtmospheric, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.fieldOfStudyChemical, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyChemical, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.fieldOfStudyHumanHealth, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyHumanHealth, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.fieldOfStudySocialCulturalPolitical, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudySocialCulturalPolitical, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.fieldOfStudyEconomics, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyEconomics, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div class="grid-col-span-2">
-                    {{ form_label(form.fieldOfStudyOther, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.fieldOfStudyOther, { attr: { class: 'input-base'} }) }}
-                </div>
+            <div>
+                {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
             </div>
-        </fieldset>
-        <!-- Field of Study Section -->
 
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-             <legend class="text-lg font-semibold px-2">Approximate Dataset Size:</legend>
+        </div>
+
+
+        <label>Dataset Information</label>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" id="information">
+            <div>
+                {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            {# <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <legend class="text-lg font-semibold px-2">Approximate Dataset Size:</legend> #}
+            <label class="required">Approximate Dataset Size:</label>
             <div class="flex">
                 {% for key, dataSizeItem in form.dataSize.children %}
                     <div class="flex items-center me-4">
                         {{ form_widget(dataSizeItem, { attr: { class: 'radio-base'} }) }}
-                        {{ form_label(dataSizeItem, null, { label_attr: { class: 'choice-label'} }) }}
+                        <span class="pl-2 choice-label">{{ dataSizeItem.vars.label }}</span>
+                        {# {{ form_label(dataSizeItem, null, { label_attr: { class: 'pl-2 choice-label'} }) }} #}
                     </div>
                 {% endfor %}
             </div>
-        </fieldset>
+            {# </fieldset> #}
 
-        <div>
-            {{ form_row(form.variablesObserved, { attr: { class: 'textarea-base'} }) }}
-        </div>
 
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-             <legend class="text-lg font-semibold px-2">Method(s) for Collecting or Generating the Data</legend>
-                <div class="grid grid-cols-3">
-                <div>
-                    {{ form_label(form.collectionMethodFieldSampling, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.collectionMethodFieldSampling, { attr: { class: 'checkbox-base'} }) }}
-                </div>
 
-                <div>
-                    {{ form_label(form.collectionMethodSimulatedGenerated, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.collectionMethodSimulatedGenerated, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.collectionMethodLaboratory, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.collectionMethodLaboratory, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.collectionMethodLiteratureBased, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.collectionMethodLiteratureBased, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.collectionMethodRemoteSensing, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.collectionMethodRemoteSensing, { attr: { class: 'checkbox-base'} }) }}
-                </div>
-
-                <div class="grid-col-span-2">
-                    {{ form_label(form.collectionMethodOther, null, { label_attr: { class: 'choice-label'} }) }}
-                    {{ form_widget(form.collectionMethodOther, { attr: { class: 'input-base'} }) }}
-                </div>
-            </div>
-        </fieldset>
-
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-            <legend class="text-lg font-semibold px-2">Estimated Data Sampling/Generation Period</legend>
-            <div>
-                {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base', 'datepicker': ''} }) }}
-            </div>
 
             <div>
-                {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base', 'datepicker': ''} }) }}
+                {{ form_row(form.variablesObserved, { attr: { class: 'textarea-base'} }) }}
             </div>
-        </fieldset>
 
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-            <legend class="text-lg font-semibold px-2">Geographic/Study Area</legend>
+            <label>Estimated Data Sampling/Generation Period</label>
 
-             <div class="grid-col-span-2">
-                    {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
-                </div>
 
-                 <div class="grid-col-span-2">
-                    {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
-                </div>
-        </fieldset>
-
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
-            <legend class="text-lg font-semibold px-2">Identify a National Data Archive for your Dataset, if applicable</legend>
-            <div class="grid grid-cols-3">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    {{ form_label(form.nationalDataArchiveNODC, null, { label_attr: { class: 'choice-label'} }) }}
+                    {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base', 'datepicker': ''} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base', 'datepicker': ''} }) }}
+                </div>
+            </div>
+
+            <label>Identify a National Data Archive for your Dataset, if applicable</label>
+            <div>
+                <div>
+
                     {{ form_widget(form.nationalDataArchiveNODC, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveNODC, null, { label_attr: { class: 'choice-label'} }) }}
                 </div>
 
                 <div>
-                    {{ form_label(form.nationalDataArchiveStoret, null, { label_attr: { class: 'choice-label'} }) }}
+
                     {{ form_widget(form.nationalDataArchiveStoret, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveStoret, null, { label_attr: { class: 'choice-label'} }) }}
                 </div>
 
                 <div>
-                    {{ form_label(form.nationalDataArchiveGBIF, null, { label_attr: { class: 'choice-label'} }) }}
+
                     {{ form_widget(form.nationalDataArchiveGBIF, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveGBIF, null, { label_attr: { class: 'choice-label'} }) }}
                 </div>
 
                 <div>
-                    {{ form_label(form.nationalDataArchiveNCBI, null, { label_attr: { class: 'choice-label'} }) }}
+
                     {{ form_widget(form.nationalDataArchiveNCBI, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveNCBI, null, { label_attr: { class: 'choice-label'} }) }}
                 </div>
 
                 <div>
-                    {{ form_label(form.nationalDataArchiveDataGov, null, { label_attr: { class: 'choice-label'} }) }}
+
                     {{ form_widget(form.nationalDataArchiveDataGov, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveDataGov, null, { label_attr: { class: 'choice-label'} }) }}
                 </div>
 
-                <div class="grid-col-span-2">
+                <div class="grid-col-span-2 pt-2">
                     {{ form_label(form.nationalDataArchiveOther, null, { label_attr: { class: 'choice-label'} }) }}
                     {{ form_widget(form.nationalDataArchiveOther, { attr: { class: 'input-base'} }) }}
                 </div>
             </div>
-        </fieldset>
 
-        <fieldset class="border border-gray-300 p-4 rounded-lg">
+            <div>
             <div class="choice-label">
                 <label>Will this dataset include any data governed under the Institutional Review
                         Board (IRB) or Health Insurance Portability and Accountability Act of 1996 (HIPAA), or data
                         with other ethical issues?
                 </label>
-                <div class="flex">
+                <div class="">
                 {% for key, ethicalIssuesItem in form.ethicalIssues.children %}
-                    <div class="flex items-center me-4">
+                    <div class="me-4">
                         {{ form_widget(ethicalIssuesItem, { attr: { class: 'radio-base'} }) }}
                         {{ form_label(ethicalIssuesItem, null, { label_attr: { class: 'choice-label'} }) }}
                     </div>
                 {% endfor %}
                 </div>
 
-                <div class="flex">
-                    <div class="flex items-center me-4">
+                <div class="">
+                    <div class="me-4 pt-2">
                         {{ form_label(form.ethicalIssuesExplanation, null, { label_attr: { class: 'choice-label'} }) }}
                         {{ form_widget(form.ethicalIssuesExplanation, { attr: { class: 'input-base'} }) }}
                     </div>
                 </div>
             </div>
-        </fieldset>
-
-        <div>
-            {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
         </div>
 
-        {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-        <div>
-            {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
         </div>
-        {% endif %}
 
-        <div class="flex justify-between max-w-[90%] mx-auto mb-8 mt-4" id="submit">
-            <button class="button button-regular" type="button">Save and Continue Later</button>
+        <div id="keywords">
+        </div>
 
-            <button type="submit" class="button button-regular">Submit to GRIIDC</button>
+        <label>Dataset Extent</label>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" id="extent">
+            <label>Geographic/Study Area:</label>
+            <div class="grid-col-span-2">
+                {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
+            </div>
 
-            <button type="reset" class="button button-regular">Reset Form</button>
+            <div class="grid-col-span-2">
+                {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
+            </div>
+        </div>
+
+
+        <label>Submit</label>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" id="contact">
+
+            <div>
+                {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+            <div>
+                {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-3 place-items-center" id="submit">
+                <div>
+                    <button class="button button-regular" type="button">Save and Continue Later</button>
+                </div>
+
+                <div>
+                    <button type="submit" class="button button-regular" formnovalidate="formnovalidate">Submit to GRIIDC</button>
+                </div>
+
+                <div>
+                    <button type="reset" class="button button-regular">Reset Form</button>
+                </div>
+            </div>
         </div>
     </div>
 </form>
