@@ -38,6 +38,13 @@
             font-weight: normal;
             display: inline;
         }
+
+
+        label.required::before
+        {
+            font-weight: bold; color:#FF0000;
+            content:"*";
+        }
     </style>
 
 {% endblock stylesheets %}
@@ -54,7 +61,7 @@
             // find element by selector
 
             const element = document.querySelector(elementId);
-            element.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+            element.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
         }
     </script>
 
@@ -109,119 +116,50 @@
     <div class="max-w-screen-xl mx-auto py-6">
         <h2 class="pb-4">Dataset Information Form</h2>
 
-        <div class="flex flex-1 gap-6 not-prose h-[80dvh]">
-            <div class="w-1/5">
-
-            <ol class="space-y-4 w-72">
-                <li onclick="highlightRow('#researchGroup')" style="cursor: pointer;">
-                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                        <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Project Title</h3>
-                        </div>
-                    </div>
-                </li>
-                <li onclick="highlightRow('#primaryPointOfContact')" style="cursor: pointer;">
-                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-medium">Contact</h3>
-                        </div>
-                    </div>
-                </li>
-                <li onclick="highlightRow('#title')" style="cursor: pointer;">
-                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-medium">Dataset Information</h3>
-                        </div>
-                    </div>
-                </li>
-                <li onclick="highlightRow('#keywords')" style="cursor: pointer;">
-                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-medium">Keywords</h3>
-                        </div>
-                    </div>
-                </li>
-                <li onclick="highlightRow('#spatialExtentDescription')" style="cursor: pointer;">
-                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-medium">Data Extent</h3>
-                        </div>
-                    </div>
-                </li>
-                <li onclick="highlightRow('#submit')" style="cursor: pointer;">
-                    <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-medium">Submit</h3>
-                        </div>
-                    </div>
-                </li>
-            </ol>
-
-                <!--
-                <ol class="relative text-gray-500 border-s border-gray-200 text-lg">
-                    <li class="mb-10 ms-6 rounded-lg">
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white">
-                            <svg class="w-3.5 h-3.5 text-green-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                            </svg>
-                        </span>
-                        <div id="project" class="pt-2 text-blue-600 font-semibold">
-                            <h3 class="leading-tight">Project Title</h3>
-                            {# <p class="text-sm">Enter the title of your project</p> #}
+        <div class="flex flex-1 gap-6 not-prose">
+            <div class="w-1/6 sticky top-6 h-fit">
+                <ol class="space-y-4 w-72">
+                    <li onclick="highlightRow('#contact')" style="cursor: pointer;">
+                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                    <h3 class="font-medium">Dataset Contact</h3>
+                            </div>
                         </div>
                     </li>
-                    <li class="mb-10 ms-6">
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
-                           <i class="fa-solid fa-address-card"></i>
-                        </span>
-                        <div id="contact">
-                            <h3 class="leading-tight">Contact</h3>
-                            {# <p class="text-sm">Enter your contact information</p> #}
+                    <li onclick="highlightRow('#information')" style="cursor: pointer;">
+                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Dataset Information</h3>
+                            </div>
                         </div>
                     </li>
-                    <li class="mb-10 ms-6">
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                        </span>
-                        <div id="information">
-                            <h3 class="leading-tight">Dataset Information</h3>
-                            {# <p class="text-sm">Enter basic information about your dataset</p> #}
+                    <li onclick="highlightRow('#keywords')" style="cursor: pointer;">
+                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Keywords</h3>
+                            </div>
                         </div>
                     </li>
-                    <li class="mb-10 ms-6">
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
-                            <i class="fa-solid fa-rectangle-list"></i>
-                        </span>
-                        <h3 class="font-medium leading-tight">Keywords</h3>
-                        {# <p class="text-sm">Enter relevant keywords for your dataset</p> #}
+                    <li onclick="highlightRow('#extent')" style="cursor: pointer;">
+                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Data Extent</h3>
+                            </div>
+                        </div>
                     </li>
-                    <li class="mb-10 ms-6">
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
-                            <i class="fa-solid fa-globe"></i>
-                        </span>
-                        <h3 class="font-medium leading-tight">Data Extent</h3>
-                        {# <p class="text-sm">Spatial and temporal extent of your dataset</p> #}
+                    <li onclick="highlightRow('#submit')" style="cursor: pointer;">
+                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Submit</h3>
+                            </div>
+                        </div>
                     </li>
-                    <li class="ms-6">
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white">
-                            <i class="fa-solid fa-clipboard-check"></i>
-                        </span>
-                        <h3 class="font-medium leading-tight">Submit</h3>
-                        {# <p class="text-sm">Submit your dataset information</p> #}
-                    </li>
-            </ol>
-
-
-            -->
-
+                </ol>
             </div>
 
-            <div id="formcontent"class="w-3/4 overflow-y-auto">
+            <div id="formcontent" class="w-5/6">
                {% include 'DIF/difForm.v2.html.twig' %}
             </div>
         </div>
-
-
-
     </div>
 {% endblock %}
