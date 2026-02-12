@@ -19,6 +19,19 @@ class GetGRPStatisticsCommand extends Command
 {
     public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
 
+    /**
+     * Common ordered list of lifecycle statuses used for totals and definitions.
+     */
+    private const STATUS_ORDER = [
+        DatasetLifecycleStatus::IDENTIFIED,
+        DatasetLifecycleStatus::SUBMITTED,
+        DatasetLifecycleStatus::AVAILABLE,
+        DatasetLifecycleStatus::RESTRICTED,
+        DatasetLifecycleStatus::INCOMPLETE,
+        DatasetLifecycleStatus::PENDING,
+        DatasetLifecycleStatus::NONE,
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly StatisticsService $statistics,
@@ -44,13 +57,6 @@ class GetGRPStatisticsCommand extends Command
         $grpDatasetTotalSize = 0;
         $grpColdStorageDatasetTotalSize = 0;
         $totalPostGrpDatasetsSubmittedByQuarter = [];
-        $totalGrpDifByQuarter = [];
-        $totalGrpAvailableByQuarter = [];
-        $totalGrpRestrictedByQuarter = [];
-        $totalGrpSubmittedByQuarter = [];
-        $totalGrpIncompleteByQuarter = [];
-        $totalGrpPendingByQuarter = [];
-        $totalGrpNoneByQuarter = [];
         $skipCount = 0;
 
         foreach ($datasets as $dataset) {
@@ -73,48 +79,50 @@ class GetGRPStatisticsCommand extends Command
                 }
                 if (DatasetLifecycleStatus::AVAILABLE === $datasetLifecycleStatus) {
                     ++$grpAvailableCount;
-                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpAvailableByQuarter);
                 }
                 if (DatasetLifecycleStatus::RESTRICTED === $datasetLifecycleStatus) {
                     ++$grpRestrictedCount;
-                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpRestrictedByQuarter);
                 }
                 if (DatasetLifecycleStatus::SUBMITTED === $datasetLifecycleStatus) {
                     ++$grpSubmittedCount;
-                    $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalGrpSubmittedByQuarter);
                 }
                 if (DatasetLifecycleStatus::IDENTIFIED === $datasetLifecycleStatus) {
                     ++$grpDifCount;
-                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpDifByQuarter);
                 }
                 if (DatasetLifecycleStatus::INCOMPLETE === $datasetLifecycleStatus) {
                     ++$grpIncompleteCount;
-                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpIncompleteByQuarter);
                 }
                 if (DatasetLifecycleStatus::PENDING === $datasetLifecycleStatus) {
                     ++$grpPendingCount;
-                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpPendingByQuarter);
                 }
                 if (DatasetLifecycleStatus::NONE === $datasetLifecycleStatus) {
                     ++$grpNoneCount;
-                    $this->statistics->quarterize($dataset->getDif()->getModificationTimeStamp(), $totalGrpNoneByQuarter);
                 }
             }
 
         }
 
+        $io->writeln("Current GRP Dataset States on " . date('Y-m-d') . ":\n");
         $io->writeln("Total number of GRP Datasets with DIF or submission: $grpDatasetCount");
-        $io->writeln("Total number of GRP Datasets that DIF-only (approved and submitted difs, excludes pending): $grpDifCount");
-        $io->writeln("Total number of GRP Datasets that are SUBMITTED for review: $grpSubmittedCount");
-        $io->writeln("Total number of GRP Datasets that are AVAILABLE: $grpAvailableCount");
-        $io->writeln("Total number of GRP Datasets that are RESTRICTED: $grpRestrictedCount");
-        $io->writeln("Total number of GRP Datasets that are INCOMPLETE: $grpIncompleteCount");
-        $io->writeln("Total number of GRP Datasets that are PENDING: $grpPendingCount");
-        $io->writeln("Total number of GRP Datasets that are NONE: $grpNoneCount");
+        $this->printStatusTotals(
+            io: $io,
+            countsByName: [
+                DatasetLifecycleStatus::INCOMPLETE->name => $grpIncompleteCount,
+                DatasetLifecycleStatus::PENDING->name => $grpPendingCount,
+                DatasetLifecycleStatus::IDENTIFIED->name => $grpDifCount,
+                DatasetLifecycleStatus::SUBMITTED->name => $grpSubmittedCount,
+                DatasetLifecycleStatus::AVAILABLE->name => $grpAvailableCount,
+                DatasetLifecycleStatus::RESTRICTED->name => $grpRestrictedCount,
+                DatasetLifecycleStatus::NONE->name => $grpNoneCount,
+            ]
+        );
+
+        // Definitions of lifecycle states
+        $this->printStatusDefinitions(io: $io);
+
         $io->writeln('Total Size of GRP Datasets: ' . round(($grpDatasetTotalSize + $grpColdStorageDatasetTotalSize) / 1000000000000, 1) . ' TB');
         $io->writeln("Number of GRP Datasets in cold storage: $grpDatasetColdStorageCount");
-        $io->writeln('Total size of GRP Datasets in cold storage: ' . round($grpColdStorageDatasetTotalSize / 1000000000000, 1) . ' TB');
-
+        $io->writeln('Total size of GRP Datasets in cold storage: ' . round($grpColdStorageDatasetTotalSize / 1000000000000, 1) . " TB\n");
 
         // GRP submissions by quarter:
         $years = array_keys($totalPostGrpDatasetsSubmittedByQuarter);
@@ -131,15 +139,6 @@ class GetGRPStatisticsCommand extends Command
                 . ' Q4:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][3]);
             }
         }
-
-        // GRP datasets by quarter for each lifecycle status:
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpAvailableByQuarter, status: DatasetLifecycleStatus::AVAILABLE, sectionName: 'GRP AVAILABLE datasets');
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpRestrictedByQuarter, status: DatasetLifecycleStatus::RESTRICTED, sectionName: 'GRP RESTRICTED datasets');
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpSubmittedByQuarter, status: DatasetLifecycleStatus::SUBMITTED, headerSuffix: 'by quarter', sectionName: 'GRP SUBMITTED datasets');
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpDifByQuarter, status: DatasetLifecycleStatus::IDENTIFIED, sectionName: 'GRP IDENTIFIED datasets');
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpIncompleteByQuarter, status: DatasetLifecycleStatus::INCOMPLETE, sectionName: 'GRP INCOMPLETE datasets');
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpPendingByQuarter, status: DatasetLifecycleStatus::PENDING, sectionName: 'GRP PENDING datasets');
-        $this->printQuarterSection(io: $io, byQuarter: $totalGrpNoneByQuarter, status: DatasetLifecycleStatus::NONE, sectionName: 'GRP NONE datasets');
 
         $io->writeln("\nGRP Downloads:\n");
         $downloadSizeByYearAndQuarter = [];
@@ -269,45 +268,29 @@ class GetGRPStatisticsCommand extends Command
     }
 
     /**
-     * Print a quarter-by-quarter section for a given lifecycle status.
+     * Print totals for each lifecycle status in the desired order.
+     *
+     * @param array<string,int> $countsByName Map of status NAME => count
      */
-    private function printQuarterSection(
-        SymfonyStyle $io,
-        array $byQuarter,
-        DatasetLifecycleStatus $status,
-        ?string $headerSuffix = null,
-        ?string $sectionName = null
-    ): void {
-        if ($byQuarter === []) {
-            if ($sectionName !== null) {
-                $io->writeln("\nNo " . $sectionName . "\n");
-            } else {
-                $io->writeln("\nNo GRP datasets - " . trim($status->description()) . "\n");
-            }
-            return;
+    private function printStatusTotals(SymfonyStyle $io, array $countsByName): void
+    {
+        foreach (self::STATUS_ORDER as $status) {
+            $name = $status->name;
+            $count = $countsByName[$name] ?? 0;
+            $io->writeln("Total number of GRP Datasets that are $name: $count");
         }
+        $io->newLine();
+    }
 
-        $years = array_keys($byQuarter);
-        sort($years);
-        $minYear = $years[0];
-        $maxYear = $years[sizeof($years) - 1];
-
-        $header = "\n" . ($sectionName ?? ("GRP datasets - " . trim($status->description())));
-        if ($headerSuffix) {
-            $header .= " " . $headerSuffix;
+    /**
+     * Print definitions for each DatasetLifecycleStatus.
+     */
+    private function printStatusDefinitions(SymfonyStyle $io): void
+    {
+        $io->writeln("\tDefinitions:\n");
+        foreach (self::STATUS_ORDER as $status) {
+            $io->writeln("\t" . $status->name . ': ' . trim($status->description()));
         }
-        $io->writeln($header . "\n");
-
-        for ($i = $minYear; $i <= $maxYear; $i++) {
-            if (in_array($i, $years)) {
-                $io->writeln(
-                    "GRP " . $status->name . " datasets " . $i
-                    . ' Q1:' . $byQuarter[$i][0]
-                    . ' Q2:' . $byQuarter[$i][1]
-                    . ' Q3:' . $byQuarter[$i][2]
-                    . ' Q4:' . $byQuarter[$i][3]
-                );
-            }
-        }
+        $io->newLine();
     }
 }
