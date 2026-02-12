@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command;
 
 use App\Entity\Dataset;
@@ -99,7 +100,6 @@ class GetGRPStatisticsCommand extends Command
                     ++$grpNoneCount;
                 }
             }
-
         }
 
         $io->writeln("Current GRP Dataset States on " . date('Y-m-d') . ":\n");

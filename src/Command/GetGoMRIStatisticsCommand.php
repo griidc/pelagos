@@ -250,6 +250,4 @@ class GetGoMRIStatisticsCommand extends Command
 
         return Command::SUCCESS;
     }
-
-
 }
