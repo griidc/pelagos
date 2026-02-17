@@ -33,7 +33,7 @@ abstract class Entity implements EntityInterface
      * @var \DateTime $creationTimeStamp;
      */
     #[ORM\Column(type: 'datetimetz')]
-    protected $creationTimeStamp;
+    protected ?\DateTime $creationTimeStamp = null;
 
     /**
      * The last modification time stamp (in UTC) for this Entity.
@@ -41,7 +41,7 @@ abstract class Entity implements EntityInterface
      * @var \DateTime $modificationTimeStamp;
      */
     #[ORM\Column(type: 'datetimetz')]
-    protected $modificationTimeStamp;
+    protected ?\DateTime $modificationTimeStamp = null;
 
     /**
      * The Person who last modified this Entity.
@@ -138,9 +138,9 @@ abstract class Entity implements EntityInterface
      *
      * @throws \Exception when $timeStamp does not have a timezone of UTC
      */
-    public function setCreationTimeStamp(\DateTime $timeStamp = null)
+    public function setCreationTimeStamp(\DateTime|null $timeStamp)
     {
-        if (isset($timeStamp)) {
+        if ($timeStamp instanceof \DateTime) {
             if ('UTC' != $timeStamp->getTimezone()->getName()) {
                 throw new \Exception('creationTimeStamp must be in UTC');
             }
@@ -208,9 +208,9 @@ abstract class Entity implements EntityInterface
     public function updateTimeStamps()
     {
         if (null == $this->creationTimeStamp) {
-            $this->setCreationTimeStamp();
+            $this->setCreationTimeStamp(null);
         }
-        $this->setModificationTimeStamp();
+        $this->setModificationTimeStamp(null);
     }
 
     /**
@@ -222,9 +222,9 @@ abstract class Entity implements EntityInterface
      *
      * @throws \Exception when $timeStamp does not have a timezone of UTC
      */
-    public function setModificationTimeStamp(\DateTime $timeStamp = null)
+    public function setModificationTimeStamp(\DateTime|null $timeStamp)
     {
-        if (isset($timeStamp)) {
+        if ($timeStamp instanceof \DateTime) {
             if ('UTC' != $timeStamp->getTimezone()->getName()) {
                 throw new \Exception('modificationTimeStamp must be in UTC');
             }
