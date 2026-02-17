@@ -61,7 +61,7 @@ class PersonTokenTest extends TestCase
         $this->personTokenUse = 'CREATE_ACCOUNT';
         $this->personToken = new PersonToken($this->mockPerson, $this->personTokenUse, new \DateInterval('P1W'));
         // Sets entity's creationTimeStamp to now.
-        $this->personToken->setCreationTimeStamp();
+        $this->personToken->setCreationTimeStamp(null);
     }
 
     /**

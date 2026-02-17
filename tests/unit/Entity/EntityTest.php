@@ -74,9 +74,13 @@ class EntityTest extends TestCase
         $this->validator = Validation::createValidatorBuilder()
             ->enableAttributeMapping(true)
             ->getValidator();
-        $this->testEntity = $this
-            ->getMockBuilder('App\Entity\Entity')
-            ->getMockForAbstractClass();
+        $this->testEntity = new class() extends Entity {
+            public function getId(): ?int
+            {
+                return null;
+            }
+        };
+
         $this->testEntity->setCreator($this->testCreator);
         $this->testEntity->setModifier($this->testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -126,7 +130,7 @@ class EntityTest extends TestCase
      */
     public function testGetModifier()
     {
-        $this->assertEquals(
+        $this->assertSame(
             $this->testEntity->getModifier(),
             $this->testCreator
         );
