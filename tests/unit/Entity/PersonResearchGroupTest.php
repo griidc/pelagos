@@ -2,7 +2,10 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\Person;
 use App\Entity\PersonResearchGroup;
+use App\Entity\ResearchGroup;
+use App\Entity\ResearchGroupRole;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error;
 
@@ -17,6 +20,27 @@ class PersonResearchGroupTest extends TestCase
      * @var PersonResearchGroup $personResearchGroup
      */
     protected $personResearchGroup;
+
+    /**
+     * A mock Person.
+     *
+     * @var Person
+     */
+    protected $mockPerson;
+
+    /**
+     * A mock ResearchGroup.
+     *
+     * @var ResearchGroup
+     */
+    protected $mockResearchGroup;
+
+    /**
+     * A mock ResearchGroupRole.
+     *
+     * @var ResearchGroupRole
+     */
+    protected $mockResearchGroupRole;
 
     /**
      * Static class variable containing a label to use for testing.

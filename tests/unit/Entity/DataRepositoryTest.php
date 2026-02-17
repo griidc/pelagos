@@ -126,9 +126,16 @@ class DataRepositoryTest extends TestCase
     /**
      * Property to hold a set of PersonDataRepositories for testing.
      *
-     * @var $testPersonDataRepositories
+     * @var array $testPersonDataRepositories
      */
     protected $testPersonDataRepositories;
+
+    /**
+     * Property to hold a set of new PersonDataRepositories for testing.
+     *
+     * @var array $newTestPersonDataRepositories
+     */
+    protected $newTestPersonDataRepositories;
 
     /**
      * Setup for PHPUnit tests.

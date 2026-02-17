@@ -149,9 +149,16 @@ class FundingOrganizationTest extends TestCase
     /**
      * Property to hold a set of PersonFundingOrganizations for testing.
      *
-     * @var $testPersonFundingOrganizations
+     * @var array $testPersonFundingOrganizations
      */
     protected $testPersonFundingOrganizations;
+
+    /**
+     * Property to hold a set of new PersonFundingOrganizations for testing.
+     *
+     * @var array $testNewPersonFundingOrganizations
+     */
+    protected $testNewPersonFundingOrganizations;
 
     /**
      * Setup for PHPUnit tests.

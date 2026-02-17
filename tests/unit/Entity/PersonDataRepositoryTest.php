@@ -2,6 +2,9 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\DataRepository;
+use App\Entity\DataRepositoryRole;
+use App\Entity\Person;
 use App\Entity\PersonDataRepository;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error;
@@ -18,6 +21,27 @@ class PersonDataRepositoryTest extends TestCase
      * @var PersonDataRepository $personDataRepository
      */
     protected $personDataRepository;
+
+    /**
+     * A mock Person.
+     *
+     * @var Person
+     */
+    protected $mockPerson;
+
+    /**
+     * A mock DataRepository.
+     *
+     * @var DataRepository
+     */
+    protected $mockDataRepository;
+
+    /**
+     * A mock DataRepositoryRole.
+     *
+     * @var DataRepositoryRole
+     */
+    protected $mockDataRepositoryRole;
 
     /**
      * Static class variable containing a label to use for testing.

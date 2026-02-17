@@ -2,6 +2,8 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\DataCenter;
+use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use PHPUnit\Framework\TestCase;
 
@@ -16,6 +18,20 @@ class DistributionPointTest extends TestCase
      * @var DistributionPoint $distributionPoint
      */
     protected $distributionPoint;
+
+    /**
+     * A mock DatasetSubmission.
+     *
+     * @var DatasetSubmission
+     */
+    protected $mockDatasetSubmission;
+
+    /**
+     * A mock DataCenter.
+     *
+     * @var DataCenter
+     */
+    protected $mockDataCenter;
 
     /**
      * Setup for PHPUnit tests.

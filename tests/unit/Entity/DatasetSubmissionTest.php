@@ -79,6 +79,27 @@ class DatasetSubmissionTest extends TestCase
     protected $mockFile;
 
     /**
+     * A mock DataCenter.
+     *
+     * @var DataCenter
+     */
+    protected $mockDataCenter;
+
+    /**
+     * A mock DistributionPoint.
+     *
+     * @var DistributionPoint
+     */
+    protected $mockDistributionPoint;
+
+    /**
+     * A mock DatasetLink.
+     *
+     * @var DatasetLink
+     */
+    protected $mockDatasetLink;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of DatasetSubmission and sets its properties.

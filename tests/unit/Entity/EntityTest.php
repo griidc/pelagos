@@ -219,7 +219,7 @@ class EntityTest extends TestCase
         $this->testEntity->setCreationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampISO,
-            $this->testEntity->getCreationTimeStampAsISO()
+            $this->testEntity->getCreationTimeStamp()->format(\DateTime::ISO8601)
         );
     }
 
@@ -236,20 +236,20 @@ class EntityTest extends TestCase
         $this->testEntity->setCreationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampLocalizedISO,
-            $this->testEntity->getCreationTimeStampAsISO(true)
+            $this->testEntity->getCreationTimeStamp(true)->format(\DateTime::ISO8601)
         );
     }
 
     /**
-     * Test the getCreationTimeStampAsISO method when creationTimeStamp is null.
+     * Test the getCreationTimeStamp method when creationTimeStamp is null.
      *
      * This method should return null in this case.
      *
      * @return void
      */
-    public function testGetCreationTimeStampAsISONull()
+    public function testGetCreationTimeStampWhenNotSet()
     {
-        $this->assertNull($this->testEntity->getCreationTimeStampAsISO());
+        $this->assertNull($this->testEntity->getCreationTimeStamp());
     }
 
     /**
@@ -335,7 +335,7 @@ class EntityTest extends TestCase
         $this->testEntity->setModificationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampISO,
-            $this->testEntity->getModificationTimeStampAsISO()
+            $this->testEntity->getModificationTimeStamp()->format(\DateTime::ISO8601)
         );
     }
 
@@ -352,7 +352,7 @@ class EntityTest extends TestCase
         $this->testEntity->setModificationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampLocalizedISO,
-            $this->testEntity->getModificationTimeStampAsISO(true)
+            $this->testEntity->getModificationTimeStamp(true)->format(\DateTime::ISO8601)
         );
     }
 
@@ -363,9 +363,9 @@ class EntityTest extends TestCase
      *
      * @return void
      */
-    public function testGetModificationTimeStampAsISONull()
+    public function testGetModificationTimeStampWhenNotSet()
     {
-        $this->assertNull($this->testEntity->getModificationTimeStampAsISO());
+        $this->assertNull($this->testEntity->getModificationTimeStamp());
     }
 
     /**

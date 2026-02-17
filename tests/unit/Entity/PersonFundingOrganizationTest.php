@@ -2,6 +2,9 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\FundingOrganization;
+use App\Entity\FundingOrganizationRole;
+use App\Entity\Person;
 use App\Entity\PersonFundingOrganization;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error;
@@ -17,6 +20,27 @@ class PersonFundingOrganizationTest extends TestCase
      * @var PersonFundingOrganization $personFundingOrganization
      */
     protected $personFundingOrganization;
+
+    /**
+     * A mock Person.
+     *
+     * @var Person
+     */
+    protected $mockPerson;
+
+    /**
+     * A mock FundingOrganization.
+     *
+     * @var FundingOrganization
+     */
+    protected $mockFundingOrganization;
+
+    /**
+     * A mock FundingOrganizationRole.
+     *
+     * @var FundingOrganizationRole
+     */
+    protected $mockFundingOrganizationRole;
 
     /**
      * Static class variable containing a label to use for testing.
