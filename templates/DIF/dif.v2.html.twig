@@ -59,57 +59,57 @@
     <script>
         function highlightRow(elementId) {
             // find element by selector
-
             const element = document.querySelector(elementId);
-            element.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+            }
         }
     </script>
 
-<script>
-    // Source - https://stackoverflow.com/a/46165582
-    // Posted by John Doherty
-    // Retrieved 2025-12-11, License - CC BY-SA 3.0
-    // Modified by Mickel
+    <script>
+        // Source - https://stackoverflow.com/a/46165582
+        // Posted by John Doherty
+        // Retrieved 2025-12-11, License - CC BY-SA 3.0
+        // Modified by Mickel
 
-    /**
-     * Is element within visible region of a scrollable container
-     * @param {HTMLElement} el - element to test
-     * @returns {boolean} true if within visible region, otherwise false
-     */
-    function isScrolledIntoView(el, comparisonElement) {
-        if (comparisonElement) {
-            const rect = el.getBoundingClientRect();
-            const parentRect = comparisonElement.getBoundingClientRect();
-            return (rect.top >= parentRect.top) && (rect.bottom <= parentRect.bottom);
+        /**
+        * Is element within visible region of a scrollable container
+        * @param {HTMLElement} el - element to test
+        * @returns {boolean} true if within visible region, otherwise false
+        */
+        function isScrolledIntoView(el, comparisonElement) {
+            if (comparisonElement) {
+                const rect = el.getBoundingClientRect();
+                const parentRect = comparisonElement.getBoundingClientRect();
+                return (rect.top >= parentRect.top) && (rect.bottom <= parentRect.bottom);
+            }
+            var rect = el.getBoundingClientRect();
+            return (rect.top >= 0) && (rect.bottom <= window.innerHeight);
         }
-        var rect = el.getBoundingClientRect();
-        return (rect.top >= 0) && (rect.bottom <= window.innerHeight);
-    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const element = document.querySelector('#formcontent');
-        if (element) {
-            element.addEventListener('scroll', function(event) {
-                const formcontent = document.getElementById('formcontent');
-                const elements = document.querySelectorAll('#formcontent .tab-section');
-                elements.forEach(element => {
-                    if (isScrolledIntoView(element, formcontent)) {
-                        const id = element.id;
-                        const section = element.dataset.section;
-                        const tab = document.getElementById(section);
-                        tab.classList.add('text-blue-600', 'font-semibold');
-                    } else {
-                        const id = element.id;
-                        const section = element.dataset.section;
-                        const tab = document.getElementById(section);
-                        tab.classList.remove('text-blue-600', 'font-semibold');
-                    }
+        document.addEventListener('DOMContentLoaded', function() {
+            const element = document.querySelector('#formcontent');
+            if (element) {
+                element.addEventListener('scroll', function(event) {
+                    const formcontent = document.getElementById('formcontent');
+                    const elements = document.querySelectorAll('#formcontent .tab-section');
+                    elements.forEach(element => {
+                        if (isScrolledIntoView(element, formcontent)) {
+                            const id = element.id;
+                            const section = element.dataset.section;
+                            const tab = document.getElementById(section);
+                            tab.classList.add('text-blue-600', 'font-semibold');
+                        } else {
+                            const id = element.id;
+                            const section = element.dataset.section;
+                            const tab = document.getElementById(section);
+                            tab.classList.remove('text-blue-600', 'font-semibold');
+                        }
+                    });
                 });
-            });
-        }
-    });
-</script>
-
+            }
+        });
+    </script>
 {% endblock javascripts %}
 
 {% block body %}
