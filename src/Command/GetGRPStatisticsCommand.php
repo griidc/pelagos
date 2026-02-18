@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Enum\DatasetLifecycleStatus;
 use App\Service\StatisticsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
@@ -14,37 +15,29 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:get-gomri-statistics', description: 'Produce GoMRI report artifacts.')]
-class GetGoMRIStatisticsCommand extends Command
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'pelagos:get-grp-statistics', description: 'Produce GRP report artifacts.')]
+class GetGRPStatisticsCommand extends Command
 {
-    // These values were derived from studying the sequence of downloads
-    // and determing the range of dates where the harvesting seemed to have
-    // occurred.
-    public const HARVEST2019COUNT = 7100; // count
-    public const HARVEST2019DATA = 3600; // GB
-
     public const NUMBEROFTOPDOWNLOADSTOSHOW = 10;
 
     /**
-     * Class constructor for dependency injection.
+     * Common ordered list of lifecycle statuses used for totals and definitions.
      */
+    private const STATUS_ORDER = [
+        DatasetLifecycleStatus::IDENTIFIED,
+        DatasetLifecycleStatus::SUBMITTED,
+        DatasetLifecycleStatus::AVAILABLE,
+        DatasetLifecycleStatus::RESTRICTED,
+        DatasetLifecycleStatus::INCOMPLETE,
+        DatasetLifecycleStatus::PENDING,
+        DatasetLifecycleStatus::NONE,
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly StatisticsService $statistics,
     ) {
         parent::__construct();
-    }
-
-    /**
-     * Exposes the entity manager to subclasses while keeping encapsulation.
-     */
-    protected function getEntityManager(): EntityManagerInterface
-    {
-        return $this->entityManager;
-    }
-
-    protected function configure(): void
-    {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -53,71 +46,101 @@ class GetGoMRIStatisticsCommand extends Command
 
         $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
-        $datasetCount = 0;
-        $gomriDatasetCount = 0;
-        $gomriDatasetColdStorageCount = 0;
-        $gomriDatasetTotalSize = 0;
-        $gomriColdStorageDatasetTotalSize = 0;
-        $totalGomriDatasetSubmittedSince2021Count = 0;
-        $totalDatasetSubmittedSince2021Count = 0;
-        $totalPostGomriDatasetsSubmittedByQuarter = [];
+        $grpDatasetCount = 0;
+        $grpDifCount = 0;
+        $grpAvailableCount = 0;
+        $grpSubmittedCount = 0;
+        $grpRestrictedCount = 0;
+        $grpIncompleteCount = 0;
+        $grpPendingCount = 0;
+        $grpNoneCount = 0;
+        $grpDatasetColdStorageCount = 0;
+        $grpDatasetTotalSize = 0;
+        $grpColdStorageDatasetTotalSize = 0;
+        $totalPostGrpDatasetsSubmittedByQuarter = [];
         $skipCount = 0;
 
         foreach ($datasets as $dataset) {
             if (DIF::STATUS_UNSUBMITTED === $dataset->getDif()->getStatus()) {
                 continue;
             }
-            ++$datasetCount;
             $datasetSubmission = $dataset->getDatasetSubmission();
-            if ('GoMRI' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
-                ++$gomriDatasetCount;
+            if ('NAS' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
+                $datasetLifecycleStatus = $dataset->getDatasetLifecycleStatus();
+                ++$grpDatasetCount;
                 if ($datasetSubmission instanceof DatasetSubmission) {
-                    $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGomriDatasetsSubmittedByQuarter);
-
-                    if ($datasetSubmission->getSubmissionTimeStamp()->format('U') >= \DateTime::createFromFormat('d/m/Y', '01/01/2021', new \DateTimeZone('America/Chicago'))->format('U')) {
-                        ++$totalGomriDatasetSubmittedSince2021Count;
-                    }
+                    $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGrpDatasetsSubmittedByQuarter);
 
                     if ($datasetSubmission->isDatasetFileInColdStorage()) {
-                        ++$gomriDatasetColdStorageCount;
-                        $gomriColdStorageDatasetTotalSize += $datasetSubmission->getColdStorageTotalUnpackedSize() ?? 0;
+                        ++$grpDatasetColdStorageCount;
+                        $grpColdStorageDatasetTotalSize += $datasetSubmission->getColdStorageTotalUnpackedSize() ?? 0;
                     } else {
-                        $gomriDatasetTotalSize += $datasetSubmission->getFileset()?->getFileSize() ?? 0;
+                        $grpDatasetTotalSize += $datasetSubmission->getFileset()?->getFileSize() ?? 0;
                     }
                 }
-            }
-
-            if ($datasetSubmission instanceof DatasetSubmission) {
-                if ($datasetSubmission->getSubmissionTimeStamp()->format('U') >= \DateTime::createFromFormat('d/m/Y', '01/01/2021', new \DateTimeZone('America/Chicago'))->format('U')) {
-                    ++$totalDatasetSubmittedSince2021Count;
+                if (DatasetLifecycleStatus::AVAILABLE === $datasetLifecycleStatus) {
+                    ++$grpAvailableCount;
+                }
+                if (DatasetLifecycleStatus::RESTRICTED === $datasetLifecycleStatus) {
+                    ++$grpRestrictedCount;
+                }
+                if (DatasetLifecycleStatus::SUBMITTED === $datasetLifecycleStatus) {
+                    ++$grpSubmittedCount;
+                }
+                if (DatasetLifecycleStatus::IDENTIFIED === $datasetLifecycleStatus) {
+                    ++$grpDifCount;
+                }
+                if (DatasetLifecycleStatus::INCOMPLETE === $datasetLifecycleStatus) {
+                    ++$grpIncompleteCount;
+                }
+                if (DatasetLifecycleStatus::PENDING === $datasetLifecycleStatus) {
+                    ++$grpPendingCount;
+                }
+                if (DatasetLifecycleStatus::NONE === $datasetLifecycleStatus) {
+                    ++$grpNoneCount;
                 }
             }
         }
 
-        $io->writeln("Total number of GoMRI Datasets: $gomriDatasetCount");
-        $io->writeln('Total Size of GoMRI Datasets: ' . round(($gomriDatasetTotalSize + $gomriColdStorageDatasetTotalSize) / 1000000000000, 1) . ' TB');
-        $io->writeln("Number of GoMRI Datasets in cold storage: $gomriDatasetColdStorageCount");
-        $io->writeln('Total size of GoMRI Datasets in cold storage: ' . round($gomriColdStorageDatasetTotalSize / 1000000000000, 1) . ' TB');
-        $io->writeln('Total number of GoMRI datasets submitted since 2021-01-01 until current date ' . $totalGomriDatasetSubmittedSince2021Count);
-        $io->writeln('Total number of datasets (all data including GoMRI) submitted since 2021-01-01 until current date ' . $totalDatasetSubmittedSince2021Count);
+        $io->writeln("Current GRP Dataset States on " . date('Y-m-d') . ":\n");
+        $io->writeln("Total number of GRP Datasets with DIF or submission: $grpDatasetCount");
+        $this->printStatusTotals(
+            io: $io,
+            countsByName: [
+                DatasetLifecycleStatus::INCOMPLETE->name => $grpIncompleteCount,
+                DatasetLifecycleStatus::PENDING->name => $grpPendingCount,
+                DatasetLifecycleStatus::IDENTIFIED->name => $grpDifCount,
+                DatasetLifecycleStatus::SUBMITTED->name => $grpSubmittedCount,
+                DatasetLifecycleStatus::AVAILABLE->name => $grpAvailableCount,
+                DatasetLifecycleStatus::RESTRICTED->name => $grpRestrictedCount,
+                DatasetLifecycleStatus::NONE->name => $grpNoneCount,
+            ]
+        );
 
-        // GoMRI submissions by quarter:
-        $years = array_keys($totalPostGomriDatasetsSubmittedByQuarter);
+        // Definitions of lifecycle states
+        $this->printStatusDefinitions(io: $io);
+
+        $io->writeln('Total Size of GRP Datasets: ' . round(($grpDatasetTotalSize + $grpColdStorageDatasetTotalSize) / 1000000000000, 1) . ' TB');
+        $io->writeln("Number of GRP Datasets in cold storage: $grpDatasetColdStorageCount");
+        $io->writeln('Total size of GRP Datasets in cold storage: ' . round($grpColdStorageDatasetTotalSize / 1000000000000, 1) . " TB\n");
+
+        // GRP submissions by quarter:
+        $years = array_keys($totalPostGrpDatasetsSubmittedByQuarter);
         sort($years);
         $minYear = $years[0];
         $maxYear = $years[sizeof($years) - 1];
-        $io->writeln("\nGomri Uploads (submissions)\n");
+        $io->writeln("\nGRP Uploads (submissions)\n");
         for ($i = $minYear; $i <= $maxYear; $i++) {
             if (in_array($i, $years)) {
-                $io->writeln("Number of GoMRI datasets submitted $i"
-                . ' Q1:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][0]
-                . ' Q2:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][1]
-                . ' Q3:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][2]
-                . ' Q4:' . $totalPostGomriDatasetsSubmittedByQuarter[$i][3]);
+                $io->writeln("Number of GRP datasets submitted $i"
+                . ' Q1:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][0]
+                . ' Q2:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][1]
+                . ' Q3:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][2]
+                . ' Q4:' . $totalPostGrpDatasetsSubmittedByQuarter[$i][3]);
             }
         }
 
-        $io->writeln("\nGoMRI Downloads:\n");
+        $io->writeln("\nGRP Downloads:\n");
         $downloadSizeByYearAndQuarter = [];
         $anonymousDownloadCountByYearAndQuarter = [];
         $loggedInDownloadCountByYearAndQuarter = [];
@@ -176,10 +199,6 @@ class GetGoMRIStatisticsCommand extends Command
         // array_keys still onlys dump first level, years, for $array[year][quarter].
         $firstYear = min(array_keys($anonymousDownloadCountByYearAndQuarter));
         $lastYear = max(array_keys($anonymousDownloadCountByYearAndQuarter));
-
-        // Deal with the data harvest of 2019Q2. (were not logged-in)
-        $anonymousDownloadCountByYearAndQuarter[2019][2] -= self::HARVEST2019COUNT;
-        $downloadSizeByYearAndQuarter[2019][2] -= self::HARVEST2019DATA;
 
         $totalDownloads = 0;
         $totalDownloadSize = 0;
@@ -245,9 +264,33 @@ class GetGoMRIStatisticsCommand extends Command
             $io->warning("Skipped $skipCount entries as these datasets are no longer available.");
         }
 
-        // Add disclaimer for data cleanup for big data harvest event.
-        $io->note('Removed ' . self::HARVEST2019COUNT . ' / ' . self::HARVEST2019DATA . 'GB from 2019Q2 downloads - data harvest occurred');
-
         return Command::SUCCESS;
+    }
+
+    /**
+     * Print totals for each lifecycle status in the desired order.
+     *
+     * @param array<string,int> $countsByName Map of status NAME => count
+     */
+    private function printStatusTotals(SymfonyStyle $io, array $countsByName): void
+    {
+        foreach (self::STATUS_ORDER as $status) {
+            $name = $status->name;
+            $count = $countsByName[$name] ?? 0;
+            $io->writeln("Total number of GRP Datasets that are $name: $count");
+        }
+        $io->newLine();
+    }
+
+    /**
+     * Print definitions for each DatasetLifecycleStatus.
+     */
+    private function printStatusDefinitions(SymfonyStyle $io): void
+    {
+        $io->writeln("\tDefinitions:\n");
+        foreach (self::STATUS_ORDER as $status) {
+            $io->writeln("\t" . $status->name . ': ' . trim($status->description()));
+        }
+        $io->newLine();
     }
 }
