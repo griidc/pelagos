@@ -2,7 +2,7 @@ services:
   database:
     image: postgis/postgis:14-3.5
     container_name: postgis
-    restart: no
+    restart: "no"
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
@@ -12,7 +12,7 @@ services:
   elasticsearch:
     image: elastic/elasticsearch:7.17.28
     container_name: elasticsearch
-    restart: no
+    restart: "no"
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
