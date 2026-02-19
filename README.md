@@ -9,8 +9,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [Redhat Linux 9+](https://www.redhat.com/) - Redhat Linux or compatible
-* [PHP 8.3+](http://php.net/docs.php) - General-purpose scripting language
+* [Redhat Linux 8+](https://www.redhat.com/) - Redhat Linux or compatible
+* [PHP 8.4+](http://php.net/docs.php) - General-purpose scripting language
 * [Composer 2.9.2+](https://getcomposer.org/) - Dependency Manager for PHP
 * [Yarn 4.12.0+](https://yarnpkg.com/en/) - Package Manager
 * [PostgreSQL 14+](https://www.postgresql.org) - ORDBMS
@@ -32,7 +32,7 @@ To install fullfill prerequisites then run:
 See the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
 
 ## License
-Copyright © 2025 Texas A&M University-Corpus Christi
+Copyright © 2026 Texas A&M University-Corpus Christi
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
