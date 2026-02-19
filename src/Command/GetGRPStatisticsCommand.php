@@ -67,7 +67,10 @@ class GetGRPStatisticsCommand extends Command
             $datasetSubmission = $dataset->getDatasetSubmission();
             if ('NAS' === $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName()) {
                 $datasetLifecycleStatus = $dataset->getDatasetLifecycleStatus();
-                ++$grpDatasetCount;
+                // Per Rosalie - 19 FEB 2026 - Don't count unapproved DIFs
+                if (DIF::STATUS_SUBMITTED !== $dataset->getDif()->getStatus()) {
+                    ++$grpDatasetCount;
+                }
                 if ($datasetSubmission instanceof DatasetSubmission) {
                     $this->statistics->quarterize($datasetSubmission->getSubmissionTimeStamp(), $totalPostGrpDatasetsSubmittedByQuarter);
 
