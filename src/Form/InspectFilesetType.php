@@ -10,20 +10,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * A form to end the dataset submission review.
+ *
+ * @extends AbstractType<InspectFilesetType>
  */
 class InspectFilesetType extends AbstractType
 {
     /**
      * Method to build a symfony form.
-     *
-     * @param FormBuilderInterface $builder The Symfony form builder.
-     * @param array                $options The options to pass in.
-     *
      * @see FormTypeExtensionInterface::buildForm()
-     *
-     * @return void
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('datasetUdi', TextType::class, array(
@@ -36,10 +32,6 @@ class InspectFilesetType extends AbstractType
 
     /**
      * Configures the options for this type.
-     *
-     * @param OptionsResolver $resolver The resolver for the options.
-     *
-     * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
