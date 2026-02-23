@@ -372,12 +372,10 @@ class DIF extends Entity
     #[ORM\ManyToMany(targetEntity: Keyword::class)]
     protected $keywords;
 
-    protected $funders;
-
-    public function setFunders($funders)
-    {
-        $this->funders = $funders;
-    }
+    // public function setFunders($funders)
+    // {
+    //     $this->funders = $funders;
+    // }
 
     /**
      * Constructor.
@@ -386,12 +384,14 @@ class DIF extends Entity
      *
      * @param Dataset $dataset the dataset this DIF identifies
      */
-    public function __construct(Dataset $dataset = null)
+    public function __construct(?Dataset $dataset = null)
     {
         if (null !== $dataset) {
             $this->setDataset($dataset);
         }
         $this->keywords = new ArrayCollection();
+
+        $this->dataSize = "< 1GB";
     }
 
     /**

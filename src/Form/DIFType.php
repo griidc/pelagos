@@ -361,18 +361,18 @@ class DIFType extends AbstractType
         $event->getForm()
         ->add('primaryPointOfContact', null, [
             'attr' => [
-                'data-value' => $entity->getPrimaryPointOfContact() ? $entity->getPrimaryPointOfContact()->getId() : '',
+                'data-value' => $entity?->getPrimaryPointOfContact() ? $entity->getPrimaryPointOfContact()->getId() : '',
             ],
         ]);
 
         $event->getForm()
         ->add('secondaryPointOfContact', null, [
             'attr' => [
-                'data-value' => $entity->getSecondaryPointOfContact() ? $entity->getSecondaryPointOfContact()->getId() : '',
+                'data-value' => $entity?->getSecondaryPointOfContact() ? $entity->getSecondaryPointOfContact()->getId() : '',
             ],
         ]);
 
-        $funders = $entity->getFunders()?->map(function(Funder $funder) {
+        $funders = $entity?->getFunders()?->map(function(Funder $funder) {
             return $funder->getId();
         })->toArray();
 
