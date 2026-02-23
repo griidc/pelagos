@@ -114,6 +114,13 @@
 
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
+
+        {% for message in app.flashes('error') %}
+            <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
+                <span class="font-medium">{{ message }}</span>
+            </div>
+        {% endfor %}
+
         <h2 class="pb-4">Dataset Information Form</h2>
 
         <div class="flex flex-1 gap-6 not-prose">
