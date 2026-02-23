@@ -357,26 +357,23 @@ class DIFType extends AbstractType
         ]);
 
         $entity = $event->getData();
-
-        $event->getForm()
-        ->add('primaryPointOfContact', null, [
-            'attr' => [
-                'data-value' => $entity?->getPrimaryPointOfContact() ? $entity->getPrimaryPointOfContact()->getId() : '',
-            ],
-        ]);
-
-        $event->getForm()
-        ->add('secondaryPointOfContact', null, [
-            'attr' => [
-                'data-value' => $entity?->getSecondaryPointOfContact() ? $entity->getSecondaryPointOfContact()->getId() : '',
-            ],
-        ]);
+        $form = $event->getForm();
 
         $funders = $entity?->getFunders()?->map(function(Funder $funder) {
             return $funder->getId();
         })->toArray();
 
-        $event->getForm()
+        $form
+        ->add('primaryPointOfContact', null, [
+            'attr' => [
+                'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
+            ],
+        ])
+        ->add('secondaryPointOfContact', null, [
+            'attr' => [
+                'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
+            ],
+        ])
         ->add('funders', null, [
             'attr' => [
                 'data-value' => implode(',', $funders ?? []),
