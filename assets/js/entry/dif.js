@@ -7,6 +7,7 @@ import 'tom-select/dist/css/tom-select.css';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect('#funders', {
     valueField: 'id',
     labelField: 'name',
@@ -25,12 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
         .then((response) => response.json())
         .then((json) => {
           callback(json.Funders);
+          this.setValue(funders.getAttribute('data-value'));
         }).catch(() => {
           callback();
         });
     },
   });
 
+  const researchGroup = document.getElementById('researchGroup');
   const researchGroupSelect = new TomSelect('#researchGroup', {
     valueField: 'id',
     labelField: 'name',
@@ -48,6 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then((response) => response.json())
         .then((json) => {
           callback(json.ResearchGroups);
+          const selectValue = researchGroup.getAttribute('value');
+          if (selectValue) {
+            this.setValue(selectValue);
+            this.disable();
+          }
         }).catch(() => {
           callback();
         });
@@ -58,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pointOfContactDropdowns = document.querySelectorAll('.point-of-contact');
     pointOfContactDropdowns.forEach((element) => {
       const dropdown = element;
+      const selectedValue = dropdown.getAttribute('data-value');
       dropdown.innerHTML = '';
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
@@ -75,6 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const option = document.createElement('option');
         option.value = item.id;
         option.textContent = `${item.name} (${item.email})`;
+        if (item.id === parseInt(selectedValue, 10)) {
+          option.selected = true;
+        }
         dropdown.appendChild(option);
       });
     });
