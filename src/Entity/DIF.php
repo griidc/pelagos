@@ -372,6 +372,13 @@ class DIF extends Entity
     #[ORM\ManyToMany(targetEntity: Keyword::class)]
     protected $keywords;
 
+    protected $funders;
+
+    public function setFunders($funders)
+    {
+        $this->funders = $funders;
+    }
+
     /**
      * Constructor.
      *

@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\Form\DIFType;
 use App\Entity\Account;
+use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
 use App\Repository\FunderRepository;
@@ -16,6 +17,7 @@ use App\Repository\ResearchGroupRepository;
 use App\Util\FundingOrgFilter;
 use App\Util\PersonUtil;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -73,10 +75,18 @@ class DIFController extends AbstractController
     }
 
     #[Route(path: '/dif2', name: 'pelagos_app_ui_dif_two')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function difTwo(Request $request, FormFactoryInterface $formFactory)
     {
+        $dataset = new Dataset();
         $dif = new DIF();
+        $dataset->setDif($dif);
         $form = $formFactory->createNamed('', DIFType::class, $dif);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            return new Response('Form submitted successfully!');
+        }
 
         return $this->render(
             'DIF/dif.v2.html.twig',
