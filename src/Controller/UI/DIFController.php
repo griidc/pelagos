@@ -12,6 +12,7 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
+use App\Repository\DatasetRepository;
 use App\Repository\FunderRepository;
 use App\Repository\ResearchGroupRepository;
 use App\Util\FundingOrgFilter;
@@ -76,12 +77,22 @@ class DIFController extends AbstractController
 
     #[Route(path: '/dif2', name: 'pelagos_app_ui_dif_two')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function difTwo(Request $request, FormFactoryInterface $formFactory)
+    public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository): Response
     {
         $dataset = new Dataset();
-        $dif = new DIF();
-        $dataset->setDif($dif);
-        $form = $formFactory->createNamed('', DIFType::class, $dif);
+        $dataset->setDif(new DIF());
+
+        $udi = $request->query->get('udi');
+
+        if ($udi !== null && $udi !== '') {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (!$dataset) {
+                // add to flash bag errror message about dataset not found
+                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+            }
+        }
+
+        $form = $formFactory->createNamed('', DIFType::class, $dataset?->getDif());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -92,6 +103,8 @@ class DIFController extends AbstractController
             'DIF/dif.v2.html.twig',
             array(
                 'form' => $form->createView(),
+                'dataset' => $dataset,
+                'udi' => $dataset?->getUdi() ?? '',
             )
         );
     }
