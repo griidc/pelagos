@@ -6,10 +6,12 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('inspect-fileset') }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('inspect-fileset') }}
 {% endblock %}
 
 {% block body %}
