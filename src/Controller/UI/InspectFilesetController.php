@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * The inspect fileset tool helps to inspect a fileset on mimir.
@@ -24,12 +25,9 @@ class InspectFilesetController extends AbstractController
      * The default action for Initiate Fileset Review.
      */
     #[Route(path: '/inspect-fileset', name: 'pelagos_app_ui_inspectfileset_default')]
+    #[IsGranted('ROLE_DATA_REPOSITORY_MANAGER')]
     public function defaultAction(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, MessageBusInterface $messageBus): Response
     {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('template/AdminOnly.html.twig');
-        }
-
         $form = $formFactory->createNamed(
             'inspectFileset',
             InspectFilesetType::class
