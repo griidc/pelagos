@@ -22,14 +22,14 @@ class InspectFilesetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('datasetUdi', TextType::class, array(
+            ->add('datasetUdi', TextType::class, [
                 'required' => true,
-                'attr' => array('class' => 'input-base'),
-                'label_attr' => array('class' => 'input-label'),
-            ))
-            ->add('submit', SubmitType::class, array(
-                'attr' => array('class' => 'button button-regular')
-            ));
+                'attr' => ['class' => 'input-base'],
+                'label_attr' => ['class' => 'input-label'],
+            ])
+            ->add('submit', SubmitType::class, [
+                'attr' => ['class' => 'button button-regular']
+            ]);
     }
 
     /**
