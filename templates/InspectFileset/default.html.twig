@@ -6,10 +6,12 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('inspect-fileset') }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('inspect-fileset') }}
 {% endblock %}
 
 {% block body %}
@@ -19,35 +21,22 @@
                 {{ message }}
             </div>
         {% endfor %}
-        <table width="100%" border="0">
-            <tr>
-                <td width="50%">
-                    <h3>Initiate Copy of a Fileset to Mimir for Review</h3>
-                </td>
-            </tr>
-            <tr>
-                <td width="50%">
-                    {{ form_start(form, {
-                        action: path('pelagos_app_ui_inspectfileset_default'),
-                        method: 'POST',
-                        attr: { id: 'inspectForm' }
-                    }) }}
-                        {{ form_label(form.datasetUdi, 'Dataset UDI:') }}
-                        {{ form_widget(form.datasetUdi, {
-                            attr: {
-                                class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                            }
-                        }) }}
-                        <div class="py-2">
-                            {{ form_widget(form.submit, {
-                                attr: {
-                                    class: 'submitButton flex w-small justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-                                }
-                            }) }}
-                        </div>
-                    {{ form_end(form) }}
-                </td>
-            </tr>
-        </table>
+
+        <div class="w-full">
+            <div class="text-3xl font-bold py-8">Initiate Copy of a Fileset to Mimir for Review</div>
+            {{ form_start(form) }}
+            <div class="grid grid-cols-1 gap-4">
+                <div>
+                    {{ form_label(form.datasetUdi, 'Dataset UDI:') }}
+                <div>
+                <div class="w-1/2">
+                    {{ form_widget(form.datasetUdi) }}
+                </div>
+                <div class="py-2">
+                    {{ form_widget(form.submit) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

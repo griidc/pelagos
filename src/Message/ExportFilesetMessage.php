@@ -7,8 +7,8 @@ class ExportFilesetMessage
     /**
      * Constructor.
      *
-     * @param integer $filesetId Fileset Id it is associated with.
-     * @param string $exportUserEmail Email of the user requesting the export.
+     * @param integer $filesetId       Fileset Id it is associated with.
+     * @param string  $exportUserEmail Email of the user requesting the export.
      *
      */
     public function __construct(private int $filesetId, private string $exportUserEmail)
@@ -19,17 +19,14 @@ class ExportFilesetMessage
 
     /**
      * Get Fileset Id.
-     *
-     * @return int
      */
     public function getFilesetId(): int
     {
         return $this->filesetId;
     }
+
     /**
      * Get User Email Address.
-     *
-     * @return string
      */
     public function getExportUserEmail(): string
     {

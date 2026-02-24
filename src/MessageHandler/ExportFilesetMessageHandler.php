@@ -31,8 +31,6 @@ class ExportFilesetMessageHandler
 
     /**
      * Invoke function to process export fileset message.
-     *
-     * @param ExportFilesetMessage $exportFilesetMessage the ExportFileset Message that has to be handled
      */
     public function __invoke(ExportFilesetMessage $exportFilesetMessage)
     {
@@ -53,18 +51,21 @@ class ExportFilesetMessageHandler
 
     /**
      * Export the files associated with the fileset to the export path (NFS share).
+     *
+     * @param string $udi The UDI of the dataset associated with the fileset, used to create a unique directory for the export.
      */
     private function exportFiles(Fileset $fileset, string $udi): void
     {
-        $nudi = str_replace(':', '.', $udi);
+        // Replace colon in UDI with a period to create a more cross-platform valid directory name.
+        $dotUdi = str_replace(':', '.', $udi);
         $fileIds = [];
         foreach ($fileset->getProcessedFiles() as $file) {
             $fileIds[] = $file->getId();
         }
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
 
-        @mkdir($this->exportPath . '/' . $nudi, 0755, true);
-        $destinationPath = $this->exportPath . '/' . $nudi;
+        @mkdir($this->exportPath . '/' . $dotUdi, 0755, true);
+        $destinationPath = $this->exportPath . '/' . $dotUdi;
 
         foreach ($filesInfo as $fileItemInfo) {
             $sourceFileName = basename($fileItemInfo['physicalFilePath']);
