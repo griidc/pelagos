@@ -4,7 +4,7 @@ select,textarea {
 
 label:not(.button)
 {
-    font-weight: bold;
+    font-weight: normal;
     display: block;
 }
 
