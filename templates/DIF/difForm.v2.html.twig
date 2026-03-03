@@ -1,7 +1,5 @@
-<form id="difForm"
-    action="{{ path('pelagos_app_ui_dif_two') }}"
-    method="post"
->
+<form id="difForm" method="post">
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
         {% if udi is defined %}
              <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
@@ -9,11 +7,12 @@
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div>
-                {{ form_label(form.researchGroup) }}
-                <select id="{{ form.researchGroup.vars.id }}" name="{{ form.researchGroup.vars.full_name }}" value="{{ form.researchGroup.vars.value }}" placeholder="Select Research Group" required="required"></select>
-                <div class="text-red-600 text-sm font-semibold">
+                {{ form_row(form.researchGroup) }}
+                {# {{ form_label(form.researchGroup) }} #}
+                {# <select id="{{ form.researchGroup.vars.id }}" name="{{ form.researchGroup.vars.full_name }}" value="{{ form.researchGroup.vars.value }}" placeholder="Select Research Group" required="required"></select> #}
+                {# <div class="text-red-600 text-sm font-semibold">
                     {{ form_errors(form.researchGroup) }}
-                </div>
+                </div> #}
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -31,8 +30,7 @@
             </div>
 
             <div>
-                {{ form_label(form.funders) }}
-                <select id="{{ form.funders.vars.id }}" name="{{ form.funders.vars.full_name }}" data-value="{{ form.funders.vars.attr['data-value'] }}" placeholder="Select Funders" multiple></select>
+                {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
             </div>
 
             <div>
@@ -164,11 +162,13 @@
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
-                    <button class="button button-regular button-griidc-form w-full justify-center" type="button">Save &amp; Continue</button>
+                    {# <button class="button button-regular" name="save" type="submit">Save and Continue Later</button> #}
+                    {{ form_row(form.saveAndContinue, { attr: { class: 'button button-regular'} }) }}
                 </div>
 
                 <div>
-                    <button type="submit" class="button button-regular button-griidc-form w-full justify-center" formnovalidate="formnovalidate">Submit to GRIIDC</button>
+                    {{ form_row(form.saveAndSubmit, { attr: { class: 'button button-regular', formnovalidate: 'formnovalidate' } }) }}
+                    {# <button type="submit" name="saveAndSubmit"class="button button-regular" formnovalidate="formnovalidate">Submit to GRIIDC</button> #}
                 </div>
 
                 <div>

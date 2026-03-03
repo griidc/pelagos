@@ -366,11 +366,6 @@ class DIF extends Entity
     #[ORM\ManyToMany(targetEntity: Keyword::class)]
     protected $keywords;
 
-    // public function setFunders($funders)
-    // {
-    //     $this->funders = $funders;
-    // }
-
     /**
      * Constructor.
      *
@@ -1454,7 +1449,20 @@ class DIF extends Entity
     }
 
     /**
-     * Get the funders for this Dataset.
+     * Set the funders for this DIF.
+     */
+    public function setFunders ($funders): self
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            $dataset->setFunders($funders);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the funders for this DIF.
      */
     public function getFunders(): ?Collection
     {
