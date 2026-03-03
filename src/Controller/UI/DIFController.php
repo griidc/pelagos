@@ -110,14 +110,7 @@ class DIFController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($dataset->getResearchGroup()->isLocked()) {
-                $this->addFlash('error', 'The selected research group is locked and cannot be used. Please select a different research group.');
-                return $this->render(
-                    'DIF/dif.v2.html.twig',
-                    [
-                        'form' => $form,
-                        'udi' => $dataset->getUdi(),
-                    ]
-                );
+                throw new \Exception('The selected research group is locked and cannot be used. Please select a different research group.');
             }
 
             if ($dataset->getUdi() === null) {
