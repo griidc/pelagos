@@ -3164,12 +3164,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alpinejs@npm:^3.15.4":
-  version: 3.15.4
-  resolution: "alpinejs@npm:3.15.4"
+"alpinejs@npm:^3.15.8":
+  version: 3.15.8
+  resolution: "alpinejs@npm:3.15.8"
   dependencies:
     "@vue/reactivity": "npm:~3.1.1"
-  checksum: 10c0/3248cb35a0a5bf51f829ead760c0b1c680a1355f081fc4883a879a0a7404ee0fc6f107717a02a0afce1648c5bd6206d43cae85ff4796f6851379ffb540e68780
+  checksum: 10c0/2746227bf7389e3c0737225448247f7bf5d44ef27e0e4e37588f452d0fac2c760d39640f1c9b0189f440dac9e724f540a94e8730e326d514929309731c932b25
   languageName: node
   linkType: hard
 
@@ -9629,7 +9629,7 @@ __metadata:
     "@tailwindcss/typography": "npm:^0.5.19"
     "@vue/babel-helper-vue-jsx-merge-props": "npm:^1.0.0"
     "@vue/babel-preset-jsx": "npm:^1.1.2"
-    alpinejs: "npm:^3.15.4"
+    alpinejs: "npm:^3.15.8"
     autoprefixer: "npm:^10.4.24"
     axios: "npm:^1.13.5"
     baseline-browser-mapping: "npm:^2.9.5"
