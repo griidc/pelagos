@@ -4,8 +4,12 @@ select,textarea {
 
 label:not(.button)
 {
-    font-weight: normal;
+    font-weight: bold;
     display: block;
+}
+
+.ui-checkboxradio-label {
+    font-weight: revert!important;
 }
 
 .choice-label label {

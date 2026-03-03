@@ -24,12 +24,8 @@ class InspectFilesetType extends AbstractType
         $builder
             ->add('datasetUdi', TextType::class, [
                 'required' => true,
-                'attr' => ['class' => 'input-base'],
-                'label_attr' => ['class' => 'input-label'],
             ])
-            ->add('submit', SubmitType::class, [
-                'attr' => ['class' => 'button button-regular']
-            ]);
+            ->add('submit', SubmitType::class);
     }
 
     /**
