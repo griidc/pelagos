@@ -1,0 +1,30 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}Inspect Dataset Fileset{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('inspect-fileset') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('inspect-fileset') }}
+{% endblock %}
+
+{% block body %}
+<div class="w-75 mx-auto" style="width:66%">
+    <table width="100%" border="0">
+        <tr>
+            <td width="50%">
+                <h3>Filecopy Starting</h3>
+            </td>
+        </tr>
+        <tr>
+            <td width="50%">
+                <p>The copy of the fileset for Dataset UDI "{{ datasetUdi }}" has been initiated.
+                You will receive an email when the copy is complete and ready for review on Mimir.</p>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
