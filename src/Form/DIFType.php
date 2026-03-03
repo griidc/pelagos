@@ -31,13 +31,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * A form for creating a DIF.
+ *
+ * @extends AbstractType<DIF>
  */
 class DIFType extends AbstractType
 {
     /**
      * The entity manager to use in this form type.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -151,7 +153,6 @@ class DIFType extends AbstractType
             ])
             ->add('dataSize', ChoiceType::class, [
                 'choices' => array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES),
-                'data' => DIF::DATA_SIZES[0],
                 'label' => 'Approximate Dataset Size:',
                 'required' => true,
                 'expanded' => true,
@@ -353,6 +354,30 @@ class DIFType extends AbstractType
             'choice_attr' => function ($choice) {
                 return ['locked' => $choice->isLocked() ? 'true' : 'false'];
             },
+        ]);
+
+        $entity = $event->getData();
+        $form = $event->getForm();
+
+        $funders = $entity?->getFunders()?->map(function(Funder $funder) {
+            return $funder->getId();
+        })->toArray();
+
+        $form
+        ->add('primaryPointOfContact', null, [
+            'attr' => [
+                'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
+            ],
+        ])
+        ->add('secondaryPointOfContact', null, [
+            'attr' => [
+                'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
+            ],
+        ])
+        ->add('funders', null, [
+            'attr' => [
+                'data-value' => implode(',', $funders ?? []),
+            ],
         ]);
     }
 
