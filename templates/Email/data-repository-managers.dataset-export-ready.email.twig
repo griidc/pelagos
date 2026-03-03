@@ -1,0 +1,19 @@
+{% block subject 'Dataset export ready for ' ~ udi %}
+
+{% block body_html %}
+Dataset export completed for {{ udi }}.<br>
+<br>
+
+UDI: {{ udi }}<br>
+<br>
+
+Please inspect the exported files on Mimir whenever convenient.<br>
+{% endblock %}
+
+{% block body_text %}
+Dataset export completed for {{ udi }}.
+
+UDI: {{ udi }}
+
+Please inspect the exported files on Mimir whenever convenient.
+{% endblock %}
