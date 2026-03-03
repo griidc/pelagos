@@ -30,10 +30,10 @@
                     {{ form_label(form.datasetUdi, 'Dataset UDI:') }}
                 <div>
                 <div class="w-1/2">
-                    {{ form_widget(form.datasetUdi) }}
+                    {{ form_widget(form.datasetUdi, {'attr': {'class': 'input-base'}}) }}
                 </div>
                 <div class="py-2">
-                    {{ form_widget(form.submit) }}
+                    {{ form_widget(form.submit, {'attr': {'class': 'button button-regular'}}) }}
                 </div>
             </div>
             {{ form_end(form) }}
