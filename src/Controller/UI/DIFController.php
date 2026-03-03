@@ -109,6 +109,17 @@ class DIFController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($dataset->getResearchGroup()->isLocked()) {
+                $this->addFlash('error', 'The selected research group is locked and cannot be used. Please select a different research group.');
+                return $this->render(
+                    'DIF/dif.v2.html.twig',
+                    [
+                        'form' => $form,
+                        'udi' => $dataset->getUdi(),
+                    ]
+                );
+            }
+
             if ($dataset->getUdi() === null) {
                 $udiUtil->mintUdi($dataset);
             }
@@ -195,5 +206,11 @@ class DIFController extends AbstractController
         }, $funders);
 
         return new JsonResponse(['Funders' => $funderArray]);
+    }
+
+    #[Route(path: '/dif/check-research-group/{id}', name: 'pelagos_dif_check_research_group')]
+    public function checkResearchGroup(ResearchGroup $researchGroup): JsonResponse
+    {
+        return new JsonResponse(['locked' => $researchGroup->isLocked()]);
     }
 }
