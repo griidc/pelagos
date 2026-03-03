@@ -7187,12 +7187,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery-ui@npm:1.13.0":
-  version: 1.13.0
-  resolution: "jquery-ui@npm:1.13.0"
+"jquery-ui@npm:<1.14.0":
+  version: 1.13.3
+  resolution: "jquery-ui@npm:1.13.3"
   dependencies:
     jquery: "npm:>=1.8.0 <4.0.0"
-  checksum: 10c0/7acb7639639e78e97297a6ef75a9c612513bd5d01a0d66027e2782a9f0231ba45eba165bbb0d35fcdaa029e890739b89b51baee2ffb8e32b9b96b7aefccd80fc
+  checksum: 10c0/d6c9b330e42ecd90cbf687ebd77c3f6572a4ef151c9572375fd82efe1dc4af21c0a568095af540805cbe1a1bea50306cfb6d12bff5297d646ae3d2fe3d6c54da
   languageName: node
   linkType: hard
 
@@ -9714,7 +9714,7 @@ __metadata:
     file-saver: "npm:^2.0.5"
     jquery: "npm:^3.5.1"
     jquery-migrate: "npm:^3.6.0"
-    jquery-ui: "npm:1.13.0"
+    jquery-ui: "npm:<1.14.0"
     jquery.cookie: "npm:^1.4.1"
     leaflet: "npm:^1.9.4"
     maplibre-gl: "npm:^4.7.1"
