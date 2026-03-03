@@ -17,8 +17,12 @@ use App\Repository\FunderRepository;
 use App\Repository\ResearchGroupRepository;
 use App\Util\FundingOrgFilter;
 use App\Util\PersonUtil;
+use App\Util\Udi;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Form\SubmitButton;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -34,7 +38,7 @@ class DIFController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
+    #[Route(path: '/dif-old', name: 'pelagos_app_ui_dif_old')]
     public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -75,40 +79,64 @@ class DIFController extends AbstractController
         );
     }
 
-    #[Route(path: '/dif2', name: 'pelagos_app_ui_dif_two')]
+    #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository): Response
+    public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
     {
-        $dataset = new Dataset();
-        $dataset->setDif(new DIF());
-
+        $dataset = null;
+        $dif = null;
         $udi = $request->query->get('udi');
-
         if ($udi !== null && $udi !== '') {
             $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
             if (!$dataset) {
                 // add to flash bag errror message about dataset not found
                 $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+            } else {
+                $dif = $dataset->getDif();
             }
         }
 
-        $form = $formFactory->createNamed('', DIFType::class, $dataset?->getDif());
+        if (!$dataset instanceof Dataset) {
+            $creator = PersonUtil::getPersonFromUser($this->getUser());
+            $dataset = new Dataset();
+            $dataset->setCreator($creator);
+            $dif = new DIF($dataset);
+            $dif->setCreator($creator);
+        }
+
+        $form = $formFactory->createNamed('', DIFType::class, $dif);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            return new Response('Form submitted successfully!');
+            if ($dataset->getUdi() === null) {
+                $udiUtil->mintUdi($dataset);
+            }
+
+            /** @var SubmitButton $saveAndSubmit */
+            $saveAndSubmit = $form->get('saveAndSubmit');
+            if ($saveAndSubmit->isClicked()) {
+                $dif->submit();
+            }
+
+            $entityManager->persist($dif);
+            $entityManager->persist($dataset);
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi());
+
+            return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
         }
 
         return $this->render(
             'DIF/dif.v2.html.twig',
-            array(
-                'form' => $form->createView(),
-                'dataset' => $dataset,
-                'udi' => $dataset?->getUdi() ?? '',
-            )
+            [
+                'form' => $form,
+                'udi' => $dataset->getUdi(),
+            ]
         );
     }
-
 
     #[Route(path: '/dif/get-research-groups', name: 'pelagos_dif_get_research_groups')]
     public function getResearchGroups(ResearchGroupRepository $researchGroupRepository): Response
