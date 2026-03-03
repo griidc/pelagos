@@ -9,7 +9,7 @@ label:not(.button)
 }
 
 .ui-checkboxradio-label {
-    font-weight: revert!important;
+    font-weight: normal!important;
 }
 
 .choice-label label {
