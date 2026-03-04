@@ -359,8 +359,10 @@ class DIFType extends AbstractType
             'placeholder' => '[PLEASE SELECT A PROJECT]',
             'required' => false,
             'label' => 'Project Title:',
-            'choice_attr' => function ($choice) {
-                return ['locked' => $choice->isLocked() ? 'true' : 'false'];
+            'choice_attr' => function (ResearchGroup $choice) {
+                return [
+                    'data-locked' => $choice->isLocked() ? 'true' : 'false',
+                    ];
             },
         ]);
 

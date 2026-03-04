@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
       'clear_button',
       'dropdown_input',
     ],
+    render: {
+      option(data, escape) {
+        return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
+      },
+    },
     // load(query, callback) {
     //   const url = Routing.generate('pelagos_dif_get_research_groups');
     //   fetch(url)
