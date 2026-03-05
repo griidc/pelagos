@@ -79,24 +79,18 @@ class DIF extends Entity
 
     /**
      * The primary point of contact for this DIF.
-     *
-     * @var Person
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[ORM\ManyToOne(targetEntity: Person::class)]
     #[Serializer\MaxDepth(1)]
     #[Assert\NotBlank(message: 'Primary Point of Contact is required')]
-    protected $primaryPointOfContact;
+    protected ?Person $primaryPointOfContact = null;
 
     /**
      * The secondary point of contact for this DIF.
-     *
-     * @var Person
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[ORM\ManyToOne(targetEntity: Person::class)]
     #[Serializer\MaxDepth(1)]
-    protected $secondaryPointOfContact;
+    protected ?Person $secondaryPointOfContact = null;
 
     /**
      * The abstract for this DIF.
@@ -379,12 +373,14 @@ class DIF extends Entity
      *
      * @param Dataset $dataset the dataset this DIF identifies
      */
-    public function __construct(Dataset $dataset = null)
+    public function __construct(?Dataset $dataset = null)
     {
         if (null !== $dataset) {
             $this->setDataset($dataset);
         }
         $this->keywords = new ArrayCollection();
+
+        $this->dataSize = "< 1GB";
     }
 
     /**
@@ -495,7 +491,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setPrimaryPointOfContact(Person $primaryPointOfContact = null)
+    public function setPrimaryPointOfContact(?Person $primaryPointOfContact = null)
     {
         $this->primaryPointOfContact = $primaryPointOfContact;
     }
@@ -503,9 +499,9 @@ class DIF extends Entity
     /**
      * Gets the primary point of contact for this DIF.
      *
-     * @return Person the primary point of contact for this DIF
+     * @return Person|null the primary point of contact for this DIF
      */
-    public function getPrimaryPointOfContact()
+    public function getPrimaryPointOfContact(): ?Person
     {
         return $this->primaryPointOfContact;
     }
@@ -517,7 +513,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setSecondaryPointOfContact(Person $secondaryPointOfContact = null)
+    public function setSecondaryPointOfContact(?Person $secondaryPointOfContact = null)
     {
         $this->secondaryPointOfContact = $secondaryPointOfContact;
     }
@@ -525,9 +521,9 @@ class DIF extends Entity
     /**
      * Gets the secondary point of contact for this DIF.
      *
-     * @return Person the secondary point of contact for this DIF
+     * @return Person|null the secondary point of contact for this DIF
      */
-    public function getSecondaryPointOfContact()
+    public function getSecondaryPointOfContact(): ?Person
     {
         return $this->secondaryPointOfContact;
     }
@@ -1453,7 +1449,20 @@ class DIF extends Entity
     }
 
     /**
-     * Get the funders for this Dataset.
+     * Set the funders for this DIF.
+     */
+    public function setFunders ($funders): self
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            $dataset->setFunders($funders);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the funders for this DIF.
      */
     public function getFunders(): ?Collection
     {
