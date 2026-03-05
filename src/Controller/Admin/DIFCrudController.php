@@ -215,8 +215,24 @@ class DIFCrudController extends AbstractCrudController
             ->linkToCrudAction('export')
             ->createAsGlobalAction();
 
+        $approveDifAction = Action::new('approveDif')
+            ->setLabel('Approve DIF')
+            ->setIcon('fa fa-check')
+            ->linkToUrl('#')
+            ->addCssClass('btn btn-secondary')
+            ->setHtmlAttributes(['onclick' => 'return false;']);
+
+        $unlockDifAction = Action::new('unlockDif')
+            ->setLabel('Unlock DIF')
+            ->setIcon('fa fa-unlock')
+            ->linkToUrl('#')
+            ->addCssClass('btn btn-secondary')
+            ->setHtmlAttributes(['onclick' => 'return false;']);
+
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $exportAction)
+            ->add(Crud::PAGE_EDIT, $approveDifAction)
+            ->add(Crud::PAGE_EDIT, $unlockDifAction)
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
@@ -225,7 +241,6 @@ class DIFCrudController extends AbstractCrudController
                     ->setIcon('fa fa-eye')
                     ->setLabel('View');
             })
-            ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
