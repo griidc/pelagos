@@ -8,58 +8,42 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 document.addEventListener('DOMContentLoaded', () => {
   const funders = document.getElementById('funders');
-  const fundersSelect = new TomSelect('#funders', {
-    valueField: 'id',
-    labelField: 'name',
-    searchField: ['name'],
-    preload: true,
+  const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
     plugins: {
       clear_button: {
         title: 'Remove all selected options',
       },
     },
-    // fetch remote data
-    load(query, callback) {
-      const url = Routing.generate('pelagos_dif_get_funders');
-      fetch(url)
-        .then((response) => response.json())
-        .then((json) => {
-          callback(json.Funders);
-          this.setValue(funders.getAttribute('data-value'));
-        }).catch(() => {
-          callback();
-        });
-    },
   });
 
   const researchGroup = document.getElementById('researchGroup');
-  const researchGroupSelect = new TomSelect('#researchGroup', {
-    valueField: 'id',
-    labelField: 'name',
-    searchField: ['name'],
-    preload: true,
+  const researchGroupSelect = new TomSelect(researchGroup, {
     maxOptions: null,
     plugins: [
       'clear_button',
       'dropdown_input',
     ],
-    // fetch remote data
-    load(query, callback) {
-      const url = Routing.generate('pelagos_dif_get_research_groups');
-      fetch(url)
-        .then((response) => response.json())
-        .then((json) => {
-          callback(json.ResearchGroups);
-          const selectValue = researchGroup.getAttribute('value');
-          if (selectValue) {
-            this.setValue(selectValue);
-            this.disable();
-          }
-        }).catch(() => {
-          callback();
-        });
+    render: {
+      option(data, escape) {
+        return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
+      },
     },
+    // load(query, callback) {
+    //   const url = Routing.generate('pelagos_dif_get_research_groups');
+    //   fetch(url)
+    //     .then((response) => response.json())
+    //     .then((json) => {
+    //       callback(json.ResearchGroups);
+    //       const selectValue = researchGroup.getAttribute('value');
+    //       if (selectValue) {
+    //         this.setValue(selectValue);
+    //         this.disable();
+    //       }
+    //     }).catch(() => {
+    //       callback();
+    //     });
+    // },
   });
 
   function populateResearchGroupContacts(contacts) {
@@ -109,12 +93,27 @@ document.addEventListener('DOMContentLoaded', () => {
     loadResearchGroupDowndowns(value);
   });
 
+  researchGroupSelect.on('item_add', (value) => {
+    const url = Routing.generate('pelagos_dif_check_research_group', { id: value });
+    fetch(url)
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.locked) {
+          alert('This research group is disabled and cannot be selected.');
+        }
+      });
+  });
+
+  if (researchGroupSelect.getValue() && researchGroupSelect.getValue() !== '') {
+    researchGroupSelect.lock();
+    loadResearchGroupDowndowns(researchGroupSelect.getValue());
+  }
+
   // on form reset event
   const difForm = document.getElementById('difForm');
   difForm.addEventListener('reset', () => {
-    // reset tomselects
+    // reset tomSelects
     setTimeout(() => {
-      researchGroupSelect.clear();
       fundersSelect.clear();
       populateResearchGroupContacts([]);
     });

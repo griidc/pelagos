@@ -9,8 +9,9 @@ use App\Entity\Keyword;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
-use Doctrine\ORM\EntityManager;
+use App\Util\PersonUtil;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -224,17 +226,16 @@ class DIFType extends AbstractType
                 'delete_empty' => true,
                 'required' => false,
             ])
-            ->add('funders', CollectionType::class, [
-                'label' => 'Funders',
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                    'class' => Funder::class,
-                ],
-                'by_reference' => true,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'required' => false,
+            ->add('funders', EntityType::class, [
+                'class' => Funder::class,
+                'choice_label' => function (Funder $funder) {
+                    return $funder->getName();
+                },
+                'query_builder' => function (EntityRepository $repo) {
+                    return $repo->createQueryBuilder('funder')
+                        ->orderBy('funder.name', 'ASC');
+                },
+                'multiple' => true,
             ])
             ->add('additionalFunders', TextType::class, [
                 'label' => 'Additional Funders',
@@ -293,6 +294,12 @@ class DIFType extends AbstractType
                 'label' => 'Issue Tracking Ticket:',
                 'required' => false,
             ])
+            ->add('saveAndSubmit', SubmitType::class, [
+                'label' => 'Save and Submit',
+            ])
+            ->add('saveAndContinue', SubmitType::class, [
+                'label' => 'Save & Continue Later',
+            ])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()
                 ->add('primaryPointOfContact', EntityType::class, [
@@ -328,9 +335,10 @@ class DIFType extends AbstractType
     {
         $researchGroups = [];
         if ($this->authorizationChecker->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
+            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findBy([], ['name' => 'ASC']);
         } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
-            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+            $person = PersonUtil::getPersonFromUser($this->tokenStorage->getToken()->getUser());
+            $researchGroups = $person->getResearchGroups();
         }
 
         if ($this->fundingOrgFilter->isActive()) {
@@ -349,36 +357,30 @@ class DIFType extends AbstractType
             'choices' => $researchGroups,
             'choice_label' => 'name',
             'placeholder' => '[PLEASE SELECT A PROJECT]',
-            'required' => true,
+            'required' => false,
             'label' => 'Project Title:',
-            'choice_attr' => function ($choice) {
-                return ['locked' => $choice->isLocked() ? 'true' : 'false'];
+            'choice_attr' => function (ResearchGroup $choice) {
+                return [
+                    'data-locked' => $choice->isLocked() ? 'true' : 'false',
+                    ];
             },
         ]);
 
         $entity = $event->getData();
         $form = $event->getForm();
 
-        $funders = $entity?->getFunders()?->map(function(Funder $funder) {
-            return $funder->getId();
-        })->toArray();
-
         $form
-        ->add('primaryPointOfContact', null, [
+        ->add('primaryPointOfContact', ChoiceType::class, [
             'attr' => [
                 'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
             ],
         ])
-        ->add('secondaryPointOfContact', null, [
+        ->add('secondaryPointOfContact', ChoiceType::class, [
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
         ])
-        ->add('funders', null, [
-            'attr' => [
-                'data-value' => implode(',', $funders ?? []),
-            ],
-        ]);
+        ;
     }
 
     /**
@@ -389,7 +391,7 @@ class DIFType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\Entity\DIF',
+            'data_class' => DIF::class,
             'allow_extra_fields' => true,
             'csrf_protection' => false,
         ]);
