@@ -4,9 +4,98 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import TomSelect from 'tom-select';
 import 'tom-select/dist/css/tom-select.css';
 
+import JustValidate from 'just-validate';
+import JustValidatePluginDate from 'just-validate-plugin-date';
+
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('difForm');
+  const formValidate = new JustValidate(form);
+
+  formValidate
+    .addField('#researchGroup', [
+      {
+        rule: 'required',
+        errorMessage: 'Research group is required',
+      },
+    ])
+    .addField('#primaryPointOfContact', [
+      {
+        rule: 'required',
+        errorMessage: 'Primary point of contact is required',
+      },
+    ])
+    .addField('#funders', [
+      {
+        rule: 'required',
+        errorMessage: 'Funders are required',
+      },
+    ])
+    .addField('#title', [
+      {
+        rule: 'required',
+        errorMessage: 'Title is required',
+      },
+    ])
+    .addField('#abstract', [
+      {
+        rule: 'required',
+        errorMessage: 'Abstract is required',
+      },
+    ])
+    .addRequiredGroup('#dataSize', 'Select at lease one option!')
+    .addField('#estimatedStartDate', [
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+          required: true,
+        })),
+        errorMessage: 'Date is required.',
+      },
+      // {
+      //   plugin: JustValidatePluginDate((fields) => ({
+      //     required: true,
+      //     format: 'yyyy-MM-dd',
+      //     isBefore: fields['#estimatedEndDate'].elem.value,
+      //   })),
+      //   errorMessage: 'Date can not be before end date',
+      // },
+    ])
+    .addField('#estimatedEndDate', [
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+          required: true,
+        })),
+        errorMessage: 'Date is required.',
+      },
+      // {
+      //   plugin: JustValidatePluginDate((fields) => ({
+      //     required: true,
+      //     format: 'yyyy-MM-dd',
+      //     isAfter: fields['#estimatedStartDate'].elem.value,
+      //   })),
+      //   errorMessage: 'Date can not be after start date',
+      // },
+    ])
+    .onSuccess((event) => {
+      console.log('Validation passes and form submitted', event);
+      event.currentTarget.submitAction.value = event.submitter.name;
+      event.currentTarget.submit();
+    })
+    ;
+
+  const estimatedStartDate = document.getElementById('estimatedStartDate');
+  estimatedStartDate.addEventListener('change', () => {
+    formValidate.revalidateField('#estimatedStartDate');
+  });
+
+  const estimatedEndDate = document.getElementById('estimatedEndDate');
+  estimatedEndDate.addEventListener('change', () => {
+    formValidate.revalidateField('#estimatedEndDate');
+  });
+
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
@@ -110,12 +199,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // on form reset event
-  const difForm = document.getElementById('difForm');
-  difForm.addEventListener('reset', () => {
+  const resetButton = document.getElementById('resetFormButton');
+  resetButton.addEventListener('click', () => {
+    form.reset(); // reset the form
     // reset tomSelects
     setTimeout(() => {
       fundersSelect.clear();
       populateResearchGroupContacts([]);
+
+      // find all form fields
+      const formFields = form.querySelectorAll('input, select, textarea');
+      formFields.forEach((field) => {
+        field.value = "";
+        field.removeAttribute('value');
+        field.removeAttribute('data-value');
+      });
+      loadResearchGroupDowndowns(researchGroupSelect.getValue());
+      // reset select fields
+      //
     });
   });
 });

@@ -307,6 +307,7 @@ class DIFType extends AbstractType
                 ])
                 ->add('secondaryPointOfContact', EntityType::class, [
                     'class' => Person::class,
+                    'required' => false,
                 ]);
             });
 
@@ -357,7 +358,7 @@ class DIFType extends AbstractType
             'choices' => $researchGroups,
             'choice_label' => 'name',
             'placeholder' => '[PLEASE SELECT A PROJECT]',
-            'required' => false,
+            'required' => true,
             'label' => 'Project Title:',
             'choice_attr' => function (ResearchGroup $choice) {
                 return [
@@ -379,6 +380,7 @@ class DIFType extends AbstractType
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
+            'required' => false,
         ])
         ;
     }
