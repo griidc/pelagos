@@ -4610,6 +4610,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:2.28.0":
+  version: 2.28.0
+  resolution: "date-fns@npm:2.28.0"
+  checksum: 10c0/ecdacd36326e7f5f8c4f1e78ae931a8997109f1c841f5163053b866585ca899521b0e7a114eeb48a9fe5135a550787bd4bbd8baa321cded0b4d823f847889a80
+  languageName: node
+  linkType: hard
+
 "dayjs@npm:^1.8.34":
   version: 1.11.19
   resolution: "dayjs@npm:1.11.19"
@@ -7339,6 +7346,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"just-validate-plugin-date@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "just-validate-plugin-date@npm:1.2.0"
+  dependencies:
+    date-fns: "npm:2.28.0"
+  checksum: 10c0/88116dbcac9b555af2d0384f51b2f104fe9d9473bbf5aa4639155771789805bc4f6e063b981b06c02659e07e2eb2aa5f6866e54707034b41d97cbf11a79e1c97
+  languageName: node
+  linkType: hard
+
+"just-validate@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "just-validate@npm:4.3.0"
+  checksum: 10c0/c13a13442a14e55581fead56d8e892e702ff848aa3b340b61cd013be2b327c20529ff658bab38a7637b255fbd0fdd0c0d03a0342a250f265957b4b55ee7f6be5
+  languageName: node
+  linkType: hard
+
 "kdbush@npm:^4.0.2":
   version: 4.0.2
   resolution: "kdbush@npm:4.0.2"
@@ -9732,6 +9755,8 @@ __metadata:
     jquery-migrate: "npm:^3.6.0"
     jquery-ui: "npm:<1.14.0"
     jquery.cookie: "npm:^1.4.1"
+    just-validate: "npm:^4.3.0"
+    just-validate-plugin-date: "npm:^1.2.0"
     leaflet: "npm:^1.9.4"
     maplibre-gl: "npm:^4.7.1"
     postcss-loader: "npm:^8.2.0"
