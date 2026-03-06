@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -23,6 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -218,16 +220,14 @@ class DIFCrudController extends AbstractCrudController
         $approveDifAction = Action::new('approveDif')
             ->setLabel('Approve DIF')
             ->setIcon('fa fa-check')
-            ->linkToUrl('#')
-            ->addCssClass('btn btn-secondary')
-            ->setHtmlAttributes(['onclick' => 'return false;']);
+            ->linkToCrudAction('approveDif')
+            ->addCssClass('btn btn-secondary');
 
         $unlockDifAction = Action::new('unlockDif')
             ->setLabel('Unlock DIF')
             ->setIcon('fa fa-unlock')
-            ->linkToUrl('#')
-            ->addCssClass('btn btn-secondary')
-            ->setHtmlAttributes(['onclick' => 'return false;']);
+            ->linkToCrudAction('unlockDif')
+            ->addCssClass('btn btn-secondary');
 
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $exportAction)
@@ -244,5 +244,43 @@ class DIFCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
+    }
+
+    public function approveDif(AdminContext $context): RedirectResponse
+    {
+        /** @var DIF $dif */
+        $dif = $context->getEntity()->getInstance();
+
+        try {
+            $dif->approve();
+            $this->entityManager->flush();
+            $this->addFlash('success', 'DIF approved.');
+        } catch (\Throwable $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+
+        $request = $context->getRequest();
+        $redirectUrl = $context->getReferrer() ?? $request->headers->get('referer') ?? $request->getUri();
+
+        return $this->redirect($redirectUrl);
+    }
+
+    public function unlockDif(AdminContext $context): RedirectResponse
+    {
+        /** @var DIF $dif */
+        $dif = $context->getEntity()->getInstance();
+
+        try {
+            $dif->unlock();
+            $this->entityManager->flush();
+            $this->addFlash('success', 'DIF unlocked.');
+        } catch (\Throwable $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+
+        $request = $context->getRequest();
+        $redirectUrl = $context->getReferrer() ?? $request->headers->get('referer') ?? $request->getUri();
+
+        return $this->redirect($redirectUrl);
     }
 }
