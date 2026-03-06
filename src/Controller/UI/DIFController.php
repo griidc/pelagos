@@ -119,7 +119,8 @@ class DIFController extends AbstractController
 
             /** @var SubmitButton $saveAndSubmit */
             $saveAndSubmit = $form->get('saveAndSubmit');
-            if ($saveAndSubmit->isClicked()) {
+            $extraData = $form->getExtraData();
+            if ((isset($extraData['submitAction']) && $extraData['submitAction'] === 'saveAndSubmit') || $saveAndSubmit->isClicked()) {
                 $dif->submit();
             }
 
