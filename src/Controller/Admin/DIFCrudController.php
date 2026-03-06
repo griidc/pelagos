@@ -47,24 +47,60 @@ class DIFCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $idField = IdField::new('id');
+        $datasetAssociationField = AssociationField::new('dataset')
+            ->setLabel('Dataset');
+        $researchGroupField = TextField::new('researchGroup')
+            ->setLabel('Research Group');
+        $creatorField = AssociationField::new('creator')
+            ->setLabel('Created By');
+        $modifierField = AssociationField::new('modifier')
+            ->hideOnIndex()
+            ->setLabel('Modified By');
+        $creationTimestampField = DateField::new('creationTimeStamp')
+            ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+            ->setLabel('Creation Timestamp');
+        $modificationTimestampField = DateField::new('modificationTimeStamp')
+            ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
+            ->setLabel('Modification Timestamp');
+        $approvedDateField = DateField::new('approvedDate')
+            ->hideOnIndex()
+            ->setLabel('Approved Date');
+        $fundersField = CollectionField::new('Funders')
+            ->hideOnIndex()
+            ->setLabel('Funders');
+        $statusField = ChoiceField::new('status')
+            ->setChoices([
+                'Unsubmitted' => DIF::STATUS_UNSUBMITTED,
+                'Submitted' => DIF::STATUS_SUBMITTED,
+                'Approved' => DIF::STATUS_APPROVED,
+            ]);
+        $isLockedField = BooleanField::new('isLocked')
+            ->renderAsSwitch(false)
+            ->setLabel('Locked');
+
+        if (Crud::PAGE_EDIT === $pageName) {
+            $idField = $idField->setDisabled();
+            $datasetAssociationField = $datasetAssociationField->setDisabled();
+            $statusField = $statusField->setDisabled();
+            $isLockedField = $isLockedField->setDisabled();
+            $researchGroupField = $researchGroupField->setDisabled();
+            $creatorField = $creatorField->setDisabled();
+            $modifierField = $modifierField->setDisabled();
+            $creationTimestampField = $creationTimestampField->setDisabled();
+            $modificationTimestampField = $modificationTimestampField->setDisabled();
+            $approvedDateField = $approvedDateField->setDisabled();
+            $fundersField = $fundersField->setDisabled();
+        }
+
         return [
-            IdField::new('id'),
-            AssociationField::new('dataset'),
+            $idField,
+            $datasetAssociationField,
             TextField::new('title'),
-            ChoiceField::new('status')
-                ->setChoices([
-                    'Unsubmitted' => DIF::STATUS_UNSUBMITTED,
-                    'Submitted' => DIF::STATUS_SUBMITTED,
-                    'Approved' => DIF::STATUS_APPROVED,
-                ]),
-            BooleanField::new('isLocked')
-                ->renderAsSwitch(false)
-                ->setLabel('Locked'),
-            TextField::new('researchGroup')
-                ->setLabel('Research Group'),
-            CollectionField::new('Funders')
-                ->hideOnIndex()
-                ->setLabel('Funders'),
+            $statusField,
+            $isLockedField,
+            $researchGroupField,
+            $fundersField,
             TextField::new('additionalFunders')
                 ->hideOnIndex()
                 ->setLabel('Additional Funders'),
@@ -76,27 +112,34 @@ class DIFCrudController extends AbstractCrudController
                 ->hideOnIndex()
                 ->setLabel('Abstract'),
             BooleanField::new('fieldOfStudyEcologicalBiological')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Ecological/Biological Field of Study'),
             BooleanField::new('fieldOfStudyPhysicalOceanography')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Physical Oceanography Field of Study'),
             BooleanField::new('fieldOfStudyAtmospheric')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Atmospheric Field of Study'),
             BooleanField::new('fieldOfStudyChemical')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Chemical Field of Study'),
             BooleanField::new('fieldOfStudyHumanHealth')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Human Health Field of Study'),
             BooleanField::new('fieldOfStudySocialCulturalPolitical')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Social/Cultural/Political Field of Study'),
             BooleanField::new('fieldOfStudyEconomics')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Economics Field of Study'),
-            BooleanField::new('fieldOfStudyOther')
+            TextField::new('fieldOfStudyOther')
                 ->hideOnIndex()
                 ->setLabel('Other Field of Study'),
             TextField::new('dataSize')
@@ -106,12 +149,15 @@ class DIFCrudController extends AbstractCrudController
                 ->hideOnIndex()
                 ->setLabel('Variables Observed'),
             BooleanField::new('collectionMethodFieldSampling')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Collection Method: Field Sampling'),
             BooleanField::new('collectionMethodSimulatedGenerated')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Collection Method: Simulated/Generated'),
             BooleanField::new('collectionMethodRemoteSensing')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('Collection Method: Remote Sensing'),
             TextField::new('collectionMethodOther')
@@ -132,15 +178,19 @@ class DIFCrudController extends AbstractCrudController
                 ->setLanguage('xml')
                 ->setLabel('Spatial Extent Geometry'),
             BooleanField::new('nationalDataArchiveNODC')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('National Data Archive: NODC'),
             BooleanField::new('nationalDataArchiveStoret')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('National Data Archive: STORET'),
             BooleanField::new('nationalDataArchiveGBIF')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('National Data Archive: GBIF'),
             BooleanField::new('nationalDataArchiveNCBI')
+                ->renderAsSwitch(false)
                 ->hideOnIndex()
                 ->setLabel('National Data Archive: NCBI'),
             TextField::new('nationalDataArchiveOther')
@@ -155,24 +205,33 @@ class DIFCrudController extends AbstractCrudController
             textfield::new('remarks')
                 ->hideOnIndex()
                 ->setLabel('Remarks'),
-            DateField::new('approvedDate')
-                ->hideOnIndex()
-                ->setLabel('Approved Date'),
+            $approvedDateField,
             CollectionField::new('keywords')
                 ->hideOnIndex()
                 ->setLabel('Keywords'),
-            AssociationField::new('creator')
-                ->setLabel('Created By'),
-            DateField::new('creationTimeStamp')
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setLabel('Creation Timestamp'),
-            AssociationField::new('modifier')
-                ->hideOnIndex()
-                ->setLabel('Modified By'),
-            DateField::new('modificationTimeStamp')
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setLabel('Modification Timestamp'),
+            $creatorField,
+            $creationTimestampField,
+            $modifierField,
+            $modificationTimestampField,
         ];
+    }
+
+    #[\Override]
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof DIF) {
+            parent::updateEntity($entityManager, $entityInstance);
+
+            return;
+        }
+
+        if ($entityInstance->isSubmittable()) {
+            $entityInstance->submit();
+        } elseif ($entityInstance->isApprovable()) {
+            $entityInstance->approve();
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     #[\Override]
@@ -223,6 +282,12 @@ class DIFCrudController extends AbstractCrudController
             ->linkToCrudAction('approveDif')
             ->addCssClass('btn btn-secondary');
 
+        $submitDifAction = Action::new('submitDif')
+            ->setLabel('Unsubmitted -> Submitted')
+            ->setIcon('fa fa-lock')
+            ->linkToCrudAction('submitDif')
+            ->addCssClass('btn btn-secondary');
+
         $unlockDifAction = Action::new('unlockDif')
             ->setLabel('Unlock DIF')
             ->setIcon('fa fa-unlock')
@@ -231,6 +296,7 @@ class DIFCrudController extends AbstractCrudController
 
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $exportAction)
+            ->add(Crud::PAGE_EDIT, $submitDifAction)
             ->add(Crud::PAGE_EDIT, $approveDifAction)
             ->add(Crud::PAGE_EDIT, $unlockDifAction)
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
@@ -246,34 +312,51 @@ class DIFCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
     }
 
+    public function submitDif(AdminContext $context): RedirectResponse
+    {
+        return $this->runDifTransition(
+            $context,
+            static function (DIF $dif): void {
+                $dif->submit();
+            },
+            'DIF submitted.'
+        );
+    }
+
     public function approveDif(AdminContext $context): RedirectResponse
     {
-        /** @var DIF $dif */
-        $dif = $context->getEntity()->getInstance();
-
-        try {
-            $dif->approve();
-            $this->entityManager->flush();
-            $this->addFlash('success', 'DIF approved.');
-        } catch (\Throwable $e) {
-            $this->addFlash('danger', $e->getMessage());
-        }
-
-        $request = $context->getRequest();
-        $redirectUrl = $context->getReferrer() ?? $request->headers->get('referer') ?? $request->getUri();
-
-        return $this->redirect($redirectUrl);
+        return $this->runDifTransition(
+            $context,
+            static function (DIF $dif): void {
+                $dif->approve();
+            },
+            'DIF approved.'
+        );
     }
 
     public function unlockDif(AdminContext $context): RedirectResponse
     {
+        return $this->runDifTransition(
+            $context,
+            static function (DIF $dif): void {
+                $dif->unlock();
+            },
+            'DIF unlocked.'
+        );
+    }
+
+    /**
+     * Execute DIF transition actions with common flash and redirect behavior.
+     */
+    private function runDifTransition(AdminContext $context, callable $transition, string $successMessage): RedirectResponse
+    {
         /** @var DIF $dif */
         $dif = $context->getEntity()->getInstance();
 
         try {
-            $dif->unlock();
+            $transition($dif);
             $this->entityManager->flush();
-            $this->addFlash('success', 'DIF unlocked.');
+            $this->addFlash('success', $successMessage);
         } catch (\Throwable $e) {
             $this->addFlash('danger', $e->getMessage());
         }
