@@ -295,10 +295,10 @@ class DIFType extends AbstractType
                 'required' => false,
             ])
             ->add('saveAndSubmit', SubmitType::class, [
-                'label' => 'Save and Submit',
+                'label' => 'Save & Submit',
             ])
             ->add('saveAndContinue', SubmitType::class, [
-                'label' => 'Save & Continue Later',
+                'label' => 'Save & Continue',
             ])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()
