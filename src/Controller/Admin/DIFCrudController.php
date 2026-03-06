@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\Funder;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,10 +21,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -66,15 +69,22 @@ class DIFCrudController extends AbstractCrudController
         $approvedDateField = DateField::new('approvedDate')
             ->hideOnIndex()
             ->setLabel('Approved Date');
-        $fundersField = CollectionField::new('Funders')
+        $fundersField = Field::new('funders')
             ->hideOnIndex()
-            ->setLabel('Funders');
+            ->setLabel('Funders (hold control to select multiple)')
+            ->setFormType(EntityType::class)
+            ->setFormTypeOption('class', Funder::class)
+            ->setFormTypeOption('multiple', true)
+            ->setFormTypeOption('attr', ['size' => 10])
+            ->setFormTypeOption('required', false)
+            ->setFormTypeOption('by_reference', true);
         $statusField = ChoiceField::new('status')
             ->setChoices([
                 'Unsubmitted' => DIF::STATUS_UNSUBMITTED,
                 'Submitted' => DIF::STATUS_SUBMITTED,
                 'Approved' => DIF::STATUS_APPROVED,
-            ]);
+            ])
+            ->setLabel('Status (change via the action buttons on top)');
         $isLockedField = BooleanField::new('isLocked')
             ->renderAsSwitch(false)
             ->setLabel('Locked');
@@ -90,10 +100,9 @@ class DIFCrudController extends AbstractCrudController
             $creationTimestampField = $creationTimestampField->setDisabled();
             $modificationTimestampField = $modificationTimestampField->setDisabled();
             $approvedDateField = $approvedDateField->setDisabled();
-            $fundersField = $fundersField->setDisabled();
         }
 
-        return [
+        $fields = [
             $idField,
             $datasetAssociationField,
             TextField::new('title'),
@@ -142,9 +151,10 @@ class DIFCrudController extends AbstractCrudController
             TextField::new('fieldOfStudyOther')
                 ->hideOnIndex()
                 ->setLabel('Other Field of Study'),
-            TextField::new('dataSize')
+            ChoiceField::new('dataSize')
+                ->setChoices(array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES))
                 ->hideOnIndex()
-                ->setLabel('Data Size'),
+                ->setLabel('Approximate Dataset Size'),
             TextareaField::new('variablesObserved')
                 ->hideOnIndex()
                 ->setLabel('Variables Observed'),
@@ -196,7 +206,12 @@ class DIFCrudController extends AbstractCrudController
             TextField::new('nationalDataArchiveOther')
                 ->hideOnIndex()
                 ->setLabel('National Data Archive: Other'),
-            TextField::new('ethicalIssues')
+            ChoiceField::new('ethicalIssues')
+                ->setChoices([
+                    'Yes' => 'Yes',
+                    'No' => 'No',
+                    'Uncertain' => 'Uncertain',
+                ])
                 ->hideOnIndex()
                 ->setLabel('Ethical Issues'),
             TextField::new('ethicalIssuesExplanation')
@@ -208,12 +223,21 @@ class DIFCrudController extends AbstractCrudController
             $approvedDateField,
             CollectionField::new('keywords')
                 ->hideOnIndex()
+                ->hideWhenUpdating()
                 ->setLabel('Keywords'),
             $creatorField,
             $creationTimestampField,
             $modifierField,
             $modificationTimestampField,
         ];
+
+        if (Crud::PAGE_EDIT === $pageName) {
+            foreach ($fields as $field) {
+                $field->setColumns(8);
+            }
+        }
+
+        return $fields;
     }
 
     #[\Override]
