@@ -3,7 +3,7 @@
 <form id="difForm" method="post">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
-        {% if udi is defined %}
+        {% if udi is not empty %}
              <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
         {% endif %}
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
