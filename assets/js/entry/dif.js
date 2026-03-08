@@ -234,8 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field.removeAttribute('data-value');
       });
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
-      // reset select fields
-      //
+      formValidate.clearErrors();
     });
   });
 });
