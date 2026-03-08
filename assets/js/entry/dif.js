@@ -90,9 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ;
 
   const estimatedStartDate = document.getElementById('estimatedStartDate');
-  const startDatepicker = new Datepicker(estimatedStartDate);
-  startDatepicker.setOptions({
+  const startDatepicker = new Datepicker(estimatedStartDate, {
     format: 'yyyy-mm-dd',
+  });
+  startDatepicker.setOptions({
     autohide: true,
   });
   estimatedStartDate.addEventListener('changeDate', () => {
@@ -103,9 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const estimatedEndDate = document.getElementById('estimatedEndDate');
-  const endDatepicker = new Datepicker(estimatedEndDate);
-  endDatepicker.setOptions({
+  const endDatepicker = new Datepicker(estimatedEndDate, {
     format: 'yyyy-mm-dd',
+  });
+  endDatepicker.setOptions({
     autohide: true,
   });
   estimatedEndDate.addEventListener('changeDate', () => {
@@ -223,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset(); // reset the form
     // reset tomSelects
     setTimeout(() => {
+      if (researchGroupSelect.isLocked === false) {
+        researchGroupSelect.clear();
+      }
+
       fundersSelect.clear();
       populateResearchGroupContacts([]);
 
