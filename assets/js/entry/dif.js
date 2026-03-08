@@ -7,6 +7,9 @@ import 'tom-select/dist/css/tom-select.css';
 import JustValidate from 'just-validate';
 import JustValidatePluginDate from 'just-validate-plugin-date';
 
+import { Datepicker } from 'flowbite-datepicker';
+import '../../../node_modules/flowbite-datepicker/dist/css/datepicker.min.css';
+
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -53,14 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })),
         errorMessage: 'Date is required.',
       },
-      // {
-      //   plugin: JustValidatePluginDate((fields) => ({
-      //     required: true,
-      //     format: 'yyyy-MM-dd',
-      //     isBefore: fields['#estimatedEndDate'].elem.value,
-      //   })),
-      //   errorMessage: 'Date can not be before end date',
-      // },
+      {
+        plugin: JustValidatePluginDate((fields) => ({
+          required: true,
+          format: 'yyyy-MM-dd',
+          isBefore: fields['#estimatedEndDate'].elem.value,
+        })),
+        errorMessage: 'Date can not be before end date',
+      },
     ])
     .addField('#estimatedEndDate', [
       {
@@ -70,14 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })),
         errorMessage: 'Date is required.',
       },
-      // {
-      //   plugin: JustValidatePluginDate((fields) => ({
-      //     required: true,
-      //     format: 'yyyy-MM-dd',
-      //     isAfter: fields['#estimatedStartDate'].elem.value,
-      //   })),
-      //   errorMessage: 'Date can not be after start date',
-      // },
+      {
+        plugin: JustValidatePluginDate((fields) => ({
+          required: true,
+          format: 'yyyy-MM-dd',
+          isAfter: fields['#estimatedStartDate'].elem.value,
+        })),
+        errorMessage: 'Date can not be after start date',
+      },
     ])
     .onSuccess((event) => {
       console.log('Validation passes and form submitted', event);
@@ -87,13 +90,31 @@ document.addEventListener('DOMContentLoaded', () => {
     ;
 
   const estimatedStartDate = document.getElementById('estimatedStartDate');
-  estimatedStartDate.addEventListener('change', () => {
-    formValidate.revalidateField('#estimatedStartDate');
+  const startDatepicker = new Datepicker(estimatedStartDate, {
+    format: 'yyyy-mm-dd',
+  });
+  startDatepicker.setOptions({
+    autohide: true,
+  });
+  estimatedStartDate.addEventListener('changeDate', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#estimatedStartDate');
+      formValidate.revalidateField('#estimatedEndDate');
+    }
   });
 
   const estimatedEndDate = document.getElementById('estimatedEndDate');
-  estimatedEndDate.addEventListener('change', () => {
-    formValidate.revalidateField('#estimatedEndDate');
+  const endDatepicker = new Datepicker(estimatedEndDate, {
+    format: 'yyyy-mm-dd',
+  });
+  endDatepicker.setOptions({
+    autohide: true,
+  });
+  estimatedEndDate.addEventListener('changeDate', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#estimatedStartDate');
+      formValidate.revalidateField('#estimatedEndDate');
+    }
   });
 
   const funders = document.getElementById('funders');
@@ -204,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset(); // reset the form
     // reset tomSelects
     setTimeout(() => {
+      if (researchGroupSelect.isLocked === false) {
+        researchGroupSelect.clear();
+      }
+
       fundersSelect.clear();
       populateResearchGroupContacts([]);
 
@@ -215,8 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field.removeAttribute('data-value');
       });
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
-      // reset select fields
-      //
+      formValidate.clearErrors();
     });
   });
 });
