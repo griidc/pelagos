@@ -8129,6 +8129,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"n@npm:^10.2.0":
+  version: 10.2.0
+  resolution: "n@npm:10.2.0"
+  bin:
+    n: bin/n
+  checksum: 10c0/04f051417751c847dfba034838a1e62b7e1ab80fb8d597940db582cb14673cd3340b0a69e971435ead40f68658d3ac916f49a3c62abaeef484a8e19a1c5dbdbd
+  conditions: "!os=win32"
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.11":
   version: 3.3.11
   resolution: "nanoid@npm:3.3.11"
@@ -9852,6 +9862,7 @@ __metadata:
     just-validate-plugin-date: "npm:^1.2.0"
     leaflet: "npm:^1.9.4"
     maplibre-gl: "npm:^4.7.1"
+    n: "npm:^10.2.0"
     postcss-loader: "npm:^8.2.0"
     prop-types: "npm:^15.8.1"
     qtip2: "npm:2.2.0"

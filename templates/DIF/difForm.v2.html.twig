@@ -66,11 +66,11 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base'} }) }}
+                    {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
                 </div>
 
                 <div>
-                    {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base'} }) }}
+                    {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
                 </div>
             </div>
 
