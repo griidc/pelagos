@@ -9733,7 +9733,7 @@ __metadata:
     vex-js: "npm:^4.1.0"
     vue: "npm:^2.6.11"
     vue-loader: "npm:^15.0.11"
-    vue-loading-overlay: "npm:^3.3.0"
+    vue-loading-overlay: "npm:^6.0.6"
     vue-template-compiler: "npm:^2.6.11"
     webpack: "npm:^5.104.1"
     webpack-cli: "npm:^5.1.4"
@@ -11310,12 +11310,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-loading-overlay@npm:^3.3.0":
-  version: 3.4.3
-  resolution: "vue-loading-overlay@npm:3.4.3"
+"vue-loading-overlay@npm:^6.0.6":
+  version: 6.0.6
+  resolution: "vue-loading-overlay@npm:6.0.6"
   peerDependencies:
-    vue: ^2.7.0
-  checksum: 10c0/318fa53abd6dfbdf399a6421ccc80dc9c6a130bf841e1bb61507172f988df710dbfcca97b40978d3251d3977fb82ff600a71f9ae6f80abfff8f2878ab738b0bd
+    vue: ^3.2.0
+  checksum: 10c0/93e6e8bcc8b47fbc141ff6604283d09e0986cd13bb15a629c9ad9f5e27f53e3bb69f12b5bad01d6f886d760c5cd94ce8bc70038735dafee1351a4f87c05cb747
   languageName: node
   linkType: hard
 
