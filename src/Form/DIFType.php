@@ -227,6 +227,7 @@ class DIFType extends AbstractType
                 'required' => false,
             ])
             ->add('funders', EntityType::class, [
+                'label' => 'Funder',
                 'class' => Funder::class,
                 'choice_label' => function (Funder $funder) {
                     return $funder->getName();
