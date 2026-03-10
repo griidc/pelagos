@@ -373,12 +373,14 @@ class DIFType extends AbstractType
 
         $form
         ->add('primaryPointOfContact', ChoiceType::class, [
+            'label' => 'Primary Data Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
             ],
             'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
         ])
         ->add('secondaryPointOfContact', ChoiceType::class, [
+            'label' => 'Additional Data Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
