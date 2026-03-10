@@ -11,7 +11,52 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('difForm');
-  const formValidate = new JustValidate(form);
+
+  const funders = document.getElementById('funders');
+  const fundersSelect = new TomSelect(funders, {
+    maxOptions: null,
+    plugins: {
+      clear_button: {
+        title: 'Remove all selected options',
+      },
+    },
+  });
+
+  const researchGroup = document.getElementById('researchGroup');
+  const researchGroupSelect = new TomSelect(researchGroup, {
+    maxOptions: null,
+    plugins: [
+      'clear_button',
+      'dropdown_input',
+    ],
+    render: {
+      option(data, escape) {
+        return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
+      },
+    },
+    // load(query, callback) {
+    //   const url = Routing.generate('pelagos_dif_get_research_groups');
+    //   fetch(url)
+    //     .then((response) => response.json())
+    //     .then((json) => {
+    //       callback(json.ResearchGroups);
+    //       const selectValue = researchGroup.getAttribute('value');
+    //       if (selectValue) {
+    //         this.setValue(selectValue);
+    //         this.disable();
+    //       }
+    //     }).catch(() => {
+    //       callback();
+    //     });
+    // },
+  });
+
+  const formValidate = new JustValidate(form, {
+    errorLabelStyle: {
+      color: '#b81111',
+      fontWeight: 'bold',
+    },
+  });
 
   formValidate
     .addField('#researchGroup', [
@@ -44,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Abstract is required',
       },
     ])
-    .addRequiredGroup('#dataSize', 'Select at lease one option!')
+    .addRequiredGroup('#dataSize', 'Select at lease one option!',{
+      errorsContainer: '#datasize-error',
+    })
     .addField('#estimatedStartDate', [
       {
         plugin: JustValidatePluginDate(() => ({
@@ -102,44 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const funders = document.getElementById('funders');
-  const fundersSelect = new TomSelect(funders, {
-    maxOptions: null,
-    plugins: {
-      clear_button: {
-        title: 'Remove all selected options',
-      },
-    },
-  });
 
-  const researchGroup = document.getElementById('researchGroup');
-  const researchGroupSelect = new TomSelect(researchGroup, {
-    maxOptions: null,
-    plugins: [
-      'clear_button',
-      'dropdown_input',
-    ],
-    render: {
-      option(data, escape) {
-        return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
-      },
-    },
-    // load(query, callback) {
-    //   const url = Routing.generate('pelagos_dif_get_research_groups');
-    //   fetch(url)
-    //     .then((response) => response.json())
-    //     .then((json) => {
-    //       callback(json.ResearchGroups);
-    //       const selectValue = researchGroup.getAttribute('value');
-    //       if (selectValue) {
-    //         this.setValue(selectValue);
-    //         this.disable();
-    //       }
-    //     }).catch(() => {
-    //       callback();
-    //     });
-    // },
-  });
 
   function populateResearchGroupContacts(contacts) {
     const pointOfContactDropdowns = document.querySelectorAll('.point-of-contact');
@@ -223,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field.value = "";
         field.removeAttribute('value');
         field.removeAttribute('data-value');
+        field.checked = false;
       });
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
       formValidate.clearErrors();
