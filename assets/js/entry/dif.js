@@ -62,34 +62,34 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#researchGroup', [
       {
         rule: 'required',
-        errorMessage: 'Research group is required',
+        errorMessage: 'Project title is required.',
       },
     ])
     .addField('#primaryPointOfContact', [
       {
         rule: 'required',
-        errorMessage: 'Primary point of contact is required',
+        errorMessage: 'Primary point of contact is required.',
       },
     ])
     .addField('#funders', [
       {
         rule: 'required',
-        errorMessage: 'Funders are required',
+        errorMessage: 'Funder is required.',
       },
     ])
     .addField('#title', [
       {
         rule: 'required',
-        errorMessage: 'Title is required',
+        errorMessage: 'Title is required.',
       },
     ])
     .addField('#abstract', [
       {
         rule: 'required',
-        errorMessage: 'Abstract is required',
+        errorMessage: 'Abstract is required.',
       },
     ])
-    .addRequiredGroup('#dataSize', 'Select at lease one option!',{
+    .addRequiredGroup('#dataSize', 'Dataset size is required.',{
       errorsContainer: '#datasize-error',
     })
     .addField('#estimatedStartDate', [
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
           format: 'yyyy-MM-dd',
           isBefore: fields['#estimatedEndDate'].elem.value,
         })),
-        errorMessage: 'Date can not be before end date',
+        errorMessage: 'Date must be before end date.',
       },
     ])
     .addField('#estimatedEndDate', [
@@ -123,11 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
           format: 'yyyy-MM-dd',
           isAfter: fields['#estimatedStartDate'].elem.value,
         })),
-        errorMessage: 'Date can not be after start date',
+        errorMessage: 'Date must be after start date.',
       },
     ])
     .onSuccess((event) => {
-      console.log('Validation passes and form submitted', event);
       event.currentTarget.submitAction.value = event.submitter.name;
       event.currentTarget.submit();
     })
@@ -148,8 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#estimatedEndDate');
     }
   });
-
-
 
   function populateResearchGroupContacts(contacts) {
     const pointOfContactDropdowns = document.querySelectorAll('.point-of-contact');
