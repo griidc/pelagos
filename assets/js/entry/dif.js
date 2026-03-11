@@ -234,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
       formValidate.clearErrors();
+      researchGroup.focus();
     });
   });
 });
