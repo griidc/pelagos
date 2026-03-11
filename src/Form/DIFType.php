@@ -227,6 +227,7 @@ class DIFType extends AbstractType
                 'required' => false,
             ])
             ->add('funders', EntityType::class, [
+                'label' => 'Funder',
                 'class' => Funder::class,
                 'choice_label' => function (Funder $funder) {
                     return $funder->getName();
@@ -307,6 +308,7 @@ class DIFType extends AbstractType
                 ])
                 ->add('secondaryPointOfContact', EntityType::class, [
                     'class' => Person::class,
+                    'required' => false,
                 ]);
             });
 
@@ -357,7 +359,7 @@ class DIFType extends AbstractType
             'choices' => $researchGroups,
             'choice_label' => 'name',
             'placeholder' => '[PLEASE SELECT A PROJECT]',
-            'required' => false,
+            'required' => true,
             'label' => 'Project Title:',
             'choice_attr' => function (ResearchGroup $choice) {
                 return [
@@ -371,14 +373,19 @@ class DIFType extends AbstractType
 
         $form
         ->add('primaryPointOfContact', ChoiceType::class, [
+            'label' => 'Primary Data Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
             ],
+            'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
         ])
         ->add('secondaryPointOfContact', ChoiceType::class, [
+            'label' => 'Additional Data Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
+            'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+            'required' => false,
         ])
         ;
     }
