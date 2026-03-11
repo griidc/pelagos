@@ -681,6 +681,7 @@ function MapWizard(json)
         {
             if(xhr.status === 400) {
                 showDialog("Invalid Geometry", xhr.responseText);
+                pelagosUI.loadingSpinner.hideSpinner();
             }
             else handleError(xhr);
         });
