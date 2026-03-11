@@ -54,18 +54,22 @@ class DIFCrudController extends AbstractCrudController
         $datasetAssociationField = AssociationField::new('dataset')
             ->setLabel('Dataset');
         $researchGroupField = TextField::new('researchGroup')
-            ->setLabel('Research Group');
+            ->setLabel('Research Group')
+            ->hideOnIndex();
         $creatorField = AssociationField::new('creator')
-            ->setLabel('Created By');
+            ->setLabel('Created By')
+            ->hideOnIndex();
         $modifierField = AssociationField::new('modifier')
             ->hideOnIndex()
-            ->setLabel('Modified By');
+            ->setLabel('Modified By')
+            ->hideOnIndex();
         $creationTimestampField = DateField::new('creationTimeStamp')
             ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-            ->setLabel('Creation Timestamp');
+            ->setLabel('Creation Timestamp')
+            ->hideOnIndex();
         $modificationTimestampField = DateField::new('modificationTimeStamp')
             ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-            ->setLabel('Modification Timestamp');
+            ->setLabel('Last Modified At');
         $approvedDateField = DateField::new('approvedDate')
             ->hideOnIndex()
             ->setLabel('Approved Date');
@@ -331,6 +335,11 @@ class DIFCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-eye')
                     ->setLabel('View');
+            })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+                return $action
+                    ->setIcon('fa fa-edit')
+                    ->setLabel('Edit');
             })
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
