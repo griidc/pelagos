@@ -72,6 +72,7 @@ class DIFCrudController extends AbstractCrudController
         $fundersField = Field::new('funders')
             ->hideOnIndex()
             ->setLabel('Funders (hold control to select multiple)')
+            ->setTemplatePath('@EasyAdmin/crud/field/array.html.twig')
             ->setFormType(EntityType::class)
             ->setFormTypeOption('class', Funder::class)
             ->setFormTypeOption('multiple', true)
@@ -84,7 +85,7 @@ class DIFCrudController extends AbstractCrudController
                 'Submitted' => DIF::STATUS_SUBMITTED,
                 'Approved' => DIF::STATUS_APPROVED,
             ])
-            ->setLabel('Status (change via the action buttons on top)');
+            ->setLabel('Status');
         $isLockedField = BooleanField::new('isLocked')
             ->renderAsSwitch(false)
             ->setLabel('Locked');
