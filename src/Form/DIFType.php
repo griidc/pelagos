@@ -337,7 +337,7 @@ class DIFType extends AbstractType
     {
         $researchGroups = [];
         if ($this->authorizationChecker->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findBy([], ['name' => 'ASC']);
+            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findBy(['locked' => false], ['name' => 'ASC']);
         } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
             $person = PersonUtil::getPersonFromUser($this->tokenStorage->getToken()->getUser());
             $researchGroups = $person->getResearchGroups();
