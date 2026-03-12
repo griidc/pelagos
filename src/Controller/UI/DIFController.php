@@ -130,6 +130,10 @@ class DIFController extends AbstractController
                 throw new \Exception('The selected research group is locked and cannot be used. Please select a different research group.');
             }
 
+            if ($dif->getStatus() === DIF::STATUS_SUBMITTED && !$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                throw new \Exception('You do not have permission to save this DIF.');
+            }
+
             if ($dataset->getUdi() === null) {
                 $udiUtil->mintUdi($dataset);
             }
@@ -160,6 +164,7 @@ class DIFController extends AbstractController
             [
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
+                'status' => $dif->getStatus(),
             ]
         );
     }

@@ -1376,7 +1376,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    protected function setStatus(int $status)
+    private function setStatus(int $status)
     {
         $this->status = $status;
         $this->updateIdentifiedStatus();

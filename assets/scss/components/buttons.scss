@@ -39,4 +39,8 @@
   .button-form {
     @apply box-border h-[2.275rem] min-h-[2.275rem] max-h-[2.275rem] py-0;
   }
+
+  .button[disabled] {
+    @apply bg-blue-600 cursor-not-allowed opacity-50;
+  }
 }

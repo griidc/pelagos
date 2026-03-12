@@ -9,9 +9,13 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
+const UNSUBMITTED = '0';
+const SUBMITTED = '1';
+const APPROVED = '2';
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('difForm');
-
+  const status = document.getElementById('status').value;
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
@@ -175,6 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dropdown.appendChild(option);
       });
+      if (status !== UNSUBMITTED) {
+        dropdown.disabled = true;
+      }
     });
   }
 
@@ -237,4 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
       researchGroup.focus();
     });
   });
+
+  if (status !== UNSUBMITTED) {
+    const formFields = form.querySelectorAll('input, select, textarea, button');
+    formFields.forEach((field) => {
+      researchGroupSelect.disable();
+      fundersSelect.disable();
+      field.disabled = true;
+    });
+  }
 });
