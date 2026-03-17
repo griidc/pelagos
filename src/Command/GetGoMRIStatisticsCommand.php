@@ -35,14 +35,6 @@ class GetGoMRIStatisticsCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * Exposes the entity manager to subclasses while keeping encapsulation.
-     */
-    protected function getEntityManager(): EntityManagerInterface
-    {
-        return $this->entityManager;
-    }
-
     protected function configure(): void
     {
     }

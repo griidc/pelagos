@@ -60,10 +60,10 @@ class StatisticsService
      *
      * @throws \Exception If quarter value used other than (1, 2, 3, 4)
      */
-    public function getTopDatasetsDownloadedByYearAndQuarter(int $count, int $year = null, int $quarter = null): array
+    public function getTopDatasetsDownloadedByYearAndQuarter(int $count, ?int $year = null, ?int $quarter = null): array
     {
         if ($quarter !== null && !(in_array($quarter, [1, 2, 3, 4], true))) {
-            throw new \Exception("Bad quarter specified, use 1-4.");
+            throw new \InvalidArgumentException("Bad quarter specified, use 1-4.");
         }
 
         if ($year === null && $quarter !== null) {
