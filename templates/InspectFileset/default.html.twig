@@ -1,0 +1,42 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}Inspect Dataset Fileset{% endblock %}
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('inspect-fileset') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('inspect-fileset') }}
+{% endblock %}
+
+{% block body %}
+    <div class="w-75 mx-auto" style="width:66%">
+        {% for message in app.flashes('error') %}
+            <div class="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-800">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="w-full">
+            <div class="text-3xl font-bold py-8">Initiate Copy of a Fileset to Mimir for Review</div>
+            {{ form_start(form) }}
+            <div class="grid grid-cols-1 gap-4">
+                <div>
+                    {{ form_label(form.datasetUdi, 'Dataset UDI:') }}
+                <div>
+                <div class="w-1/2">
+                    {{ form_widget(form.datasetUdi, {'attr': {'class': 'input-base'}}) }}
+                </div>
+                <div class="py-2">
+                    {{ form_widget(form.submit, {'attr': {'class': 'button button-regular'}}) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

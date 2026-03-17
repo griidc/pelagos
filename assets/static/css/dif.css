@@ -8,6 +8,10 @@ label:not(.button)
     display: block;
 }
 
+.ui-checkboxradio-label {
+    font-weight: normal!important;
+}
+
 .choice-label label {
     font-weight: normal;
     display: inline;
