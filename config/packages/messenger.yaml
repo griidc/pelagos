@@ -55,6 +55,7 @@ when@prod:
             routing:
                 # Slow running Handlers
                 'App\Message\ZipDatasetFiles': async_low
+                'App\Message\ExportFilesetMessage': async_low
 
                 # Normal Handlers
                 'App\Message\DatasetSubmissionFiler': async_normal

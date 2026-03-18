@@ -1,6 +1,6 @@
 {
     "devDependencies": {
-        "@babel/core": "^7.28.6",
+        "@babel/core": "^7.29.0",
         "@babel/preset-env": "7.28.5",
         "@babel/preset-react": "^7.28.5",
         "@fortawesome/fontawesome-free": "^6.7.2",
@@ -45,7 +45,7 @@
         "@headlessui/react": "^2.2.1",
         "@heroicons/react": "^2.2.0",
         "@tailwindcss/typography": "^0.5.19",
-        "alpinejs": "^3.15.4",
+        "alpinejs": "^3.15.8",
         "axios": "^1.13.5",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",
@@ -60,7 +60,7 @@
         "file-saver": "^2.0.5",
         "jquery": "^3.5.1",
         "jquery-migrate": "^3.6.0",
-        "jquery-ui": "^1.13.2",
+        "jquery-ui": "<1.14.0",
         "jquery.cookie": "^1.4.1",
         "leaflet": "^1.9.4",
         "maplibre-gl": "^4.7.1",
