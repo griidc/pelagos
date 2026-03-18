@@ -232,3 +232,8 @@ services:
     App\Twig\Extensions:
         bind:
             array $excludeRoutes: "%env(json:REMOVE_BASE_URL_ROUTES)%"
+
+    App\MessageHandler\ExportFilesetMessageHandler:
+        bind:
+            string $exportPath: '%env(EXPORT_REVIEW_PATH)%'
+            string $datastorePath: '%env(DATA_STORE_DIRECTORY)%'
