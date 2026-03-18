@@ -8,6 +8,7 @@ use App\Entity\Funder;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
 use Doctrine\ORM\EntityManagerInterface;
+use Dom\Text;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -51,27 +52,35 @@ class DIFCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $idField = IdField::new('id');
-        $datasetAssociationField = AssociationField::new('dataset')
-            ->setLabel('Dataset');
+
+        $UdiField = AssociationField::new('dataset')
+            ->setLabel('UDI');
+
         $researchGroupField = TextField::new('researchGroup')
-            ->setLabel('Research Group');
+            ->setLabel('Project Title');
+
         $creatorField = AssociationField::new('creator')
             ->setLabel('Created By');
+
         $modifierField = AssociationField::new('modifier')
             ->hideOnIndex()
             ->setLabel('Modified By');
+
         $creationTimestampField = DateField::new('creationTimeStamp')
             ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
             ->setLabel('Creation Timestamp');
+
         $modificationTimestampField = DateField::new('modificationTimeStamp')
             ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
             ->setLabel('Modification Timestamp');
+
         $approvedDateField = DateField::new('approvedDate')
             ->hideOnIndex()
             ->setLabel('Approved Date');
+
         $fundersField = Field::new('funders')
             ->hideOnIndex()
-            ->setLabel('Funders (hold control to select multiple)')
+            ->setLabel('Funder')
             ->setTemplatePath('@EasyAdmin/crud/field/array.html.twig')
             ->setFormType(EntityType::class)
             ->setFormTypeOption('class', Funder::class)
@@ -79,6 +88,7 @@ class DIFCrudController extends AbstractCrudController
             ->setFormTypeOption('attr', ['size' => 10])
             ->setFormTypeOption('required', false)
             ->setFormTypeOption('by_reference', true);
+
         $statusField = ChoiceField::new('status')
             ->setChoices([
                 'Unsubmitted' => DIF::STATUS_UNSUBMITTED,
@@ -86,13 +96,113 @@ class DIFCrudController extends AbstractCrudController
                 'Approved' => DIF::STATUS_APPROVED,
             ])
             ->setLabel('Status');
+
         $isLockedField = BooleanField::new('isLocked')
             ->renderAsSwitch(false)
             ->setLabel('Locked');
 
+        $primaryPointOfContactField = AssociationField::new('primaryPointOfContact')
+            ->setLabel('Primary Data Point of Contact')
+            ->hideOnIndex();
+
+        $secondaryPointOfContactField = AssociationField::new('secondaryPointOfContact')
+            ->setLabel('Additional Data Point of Contact')
+            ->hideOnIndex();
+
+        $additionalFundersField = TextField::new('additionalFunders')
+            ->hideOnIndex()
+            ->setLabel('Additional Funders');
+
+        $titleField = TextField::new('title')
+            ->setLabel('Dataset Title');
+
+        $abstractField = TextareaField::new('abstract')
+            ->setLabel('Dataset Abstract')
+            ->hideOnIndex();
+
+        $dataSizeField = ChoiceField::new('dataSize')
+            ->setChoices(array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES))
+            ->hideOnIndex()
+            ->setLabel('Approximate Dataset Size');
+
+        $variablesObservedField = TextareaField::new('variablesObserved')
+            ->hideOnIndex()
+            ->setLabel('Data Parameters and Units');
+
+        $estimatedStartDateField = DateField::new('estimatedStartDate')
+            ->hideOnIndex()
+            ->setLabel('Start Date');
+
+        $estimatedEndDateField = DateField::new('estimatedEndDate')
+            ->hideOnIndex()
+            ->setLabel('End Date');
+
+        $spatialExtentDescriptionField = TextareaField::new('spatialExtentDescription')
+            ->hideOnIndex()
+            ->setLabel('Geographic/Study Area Description');
+
+        $nationalDataArchiveNODCField = BooleanField::new('nationalDataArchiveNODC')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('National Data Archive: NODC');
+
+        $nationalDataArchiveStoretField = BooleanField::new('nationalDataArchiveStoret')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('National Data Archive: STORET');
+
+        $nationalDataArchiveGBIFField = BooleanField::new('nationalDataArchiveGBIF')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('National Data Archive: GBIF');
+
+        $nationalDataArchiveNCBIField = BooleanField::new('nationalDataArchiveNCBI')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('National Data Archive: NCBI');
+
+        $nationalDataArchiveDataGovField = BooleanField::new('nationalDataArchiveDataGov')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('National Data Archive: Data.gov');
+
+        $nationalDataArchiveOtherField = TextField::new('nationalDataArchiveOther')
+            ->hideOnIndex()
+            ->setLabel('National Data Archive: Other');
+
+        $ethicalIssuesField = ChoiceField::new('ethicalIssues')
+            ->setChoices([
+                'Yes' => 'Yes',
+                'No' => 'No',
+                'Uncertain' => 'Uncertain',
+            ])
+            ->hideOnIndex()
+            ->setLabel('Ethical Issues');
+
+        $ethicalIssuesExplanationField = TextField::new('ethicalIssuesExplanation')
+            ->hideOnIndex()
+            ->setLabel('Ethical Issues Explanation');
+
+        $remarksField = TextField::new('remarks')
+            ->hideOnIndex()
+            ->setLabel('Remarks');
+
+        $issueTrackingTicketField = TextField::new('issueTrackingTicket')
+            ->setLabel('Issue Tracking Ticket')
+            ->hideOnIndex();
+
+        // left for reference only
+        $spatialExtentGeometryField = CodeEditorField::new('spatialExtentGeometry')
+            ->hideOnIndex()
+            ->hideOnDetail()
+            ->hideOnForm()
+            ->hideLineNumbers()
+            ->setLanguage('xml')
+            ->setLabel('Spatial Extent Geometry');
+
         if (Crud::PAGE_EDIT === $pageName) {
             $idField = $idField->setDisabled();
-            $datasetAssociationField = $datasetAssociationField->setDisabled();
+            $UdiField = $UdiField->setDisabled();
             $statusField = $statusField->setDisabled();
             $isLockedField = $isLockedField->setDisabled();
             $researchGroupField = $researchGroupField->setDisabled();
@@ -105,127 +215,32 @@ class DIFCrudController extends AbstractCrudController
 
         $fields = [
             $idField,
-            $datasetAssociationField,
-            TextField::new('title'),
+            $UdiField,
             $statusField,
             $isLockedField,
             $researchGroupField,
+            $primaryPointOfContactField,
+            $secondaryPointOfContactField,
             $fundersField,
-            TextField::new('additionalFunders')
-                ->hideOnIndex()
-                ->setLabel('Additional Funders'),
-            AssociationField::new('primaryPointOfContact')
-                ->hideOnIndex(),
-            AssociationField::new('secondaryPointOfContact')
-                ->hideOnIndex(),
-            TextareaField::new('abstract')
-                ->hideOnIndex()
-                ->setLabel('Abstract'),
-            BooleanField::new('fieldOfStudyEcologicalBiological')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Ecological/Biological Field of Study'),
-            BooleanField::new('fieldOfStudyPhysicalOceanography')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Physical Oceanography Field of Study'),
-            BooleanField::new('fieldOfStudyAtmospheric')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Atmospheric Field of Study'),
-            BooleanField::new('fieldOfStudyChemical')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Chemical Field of Study'),
-            BooleanField::new('fieldOfStudyHumanHealth')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Human Health Field of Study'),
-            BooleanField::new('fieldOfStudySocialCulturalPolitical')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Social/Cultural/Political Field of Study'),
-            BooleanField::new('fieldOfStudyEconomics')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Economics Field of Study'),
-            TextField::new('fieldOfStudyOther')
-                ->hideOnIndex()
-                ->setLabel('Other Field of Study'),
-            ChoiceField::new('dataSize')
-                ->setChoices(array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES))
-                ->hideOnIndex()
-                ->setLabel('Approximate Dataset Size'),
-            TextareaField::new('variablesObserved')
-                ->hideOnIndex()
-                ->setLabel('Variables Observed'),
-            BooleanField::new('collectionMethodFieldSampling')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Field Sampling'),
-            BooleanField::new('collectionMethodSimulatedGenerated')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Simulated/Generated'),
-            BooleanField::new('collectionMethodRemoteSensing')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Remote Sensing'),
-            TextField::new('collectionMethodOther')
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Other'),
-            DateField::new('estimatedStartDate')
-                ->hideOnIndex()
-                ->setLabel('Estimated Start Date'),
-            DateField::new('estimatedEndDate')
-                ->hideOnIndex()
-                ->setLabel('Estimated End Date'),
-            TextareaField::new('spatialExtentDescription')
-                ->hideOnIndex()
-                ->setLabel('Spatial Extent Description'),
-            CodeEditorField::new('spatialExtentGeometry')
-                ->hideOnIndex()
-                ->hideLineNumbers()
-                ->setLanguage('xml')
-                ->setLabel('Spatial Extent Geometry'),
-            BooleanField::new('nationalDataArchiveNODC')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: NODC'),
-            BooleanField::new('nationalDataArchiveStoret')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: STORET'),
-            BooleanField::new('nationalDataArchiveGBIF')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: GBIF'),
-            BooleanField::new('nationalDataArchiveNCBI')
-                ->renderAsSwitch(false)
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: NCBI'),
-            TextField::new('nationalDataArchiveOther')
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: Other'),
-            ChoiceField::new('ethicalIssues')
-                ->setChoices([
-                    'Yes' => 'Yes',
-                    'No' => 'No',
-                    'Uncertain' => 'Uncertain',
-                ])
-                ->hideOnIndex()
-                ->setLabel('Ethical Issues'),
-            TextField::new('ethicalIssuesExplanation')
-                ->hideOnIndex()
-                ->setLabel('Ethical Issues Explanation'),
-            textfield::new('remarks')
-                ->hideOnIndex()
-                ->setLabel('Remarks'),
+            $additionalFundersField,
+            $titleField,
+            $abstractField,
+            $dataSizeField,
+            $variablesObservedField,
+            $estimatedStartDateField,
+            $estimatedEndDateField,
+            $nationalDataArchiveNODCField,
+            $nationalDataArchiveStoretField,
+            $nationalDataArchiveGBIFField,
+            $nationalDataArchiveNCBIField,
+            $nationalDataArchiveDataGovField,
+            $nationalDataArchiveOtherField,
+            $ethicalIssuesField,
+            $ethicalIssuesExplanationField,
+            $spatialExtentDescriptionField,
+            $remarksField,
+            $issueTrackingTicketField,
             $approvedDateField,
-            CollectionField::new('keywords')
-                ->hideOnIndex()
-                ->hideWhenUpdating()
-                ->setLabel('Keywords'),
             $creatorField,
             $creationTimestampField,
             $modifierField,
