@@ -1,0 +1,180 @@
+<form id="difForm" method="post">
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    <div class="max-w-[85%] mx-auto">
+        {% if udi is defined %}
+             <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
+        <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+            <div>
+                {{ form_row(form.researchGroup) }}
+                {# {{ form_label(form.researchGroup) }} #}
+                {# <select id="{{ form.researchGroup.vars.id }}" name="{{ form.researchGroup.vars.full_name }}" value="{{ form.researchGroup.vars.value }}" placeholder="Select Research Group" required="required"></select> #}
+                {# <div class="text-red-600 text-sm font-semibold">
+                    {{ form_errors(form.researchGroup) }}
+                </div> #}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(form.primaryPointOfContact) }}
+                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                    <div class="text-red-600 text-sm font-semibold">
+                        {{ form_errors(form.primaryPointOfContact) }}
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                </div>
+            </div>
+
+            <div>
+                {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
+            </div>
+
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <div>
+                {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <label class="required">Approximate Dataset Size:</label>
+            <div class="flex w-100 flex-col md:flex-row md:items-center gap-4">
+                {% for key, dataSizeItem in form.dataSize.children %}
+                    <div class="flex items-center me-4">
+                        {{ form_widget(dataSizeItem, { attr: { class: 'radio-base'} }) }}
+                        <span class="pl-2 choice-label">{{ dataSizeItem.vars.label }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div>
+                {{ form_row(form.variablesObserved, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <label>Estimated Data Sampling/Generation Period</label>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-format': 'yyyy-mm-dd'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-format': 'yyyy-mm-dd'} }) }}
+                </div>
+            </div>
+
+            <label>Identify a National Data Archive for your Dataset, if applicable</label>
+            <div>
+                <div>
+                    {{ form_widget(form.nationalDataArchiveNODC, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveNODC, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveStoret, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveStoret, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveGBIF, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveGBIF, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveNCBI, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveNCBI, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveDataGov, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveDataGov, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div class="grid-col-span-2 pt-2">
+                    {{ form_label(form.nationalDataArchiveOther, null, { label_attr: { class: 'choice-label'} }) }}
+                    {{ form_widget(form.nationalDataArchiveOther, { attr: { class: 'input-base'} }) }}
+                </div>
+            </div>
+
+            <div>
+                <div class="choice-label">
+                    <label>Will this dataset include any data governed under the Institutional Review
+                            Board (IRB) or Health Insurance Portability and Accountability Act of 1996 (HIPAA), or data
+                            with other ethical issues?
+                    </label>
+                    <div class="">
+                    {% for key, ethicalIssuesItem in form.ethicalIssues.children %}
+                        <div class="me-4">
+                            {{ form_widget(ethicalIssuesItem, { attr: { class: 'radio-base'} }) }}
+                            {{ form_label(ethicalIssuesItem, null, { label_attr: { class: 'choice-label'} }) }}
+                        </div>
+                    {% endfor %}
+                    </div>
+
+                    <div class="">
+                        <div class="me-4 pt-2">
+                            {{ form_label(form.ethicalIssuesExplanation, null, { label_attr: { class: 'choice-label'} }) }}
+                            {{ form_widget(form.ethicalIssuesExplanation, { attr: { class: 'input-base'} }) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="keywords">
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <label>Geographic/Study Area:</label>
+            <div class="grid-col-span-2">
+                {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div class="grid-col-span-2">
+                {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
+            </div>
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
+            <div>
+                {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+            <div>
+                {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-3 gap-4" id="submit">
+                <div>
+                    {# <button class="button button-regular" name="save" type="submit">Save and Continue Later</button> #}
+                    {{ form_row(form.saveAndContinue, { attr: { class: 'button button-regular button-griidc-form w-full justify-center'} }) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.saveAndSubmit, { attr: { class: 'button button-regular button-griidc-form w-full justify-center', formnovalidate: 'formnovalidate' } }) }}
+                    {# <button type="submit" name="saveAndSubmit"class="button button-regular" formnovalidate="formnovalidate">Submit to GRIIDC</button> #}
+                </div>
+
+                <div>
+                    <button type="reset" class="button button-regular button-griidc-form w-full justify-center">Reset Form</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

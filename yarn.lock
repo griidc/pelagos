@@ -1874,6 +1874,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@orchidjs/sifter@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@orchidjs/sifter@npm:1.1.0"
+  dependencies:
+    "@orchidjs/unicode-variants": "npm:^1.1.2"
+  checksum: 10c0/615f4c8f340c062d1a944ae88d7d745353e45d14d002c6966bc02ef44aca13c904942836f9ad89cbe2b5d8fa3b885c2b00b65be8d318cabc75f440949068ed6a
+  languageName: node
+  linkType: hard
+
+"@orchidjs/unicode-variants@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@orchidjs/unicode-variants@npm:1.1.2"
+  checksum: 10c0/7836e0766641d79a0337a2a8ca7f49051bb71e19e0e8fc64cdbafac4f2f718abd368b364ad79a9b13547a70e24cebb3cc4d71e75f22791ade8ba80654eb1323f
+  languageName: node
+  linkType: hard
+
 "@popperjs/core@npm:^2.9.0":
   version: 2.11.8
   resolution: "@popperjs/core@npm:2.11.8"
@@ -9722,6 +9738,7 @@ __metadata:
     spin.js: "npm:^4.1.2"
     tailwindcss: "npm:^3.4.3"
     tippy.js: "npm:^6.3.7"
+    tom-select: "npm:^2.4.3"
     v-tooltip: "npm:^2.0.3"
     vex-js: "npm:^4.1.0"
     vue: "npm:^2.6.11"
@@ -10896,6 +10913,16 @@ __metadata:
   version: 1.0.1
   resolution: "toidentifier@npm:1.0.1"
   checksum: 10c0/93937279934bd66cc3270016dd8d0afec14fb7c94a05c72dc57321f8bd1fa97e5bea6d1f7c89e728d077ca31ea125b78320a616a6c6cd0e6b9cb94cb864381c1
+  languageName: node
+  linkType: hard
+
+"tom-select@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "tom-select@npm:2.4.3"
+  dependencies:
+    "@orchidjs/sifter": "npm:^1.1.0"
+    "@orchidjs/unicode-variants": "npm:^1.1.2"
+  checksum: 10c0/0567c48e31d954227ac88f53586b61f784338d97f00115c17e5fc3606552e117bdd4d53e4fa912736569daada938ef7e72092ae16d22420eab0d1bb3472b62ea
   languageName: node
   linkType: hard
 
