@@ -23,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -191,7 +192,8 @@ class DIFCrudController extends AbstractCrudController
             ->setLabel('Issue Tracking Ticket')
             ->hideOnIndex();
 
-        // left for reference only
+        // left for reference only as this will be used again when spatial extent geometry support is added back in the future
+        /*
         $spatialExtentGeometryField = CodeEditorField::new('spatialExtentGeometry')
             ->hideOnIndex()
             ->hideOnDetail()
@@ -199,6 +201,7 @@ class DIFCrudController extends AbstractCrudController
             ->hideLineNumbers()
             ->setLanguage('xml')
             ->setLabel('Spatial Extent Geometry');
+        */
 
         if (Crud::PAGE_EDIT === $pageName) {
             $idField = $idField->setDisabled();
@@ -213,39 +216,84 @@ class DIFCrudController extends AbstractCrudController
             $approvedDateField = $approvedDateField->setDisabled();
         }
 
-        $fields = [
-            $idField,
-            $UdiField,
-            $statusField,
-            $isLockedField,
-            $researchGroupField,
-            $primaryPointOfContactField,
-            $secondaryPointOfContactField,
-            $fundersField,
-            $additionalFundersField,
-            $titleField,
-            $abstractField,
-            $dataSizeField,
-            $variablesObservedField,
-            $estimatedStartDateField,
-            $estimatedEndDateField,
-            $nationalDataArchiveNODCField,
-            $nationalDataArchiveStoretField,
-            $nationalDataArchiveGBIFField,
-            $nationalDataArchiveNCBIField,
-            $nationalDataArchiveDataGovField,
-            $nationalDataArchiveOtherField,
-            $ethicalIssuesField,
-            $ethicalIssuesExplanationField,
-            $spatialExtentDescriptionField,
-            $remarksField,
-            $issueTrackingTicketField,
-            $approvedDateField,
-            $creatorField,
-            $creationTimestampField,
-            $modifierField,
-            $modificationTimestampField,
-        ];
+        if (in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_DETAIL], true)) {
+            $fields = [
+                FormField::addFieldset('Dataset Identification &amp; Status'),
+                $idField,
+                $UdiField,
+                $statusField,
+                $isLockedField,
+
+                FormField::addFieldset('Dataset Contact'),
+                $researchGroupField,
+                $primaryPointOfContactField,
+                $secondaryPointOfContactField,
+                $fundersField,
+                $additionalFundersField,
+
+                FormField::addFieldset('Dataset Information'),
+                $titleField,
+                $abstractField,
+                $dataSizeField,
+                $variablesObservedField,
+                $estimatedStartDateField,
+                $estimatedEndDateField,
+                $nationalDataArchiveNODCField,
+                $nationalDataArchiveStoretField,
+                $nationalDataArchiveGBIFField,
+                $nationalDataArchiveNCBIField,
+                $nationalDataArchiveDataGovField,
+                $nationalDataArchiveOtherField,
+                $ethicalIssuesField,
+                $ethicalIssuesExplanationField,
+
+                FormField::addFieldset('Dataset Extent'),
+                $spatialExtentDescriptionField,
+
+                FormField::addFieldset('DIF Curation Information'),
+                $remarksField,
+                $issueTrackingTicketField,
+                $approvedDateField,
+                $creatorField,
+                $creationTimestampField,
+                $modifierField,
+                $modificationTimestampField,
+            ];
+        } else {
+            $fields = [
+                $idField,
+                $UdiField,
+                $statusField,
+                $isLockedField,
+                $researchGroupField,
+                $primaryPointOfContactField,
+                $secondaryPointOfContactField,
+                $fundersField,
+                $additionalFundersField,
+                $titleField,
+                $abstractField,
+                $dataSizeField,
+                $variablesObservedField,
+                $estimatedStartDateField,
+                $estimatedEndDateField,
+                $nationalDataArchiveNODCField,
+                $nationalDataArchiveStoretField,
+                $nationalDataArchiveGBIFField,
+                $nationalDataArchiveNCBIField,
+                $nationalDataArchiveDataGovField,
+                $nationalDataArchiveOtherField,
+                $ethicalIssuesField,
+                $ethicalIssuesExplanationField,
+                $spatialExtentDescriptionField,
+                $remarksField,
+                $issueTrackingTicketField,
+                $approvedDateField,
+                $creatorField,
+                $creationTimestampField,
+                $modifierField,
+                $modificationTimestampField,
+            ];
+        }
 
         if (Crud::PAGE_EDIT === $pageName) {
             foreach ($fields as $field) {
