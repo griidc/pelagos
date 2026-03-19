@@ -8,7 +8,6 @@ use App\Entity\Funder;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
 use Doctrine\ORM\EntityManagerInterface;
-use Dom\Text;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -19,8 +18,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
@@ -55,6 +52,9 @@ class DIFCrudController extends AbstractCrudController
         $idField = IdField::new('id');
 
         $UdiField = AssociationField::new('dataset')
+            ->setLabel('UDI');
+
+        $UdiIndexField = TextField::new('dataset.udi')
             ->setLabel('UDI');
 
         $researchGroupField = TextField::new('researchGroup')
@@ -216,11 +216,13 @@ class DIFCrudController extends AbstractCrudController
             $approvedDateField = $approvedDateField->setDisabled();
         }
 
+        $udiEditOrDetailField = Crud::PAGE_DETAIL === $pageName ? $UdiIndexField : $UdiField;
+
         if (in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_DETAIL], true)) {
             $fields = [
                 FormField::addFieldset('Dataset Identification &amp; Status'),
                 $idField,
-                $UdiField,
+                $udiEditOrDetailField,
                 $statusField,
                 $isLockedField,
 
@@ -262,7 +264,7 @@ class DIFCrudController extends AbstractCrudController
         } else {
             $fields = [
                 $idField,
-                $UdiField,
+                $UdiIndexField,
                 $statusField,
                 $isLockedField,
                 $researchGroupField,
@@ -365,7 +367,7 @@ class DIFCrudController extends AbstractCrudController
             ->createAsGlobalAction();
 
         $approveDifAction = Action::new('approveDif')
-            ->setLabel('Approve DIF')
+            ->setLabel('Approve')
             ->setIcon('fa fa-check')
             ->linkToCrudAction('approveDif')
             ->addCssClass('btn btn-secondary');
@@ -377,7 +379,7 @@ class DIFCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         $unlockDifAction = Action::new('unlockDif')
-            ->setLabel('Unlock DIF')
+            ->setLabel('Unlock')
             ->setIcon('fa fa-unlock')
             ->linkToCrudAction('unlockDif')
             ->addCssClass('btn btn-secondary');
@@ -430,6 +432,16 @@ class DIFCrudController extends AbstractCrudController
                 $dif->unlock();
             },
             'DIF unlocked.'
+        );
+    }
+
+    public function export(AdminContext $context): RedirectResponse
+    {
+        return $this->runDifTransition(
+            $context,
+            static function (): void {
+            },
+            'DIF exported stub - export functionality not yet implemented.'
         );
     }
 
