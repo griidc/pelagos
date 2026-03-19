@@ -79,6 +79,23 @@ class DIFController extends AbstractController
         );
     }
 
+    #[Route(path: '/difok')]
+    public function confirmTest(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $udi = $request->query->get('udi');
+        if ($udi !== null && $udi !== '') {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (!$dataset) {
+                // add to flash bag errror message about dataset not found
+                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+            }
+        }
+
+        return $this->render('DIF/dif-confirmation.html.twig', [
+            'dataset' => $dataset ?? null,
+        ]);
+    }
+
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
@@ -131,7 +148,11 @@ class DIFController extends AbstractController
 
             $this->addFlash('success', 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi());
 
-            return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
+            return $this->render('DIF/dif-confirmation.html.twig', [
+                'dataset' => $dataset,
+            ]);
+
+            // return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
         }
 
         return $this->render(
