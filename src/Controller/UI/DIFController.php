@@ -79,6 +79,23 @@ class DIFController extends AbstractController
         );
     }
 
+    #[Route(path: '/difok')]
+    public function confirmTest(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $udi = $request->query->get('udi');
+        if ($udi !== null && $udi !== '') {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (!$dataset) {
+                // add to flash bag errror message about dataset not found
+                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+            }
+        }
+
+        return $this->render('DIF/dif-confirmation.html.twig', [
+            'dataset' => $dataset ?? null,
+        ]);
+    }
+
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
@@ -113,13 +130,18 @@ class DIFController extends AbstractController
                 throw new \Exception('The selected research group is locked and cannot be used. Please select a different research group.');
             }
 
+            if ($dif->getStatus() === DIF::STATUS_SUBMITTED && !$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                throw new \Exception('You do not have permission to save this DIF.');
+            }
+
             if ($dataset->getUdi() === null) {
                 $udiUtil->mintUdi($dataset);
             }
 
             /** @var SubmitButton $saveAndSubmit */
             $saveAndSubmit = $form->get('saveAndSubmit');
-            if ($saveAndSubmit->isClicked()) {
+            $extraData = $form->getExtraData();
+            if ((isset($extraData['submitAction']) && $extraData['submitAction'] === 'saveAndSubmit') || $saveAndSubmit->isClicked()) {
                 $dif->submit();
             }
 
@@ -130,7 +152,11 @@ class DIFController extends AbstractController
 
             $this->addFlash('success', 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi());
 
-            return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
+            return $this->render('DIF/dif-confirmation.html.twig', [
+                'dataset' => $dataset,
+            ]);
+
+            // return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
         }
 
         return $this->render(
@@ -138,6 +164,7 @@ class DIFController extends AbstractController
             [
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
+                'status' => $dif->getStatus(),
             ]
         );
     }

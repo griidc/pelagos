@@ -1376,7 +1376,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    protected function setStatus(int $status)
+    private function setStatus(int $status)
     {
         $this->status = $status;
         $this->updateIdentifiedStatus();
@@ -1451,7 +1451,7 @@ class DIF extends Entity
     /**
      * Set the funders for this DIF.
      */
-    public function setFunders ($funders): self
+    public function setFunders(Collection $funders): self
     {
         $dataset = $this->getDataset();
         if ($dataset instanceof Dataset) {
