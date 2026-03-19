@@ -42,11 +42,13 @@ class DIFCrudController extends AbstractCrudController
     {
     }
 
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return DIF::class;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $idField = IdField::new('id');
@@ -346,6 +348,7 @@ class DIFCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
@@ -373,8 +376,8 @@ class DIFCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         $submitDifAction = Action::new('submitDif')
-            ->setLabel('Unsubmitted -> Submitted')
-            ->setIcon('fa fa-lock')
+            ->setLabel('Submit')
+            ->setIcon('fa fa-arrow-up')
             ->linkToCrudAction('submitDif')
             ->addCssClass('btn btn-secondary');
 
@@ -389,6 +392,13 @@ class DIFCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $submitDifAction)
             ->add(Crud::PAGE_EDIT, $approveDifAction)
             ->add(Crud::PAGE_EDIT, $unlockDifAction)
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static function (Action $action): Action {
+                return $action
+                    ->setLabel('Save Changes')
+                    ->setIcon('fa fa-save')
+                    ->addCssClass('btn btn-secondary');
+            })
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
@@ -405,43 +415,43 @@ class DIFCrudController extends AbstractCrudController
     public function submitDif(AdminContext $context): RedirectResponse
     {
         return $this->runDifTransition(
-            $context,
-            static function (DIF $dif): void {
+            context: $context,
+            transition: static function (DIF $dif): void {
                 $dif->submit();
             },
-            'DIF submitted.'
+            successMessage: 'DIF submitted.',
         );
     }
 
     public function approveDif(AdminContext $context): RedirectResponse
     {
         return $this->runDifTransition(
-            $context,
-            static function (DIF $dif): void {
+            context: $context,
+            transition: static function (DIF $dif): void {
                 $dif->approve();
             },
-            'DIF approved.'
+            successMessage: 'DIF approved.',
         );
     }
 
     public function unlockDif(AdminContext $context): RedirectResponse
     {
         return $this->runDifTransition(
-            $context,
-            static function (DIF $dif): void {
+            context: $context,
+            transition: static function (DIF $dif): void {
                 $dif->unlock();
             },
-            'DIF unlocked.'
+            successMessage: 'DIF unlocked.',
         );
     }
 
     public function export(AdminContext $context): RedirectResponse
     {
         return $this->runDifTransition(
-            $context,
-            static function (): void {
+            context: $context,
+            transition: static function (): void {
             },
-            'DIF exported stub - export functionality not yet implemented.'
+            successMessage: 'DIF exported stub - export functionality not yet implemented.',
         );
     }
 
