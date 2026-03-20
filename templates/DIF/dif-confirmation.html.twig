@@ -25,14 +25,27 @@
             <section class="bg-white py-8 antialiased md:py-16">
             <div class="mx-auto max-w-2xl px-4 2xl:px-0">
                 <h2 class="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
+                {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
                     Congratulations!
+                {% else %}
+                    Success!
+                {% endif %}
                 </h2>
                 <p class="text-gray-500 mb-6 md:mb-8">
+                {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
                     You have successfully identified a dataset in GRIIDC. The GRIIDC identifier for this dataset is
+                {% else %}
+                    You have saved an identified dataset. The GRIIDC identifier is
+                {% endif %}
                     <a href="{{ url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) }}" class="pagelink">{{ dataset.udi }}</a>. A confirmation email has been sent to your inbox.
                 </p>
                 <p class="text-gray-500 mb-6 md:mb-8">
-                    <span class="font-semibold">Next steps:</span> GRIIDC will review the information and contact you with any questions.
+                    <span class="font-semibold">Next steps:</span>
+                {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
+                    GRIIDC will review the information and contact you with any questions.
+                {% else %}
+                    Submit the identified dataset located on the <a href="{{ url('app_ui_dashboard') }}" class="pagelink">Dashboard page</a>.
+                {% endif %}
                 </p>
                 <div class="space-y-4 sm:space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-6 mb-6 md:mb-8">
                     <dl class="sm:flex items-center justify-left gap-2">
