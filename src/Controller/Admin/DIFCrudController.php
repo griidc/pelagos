@@ -59,6 +59,10 @@ class DIFCrudController extends AbstractCrudController
         $UdiIndexField = TextField::new('dataset.udi')
             ->setLabel('UDI');
 
+        $UdiEditField = TextField::new('dataset.udi')
+            ->setLabel('UDI')
+            ->setFormTypeOption('attr', ['readonly' => true]);
+
         $researchGroupField = TextField::new('researchGroup')
             ->setLabel('Project Title');
 
@@ -207,7 +211,6 @@ class DIFCrudController extends AbstractCrudController
 
         if (Crud::PAGE_EDIT === $pageName) {
             $idField = $idField->setDisabled();
-            $UdiField = $UdiField->setDisabled();
             $statusField = $statusField->setDisabled();
             $isLockedField = $isLockedField->setDisabled();
             $researchGroupField = $researchGroupField->setDisabled();
@@ -218,7 +221,7 @@ class DIFCrudController extends AbstractCrudController
             $approvedDateField = $approvedDateField->setDisabled();
         }
 
-        $udiEditOrDetailField = Crud::PAGE_DETAIL === $pageName ? $UdiIndexField : $UdiField;
+        $udiEditOrDetailField = Crud::PAGE_EDIT === $pageName ? $UdiEditField : $UdiIndexField;
 
         if (in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_DETAIL], true)) {
             $fields = [
