@@ -50,7 +50,7 @@
         "symfony/ldap": "7.4.*",
         "symfony/mailer": "7.4.*",
         "symfony/maker-bundle": "^1.13",
-        "symfony/messenger": "7.4.*",
+        "symfony/messenger": "8.0.*",
         "symfony/monolog-bundle": "^3.0",
         "symfony/runtime": "7.4.*",
         "symfony/security-bundle": "7.4.*",
