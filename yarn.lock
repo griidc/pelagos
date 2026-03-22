@@ -3613,7 +3613,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baseline-browser-mapping@npm:^2.9.0, baseline-browser-mapping@npm:^2.9.5":
+"baseline-browser-mapping@npm:^2.10.10":
+  version: 2.10.10
+  resolution: "baseline-browser-mapping@npm:2.10.10"
+  bin:
+    baseline-browser-mapping: dist/cli.cjs
+  checksum: 10c0/39dee9d955a5e017852f338cb9057feee8d938c82f217d63158f04ccdbbc1c19e80bbed8d15223e3d410ee8b3703829d41fd7eb345e6e44230034ea9adaf8a1d
+  languageName: node
+  linkType: hard
+
+"baseline-browser-mapping@npm:^2.9.0":
   version: 2.9.5
   resolution: "baseline-browser-mapping@npm:2.9.5"
   bin:
@@ -9685,7 +9694,7 @@ __metadata:
     alpinejs: "npm:^3.15.8"
     autoprefixer: "npm:^10.4.24"
     axios: "npm:^1.13.5"
-    baseline-browser-mapping: "npm:^2.9.5"
+    baseline-browser-mapping: "npm:^2.10.10"
     bootstrap: "npm:^4.4.1"
     bootstrap-vue: "npm:^2.5.0"
     clsx: "npm:^2.1.1"
