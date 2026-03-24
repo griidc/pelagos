@@ -151,31 +151,31 @@ class DIFCrudController extends AbstractCrudController
         $nationalDataArchiveNODCField = BooleanField::new('nationalDataArchiveNODC')
             ->renderAsSwitch(false)
             ->hideOnIndex()
-            ->setLabel('National Data Archive: NODC');
+            ->setLabel('NODC');
 
         $nationalDataArchiveStoretField = BooleanField::new('nationalDataArchiveStoret')
             ->renderAsSwitch(false)
             ->hideOnIndex()
-            ->setLabel('National Data Archive: STORET');
+            ->setLabel('STORET');
 
         $nationalDataArchiveGBIFField = BooleanField::new('nationalDataArchiveGBIF')
             ->renderAsSwitch(false)
             ->hideOnIndex()
-            ->setLabel('National Data Archive: GBIF');
+            ->setLabel('GBIF');
 
         $nationalDataArchiveNCBIField = BooleanField::new('nationalDataArchiveNCBI')
             ->renderAsSwitch(false)
             ->hideOnIndex()
-            ->setLabel('National Data Archive: NCBI');
+            ->setLabel('NCBI');
 
         $nationalDataArchiveDataGovField = BooleanField::new('nationalDataArchiveDataGov')
             ->renderAsSwitch(false)
             ->hideOnIndex()
-            ->setLabel('National Data Archive: Data.gov');
+            ->setLabel('Data.gov');
 
         $nationalDataArchiveOtherField = TextField::new('nationalDataArchiveOther')
             ->hideOnIndex()
-            ->setLabel('National Data Archive: Other');
+            ->setLabel('Other');
 
         $ethicalIssuesField = ChoiceField::new('ethicalIssues')
             ->setChoices([
@@ -245,14 +245,16 @@ class DIFCrudController extends AbstractCrudController
                 $variablesObservedField,
                 $estimatedStartDateField,
                 $estimatedEndDateField,
+                $ethicalIssuesField,
+                $ethicalIssuesExplanationField,
+
+                FormField::addFieldset('National Datacenter'),
                 $nationalDataArchiveNODCField,
                 $nationalDataArchiveStoretField,
                 $nationalDataArchiveGBIFField,
                 $nationalDataArchiveNCBIField,
                 $nationalDataArchiveDataGovField,
                 $nationalDataArchiveOtherField,
-                $ethicalIssuesField,
-                $ethicalIssuesExplanationField,
 
                 FormField::addFieldset('Dataset Extent'),
                 $spatialExtentDescriptionField,
@@ -314,18 +316,6 @@ class DIFCrudController extends AbstractCrudController
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if (!$entityInstance instanceof DIF) {
-            parent::updateEntity($entityManager, $entityInstance);
-
-            return;
-        }
-
-        if ($entityInstance->isSubmittable()) {
-            $entityInstance->submit();
-        } elseif ($entityInstance->isApprovable()) {
-            $entityInstance->approve();
-        }
-
         parent::updateEntity($entityManager, $entityInstance);
     }
 
@@ -355,6 +345,7 @@ class DIFCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setSearchFields(['dataset.udi', 'title', 'dataset.title'])
             ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('DIFs')
             ->setEntityLabelInSingular('DIF')
