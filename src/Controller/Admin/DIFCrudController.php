@@ -324,6 +324,34 @@ class DIFCrudController extends AbstractCrudController
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         parent::updateEntity($entityManager, $entityInstance);
+
+        if (!$entityInstance instanceof DIF) {
+            return;
+        }
+
+        $transition = $this->getContext()?->getRequest()->request->get('dif_transition');
+
+        if (!is_string($transition) || '' === $transition) {
+            $this->addFlash('success', 'DIF changes saved.');
+            return;
+        }
+
+        try {
+            match ($transition) {
+                'submit' => $entityInstance->submit(),
+                'approve' => $entityInstance->approve(),
+                'unlock' => $entityInstance->unlock(),
+                default => null,
+            };
+
+            $entityManager->flush();
+
+            if (in_array($transition, ['submit', 'approve', 'unlock'], true)) {
+                $this->addFlash('success', sprintf('DIF %sed.', $transition));
+            }
+        } catch (\Throwable $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
     }
 
     #[\Override]
@@ -382,6 +410,7 @@ class DIFCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('DIFs')
             ->setEntityLabelInSingular('DIF')
             ->setPageTitle(Crud::PAGE_INDEX, 'DIFs')
+            ->overrideTemplate('crud/edit', 'Admin/crud/dif_edit.html.twig')
             ->showEntityActionsInlined()
         ;
     }
@@ -415,9 +444,6 @@ class DIFCrudController extends AbstractCrudController
 
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $exportAction)
-            ->add(Crud::PAGE_EDIT, $submitDifAction)
-            ->add(Crud::PAGE_EDIT, $approveDifAction)
-            ->add(Crud::PAGE_EDIT, $unlockDifAction)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static function (Action $action): Action {
                 return $action
@@ -488,6 +514,7 @@ class DIFCrudController extends AbstractCrudController
     {
         /** @var DIF $dif */
         $dif = $context->getEntity()->getInstance();
+        $request = $context->getRequest();
 
         try {
             $transition($dif);
@@ -496,8 +523,6 @@ class DIFCrudController extends AbstractCrudController
         } catch (\Throwable $e) {
             $this->addFlash('danger', $e->getMessage());
         }
-
-        $request = $context->getRequest();
         $redirectUrl = $context->getReferrer() ?? $request->headers->get('referer') ?? $request->getUri();
 
         return $this->redirect($redirectUrl);
