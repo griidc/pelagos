@@ -95,8 +95,9 @@ class DIFCrudController extends AbstractCrudController
             ->setTemplatePath('@EasyAdmin/crud/field/array.html.twig')
             ->setFormType(EntityType::class)
             ->setFormTypeOption('class', Funder::class)
+            ->setFormTypeOption('choice_label', 'name')
             ->setFormTypeOption('multiple', true)
-            ->setFormTypeOption('attr', ['size' => 10])
+            ->setFormTypeOption('attr', ['data-ea-widget' => 'ea-autocomplete'])
             ->setFormTypeOption('required', false)
             ->setFormTypeOption('by_reference', true);
 
@@ -348,7 +349,7 @@ class DIFCrudController extends AbstractCrudController
     }
 
     /**
-     * Restrict point-of-contact choices to people in the DIF's research group.
+     * Restrict point-of-contact to those in the DIF's research group.
      */
     private function createPointOfContactQueryBuilder(?DIF $dif): ?callable
     {
