@@ -56,6 +56,7 @@ Encore
   .addEntry('map-search', './assets/js/entry/map-search.js')
   .addEntry('dif', './assets/js/entry/dif.js')
   .addEntry('dashboard', './assets/js/entry/dashboard.js')
+  .addEntry('inspect-fileset', './assets/js/entry/inspect-fileset.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
