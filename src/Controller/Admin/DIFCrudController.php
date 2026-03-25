@@ -7,6 +7,7 @@ use App\Entity\DIF;
 use App\Entity\Funder;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
+use App\Repository\PersonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -51,6 +52,9 @@ class DIFCrudController extends AbstractCrudController
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        /** @var DIF|null $dif */
+        $dif = $this->getContext()?->getEntity()->getInstance();
+
         $idField = IdField::new('id');
 
         $UdiField = AssociationField::new('dataset')
@@ -110,10 +114,12 @@ class DIFCrudController extends AbstractCrudController
 
         $primaryPointOfContactField = AssociationField::new('primaryPointOfContact')
             ->setLabel('Primary Data Point of Contact')
+            ->setFormTypeOption('query_builder', $this->createPointOfContactQueryBuilder($dif))
             ->hideOnIndex();
 
         $secondaryPointOfContactField = AssociationField::new('secondaryPointOfContact')
             ->setLabel('Additional Data Point of Contact')
+            ->setFormTypeOption('query_builder', $this->createPointOfContactQueryBuilder($dif))
             ->hideOnIndex();
 
         $additionalFundersField = TextField::new('additionalFunders')
@@ -339,6 +345,31 @@ class DIFCrudController extends AbstractCrudController
             ->add('creationTimeStamp')
             ->add('modificationTimeStamp')
         ;
+    }
+
+    /**
+     * Restrict point-of-contact choices to people in the DIF's research group.
+     */
+    private function createPointOfContactQueryBuilder(?DIF $dif): ?callable
+    {
+        $researchGroup = $dif?->getDataset()?->getResearchGroup();
+
+        if (null === $researchGroup) {
+            return null;
+        }
+
+        $researchGroupId = $researchGroup->getId();
+
+        return static function (PersonRepository $personRepository) use ($researchGroupId) {
+            return $personRepository->createQueryBuilder('entity')
+                ->innerJoin('entity.personResearchGroups', 'personResearchGroup')
+                ->innerJoin('personResearchGroup.researchGroup', 'researchGroup')
+                ->andWhere('researchGroup.id = :researchGroupId')
+                ->setParameter('researchGroupId', $researchGroupId)
+                ->orderBy('entity.lastName', 'ASC')
+                ->addOrderBy('entity.firstName', 'ASC')
+            ;
+        };
     }
 
     #[\Override]
