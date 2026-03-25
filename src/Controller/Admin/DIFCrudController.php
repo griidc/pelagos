@@ -332,6 +332,7 @@ class DIFCrudController extends AbstractCrudController
         $transition = $this->getContext()?->getRequest()->request->get('dif_transition');
 
         if (!is_string($transition) || '' === $transition) {
+            $this->addFlash('success', 'DIF changes saved.');
             return;
         }
 
