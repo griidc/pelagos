@@ -1,6 +1,11 @@
 <form id="difForm" method="post">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
+        <div class="p-4">
+            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
+            In this step you will identify the dataset by selecting the project title from the drop-down menu.
+            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
+        </div>
         {% if udi is not empty %}
              <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
         {% endif %}
@@ -161,6 +166,7 @@
             {% endif %}
 
             <input type="hidden" name="submitAction" id="submitAction"/>
+            <input type="hidden" name="status" id="status" value="{{ status }}"/>
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
