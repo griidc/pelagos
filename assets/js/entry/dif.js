@@ -9,11 +9,20 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
+// import * as GeoViz from '../modules/geoViz-leaflet';
+
+import GeoViz from '../modules/geoViz';
+
 const UNSUBMITTED = '0';
 const SUBMITTED = '1';
 const APPROVED = '2';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
+    // options can be added here in the future if needed
+  });
+
   const form = document.getElementById('difForm');
   const status = document.getElementById('status').value;
   const funders = document.getElementById('funders');
@@ -253,4 +262,22 @@ document.addEventListener('DOMContentLoaded', () => {
       field.disabled = true;
     });
   }
+
+  geoViz.on('geojsonupdated', (e) => {
+    const url = Routing.generate('pelagos_app_geojson_to_gml');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        geometry: e.geojson.geometry
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const gmlOutput = json.gml;
+        document.getElementById('spatialExtentGeometry').value = gmlOutput;
+      });
+  });
 });

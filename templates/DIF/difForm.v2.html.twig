@@ -144,8 +144,10 @@
         <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
             <label>Geographic/Study Area:</label>
+
             <div class="grid-col-span-2">
                 {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
+                {% include 'DIF/spatial.html.twig' %}
             </div>
 
             <div class="grid-col-span-2">
