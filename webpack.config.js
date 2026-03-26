@@ -57,6 +57,8 @@ Encore
   .addEntry('dif', './assets/js/entry/dif.js')
   .addEntry('dashboard', './assets/js/entry/dashboard.js')
   .addEntry('inspect-fileset', './assets/js/entry/inspect-fileset.js')
+  .addEntry('ezadmin-dif-spatial-extent-map', './assets/js/entry/ezadmin-dif-spatial-extent-map.js')
+  .addEntry('ezadmin-dif-spatial-extent-map-detail', './assets/js/entry/ezadmin-dif-spatial-extent-map-detail.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()

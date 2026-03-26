@@ -1,5 +1,54 @@
 {% extends '@EasyAdmin/crud/edit.html.twig' %}
 
+{% block configured_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .ea-dif-geometry-map-wrapper {
+            border: 1px solid #cfd4da;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            background: #fff;
+        }
+
+        .ea-dif-geometry-map-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .ea-dif-geometry-map {
+            width: 100%;
+            min-height: 360px;
+            height: 420px;
+            border: 1px solid #d9dee3;
+            border-radius: 4px;
+        }
+
+        .ea-dif-geometry-map-help {
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+            color: #5f6b7a;
+            font-size: 0.9rem;
+        }
+
+        .ea-dif-geometry-map-status {
+            margin-top: 0.4rem;
+            min-height: 1.2rem;
+            font-size: 0.86rem;
+        }
+
+        .ea-dif-geometry-map-status.is-error {
+            color: #b02a37;
+        }
+
+        .ea-dif-geometry-map-status.is-ok {
+            color: #146c43;
+        }
+    </style>
+{% endblock %}
+
 {% block page_actions %}
     {{ parent() }}
 
@@ -26,4 +75,11 @@
             value="unlock">
         <i class="fa fa-unlock"></i> Unlock
     </button>
+{% endblock %}
+
+{% block configured_javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {{ encore_entry_script_tags('ezadmin-dif-spatial-extent-map') }}
 {% endblock %}

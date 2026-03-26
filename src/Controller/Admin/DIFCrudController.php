@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
@@ -205,16 +206,11 @@ class DIFCrudController extends AbstractCrudController
             ->setLabel('Issue Tracking Ticket')
             ->hideOnIndex();
 
-        // left for reference only as this will be used again when spatial extent geometry support is added back in the future
-        /*
         $spatialExtentGeometryField = CodeEditorField::new('spatialExtentGeometry')
             ->hideOnIndex()
-            ->hideOnDetail()
-            ->hideOnForm()
             ->hideLineNumbers()
             ->setLanguage('xml')
             ->setLabel('Spatial Extent Geometry');
-        */
 
         if (Crud::PAGE_EDIT === $pageName) {
             $idField = $idField->setDisabled();
@@ -265,6 +261,7 @@ class DIFCrudController extends AbstractCrudController
 
                 FormField::addFieldset('Dataset Extent'),
                 $spatialExtentDescriptionField,
+                $spatialExtentGeometryField,
 
                 FormField::addFieldset('DIF Curation Information'),
                 $remarksField,
@@ -411,6 +408,7 @@ class DIFCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('DIF')
             ->setPageTitle(Crud::PAGE_INDEX, 'DIFs')
             ->overrideTemplate('crud/edit', 'Admin/crud/dif_edit.html.twig')
+            ->overrideTemplate('crud/detail', 'Admin/crud/dif_detail.html.twig')
             ->showEntityActionsInlined()
         ;
     }
