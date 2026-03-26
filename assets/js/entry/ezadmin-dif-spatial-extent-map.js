@@ -78,6 +78,50 @@
       worldCopyJump: true,
     });
 
+    function resetMapView() {
+      map.setView([27.5, -97.5], 3);
+    }
+
+    function getLayerBounds(layer) {
+      if (!layer) {
+        return null;
+      }
+
+      if (typeof layer.getBounds === 'function') {
+        const bounds = layer.getBounds();
+        if (bounds && typeof bounds.isValid === 'function' && bounds.isValid()) {
+          return bounds;
+        }
+      }
+
+      if (typeof layer.getLatLng === 'function') {
+        const latlng = layer.getLatLng();
+        return L.latLngBounds([latlng, latlng]);
+      }
+
+      return null;
+    }
+
+    function fitMapToLayer(layer) {
+      const bounds = getLayerBounds(layer);
+
+      if (!bounds || !bounds.isValid()) {
+        resetMapView();
+        return;
+      }
+
+      const southWest = bounds.getSouthWest();
+      const northEast = bounds.getNorthEast();
+      const isSinglePoint = southWest.equals(northEast);
+
+      if (isSinglePoint) {
+        map.setView(bounds.getCenter(), 10);
+        return;
+      }
+
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors',
@@ -338,6 +382,7 @@
       if (layers.length === 0) {
         updateField('');
         setStatus('Spatial extent geometry cleared.', false);
+        resetMapView();
         return;
       }
 
@@ -418,7 +463,7 @@
           }
 
           if (drawnItems.getLayers().length > 0) {
-            map.fitBounds(drawnItems.getBounds(), { padding: [20, 20], maxZoom: 8 });
+            fitMapToLayer(drawnItems);
           }
 
           setStatus('Loaded existing spatial extent geometry.', false);
@@ -430,11 +475,23 @@
 
     map.on(L.Draw.Event.CREATED, (event) => {
       drawnItems.addLayer(event.layer);
+      fitMapToLayer(drawnItems.getLayers().length === 1 ? event.layer : drawnItems);
       syncLayerToField();
     });
 
-    map.on(L.Draw.Event.EDITED, syncLayerToField);
-    map.on(L.Draw.Event.DELETED, syncLayerToField);
+    map.on(L.Draw.Event.EDITED, () => {
+      fitMapToLayer(drawnItems);
+      syncLayerToField();
+    });
+
+    map.on(L.Draw.Event.DELETED, () => {
+      if (drawnItems.getLayers().length > 0) {
+        fitMapToLayer(drawnItems);
+      } else {
+        resetMapView();
+      }
+      syncLayerToField();
+    });
 
     if (editForm) {
       editForm.addEventListener('submit', (event) => {

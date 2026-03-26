@@ -138,6 +138,45 @@
       keyboard: false,
     });
 
+    function getLayerBounds(layer) {
+      if (!layer) {
+        return null;
+      }
+
+      if (typeof layer.getBounds === 'function') {
+        const bounds = layer.getBounds();
+        if (bounds && typeof bounds.isValid === 'function' && bounds.isValid()) {
+          return bounds;
+        }
+      }
+
+      if (typeof layer.getLatLng === 'function') {
+        const latlng = layer.getLatLng();
+        return L.latLngBounds([latlng, latlng]);
+      }
+
+      return null;
+    }
+
+    function fitMapToLayer(layer) {
+      const bounds = getLayerBounds(layer);
+
+      if (!bounds || !bounds.isValid()) {
+        return;
+      }
+
+      const southWest = bounds.getSouthWest();
+      const northEast = bounds.getNorthEast();
+      const isSinglePoint = southWest.equals(northEast);
+
+      if (isSinglePoint) {
+        map.setView(bounds.getCenter(), 10);
+        return;
+      }
+
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors',
@@ -169,10 +208,7 @@
           layer.addTo(map);
         }
 
-        const bounds = layer.getBounds ? layer.getBounds() : null;
-        if (bounds && bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [20, 20], maxZoom: 8 });
-        }
+        fitMapToLayer(layer);
 
         setStatus('Displaying stored spatial extent geometry.', false);
       })
