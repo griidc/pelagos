@@ -408,6 +408,7 @@ class DIFCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('DIF')
             ->setPageTitle(Crud::PAGE_INDEX, 'DIFs')
             ->overrideTemplate('crud/edit', 'Admin/crud/dif_edit.html.twig')
+            ->overrideTemplate('crud/detail', 'Admin/crud/dif_detail.html.twig')
             ->showEntityActionsInlined()
         ;
     }
