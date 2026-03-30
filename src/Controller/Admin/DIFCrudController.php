@@ -26,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -37,7 +38,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DIFCrudController extends AbstractCrudController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator,
+    )
     {
     }
 
@@ -60,7 +64,7 @@ class DIFCrudController extends AbstractCrudController
             ->setLabel('UDI');
 
         $researchGroupField = TextField::new('researchGroup')
-            ->setLabel('Project Title');
+            ->setLabel('Research Group');
 
         $creatorField = AssociationField::new('creator')
             ->setLabel('Created By')
@@ -76,8 +80,8 @@ class DIFCrudController extends AbstractCrudController
             ->hideOnIndex();
 
         $modificationTimestampField = DateField::new('modificationTimeStamp')
-            ->setFormat('yyyy-MM-dd HH:mm zzz')
-            ->setLabel('Last Modified');
+            ->setFormat('yyyy-MM-dd HH:mm')
+            ->setLabel('Last Mod (UTC)');
 
         $approvedDateField = DateField::new('approvedDate')
             ->hideOnIndex()
@@ -352,16 +356,27 @@ class DIFCrudController extends AbstractCrudController
             ->linkToCrudAction('export')
             ->createAsGlobalAction();
 
+        $openUiAction = Action::new('openUi')
+            ->setLabel('Open DIF')
+            ->setIcon('fa fa-up-right-from-square')
+            ->linkToUrl(fn (DIF $dif): string => $this->urlGenerator->generate('pelagos_app_ui_dif_default', [
+                'udi' => $dif->getUdi(),
+            ]))
+            ->setHtmlAttributes([
+                'target' => '_blank',
+            ]);
+
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $exportAction)
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $openUiAction)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-eye')
-                    ->setLabel('View');
+                    ->setLabel('details');
             })
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
