@@ -15,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -27,7 +26,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -57,15 +55,9 @@ class DIFCrudController extends AbstractCrudController
 
         $idField = IdField::new('id');
 
-        $UdiField = AssociationField::new('dataset')
-            ->setLabel('UDI');
 
         $UdiIndexField = TextField::new('dataset.udi')
             ->setLabel('UDI');
-
-        $UdiEditField = TextField::new('dataset.udi')
-            ->setLabel('UDI')
-            ->setFormTypeOption('attr', ['readonly' => true]);
 
         $researchGroupField = TextField::new('researchGroup')
             ->setLabel('Project Title');
@@ -205,36 +197,11 @@ class DIFCrudController extends AbstractCrudController
             ->setLabel('Issue Tracking Ticket')
             ->hideOnIndex();
 
-        // left for reference only as this will be used again when spatial extent geometry support is added back in the future
-        /*
-        $spatialExtentGeometryField = CodeEditorField::new('spatialExtentGeometry')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->hideOnForm()
-            ->hideLineNumbers()
-            ->setLanguage('xml')
-            ->setLabel('Spatial Extent Geometry');
-        */
-
-        if (Crud::PAGE_EDIT === $pageName) {
-            $idField = $idField->setDisabled();
-            $statusField = $statusField->setDisabled();
-            $isLockedField = $isLockedField->setDisabled();
-            $researchGroupField = $researchGroupField->setDisabled();
-            $creatorField = $creatorField->setDisabled();
-            $modifierField = $modifierField->setDisabled();
-            $creationTimestampField = $creationTimestampField->setDisabled();
-            $modificationTimestampField = $modificationTimestampField->setDisabled();
-            $approvedDateField = $approvedDateField->setDisabled();
-        }
-
-        $udiEditOrDetailField = Crud::PAGE_EDIT === $pageName ? $UdiEditField : $UdiIndexField;
-
-        if (in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_DETAIL], true)) {
+        if (Crud::PAGE_DETAIL === $pageName) {
             $fields = [
                 FormField::addFieldset('Dataset Identification &amp; Status'),
                 $idField,
-                $udiEditOrDetailField,
+                $UdiIndexField,
                 $statusField,
                 $isLockedField,
 
@@ -311,47 +278,7 @@ class DIFCrudController extends AbstractCrudController
             ];
         }
 
-        if (Crud::PAGE_EDIT === $pageName) {
-            foreach ($fields as $field) {
-                $field->setColumns(8);
-            }
-        }
-
         return $fields;
-    }
-
-    #[\Override]
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        parent::updateEntity($entityManager, $entityInstance);
-
-        if (!$entityInstance instanceof DIF) {
-            return;
-        }
-
-        $transition = $this->getContext()?->getRequest()->request->get('dif_transition');
-
-        if (!is_string($transition) || '' === $transition) {
-            $this->addFlash('success', 'DIF changes saved.');
-            return;
-        }
-
-        try {
-            match ($transition) {
-                'submit' => $entityInstance->submit(),
-                'approve' => $entityInstance->approve(),
-                'unlock' => $entityInstance->unlock(),
-                default => null,
-            };
-
-            $entityManager->flush();
-
-            if (in_array($transition, ['submit', 'approve', 'unlock'], true)) {
-                $this->addFlash('success', sprintf('DIF %sed.', $transition));
-            }
-        } catch (\Throwable $e) {
-            $this->addFlash('danger', $e->getMessage());
-        }
     }
 
     #[\Override]
@@ -410,7 +337,6 @@ class DIFCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('DIFs')
             ->setEntityLabelInSingular('DIF')
             ->setPageTitle(Crud::PAGE_INDEX, 'DIFs')
-            ->overrideTemplate('crud/edit', 'Admin/crud/dif_edit.html.twig')
             ->showEntityActionsInlined()
         ;
     }
@@ -424,35 +350,11 @@ class DIFCrudController extends AbstractCrudController
             ->linkToCrudAction('export')
             ->createAsGlobalAction();
 
-        $approveDifAction = Action::new('approveDif')
-            ->setLabel('Approve')
-            ->setIcon('fa fa-check')
-            ->linkToCrudAction('approveDif')
-            ->addCssClass('btn btn-secondary');
-
-        $submitDifAction = Action::new('submitDif')
-            ->setLabel('Submit')
-            ->setIcon('fa fa-arrow-up')
-            ->linkToCrudAction('submitDif')
-            ->addCssClass('btn btn-secondary');
-
-        $unlockDifAction = Action::new('unlockDif')
-            ->setLabel('Unlock')
-            ->setIcon('fa fa-unlock')
-            ->linkToCrudAction('unlockDif')
-            ->addCssClass('btn btn-secondary');
-
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $exportAction)
-            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static function (Action $action): Action {
-                return $action
-                    ->setLabel('Save Changes')
-                    ->setIcon('fa fa-save')
-                    ->addCssClass('btn btn-secondary');
-            })
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
+            ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
@@ -462,69 +364,5 @@ class DIFCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
-    }
-
-    public function submitDif(AdminContext $context): RedirectResponse
-    {
-        return $this->runDifTransition(
-            context: $context,
-            transition: static function (DIF $dif): void {
-                $dif->submit();
-            },
-            successMessage: 'DIF submitted.',
-        );
-    }
-
-    public function approveDif(AdminContext $context): RedirectResponse
-    {
-        return $this->runDifTransition(
-            context: $context,
-            transition: static function (DIF $dif): void {
-                $dif->approve();
-            },
-            successMessage: 'DIF approved.',
-        );
-    }
-
-    public function unlockDif(AdminContext $context): RedirectResponse
-    {
-        return $this->runDifTransition(
-            context: $context,
-            transition: static function (DIF $dif): void {
-                $dif->unlock();
-            },
-            successMessage: 'DIF unlocked.',
-        );
-    }
-
-    public function export(AdminContext $context): RedirectResponse
-    {
-        return $this->runDifTransition(
-            context: $context,
-            transition: static function (): void {
-            },
-            successMessage: 'DIF exported stub - export functionality not yet implemented.',
-        );
-    }
-
-    /**
-     * Execute DIF transition actions with common flash and redirect behavior.
-     */
-    private function runDifTransition(AdminContext $context, callable $transition, string $successMessage): RedirectResponse
-    {
-        /** @var DIF $dif */
-        $dif = $context->getEntity()->getInstance();
-        $request = $context->getRequest();
-
-        try {
-            $transition($dif);
-            $this->entityManager->flush();
-            $this->addFlash('success', $successMessage);
-        } catch (\Throwable $e) {
-            $this->addFlash('danger', $e->getMessage());
-        }
-        $redirectUrl = $context->getReferrer() ?? $request->headers->get('referer') ?? $request->getUri();
-
-        return $this->redirect($redirectUrl);
     }
 }
