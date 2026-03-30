@@ -357,8 +357,9 @@ class DIFCrudController extends AbstractCrudController
             ->createAsGlobalAction();
 
         $openUiAction = Action::new('openUi')
-            ->setLabel('Open DIF')
+            ->setLabel('Open')
             ->setIcon('fa fa-up-right-from-square')
+            ->addCssClass('text-nowrap')
             ->linkToUrl(fn (DIF $dif): string => $this->urlGenerator->generate('pelagos_app_ui_dif_default', [
                 'udi' => $dif->getUdi(),
             ]))
@@ -371,12 +372,13 @@ class DIFCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $openUiAction)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-eye')
-                    ->setLabel('details');
+                    ->addCssClass('text-nowrap')
+                    ->setLabel('view');
             })
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
