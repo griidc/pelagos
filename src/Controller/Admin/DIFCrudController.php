@@ -63,19 +63,21 @@ class DIFCrudController extends AbstractCrudController
             ->setLabel('Project Title');
 
         $creatorField = AssociationField::new('creator')
-            ->setLabel('Created By');
+            ->setLabel('Created By')
+            ->hideOnIndex();
 
         $modifierField = AssociationField::new('modifier')
             ->hideOnIndex()
             ->setLabel('Modified By');
 
         $creationTimestampField = DateField::new('creationTimeStamp')
-            ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-            ->setLabel('Creation Timestamp');
+            ->setFormat('yyyy-MM-dd HH:mm zzz')
+            ->setLabel('Creation Timestamp')
+            ->hideOnIndex();
 
         $modificationTimestampField = DateField::new('modificationTimeStamp')
-            ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-            ->setLabel('Modification Timestamp');
+            ->setFormat('yyyy-MM-dd HH:mm zzz')
+            ->setLabel('Last Modified');
 
         $approvedDateField = DateField::new('approvedDate')
             ->hideOnIndex()
