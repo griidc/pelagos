@@ -350,14 +350,8 @@ class DIFCrudController extends AbstractCrudController
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $exportAction = Action::new('export')
-            ->setLabel('Export')
-            ->setIcon('fa fa-file-export')
-            ->linkToCrudAction('export')
-            ->createAsGlobalAction();
-
         $openUiAction = Action::new('openUi')
-            ->setLabel('Open')
+            ->setLabel('Edit')
             ->setIcon('fa fa-up-right-from-square')
             ->addCssClass('text-nowrap')
             ->linkToUrl(fn (DIF $dif): string => $this->urlGenerator->generate('pelagos_app_ui_dif_default', [
@@ -368,7 +362,6 @@ class DIFCrudController extends AbstractCrudController
             ]);
 
         return parent::configureActions($actions)
-            ->add(Crud::PAGE_INDEX, $exportAction)
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
@@ -378,7 +371,7 @@ class DIFCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-eye')
                     ->addCssClass('text-nowrap')
-                    ->setLabel('view');
+                    ->setLabel('View');
             })
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
