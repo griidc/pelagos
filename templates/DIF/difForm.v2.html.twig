@@ -181,6 +181,18 @@
                     <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
                 </div>
             </div>
+            {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+            <label>Data Manager Actions:
+            <br /><span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
+            <div class="grid grid-cols-3 gap-4 bg-red-100 py-2" id="submit">
+                <div>
+                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center">Approve</button>
+                </div>
+                <div>
+                    <button type="submit" id="rejectSubmission" name="rejectSubmission" class="button button-regular button-form w-full justify-center">Unlock</button>
+                </div>
+            <div>
+            {% endif %}
         </div>
     </div>
 </form>
