@@ -166,7 +166,7 @@
             {% endif %}
 
             <input type="hidden" name="submitAction" id="submitAction"/>
-            <input type="hidden" name="status" id="status" value="{{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') ? 0 : status }}"/>
+            <input type="hidden" name="status" id="status" value="{{ status }}"/>
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>

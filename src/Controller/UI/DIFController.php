@@ -126,12 +126,6 @@ class DIFController extends AbstractController
             $extraData = $form->getExtraData();
             if ((isset($extraData['submitAction']) && $extraData['submitAction'] === 'saveAndSubmit') || $saveAndSubmit->isClicked()) {
                 $dif->submit();
-            } elseif ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-                if (isset($extraData['approveSubmission'])) {
-                    $dif->approve();
-                } elseif (isset($extraData['rejectSubmission'])) {
-                    $dif->unlock();
-                }
             }
 
             $entityManager->persist($dif);
