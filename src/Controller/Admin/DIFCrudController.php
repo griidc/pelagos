@@ -41,8 +41,7 @@ class DIFCrudController extends AbstractCrudController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
     }
 
     #[\Override]
