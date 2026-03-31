@@ -4,8 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\Funder;
 use App\Entity\ResearchGroup;
 use App\Filter\ResearchGroupFilter;
+use App\Repository\PersonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -16,13 +18,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -34,143 +38,252 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
 class DIFCrudController extends AbstractCrudController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
     }
 
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return DIF::class;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id'),
-            AssociationField::new('dataset'),
-            TextField::new('title'),
-            ChoiceField::new('status')
-                ->setChoices([
-                    'Unsubmitted' => DIF::STATUS_UNSUBMITTED,
-                    'Submitted' => DIF::STATUS_SUBMITTED,
-                    'Approved' => DIF::STATUS_APPROVED,
-                ]),
-            BooleanField::new('isLocked')
-                ->renderAsSwitch(false)
-                ->setLabel('Locked'),
-            TextField::new('researchGroup')
-                ->setLabel('Research Group'),
-            CollectionField::new('Funders')
-                ->hideOnIndex()
-                ->setLabel('Funders'),
-            TextField::new('additionalFunders')
-                ->hideOnIndex()
-                ->setLabel('Additional Funders'),
-            AssociationField::new('primaryPointOfContact')
-                ->hideOnIndex(),
-            AssociationField::new('secondaryPointOfContact')
-                ->hideOnIndex(),
-            TextareaField::new('abstract')
-                ->hideOnIndex()
-                ->setLabel('Abstract'),
-            BooleanField::new('fieldOfStudyEcologicalBiological')
-                ->hideOnIndex()
-                ->setLabel('Ecological/Biological Field of Study'),
-            BooleanField::new('fieldOfStudyPhysicalOceanography')
-                ->hideOnIndex()
-                ->setLabel('Physical Oceanography Field of Study'),
-            BooleanField::new('fieldOfStudyAtmospheric')
-                ->hideOnIndex()
-                ->setLabel('Atmospheric Field of Study'),
-            BooleanField::new('fieldOfStudyChemical')
-                ->hideOnIndex()
-                ->setLabel('Chemical Field of Study'),
-            BooleanField::new('fieldOfStudyHumanHealth')
-                ->hideOnIndex()
-                ->setLabel('Human Health Field of Study'),
-            BooleanField::new('fieldOfStudySocialCulturalPolitical')
-                ->hideOnIndex()
-                ->setLabel('Social/Cultural/Political Field of Study'),
-            BooleanField::new('fieldOfStudyEconomics')
-                ->hideOnIndex()
-                ->setLabel('Economics Field of Study'),
-            BooleanField::new('fieldOfStudyOther')
-                ->hideOnIndex()
-                ->setLabel('Other Field of Study'),
-            TextField::new('dataSize')
-                ->hideOnIndex()
-                ->setLabel('Data Size'),
-            TextareaField::new('variablesObserved')
-                ->hideOnIndex()
-                ->setLabel('Variables Observed'),
-            BooleanField::new('collectionMethodFieldSampling')
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Field Sampling'),
-            BooleanField::new('collectionMethodSimulatedGenerated')
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Simulated/Generated'),
-            BooleanField::new('collectionMethodRemoteSensing')
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Remote Sensing'),
-            TextField::new('collectionMethodOther')
-                ->hideOnIndex()
-                ->setLabel('Collection Method: Other'),
-            DateField::new('estimatedStartDate')
-                ->hideOnIndex()
-                ->setLabel('Estimated Start Date'),
-            DateField::new('estimatedEndDate')
-                ->hideOnIndex()
-                ->setLabel('Estimated End Date'),
-            TextareaField::new('spatialExtentDescription')
-                ->hideOnIndex()
-                ->setLabel('Spatial Extent Description'),
-            CodeEditorField::new('spatialExtentGeometry')
-                ->hideOnIndex()
-                ->hideLineNumbers()
-                ->setLanguage('xml')
-                ->setLabel('Spatial Extent Geometry'),
-            BooleanField::new('nationalDataArchiveNODC')
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: NODC'),
-            BooleanField::new('nationalDataArchiveStoret')
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: STORET'),
-            BooleanField::new('nationalDataArchiveGBIF')
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: GBIF'),
-            BooleanField::new('nationalDataArchiveNCBI')
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: NCBI'),
-            TextField::new('nationalDataArchiveOther')
-                ->hideOnIndex()
-                ->setLabel('National Data Archive: Other'),
-            TextField::new('ethicalIssues')
-                ->hideOnIndex()
-                ->setLabel('Ethical Issues'),
-            TextField::new('ethicalIssuesExplanation')
-                ->hideOnIndex()
-                ->setLabel('Ethical Issues Explanation'),
-            textfield::new('remarks')
-                ->hideOnIndex()
-                ->setLabel('Remarks'),
-            DateField::new('approvedDate')
-                ->hideOnIndex()
-                ->setLabel('Approved Date'),
-            CollectionField::new('keywords')
-                ->hideOnIndex()
-                ->setLabel('Keywords'),
-            AssociationField::new('creator')
-                ->setLabel('Created By'),
-            DateField::new('creationTimeStamp')
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setLabel('Creation Timestamp'),
-            AssociationField::new('modifier')
-                ->hideOnIndex()
-                ->setLabel('Modified By'),
-            DateField::new('modificationTimeStamp')
-                ->setFormat('yyyy-MM-dd HH:mm:ss zzz')
-                ->setLabel('Modification Timestamp'),
-        ];
+        /** @var DIF|null $dif */
+        $dif = $this->getContext()?->getEntity()->getInstance();
+
+        $idField = IdField::new('id');
+
+
+        $UdiIndexField = TextField::new('dataset.udi')
+            ->setLabel('UDI');
+
+        $researchGroupField = TextField::new('researchGroup')
+            ->setLabel('Research Group');
+
+        $creatorField = AssociationField::new('creator')
+            ->setLabel('Created By')
+            ->hideOnIndex();
+
+        $modifierField = AssociationField::new('modifier')
+            ->hideOnIndex()
+            ->setLabel('Modified By');
+
+        $creationTimestampField = DateField::new('creationTimeStamp')
+            ->setFormat('yyyy-MM-dd HH:mm zzz')
+            ->setLabel('Creation Timestamp')
+            ->hideOnIndex();
+
+        $modificationTimestampField = DateField::new('modificationTimeStamp')
+            ->setFormat('yyyy-MM-dd HH:mm')
+            ->setLabel('Last Mod (UTC)');
+
+        $approvedDateField = DateField::new('approvedDate')
+            ->hideOnIndex()
+            ->setLabel('Approved Date');
+
+        $fundersField = Field::new('funders')
+            ->hideOnIndex()
+            ->setLabel('Funder')
+            ->setTemplatePath('@EasyAdmin/crud/field/array.html.twig')
+            ->setFormType(EntityType::class)
+            ->setFormTypeOption('class', Funder::class)
+            ->setFormTypeOption('choice_label', 'name')
+            ->setFormTypeOption('multiple', true)
+            ->setFormTypeOption('attr', ['data-ea-widget' => 'ea-autocomplete'])
+            ->setFormTypeOption('required', false)
+            ->setFormTypeOption('by_reference', true);
+
+        $statusField = ChoiceField::new('status')
+            ->setChoices([
+                'Unsubmitted' => DIF::STATUS_UNSUBMITTED,
+                'Submitted' => DIF::STATUS_SUBMITTED,
+                'Approved' => DIF::STATUS_APPROVED,
+            ])
+            ->setLabel('Status');
+
+        $isLockedField = BooleanField::new('isLocked')
+            ->renderAsSwitch(false)
+            ->setLabel('Locked');
+
+        $primaryPointOfContactField = AssociationField::new('primaryPointOfContact')
+            ->setLabel('Primary Data Point of Contact')
+            ->setFormTypeOption('query_builder', $this->createPointOfContactQueryBuilder($dif))
+            ->hideOnIndex();
+
+        $secondaryPointOfContactField = AssociationField::new('secondaryPointOfContact')
+            ->setLabel('Additional Data Point of Contact')
+            ->setFormTypeOption('query_builder', $this->createPointOfContactQueryBuilder($dif))
+            ->hideOnIndex();
+
+        $additionalFundersField = TextField::new('additionalFunders')
+            ->hideOnIndex()
+            ->setLabel('Additional Funders');
+
+        $titleField = TextField::new('title')
+            ->setLabel('Dataset Title');
+
+        $abstractField = TextareaField::new('abstract')
+            ->setLabel('Dataset Abstract')
+            ->hideOnIndex();
+
+        $dataSizeField = ChoiceField::new('dataSize')
+            ->setChoices(array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES))
+            ->hideOnIndex()
+            ->setLabel('Approximate Dataset Size');
+
+        $variablesObservedField = TextareaField::new('variablesObserved')
+            ->hideOnIndex()
+            ->setLabel('Data Parameters and Units');
+
+        $estimatedStartDateField = DateField::new('estimatedStartDate')
+            ->hideOnIndex()
+            ->setLabel('Start Date');
+
+        $estimatedEndDateField = DateField::new('estimatedEndDate')
+            ->hideOnIndex()
+            ->setLabel('End Date');
+
+        $spatialExtentDescriptionField = TextareaField::new('spatialExtentDescription')
+            ->hideOnIndex()
+            ->setLabel('Geographic/Study Area Description');
+
+        $nationalDataArchiveNODCField = BooleanField::new('nationalDataArchiveNODC')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('NODC');
+
+        $nationalDataArchiveStoretField = BooleanField::new('nationalDataArchiveStoret')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('STORET');
+
+        $nationalDataArchiveGBIFField = BooleanField::new('nationalDataArchiveGBIF')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('GBIF');
+
+        $nationalDataArchiveNCBIField = BooleanField::new('nationalDataArchiveNCBI')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('NCBI');
+
+        $nationalDataArchiveDataGovField = BooleanField::new('nationalDataArchiveDataGov')
+            ->renderAsSwitch(false)
+            ->hideOnIndex()
+            ->setLabel('Data.gov');
+
+        $nationalDataArchiveOtherField = TextField::new('nationalDataArchiveOther')
+            ->hideOnIndex()
+            ->setLabel('Other');
+
+        $ethicalIssuesField = ChoiceField::new('ethicalIssues')
+            ->setChoices([
+                'Yes' => 'Yes',
+                'No' => 'No',
+                'Uncertain' => 'Uncertain',
+            ])
+            ->hideOnIndex()
+            ->setLabel('Ethical Issues');
+
+        $ethicalIssuesExplanationField = TextField::new('ethicalIssuesExplanation')
+            ->hideOnIndex()
+            ->setLabel('Ethical Issues Explanation');
+
+        $remarksField = TextField::new('remarks')
+            ->hideOnIndex()
+            ->setLabel('Remarks');
+
+        $issueTrackingTicketField = TextField::new('issueTrackingTicket')
+            ->setLabel('Issue Tracking Ticket')
+            ->hideOnIndex();
+
+        if (Crud::PAGE_DETAIL === $pageName) {
+            $fields = [
+                FormField::addFieldset('Dataset Identification &amp; Status'),
+                $idField,
+                $UdiIndexField,
+                $statusField,
+                $isLockedField,
+
+                FormField::addFieldset('Dataset Contact'),
+                $researchGroupField,
+                $primaryPointOfContactField,
+                $secondaryPointOfContactField,
+                $fundersField,
+                $additionalFundersField,
+
+                FormField::addFieldset('Dataset Information'),
+                $titleField,
+                $abstractField,
+                $dataSizeField,
+                $variablesObservedField,
+                $estimatedStartDateField,
+                $estimatedEndDateField,
+                $ethicalIssuesField,
+                $ethicalIssuesExplanationField,
+
+                FormField::addFieldset('National Datacenter'),
+                $nationalDataArchiveNODCField,
+                $nationalDataArchiveStoretField,
+                $nationalDataArchiveGBIFField,
+                $nationalDataArchiveNCBIField,
+                $nationalDataArchiveDataGovField,
+                $nationalDataArchiveOtherField,
+
+                FormField::addFieldset('Dataset Extent'),
+                $spatialExtentDescriptionField,
+
+                FormField::addFieldset('DIF Curation Information'),
+                $remarksField,
+                $issueTrackingTicketField,
+                $approvedDateField,
+                $creatorField,
+                $creationTimestampField,
+                $modifierField,
+                $modificationTimestampField,
+            ];
+        } else {
+            $fields = [
+                $idField,
+                $UdiIndexField,
+                $statusField,
+                $isLockedField,
+                $researchGroupField,
+                $primaryPointOfContactField,
+                $secondaryPointOfContactField,
+                $fundersField,
+                $additionalFundersField,
+                $titleField,
+                $abstractField,
+                $dataSizeField,
+                $variablesObservedField,
+                $estimatedStartDateField,
+                $estimatedEndDateField,
+                $nationalDataArchiveNODCField,
+                $nationalDataArchiveStoretField,
+                $nationalDataArchiveGBIFField,
+                $nationalDataArchiveNCBIField,
+                $nationalDataArchiveDataGovField,
+                $nationalDataArchiveOtherField,
+                $ethicalIssuesField,
+                $ethicalIssuesExplanationField,
+                $spatialExtentDescriptionField,
+                $remarksField,
+                $issueTrackingTicketField,
+                $approvedDateField,
+                $creatorField,
+                $creationTimestampField,
+                $modifierField,
+                $modificationTimestampField,
+            ];
+        }
+
+        return $fields;
     }
 
     #[\Override]
@@ -195,9 +308,36 @@ class DIFCrudController extends AbstractCrudController
         ;
     }
 
+    /**
+     * Restrict point-of-contact to those in the DIF's research group.
+     */
+    private function createPointOfContactQueryBuilder(?DIF $dif): ?callable
+    {
+        $researchGroup = $dif?->getDataset()?->getResearchGroup();
+
+        if (null === $researchGroup) {
+            return null;
+        }
+
+        $researchGroupId = $researchGroup->getId();
+
+        return static function (PersonRepository $personRepository) use ($researchGroupId) {
+            return $personRepository->createQueryBuilder('entity')
+                ->innerJoin('entity.personResearchGroups', 'personResearchGroup')
+                ->innerJoin('personResearchGroup.researchGroup', 'researchGroup')
+                ->andWhere('researchGroup.id = :researchGroupId')
+                ->setParameter('researchGroupId', $researchGroupId)
+                ->orderBy('entity.lastName', 'ASC')
+                ->addOrderBy('entity.firstName', 'ASC')
+            ;
+        };
+    }
+
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
+            ->setSearchFields(['dataset.udi', 'title', 'dataset.title'])
             ->setDefaultSort(['modificationTimeStamp' => 'DESC'])
             ->setEntityLabelInPlural('DIFs')
             ->setEntityLabelInSingular('DIF')
@@ -209,23 +349,29 @@ class DIFCrudController extends AbstractCrudController
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $exportAction = Action::new('export')
-            ->setLabel('Export')
-            ->setIcon('fa fa-file-export')
-            ->linkToCrudAction('export')
-            ->createAsGlobalAction();
+        $openUiAction = Action::new('openUi')
+            ->setLabel('Edit')
+            ->setIcon('fa fa-up-right-from-square')
+            ->addCssClass('text-nowrap')
+            ->linkToUrl(fn (DIF $dif): string => $this->urlGenerator->generate('pelagos_app_ui_dif_default', [
+                'udi' => $dif->getUdi(),
+            ]))
+            ->setHtmlAttributes([
+                'target' => '_blank',
+            ]);
 
         return parent::configureActions($actions)
-            ->add(Crud::PAGE_INDEX, $exportAction)
             ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
+            ->remove(Crud::PAGE_INDEX, Action::EDIT)
+            ->add(Crud::PAGE_INDEX, $openUiAction)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
                 return $action
                     ->setIcon('fa fa-eye')
+                    ->addCssClass('text-nowrap')
                     ->setLabel('View');
             })
-            ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
