@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import * as Leaflet from 'leaflet';
 import 'esri-leaflet';
 import * as EsriLeafletVector from 'esri-leaflet-vector';
@@ -5,49 +6,19 @@ import '../../css/custom-pm-icons.css';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import { EventEmitter } from 'events';
-// import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 // import 'leaflet/dist/leaflet.css'; # This is broken due to webpack, but it is imported in the index.html.twig file.
 
-// const geoVizEventEmitter = new EventEmitter();
+const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
 const worldViewCode = process.env.WORLD_VIEW_CODE;
 const INITIAL_ZOOM = 3;
 const INITIAL_CENTER = [27.5, -97.5];
 
-const styles = {
-  defaultStyle:
-  {
-    color: '#fcaf08',
-    opacity: 1,
-    fillOpacity: 0,
-  },
-  selectedStyle:
-  {
-    color: '#08fcaf',
-    opacity: 1,
-    fillOpacity: 0,
-  },
-  hoverStyle:
-  {
-    color: '#af08fc',
-    opacity: 1,
-    fillOpacity: 0,
-  },
-  markerStyle:
-  {
-    radius: 6,
-    fill: false,
-    opacity: 1,
-  },
-};
-
-function getV2BasemapLayer(style) {
-  return EsriLeafletVector.vectorBasemapLayer(style, {
-    token: esriApiKey,
-    version: 2,
-    worldview: worldViewCode,
-  });
-}
+const getV2BasemapLayer = (style) => EsriLeafletVector.vectorBasemapLayer(style, {
+  token: esriApiKey,
+  version: 2,
+  worldview: worldViewCode,
+});
 
 const ArcGISImagery = getV2BasemapLayer('arcgis/imagery');
 const ArcGISOceans = getV2BasemapLayer('arcgis/oceans');
@@ -59,17 +30,13 @@ const mapStyles = {
   'ArcGIS Terrain': ArcGISTerrain,
 };
 
-const goHome = (LeafletMap) => {
-  LeafletMap.setZoom(INITIAL_ZOOM, { animate: true });
-  LeafletMap.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
-};
-
+let map = null;
+let drawnGroup = null;
 export default class GeoViz {
   constructor(element, options = {}) {
-    this.options = options;
-    this.element = element;
-    this.geoVizEventEmitter = new EventEmitter();
-    this.map = Leaflet.map(this.element, {
+    // this.options = options;
+    // this.element = element;
+    map = Leaflet.map(element, {
       preferCanvas: true,
       minZoom: 2,
       maxZoom: 14,
@@ -80,19 +47,13 @@ export default class GeoViz {
 
     Leaflet.PM.setOptIn(true);
 
-    this.allowDrawPolygon = options.allowDrawPolygon !== undefined ? options.allowDrawPolygon : true;
-    this.allowDrawRectangle = options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true;
-    this.allowDrawPolyline = options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : true;
-    this.allowDrawRectangle = options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true;
-    this.allowDrawPoint = options.allowDrawPoint !== undefined ? options.allowDrawPoint : true;
-
-    this.map.pm.addControls({
+    map.pm.addControls({
       position: 'topleft',
-      drawCircleMarker: this.allowDrawPoint,
+      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
       drawMarker: false,
-      drawPolyline: this.allowDrawPolyline,
-      drawRectangle: this.allowDrawRectangle,
-      drawPolygon: this.allowDrawPolygon,
+      drawPolyline: options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : true,
+      drawRectangle: options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true,
+      drawPolygon: options.allowDrawPolygon !== undefined ? options.allowDrawPolygon : true,
       drawCircle: false,
       drawText: false,
       cutPolygon: false,
@@ -102,33 +63,79 @@ export default class GeoViz {
       rotateMode: false,
     });
 
-    this.map.pm.Toolbar.createCustomControl({
+    map.pm.Toolbar.createCustomControl({
       name: 'Home',
       block: 'custom',
       title: 'Navigate to Home',
       className: 'custom-pm-icon-home',
       onClick: () => {
-        goHome(this.map);
+        this.goHome();
       },
     });
 
-    this.map.pm.Toolbar.changeControlOrder([
+    map.pm.Toolbar.changeControlOrder([
       'Home',
     ]);
 
-    this.controlLayer = Leaflet.control.layers(mapStyles).addTo(this.map);
+    drawnGroup = Leaflet.featureGroup().addTo(map);
 
-    this.features = Leaflet.featureGroup().addTo(this.map);
-    this.selectedFeatures = Leaflet.featureGroup().addTo(this.map);
-    this.map.setView(INITIAL_CENTER, INITIAL_ZOOM);
+    let drawnLayer;
+    map.on('pm:create', (e) => {
+      drawnLayer = e.layer;
+      // Allow PM to manage the layer
+      drawnLayer.options.pmIgnore = false;
+      Leaflet.PM.reInitLayer(drawnLayer);
+      drawnGroup.addLayer(drawnLayer);
+      const geojson = drawnLayer.toGeoJSON();
+      if (geojson) {
+        geoVizEventEmitter.emit('geojsonupdated', { geojson });
+      }
+      drawnLayer.on('pm:disable', (event) => {
+        const editedGeojson = event.target.toGeoJSON();
+        if (editedGeojson) {
+          geoVizEventEmitter.emit('geojsonupdated', { geojson: editedGeojson });
+        }
+      });
+    });
+
+    ['pm:globaleditmodetoggled', 'pm:globalremovalmodetoggled'].forEach((eventName) => {
+      map.on(eventName, () => {
+        if (drawnLayer) {
+          drawnLayer.bringToFront();
+        }
+      });
+    });
+
+    map.on('pm:remove', () => {
+      geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
+    });
+
+    // Listen for the drawstart event and clear the previously drawn features, if any.
+    map.on('pm:drawstart', () => {
+      if (drawnLayer) {
+        drawnLayer.off();
+        map.removeLayer(drawnLayer);
+      }
+    });
+
+    Leaflet.control.layers(mapStyles).addTo(map);
+
+    // this.features = Leaflet.featureGroup().addTo(this.map);
+    // this.selectedFeatures = Leaflet.featureGroup().addTo(this.map);
+    map.setView(INITIAL_CENTER, INITIAL_ZOOM);
+  }
+
+  getDrawnFeaturesAsGeoJSON() {
+    return drawnGroup.toGeoJSON();
   }
 
   goHome() {
-    return goHome(this.map);
+    map.setZoom(INITIAL_ZOOM, { animate: true });
+    map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
   }
 
   on(eventName, callback) {
-    this.geoVizEventEmitter.on(eventName, callback);
+    return geoVizEventEmitter.on(eventName, callback);
   }
 }
 
