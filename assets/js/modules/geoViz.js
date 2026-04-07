@@ -108,12 +108,14 @@ export default class GeoViz {
 
     map.on('pm:remove', () => {
       geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
+      drawnGroup.clearLayers();
     });
 
     // Listen for the drawstart event and clear the previously drawn features, if any.
     map.on('pm:drawstart', () => {
       if (drawnLayer) {
         drawnLayer.off();
+        drawnGroup.clearLayers();
         map.removeLayer(drawnLayer);
       }
     });

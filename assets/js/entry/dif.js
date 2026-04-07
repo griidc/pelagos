@@ -13,6 +13,9 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 import GeoViz from '../modules/geoViz';
 
+import * as turf from '@turf/turf';
+import { _ } from 'core-js';
+
 const UNSUBMITTED = '0';
 const SUBMITTED = '1';
 const APPROVED = '2';
@@ -264,6 +267,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
+    const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
+
+    let geometryArray = [];
+    turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
+      geometryArray.push(turf.getGeom(currentFeature));
+    });
+    const geometryCollection = turf.geometryCollection(geometryArray);
+
+    const geometry = combinedFeatureCollection.features[0].geometry;
+
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
       method: 'POST',
@@ -271,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        geometry: e.geojson.geometry
+        geometry: geometry,
       }),
     })
       .then((response) => response.json())
