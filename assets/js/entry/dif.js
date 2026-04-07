@@ -10,11 +10,23 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
+// import * as GeoViz from '../modules/geoViz-leaflet';
+
+import GeoViz from '../modules/geoViz';
+
+import * as turf from '@turf/turf';
+import { _ } from 'core-js';
+
 const UNSUBMITTED = '0';
 // const SUBMITTED = '1';
 // const APPROVED = '2';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
+    // options can be added here in the future if needed
+  });
+
   const form = document.getElementById('difForm');
   const status = document.getElementById('status').value;
   const funders = document.getElementById('funders');
@@ -256,4 +268,32 @@ document.addEventListener('DOMContentLoaded', () => {
       formField.disabled = true;
     });
   }
+
+  geoViz.on('geojsonupdated', (e) => {
+    const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
+
+    let geometryArray = [];
+    turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
+      geometryArray.push(turf.getGeom(currentFeature));
+    });
+    const geometryCollection = turf.geometryCollection(geometryArray);
+
+    const geometry = combinedFeatureCollection.features[0].geometry;
+
+    const url = Routing.generate('pelagos_app_geojson_to_gml');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        geometry: geometry,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const gmlOutput = json.gml;
+        document.getElementById('spatialExtentGeometry').value = gmlOutput;
+      });
+  });
 });
