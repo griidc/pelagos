@@ -238,7 +238,7 @@ class GmlController extends AbstractController
      * @throws BadRequestHttpException When no GeoJSON is given or when the GeoJSON cannot be parsed.
      */
     #[Route(path: '/geojsontogml', name: 'pelagos_app_geojson_to_gml', methods: ['POST'])]
-    public function GeoJSONtoGml(Request $request, GeometryUtil $geometryUtil): Response
+    public function geoJSONtoGml(Request $request, GeometryUtil $geometryUtil): Response
     {
         $geojson = json_encode($request->request->all('geometry'));
         if ($geojson === false) {
