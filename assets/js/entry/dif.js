@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle, import/no-extraneous-dependencies, import/no-unresolved, import/no-duplicates, import/order, import/no-self-import, import/no-relative-packages, import/no-named-as-default, import/no-named-as-default-member */
 import '../../scss/dif.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -17,8 +18,8 @@ import * as turf from '@turf/turf';
 import { _ } from 'core-js';
 
 const UNSUBMITTED = '0';
-const SUBMITTED = '1';
-const APPROVED = '2';
+// const SUBMITTED = '1';
+// const APPROVED = '2';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Abstract is required.',
       },
     ])
-    .addRequiredGroup('#dataSize', 'Dataset size is required.',{
+    .addRequiredGroup('#dataSize', 'Dataset size is required.', {
       errorsContainer: '#datasize-error',
     })
     .addField('#estimatedStartDate', [
@@ -143,10 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     ])
     .onSuccess((event) => {
-      event.currentTarget.submitAction.value = event.submitter.name;
-      event.currentTarget.submit();
-    })
-    ;
+      const successEvent = event;
+      successEvent.currentTarget.submitAction.value = event.submitter.name;
+      successEvent.currentTarget.submit();
+    });
 
   const estimatedStartDate = document.getElementById('estimatedStartDate');
   estimatedStartDate.addEventListener('changeDate', () => {
@@ -246,10 +247,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // find all form fields
       const formFields = form.querySelectorAll('input, select, textarea');
       formFields.forEach((field) => {
-        field.value = "";
-        field.removeAttribute('value');
-        field.removeAttribute('data-value');
-        field.checked = false;
+        const formField = field;
+        formField.value = '';
+        formField.removeAttribute('value');
+        formField.removeAttribute('data-value');
+        formField.checked = false;
       });
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
       formValidate.clearErrors();
@@ -260,9 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (status !== UNSUBMITTED) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
+      const formField = field;
       researchGroupSelect.disable();
       fundersSelect.disable();
-      field.disabled = true;
+      formField.disabled = true;
     });
   }
 
