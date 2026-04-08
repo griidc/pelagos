@@ -124,8 +124,46 @@ class DIFController extends AbstractController
             /** @var SubmitButton $saveAndSubmit */
             $saveAndSubmit = $form->get('saveAndSubmit');
             $extraData = $form->getExtraData();
-            if ((isset($extraData['submitAction']) && $extraData['submitAction'] === 'saveAndSubmit') || $saveAndSubmit->isClicked()) {
-                $dif->submit();
+
+            // `submitAction` is populated from event.submitter.name in frontend JS.
+            // Fall back to button names in extraData so the action still works without JS.
+            $submitAction = $extraData['submitAction'] ?? null;
+            if ($submitAction === null) {
+                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'] as $buttonName) {
+                    if (isset($extraData[$buttonName])) {
+                        $submitAction = $buttonName;
+                        break;
+                    }
+                }
+            }
+
+            if ($saveAndSubmit->isClicked()) {
+                $submitAction = 'saveAndSubmit';
+            }
+
+            if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'], true)) {
+                $this->denyAccessUnlessGranted('ROLE_DATA_REPOSITORY_MANAGER');
+            }
+
+            switch ($submitAction) {
+                case 'saveAndSubmit':
+                    $dif->submit();
+                    $successMessage = 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi();
+                    break;
+                case 'approveSubmission':
+                    $dif->approve();
+                    $successMessage = 'DIF successfully approved. Your UDI is: ' . $dataset->getUdi();
+                    break;
+                case 'rejectSubmission':
+                    $dif->unlock();
+                    $successMessage = 'DIF successfully unlocked. Your UDI is: ' . $dataset->getUdi();
+                    break;
+                case 'drpmUpdateSubmission':
+                    $successMessage = 'DIF successfully updated. Your UDI is: ' . $dataset->getUdi();
+                    break;
+                default:
+                    $successMessage = 'DIF successfully saved. Your UDI is: ' . $dataset->getUdi();
+                    break;
             }
 
             $entityManager->persist($dif);
@@ -133,8 +171,7 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi());
-
+            $this->addFlash('success', $successMessage);
             return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
         }
 
@@ -144,6 +181,7 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
+                'isDrpm' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
             ]
         );
     }

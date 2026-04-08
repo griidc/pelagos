@@ -17,6 +17,7 @@ const UNSUBMITTED = '0';
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('difForm');
   const status = document.getElementById('status').value;
+  const isDrpm = document.getElementById('isDrpm')?.value === '1';
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
@@ -180,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dropdown.appendChild(option);
       });
-      if (status !== UNSUBMITTED) {
+      if (status !== UNSUBMITTED && !isDrpm) {
         dropdown.disabled = true;
       }
     });
@@ -219,6 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loadResearchGroupDowndowns(researchGroupSelect.getValue());
   }
 
+  if (isDrpm) {
+    researchGroupSelect.unlock();
+  }
+
   // on form reset event
   const resetButton = document.getElementById('resetFormButton');
   resetButton.addEventListener('click', () => {
@@ -247,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (status !== UNSUBMITTED) {
+  if (status !== UNSUBMITTED && !isDrpm) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;
