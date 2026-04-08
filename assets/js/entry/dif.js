@@ -22,7 +22,6 @@ const UNSUBMITTED = '0';
 // const APPROVED = '2';
 
 document.addEventListener('DOMContentLoaded', () => {
-
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
     // options can be added here in the future if needed
   });
@@ -272,13 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
   geoViz.on('geojsonupdated', (e) => {
     const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
 
-    let geometryArray = [];
-    turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
-      geometryArray.push(turf.getGeom(currentFeature));
-    });
-    const geometryCollection = turf.geometryCollection(geometryArray);
+    // let geometryArray = [];
+    // turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
+    //   geometryArray.push(turf.getGeom(currentFeature));
+    // });
+    // const geometryCollection = turf.geometryCollection(geometryArray);
 
-    const geometry = combinedFeatureCollection.features[0].geometry;
+    const { geometry } = combinedFeatureCollection.features[0];
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
@@ -287,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        geometry: geometry,
+        geometry,
       }),
     })
       .then((response) => response.json())
