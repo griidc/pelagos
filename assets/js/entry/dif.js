@@ -15,7 +15,6 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 import GeoViz from '../modules/geoViz';
 
 import * as turf from '@turf/turf';
-import { _ } from 'core-js';
 
 const UNSUBMITTED = '0';
 // const SUBMITTED = '1';
