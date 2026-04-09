@@ -165,21 +165,21 @@ class DIFController extends AbstractController
             switch ($submitAction) {
                 case 'saveAndSubmit':
                     $dif->submit();
-                    $successMessage = 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi();
+                    $successMessage = 'DIF successfully submitted';
                     break;
                 case 'approveSubmission':
                     $dif->approve();
-                    $successMessage = 'DIF successfully approved. Your UDI is: ' . $dataset->getUdi();
+                    $successMessage = 'DIF successfully approved';
                     break;
                 case 'rejectSubmission':
                     $dif->unlock();
-                    $successMessage = 'DIF successfully unlocked. Your UDI is: ' . $dataset->getUdi();
+                    $successMessage = 'DIF successfully unlocked';
                     break;
                 case 'drpmUpdateSubmission':
-                    $successMessage = 'DIF successfully updated. Your UDI is: ' . $dataset->getUdi();
+                    $successMessage = 'DIF successfully updated';
                     break;
                 default:
-                    $successMessage = 'DIF successfully saved. Your UDI is: ' . $dataset->getUdi();
+                    $successMessage = 'DIF successfully saved';
                     break;
             }
 
@@ -202,7 +202,6 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
-                'isDrpm' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
             ]
         );
     }

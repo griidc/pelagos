@@ -167,7 +167,6 @@
 
             <input type="hidden" name="submitAction" id="submitAction"/>
             <input type="hidden" name="status" id="status" value="{{ status }}"/>
-            <input type="hidden" id="isDrpm" value="{{ isDrpm ? '1' : '0' }}"/>
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
@@ -184,6 +183,7 @@
             </div>
         </div>
         {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+        <input type="hidden" id="isDrpm" value='1'>
         <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
             <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
@@ -199,6 +199,8 @@
                 </div>
             <div>
         </div>
+        {% else %}
+            <input type="hidden" id="isDrpm" value='0'>
         {% endif %}
     </div>
 </form>
