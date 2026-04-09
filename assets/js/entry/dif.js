@@ -22,7 +22,27 @@ const UNSUBMITTED = '0';
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
+    allowDrawPoint: false,
     // options can be added here in the future if needed
+  });
+
+  const spatialExtentRadios = document.getElementsByName('has-extent');
+  const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
+  const spatialExtentDescription = document.getElementById('spatial-extent-description');
+  spatialExtentRadios.forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'yes-extent') {
+        spatialExtentGeometry.classList.remove('hidden');
+        spatialExtentDescription.classList.add('hidden');
+        document.getElementById('spatialExtentDescription').value = '';
+        geoViz.fixMapSize();
+      } else if (e.target.value === 'no-extent') {
+        spatialExtentGeometry.classList.add('hidden');
+        spatialExtentDescription.classList.remove('hidden');
+        document.getElementById('spatialExtentGeometry').value = '';
+        geoViz.clearMap();
+      }
+    });
   });
 
   const form = document.getElementById('difForm');
@@ -197,6 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadResearchGroupDowndowns(researchGroupId) {
+    if (!researchGroupId) {
+      populateResearchGroupContacts([]);
+      return;
+    }
     const url = Routing.generate('pelagos_dif_get_research_group_contacts', { id: researchGroupId });
     let contacts = [];
     fetch(url)
@@ -243,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       populateResearchGroupContacts([]);
 
       // find all form fields
-      const formFields = form.querySelectorAll('input, select, textarea');
+      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
       formFields.forEach((field) => {
         const formField = field;
         formField.value = '';
@@ -251,6 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formField.removeAttribute('data-value');
         formField.checked = false;
       });
+      spatialExtentDescription.classList.add('hidden');
+      spatialExtentGeometry.classList.add('hidden');
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
       formValidate.clearErrors();
       researchGroup.focus();
@@ -268,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
-    const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
+    // const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
 
     // let geometryArray = [];
     // turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
@@ -276,7 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // });
     // const geometryCollection = turf.geometryCollection(geometryArray);
 
-    const { geometry } = combinedFeatureCollection.features[0];
+    // const { geometry } = combinedFeatureCollection.features[0];
+
+    // const newFeature = turf.flatten(combinedFeatureCollection);
+
+    const updateFeature = geoViz.getDrawnFeaturesAsGeoJSON();
+
+    const geometry = turf.getGeom(updateFeature.features[0]);
+    console.log(updateFeature);
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
