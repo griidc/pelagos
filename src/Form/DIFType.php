@@ -250,7 +250,7 @@ class DIFType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('spatialExtentGeometry', TextareaType::class)
+            ->add('spatialExtentGeometry', HiddenType::class)
             ->add('nationalDataArchiveNODC', CheckboxType::class, [
                  'label' => 'National Centers for Environmental Information',
                  'required' => false,
