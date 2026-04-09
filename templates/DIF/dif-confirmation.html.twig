@@ -28,14 +28,14 @@
                 {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
                     Congratulations!
                 {% else %}
-                    Success!
+                    Draft saved.
                 {% endif %}
                 </h2>
                 <p class="text-gray-500 mb-6 md:mb-8">
                 {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
                     You have successfully identified a dataset in GRIIDC. The GRIIDC identifier for this dataset is
                 {% else %}
-                    You have saved an identified dataset. The GRIIDC identifier is
+                    You have saved an identified dataset. Please return to the form to submit the identified dataset. The GRIIDC identifier is
                 {% endif %}
                     <a href="{{ url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) }}" class="pagelink">{{ dataset.udi }}</a>. A confirmation email has been sent to your inbox.
                 </p>

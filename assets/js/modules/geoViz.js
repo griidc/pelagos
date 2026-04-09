@@ -8,6 +8,14 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import { EventEmitter } from 'events';
 // import 'leaflet/dist/leaflet.css'; # This is broken due to webpack, but it is imported in the index.html.twig file.
 
+// import { Modal } from 'flowbite';
+
+// function showModal() {
+//   const modal = document.getElementById('default-modal');
+//   const modalInstance = new Modal(modal);
+//   modalInstance.toggle();
+// }
+
 const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
 const worldViewCode = process.env.WORLD_VIEW_CODE;
@@ -49,8 +57,8 @@ export default class GeoViz {
 
     map.pm.addControls({
       position: 'topleft',
-      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
       drawMarker: false,
+      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
       drawPolyline: options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : true,
       drawRectangle: options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true,
       drawPolygon: options.allowDrawPolygon !== undefined ? options.allowDrawPolygon : true,
@@ -67,14 +75,39 @@ export default class GeoViz {
       name: 'Home',
       block: 'custom',
       title: 'Navigate to Home',
+      toggle: false,
       className: 'custom-pm-icon-home',
       onClick: () => {
         this.goHome();
       },
     });
 
+    map.pm.Toolbar.createCustomControl({
+      name: 'Paste',
+      block: 'options',
+      title: 'Paste Wizard',
+      className: 'custom-pm-icon-brush',
+      actions: [
+        {
+          text: 'Paste Bounding Box',
+          onClick: () => {
+            map.pm.Toolbar.buttons.Paste.toggle();
+            // showModal();
+          },
+        },
+        {
+          text: 'Paste Point',
+          onClick: () => {
+            map.pm.Toolbar.buttons.Paste.toggle();
+            alert('This feature is not yet implemented. Please draw a point manually or paste a GeoJSON feature using the "Draw" tools.');
+          },
+        },
+      ],
+    });
+
     map.pm.Toolbar.changeControlOrder([
       'Home',
+      'Paste',
     ]);
 
     drawnGroup = Leaflet.featureGroup().addTo(map);
@@ -138,6 +171,16 @@ export default class GeoViz {
 
   on(eventName, callback) {
     return geoVizEventEmitter.on(eventName, callback);
+  }
+
+  fixMapSize() {
+    setTimeout(() => {
+      map.invalidateSize(true);
+    }, 10);
+  }
+
+  clearMap() {
+    drawnGroup.clearLayers();
   }
 }
 
@@ -456,4 +499,3 @@ export default class GeoViz {
 //   off,
 //   once,
 // };
-

@@ -7765,7 +7765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flowbite-datepicker@npm:1.3.2, flowbite-datepicker@npm:^1.3.0":
+"flowbite-datepicker@npm:1.3.2, flowbite-datepicker@npm:^1.3.0, flowbite-datepicker@npm:^1.3.1":
   version: 1.3.2
   resolution: "flowbite-datepicker@npm:1.3.2"
   dependencies:
@@ -7783,6 +7783,18 @@ __metadata:
     flowbite-datepicker: "npm:^1.3.0"
     mini-svg-data-uri: "npm:^1.4.3"
   checksum: 10c0/7de6311d4aef16b4854d88bab7943d59db16077a90a1da757fee06c70ef8bba8bb2579d3c5b3d5ceab85d9b9500b16d13eb4c55521f3a02989620f9a4ba3a2ed
+  languageName: node
+  linkType: hard
+
+"flowbite@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "flowbite@npm:3.1.2"
+  dependencies:
+    "@popperjs/core": "npm:^2.9.3"
+    flowbite-datepicker: "npm:^1.3.1"
+    mini-svg-data-uri: "npm:^1.4.3"
+    postcss: "npm:^8.5.1"
+  checksum: 10c0/5e617695162e8800f874281fe9ac205cbadc1c1413eccc760efb19c51bc6cfb337e3af70bfda6ed49b586b24e6af01a99b3a87c633688a77924516bc4d08795b
   languageName: node
   linkType: hard
 
@@ -11084,6 +11096,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.5.1":
+  version: 8.5.9
+  resolution: "postcss@npm:8.5.9"
+  dependencies:
+    nanoid: "npm:^3.3.11"
+    picocolors: "npm:^1.1.1"
+    source-map-js: "npm:^1.2.1"
+  checksum: 10c0/7cb2b32202ea1ead03f15cfbb2756a64a0f98942378e99b3dfce33678fe5eaf93e31d675a46e3a0dfb417d7b49b82d8999d0dd42a33c3b128e71ade0f978719a
+  languageName: node
+  linkType: hard
+
 "potpack@npm:^2.0.0":
   version: 2.1.0
   resolution: "potpack@npm:2.1.0"
@@ -11698,6 +11721,7 @@ __metadata:
     exceljs: "npm:^4.3.0"
     file-loader: "npm:^6.0.0"
     file-saver: "npm:^2.0.5"
+    flowbite: "npm:^3.1.2"
     flowbite-datepicker: "npm:1.3.2"
     jquery: "npm:^3.5.1"
     jquery-migrate: "npm:^3.6.0"
