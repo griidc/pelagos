@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateFeature = geoViz.getDrawnFeaturesAsGeoJSON();
 
     const geometry = turf.getGeom(updateFeature.features[0]);
-    console.log(updateFeature);
+    console.log(e, updateFeature);
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
