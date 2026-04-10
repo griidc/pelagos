@@ -56,10 +56,15 @@ export default class GeoViz {
     Leaflet.PM.setOptIn(true);
 
     map.pm.addControls({
-      position: 'topleft',
+      positions: {
+        draw: 'topleft',
+        edit: 'topleft',
+        custom: 'topleft',
+        options: 'bottomright',
+      },
       drawMarker: false,
-      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
-      drawPolyline: options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : true,
+      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : false,
+      drawPolyline: options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : false,
       drawRectangle: options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true,
       drawPolygon: options.allowDrawPolygon !== undefined ? options.allowDrawPolygon : true,
       drawCircle: false,
@@ -82,28 +87,28 @@ export default class GeoViz {
       },
     });
 
-    map.pm.Toolbar.createCustomControl({
-      name: 'Paste',
-      block: 'options',
-      title: 'Paste Wizard',
-      className: 'custom-pm-icon-brush',
-      actions: [
-        {
-          text: 'Paste Bounding Box',
-          onClick: () => {
-            map.pm.Toolbar.buttons.Paste.toggle();
-            // showModal();
-          },
-        },
-        {
-          text: 'Paste Point',
-          onClick: () => {
-            map.pm.Toolbar.buttons.Paste.toggle();
-            alert('This feature is not yet implemented. Please draw a point manually or paste a GeoJSON feature using the "Draw" tools.');
-          },
-        },
-      ],
-    });
+    // map.pm.Toolbar.createCustomControl({
+    //   name: 'Paste',
+    //   block: 'options',
+    //   title: 'Paste Wizard',
+    //   className: 'custom-pm-icon-brush',
+    //   actions: [
+    //     {
+    //       text: 'Paste Bounding Box',
+    //       onClick: () => {
+    //         map.pm.Toolbar.buttons.Paste.toggle();
+    //         // showModal();
+    //       },
+    //     },
+    //     {
+    //       text: 'Paste Point',
+    //       onClick: () => {
+    //         map.pm.Toolbar.buttons.Paste.toggle();
+    //         alert('This feature is not yet implemented. Please draw a point manually or paste a GeoJSON feature using the "Draw" tools.');
+    //       },
+    //     },
+    //   ],
+    // });
 
     map.pm.Toolbar.changeControlOrder([
       'Home',
