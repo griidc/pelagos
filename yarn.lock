@@ -7189,12 +7189,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery-ui@npm:<1.14.0":
-  version: 1.13.3
-  resolution: "jquery-ui@npm:1.13.3"
+"jquery-ui@npm:<1.15.0":
+  version: 1.14.2
+  resolution: "jquery-ui@npm:1.14.2"
   dependencies:
-    jquery: "npm:>=1.8.0 <4.0.0"
-  checksum: 10c0/d6c9b330e42ecd90cbf687ebd77c3f6572a4ef151c9572375fd82efe1dc4af21c0a568095af540805cbe1a1bea50306cfb6d12bff5297d646ae3d2fe3d6c54da
+    jquery: "npm:>=1.12.0 <5.0.0"
+  checksum: 10c0/83b65744c4f4f2e9fa12833feb76c964f9565ef8301ef4e224e93e6c867e10a45d7da3e93bc7bcaec5227a61e09a2a6d1ce0198d9c38de08e4ada3d53a628615
   languageName: node
   linkType: hard
 
@@ -7205,7 +7205,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery@npm:>=1.8.0 <4.0.0, jquery@npm:^3.5.1":
+"jquery@npm:>=1.12.0 <5.0.0":
+  version: 4.0.0
+  resolution: "jquery@npm:4.0.0"
+  checksum: 10c0/06d8d0f51121af5a691f8b59c74823157bb5b60eea915b30eaa920d6c0ffd91e60ba81e9b97bd8203f331f9dd8d0ec9a4b010935ea314bdd2f15453c29bc780b
+  languageName: node
+  linkType: hard
+
+"jquery@npm:^3.5.1":
   version: 3.7.1
   resolution: "jquery@npm:3.7.1"
   checksum: 10c0/808cfbfb758438560224bf26e17fcd5afc7419170230c810dd11f5c1792e2263e2970cca8d659eb84fcd9acc301edb6d310096e450277d54be4f57071b0c82d9
@@ -9716,7 +9723,7 @@ __metadata:
     file-saver: "npm:^2.0.5"
     jquery: "npm:^3.5.1"
     jquery-migrate: "npm:^3.6.0"
-    jquery-ui: "npm:<1.14.0"
+    jquery-ui: "npm:<1.15.0"
     jquery.cookie: "npm:^1.4.1"
     leaflet: "npm:^1.9.4"
     maplibre-gl: "npm:^4.7.1"
