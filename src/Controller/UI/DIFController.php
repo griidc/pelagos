@@ -154,10 +154,6 @@ class DIFController extends AbstractController
                 }
             }
 
-            if ($saveAndSubmit->isClicked()) {
-                $submitAction = 'saveAndSubmit';
-            }
-
             if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'], true)) {
                 $this->denyAccessUnlessGranted('ROLE_DATA_REPOSITORY_MANAGER');
             }
@@ -165,21 +161,19 @@ class DIFController extends AbstractController
             switch ($submitAction) {
                 case 'saveAndSubmit':
                     $dif->submit();
-                    $successMessage = 'DIF successfully submitted';
                     break;
                 case 'approveSubmission':
                     $dif->approve();
-                    $successMessage = 'DIF successfully approved';
+                    $this->addFlash('success', 'DIF successfully approved');
                     break;
                 case 'rejectSubmission':
                     $dif->unlock();
-                    $successMessage = 'DIF successfully unlocked';
+                    $this->addFlash('success', 'DIF successfully unlocked');
                     break;
                 case 'drpmUpdateSubmission':
-                    $successMessage = 'DIF successfully updated';
+                    $this->addFlash('success', 'DIF successfully updated');
                     break;
                 default:
-                    $successMessage = 'DIF successfully saved';
                     break;
             }
 
@@ -188,12 +182,9 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', $successMessage);
             return $this->render('DIF/dif-confirmation.html.twig', [
                 'dataset' => $dataset,
             ]);
-
-            // return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
         }
 
         return $this->render(
