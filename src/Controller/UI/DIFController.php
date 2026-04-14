@@ -154,32 +154,33 @@ class DIFController extends AbstractController
                 }
             }
 
-            if ($saveAndSubmit->isClicked()) {
-                $submitAction = 'saveAndSubmit';
-            }
-
             if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'], true)) {
                 $this->denyAccessUnlessGranted('ROLE_DATA_REPOSITORY_MANAGER');
             }
 
             switch ($submitAction) {
                 case 'saveAndSubmit':
+                    if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                        $actionDone = 'DIF submitted by a DRPM';
+                        $this->addFlash('success', $actionDone);
+                    }
                     $dif->submit();
-                    $successMessage = 'DIF successfully submitted';
                     break;
                 case 'approveSubmission':
                     $dif->approve();
-                    $successMessage = 'DIF successfully approved';
+                    $actionDone = 'DIF approved';
+                    $this->addFlash('success', $actionDone);
                     break;
                 case 'rejectSubmission':
                     $dif->unlock();
-                    $successMessage = 'DIF successfully unlocked';
+                    $actionDone = 'DIF unlocked';
+                    $this->addFlash('success', $actionDone);
                     break;
                 case 'drpmUpdateSubmission':
-                    $successMessage = 'DIF successfully updated';
+                    $actionDone = 'DIF updated';
+                    $this->addFlash('success', $actionDone);
                     break;
                 default:
-                    $successMessage = 'DIF successfully saved';
                     break;
             }
 
@@ -188,12 +189,16 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', $successMessage);
-            return $this->render('DIF/dif-confirmation.html.twig', [
-                'dataset' => $dataset,
-            ]);
-
-            // return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                return $this->render('DIF/drpm-dif-confirmation.html.twig', [
+                    'dataset' => $dataset,
+                    'actionDone' => $actionDone,
+                ]);
+            } else {
+                return $this->render('DIF/dif-confirmation.html.twig', [
+                    'dataset' => $dataset,
+                ]);
+            }
         }
 
         return $this->render(
