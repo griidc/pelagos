@@ -322,13 +322,13 @@ class DIFCrudController extends AbstractCrudController
         $researchGroupId = $researchGroup->getId();
 
         return static function (PersonRepository $personRepository) use ($researchGroupId) {
-            return $personRepository->createQueryBuilder('entity')
-                ->innerJoin('entity.personResearchGroups', 'personResearchGroup')
+            return $personRepository->createQueryBuilder('person')
+                ->innerJoin('person.personResearchGroups', 'personResearchGroup')
                 ->innerJoin('personResearchGroup.researchGroup', 'researchGroup')
                 ->andWhere('researchGroup.id = :researchGroupId')
                 ->setParameter('researchGroupId', $researchGroupId)
-                ->orderBy('entity.lastName', 'ASC')
-                ->addOrderBy('entity.firstName', 'ASC')
+                ->orderBy('person.lastName', 'ASC')
+                ->addOrderBy('person.firstName', 'ASC')
             ;
         };
     }
