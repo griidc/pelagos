@@ -182,9 +182,11 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->render('DIF/dif-confirmation.html.twig', [
-                'dataset' => $dataset,
-            ]);
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                return $this->render('DIF/drpm-dif-confirmation.html.twig', ['dataset' => $dataset,]);
+            } else {
+                return $this->render('DIF/dif-confirmation.html.twig', ['dataset' => $dataset,]);
+            }
         }
 
         return $this->render(
