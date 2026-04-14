@@ -141,8 +141,46 @@ class DIFController extends AbstractController
             /** @var SubmitButton $saveAndSubmit */
             $saveAndSubmit = $form->get('saveAndSubmit');
             $extraData = $form->getExtraData();
-            if ((isset($extraData['submitAction']) && $extraData['submitAction'] === 'saveAndSubmit') || $saveAndSubmit->isClicked()) {
-                $dif->submit();
+
+            // `submitAction` is populated from event.submitter.name in frontend JS.
+            // Fall back to button names in extraData so the action still works without JS.
+            $submitAction = $extraData['submitAction'] ?? null;
+            if ($submitAction === null) {
+                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'] as $buttonName) {
+                    if (isset($extraData[$buttonName])) {
+                        $submitAction = $buttonName;
+                        break;
+                    }
+                }
+            }
+
+            if ($saveAndSubmit->isClicked()) {
+                $submitAction = 'saveAndSubmit';
+            }
+
+            if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'], true)) {
+                $this->denyAccessUnlessGranted('ROLE_DATA_REPOSITORY_MANAGER');
+            }
+
+            switch ($submitAction) {
+                case 'saveAndSubmit':
+                    $dif->submit();
+                    $successMessage = 'DIF successfully submitted';
+                    break;
+                case 'approveSubmission':
+                    $dif->approve();
+                    $successMessage = 'DIF successfully approved';
+                    break;
+                case 'rejectSubmission':
+                    $dif->unlock();
+                    $successMessage = 'DIF successfully unlocked';
+                    break;
+                case 'drpmUpdateSubmission':
+                    $successMessage = 'DIF successfully updated';
+                    break;
+                default:
+                    $successMessage = 'DIF successfully saved';
+                    break;
             }
 
             $entityManager->persist($dif);
@@ -150,8 +188,7 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi());
-
+            $this->addFlash('success', $successMessage);
             return $this->render('DIF/dif-confirmation.html.twig', [
                 'dataset' => $dataset,
             ]);
