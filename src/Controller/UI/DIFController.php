@@ -160,18 +160,25 @@ class DIFController extends AbstractController
 
             switch ($submitAction) {
                 case 'saveAndSubmit':
+                    if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                        $actionDone = 'DIF submitted by a DRPM';
+                        $this->addFlash('success', $actionDone);
+                    }
                     $dif->submit();
                     break;
                 case 'approveSubmission':
                     $dif->approve();
-                    $this->addFlash('success', 'DIF successfully approved');
+                    $actionDone = 'DIF approved';
+                    $this->addFlash('success', $actionDone);
                     break;
                 case 'rejectSubmission':
                     $dif->unlock();
-                    $this->addFlash('success', 'DIF successfully unlocked');
+                    $actionDone = 'DIF unlocked';
+                    $this->addFlash('success', $actionDone);
                     break;
                 case 'drpmUpdateSubmission':
-                    $this->addFlash('success', 'DIF successfully updated');
+                    $actionDone = 'DIF updated';
+                    $this->addFlash('success', $actionDone);
                     break;
                 default:
                     break;
@@ -183,9 +190,14 @@ class DIFController extends AbstractController
             $entityManager->flush();
 
             if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-                return $this->render('DIF/drpm-dif-confirmation.html.twig', ['dataset' => $dataset,]);
+                return $this->render('DIF/drpm-dif-confirmation.html.twig', [
+                    'dataset' => $dataset,
+                    'actionDone' => $actionDone,
+                ]);
             } else {
-                return $this->render('DIF/dif-confirmation.html.twig', ['dataset' => $dataset,]);
+                return $this->render('DIF/dif-confirmation.html.twig', [
+                    'dataset' => $dataset,
+                ]);
             }
         }
 
