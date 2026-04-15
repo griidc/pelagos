@@ -192,7 +192,7 @@
                     <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ status != constant('App\\Entity\\DIF::STATUS_SUBMITTED') ? 'disabled' }}>Approve</button>
                 </div>
                 <div>
-                    <button type="submit" id="rejectSubmission" name="rejectSubmission" class="button button-regular button-form w-full justify-center" {{ status != constant('App\\Entity\\DIF::STATUS_APPROVED') ? 'disabled' }}>Unlock</button>
+                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ status != constant('App\\Entity\\DIF::STATUS_APPROVED') and status != constant('App\\Entity\\DIF::STATUS_SUBMITTED') ? 'disabled' }}>Unlock</button>
                 </div>
                 <div>
                     <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
