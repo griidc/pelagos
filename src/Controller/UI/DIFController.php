@@ -146,7 +146,7 @@ class DIFController extends AbstractController
             // Fall back to button names in extraData so the action still works without JS.
             $submitAction = $extraData['submitAction'] ?? null;
             if ($submitAction === null) {
-                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'] as $buttonName) {
+                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'unlockSubmission'] as $buttonName) {
                     if (isset($extraData[$buttonName])) {
                         $submitAction = $buttonName;
                         break;
@@ -154,7 +154,7 @@ class DIFController extends AbstractController
                 }
             }
 
-            if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'rejectSubmission'], true)) {
+            if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'unlockSubmission'], true)) {
                 $this->denyAccessUnlessGranted('ROLE_DATA_REPOSITORY_MANAGER');
             }
 
@@ -171,7 +171,7 @@ class DIFController extends AbstractController
                     $actionDone = 'DIF approved';
                     $this->addFlash('success', $actionDone);
                     break;
-                case 'rejectSubmission':
+                case 'unlockSubmission':
                     $dif->unlock();
                     $actionDone = 'DIF unlocked';
                     $this->addFlash('success', $actionDone);
