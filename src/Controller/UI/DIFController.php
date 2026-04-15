@@ -189,8 +189,8 @@ class DIFController extends AbstractController
                 'subjectEntityName' => DIF::class,
                 'subjectEntityId' => $dataset->getDif()->getId(),
                 'payLoad' => [
-                    'drpm' => $this->getUser()->getUserIdentifier(),
-                    'action' => $actionDone,
+                    'userId' => $this->getUser()->getUserIdentifier(),
+                    'adminAction' => $actionDone,
                     'udi' => $dataset->getUdi(),
                 ]
             ];

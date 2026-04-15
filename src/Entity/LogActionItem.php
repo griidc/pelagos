@@ -252,6 +252,16 @@ class LogActionItem extends Entity
             $from = $json['previousRestriction'] ?? '';
             $to = $json['newRestriction'] ?? '';
             $text = "$userId changed dataset restriction flag from $from to $to.";
+        } elseif ($action === 'Admin Action') {
+            $userId = $json['userId'] ?? '';
+            $adminAction = $json['adminAction'] ?? '';
+            $udi = $json['udi'] ?? '';
+            $text = "Admin $userId - $adminAction";
+            if (!empty($udi)) {
+                $text .= " for $udi.";
+            } else {
+                $text .= '.';
+            }
         } else {
             $text = 'Warning: Unknown JSON. Extend getPayloadDetails method in LogActionItemCrudController class.';
         }
