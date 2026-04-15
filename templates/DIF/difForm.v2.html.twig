@@ -206,7 +206,7 @@
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
-                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') ? 'disabled' }}>Submit &amp; Continue Later</button>
+                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') ? 'disabled' }}>Save and Continue Later</button>
                 </div>
 
                 <div>
@@ -225,13 +225,13 @@
             <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
             <div class="grid grid-cols-3 gap-4 py-2" id="submit">
                 <div>
-                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
-                </div>
-                <div>
                     <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ status != constant('App\\Entity\\DIF::STATUS_SUBMITTED') ? 'disabled' }}>Approve</button>
                 </div>
                 <div>
                     <button type="submit" id="rejectSubmission" name="rejectSubmission" class="button button-regular button-form w-full justify-center" {{ status != constant('App\\Entity\\DIF::STATUS_APPROVED') ? 'disabled' }}>Unlock</button>
+                </div>
+                <div>
+                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
                 </div>
             <div>
         </div>
