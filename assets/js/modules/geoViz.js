@@ -61,7 +61,7 @@ export default class GeoViz {
         options: 'bottomright',
       },
       drawMarker: false,
-      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : false,
+      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
       drawPolyline: options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : false,
       drawRectangle: options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true,
       drawPolygon: options.allowDrawPolygon !== undefined ? options.allowDrawPolygon : true,
