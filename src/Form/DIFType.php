@@ -104,12 +104,12 @@ class DIFType extends AbstractType
             ])
             ->add('primaryPointOfContact', ChoiceType::class, [
                 'label' => 'Primary Data Point of Contact:',
-                'placeholder' => '[Please select a project first]',
+                'placeholder' => '[Please select a project first.]',
                 'required' => true,
             ])
             ->add('secondaryPointOfContact', ChoiceType::class, [
                 'label' => 'Additional Data Point of Contact:',
-                'placeholder' => '[Please select a project first]',
+                'placeholder' => '[Please select a project first.]',
                 'required' => false,
             ])
             ->add('abstract', TextareaType::class, [
@@ -238,14 +238,14 @@ class DIFType extends AbstractType
                 },
                 'multiple' => true,
                 'attr' => [
-                    'placeholder' => '[Please select a funder]',
+                    'placeholder' => '[Please select a funder.]',
                 ],
             ])
             ->add('additionalFunders', TextType::class, [
                 'label' => 'Additional Funders',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => '[Please add any additional funders not on the dropdown]',
+                    'placeholder' => '[Please add any additional funders not on the dropdown.]',
                 ],
 
             ])
@@ -369,7 +369,7 @@ class DIFType extends AbstractType
             'class' => ResearchGroup::class,
             'choices' => $researchGroups,
             'choice_label' => 'name',
-            'placeholder' => '[Please select a project]',
+            'placeholder' => '[Please select a project.]',
             'required' => true,
             'label' => 'Project Title:',
             'choice_attr' => function (ResearchGroup $choice) {
@@ -388,14 +388,14 @@ class DIFType extends AbstractType
             'attr' => [
                 'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
             ],
-            'placeholder' => '[Please select a project first]',
+            'placeholder' => '[Please select a project first.]',
         ])
         ->add('secondaryPointOfContact', ChoiceType::class, [
             'label' => 'Additional Data Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
-            'placeholder' => '[Please select a project first]',
+            'placeholder' => '[Please select a project first.]',
             'required' => false,
         ])
         ;

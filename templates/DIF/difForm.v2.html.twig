@@ -23,18 +23,16 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    {{ form_label(form.primaryPointOfContact) }}
-                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                    <div class="text-red-600 text-sm font-semibold">
-                        {{ form_errors(form.primaryPointOfContact) }}
-                    </div>
+            <div>
+                {{ form_label(form.primaryPointOfContact) }}
+                {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                <div class="text-red-600 text-sm font-semibold">
+                    {{ form_errors(form.primaryPointOfContact) }}
                 </div>
+            </div>
 
-                <div>
-                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                </div>
+            <div>
+                {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
             </div>
 
             <div>
