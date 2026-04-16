@@ -10,11 +10,41 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
+// import * as GeoViz from '../modules/geoViz-leaflet';
+
+import GeoViz from '../modules/geoViz';
+
+import * as turf from '@turf/turf';
+
 const UNSUBMITTED = '0';
 // const SUBMITTED = '1';
 // const APPROVED = '2';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
+    allowDrawPoint: false,
+    // options can be added here in the future if needed
+  });
+
+  const spatialExtentRadios = document.getElementsByName('has-extent');
+  const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
+  const spatialExtentDescription = document.getElementById('spatial-extent-description');
+  spatialExtentRadios.forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'yes-extent') {
+        spatialExtentGeometry.classList.remove('hidden');
+        spatialExtentDescription.classList.add('hidden');
+        document.getElementById('spatialExtentDescription').value = '';
+        geoViz.fixMapSize();
+      } else if (e.target.value === 'no-extent') {
+        spatialExtentGeometry.classList.add('hidden');
+        spatialExtentDescription.classList.remove('hidden');
+        document.getElementById('spatialExtentGeometry').value = '';
+        geoViz.clearMap();
+      }
+    });
+  });
+
   const form = document.getElementById('difForm');
   const status = document.getElementById('status').value;
   const funders = document.getElementById('funders');
@@ -187,6 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadResearchGroupDowndowns(researchGroupId) {
+    if (!researchGroupId) {
+      populateResearchGroupContacts([]);
+      return;
+    }
     const url = Routing.generate('pelagos_dif_get_research_group_contacts', { id: researchGroupId });
     let contacts = [];
     fetch(url)
@@ -233,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       populateResearchGroupContacts([]);
 
       // find all form fields
-      const formFields = form.querySelectorAll('input, select, textarea');
+      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
       formFields.forEach((field) => {
         const formField = field;
         formField.value = '';
@@ -241,6 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formField.removeAttribute('data-value');
         formField.checked = false;
       });
+      spatialExtentDescription.classList.add('hidden');
+      spatialExtentGeometry.classList.add('hidden');
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
       formValidate.clearErrors();
       researchGroup.focus();
@@ -256,4 +292,39 @@ document.addEventListener('DOMContentLoaded', () => {
       formField.disabled = true;
     });
   }
+
+  geoViz.on('geojsonupdated', (e) => {
+    // const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
+
+    // let geometryArray = [];
+    // turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
+    //   geometryArray.push(turf.getGeom(currentFeature));
+    // });
+    // const geometryCollection = turf.geometryCollection(geometryArray);
+
+    // const { geometry } = combinedFeatureCollection.features[0];
+
+    // const newFeature = turf.flatten(combinedFeatureCollection);
+
+    const updateFeature = geoViz.getDrawnFeaturesAsGeoJSON();
+
+    const geometry = turf.getGeom(updateFeature.features[0]);
+    console.log(e, updateFeature);
+
+    const url = Routing.generate('pelagos_app_geojson_to_gml');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        geometry,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const gmlOutput = json.gml;
+        document.getElementById('spatialExtentGeometry').value = gmlOutput;
+      });
+  });
 });
