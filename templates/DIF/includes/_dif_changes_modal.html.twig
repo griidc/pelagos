@@ -1,0 +1,43 @@
+<div id="dif-changes-modal" class="fixed inset-0 {{ showDifChangesModal ? '' : 'hidden' }}" style="z-index: 2147483000;">
+    <div class="absolute inset-0 bg-black/70"></div>
+    <div class="relative h-full w-full" style="z-index: 2147483001;">
+        <div class="h-full w-full flex items-center justify-center p-4 md:p-8">
+            <div class="w-[80vw] h-[88vh] max-w-[80vw] max-h-[88vh] rounded-xl border-4 border-slate-900 overflow-hidden" style="background-color: var(--color-lightBlue); box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);">
+                <div class="h-full overflow-y-auto p-6 md:p-10">
+                    <h2 class="text-3xl font-semibold mb-4">Welcome to the new Dataset Information Form (DIF)!</h2>
+                    <br />
+                    <br />
+                    <div class="text-gray-700 space-y-4">
+                        <p>
+                            The Dataset Information Form (DIF) has been updated to provide a cleaner, more intuitive interface for submitting and managing your datasets.
+                        </p>
+                        <p>
+                            New features include:
+                        </p>
+                        <ul class="dif-changes-list">
+                            <li>Cleaner look and feel</li>
+                            <li>Tabs on the side to navigate sections</li>
+                            <li>New spatial extent map</li>
+                        </ul>
+                        <p>
+                            Important notes:
+                        </p>
+                        <p>
+                            A listing of datasets that you have created are now located on the new "My Dashboard" feature
+                            which can be accessed via the link above on the top navigation bar. If you would like to work
+                            on a previously saved DIF, please use the Dashboard to load the DIF.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex flex-row items-center justify-end gap-3">
+                        <button type="button" id="dif-changes-ok" class="button button-regular button-form justify-center px-4 py-2 text-sm">
+                            OK
+                        </button>
+                        <button type="button" id="dif-changes-ok-dont-show" class="button button-regular button-form justify-center px-4 py-2 text-sm whitespace-nowrap">
+                            OK - don't show this again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

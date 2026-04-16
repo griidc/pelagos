@@ -165,6 +165,7 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
+                'showDifChangesModal' => $request->cookies->get('pelagos_dif_changes_acknowledged') !== '1',
             ]
         );
     }
