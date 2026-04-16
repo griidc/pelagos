@@ -245,7 +245,7 @@ class DIFType extends AbstractType
             ->add('spatialExtentDescription', TextareaType::class, [
                 'label' => 'Description:',
                 'attr' => [
-                    'placeholder' => 'Example - "lab measurements of oil degradation, no field sampling involved"',
+                    'placeholder' => 'Please provide a short statement describing why this dataset does not have a spatial component. Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved."',
                     'rows' => 5,
                 ],
                 'required' => false,
