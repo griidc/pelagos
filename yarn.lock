@@ -9349,10 +9349,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.0.0":
-  version: 19.2.3
-  resolution: "react@npm:19.2.3"
-  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
+"react@npm:^19.2.5":
+  version: 19.2.5
+  resolution: "react@npm:19.2.5"
+  checksum: 10c0/4b5f231dbef92886f602533c9ce3bde04d99f0e71dfb5d794c43e02726efaad0421c08688f75fc98a6d6e1dc017372e1af7abbfecdc86a79968f461675931a7a
   languageName: node
   linkType: hard
 
@@ -9739,7 +9739,7 @@ __metadata:
     postcss-loader: "npm:^8.2.0"
     prop-types: "npm:^15.8.1"
     qtip2: "npm:2.2.0"
-    react: "npm:^19.0.0"
+    react: "npm:^19.2.5"
     react-dom: "npm:^19.0.0"
     regenerator-runtime: "npm:^0.14.1"
     sass-embedded: "npm:1.64"
