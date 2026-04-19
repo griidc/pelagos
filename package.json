@@ -10,7 +10,7 @@
         "autoprefixer": "^10.4.24",
         "baseline-browser-mapping": "^2.10.18",
         "core-js": "^3.49.0",
-        "eslint": "^8.0.0",
+        "eslint": "^10.2.1",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-import": "^2.32.0",
