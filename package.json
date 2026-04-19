@@ -7,7 +7,7 @@
         "@symfony/webpack-encore": "^4.6.1",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
         "@vue/babel-preset-jsx": "^1.1.2",
-        "autoprefixer": "^10.4.24",
+        "autoprefixer": "^10.5.0",
         "baseline-browser-mapping": "^2.10.18",
         "core-js": "^3.49.0",
         "eslint": "^8.0.0",
