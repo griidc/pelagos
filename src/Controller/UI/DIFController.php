@@ -20,7 +20,6 @@ use App\Util\PersonUtil;
 use App\Util\Udi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\SubmitButton;
 
@@ -138,11 +137,8 @@ class DIFController extends AbstractController
                 $udiUtil->mintUdi($dataset);
             }
 
-            /** @var SubmitButton $saveAndSubmit */
-            $saveAndSubmit = $form->get('saveAndSubmit');
             $extraData = $form->getExtraData();
 
-            // `submitAction` is populated from event.submitter.name in frontend JS.
             // Fall back to button names in extraData so the action still works without JS.
             $submitAction = $extraData['submitAction'] ?? null;
             if ($submitAction === null) {
@@ -207,6 +203,11 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
+                'isSubmittable' => $dif->isSubmittable(),
+                'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
+                'isApprovable' => $dif->isApprovable(),
+                'isApproved' => $dif->isApproved(),
+                'isUnlockable' => $dif->isUnlockable(),
             ]
         );
     }
