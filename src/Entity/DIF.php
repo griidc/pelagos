@@ -39,7 +39,7 @@ class DIF extends Entity
     /**
      * Valid data sizes for $dataSize.
      */
-    public const DATA_SIZES = ['< 10GB', '10GB-200GB', '200GB-1TB', '1TB-5TB', '>5TB'];
+    public const DATA_SIZES = ['< 1GB','1GB-10GB', '10GB-200GB', '200GB-1TB', '1TB-5TB', '>5TB'];
 
     /**
      * Valid values for $ethicalIssues.
@@ -379,8 +379,6 @@ class DIF extends Entity
             $this->setDataset($dataset);
         }
         $this->keywords = new ArrayCollection();
-
-        $this->dataSize = "< 1GB";
     }
 
     /**
