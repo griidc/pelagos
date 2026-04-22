@@ -2,9 +2,13 @@
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
         <div class="mb-4 font-normal text-gray-500">
-            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
-            In this step you will identify the dataset by selecting the project title from the drop-down menu.
-            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
+            <span>
+                The GRIIDC dataset submission process consists of two steps, identifying and submitting the data.
+                In this step you will identify the dataset by selecting the project title from the drop-down menu.
+                The red asterisk indicates required fields. For a listing of datasets, please visit the
+                <a href="{{ path('app_ui_dashboard') }}">User Dashboard.</a> Please contact
+                <a href="mailto:help@griidc.org">help@griidc.org</a> with any questions.
+            </span>
         </div>
         {% if udi is not empty %}
              <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
@@ -19,18 +23,16 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    {{ form_label(form.primaryPointOfContact) }}
-                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                    <div class="text-red-600 text-sm font-semibold">
-                        {{ form_errors(form.primaryPointOfContact) }}
-                    </div>
+            <div>
+                {{ form_label(form.primaryPointOfContact) }}
+                {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                <div class="text-red-600 text-sm font-semibold">
+                    {{ form_errors(form.primaryPointOfContact) }}
                 </div>
+            </div>
 
-                <div>
-                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                </div>
+            <div>
+                {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
             </div>
 
             <div>
@@ -80,7 +82,7 @@
                 </div>
             </div>
 
-            <label>Identify a National Data Archive for your Dataset, if applicable</label>
+            <label>Identify a National Data Archive for your dataset, if applicable.</label>
             <div>
                 <div>
                     {{ form_widget(form.nationalDataArchiveNODC, { attr: { class: 'checkbox-base'} }) }}

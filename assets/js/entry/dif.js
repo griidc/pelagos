@@ -177,11 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
       if (contacts.length === 0) {
-        defaultOption.textContent = '[PLEASE SELECT A PROJECT FIRST]';
+        defaultOption.textContent = '[Please select a project first.]';
         defaultOption.disabled = true;
         dropdown.disabled = true;
       } else {
-        defaultOption.textContent = '[PLEASE SELECT A CONTACT]';
+        defaultOption.textContent = '[Please select a contact.]';
         dropdown.disabled = false;
       }
       defaultOption.selected = true;
