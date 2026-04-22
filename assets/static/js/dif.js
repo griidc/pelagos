@@ -329,7 +329,7 @@ $(document).ready(function()
             return -1;
         }
     }));
-    $("select option:contains(Please select a project)").prependTo($("select#researchGroup"));
+    $("select option:contains(PLEASE SELECT A PROJECT)").prependTo($("select#researchGroup"));
     $('select#researchGroup').prop('selectedIndex', 0).trigger('change');
 });
 
@@ -985,7 +985,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
                 var selectedID = 0;
                 var selectelement;
                 selectelement = $('[name="primaryPointOfContact"],[name="secondaryPointOfContact"]');
-                selectelement.find("option").remove().end().append('<option value="">[Please select a contact.]</option>').val("");
+                selectelement.find("option").remove().end().append('<option value="">[PLEASE SELECT A CONTACT]</option>').val("");
                 $.each(json, function(id, personResearchGroup) {
                     selectelement.append(new Option(
                         personResearchGroup.person.lastName
