@@ -12,7 +12,6 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
-use App\Event\LogActionItemEventDispatcher;
 use App\Repository\DatasetRepository;
 use App\Repository\FunderRepository;
 use App\Repository\ResearchGroupRepository;
@@ -98,7 +97,7 @@ class DIFController extends AbstractController
 
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil, LogActionItemEventDispatcher $logActionItemEventDispatcher): Response
+    public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
     {
         $dataset = null;
         $dif = null;
@@ -138,10 +137,8 @@ class DIFController extends AbstractController
                 $udiUtil->mintUdi($dataset);
             }
 
-            /** @var SubmitButton $saveAndSubmit */
             $extraData = $form->getExtraData();
 
-            // `submitAction` is populated from event.submitter.name in frontend JS.
             // Fall back to button names in extraData so the action still works without JS.
             $submitAction = $extraData['submitAction'] ?? null;
             if ($submitAction === null) {
@@ -183,22 +180,9 @@ class DIFController extends AbstractController
                     break;
             }
 
-        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            $logData = [
-                'actionName' => 'Admin Action',
-                'subjectEntityName' => DIF::class,
-                'subjectEntityId' => $dataset->getDif()->getId(),
-                'payLoad' => [
-                    'userId' => $this->getUser()->getUserIdentifier(),
-                    'adminAction' => $actionDone,
-                    'udi' => $dataset->getUdi(),
-                ]
-            ];
-            $logActionItemEventDispatcher->dispatch($logData, 'admin_action');
-        }
-
             $entityManager->persist($dif);
             $entityManager->persist($dataset);
+
             $entityManager->flush();
 
             if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -219,6 +203,11 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
+                'isSubmittable' => $dif->isSubmittable(),
+                'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
+                'isApprovable' => $dif->isApprovable(),
+                'isApproved' => $dif->isApproved(),
+                'isUnlockable' => $dif->isUnlockable(),
             ]
         );
     }
