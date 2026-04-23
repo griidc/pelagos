@@ -1,4 +1,5 @@
 services:
+
   database:
     image: postgis/postgis:14-3.5
     container_name: postgis
@@ -9,6 +10,7 @@ services:
       - 5432:5432
     labels:
       com.symfony.server.service-ignore: true
+
   elasticsearch:
     image: elastic/elasticsearch:7.17.28
     container_name: elasticsearch
@@ -18,3 +20,33 @@ services:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ports:
       - 9200:9200
+
+  php:
+    build:
+      context: .
+      dockerfile: Containerfile.dev
+    image: symfony-dev:local
+    container_name: symfony-php
+    restart: "no"
+    working_dir: /app
+    # Keep the container running with nothing in it — we shell in manually
+    # to launch symfony serve:start --port=8000 --allow-all-ip --no-tls -d
+    command: ["tail", "-f", "/dev/null"]
+    volumes:
+      - .:/app:Z
+      # Volume path updated to match root's home inside the container
+      - symfony_cli_home:/root/.symfony5:Z
+      - /etc/php.ini:/etc/php.ini:ro
+    ports:
+      - 8000:8000
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: "1"
+      DATABASE_URL: "postgresql://postgres:@postgis:5432/pelagos?serverVersion=14&charset=utf8"
+      ELASTICSEARCH_URL: "http://elasticsearch:9200/"
+    depends_on:
+      - database
+      - elasticsearch
+
+volumes:
+  symfony_cli_home:

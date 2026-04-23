@@ -39,10 +39,13 @@ if [ ! -f $1 ]; then
 fi
 
 # Manually parse DATABASE_URL from .env.local file
+if [[ ! -v DATABASE_URL ]]; 
+    then database_url=$(grep "^DATABASE_URL" ./.env.local)
+else
+    database_url=$DATABASE_URL
+fi
 
-database_url=$(grep "^DATABASE_URL" ./.env.local)
 IFS=':' read -ra database_url_parts <<< "$database_url"
-
 # unused
 dbtype=${database_url_parts[0]}
 dbtype=${dbtype/database_url=/}
