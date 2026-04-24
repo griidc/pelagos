@@ -2,20 +2,33 @@ FROM rockylinux:9
 
 LABEL description="Symfony Development Server — PHP 8.4"
 
-# ── Repositories ──────────────────────────────────────────────────────────────
-# EPEL: provides memcached and other extras
-# Remi: provides PHP 8.4 (Rocky 9 AppStream only ships PHP 8.0)
-# NodeSource: provides Node.js LTS (needed for yarn)
-RUN dnf install -y --setopt=install_weak_deps=False epel-release \
-    && dnf install -y --setopt=install_weak_deps=False \
+# ── All repos, packages, tools installed and cleaned in a single layer ────────
+#
+# A single RUN means:
+#   - dnf cache never persists into a committed layer
+#   - npm cache never persists into a committed layer
+#   - repo setup scripts and their deps are cleaned up in the same layer
+#   - the final committed layer contains only the installed files
+#
+RUN \
+    # ── DNF baseline config — suppress weak deps and docs globally ────────────
+    echo "install_weak_deps=False" >> /etc/dnf/dnf.conf \
+    && echo "tsflags=nodocs" >> /etc/dnf/dnf.conf \
+    \
+    # ── EPEL (needed for memcached etc) ───────────────────────────────────────
+    && dnf install -y epel-release \
+    \
+    # ── Remi repo for PHP 8.4 ─────────────────────────────────────────────────
+    && dnf install -y \
         https://rpms.remirepo.net/enterprise/remi-release-9.rpm \
     && dnf module reset php -y \
     && dnf module enable php:remi-8.4 -y \
+    \
+    # ── NodeSource LTS repo ───────────────────────────────────────────────────
     && curl -fsSL https://rpm.nodesource.com/setup_lts.x | bash - \
-    && dnf clean all -y
-
-# ── System & PHP packages ─────────────────────────────────────────────────────
-RUN dnf install -y --setopt=install_weak_deps=False \
+    \
+    # ── All packages in one transaction ───────────────────────────────────────
+    && dnf install -y \
         php-cli \
         php-common \
         php-intl \
@@ -34,40 +47,53 @@ RUN dnf install -y --setopt=install_weak_deps=False \
         php-tidy \
         php-ldap \
         php-memcached \
-        git \
         unzip \
-        vim \
+        ca-certificates \
+        vim-minimal \
         postgresql \
         memcached \
         nodejs \
-    && dnf clean all -y
-
-# ── Yarn ──────────────────────────────────────────────────────────────────────
-RUN npm install -g yarn \
+    \
+    # ── Yarn via npm ──────────────────────────────────────────────────────────
+    && npm install -g yarn \
+    \
+    # ── Composer ──────────────────────────────────────────────────────────────
+    && curl -sS https://getcomposer.org/installer \
+        | php -- --install-dir=/usr/local/bin --filename=composer \
+    \
+    # ── Symfony CLI ───────────────────────────────────────────────────────────
+    && curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.rpm.sh' \
+        | bash - \
+    && dnf install -y symfony-cli \
+    \
+    # ── Aggressive cleanup in the same layer ──────────────────────────────────
+    && dnf clean all \
+    && npm cache clean --force \
+    && rm -rf \
+        /var/cache/dnf \
+        /var/cache/yum \
+        /var/log/dnf* \
+        /var/log/yum* \
+        /tmp/* \
+        /var/tmp/* \
+        /root/.npm \
+        /usr/share/doc \
+        /usr/share/man \
+        /usr/share/info \
+        /usr/share/locale \
+    \
+    # ── Verify PHP 8.4 ────────────────────────────────────────────────────────
+    && php --version | grep -E "^PHP 8\.4" || \
+        { echo "ERROR: Expected PHP 8.4, got: $(php --version | head -1)"; exit 1; } \
+    \
+    # ── Verify everything installed correctly ─────────────────────────────────
+    && composer --version \
+    && symfony version \
     && yarn --version
 
-# ── Verify PHP 8.4 ────────────────────────────────────────────────────────────
-RUN php --version | grep -E "^PHP 8\.4" || \
-    { echo "ERROR: Expected PHP 8.4, got: $(php --version | head -1)"; exit 1; }
-
-# ── Composer ──────────────────────────────────────────────────────────────────
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer --version
-
-# ── Symfony CLI ───────────────────────────────────────────────────────────────
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.rpm.sh' \
-        | bash \
-    && dnf install -y symfony-cli \
-    && dnf clean all -y \
-    && symfony version
-
 # ── Working directory ─────────────────────────────────────────────────────────
-# Running as root inside a rootless container is safe — root inside the
-# container simply maps to your unprivileged user account on the host.
 WORKDIR /app
 
-# Symfony CLI keeps server state and local TLS certs here
 VOLUME /root/.symfony5
 
 EXPOSE 8000
