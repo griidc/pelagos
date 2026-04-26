@@ -48,7 +48,7 @@
         "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
         "symfony/ldap": "7.4.*",
-        "symfony/mailer": "7.4.*",
+        "symfony/mailer": "8.0.*",
         "symfony/maker-bundle": "^1.13",
         "symfony/messenger": "7.4.*",
         "symfony/monolog-bundle": "^3.0",
