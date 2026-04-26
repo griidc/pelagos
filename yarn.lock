@@ -4804,13 +4804,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devextreme-vue@npm:^21.1.6":
-  version: 21.2.15
-  resolution: "devextreme-vue@npm:21.2.15"
+"devextreme-vue@npm:^25.2.6":
+  version: 25.2.6
+  resolution: "devextreme-vue@npm:25.2.6"
   peerDependencies:
-    devextreme: ~21.2.15
-    vue: ^2.5.16 || ^3.0.0
-  checksum: 10c0/cf30b096a090ad485bfd46388ccc9161a1c3585be2644b227650ea040790db1865770ad05576e14320f7af8283e5838c761e274ef1569b56eda5382c1562ad37
+    devextreme: 25.2.6
+    vue: ^3.0.0
+  checksum: 10c0/890716a34c0bb70ac0b6110be1eb67167b7875272b0f8e55465b8c4f5b77116b851bc0c7acd333fddeb44e49fa64fd344ffde707b69132816828ef6859cc5a52
   languageName: node
   linkType: hard
 
@@ -9716,7 +9716,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     core-js: "npm:^3.49.0"
     devextreme: "npm:^21.1.6"
-    devextreme-vue: "npm:^21.1.6"
+    devextreme-vue: "npm:^25.2.6"
     dotenv-webpack: "npm:^8.1.1"
     dropzone: "npm:^5.7.2"
     eslint: "npm:^8.0.0"

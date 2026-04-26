@@ -51,7 +51,7 @@
         "bootstrap-vue": "^2.5.0",
         "clsx": "^2.1.1",
         "devextreme": "^21.1.6",
-        "devextreme-vue": "^21.1.6",
+        "devextreme-vue": "^25.2.6",
         "dotenv-webpack": "^8.1.1",
         "dropzone": "^5.7.2",
         "esri-leaflet": "^3.0.19",
