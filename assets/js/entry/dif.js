@@ -10,20 +10,19 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
-// import * as GeoViz from '../modules/geoViz-leaflet';
-
 import GeoViz from '../modules/geoViz';
 
 import * as turf from '@turf/turf';
 
-const UNSUBMITTED = '0';
-// const SUBMITTED = '1';
-// const APPROVED = '2';
+const DIF_STATES = {
+  UNSUBMITTED: '0',
+  SUBMITTED: '1',
+  APPROVED: '2',
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
-    allowDrawPoint: false,
-    // options can be added here in the future if needed
+    loadWizard: true,
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
@@ -70,21 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
       },
     },
-    // load(query, callback) {
-    //   const url = Routing.generate('pelagos_dif_get_research_groups');
-    //   fetch(url)
-    //     .then((response) => response.json())
-    //     .then((json) => {
-    //       callback(json.ResearchGroups);
-    //       const selectValue = researchGroup.getAttribute('value');
-    //       if (selectValue) {
-    //         this.setValue(selectValue);
-    //         this.disable();
-    //       }
-    //     }).catch(() => {
-    //       callback();
-    //     });
-    // },
   });
 
   const formValidate = new JustValidate(form, {
@@ -211,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dropdown.appendChild(option);
       });
-      if (status !== UNSUBMITTED && !isDrpm) {
+      if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
         dropdown.disabled = true;
       }
     });
@@ -236,17 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   researchGroupSelect.on('change', (value) => {
     loadResearchGroupDowndowns(value);
-  });
-
-  researchGroupSelect.on('item_add', (value) => {
-    const url = Routing.generate('pelagos_dif_check_research_group', { id: value });
-    fetch(url)
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.locked) {
-          alert('This research group is disabled and cannot be selected.');
-        }
-      });
   });
 
   if (researchGroupSelect.getValue() && researchGroupSelect.getValue() !== '') {
@@ -288,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (status !== UNSUBMITTED && !isDrpm) {
+  if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;
@@ -299,22 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
-    // const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
-
-    // let geometryArray = [];
-    // turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
-    //   geometryArray.push(turf.getGeom(currentFeature));
-    // });
-    // const geometryCollection = turf.geometryCollection(geometryArray);
-
-    // const { geometry } = combinedFeatureCollection.features[0];
-
-    // const newFeature = turf.flatten(combinedFeatureCollection);
-
-    const updateFeature = geoViz.getDrawnFeaturesAsGeoJSON();
-
-    const geometry = turf.getGeom(updateFeature.features[0]);
-    console.log(e, updateFeature);
+    const drawnFeatures = geoViz.getDrawnFeaturesAsGeoJSON();
+    const combinedFeatureCollection = drawnFeatures.features.length > 1 ? turf.combine(drawnFeatures) : drawnFeatures;
+    const geometry = turf.getGeom(combinedFeatureCollection.features[0]);
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
