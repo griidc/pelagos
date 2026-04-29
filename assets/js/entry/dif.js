@@ -10,19 +10,19 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
-// import * as GeoViz from '../modules/geoViz-leaflet';
-
 import GeoViz from '../modules/geoViz';
 
 import * as turf from '@turf/turf';
 
-const UNSUBMITTED = '0';
-// const SUBMITTED = '1';
-// const APPROVED = '2';
+const DIF_STATES = {
+  UNSUBMITTED: '0',
+  SUBMITTED: '1',
+  APPROVED: '2',
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
-    // options can be added here
+    loadWizard: true,
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dropdown.appendChild(option);
       });
-      if (status !== UNSUBMITTED && !isDrpm) {
+      if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
         dropdown.disabled = true;
       }
     });
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (status !== UNSUBMITTED && !isDrpm) {
+  if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;

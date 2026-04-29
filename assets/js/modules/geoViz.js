@@ -8,14 +8,6 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import { EventEmitter } from 'events';
 // import 'leaflet/dist/leaflet.css'; # This is broken due to webpack, but it is imported in the index.html.twig file.
 
-// import { Modal } from 'flowbite';
-
-// function showModal() {
-//   const modal = document.getElementById('default-modal');
-//   const modalInstance = new Modal(modal);
-//   modalInstance.toggle();
-// }
-
 const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
 const worldViewCode = process.env.WORLD_VIEW_CODE;
@@ -38,11 +30,12 @@ const mapStyles = {
   'ArcGIS Terrain': ArcGISTerrain,
 };
 
-let map = null;
 let drawnGroup = null;
 export default class GeoViz {
   constructor(element, options = {}) {
-    map = Leaflet.map(element, {
+    const loadWizard = options.loadWizard !== undefined ? options.loadWizard : false;
+
+    this.map = Leaflet.map(element, {
       preferCanvas: true,
       minZoom: 2,
       maxZoom: 14,
@@ -53,12 +46,12 @@ export default class GeoViz {
 
     Leaflet.PM.setOptIn(true);
 
-    map.pm.addControls({
+    this.map.pm.addControls({
       positions: {
         draw: 'topleft',
         edit: 'topleft',
         custom: 'topleft',
-        options: 'bottomright',
+        options: 'topleft',
       },
       drawMarker: false,
       drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
@@ -74,7 +67,7 @@ export default class GeoViz {
       rotateMode: false,
     });
 
-    map.pm.Toolbar.createCustomControl({
+    this.map.pm.Toolbar.createCustomControl({
       name: 'Home',
       block: 'custom',
       title: 'Navigate to Home',
@@ -85,38 +78,22 @@ export default class GeoViz {
       },
     });
 
-    // map.pm.Toolbar.createCustomControl({
-    //   name: 'Paste',
-    //   block: 'options',
-    //   title: 'Paste Wizard',
-    //   className: 'custom-pm-icon-brush',
-    //   actions: [
-    //     {
-    //       text: 'Paste Bounding Box',
-    //       onClick: () => {
-    //         map.pm.Toolbar.buttons.Paste.toggle();
-    //         // showModal();
-    //       },
-    //     },
-    //     {
-    //       text: 'Paste Point',
-    //       onClick: () => {
-    //         map.pm.Toolbar.buttons.Paste.toggle();
-    //         alert('This feature is not yet implemented. Please draw a point manually or paste a GeoJSON feature using the "Draw" tools.');
-    //       },
-    //     },
-    //   ],
-    // });
-
-    map.pm.Toolbar.changeControlOrder([
+    this.map.pm.Toolbar.changeControlOrder([
       'Home',
-      'Paste',
     ]);
 
-    drawnGroup = Leaflet.featureGroup().addTo(map);
+    if (loadWizard) {
+      import('./spatialWizard').then((module) => {
+        // eslint-disable-next-line new-cap
+        const myWizard = new module.default(this);
+        myWizard.init();
+      });
+    }
+
+    drawnGroup = Leaflet.featureGroup().addTo(this.map);
 
     let drawnLayer;
-    map.on('pm:create', (e) => {
+    this.map.on('pm:create', (e) => {
       drawnLayer = e.layer;
       // Allow PM to manage the layer
       drawnLayer.options.pmIgnore = false;
@@ -135,32 +112,29 @@ export default class GeoViz {
     });
 
     ['pm:globaleditmodetoggled', 'pm:globalremovalmodetoggled'].forEach((eventName) => {
-      map.on(eventName, () => {
+      this.map.on(eventName, () => {
         if (drawnLayer) {
           drawnLayer.bringToFront();
         }
       });
     });
 
-    map.on('pm:remove', () => {
+    this.map.on('pm:remove', () => {
       geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
       drawnGroup.clearLayers();
     });
 
     // Listen for the drawstart event and clear the previously drawn features, if any.
-    map.on('pm:drawstart', () => {
+    this.map.on('pm:drawstart', () => {
       if (drawnLayer) {
         drawnLayer.off();
         drawnGroup.clearLayers();
-        map.removeLayer(drawnLayer);
+        this.map.removeLayer(drawnLayer);
       }
     });
 
-    Leaflet.control.layers(mapStyles).addTo(map);
-
-    // this.features = Leaflet.featureGroup().addTo(this.map);
-    // this.selectedFeatures = Leaflet.featureGroup().addTo(this.map);
-    map.setView(INITIAL_CENTER, INITIAL_ZOOM);
+    Leaflet.control.layers(mapStyles).addTo(this.map);
+    this.map.setView(INITIAL_CENTER, INITIAL_ZOOM);
   }
 
   getDrawnFeaturesAsGeoJSON() {
@@ -168,8 +142,8 @@ export default class GeoViz {
   }
 
   goHome() {
-    map.setZoom(INITIAL_ZOOM, { animate: true });
-    map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
+    this.map.setZoom(INITIAL_ZOOM, { animate: true });
+    this.map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
   }
 
   on(eventName, callback) {
@@ -178,11 +152,17 @@ export default class GeoViz {
 
   fixMapSize() {
     setTimeout(() => {
-      map.invalidateSize(true);
+      this.map.invalidateSize(true);
     }, 10);
   }
 
   clearMap() {
     drawnGroup.clearLayers();
+  }
+
+  addFeature(geojson) {
+    const layer = Leaflet.geoJSON(geojson);
+    drawnGroup.addLayer(layer);
+    this.map.fitBounds(layer.getBounds(), { animate: true });
   }
 }
