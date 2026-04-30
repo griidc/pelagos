@@ -12,8 +12,6 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 import GeoViz from '../modules/geoViz';
 
-import * as turf from '@turf/turf';
-
 const DIF_STATES = {
   UNSUBMITTED: '0',
   SUBMITTED: '1',
@@ -272,9 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
-    const drawnFeatures = geoViz.getDrawnFeaturesAsGeoJSON();
-    const combinedFeatureCollection = drawnFeatures.features.length > 1 ? turf.combine(drawnFeatures) : drawnFeatures;
-    const geometry = turf.getGeom(combinedFeatureCollection.features[0]);
+    const geometry = e.geojson ? e.geojson.geometry : '';
+
+    if (!geometry) {
+      document.getElementById('spatialExtentGeometry').value = '';
+      return;
+    }
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
