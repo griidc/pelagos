@@ -30,7 +30,7 @@ const mapStyles = {
   'ArcGIS Terrain': ArcGISTerrain,
 };
 
-let drawnGroup = null;
+let drawnLayer = null;
 export default class GeoViz {
   constructor(element, options = {}) {
     const loadWizard = options.loadWizard !== undefined ? options.loadWizard : false;
@@ -67,6 +67,9 @@ export default class GeoViz {
       rotateMode: false,
     });
 
+    // eslint-disable-next-line no-underscore-dangle
+    this.map.pm.Toolbar.buttons.drawCircleMarker._button.title = 'Draw Point';
+
     this.map.pm.Toolbar.createCustomControl({
       name: 'Home',
       block: 'custom',
@@ -90,15 +93,11 @@ export default class GeoViz {
       });
     }
 
-    drawnGroup = Leaflet.featureGroup().addTo(this.map);
-
-    let drawnLayer;
     this.map.on('pm:create', (e) => {
       drawnLayer = e.layer;
       // Allow PM to manage the layer
       drawnLayer.options.pmIgnore = false;
       Leaflet.PM.reInitLayer(drawnLayer);
-      drawnGroup.addLayer(drawnLayer);
       const geojson = drawnLayer.toGeoJSON();
       if (geojson) {
         geoVizEventEmitter.emit('geojsonupdated', { geojson });
@@ -121,15 +120,13 @@ export default class GeoViz {
 
     this.map.on('pm:remove', () => {
       geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
-      drawnGroup.clearLayers();
     });
 
     // Listen for the drawstart event and clear the previously drawn features, if any.
     this.map.on('pm:drawstart', () => {
       if (drawnLayer) {
         drawnLayer.off();
-        drawnGroup.clearLayers();
-        this.map.removeLayer(drawnLayer);
+        drawnLayer.removeFrom(this.map);
       }
     });
 
@@ -138,7 +135,7 @@ export default class GeoViz {
   }
 
   getDrawnFeaturesAsGeoJSON() {
-    return drawnGroup.toGeoJSON();
+    return drawnLayer.toGeoJSON();
   }
 
   goHome() {
@@ -157,12 +154,20 @@ export default class GeoViz {
   }
 
   clearMap() {
-    drawnGroup.clearLayers();
+    if (drawnLayer) {
+      drawnLayer.remove();
+    }
   }
 
   addFeature(geojson) {
-    const layer = Leaflet.geoJSON(geojson);
-    drawnGroup.addLayer(layer);
-    this.map.fitBounds(layer.getBounds(), { animate: true });
+    if (drawnLayer) {
+      drawnLayer.off();
+      drawnLayer.remove();
+    }
+    drawnLayer = Leaflet.geoJSON(geojson, {
+      pmIgnore: false,
+      pointToLayer: (feature, latlng) => Leaflet.circleMarker(latlng, { pmIgnore: false }),
+    }).addTo(this.map);
+    this.map.fitBounds(drawnLayer.getBounds(), { animate: true, maxZoom: 6 });
   }
 }
