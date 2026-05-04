@@ -95,7 +95,7 @@ class DIFType extends AbstractType
         $builder
             ->add('title', TextareaType::class, [
                 'attr' => [
-                    'placeholder' => 'Please provide a title that describes the contents of your dataset. This is NOT the title of your project. (200 character maximum).',
+                    'placeholder' => 'Please provide a title that describes the contents of your dataset. This is NOT the title of your project. (200 character maximum)',
                     'rows' => '2',
                     'maxsize' => 200,
                 ],
@@ -115,7 +115,7 @@ class DIFType extends AbstractType
             ->add('abstract', TextareaType::class, [
                 'attr' => [
                     'rows' => 6,
-                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated (4000 character maximum).',
+                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated. (4000 character maximum)',
                     'maxlength' => 4000,
                 ],
                 'label' => 'Dataset Abstract:',
