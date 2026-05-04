@@ -10,11 +10,40 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
+// import * as GeoViz from '../modules/geoViz-leaflet';
+
+import GeoViz from '../modules/geoViz';
+
+import * as turf from '@turf/turf';
+
 const UNSUBMITTED = '0';
 // const SUBMITTED = '1';
 // const APPROVED = '2';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
+    // options can be added here
+  });
+
+  const spatialExtentRadios = document.getElementsByName('has-extent');
+  const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
+  const spatialExtentDescription = document.getElementById('spatial-extent-description');
+  spatialExtentRadios.forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'yes-extent') {
+        spatialExtentGeometry.classList.remove('hidden');
+        spatialExtentDescription.classList.add('hidden');
+        document.getElementById('spatialExtentDescription').value = '';
+        geoViz.fixMapSize();
+      } else if (e.target.value === 'no-extent') {
+        spatialExtentGeometry.classList.add('hidden');
+        spatialExtentDescription.classList.remove('hidden');
+        document.getElementById('spatialExtentGeometry').value = '';
+        geoViz.clearMap();
+      }
+    });
+  });
+
   const form = document.getElementById('difForm');
   const status = document.getElementById('status').value;
   const funders = document.getElementById('funders');
@@ -39,21 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
       },
     },
-    // load(query, callback) {
-    //   const url = Routing.generate('pelagos_dif_get_research_groups');
-    //   fetch(url)
-    //     .then((response) => response.json())
-    //     .then((json) => {
-    //       callback(json.ResearchGroups);
-    //       const selectValue = researchGroup.getAttribute('value');
-    //       if (selectValue) {
-    //         this.setValue(selectValue);
-    //         this.disable();
-    //       }
-    //     }).catch(() => {
-    //       callback();
-    //     });
-    // },
   });
 
   const formValidate = new JustValidate(form, {
@@ -187,6 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadResearchGroupDowndowns(researchGroupId) {
+    if (!researchGroupId) {
+      populateResearchGroupContacts([]);
+      return;
+    }
     const url = Routing.generate('pelagos_dif_get_research_group_contacts', { id: researchGroupId });
     let contacts = [];
     fetch(url)
@@ -201,17 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   researchGroupSelect.on('change', (value) => {
     loadResearchGroupDowndowns(value);
-  });
-
-  researchGroupSelect.on('item_add', (value) => {
-    const url = Routing.generate('pelagos_dif_check_research_group', { id: value });
-    fetch(url)
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.locked) {
-          alert('This research group is disabled and cannot be selected.');
-        }
-      });
   });
 
   if (researchGroupSelect.getValue() && researchGroupSelect.getValue() !== '') {
@@ -233,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       populateResearchGroupContacts([]);
 
       // find all form fields
-      const formFields = form.querySelectorAll('input, select, textarea');
+      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
       formFields.forEach((field) => {
         const formField = field;
         formField.value = '';
@@ -241,6 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formField.removeAttribute('data-value');
         formField.checked = false;
       });
+      spatialExtentDescription.classList.add('hidden');
+      spatialExtentGeometry.classList.add('hidden');
       loadResearchGroupDowndowns(researchGroupSelect.getValue());
       formValidate.clearErrors();
       researchGroup.focus();
@@ -256,4 +265,26 @@ document.addEventListener('DOMContentLoaded', () => {
       formField.disabled = true;
     });
   }
+
+  geoViz.on('geojsonupdated', (e) => {
+    const drawnFeatures = geoViz.getDrawnFeaturesAsGeoJSON();
+    const combinedFeatureCollection = drawnFeatures.features.length > 1 ? turf.combine(drawnFeatures) : drawnFeatures;
+    const geometry = turf.getGeom(combinedFeatureCollection.features[0]);
+
+    const url = Routing.generate('pelagos_app_geojson_to_gml');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        geometry,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const gmlOutput = json.gml;
+        document.getElementById('spatialExtentGeometry').value = gmlOutput;
+      });
+  });
 });
