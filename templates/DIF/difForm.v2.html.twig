@@ -206,11 +206,11 @@
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
-                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isDRPM ? 'disabled' }}>Save and Continue Later</button>
+                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isDRPM ? 'title="DRPM users cannot use save and continue later. Use Update instead." disabled' }}>Save and Continue Later</button>
                 </div>
 
                 <div>
-                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center" {{ isDRPM and not isSubmittable ? 'disabled' }}>Submit to GRIIDC</button>
+                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center" {{ isDRPM and not isSubmittable ? 'title="Only DIFs in the unsubmitted state can be submitted." disabled' }}>Submit to GRIIDC</button>
                 </div>
 
                 <div>
@@ -225,13 +225,13 @@
             <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
             <div class="grid grid-cols-3 gap-4 py-2" id="submit">
                 <div>
-                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'disabled' }}>Approve</button>
+                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'title="Only DIFs in the submitted state can be approved." disabled' }}>Approve</button>
                 </div>
                 <div>
-                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ not isUnlockable ? 'disabled' }}>Unlock</button>
+                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ not isUnlockable ? 'title="Only DIFs in the approved or submitted state can be unlocked." disabled' }}>Unlock</button>
                 </div>
                 <div>
-                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
+                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center" title="This button allows a DRPM to update a DIF without changing states.">Update</button>
                 </div>
             <div>
         </div>

@@ -66,28 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const defaultFunderPlaceholder = funders.getAttribute('placeholder') || '[Please select a funder.]';
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
+    hidePlaceholder: true,
     plugins: {
       remove_button: {
         title: 'Remove this funder',
       },
     },
   });
-
-  function syncFunderPlaceholder() {
-    const selectedFunders = fundersSelect.getValue();
-    const hasSelection = Array.isArray(selectedFunders)
-      ? selectedFunders.length > 0
-      : String(selectedFunders || '').length > 0;
-    const placeholderText = hasSelection ? '' : defaultFunderPlaceholder;
-
-    fundersSelect.settings.placeholder = placeholderText;
-    if (fundersSelect.control_input) {
-      fundersSelect.control_input.setAttribute('placeholder', placeholderText);
-    }
-  }
-
-  fundersSelect.on('change', syncFunderPlaceholder);
-  syncFunderPlaceholder();
 
   const researchGroup = document.getElementById('researchGroup');
   const researchGroupSelect = new TomSelect(researchGroup, {
