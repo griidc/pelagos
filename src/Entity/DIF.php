@@ -1303,41 +1303,13 @@ class DIF extends Entity
     }
 
     /**
-     * Whether or not this DIF can be rejected.
+     * Whether or not this DIF can be unlocked/rejected.
      *
-     * @return bool true if this DIF can be rejected, False otherwise
-     */
-    public function isRejectable()
-    {
-        return self::STATUS_SUBMITTED === $this->status;
-    }
-
-    /**
-     * Reject this DIF.
-     *
-     * This will set the DIF's status to unsubmitted when its current status is submitted,
-     *
-     * @return void
-     *
-     * @throws \Exception when a DIF's status is anything other than unsubmitted
-     */
-    public function reject()
-    {
-        if ($this->isRejectable()) {
-            $this->setStatus(self::STATUS_UNSUBMITTED);
-        } else {
-            throw new \Exception('Can only reject a submitted DIF');
-        }
-    }
-
-    /**
-     * Whether or not this DIF can be unlocked.
-     *
-     * @return bool true if this DIF can be unlocked, False otherwise
+     * @return bool true if this DIF can be unlocked/rejected, False otherwise
      */
     public function isUnlockable()
     {
-        return self::STATUS_APPROVED === $this->status;
+        return (self::STATUS_APPROVED === $this->status || self::STATUS_SUBMITTED === $this->status);
     }
 
     /**
@@ -1354,7 +1326,7 @@ class DIF extends Entity
         if ($this->isUnlockable()) {
             $this->setStatus(self::STATUS_UNSUBMITTED);
         } else {
-            throw new \Exception('Can only unlock an approved DIF');
+            throw new \Exception('Can only unlock a submitted or approved DIF');
         }
     }
 

@@ -20,7 +20,6 @@ use App\Util\PersonUtil;
 use App\Util\Udi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\SubmitButton;
 
@@ -138,11 +137,47 @@ class DIFController extends AbstractController
                 $udiUtil->mintUdi($dataset);
             }
 
-            /** @var SubmitButton $saveAndSubmit */
-            $saveAndSubmit = $form->get('saveAndSubmit');
             $extraData = $form->getExtraData();
-            if ((isset($extraData['submitAction']) && $extraData['submitAction'] === 'saveAndSubmit') || $saveAndSubmit->isClicked()) {
-                $dif->submit();
+
+            // Fall back to button names in extraData so the action still works without JS.
+            $submitAction = $extraData['submitAction'] ?? null;
+            if ($submitAction === null) {
+                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'unlockSubmission'] as $buttonName) {
+                    if (isset($extraData[$buttonName])) {
+                        $submitAction = $buttonName;
+                        break;
+                    }
+                }
+            }
+
+            if (in_array($submitAction, ['drpmUpdateSubmission', 'approveSubmission', 'unlockSubmission'], true)) {
+                $this->denyAccessUnlessGranted('ROLE_DATA_REPOSITORY_MANAGER');
+            }
+
+            switch ($submitAction) {
+                case 'saveAndSubmit':
+                    if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                        $actionDone = 'DIF submitted by a DRPM';
+                        $this->addFlash('success', $actionDone);
+                    }
+                    $dif->submit();
+                    break;
+                case 'approveSubmission':
+                    $dif->approve();
+                    $actionDone = 'DIF approved';
+                    $this->addFlash('success', $actionDone);
+                    break;
+                case 'unlockSubmission':
+                    $dif->unlock();
+                    $actionDone = 'DIF unlocked';
+                    $this->addFlash('success', $actionDone);
+                    break;
+                case 'drpmUpdateSubmission':
+                    $actionDone = 'DIF updated';
+                    $this->addFlash('success', $actionDone);
+                    break;
+                default:
+                    break;
             }
 
             $entityManager->persist($dif);
@@ -150,13 +185,16 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'DIF Successfully Submitted. Your UDI is: ' . $dataset->getUdi());
-
-            return $this->render('DIF/dif-confirmation.html.twig', [
-                'dataset' => $dataset,
-            ]);
-
-            // return new RedirectResponse($this->generateUrl('app_ui_dashboard'));
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                return $this->render('DIF/drpm-dif-confirmation.html.twig', [
+                    'dataset' => $dataset,
+                    'actionDone' => $actionDone,
+                ]);
+            } else {
+                return $this->render('DIF/dif-confirmation.html.twig', [
+                    'dataset' => $dataset,
+                ]);
+            }
         }
 
         return $this->render(
@@ -165,6 +203,11 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
+                'isSubmittable' => $dif->isSubmittable(),
+                'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
+                'isApprovable' => $dif->isApprovable(),
+                'isApproved' => $dif->isApproved(),
+                'isUnlockable' => $dif->isUnlockable(),
             ]
         );
     }
