@@ -10,19 +10,17 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
-// import * as GeoViz from '../modules/geoViz-leaflet';
-
 import GeoViz from '../modules/geoViz';
 
-import * as turf from '@turf/turf';
-
-const UNSUBMITTED = '0';
-// const SUBMITTED = '1';
-// const APPROVED = '2';
+const DIF_STATES = {
+  UNSUBMITTED: '0',
+  SUBMITTED: '1',
+  APPROVED: '2',
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
-    // options can be added here
+    loadWizard: true,
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
@@ -30,15 +28,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const spatialExtentDescription = document.getElementById('spatial-extent-description');
   spatialExtentRadios.forEach((radio) => {
     radio.addEventListener('change', (e) => {
+      const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
+      const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+      const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
+      const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
+      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
+        // eslint-disable-next-line no-alert, no-restricted-globals
+        if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
+          e.preventDefault();
+          // canceling, so set back to previous selection.
+          if (e.target.value === 'yes-extent') {
+            document.getElementById('no-extent').checked = true;
+          } else if (e.target.value === 'no-extent') {
+            document.getElementById('yes-extent').checked = true;
+          }
+          return;
+        }
+      }
       if (e.target.value === 'yes-extent') {
         spatialExtentGeometry.classList.remove('hidden');
         spatialExtentDescription.classList.add('hidden');
-        document.getElementById('spatialExtentDescription').value = '';
+        spatialExtentDescriptionField.value = '';
         geoViz.fixMapSize();
       } else if (e.target.value === 'no-extent') {
         spatialExtentGeometry.classList.add('hidden');
         spatialExtentDescription.classList.remove('hidden');
-        document.getElementById('spatialExtentGeometry').value = '';
+        spatialExtentGeometryField.value = '';
         geoViz.clearMap();
       }
     });
@@ -195,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dropdown.appendChild(option);
       });
-      if (status !== UNSUBMITTED && !isDrpm) {
+      if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
         dropdown.disabled = true;
       }
     });
@@ -261,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (status !== UNSUBMITTED && !isDrpm) {
+  if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;
@@ -272,9 +287,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
-    const drawnFeatures = geoViz.getDrawnFeaturesAsGeoJSON();
-    const combinedFeatureCollection = drawnFeatures.features.length > 1 ? turf.combine(drawnFeatures) : drawnFeatures;
-    const geometry = turf.getGeom(combinedFeatureCollection.features[0]);
+    const geometry = e.geojson ? e.geojson.geometry : '';
+
+    if (!geometry) {
+      document.getElementById('spatialExtentGeometry').value = '';
+      return;
+    }
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
