@@ -1,0 +1,118 @@
+<div
+    id="modalEl"
+    tabindex="-1"
+    aria-hidden="true"
+    class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    style="z-index: 9999;"
+>
+    <div class="relative max-h-full w-full max-w-2xl">
+        <!-- Modal content -->
+        <div class="relative rounded-lg bg-white shadow-sm">
+            <!-- Modal header -->
+            <div
+                class="flex items-start justify-between rounded-t border-b p-5"
+            >
+                <h3
+                    class="text-xl font-semibold text-gray-900 lg:text-2xl"
+                >
+                    Spatial Wizard
+                </h3>
+                <button
+                    id="modal-close-button"
+                    type="button"
+                    class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
+                >
+                    <svg
+                        class="h-3 w-3"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 14"
+                    >
+                        <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                        />
+                    </svg>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="space-y-6 p-6">
+                <div id="wizard-content">
+                    <div class="mb-4 border-b border-gray-200">
+                        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
+                            <li class="me-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 rounded-t-lg" id="point-tab" data-tabs-target="#point" type="button" role="tab" aria-controls="point" aria-selected="false">Single Point</button>
+                            </li>
+                            <li class="me-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="bounding-box-tab" data-tabs-target="#bounding-box" type="button" role="tab" aria-controls="bounding-box-tab" aria-selected="false">Bounding Box</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="default-tab-content">
+                        <div class="hidden p-4 rounded-lg bg-gray-50" id="point" role="tabpanel" aria-labelledby="point-tab">
+                            <p class="text-sm text-gray-500 m-4">
+                                <form id="point-form">
+                                    <label for="latitude" class="input-label">Latitude</label>
+                                    <input type="text" id="latitude" name="latitude" class="input-base" placeholder="Enter latitude">
+                                    <label for="longitude" class="input-label">Longitude</label>
+                                    <input type="text" id="longitude" name="longitude" class="input-base" placeholder="Enter longitude">
+                                    <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
+                                </form>
+                            </p>
+                        </div>
+                        <div class="hidden p-4 rounded-lg bg-gray-50" id="bounding-box" role="tabpanel" aria-labelledby="bounding-box-tab">
+                            <p class="text-sm text-gray-500 m-4">
+                                <form id="bounding-box-form">
+                                    <div class="flex flex-col items-center gap-4">
+                                        <!-- North -->
+                                        <div class="w-full max-w-xs">
+                                            <label for="north" class="input-label">North Latitude</label>
+                                            <input type="text" id="north" name="north" class="input-base" placeholder="Enter north latitude">
+                                        </div>
+
+                                        <!-- West, East Row -->
+                                        <div class="flex gap-4 w-full justify-center">
+                                            <div class="w-full max-w-xs">
+                                                <label for="west" class="input-label">West Longitude</label>
+                                                <input type="text" id="west" name="west" class="input-base" placeholder="Enter west longitude">
+                                            </div>
+                                            <div class="w-full max-w-xs">
+                                                <label for="east" class="input-label">East Longitude</label>
+                                                <input type="text" id="east" name="east" class="input-base" placeholder="Enter east longitude">
+                                            </div>
+                                        </div>
+
+                                        <!-- South -->
+                                        <div class="w-full max-w-xs">
+                                            <label for="south" class="input-label">South Latitude</label>
+                                            <input type="text" id="south" name="south" class="input-base" placeholder="Enter south latitude">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
+                                </form>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div
+                class="flex items-center space-x-2 rtl:space-x-reverse rounded-b border-t border-gray-200 p-6"
+            >
+                <p class="text-sm text-gray-500">Coordinates should be WGS-84 format.</p>
+                <!-- <button
+                    id="modal-done-button"
+                    type="button"
+                    class="button button-regular button-form"
+                >
+                    Done
+                </button> -->
+            </div>
+        </div>
+    </div>
+</div>

@@ -193,7 +193,7 @@
                 {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
             </div>
 
-            {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+            {% if isDRPM %}
             <div>
                 {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
             </div>
@@ -204,11 +204,11 @@
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
-                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center">Submit &amp; Continue Later</button>
+                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isDRPM ? 'disabled' }}>Save and Continue Later</button>
                 </div>
 
                 <div>
-                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
+                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center" {{ isDRPM and not isSubmittable ? 'disabled' }}>Submit to GRIIDC</button>
                 </div>
 
                 <div>
@@ -216,5 +216,25 @@
                 </div>
             </div>
         </div>
+        {% if isDRPM %}
+        <input type="hidden" id="isDrpm" value='1'>
+        <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
+            <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
+            <div class="grid grid-cols-3 gap-4 py-2" id="submit">
+                <div>
+                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'disabled' }}>Approve</button>
+                </div>
+                <div>
+                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ not isUnlockable ? 'disabled' }}>Unlock</button>
+                </div>
+                <div>
+                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
+                </div>
+            <div>
+        </div>
+        {% else %}
+            <input type="hidden" id="isDrpm" value='0'>
+        {% endif %}
     </div>
 </form>

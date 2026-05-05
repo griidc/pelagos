@@ -10,20 +10,17 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
-// import * as GeoViz from '../modules/geoViz-leaflet';
-
 import GeoViz from '../modules/geoViz';
 
-import * as turf from '@turf/turf';
-
-const UNSUBMITTED = '0';
-// const SUBMITTED = '1';
-// const APPROVED = '2';
+const DIF_STATES = {
+  UNSUBMITTED: '0',
+  SUBMITTED: '1',
+  APPROVED: '2',
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
-    allowDrawPoint: false,
-    // options can be added here in the future if needed
+    loadWizard: true,
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
@@ -31,15 +28,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const spatialExtentDescription = document.getElementById('spatial-extent-description');
   spatialExtentRadios.forEach((radio) => {
     radio.addEventListener('change', (e) => {
+      const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
+      const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+      const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
+      const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
+      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
+        // eslint-disable-next-line no-alert, no-restricted-globals
+        if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
+          e.preventDefault();
+          // canceling, so set back to previous selection.
+          if (e.target.value === 'yes-extent') {
+            document.getElementById('no-extent').checked = true;
+          } else if (e.target.value === 'no-extent') {
+            document.getElementById('yes-extent').checked = true;
+          }
+          return;
+        }
+      }
       if (e.target.value === 'yes-extent') {
         spatialExtentGeometry.classList.remove('hidden');
         spatialExtentDescription.classList.add('hidden');
-        document.getElementById('spatialExtentDescription').value = '';
+        spatialExtentDescriptionField.value = '';
         geoViz.fixMapSize();
       } else if (e.target.value === 'no-extent') {
         spatialExtentGeometry.classList.add('hidden');
         spatialExtentDescription.classList.remove('hidden');
-        document.getElementById('spatialExtentGeometry').value = '';
+        spatialExtentGeometryField.value = '';
         geoViz.clearMap();
       }
     });
@@ -47,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('difForm');
   const status = document.getElementById('status').value;
+  const isDrpm = document.getElementById('isDrpm')?.value === '1';
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
@@ -69,21 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
       },
     },
-    // load(query, callback) {
-    //   const url = Routing.generate('pelagos_dif_get_research_groups');
-    //   fetch(url)
-    //     .then((response) => response.json())
-    //     .then((json) => {
-    //       callback(json.ResearchGroups);
-    //       const selectValue = researchGroup.getAttribute('value');
-    //       if (selectValue) {
-    //         this.setValue(selectValue);
-    //         this.disable();
-    //       }
-    //     }).catch(() => {
-    //       callback();
-    //     });
-    // },
   });
 
   const formValidate = new JustValidate(form, {
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dropdown.appendChild(option);
       });
-      if (status !== UNSUBMITTED) {
+      if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
         dropdown.disabled = true;
       }
     });
@@ -237,20 +237,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loadResearchGroupDowndowns(value);
   });
 
-  researchGroupSelect.on('item_add', (value) => {
-    const url = Routing.generate('pelagos_dif_check_research_group', { id: value });
-    fetch(url)
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.locked) {
-          alert('This research group is disabled and cannot be selected.');
-        }
-      });
-  });
-
   if (researchGroupSelect.getValue() && researchGroupSelect.getValue() !== '') {
     researchGroupSelect.lock();
     loadResearchGroupDowndowns(researchGroupSelect.getValue());
+  }
+
+  if (isDrpm) {
+    researchGroupSelect.unlock();
   }
 
   // on form reset event
@@ -283,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (status !== UNSUBMITTED) {
+  if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;
@@ -294,22 +287,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
-    // const combinedFeatureCollection = turf.combine(geoViz.getDrawnFeaturesAsGeoJSON());
+    const geometry = e.geojson ? e.geojson.geometry : '';
 
-    // let geometryArray = [];
-    // turf.featureEach(combinedFeatureCollection, function (currentFeature, featureIndex) {
-    //   geometryArray.push(turf.getGeom(currentFeature));
-    // });
-    // const geometryCollection = turf.geometryCollection(geometryArray);
-
-    // const { geometry } = combinedFeatureCollection.features[0];
-
-    // const newFeature = turf.flatten(combinedFeatureCollection);
-
-    const updateFeature = geoViz.getDrawnFeaturesAsGeoJSON();
-
-    const geometry = turf.getGeom(updateFeature.features[0]);
-    console.log(e, updateFeature);
+    if (!geometry) {
+      document.getElementById('spatialExtentGeometry').value = '';
+      return;
+    }
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
     fetch(url, {
