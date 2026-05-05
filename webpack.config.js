@@ -78,6 +78,15 @@ Encore
     vue: Encore.isProduction() ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
   })
 
+  .addLoader({
+    test: /\.html$/i,
+    loader: 'html-loader',
+    options: {
+    // Optional: minimize in production
+      minimize: Encore.isProduction(),
+    },
+  })
+
 /*
      * FEATURE CONFIG
      *

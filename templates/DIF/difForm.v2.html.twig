@@ -151,8 +151,7 @@
                     <input type="radio" id="yes-extent" name="has-extent" value="yes-extent" class="hidden peer" helper>
                     <label for="yes-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
                         <div class="block">
-                            <div class="w-full font-semibold">Defined Spatial Area</div>
-                            <div class="w-full">There are coordinates defining the area</div>
+                            <div class="w-full">Yes, the dataset has a defined spatial extent.</div>
                         </div>
                         <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -163,8 +162,7 @@
                     <input type="radio" id="no-extent" name="has-extent" value="no-extent" class="hidden peer" helper>
                     <label for="no-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
                         <div class="block">
-                            <div class="w-full font-semibold">Has no spatial extent</div>
-                            <div class="w-full">There are no coordinates defining the area</div>
+                            <div class="w-full">No, the dataset does not have a defined spatial extent.</div>
                         </div>
                         <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -195,7 +193,7 @@
                 {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
             </div>
 
-            {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+            {% if isDRPM %}
             <div>
                 {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
             </div>
@@ -206,11 +204,11 @@
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
-                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center">Submit &amp; Continue Later</button>
+                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isDRPM ? 'disabled' }}>Save and Continue Later</button>
                 </div>
 
                 <div>
-                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
+                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center" {{ isDRPM and not isSubmittable ? 'disabled' }}>Submit to GRIIDC</button>
                 </div>
 
                 <div>
@@ -218,5 +216,25 @@
                 </div>
             </div>
         </div>
+        {% if isDRPM %}
+        <input type="hidden" id="isDrpm" value='1'>
+        <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
+            <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
+            <div class="grid grid-cols-3 gap-4 py-2" id="submit">
+                <div>
+                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'disabled' }}>Approve</button>
+                </div>
+                <div>
+                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ not isUnlockable ? 'disabled' }}>Unlock</button>
+                </div>
+                <div>
+                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
+                </div>
+            <div>
+        </div>
+        {% else %}
+            <input type="hidden" id="isDrpm" value='0'>
+        {% endif %}
     </div>
 </form>
