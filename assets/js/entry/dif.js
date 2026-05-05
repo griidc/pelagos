@@ -28,15 +28,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const spatialExtentDescription = document.getElementById('spatial-extent-description');
   spatialExtentRadios.forEach((radio) => {
     radio.addEventListener('change', (e) => {
+      const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
+      const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+      const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
+      const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
+      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
+        // eslint-disable-next-line no-alert, no-restricted-globals
+        if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
+          e.preventDefault();
+          // canceling, so set back to previous selection.
+          if (e.target.value === 'yes-extent') {
+            document.getElementById('no-extent').checked = true;
+          } else if (e.target.value === 'no-extent') {
+            document.getElementById('yes-extent').checked = true;
+          }
+          return;
+        }
+      }
       if (e.target.value === 'yes-extent') {
         spatialExtentGeometry.classList.remove('hidden');
         spatialExtentDescription.classList.add('hidden');
-        document.getElementById('spatialExtentDescription').value = '';
+        spatialExtentDescriptionField.value = '';
         geoViz.fixMapSize();
       } else if (e.target.value === 'no-extent') {
         spatialExtentGeometry.classList.add('hidden');
         spatialExtentDescription.classList.remove('hidden');
-        document.getElementById('spatialExtentGeometry').value = '';
+        spatialExtentGeometryField.value = '';
         geoViz.clearMap();
       }
     });
