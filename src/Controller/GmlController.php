@@ -6,10 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Exception\InvalidGmlException;
-use App\Util\Geometry;
+use App\Util\GeometryUtil;
 use App\Util\GmlUtil;
 use App\Util\Metadata;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +29,7 @@ class GmlController extends AbstractController
      * @return Response A response containing converted wkt.
      */
     #[Route(path: '/gmltowkt', name: 'pelagos_app_gml_towkt', methods: ['POST'])]
-    public function toWktAction(Request $request, Geometry $geometryUtil)
+    public function toWktAction(Request $request, GeometryUtil $geometryUtil)
     {
         $gml = $request->request->get('gml');
 
@@ -50,8 +50,8 @@ class GmlController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     *
      * @throws BadRequestHttpException When no WKT is given.
+     *
      * @return Response A response containing converted gml.
      */
     #[Route(path: '/wkttogml', name: 'pelagos_app_gml_fromwkt', methods: ['POST'])]
@@ -59,7 +59,7 @@ class GmlController extends AbstractController
     {
         $wkt = $request->request->get('wkt');
 
-        if (!empty($wkt)) {
+        if ($wkt !== null && $wkt !== '') {
             $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),6,17)';
             $connection = $entityManager->getConnection();
             $statement = $connection->prepare($query);
@@ -89,7 +89,7 @@ class GmlController extends AbstractController
      */
     private function addGMLid(string $gml)
     {
-        $doc = new \DomDocument('1.0', 'UTF-8');
+        $doc = new \DOMDocument('1.0', 'UTF-8');
         $doc->loadXML($gml, LIBXML_NOERROR);
 
         foreach ($doc->childNodes as $node) {
@@ -155,7 +155,7 @@ class GmlController extends AbstractController
     {
         $gml = $request->request->get('gml');
         $isValid = false;
-        if (empty($gml)) {
+        if ($gml === null || $gml === '') {
             throw new BadRequestHttpException('No GML given. (Parameter:gml)');
         } else {
             $namespaces = array(
@@ -199,7 +199,7 @@ class GmlController extends AbstractController
     public function validateGeometryFromWktAction(Request $request, EntityManagerInterface $entityManager)
     {
         $wkt = $request->request->get('wkt');
-        if (!empty($wkt)) {
+        if ($wkt !== null && $wkt !== '') {
             try {
                 \geoPHP::load($wkt, 'wkt');
             } catch (\Exception $exception) {
@@ -230,5 +230,22 @@ class GmlController extends AbstractController
         } else {
             throw new BadRequestHttpException('No Well Know Text given. (Parameter:wkt)');
         }
+    }
+
+    /**
+     * This function converts GeoJSON to GML.
+     *
+     * @throws BadRequestHttpException When no GeoJSON is given or when the GeoJSON cannot be parsed.
+     */
+    #[Route(path: '/geojsontogml', name: 'pelagos_app_geojson_to_gml', methods: ['POST'])]
+    public function geoJSONtoGml(Request $request, GeometryUtil $geometryUtil): Response
+    {
+        $geojson = json_encode($request->request->all('geometry'));
+        if ($geojson === false) {
+            throw new BadRequestHttpException('Could not parse GeoJSON from request.');
+        }
+        $gml = $geometryUtil->convertGeoJsonToGml($geojson);
+        $gml = $this->addGMLid($gml);
+        return new JsonResponse(['gml' => $gml]);
     }
 }

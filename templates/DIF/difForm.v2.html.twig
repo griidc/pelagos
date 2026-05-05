@@ -1,0 +1,240 @@
+<form id="difForm" method="post">
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    <div class="max-w-[85%] mx-auto">
+        <div class="mb-4 font-normal text-gray-500">
+            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
+            In this step you will identify the dataset by selecting the project title from the drop-down menu.
+            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
+        </div>
+        {% if udi is not empty %}
+             <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
+        <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+            <div>
+                {{ form_label(form.researchGroup) }}
+                {{ form_widget(form.researchGroup) }}
+                <div class="text-red-600 text-sm font-semibold">
+                    {{ form_errors(form.researchGroup) }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(form.primaryPointOfContact) }}
+                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                    <div class="text-red-600 text-sm font-semibold">
+                        {{ form_errors(form.primaryPointOfContact) }}
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                </div>
+            </div>
+
+            <div>
+                {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
+            </div>
+
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <div>
+                {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <label class="required">Approximate Dataset Size:</label>
+            <div class="flex w-100 flex-col md:flex-row md:items-center gap-4" id="dataSize">
+                {% for key, dataSizeItem in form.dataSize.children %}
+                    <div class="flex items-center me-4">
+                        {{ form_widget(dataSizeItem, { attr: { class: 'radio-base'} }) }}
+                        <span class="pl-2 choice-label">{{ dataSizeItem.vars.label }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="datasize-error"></div>
+
+            <div>
+                {{ form_row(form.variablesObserved, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <label>Estimated Data Sampling/Generation Period</label>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form_row(form.estimatedStartDate, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                </div>
+
+                <div>
+                    {{ form_row(form.estimatedEndDate, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                </div>
+            </div>
+
+            <label>Identify a National Data Archive for your Dataset, if applicable</label>
+            <div>
+                <div>
+                    {{ form_widget(form.nationalDataArchiveNODC, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveNODC, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveStoret, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveStoret, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveGBIF, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveGBIF, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveNCBI, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveNCBI, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div>
+                    {{ form_widget(form.nationalDataArchiveDataGov, { attr: { class: 'checkbox-base'} }) }}
+                    {{ form_label(form.nationalDataArchiveDataGov, null, { label_attr: { class: 'choice-label'} }) }}
+                </div>
+
+                <div class="grid-col-span-2 pt-2">
+                    {{ form_label(form.nationalDataArchiveOther, null, { label_attr: { class: 'choice-label'} }) }}
+                    {{ form_widget(form.nationalDataArchiveOther, { attr: { class: 'input-base'} }) }}
+                </div>
+            </div>
+
+            <div>
+                <div class="choice-label">
+                    <label>Will this dataset include any data governed under the Institutional Review
+                            Board (IRB) or Health Insurance Portability and Accountability Act of 1996 (HIPAA), or data
+                            with other ethical issues?
+                    </label>
+                    <div class="">
+                    {% for key, ethicalIssuesItem in form.ethicalIssues.children %}
+                        <div class="me-4">
+                            {{ form_widget(ethicalIssuesItem, { attr: { class: 'radio-base'} }) }}
+                            {{ form_label(ethicalIssuesItem, null, { label_attr: { class: 'choice-label'} }) }}
+                        </div>
+                    {% endfor %}
+                    </div>
+
+                    <div class="">
+                        <div class="me-4 pt-2">
+                            {{ form_label(form.ethicalIssuesExplanation, null, { label_attr: { class: 'choice-label'} }) }}
+                            {{ form_widget(form.ethicalIssuesExplanation, { attr: { class: 'input-base'} }) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="keywords">
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <label>Geographic/Study Area:</label>
+
+            <h3 class="mb-5 text-gray-900">Does the dataset have a defined geographic or study area?</h3>
+            <ul class="grid w-full gap-6 md:grid-cols-2">
+                <li>
+                    <input type="radio" id="yes-extent" name="has-extent" value="yes-extent" class="hidden peer" helper>
+                    <label for="yes-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                        <div class="block">
+                            <div class="w-full">Yes, the dataset has a defined spatial extent.</div>
+                        </div>
+                        <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                        </svg>
+                    </label>
+                </li>
+                <li>
+                    <input type="radio" id="no-extent" name="has-extent" value="no-extent" class="hidden peer" helper>
+                    <label for="no-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                        <div class="block">
+                            <div class="w-full">No, the dataset does not have a defined spatial extent.</div>
+                        </div>
+                        <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                        </svg>
+                    </label>
+                </li>
+            </ul>
+
+            <div id="spatial-extent">
+                <div id="spatial-extent-geometry" class="hidden">
+                    <div class="grid-col-span-2">
+                        {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
+                        {% include 'DIF/spatial.html.twig' %}
+                    </div>
+                </div>
+
+                <div id="spatial-extent-description" class="hidden">
+                    <div class="grid-col-span-2">
+                        {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
+            <div>
+                {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            {% if isDRPM %}
+            <div>
+                {{ form_row(form.issueTrackingTicket, { attr: { class: 'input-base'} }) }}
+            </div>
+            {% endif %}
+
+            <input type="hidden" name="submitAction" id="submitAction"/>
+            <input type="hidden" name="status" id="status" value="{{ status }}"/>
+
+            <div class="grid grid-cols-3 gap-4" id="submit">
+                <div>
+                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isDRPM ? 'disabled' }}>Save and Continue Later</button>
+                </div>
+
+                <div>
+                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center" {{ isDRPM and not isSubmittable ? 'disabled' }}>Submit to GRIIDC</button>
+                </div>
+
+                <div>
+                    <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
+                </div>
+            </div>
+        </div>
+        {% if isDRPM %}
+        <input type="hidden" id="isDrpm" value='1'>
+        <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
+            <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
+            <div class="grid grid-cols-3 gap-4 py-2" id="submit">
+                <div>
+                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'disabled' }}>Approve</button>
+                </div>
+                <div>
+                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ not isUnlockable ? 'disabled' }}>Unlock</button>
+                </div>
+                <div>
+                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
+                </div>
+            <div>
+        </div>
+        {% else %}
+            <input type="hidden" id="isDrpm" value='0'>
+        {% endif %}
+    </div>
+</form>

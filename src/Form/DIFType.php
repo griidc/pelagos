@@ -9,8 +9,9 @@ use App\Entity\Keyword;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
-use Doctrine\ORM\EntityManager;
+use App\Util\PersonUtil;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,13 +33,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * A form for creating a DIF.
+ *
+ * @extends AbstractType<DIF>
  */
 class DIFType extends AbstractType
 {
     /**
      * The entity manager to use in this form type.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -151,7 +155,6 @@ class DIFType extends AbstractType
             ])
             ->add('dataSize', ChoiceType::class, [
                 'choices' => array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES),
-                'data' => DIF::DATA_SIZES[0],
                 'label' => 'Approximate Dataset Size:',
                 'required' => true,
                 'expanded' => true,
@@ -223,17 +226,17 @@ class DIFType extends AbstractType
                 'delete_empty' => true,
                 'required' => false,
             ])
-            ->add('funders', CollectionType::class, [
-                'label' => 'Funders',
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                    'class' => Funder::class,
-                ],
-                'by_reference' => true,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'required' => false,
+            ->add('funders', EntityType::class, [
+                'label' => 'Funder',
+                'class' => Funder::class,
+                'choice_label' => function (Funder $funder) {
+                    return $funder->getName();
+                },
+                'query_builder' => function (EntityRepository $repo) {
+                    return $repo->createQueryBuilder('funder')
+                        ->orderBy('funder.name', 'ASC');
+                },
+                'multiple' => true,
             ])
             ->add('additionalFunders', TextType::class, [
                 'label' => 'Additional Funders',
@@ -242,7 +245,7 @@ class DIFType extends AbstractType
             ->add('spatialExtentDescription', TextareaType::class, [
                 'label' => 'Description:',
                 'attr' => [
-                    'placeholder' => 'Example - "lab measurements of oil degradation, no field sampling involved"',
+                    'placeholder' => 'Please provide a short statement describing why this dataset does not have a spatial component. Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved."',
                     'rows' => 5,
                 ],
                 'required' => false,
@@ -292,6 +295,12 @@ class DIFType extends AbstractType
                 'label' => 'Issue Tracking Ticket:',
                 'required' => false,
             ])
+            ->add('saveAndSubmit', SubmitType::class, [
+                'label' => 'Save and Submit',
+            ])
+            ->add('saveAndContinue', SubmitType::class, [
+                'label' => 'Save & Continue Later',
+            ])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()
                 ->add('primaryPointOfContact', EntityType::class, [
@@ -299,6 +308,7 @@ class DIFType extends AbstractType
                 ])
                 ->add('secondaryPointOfContact', EntityType::class, [
                     'class' => Person::class,
+                    'required' => false,
                 ]);
             });
 
@@ -327,9 +337,10 @@ class DIFType extends AbstractType
     {
         $researchGroups = [];
         if ($this->authorizationChecker->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
+            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findBy(['locked' => false], ['name' => 'ASC']);
         } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
-            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+            $person = PersonUtil::getPersonFromUser($this->tokenStorage->getToken()->getUser());
+            $researchGroups = $person->getResearchGroups();
         }
 
         if ($this->fundingOrgFilter->isActive()) {
@@ -350,10 +361,33 @@ class DIFType extends AbstractType
             'placeholder' => '[PLEASE SELECT A PROJECT]',
             'required' => true,
             'label' => 'Project Title:',
-            'choice_attr' => function ($choice) {
-                return ['locked' => $choice->isLocked() ? 'true' : 'false'];
+            'choice_attr' => function (ResearchGroup $choice) {
+                return [
+                    'data-locked' => $choice->isLocked() ? 'true' : 'false',
+                    ];
             },
         ]);
+
+        $entity = $event->getData();
+        $form = $event->getForm();
+
+        $form
+        ->add('primaryPointOfContact', ChoiceType::class, [
+            'label' => 'Primary Data Point of Contact:',
+            'attr' => [
+                'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
+            ],
+            'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+        ])
+        ->add('secondaryPointOfContact', ChoiceType::class, [
+            'label' => 'Additional Data Point of Contact:',
+            'attr' => [
+                'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
+            ],
+            'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+            'required' => false,
+        ])
+        ;
     }
 
     /**
@@ -364,7 +398,7 @@ class DIFType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\Entity\DIF',
+            'data_class' => DIF::class,
             'allow_extra_fields' => true,
             'csrf_protection' => false,
         ]);
