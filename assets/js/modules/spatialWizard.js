@@ -23,15 +23,6 @@ export default class SpatialWizard {
         backdrop: 'dynamic',
         placement: 'center',
         closable: false,
-        onHide: () => {
-          console.log('modal is hidden');
-        },
-        onShow: () => {
-          console.log('modal is shown');
-        },
-        onToggle: () => {
-          console.log('modal has been toggled');
-        },
       },
       {
         id: 'modalEl',
@@ -89,22 +80,6 @@ export default class SpatialWizard {
         map.pm.Toolbar.buttons.Paste.toggle();
         showWizard();
       },
-      // actions: [
-      //   {
-      //     text: 'Paste Bounding Box',
-      //     onClick: () => {
-      //       map.pm.Toolbar.buttons.Paste.toggle();
-      //       showWizard();
-      //     },
-      //   },
-      //   {
-      //     text: 'Paste Point',
-      //     onClick: () => {
-      //       map.pm.Toolbar.buttons.Paste.toggle();
-      //       showWizard();
-      //     },
-      //   },
-      // ],
     });
 
     map.pm.Toolbar.changeControlOrder([
@@ -113,5 +88,3 @@ export default class SpatialWizard {
     ]);
   }
 }
-
-// export default { showWizard, hideWizard };
