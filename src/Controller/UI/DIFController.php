@@ -189,7 +189,6 @@ class DIFController extends AbstractController
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
                 'status' => $dif->getStatus(),
-                'showDifChangesModal' => $request->cookies->get('pelagos_dif_changes_acknowledged') !== '1',
                 'isSubmittable' => $dif->isSubmittable(),
                 'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
                 'isApprovable' => $dif->isApprovable(),

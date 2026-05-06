@@ -52,8 +52,6 @@
         }
     </style>
 
-    {% include 'DIF/includes/_dif_changes_modal_styles.html.twig' %}
-
 {% endblock stylesheets %}
 
 {% block javascripts %}
@@ -71,14 +69,10 @@
             }
         }
     </script>
-
-    {% include 'DIF/includes/_dif_changes_modal_scripts.html.twig' %}
 {% endblock javascripts %}
 
 {% block body %}
-    {% include 'DIF/includes/_dif_changes_modal.html.twig' %}
-
-    <div id="dif-page-content" class="max-w-screen-xl mx-auto py-6">
+    <div class="max-w-screen-xl mx-auto py-6">
         {% for message in app.flashes('error') %}
             <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
                 <span class="font-medium">{{ message }}</span>
