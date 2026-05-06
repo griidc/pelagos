@@ -29,7 +29,7 @@ use Symfony\Component\Form\SubmitButton;
 class DIFController extends AbstractController
 {
     /**
-     * The default action for the DIF.
+     * The old DIF.
      *
      * @param Request              $request          The Symfony request object.
      * @param FormFactoryInterface $formFactory      The form factory.
@@ -38,7 +38,7 @@ class DIFController extends AbstractController
      * @return Response A Response instance.
      */
     #[Route(path: '/dif-old', name: 'pelagos_app_ui_dif_old')]
-    public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter)
+    public function difOld(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -78,26 +78,12 @@ class DIFController extends AbstractController
         );
     }
 
-    #[Route(path: '/difok')]
-    public function confirmTest(Request $request, DatasetRepository $datasetRepository): Response
-    {
-        $udi = $request->query->get('udi');
-        if ($udi !== null && $udi !== '') {
-            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
-            if (!$dataset) {
-                // add to flash bag errror message about dataset not found
-                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
-            }
-        }
-
-        return $this->render('DIF/dif-confirmation.html.twig', [
-            'dataset' => $dataset ?? null,
-        ]);
-    }
-
+    /**
+     * The default action for the DIF.
+     */
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function difTwo(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
+    public function index(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
     {
         $dataset = null;
         $dif = null;
