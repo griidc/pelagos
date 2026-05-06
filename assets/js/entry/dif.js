@@ -11,6 +11,7 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 import GeoViz from '../modules/geoViz';
+import FullScreenModal from '../modules/fullScreenModal';
 
 const DIF_STATES = {
   UNSUBMITTED: '0',
@@ -310,4 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('spatialExtentGeometry').value = gmlOutput;
       });
   });
+
+  const fullScreenModal = new FullScreenModal();
 });
