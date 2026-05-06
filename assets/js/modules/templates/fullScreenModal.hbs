@@ -1,9 +1,23 @@
-<div>
-    {{title}}
-    {{content}}
-    <hr>
-    <span>
-        <button id="modal-close-button" type="button" class="button button-regular button-form" aria-label="Close modal">Close</button>&nbsp;
-        <button id="modal-close-button-for-good" type="button" class="button button-regular button-form" aria-label="Close modal">Close and don't show again</button>
-    </span>
+<div class="bg-white rounded-lg shadow-lg flex flex-col h-full">
+    <!-- Header -->
+    <div class="px-8 py-6 rounded-t-lg flex-shrink-0">
+        <h2 class="text-2xl font-bold text-black">{{title}}</h2>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto px-8 py-4">
+        <div class="dif-modal-content text-black leading-relaxed space-y-4">
+            {{{content}}}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="py-4 flex items-center gap-3">
+        <button id="modal-close-button" type="button" class="button button-regular button-form" aria-label="Close modal">
+            Close
+        </button>
+        <button id="modal-close-button-for-good" type="button" class="button button-regular button-form" aria-label="Close modal and don't show again">
+            Close and don't show again
+        </button>
+    </div>
 </div>

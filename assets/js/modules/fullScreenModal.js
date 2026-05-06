@@ -26,14 +26,13 @@ export default class FullScreenModal {
     // Ensure full-width/full-height placement even if page-level CSS overrides utility classes.
     Object.assign(modalElement.style, {
       position: 'fixed',
-      left: '10 rem',
-      right: '10 rem',
-      bottom: '10 rem',
-      top: 'var(--headerHeight, 110px)',
-      width: 'calc(100vw - 20px)',
-      height: 'calc(100vh - var(--headerHeight, 110px) - 20px)',
+      left: '50px',
+      right: '50px',
+      bottom: '50px',
+      top: '50px',
+      width: 'calc(100vw - 100px)',
+      height: 'calc(100vh - 100px)',
       zIndex: '50',
-      backgroundColor: 'var(--color-light-cyan, #d8f2fa)',
       overflow: 'auto',
     });
 

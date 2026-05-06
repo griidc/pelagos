@@ -314,7 +314,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const fullScreenModal = new FullScreenModal({
-    title: 'New DIF Features',
+    title: 'Welcome to the new Dataset Information Form (DIF)!',
     cookieName: 'new-dif-acknowledged',
-    content: 'Here are some new features in the DIF module...  ' });
+    content: `
+    New Features Include:
+      <ul>
+        <li>Cleaner look and feel</li>
+        <li>Tabs on the side to navigate sections</li>
+        <li>New spatial extent map</li>
+      </ul>
+      <p>
+        Important Notes:
+      </p>
+      <p>
+        A listing of datasets that you have created are now located on the User Dashboard.
+        If you would like to work on a previously saved DIF, please use the Dashboard to load
+        the DIF.
+      </p>
+    `,
+  });
 });
