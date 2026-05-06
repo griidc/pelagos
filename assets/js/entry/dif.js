@@ -12,6 +12,7 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 import GeoViz from '../modules/geoViz';
 import FullScreenModal from '../modules/fullScreenModal';
+import { cookie } from 'jquery';
 
 const DIF_STATES = {
   UNSUBMITTED: '0',
@@ -312,5 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  const fullScreenModal = new FullScreenModal();
+  const fullScreenModal = new FullScreenModal({
+    title: 'New DIF Features',
+    cookieName: 'new-dif-acknowledged',
+    content: 'Here are some new features in the DIF module...  ' });
 });
