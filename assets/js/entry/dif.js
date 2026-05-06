@@ -11,6 +11,7 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 import GeoViz from '../modules/geoViz';
+import FullScreenModal from '../modules/fullScreenModal';
 
 const DIF_STATES = {
   UNSUBMITTED: '0',
@@ -311,5 +312,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const gmlOutput = json.gml;
         document.getElementById('spatialExtentGeometry').value = gmlOutput;
       });
+  });
+
+  const fullScreenModal = new FullScreenModal({
+    title: 'Welcome to the new Dataset Information Form (DIF)!',
+    cookieName: 'new-dif-acknowledged',
+    content: `
+    New Features Include:
+      <ul>
+        <li>Cleaner look and feel</li>
+        <li>Tabs on the side to navigate sections</li>
+        <li>New spatial extent map</li>
+      </ul>
+      <p>
+        Important Notes:
+      </p>
+      <p>
+        A listing of datasets that you have created are now located on the User Dashboard.
+        If you would like to work on a previously saved DIF, please use the Dashboard to load
+        the DIF.
+      </p>
+    `,
   });
 });
