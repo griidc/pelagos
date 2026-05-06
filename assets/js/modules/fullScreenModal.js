@@ -5,9 +5,9 @@ import Handlebars from 'handlebars';
 export default class FullScreenModal {
   constructor(options = {}) {
     this.modalInstance = null;
-    this.cookieName = options.cookieName || 'newdifack';
-    this.title = options.title || 'Modal';
-    this.content = options.content || 'Some content.';
+    this.cookieName = options.cookieName || 'generic-modal-acknowledged';
+    this.title = options.title || 'Modal Title Placeholder';
+    this.content = options.content || 'Modal Content Placeholder';
 
     const isAcknowledged = document.cookie
       .split(';')
@@ -22,6 +22,9 @@ export default class FullScreenModal {
     newElement.innerHTML = Handlebars.compile(modalTemplate)({ title: this.title, content: this.content });
     const modalElement = newElement.firstChild;
     document.body.appendChild(modalElement);
+
+    const fontSource = document.getElementById('pelagos-content') || document.body;
+    modalElement.style.fontFamily = window.getComputedStyle(fontSource).fontFamily;
 
     // Ensure full-width/full-height placement even if page-level CSS overrides utility classes.
     Object.assign(modalElement.style, {

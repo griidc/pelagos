@@ -12,7 +12,6 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 import GeoViz from '../modules/geoViz';
 import FullScreenModal from '../modules/fullScreenModal';
-import { cookie } from 'jquery';
 
 const DIF_STATES = {
   UNSUBMITTED: '0',
