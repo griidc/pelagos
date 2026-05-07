@@ -317,6 +317,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const fullScreenModal = new FullScreenModal({
     title: 'Welcome to the new Dataset Information Form (DIF)!',
     cookieName: 'new-dif-acknowledged',
+    supplementalCss: {
+      '.dif-modal-content ul': {
+        listStyleType: 'disc',
+        margin: '1rem 0',
+        paddingLeft: '1.5rem',
+      },
+      '.dif-modal-content li': {
+        margin: '0.25rem 0',
+      },
+    },
     content: `
     New Features Include:
       <ul>
