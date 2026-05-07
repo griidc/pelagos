@@ -8,6 +8,7 @@ export default class FullScreenModal {
     this.cookieName = options.cookieName || 'generic-modal-acknowledged';
     this.title = options.title || 'Modal Title Placeholder';
     this.content = options.content || 'Modal Content Placeholder';
+    this.supplementalCss = options.supplementalCss || null;
 
     const isAcknowledged = document.cookie
       .split(';')
@@ -39,6 +40,8 @@ export default class FullScreenModal {
       overflow: 'auto',
     });
 
+    this.applySupplementalCss(modalElement);
+
     const modalInstance = new Modal(
       modalElement,
       {
@@ -66,5 +69,35 @@ export default class FullScreenModal {
     });
 
     showModal();
+  }
+
+  applySupplementalCss(modalElement) {
+    if (typeof this.supplementalCss === 'string') {
+      modalElement.style.cssText += this.supplementalCss;
+      return;
+    }
+
+    if (!this.supplementalCss || typeof this.supplementalCss !== 'object') {
+      return;
+    }
+
+    const supplementalCssKeys = Object.keys(this.supplementalCss);
+    const hasSelectorRules = supplementalCssKeys.some((key) => /[.#:[\s>+~]/.test(key));
+
+    if (!hasSelectorRules) {
+      Object.assign(modalElement.style, this.supplementalCss);
+      return;
+    }
+
+    supplementalCssKeys.forEach((selector) => {
+      const ruleSet = this.supplementalCss[selector];
+      if (!ruleSet || typeof ruleSet !== 'object') {
+        return;
+      }
+
+      modalElement.querySelectorAll(selector).forEach((element) => {
+        Object.assign(element.style, ruleSet);
+      });
+    });
   }
 }
