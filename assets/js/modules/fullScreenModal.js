@@ -60,11 +60,11 @@ export default class FullScreenModal {
     };
 
     modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
-      modalInstance.hide();
+      this.hideModal(modalElement, modalInstance);
     });
 
     modalElement.querySelector('#modal-close-button-for-good').addEventListener('click', () => {
-      modalInstance.hide();
+      this.hideModal(modalElement, modalInstance);
       document.cookie = `${this.cookieName}=1; path=/; max-age=31536000; SameSite=Lax`;
     });
 
@@ -99,5 +99,14 @@ export default class FullScreenModal {
         Object.assign(element.style, ruleSet);
       });
     });
+  }
+
+  hideModal(modalElement, modalInstance) {
+    const activeElement = document.activeElement;
+    if (activeElement && modalElement.contains(activeElement) && typeof activeElement.blur === 'function') {
+      activeElement.blur();
+    }
+
+    modalInstance.hide();
   }
 }
