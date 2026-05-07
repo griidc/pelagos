@@ -8,8 +8,6 @@ import 'tom-select/dist/css/tom-select.css';
 import JustValidate from 'just-validate';
 import JustValidatePluginDate from 'just-validate-plugin-date';
 
-import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
-
 import GeoViz from '../modules/geoViz';
 import FullScreenModal from '../modules/fullScreenModal';
 
@@ -314,6 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
+  const dashboardUrl = window.Routing.generate('app_ui_dashboard');
+
   const fullScreenModal = new FullScreenModal({
     title: 'Welcome to the new Dataset Information Form (DIF)!',
     cookieName: 'new-dif-acknowledged',
@@ -338,8 +338,10 @@ document.addEventListener('DOMContentLoaded', () => {
         Important Notes:
       </p>
       <p>
-        A listing of datasets that you have created are now located on the User Dashboard.
-        If you would like to work on a previously saved DIF, please use the Dashboard to load
+        A listing of datasets that you have created are now located on the
+        <a href="${dashboardUrl}" class="pagelink" target="_blank">User Dashboard</a>.
+        If you would like to work on a previously saved DIF, please use the
+        <a href="${dashboardUrl}" class="pagelink" target="_blank">Dashboard</a> to load
         the DIF.
       </p>
     `,
