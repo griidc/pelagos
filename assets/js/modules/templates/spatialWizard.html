@@ -51,6 +51,9 @@
                             <li class="me-2" role="presentation">
                                 <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="bounding-box-tab" data-tabs-target="#bounding-box" type="button" role="tab" aria-controls="bounding-box-tab" aria-selected="false">Bounding Box</button>
                             </li>
+                            <li class="me-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="text-paste-tab" data-tabs-target="#text-paste" type="button" role="tab" aria-controls="text-paste-tab" aria-selected="false">Paste List</button>
+                            </li>
                         </ul>
                     </div>
                     <div id="default-tab-content">
@@ -59,8 +62,10 @@
                                 <form id="point-form">
                                     <label for="latitude" class="input-label">Latitude</label>
                                     <input type="text" id="latitude" name="latitude" class="input-base" placeholder="Enter latitude">
+                                    <div id="latitude-error"></div>
                                     <label for="longitude" class="input-label">Longitude</label>
                                     <input type="text" id="longitude" name="longitude" class="input-base" placeholder="Enter longitude">
+                                    <div id="longitude-error"></div>
                                     <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
                                 </form>
                             </p>
@@ -93,6 +98,51 @@
                                             <input type="text" id="south" name="south" class="input-base" placeholder="Enter south latitude">
                                         </div>
                                     </div>
+                                    <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
+                                </form>
+                            </p>
+                        </div>
+                        <div class="hidden p-4 rounded-lg bg-gray-50" id="text-paste" role="tabpanel" aria-labelledby="text-paste-tab">
+                            <p class="text-sm text-gray-500 m-4">
+                                <form id="text-paste-form">
+                                    <div class="mt-4">
+                                        <ul class="grid w-full gap-1 md:grid-cols-3" id="feature-type">
+                                            <li>
+                                                <input type="radio" id="polygon" name="feature-type" value="Polygon" class="hidden peer" />
+                                                <label for="polygon" class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
+                                                    <div class="block">
+                                                        <div class="w-full">Polygon</div>
+                                                    </div>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <input type="radio" id="line" name="feature-type" value="LineString" class="hidden peer">
+                                                <label for="line" class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
+                                                    <div class="block">
+                                                        <div class="w-full">Line</div>
+                                                    </div>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <input type="radio" id="multipoint" name="feature-type" value="MultiPoint" class="hidden peer">
+                                                <label for="multipoint" class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
+                                                    <div class="block">
+                                                        <div class="w-full">Multipoint</div>
+                                                    </div>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div id="feature-type-error"></div>
+
+                                    <label for="coordinates" class="input-label">Coordinates</label>
+                                    <div class="relative">
+                                        <textarea id="coordinates" name="coordinates" rows="6" class="input-base" placeholder="Enter coordinates. Format: latitude, longitude"></textarea>
+                                    </div>
+
+                                    <div id="coordinates-error"></div>
+
+
                                     <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
                                 </form>
                             </p>
