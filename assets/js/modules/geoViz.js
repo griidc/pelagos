@@ -5,8 +5,10 @@ import * as EsriLeafletVector from 'esri-leaflet-vector';
 import '../../css/custom-pm-icons.css';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+import { FullScreen } from 'leaflet.fullscreen';
 import { EventEmitter } from 'events';
 // import 'leaflet/dist/leaflet.css'; # This is broken due to webpack, but it is imported in the index.html.twig file.
+import 'leaflet.fullscreen/dist/Control.FullScreen.css';
 
 const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
@@ -31,9 +33,12 @@ const mapStyles = {
 };
 
 let drawnLayer = null;
+let isFullScreen = false;
 export default class GeoViz {
   constructor(element, options = {}) {
     const loadWizard = options.loadWizard !== undefined ? options.loadWizard : false;
+
+    this.isFullScreen = () => isFullScreen;
 
     this.map = Leaflet.map(element, {
       preferCanvas: true,
@@ -43,6 +48,25 @@ export default class GeoViz {
       worldCopyJump: true,
       layers: [ArcGISImagery],
     });
+
+    this.map.addControl(
+      new FullScreen({
+        position: 'topleft',
+        forcePseudoFullscreen: true,
+      }),
+    );
+
+    this.map.on('enterFullscreen', () => {
+      isFullScreen = true;
+    });
+
+    this.map.on('exitFullscreen', () => {
+      isFullScreen = false;
+    });
+
+    this.toggleFullScreen = () => {
+      this.map.toggleFullscreen();
+    };
 
     Leaflet.PM.setOptIn(true);
 
