@@ -31,6 +31,9 @@ export default class SpatialWizard {
     );
 
     const showWizard = () => {
+      if (geoViz.isFullScreen()) {
+        geoViz.toggleFullScreen();
+      }
       modalInstance.show();
     };
 
