@@ -57,6 +57,7 @@ Encore
   .addEntry('dif', './assets/js/entry/dif.js')
   .addEntry('dashboard', './assets/js/entry/dashboard.js')
   .addEntry('inspect-fileset', './assets/js/entry/inspect-fileset.js')
+  .addEntry('dataset-submission', './assets/js/entry/dataset-submission.js')
 
   // enables Sass/SCSS support
   .enableSassLoader()
