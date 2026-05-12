@@ -5,108 +5,65 @@ import Handlebars from 'handlebars';
 export default class FullScreenModal {
   constructor(options = {}) {
     this.modalInstance = null;
-    this.cookieName = options.cookieName || 'generic-modal-acknowledged';
-    this.title = options.title || 'Modal Title Placeholder';
-    this.content = options.content || 'Modal Content Placeholder';
-    this.supplementalCss = options.supplementalCss || null;
+    this.modalElement = null;
+    let cookieName = options.cookieName || 'generic-modal-acknowledged';
+    let title = options.title || 'Modal Title Placeholder';
+    let content = options.content || 'Modal Content Placeholder';
 
     const isAcknowledged = document.cookie
       .split(';')
       .map((cookie) => cookie.trim())
-      .some((cookie) => cookie.startsWith(`${this.cookieName}=`));
+      .some((cookie) => cookie.startsWith(`${cookieName}=`));
 
     if (isAcknowledged) {
       return;
     }
 
     const newElement = document.createElement('div');
-    newElement.innerHTML = Handlebars.compile(modalTemplate)({ title: this.title, content: this.content });
-    const modalElement = newElement.firstChild;
-    document.body.appendChild(modalElement);
 
-    const fontSource = document.getElementById('pelagos-content') || document.body;
-    modalElement.style.fontFamily = window.getComputedStyle(fontSource).fontFamily;
+    let modalOptions = {
+      title: title,
+      content: content,
+    };
+    newElement.innerHTML = Handlebars.compile(modalTemplate)(modalOptions);
 
-    // Ensure full-width/full-height placement even if page-level CSS overrides utility classes.
-    Object.assign(modalElement.style, {
-      position: 'fixed',
-      left: '50px',
-      right: '50px',
-      bottom: '50px',
-      top: '50px',
-      width: 'calc(100vw - 100px)',
-      height: 'calc(100vh - 100px)',
-      zIndex: '50',
-      overflow: 'auto',
-    });
+    this.modalElement = newElement.firstChild;
+    document.body.appendChild(this.modalElement);
 
-    this.applySupplementalCss(modalElement);
-
-    const modalInstance = new Modal(
-      modalElement,
+    this.modalInstance = new Modal(
+      this.modalElement,
       {
         backdrop: 'dynamic',
         placement: 'center',
-        closable: true,
+        closable: false,
       },
       {
-        id: 'fullscreen-modal',
+        id: 'modalEl',
         override: true,
       },
     );
 
-    const showModal = () => {
-      modalInstance.show();
-    };
-
-    modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
-      this.hideModal(modalElement, modalInstance);
+    this.modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
+      this.hide();
     });
 
-    modalElement.querySelector('#modal-close-button-for-good').addEventListener('click', () => {
-      this.hideModal(modalElement, modalInstance);
-      document.cookie = `${this.cookieName}=1; path=/; max-age=31536000; SameSite=Lax`;
-    });
-
-    showModal();
-  }
-
-  applySupplementalCss(modalElement) {
-    if (typeof this.supplementalCss === 'string') {
-      modalElement.style.cssText += this.supplementalCss;
-      return;
-    }
-
-    if (!this.supplementalCss || typeof this.supplementalCss !== 'object') {
-      return;
-    }
-
-    const supplementalCssKeys = Object.keys(this.supplementalCss);
-    const hasSelectorRules = supplementalCssKeys.some((key) => /[.#:[\s>+~]/.test(key));
-
-    if (!hasSelectorRules) {
-      Object.assign(modalElement.style, this.supplementalCss);
-      return;
-    }
-
-    supplementalCssKeys.forEach((selector) => {
-      const ruleSet = this.supplementalCss[selector];
-      if (!ruleSet || typeof ruleSet !== 'object') {
-        return;
-      }
-
-      modalElement.querySelectorAll(selector).forEach((element) => {
-        Object.assign(element.style, ruleSet);
-      });
+    this.modalElement.querySelector('#modal-close-button-for-good').addEventListener('click', () => {
+      this.hide();
+      document.cookie = `${cookieName}=1; path=/; max-age=31536000; SameSite=Lax`;
     });
   }
 
-  hideModal(modalElement, modalInstance) {
+  show() {
+    this.modalInstance?.show();
+  }
+
+  hide() {
+    // blur any active element inside the modal to prevent focus issues after hiding
+    // for screenreaders and keyboard users
     const activeElement = document.activeElement;
-    if (activeElement && modalElement.contains(activeElement) && typeof activeElement.blur === 'function') {
+    if (activeElement && this.modalElement?.contains(activeElement) && typeof activeElement.blur === 'function') {
       activeElement.blur();
     }
-
-    modalInstance.hide();
+    this.modalInstance?.hide();
   }
 }
