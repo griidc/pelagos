@@ -10,6 +10,7 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import GeoViz from '../modules/geoViz';
 import FullScreenModal from '../modules/fullScreenModal';
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const DIF_STATES = {
   UNSUBMITTED: '0',
@@ -310,24 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  const dashboardUrl = window.Routing.generate('app_ui_dashboard');
+  const dashboardUrl = Routing.generate('app_ui_dashboard');
 
   const fullScreenModal = new FullScreenModal({
     title: 'Welcome to the new Dataset Information Form (DIF)!',
     cookieName: 'new-dif-acknowledged',
-    supplementalCss: {
-      '.dif-modal-content ul': {
-        listStyleType: 'disc',
-        margin: '1rem 0',
-        paddingLeft: '1.5rem',
-      },
-      '.dif-modal-content li': {
-        margin: '0.25rem 0',
-      },
-    },
     content: `
     New Features Include:
-      <ul>
+      <ul style="list-style: disc; margin: 1rem 0; padding-left: 1.5rem;">
         <li>Cleaner look and feel</li>
         <li>Tabs on the side to navigate sections</li>
         <li>New spatial extent map</li>
@@ -343,5 +334,9 @@ document.addEventListener('DOMContentLoaded', () => {
         the DIF.
       </p>
     `,
+  });
+
+  window.addEventListener('load', () => {
+    fullScreenModal.show();
   });
 });
