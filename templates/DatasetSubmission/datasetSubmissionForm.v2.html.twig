@@ -12,66 +12,28 @@
         {% endif %}
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-            <div class="grid grid-cols-2 gap-4">
-                {# <div>
-                    {{ form_label(form.primaryPointOfContact) }}
-                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                    <div class="text-red-600 text-sm font-semibold">
-                        {{ form_errors(form.primaryPointOfContact) }}
-                    </div>
-                </div>
-
+            <div class="grid grid-cols-1 gap-4">
+                {% for contact in form.datasetContacts %}
                 <div>
-                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                </div> #}
-
-                <div id="dataset-contacts">
-                    {% for contact in form.datasetContacts %}
-                    <table class="tab-table dataset-contacts" index="{{contact.vars.name}}">
-                        <tr>
-                            <td>
-                                <span class="helpSection">
-                                    <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                    <div class="tooltiptext">
-                                        Please use the drop down list to select the person who can be contacted
-                                        about the dataset. If the person is not listed or their contact information
-                                        is incorrect, please contact help@griidc.org.
-                                    </div>
-                                </span>
-                                {% if contact.vars.data.primaryContact %}
-                                    <label for="datasetcontact">Primary Point of Contact</label>
-                                {% else %}
-                                    <button class="deletebutton" type="button">Delete Contact</button>
-                                    <label for="datasetcontact">Additional Point of Contact</label>
-                                {% endif %}
-                                <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
-                                    {% if contact.vars.data.person|default %}
-                                    <option selected value="{{contact.vars.data.person.id}}">
-                                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
-                                    </option>
-                                    {% endif %}
-                                </select>
-                                <label for="contactperson" class="error"></label>
-                                {% include "DatasetSubmission/contact-information.html.twig" %}
-                                {{ form_widget(contact.primaryContact) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="helpSection">
-                                    <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                    <div class="tooltiptext">
-                                        Please select the person’s relationship to the dataset from the drop down
-                                        list.
-                                    </div>
-                                </span>
-                                {{ form_row(contact.role) }}
-                            </td>
-                        </tr>
-                    </table>
-                    {% endfor %}
+                    {% if contact.vars.data.primaryContact %}
+                        <label for="datasetcontact">Primary Point of Contact</label>
+                    {% else %}
+                        <label for="datasetcontact">Additional Point of Contact</label>
+                    {% endif %}
+                    <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                        {% if contact.vars.data.person|default %}
+                        <option selected value="{{contact.vars.data.person.id}}">
+                            {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
+                        </option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div>
+                    {{ form_widget(contact.primaryContact) }}
+                    {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
                 </div>
 
+                {% endfor %}
             </div>
 
             <div>
@@ -89,17 +51,86 @@
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
-        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div>
                 {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
             </div>
 
             <div>
+                {{ form_row(form.shortTitle, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
                 {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.purpose, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppParams, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppMethods, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppInstruments, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppSampScalesRates, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppErrorAnalysis, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppProvenance, { attr: { class: 'textarea-base', rows: 3} }) }}
             </div>
         </div>
 
-        <div id="keywords">
+        <span class="text-2xl font-semibold mb-4" id="keywords">Keywords</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
+            <div>
+                {{ form_label(form.themeKeywords) }}
+                <select class="keywordinput" id="theme-keywords" multiple required="required">
+                {% for keyword in form.themeKeywords %}
+                    <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                {{ form_label(form.placeKeywords) }}
+                <select class="keywordinput" id="place-keywords" multiple>
+                {% for keyword in form.placeKeywords %}
+                    <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Topic Category Keyword List</label>
+                <select class="keywordinput" size="10" id="topic-keyword-select" keyword="source">
+                    {% set order = 0 %}
+                    {% for keyword in form.topicKeywords.vars.choices %}
+                        {% set found = false  %}
+                        {% for keywordValue in form.topicKeywords.vars.value %}
+                            {% if keyword.value == keywordValue %}
+                                {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }}>{{keyword.label}}</option>
+                        {% set order = order + 1 %}
+                    {% endfor %}
+                </select>
+            </div>
+
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
