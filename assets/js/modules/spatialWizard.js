@@ -7,6 +7,20 @@ import modalTemplate from './templates/spatialWizard.html';
 let map = null;
 let geoViz = null;
 
+const coordinateListToPairsArray = (text) => {
+  const pattern = /[\s,]+/g;
+  const list = text.split(pattern);
+  const coordinatePairs = [];
+  for (let i = 0; i < list.length; i += 2) {
+    const lng = parseFloat(list[i]);
+    const lat = parseFloat(list[i + 1]);
+    if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+      coordinatePairs.push([lng, lat]);
+    }
+  }
+  return coordinatePairs;
+};
+
 export default class SpatialWizard {
   constructor(geoVizInstance) {
     geoViz = geoVizInstance;
@@ -21,9 +35,10 @@ export default class SpatialWizard {
     const modalInstance = new Modal(
       modalElement,
       {
-        backdrop: 'dynamic',
+        backdrop: 'static',
         placement: 'center',
         closable: false,
+        backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
       },
       {
         id: 'modalEl',
@@ -36,6 +51,45 @@ export default class SpatialWizard {
         geoViz.toggleFullScreen();
       }
       modalInstance.show();
+
+      const json = geoViz.getDrawnFeaturesAsGeoJSON();
+      if (!json || !json.features || json.features.length === 0) {
+        return;
+      }
+
+      const combined = turf.combine(json);
+      const exploded = turf.explode(combined);
+      const featureType = turf.getType(combined.features[0]);
+
+      let coordinatesText = '';
+      for (let i = 0; i < exploded.features.length; i += 1) {
+        const coords = turf.getCoords(exploded.features[i]);
+        const [lng, lat] = coords;
+        coordinatesText += `${lng}, ${lat}\n`;
+      }
+
+      const coordinatesTextArea = modalElement.querySelector('#coordinates');
+      const featureTypeMultiPoint = modalElement.querySelector('#multipoint');
+      const featureTypePolygon = modalElement.querySelector('#polygon');
+      const featureTypeLineString = modalElement.querySelector('#linestring');
+
+      switch (featureType) {
+        case 'MultiPoint':
+          featureTypeMultiPoint.checked = true;
+          break;
+        case 'MultiPolygon':
+          featureTypePolygon.checked = true;
+          break;
+        case 'MultiLineString':
+          featureTypeLineString.checked = true;
+          break;
+        default:
+          break;
+      }
+
+      if (coordinatesText) {
+        coordinatesTextArea.value = coordinatesText.trim();
+      }
     };
 
     const hideWizard = () => {
@@ -214,6 +268,23 @@ export default class SpatialWizard {
           rule: 'required',
           errorMessage: 'Coordinates are required.',
         },
+        {
+          validator: (value) => {
+            const list = coordinateListToPairsArray(value);
+
+            for (let i = 0; i < list.length; i += 1) {
+              const [lng, lat] = list[i];
+              if (lat < -90 || lat > 90) {
+                return false;
+              }
+              if (lng < -180 || lng > 180) {
+                return false;
+              }
+            }
+            return true;
+          },
+          errorMessage: 'Coordinates must be between -90 and 90 for latitude and -180 and 180 for longitude.',
+        },
       ])
       .addRequiredGroup('#feature-type', 'Feature type is required.', {
         errorsContainer: '#feature-type-error',
@@ -225,21 +296,13 @@ export default class SpatialWizard {
         const formData = new FormData(formElement);
         const coordinatesText = formData.get('coordinates');
         const featureType = formData.get('feature-type');
-        const pattern = /[\s,]+/g;
-        const coordinateArray = coordinatesText.split(pattern);
-        // convert coords into array of [lng, lat] pairs
-        let coordinatePairs = [];
-        for (let i = 0; i < coordinateArray.length; i += 2) {
-          const lat = parseFloat(coordinateArray[i]);
-          const lng = parseFloat(coordinateArray[i + 1]);
-          if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-            coordinatePairs.push([lng, lat]);
-          }
-        }
+        let coordinatePairs = coordinateListToPairsArray(coordinatesText);
 
         // if featureType is Polygon, add first coordinate pair to the end of the array to close the polygon
         if (featureType === 'Polygon') {
-          coordinatePairs.push(coordinatePairs[0]);
+          if (coordinatePairs[0] !== coordinatePairs[coordinatePairs.length - 1]) {
+            coordinatePairs.push(coordinatePairs[0]);
+          }
           coordinatePairs = [coordinatePairs];
         }
 
@@ -249,70 +312,8 @@ export default class SpatialWizard {
         };
         const featureCollection = turf.feature(geometry);
         geoViz.addFeature(featureCollection);
-        formElement.reset();
+        // formElement.reset();
       });
-
-    // pointForm.addEventListener('submit', (e) => {
-    //   e.preventDefault();
-    //   hideWizard();
-    //   const formElement = document.getElementById('point-form');
-    //   const formData = new FormData(formElement);
-    //   const lat = formData.get('latitude');
-    //   const lng = formData.get('longitude');
-    //   const point = turf.point([parseFloat(lng), parseFloat(lat)]);
-    //   geoViz.addFeature(point);
-    //   formElement.reset();
-    // });
-
-    // bboxForm.addEventListener('submit', (e) => {
-    //   e.preventDefault();
-    //   hideWizard();
-
-    //   const formElement = document.getElementById('bounding-box-form');
-    //   const formData = new FormData(formElement);
-    //   const north = formData.get('north');
-    //   const south = formData.get('south');
-    //   const east = formData.get('east');
-    //   const west = formData.get('west');
-    //   const bboxPolygon = turf.bboxPolygon([parseFloat(west), parseFloat(south), parseFloat(east), parseFloat(north)]);
-    //   geoViz.addFeature(bboxPolygon);
-    //   formElement.reset();
-    // });
-
-    // textPasteForm.addEventListener('submit', (e) => {
-    //   e.preventDefault();
-    //   hideWizard();
-
-    //   const formElement = document.getElementById('text-paste-form');
-    //   const formData = new FormData(formElement);
-    //   const coordinatesText = formData.get('coordinates');
-    //   const featureType = formData.get('feature-type');
-    //   const pattern = /[\s,]+/g;
-    //   const coordinateArray = coordinatesText.split(pattern);
-    //   // convert coords into array of [lng, lat] pairs
-    //   let coordinatePairs = [];
-    //   for (let i = 0; i < coordinateArray.length; i += 2) {
-    //     const lat = parseFloat(coordinateArray[i]);
-    //     const lng = parseFloat(coordinateArray[i + 1]);
-    //     if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-    //       coordinatePairs.push([lng, lat]);
-    //     }
-    //   }
-
-    //   // if featureType is Polygon, add first coordinate pair to the end of the array to close the polygon
-    //   if (featureType === 'Polygon') {
-    //     coordinatePairs.push(coordinatePairs[0]);
-    //     coordinatePairs = [coordinatePairs];
-    //   }
-
-    //   const geometry = {
-    //     type: featureType,
-    //     coordinates: coordinatePairs,
-    //   };
-    //   const featureCollection = turf.feature(geometry);
-    //   geoViz.addFeature(featureCollection);
-    //   formElement.reset();
-    // });
 
     this.init = () => {};
 
