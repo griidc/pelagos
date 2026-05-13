@@ -116,10 +116,10 @@
                                                 </label>
                                             </li>
                                             <li>
-                                                <input type="radio" id="line" name="feature-type" value="LineString" class="hidden peer">
-                                                <label for="line" class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
+                                                <input type="radio" id="linestring" name="feature-type" value="LineString" class="hidden peer">
+                                                <label for="linestring" class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
                                                     <div class="block">
-                                                        <div class="w-full">Line</div>
+                                                        <div class="w-full">LineString</div>
                                                     </div>
                                                 </label>
                                             </li>
@@ -127,7 +127,7 @@
                                                 <input type="radio" id="multipoint" name="feature-type" value="MultiPoint" class="hidden peer">
                                                 <label for="multipoint" class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
                                                     <div class="block">
-                                                        <div class="w-full">Multipoint</div>
+                                                        <div class="w-full">MultiPoint</div>
                                                     </div>
                                                 </label>
                                             </li>
@@ -137,11 +137,10 @@
 
                                     <label for="coordinates" class="input-label">Coordinates</label>
                                     <div class="relative">
-                                        <textarea id="coordinates" name="coordinates" rows="6" class="input-base" placeholder="Enter coordinates. Format: latitude, longitude"></textarea>
+                                        <textarea id="coordinates" name="coordinates" rows="6" class="input-base" placeholder="Enter coordinates. Format: Longitude, Latitude"></textarea>
                                     </div>
 
                                     <div id="coordinates-error"></div>
-
 
                                     <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
                                 </form>
@@ -155,13 +154,6 @@
                 class="flex items-center space-x-2 rtl:space-x-reverse rounded-b border-t border-gray-200 p-6"
             >
                 <p class="text-sm text-gray-500">Coordinates should be WGS-84 format.</p>
-                <!-- <button
-                    id="modal-done-button"
-                    type="button"
-                    class="button button-regular button-form"
-                >
-                    Done
-                </button> -->
             </div>
         </div>
     </div>
