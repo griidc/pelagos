@@ -7,7 +7,12 @@ import modalTemplate from './templates/spatialWizard.html';
 let map = null;
 let geoViz = null;
 
-const coordinateListToPairsArray = (text) => {
+const COORDINATE_ORDER = {
+  LATLng: 'latLng',
+  LONGlat: 'lngLat',
+};
+
+const coordinateListToPairsArray = (text, order = COORDINATE_ORDER.LONGlat) => {
   const pattern = /[\s,]+/g;
   const list = text.split(pattern);
   const coordinatePairs = [];
@@ -15,7 +20,11 @@ const coordinateListToPairsArray = (text) => {
     const lng = parseFloat(list[i]);
     const lat = parseFloat(list[i + 1]);
     if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-      coordinatePairs.push([lng, lat]);
+      if (order === COORDINATE_ORDER.LATLng) {
+        coordinatePairs.push([lat, lng]);
+      } else {
+        coordinatePairs.push([lng, lat]);
+      }
     }
   }
   return coordinatePairs;
@@ -284,6 +293,36 @@ export default class SpatialWizard {
             return true;
           },
           errorMessage: 'Coordinates must be between -90 and 90 for latitude and -180 and 180 for longitude.',
+        },
+        {
+          validator: (value) => {
+            const list = coordinateListToPairsArray(value);
+            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+
+            if (featureType === 'Polygon' && list.length < 3) {
+              return false;
+            }
+
+            if (featureType === 'LineString' && list.length < 2) {
+              return false;
+            }
+
+            return true;
+          },
+          errorMessage: 'Please provide at least 3 coordinate pairs for a Polygon.',
+        },
+        {
+          validator: (value) => {
+            const list = coordinateListToPairsArray(value);
+            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+
+            if (featureType === 'LineString' && list.length < 2) {
+              return false;
+            }
+
+            return true;
+          },
+          errorMessage: 'Please provide at least 2 coordinate pairs for a LineString.',
         },
       ])
       .addRequiredGroup('#feature-type', 'Feature type is required.', {
