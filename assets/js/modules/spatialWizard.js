@@ -12,6 +12,8 @@ const COORDINATE_ORDER = {
   LONGlat: 'lngLat',
 };
 
+const spatialWizardHideEvent = new CustomEvent('spatialWizardHide');
+
 const coordinateListToPairsArray = (text, order = COORDINATE_ORDER.LONGlat) => {
   const pattern = /[\s,]+/g;
   const list = text.split(pattern);
@@ -40,74 +42,6 @@ export default class SpatialWizard {
     newElement.innerHTML = modalTemplate;
     const modalElement = newElement.firstChild;
     document.body.appendChild(modalElement);
-
-    const modalInstance = new Modal(
-      modalElement,
-      {
-        backdrop: 'static',
-        placement: 'center',
-        closable: false,
-        backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
-      },
-      {
-        id: 'modalEl',
-        override: true,
-      },
-    );
-
-    const showWizard = () => {
-      if (geoViz.isFullScreen()) {
-        geoViz.toggleFullScreen();
-      }
-      modalInstance.show();
-
-      const json = geoViz.getDrawnFeaturesAsGeoJSON();
-      if (!json || !json.features || json.features.length === 0) {
-        return;
-      }
-
-      const combined = turf.combine(json);
-      const exploded = turf.explode(combined);
-      const featureType = turf.getType(combined.features[0]);
-
-      let coordinatesText = '';
-      for (let i = 0; i < exploded.features.length; i += 1) {
-        const coords = turf.getCoords(exploded.features[i]);
-        const [lng, lat] = coords;
-        coordinatesText += `${lng}, ${lat}\n`;
-      }
-
-      const coordinatesTextArea = modalElement.querySelector('#coordinates');
-      const featureTypeMultiPoint = modalElement.querySelector('#multipoint');
-      const featureTypePolygon = modalElement.querySelector('#polygon');
-      const featureTypeLineString = modalElement.querySelector('#linestring');
-
-      switch (featureType) {
-        case 'MultiPoint':
-          featureTypeMultiPoint.checked = true;
-          break;
-        case 'MultiPolygon':
-          featureTypePolygon.checked = true;
-          break;
-        case 'MultiLineString':
-          featureTypeLineString.checked = true;
-          break;
-        default:
-          break;
-      }
-
-      if (coordinatesText) {
-        coordinatesTextArea.value = coordinatesText.trim();
-      }
-    };
-
-    const hideWizard = () => {
-      modalInstance.hide();
-    };
-
-    modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
-      hideWizard();
-    });
 
     const pointForm = modalElement.querySelector('#point-form');
     const bboxForm = modalElement.querySelector('#bounding-box-form');
@@ -160,7 +94,7 @@ export default class SpatialWizard {
         errorsContainer: '#longitude-error',
       })
       .onSuccess((event) => {
-        hideWizard();
+        window.dispatchEvent(spatialWizardHideEvent);
         const formElement = event.srcElement;
         const formData = new FormData(formElement);
         const lat = formData.get('latitude');
@@ -247,7 +181,7 @@ export default class SpatialWizard {
         },
       ])
       .onSuccess((event) => {
-        hideWizard();
+        window.dispatchEvent(spatialWizardHideEvent);
         const formElement = event.srcElement;
         const formData = new FormData(formElement);
         const north = formData.get('north');
@@ -329,7 +263,7 @@ export default class SpatialWizard {
         errorsContainer: '#feature-type-error',
       })
       .onSuccess((event) => {
-        hideWizard();
+        window.dispatchEvent(spatialWizardHideEvent);
 
         const formElement = event.srcElement;
         const formData = new FormData(formElement);
@@ -351,8 +285,81 @@ export default class SpatialWizard {
         };
         const featureCollection = turf.feature(geometry);
         geoViz.addFeature(featureCollection);
-        // formElement.reset();
+        formElement.reset();
       });
+
+    const modalInstance = new Modal(
+      modalElement,
+      {
+        backdrop: 'static',
+        placement: 'center',
+        closable: false,
+        backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
+        onHide: () => {
+          textPasteFormValidate.refresh();
+          pointFormValidate.refresh();
+          bboxFormValidate.refresh();
+        },
+      },
+      {
+        id: 'modalEl',
+        override: true,
+      },
+    );
+
+    const showWizard = () => {
+      if (geoViz.isFullScreen()) {
+        geoViz.toggleFullScreen();
+      }
+      modalInstance.show();
+
+      const json = geoViz.getDrawnFeaturesAsGeoJSON();
+      if (!json || !json.features || json.features.length === 0) {
+        return;
+      }
+
+      const combined = turf.combine(json);
+      const exploded = turf.explode(combined);
+      const featureType = turf.getType(combined.features[0]);
+
+      let coordinatesText = '';
+      for (let i = 0; i < exploded.features.length; i += 1) {
+        const coords = turf.getCoords(exploded.features[i]);
+        const [lng, lat] = coords;
+        coordinatesText += `${lng}, ${lat}\n`;
+      }
+
+      const coordinatesTextArea = modalElement.querySelector('#coordinates');
+      const featureTypeMultiPoint = modalElement.querySelector('#multipoint');
+      const featureTypePolygon = modalElement.querySelector('#polygon');
+      const featureTypeLineString = modalElement.querySelector('#linestring');
+
+      switch (featureType) {
+        case 'MultiPoint':
+          featureTypeMultiPoint.checked = true;
+          break;
+        case 'MultiPolygon':
+          featureTypePolygon.checked = true;
+          break;
+        case 'MultiLineString':
+          featureTypeLineString.checked = true;
+          break;
+        default:
+          break;
+      }
+
+      coordinatesTextArea.value = coordinatesText.trim();
+    };
+
+    const hideWizard = () => {
+      modalInstance.hide();
+    };
+
+    modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
+      hideWizard();
+    });
+
+    window.addEventListener('spatialWizardHide', () => hideWizard());
 
     this.init = () => {};
 
