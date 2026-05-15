@@ -1,4 +1,7 @@
-/* eslint-disable import/no-cycle, import/no-extraneous-dependencies, import/no-unresolved, import/no-duplicates, import/order, import/no-self-import, import/no-relative-packages, import/no-named-as-default, import/no-named-as-default-member */
+/* eslint-disable import/no-cycle, import/no-extraneous-dependencies,
+  import/no-unresolved, import/no-duplicates, import/order,
+  import/no-self-import, import/no-relative-packages,
+  import/no-named-as-default, import/no-named-as-default-member */
 import '../../scss/dif.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
