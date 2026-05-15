@@ -237,10 +237,6 @@ export default class SpatialWizard {
               return false;
             }
 
-            if (featureType === 'LineString' && list.length < 2) {
-              return false;
-            }
-
             return true;
           },
           errorMessage: 'Please provide at least 3 coordinate pairs for a Polygon.',
