@@ -29,6 +29,23 @@
             color: rgb(17 24 39 / var(--tw-text-opacity, 1));
         }
 
+        /* Needed for Project Title */
+        #researchGroup-ts-control > input {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+
+        /* Needed for Funder */
+        .ts-control input#funders-ts-control {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+        .ts-control:has(#funders-ts-control) {
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+
+
         .ts-control:focus {
             --tw-border-opacity: 1;
             border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
