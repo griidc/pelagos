@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const status = document.getElementById('status').value;
   const isDrpm = document.getElementById('isDrpm')?.value === '1';
   const funders = document.getElementById('funders');
-  const defaultFunderPlaceholder = funders.getAttribute('placeholder') || '[Please select a funder.]';
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
     hidePlaceholder: true,

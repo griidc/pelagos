@@ -12,11 +12,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <style>
-        .ts-control,
-        .ts-wrapper.single .ts-control {
+        .ts-control {
             border-style: var(--tw-border-style);
-            display: flex;
-            flex-wrap: wrap;
+            display: block;
             width: 100%;
             border-radius: 0.5rem;
             border-width: 1px;
@@ -31,11 +29,22 @@
             color: rgb(17 24 39 / var(--tw-text-opacity, 1));
         }
 
-        .ts-control input.items-placeholder,
+        /* Needed for Project Title */
+        #researchGroup-ts-control > input {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+
+        /* Needed for Funder */
         .ts-control input#funders-ts-control {
             font-size: 0.875rem !important;
             line-height: 1.25rem !important;
         }
+        .ts-control:has(#funders-ts-control) {
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+
 
         .ts-control:focus {
             --tw-border-opacity: 1;
