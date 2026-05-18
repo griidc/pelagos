@@ -12,6 +12,14 @@ const COORDINATE_ORDER = {
   LONGlat: 'lngLat',
 };
 
+const ORDER_CHECK = {
+  LONGLAT: COORDINATE_ORDER.LONGlat,
+  LATLONG: COORDINATE_ORDER.LATLng,
+  EMPTY: 'empty',
+  UNKNOWN: 'unknown',
+  MIXED: 'mixed',
+};
+
 const spatialWizardHideEvent = new CustomEvent('spatialWizardHide');
 
 const coordinateListToPairsArray = (text, order = COORDINATE_ORDER.LONGlat) => {
@@ -30,6 +38,33 @@ const coordinateListToPairsArray = (text, order = COORDINATE_ORDER.LONGlat) => {
     }
   }
   return coordinatePairs;
+};
+
+const checkCoordinateOrder = (pairs) => {
+  let hasLatLong = false;
+  let hasLongLat = false;
+
+  for (let i = 0; i < pairs.length; i += 1) {
+    const [first, second] = pairs[i];
+    if (first >= -90 && first <= 90 && second >= -180 && second <= 180) {
+      hasLatLong = true;
+    } else if (first >= -180 && first <= 180 && second >= -90 && second <= 90) {
+      hasLongLat = true;
+    } else {
+      return ORDER_CHECK.UNKNOWN;
+    }
+  }
+
+  if (hasLatLong && hasLongLat) {
+    return ORDER_CHECK.MIXED;
+  }
+  if (hasLatLong) {
+    return ORDER_CHECK.LATLONG;
+  }
+  if (hasLongLat) {
+    return ORDER_CHECK.LONGLAT;
+  }
+  return ORDER_CHECK.EMPTY;
 };
 
 export default class SpatialWizard {
@@ -213,7 +248,8 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const list = coordinateListToPairsArray(value);
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value, order);
 
             for (let i = 0; i < list.length; i += 1) {
               const [lng, lat] = list[i];
@@ -230,7 +266,8 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const list = coordinateListToPairsArray(value);
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value, order);
             const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
 
             if (featureType === 'Polygon' && list.length < 3) {
@@ -243,7 +280,22 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
             const list = coordinateListToPairsArray(value);
+            const orderCheck = checkCoordinateOrder(list);
+
+            console.log('Checked Order:', order);
+            console.log('Order check result:', orderCheck);
+
+            // WIP
+            return true;
+          },
+          errorMessage: 'Please ensure coordinates are provided in a valid order.',
+        },
+        {
+          validator: (value) => {
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value, order);
             const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
 
             if (featureType === 'LineString' && list.length < 2) {
@@ -265,7 +317,8 @@ export default class SpatialWizard {
         const formData = new FormData(formElement);
         const coordinatesText = formData.get('coordinates');
         const featureType = formData.get('feature-type');
-        let coordinatePairs = coordinateListToPairsArray(coordinatesText);
+        const coordinateOrder = formData.get('coordinate-order');
+        let coordinatePairs = coordinateListToPairsArray(coordinatesText, coordinateOrder);
 
         // if featureType is Polygon, add first coordinate pair to the end of the array to close the polygon
         if (featureType === 'Polygon') {
