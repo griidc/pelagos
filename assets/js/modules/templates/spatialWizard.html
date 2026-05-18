@@ -142,6 +142,14 @@
 
                                     <div id="coordinates-error"></div>
 
+                                    <div class="flex items-center mb-4">
+                                        <label class="input-label mr-2">Coordinate Order:</label>
+                                        <input id="order-long-lat" type="radio" value="longLat" checked name="coordinate-order" class="radio-base">
+                                        <label for="order-long-lat" class="input-label mx-2">Longitude, Latitude</label>
+                                        <input id="order-lat-long" type="radio" value="latLng" name="coordinate-order" class="radio-base">
+                                        <label for="order-lat-long" class="input-label mx-2">Latitude, Longitude</label>
+                                    </div>
+
                                     <button type="submit" class="mt-4 button button-regular button-form">Submit</button>
                                 </form>
                             </p>

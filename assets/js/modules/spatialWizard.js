@@ -7,7 +7,22 @@ import modalTemplate from './templates/spatialWizard.html';
 let map = null;
 let geoViz = null;
 
-const coordinateListToPairsArray = (text) => {
+const COORDINATE_ORDER = {
+  LATLng: 'latLng',
+  LONGlat: 'lngLat',
+};
+
+const ORDER_CHECK = {
+  LONGLAT: COORDINATE_ORDER.LONGlat,
+  LATLONG: COORDINATE_ORDER.LATLng,
+  EMPTY: 'empty',
+  UNKNOWN: 'unknown',
+  MIXED: 'mixed',
+};
+
+const spatialWizardHideEvent = new CustomEvent('spatialWizardHide');
+
+const coordinateListToPairsArray = (text, order = COORDINATE_ORDER.LONGlat) => {
   const pattern = /[\s,]+/g;
   const list = text.split(pattern);
   const coordinatePairs = [];
@@ -15,10 +30,41 @@ const coordinateListToPairsArray = (text) => {
     const lng = parseFloat(list[i]);
     const lat = parseFloat(list[i + 1]);
     if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-      coordinatePairs.push([lng, lat]);
+      if (order === COORDINATE_ORDER.LATLng) {
+        coordinatePairs.push([lat, lng]);
+      } else {
+        coordinatePairs.push([lng, lat]);
+      }
     }
   }
   return coordinatePairs;
+};
+
+const checkCoordinateOrder = (pairs) => {
+  let hasLatLong = false;
+  let hasLongLat = false;
+
+  for (let i = 0; i < pairs.length; i += 1) {
+    const [first, second] = pairs[i];
+    if (first >= -90 && first <= 90 && second >= -180 && second <= 180) {
+      hasLatLong = true;
+    } else if (first >= -180 && first <= 180 && second >= -90 && second <= 90) {
+      hasLongLat = true;
+    } else {
+      return ORDER_CHECK.UNKNOWN;
+    }
+  }
+
+  if (hasLatLong && hasLongLat) {
+    return ORDER_CHECK.MIXED;
+  }
+  if (hasLatLong) {
+    return ORDER_CHECK.LATLONG;
+  }
+  if (hasLongLat) {
+    return ORDER_CHECK.LONGLAT;
+  }
+  return ORDER_CHECK.EMPTY;
 };
 
 export default class SpatialWizard {
@@ -31,74 +77,6 @@ export default class SpatialWizard {
     newElement.innerHTML = modalTemplate;
     const modalElement = newElement.firstChild;
     document.body.appendChild(modalElement);
-
-    const modalInstance = new Modal(
-      modalElement,
-      {
-        backdrop: 'static',
-        placement: 'center',
-        closable: false,
-        backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
-      },
-      {
-        id: 'modalEl',
-        override: true,
-      },
-    );
-
-    const showWizard = () => {
-      if (geoViz.isFullScreen()) {
-        geoViz.toggleFullScreen();
-      }
-      modalInstance.show();
-
-      const json = geoViz.getDrawnFeaturesAsGeoJSON();
-      if (!json || !json.features || json.features.length === 0) {
-        return;
-      }
-
-      const combined = turf.combine(json);
-      const exploded = turf.explode(combined);
-      const featureType = turf.getType(combined.features[0]);
-
-      let coordinatesText = '';
-      for (let i = 0; i < exploded.features.length; i += 1) {
-        const coords = turf.getCoords(exploded.features[i]);
-        const [lng, lat] = coords;
-        coordinatesText += `${lng}, ${lat}\n`;
-      }
-
-      const coordinatesTextArea = modalElement.querySelector('#coordinates');
-      const featureTypeMultiPoint = modalElement.querySelector('#multipoint');
-      const featureTypePolygon = modalElement.querySelector('#polygon');
-      const featureTypeLineString = modalElement.querySelector('#linestring');
-
-      switch (featureType) {
-        case 'MultiPoint':
-          featureTypeMultiPoint.checked = true;
-          break;
-        case 'MultiPolygon':
-          featureTypePolygon.checked = true;
-          break;
-        case 'MultiLineString':
-          featureTypeLineString.checked = true;
-          break;
-        default:
-          break;
-      }
-
-      if (coordinatesText) {
-        coordinatesTextArea.value = coordinatesText.trim();
-      }
-    };
-
-    const hideWizard = () => {
-      modalInstance.hide();
-    };
-
-    modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
-      hideWizard();
-    });
 
     const pointForm = modalElement.querySelector('#point-form');
     const bboxForm = modalElement.querySelector('#bounding-box-form');
@@ -151,7 +129,7 @@ export default class SpatialWizard {
         errorsContainer: '#longitude-error',
       })
       .onSuccess((event) => {
-        hideWizard();
+        window.dispatchEvent(spatialWizardHideEvent);
         const formElement = event.srcElement;
         const formData = new FormData(formElement);
         const lat = formData.get('latitude');
@@ -238,7 +216,7 @@ export default class SpatialWizard {
         },
       ])
       .onSuccess((event) => {
-        hideWizard();
+        window.dispatchEvent(spatialWizardHideEvent);
         const formElement = event.srcElement;
         const formData = new FormData(formElement);
         const north = formData.get('north');
@@ -270,7 +248,8 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const list = coordinateListToPairsArray(value);
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value, order);
 
             for (let i = 0; i < list.length; i += 1) {
               const [lng, lat] = list[i];
@@ -285,18 +264,61 @@ export default class SpatialWizard {
           },
           errorMessage: 'Coordinates must be between -90 and 90 for latitude and -180 and 180 for longitude.',
         },
+        {
+          validator: (value) => {
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value, order);
+            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+
+            if (featureType === 'Polygon' && list.length < 3) {
+              return false;
+            }
+
+            return true;
+          },
+          errorMessage: 'Please provide at least 3 coordinate pairs for a Polygon.',
+        },
+        {
+          validator: (value) => {
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value);
+            const orderCheck = checkCoordinateOrder(list);
+
+            console.log('Checked Order:', order);
+            console.log('Order check result:', orderCheck);
+
+            // WIP
+            return true;
+          },
+          errorMessage: 'Please ensure coordinates are provided in a valid order.',
+        },
+        {
+          validator: (value) => {
+            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const list = coordinateListToPairsArray(value, order);
+            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+
+            if (featureType === 'LineString' && list.length < 2) {
+              return false;
+            }
+
+            return true;
+          },
+          errorMessage: 'Please provide at least 2 coordinate pairs for a LineString.',
+        },
       ])
       .addRequiredGroup('#feature-type', 'Feature type is required.', {
         errorsContainer: '#feature-type-error',
       })
       .onSuccess((event) => {
-        hideWizard();
+        window.dispatchEvent(spatialWizardHideEvent);
 
         const formElement = event.srcElement;
         const formData = new FormData(formElement);
         const coordinatesText = formData.get('coordinates');
         const featureType = formData.get('feature-type');
-        let coordinatePairs = coordinateListToPairsArray(coordinatesText);
+        const coordinateOrder = formData.get('coordinate-order');
+        let coordinatePairs = coordinateListToPairsArray(coordinatesText, coordinateOrder);
 
         // if featureType is Polygon, add first coordinate pair to the end of the array to close the polygon
         if (featureType === 'Polygon') {
@@ -312,16 +334,89 @@ export default class SpatialWizard {
         };
         const featureCollection = turf.feature(geometry);
         geoViz.addFeature(featureCollection);
-        // formElement.reset();
+        formElement.reset();
       });
+
+    const modalInstance = new Modal(
+      modalElement,
+      {
+        backdrop: 'static',
+        placement: 'center',
+        closable: false,
+        backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
+        onHide: () => {
+          textPasteFormValidate.refresh();
+          pointFormValidate.refresh();
+          bboxFormValidate.refresh();
+        },
+      },
+      {
+        id: 'modalEl',
+        override: true,
+      },
+    );
+
+    const showWizard = () => {
+      if (geoViz.isFullScreen()) {
+        geoViz.toggleFullScreen();
+      }
+      modalInstance.show();
+
+      const json = geoViz.getDrawnFeaturesAsGeoJSON();
+      if (!json || !json.features || json.features.length === 0) {
+        return;
+      }
+
+      const combined = turf.combine(json);
+      const exploded = turf.explode(combined);
+      const featureType = turf.getType(combined.features[0]);
+
+      let coordinatesText = '';
+      for (let i = 0; i < exploded.features.length; i += 1) {
+        const coords = turf.getCoords(exploded.features[i]);
+        const [lng, lat] = coords;
+        coordinatesText += `${lng}, ${lat}\n`;
+      }
+
+      const coordinatesTextArea = modalElement.querySelector('#coordinates');
+      const featureTypeMultiPoint = modalElement.querySelector('#multipoint');
+      const featureTypePolygon = modalElement.querySelector('#polygon');
+      const featureTypeLineString = modalElement.querySelector('#linestring');
+
+      switch (featureType) {
+        case 'MultiPoint':
+          featureTypeMultiPoint.checked = true;
+          break;
+        case 'MultiPolygon':
+          featureTypePolygon.checked = true;
+          break;
+        case 'MultiLineString':
+          featureTypeLineString.checked = true;
+          break;
+        default:
+          break;
+      }
+
+      coordinatesTextArea.value = coordinatesText.trim();
+    };
+
+    const hideWizard = () => {
+      modalInstance.hide();
+    };
+
+    modalElement.querySelector('#modal-close-button').addEventListener('click', () => {
+      hideWizard();
+    });
+
+    window.addEventListener('spatialWizardHide', () => hideWizard());
 
     this.init = () => {};
 
     map.pm.Toolbar.createCustomControl({
       name: 'Paste',
       block: 'options',
-      title: 'Paste Wizard',
-      className: 'custom-pm-icon-brush',
+      title: 'Paste Coordinate(s) Text',
+      className: 'custom-pm-icon-text',
       onClick: () => {
         map.pm.Toolbar.buttons.Paste.toggle();
         showWizard();
