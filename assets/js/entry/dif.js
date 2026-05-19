@@ -168,6 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
       successEvent.currentTarget.submit();
     });
 
+  const saveAndContinueButton = document.getElementById('saveAndContinue');
+  saveAndContinueButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    form.submitAction.value = 'saveAndContinue';
+    form.submit();
+  });
+
   const estimatedStartDate = document.getElementById('estimatedStartDate');
   estimatedStartDate.addEventListener('changeDate', () => {
     if (formValidate.isSubmitted) {
