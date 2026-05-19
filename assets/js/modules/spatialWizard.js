@@ -415,7 +415,7 @@ export default class SpatialWizard {
     map.pm.Toolbar.createCustomControl({
       name: 'Paste',
       block: 'options',
-      title: 'Paste Coordinate(s) Text',
+      title: 'Insert coordinates',
       className: 'custom-pm-icon-text',
       onClick: () => {
         map.pm.Toolbar.buttons.Paste.toggle();

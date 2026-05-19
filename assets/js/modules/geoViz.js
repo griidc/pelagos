@@ -56,6 +56,8 @@ export default class GeoViz {
       new FullScreen({
         position: 'topleft',
         forcePseudoFullscreen: true,
+        title: 'Full screen',
+        titleCancel: 'Exit full screen',
       }),
     );
 
@@ -72,6 +74,24 @@ export default class GeoViz {
     };
 
     Leaflet.PM.setOptIn(true);
+
+    const customTranslation = {
+      tooltips: {
+        placeCircleMarker: 'Click to draw point',
+      },
+      buttonTitles: {
+        editButton: 'Edit layer',
+        deleteButton: 'Remove layer',
+        drawPolyButton: 'Draw polygon',
+        drawRectButton: 'Draw bounding box',
+        drawCircleMarkerButton: 'Draw point',
+      },
+      actions: {
+        cancel: 'Done',
+      },
+    };
+
+    this.map.pm.setLang('customText', customTranslation, 'en');
 
     this.map.pm.addControls({
       positions: {
@@ -94,13 +114,10 @@ export default class GeoViz {
       rotateMode: false,
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    this.map.pm.Toolbar.buttons.drawCircleMarker._button.title = 'Draw Point';
-
     this.map.pm.Toolbar.createCustomControl({
       name: 'Home',
       block: 'custom',
-      title: 'Navigate to Home',
+      title: 'Home',
       toggle: false,
       className: 'custom-pm-icon-home',
       onClick: () => {
