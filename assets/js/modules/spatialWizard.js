@@ -266,9 +266,11 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const orderElement = textPasteForm.querySelector('input[name="coordinate-order"]:checked');
+            const order = orderElement?.value;
             const list = coordinateListToPairsArray(value, order);
-            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+            const featureTypeElement = textPasteForm.querySelector('input[name="feature-type"]:checked');
+            const featureType = featureTypeElement?.value;
 
             if (featureType === 'Polygon' && list.length < 3) {
               return false;
@@ -280,7 +282,8 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const orderElement = textPasteForm.querySelector('input[name="coordinate-order"]:checked');
+            const order = orderElement?.value;
             const list = coordinateListToPairsArray(value);
             const orderCheck = checkCoordinateOrder(list);
 
@@ -294,9 +297,11 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const orderElement = textPasteForm.querySelector('input[name="coordinate-order"]:checked');
+            const order = orderElement?.value;
             const list = coordinateListToPairsArray(value, order);
-            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+            const featureTypeElement = textPasteForm.querySelector('input[name="feature-type"]:checked');
+            const featureType = featureTypeElement?.value;
 
             if (featureType === 'LineString' && list.length < 2) {
               return false;
