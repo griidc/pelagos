@@ -80,14 +80,15 @@ export default class GeoViz {
         placeCircleMarker: 'Click to draw point',
       },
       buttonTitles: {
-        editButton: 'Edit layer',
-        deleteButton: 'Remove layer',
+        editButton: 'Edit feature(s)',
+        deleteButton: 'Remove feature(s)',
         drawPolyButton: 'Draw polygon',
         drawRectButton: 'Draw bounding box',
-        drawCircleMarkerButton: 'Draw point',
+        drawCircleMarkerButton: 'Draw point(s)',
       },
       actions: {
         cancel: 'Done',
+        removeLastVertex: 'Remove last vertex',
       },
     };
 

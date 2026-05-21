@@ -311,6 +311,11 @@ export default class SpatialWizard {
           },
           errorMessage: 'Please provide at least 2 coordinate pairs for a LineString.',
         },
+        {
+          rule: 'customRegexp',
+          value: /^[0-9\s,.-]+$/,
+          errorMessage: 'Only numbers, spaces, commas, periods, and hyphens are allowed in the coordinates.',
+        },
       ])
       .addRequiredGroup('#feature-type', 'Feature type is required.', {
         errorsContainer: '#feature-type-error',
