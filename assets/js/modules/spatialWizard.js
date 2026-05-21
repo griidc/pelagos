@@ -313,8 +313,8 @@ export default class SpatialWizard {
         },
         {
           rule: 'customRegexp',
-          value: /^[0-9\s,.]+$/,
-          errorMessage: 'Only numbers, spaces, commas, and periods are allowed in the coordinates.',
+          value: /^[0-9\s,.-]+$/,
+          errorMessage: 'Only numbers, spaces, commas, periods, and hyphens are allowed in the coordinates.',
         },
       ])
       .addRequiredGroup('#feature-type', 'Feature type is required.', {
