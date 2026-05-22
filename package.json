@@ -72,6 +72,7 @@
         "just-validate": "^4.3.0",
         "just-validate-plugin-date": "^1.2.0",
         "leaflet": "^1.9.4",
+        "leaflet.fullscreen": "^5.3.1",
         "maplibre-gl": "^4.7.1",
         "postcss-loader": "^8.2.0",
         "prop-types": "^15.8.1",

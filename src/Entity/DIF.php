@@ -379,8 +379,6 @@ class DIF extends Entity
             $this->setDataset($dataset);
         }
         $this->keywords = new ArrayCollection();
-
-        $this->dataSize = "< 1GB";
     }
 
     /**

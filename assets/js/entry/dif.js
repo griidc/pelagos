@@ -1,4 +1,7 @@
-/* eslint-disable import/no-cycle, import/no-extraneous-dependencies, import/no-unresolved, import/no-duplicates, import/order, import/no-self-import, import/no-relative-packages, import/no-named-as-default, import/no-named-as-default-member */
+/* eslint-disable import/no-cycle, import/no-extraneous-dependencies,
+  import/no-unresolved, import/no-duplicates, import/order,
+  import/no-self-import, import/no-relative-packages,
+  import/no-named-as-default, import/no-named-as-default-member */
 import '../../scss/dif.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -27,11 +30,47 @@ document.addEventListener('DOMContentLoaded', () => {
   const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
   const spatialExtentDescription = document.getElementById('spatial-extent-description');
   spatialExtentRadios.forEach((radio) => {
+    const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
+    const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+    const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
+    const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
+
+    if (spatialExtentDescriptionFieldValue && radio.value === 'no-extent') {
+      spatialExtentGeometry.classList.add('hidden');
+      spatialExtentDescription.classList.remove('hidden');
+      spatialExtentGeometryField.value = '';
+      geoViz.clearMap();
+      const spatialRadio = radio;
+      spatialRadio.checked = true;
+    }
+
+    if (spatialExtentGeometryFieldValue && radio.value === 'yes-extent') {
+      spatialExtentGeometry.classList.remove('hidden');
+      spatialExtentDescription.classList.add('hidden');
+      const spatialRadio = radio;
+      spatialRadio.checked = true;
+      geoViz.fixMapSize();
+      const url = Routing.generate('pelagos_app_gml_to_geojson');
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          gml: spatialExtentGeometryFieldValue,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          const geoJSON = JSON.parse(json.geojson);
+          const geometry = geoJSON ? geoJSON.geometry : null;
+          if (geometry) {
+            geoViz.addFeature(geoJSON);
+          }
+        });
+    }
+
     radio.addEventListener('change', (e) => {
-      const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
-      const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
-      const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
-      const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
       if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
         // eslint-disable-next-line no-alert, no-restricted-globals
         if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
@@ -65,9 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
+    hidePlaceholder: true,
     plugins: {
-      clear_button: {
-        title: 'Remove all selected options',
+      remove_button: {
+        title: 'Remove this funder',
       },
     },
   });
@@ -192,11 +232,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
       if (contacts.length === 0) {
-        defaultOption.textContent = '[PLEASE SELECT A PROJECT FIRST]';
+        defaultOption.textContent = '[Please select a project first.]';
         defaultOption.disabled = true;
         dropdown.disabled = true;
       } else {
-        defaultOption.textContent = '[PLEASE SELECT A CONTACT]';
+        defaultOption.textContent = '[Please select a contact.]';
         dropdown.disabled = false;
       }
       defaultOption.selected = true;

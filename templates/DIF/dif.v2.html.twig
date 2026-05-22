@@ -29,6 +29,23 @@
             color: rgb(17 24 39 / var(--tw-text-opacity, 1));
         }
 
+        /* Needed for Project Title */
+        #researchGroup-ts-control > input {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+
+        /* Needed for Funder */
+        .ts-control input#funders-ts-control {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+        .ts-control:has(#funders-ts-control) {
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+
+
         .ts-control:focus {
             --tw-border-opacity: 1;
             border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
@@ -83,37 +100,37 @@
 
         <div class="flex flex-1 gap-6 not-prose">
             <div class="w-1/6 sticky top-6 h-fit">
-                <ol class="space-y-4 w-72">
+                <ol class="space-y-4 w-64">
                     <li onclick="highlightRow('#contact')" style="cursor: pointer;">
-                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
                             <div class="flex items-center justify-between">
                                     <h3 class="font-medium">Dataset Contact</h3>
                             </div>
                         </div>
                     </li>
                     <li onclick="highlightRow('#information')" style="cursor: pointer;">
-                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Dataset Information</h3>
                             </div>
                         </div>
                     </li>
                     <li onclick="highlightRow('#keywords')" style="cursor: pointer;display: none;">
-                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Keywords</h3>
                             </div>
                         </div>
                     </li>
                     <li onclick="highlightRow('#extent')" style="cursor: pointer;">
-                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Data Extent</h3>
                             </div>
                         </div>
                     </li>
                     <li onclick="highlightRow('#submit')" style="cursor: pointer;">
-                        <div class="w-full p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Submit</h3>
                             </div>

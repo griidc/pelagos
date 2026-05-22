@@ -9412,6 +9412,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet.fullscreen@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "leaflet.fullscreen@npm:5.3.1"
+  peerDependencies:
+    leaflet: ^1.7.0 || >=2.0.0-alpha.1
+  checksum: 10c0/e28c988b8e1195e21b2f98e900e9a6adeb3fac0430810b8991114a6ba7997a19c060a32aebfdd83147fe4e530acc4067b00170f8346e35382fe5127a7873fc73
+  languageName: node
+  linkType: hard
+
 "leaflet@npm:^1.9.4":
   version: 1.9.4
   resolution: "leaflet@npm:1.9.4"
@@ -11898,6 +11907,7 @@ __metadata:
     just-validate: "npm:^4.3.0"
     just-validate-plugin-date: "npm:^1.2.0"
     leaflet: "npm:^1.9.4"
+    leaflet.fullscreen: "npm:^5.3.1"
     maplibre-gl: "npm:^4.7.1"
     n: "npm:^10.2.0"
     postcss-loader: "npm:^8.2.0"

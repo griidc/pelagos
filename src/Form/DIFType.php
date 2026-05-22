@@ -95,7 +95,7 @@ class DIFType extends AbstractType
         $builder
             ->add('title', TextareaType::class, [
                 'attr' => [
-                    'placeholder' => 'Dataset Title (200 Character Maximum)',
+                    'placeholder' => 'Please provide a title that describes the contents of your dataset. This is NOT the title of your project. (200 character maximum)',
                     'rows' => '2',
                     'maxsize' => 200,
                 ],
@@ -104,18 +104,18 @@ class DIFType extends AbstractType
             ])
             ->add('primaryPointOfContact', ChoiceType::class, [
                 'label' => 'Primary Data Point of Contact:',
-                'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+                'placeholder' => '[Please select a project first.]',
                 'required' => true,
             ])
             ->add('secondaryPointOfContact', ChoiceType::class, [
                 'label' => 'Additional Data Point of Contact:',
-                'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+                'placeholder' => '[Please select a project first.]',
                 'required' => false,
             ])
             ->add('abstract', TextareaType::class, [
                 'attr' => [
                     'rows' => 6,
-                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated (4000 character maximum)',
+                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated. (4000 character maximum)',
                     'maxlength' => 4000,
                 ],
                 'label' => 'Dataset Abstract:',
@@ -164,7 +164,7 @@ class DIFType extends AbstractType
                 'label' => 'Data Parameters and Units:',
                 'attr' => [
                     'rows' => 3,
-                    'placeholder' => 'Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)',
+                    'placeholder' => 'Please provide any parameters and units. For example: wind speed (km/hr), salinity (ppt), temperature (degrees C).',
                 ],
                 'required' => false,
             ])
@@ -237,10 +237,17 @@ class DIFType extends AbstractType
                         ->orderBy('funder.name', 'ASC');
                 },
                 'multiple' => true,
+                'attr' => [
+                    'placeholder' => '[Please select a funder.]',
+                ],
             ])
             ->add('additionalFunders', TextType::class, [
                 'label' => 'Additional Funders',
                 'required' => false,
+                'attr' => [
+                    'placeholder' => '[Please add any additional funders not on the dropdown.]',
+                ],
+
             ])
             ->add('spatialExtentDescription', TextareaType::class, [
                 'label' => 'Description:',
@@ -287,9 +294,13 @@ class DIFType extends AbstractType
                 'required' => false,
             ])
             ->add('remarks', TextareaType::class, [
-                'attr' => ['rows' => 3],
+                'attr' => [
+                    'rows' => 3,
+                    'placeholder' => 'Please provide any additional information that would help GRIIDC understand the contents or format of your dataset.',
+                ],
                 'label' => 'Remarks:',
                 'required' => false,
+
             ])
             ->add('issueTrackingTicket', TextType::class, [
                 'label' => 'Issue Tracking Ticket:',
@@ -358,7 +369,7 @@ class DIFType extends AbstractType
             'class' => ResearchGroup::class,
             'choices' => $researchGroups,
             'choice_label' => 'name',
-            'placeholder' => '[PLEASE SELECT A PROJECT]',
+            'placeholder' => '[Please select a project.]',
             'required' => true,
             'label' => 'Project Title:',
             'choice_attr' => function (ResearchGroup $choice) {
@@ -377,14 +388,14 @@ class DIFType extends AbstractType
             'attr' => [
                 'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
             ],
-            'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+            'placeholder' => '[Please select a project first.]',
         ])
         ->add('secondaryPointOfContact', ChoiceType::class, [
             'label' => 'Additional Data Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
-            'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
+            'placeholder' => '[Please select a project first.]',
             'required' => false,
         ])
         ;
