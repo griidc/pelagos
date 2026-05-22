@@ -266,9 +266,11 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const orderElement = textPasteForm.querySelector('input[name="coordinate-order"]:checked');
+            const order = orderElement?.value;
             const list = coordinateListToPairsArray(value, order);
-            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+            const featureTypeElement = textPasteForm.querySelector('input[name="feature-type"]:checked');
+            const featureType = featureTypeElement?.value;
 
             if (featureType === 'Polygon' && list.length < 3) {
               return false;
@@ -280,7 +282,8 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const orderElement = textPasteForm.querySelector('input[name="coordinate-order"]:checked');
+            const order = orderElement?.value;
             const list = coordinateListToPairsArray(value);
             const orderCheck = checkCoordinateOrder(list);
 
@@ -294,9 +297,11 @@ export default class SpatialWizard {
         },
         {
           validator: (value) => {
-            const order = textPasteForm.querySelector('input[name="coordinate-order"]:checked').value;
+            const orderElement = textPasteForm.querySelector('input[name="coordinate-order"]:checked');
+            const order = orderElement?.value;
             const list = coordinateListToPairsArray(value, order);
-            const featureType = textPasteForm.querySelector('input[name="feature-type"]:checked').value;
+            const featureTypeElement = textPasteForm.querySelector('input[name="feature-type"]:checked');
+            const featureType = featureTypeElement?.value;
 
             if (featureType === 'LineString' && list.length < 2) {
               return false;
@@ -305,6 +310,11 @@ export default class SpatialWizard {
             return true;
           },
           errorMessage: 'Please provide at least 2 coordinate pairs for a LineString.',
+        },
+        {
+          rule: 'customRegexp',
+          value: /^[0-9\s,.-]+$/,
+          errorMessage: 'Only numbers, spaces, commas, periods, and hyphens are allowed in the coordinates.',
         },
       ])
       .addRequiredGroup('#feature-type', 'Feature type is required.', {
@@ -415,7 +425,7 @@ export default class SpatialWizard {
     map.pm.Toolbar.createCustomControl({
       name: 'Paste',
       block: 'options',
-      title: 'Paste Coordinate(s) Text',
+      title: 'Insert coordinates',
       className: 'custom-pm-icon-text',
       onClick: () => {
         map.pm.Toolbar.buttons.Paste.toggle();
