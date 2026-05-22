@@ -1,14 +1,14 @@
 import { Modal } from 'flowbite';
-import modalTemplate from './templates/fullScreenModal.hbs';
 import Handlebars from 'handlebars';
+import modalTemplate from './templates/fullScreenModal.hbs';
 
 export default class FullScreenModal {
   constructor(options = {}) {
     this.modalInstance = null;
     this.modalElement = null;
-    let cookieName = options.cookieName || 'generic-modal-acknowledged';
-    let title = options.title || 'Modal Title Placeholder';
-    let content = options.content || 'Modal Content Placeholder';
+    const cookieName = options.cookieName || 'generic-modal-acknowledged';
+    const title = options.title || 'Modal Title Placeholder';
+    const content = options.content || 'Modal Content Placeholder';
 
     const isAcknowledged = document.cookie
       .split(';')
@@ -21,9 +21,9 @@ export default class FullScreenModal {
 
     const newElement = document.createElement('div');
 
-    let modalOptions = {
-      title: title,
-      content: content,
+    const modalOptions = {
+      title,
+      content,
     };
     newElement.innerHTML = Handlebars.compile(modalTemplate)(modalOptions);
 
@@ -33,12 +33,13 @@ export default class FullScreenModal {
     this.modalInstance = new Modal(
       this.modalElement,
       {
-        backdrop: 'dynamic',
+        backdrop: 'static',
         placement: 'center',
         closable: false,
+        backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
       },
       {
-        id: 'modalEl',
+        id: 'popup-modal',
         override: true,
       },
     );
@@ -60,7 +61,7 @@ export default class FullScreenModal {
   hide() {
     // blur any active element inside the modal to prevent focus issues after hiding
     // for screenreaders and keyboard users
-    const activeElement = document.activeElement;
+    const { activeElement } = document;
     if (activeElement && this.modalElement?.contains(activeElement) && typeof activeElement.blur === 'function') {
       activeElement.blur();
     }
