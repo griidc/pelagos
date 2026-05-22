@@ -87,6 +87,11 @@ Encore
     },
   })
 
+  .addLoader({
+    test: /\.hbs$/i,
+    loader: 'raw-loader',
+  })
+
 /*
      * FEATURE CONFIG
      *

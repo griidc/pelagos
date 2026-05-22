@@ -361,7 +361,7 @@ export default class SpatialWizard {
         },
       },
       {
-        id: 'modalEl',
+        id: 'spatial-wizard-modal',
         override: true,
       },
     );
