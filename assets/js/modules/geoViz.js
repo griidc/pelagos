@@ -5,8 +5,10 @@ import * as EsriLeafletVector from 'esri-leaflet-vector';
 import '../../css/custom-pm-icons.css';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+import { FullScreen } from 'leaflet.fullscreen';
 import { EventEmitter } from 'events';
 // import 'leaflet/dist/leaflet.css'; # This is broken due to webpack, but it is imported in the index.html.twig file.
+import 'leaflet.fullscreen/dist/Control.FullScreen.css';
 
 const geoVizEventEmitter = new EventEmitter();
 const esriApiKey = process.env.ESRI_API_KEY;
@@ -31,9 +33,13 @@ const mapStyles = {
 };
 
 let drawnLayer = null;
+let isFullScreen = false;
+const drawnLayers = new Leaflet.FeatureGroup();
 export default class GeoViz {
   constructor(element, options = {}) {
     const loadWizard = options.loadWizard !== undefined ? options.loadWizard : false;
+
+    this.isFullScreen = () => isFullScreen;
 
     this.map = Leaflet.map(element, {
       preferCanvas: true,
@@ -44,7 +50,49 @@ export default class GeoViz {
       layers: [ArcGISImagery],
     });
 
+    drawnLayers.addTo(this.map);
+
+    this.map.addControl(
+      new FullScreen({
+        position: 'topleft',
+        forcePseudoFullscreen: true,
+        title: 'Full screen',
+        titleCancel: 'Exit full screen',
+      }),
+    );
+
+    this.map.on('enterFullscreen', () => {
+      isFullScreen = true;
+    });
+
+    this.map.on('exitFullscreen', () => {
+      isFullScreen = false;
+    });
+
+    this.toggleFullScreen = () => {
+      this.map.toggleFullscreen();
+    };
+
     Leaflet.PM.setOptIn(true);
+
+    const customTranslation = {
+      tooltips: {
+        placeCircleMarker: 'Click to draw point',
+      },
+      buttonTitles: {
+        editButton: 'Edit feature(s)',
+        deleteButton: 'Remove feature(s)',
+        drawPolyButton: 'Draw polygon',
+        drawRectButton: 'Draw bounding box',
+        drawCircleMarkerButton: 'Draw point(s)',
+      },
+      actions: {
+        cancel: 'Done',
+        removeLastVertex: 'Remove last vertex',
+      },
+    };
+
+    this.map.pm.setLang('customText', customTranslation, 'en');
 
     this.map.pm.addControls({
       positions: {
@@ -67,13 +115,10 @@ export default class GeoViz {
       rotateMode: false,
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    this.map.pm.Toolbar.buttons.drawCircleMarker._button.title = 'Draw Point';
-
     this.map.pm.Toolbar.createCustomControl({
       name: 'Home',
       block: 'custom',
-      title: 'Navigate to Home',
+      title: 'Home',
       toggle: false,
       className: 'custom-pm-icon-home',
       onClick: () => {
@@ -108,6 +153,7 @@ export default class GeoViz {
           geoVizEventEmitter.emit('geojsonupdated', { geojson: editedGeojson });
         }
       });
+      drawnLayers.addLayer(drawnLayer);
     });
 
     ['pm:globaleditmodetoggled', 'pm:globalremovalmodetoggled'].forEach((eventName) => {
@@ -120,6 +166,7 @@ export default class GeoViz {
 
     this.map.on('pm:remove', () => {
       geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
+      drawnLayers.clearLayers();
     });
 
     // Listen for the drawstart event and clear the previously drawn features, if any.
@@ -127,6 +174,7 @@ export default class GeoViz {
       if (drawnLayer) {
         drawnLayer.off();
         drawnLayer.removeFrom(this.map);
+        drawnLayers.clearLayers();
       }
     });
 
@@ -135,7 +183,7 @@ export default class GeoViz {
   }
 
   getDrawnFeaturesAsGeoJSON() {
-    return drawnLayer.toGeoJSON();
+    return drawnLayers.toGeoJSON();
   }
 
   goHome() {
@@ -154,20 +202,21 @@ export default class GeoViz {
   }
 
   clearMap() {
-    if (drawnLayer) {
-      drawnLayer.remove();
-    }
+    drawnLayers.eachLayer((layer) => {
+      layer.off();
+      drawnLayers.removeLayer(layer);
+    });
+    drawnLayers.clearLayers();
   }
 
   addFeature(geojson) {
-    if (drawnLayer) {
-      drawnLayer.off();
-      drawnLayer.remove();
-    }
+    this.clearMap();
     drawnLayer = Leaflet.geoJSON(geojson, {
       pmIgnore: false,
       pointToLayer: (feature, latlng) => Leaflet.circleMarker(latlng, { pmIgnore: false }),
-    }).addTo(this.map);
+    });
+    drawnLayer.addTo(this.map);
+    drawnLayers.addLayer(drawnLayer);
     this.map.fitBounds(drawnLayer.getBounds(), { animate: true, maxZoom: 6 });
   }
 }

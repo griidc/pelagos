@@ -248,4 +248,18 @@ class GmlController extends AbstractController
         $gml = $this->addGMLid($gml);
         return new JsonResponse(['gml' => $gml]);
     }
+
+    /**
+     * This function converts GML to GeoJSON.
+     *
+     * @throws BadRequestHttpException When no GML is given or when the GML cannot be parsed.
+     */
+    #[Route(path: '/gmltogeojson', name: 'pelagos_app_gml_to_geojson', methods: ['POST'])]
+    public function gmlToGeoJSON(Request $request, GeometryUtil $geometryUtil): Response
+    {
+        $gml = $request->request->all()['gml'] ?? '';
+
+        $geojson = $geometryUtil->convertGmlToGeoJson($gml);
+        return new JsonResponse(['geojson' => $geojson]);
+    }
 }
