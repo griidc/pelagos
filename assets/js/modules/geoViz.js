@@ -87,7 +87,6 @@ export default class GeoViz {
         drawCircleMarkerButton: 'Draw point(s)',
       },
       actions: {
-        cancel: 'Done',
         removeLastVertex: 'Remove last vertex',
       },
     };
