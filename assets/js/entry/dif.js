@@ -13,6 +13,7 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import GeoViz from '../modules/geoViz';
 import FullScreenModal from '../modules/fullScreenModal';
+import * as turf from '@turf/turf';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const DIF_STATES = {
@@ -334,7 +335,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   geoViz.on('geojsonupdated', (e) => {
-    const geometry = e.geojson ? e.geojson.geometry : '';
+    const geometryType = e.geojson ? turf.getType(e.geojson) : '';
+    let geometry = null;
+    if (geometryType === 'Point') {
+      const geoJSON = geoViz.getDrawnFeaturesAsGeoJSON();
+      const combinedFeature = turf.combine(geoJSON);
+      geometry = combinedFeature.features.length > 0 ? combinedFeature.features[0].geometry : null;
+    } else {
+      geometry = e.geojson ? e.geojson.geometry : '';
+    }
 
     if (!geometry) {
       document.getElementById('spatialExtentGeometry').value = '';
