@@ -132,6 +132,23 @@ export default class GeoViz {
     });
 
     this.map.pm.Toolbar.createCustomControl({
+      name: 'customDelete',
+      block: 'edit', // Places it in the 'edit' group
+      title: 'Delete All',
+      className: 'leaflet-pm-icon-cut', // Standard delete icon
+      actions: [
+        {
+          text: 'Delete All',
+          onClick: () => {
+            this.clearMap();
+            // toggle this control off
+            this.map.pm.Toolbar.buttons.customDelete.toggle();
+          },
+        },
+      ],
+    });
+
+    this.map.pm.Toolbar.createCustomControl({
       name: 'Home',
       block: 'custom',
       title: 'Home',
