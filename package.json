@@ -15,7 +15,7 @@
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-import": "^2.32.0",
         "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-vue": "^9.33.0",
+        "eslint-plugin-vue": "^10.9.1",
         "file-loader": "^6.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
