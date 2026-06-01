@@ -87,7 +87,6 @@ export default class GeoViz {
         drawCircleMarkerButton: 'Draw point(s)',
       },
       actions: {
-        cancel: 'Done',
         removeLastVertex: 'Remove last vertex',
       },
     };
@@ -102,10 +101,10 @@ export default class GeoViz {
         options: 'topleft',
       },
       drawMarker: false,
-      drawCircleMarker: options.allowDrawPoint !== undefined ? options.allowDrawPoint : true,
-      drawPolyline: options.allowDrawPolyline !== undefined ? options.allowDrawPolyline : false,
-      drawRectangle: options.allowDrawRectangle !== undefined ? options.allowDrawRectangle : true,
-      drawPolygon: options.allowDrawPolygon !== undefined ? options.allowDrawPolygon : true,
+      drawCircleMarker: false,
+      drawPolyline: false,
+      drawRectangle: true,
+      drawPolygon: true,
       drawCircle: false,
       drawText: false,
       cutPolygon: false,
@@ -113,6 +112,23 @@ export default class GeoViz {
       dragMode: false,
       removalMode: true,
       rotateMode: false,
+    });
+
+    this.map.pm.Toolbar.copyDrawControl('CircleMarker', {
+      name: 'drawPoint',
+      title: 'Draw point(s)',
+      continueDrawing: true,
+      afterClick: () => {
+        this.map.pm.enableDraw('drawPoint', { continueDrawing: true });
+      },
+      actions: [
+        {
+          text: 'Done',
+          onClick: () => {
+            this.map.pm.disableDraw('drawPoint');
+          },
+        },
+      ],
     });
 
     this.map.pm.Toolbar.createCustomControl({
@@ -140,6 +156,7 @@ export default class GeoViz {
 
     this.map.on('pm:create', (e) => {
       drawnLayer = e.layer;
+      drawnLayers.addLayer(drawnLayer);
       // Allow PM to manage the layer
       drawnLayer.options.pmIgnore = false;
       Leaflet.PM.reInitLayer(drawnLayer);
@@ -153,7 +170,6 @@ export default class GeoViz {
           geoVizEventEmitter.emit('geojsonupdated', { geojson: editedGeojson });
         }
       });
-      drawnLayers.addLayer(drawnLayer);
     });
 
     ['pm:globaleditmodetoggled', 'pm:globalremovalmodetoggled'].forEach((eventName) => {
@@ -166,7 +182,6 @@ export default class GeoViz {
 
     this.map.on('pm:remove', () => {
       geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
-      drawnLayers.clearLayers();
     });
 
     // Listen for the drawstart event and clear the previously drawn features, if any.
