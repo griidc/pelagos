@@ -80,6 +80,28 @@ class DIFController extends AbstractController
     }
 
     /**
+     * This is used for testing the confirmation page without having to submit a DIF.
+     *
+     * @test
+     */
+    #[Route(path: '/difok')]
+    public function confirmTest(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $udi = $request->query->get('udi');
+        if ($udi !== null && $udi !== '') {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (!$dataset) {
+                // add to flash bag errror message about dataset not found
+                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+            }
+        }
+
+        return $this->render('DIF/dif-confirmation.html.twig', [
+            'dataset' => $dataset ?? null,
+        ]);
+    }
+
+    /**
      * The default action for the DIF.
      */
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
