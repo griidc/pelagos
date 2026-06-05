@@ -172,16 +172,27 @@ export default class GeoViz {
       });
     });
 
+    this.map.on('pm:update', (e) => {
+      const updatedGeojson = e.layer.toGeoJSON();
+      if (updatedGeojson) {
+        geoVizEventEmitter.emit('geojsonupdated', { geojson: updatedGeojson });
+      }
+    });
+
+    this.map.on('pm:remove', ({ layer }) => {
+      const updatedGeojson = layer.toGeoJSON();
+      drawnLayers.removeLayer(layer);
+      if (updatedGeojson) {
+        geoVizEventEmitter.emit('geojsonupdated', { geojson: updatedGeojson });
+      }
+    });
+
     ['pm:globaleditmodetoggled', 'pm:globalremovalmodetoggled'].forEach((eventName) => {
       this.map.on(eventName, () => {
         if (drawnLayer) {
           drawnLayer.bringToFront();
         }
       });
-    });
-
-    this.map.on('pm:remove', () => {
-      geoVizEventEmitter.emit('geojsonupdated', { geojson: null });
     });
 
     // Listen for the drawstart event and clear the previously drawn features, if any.
