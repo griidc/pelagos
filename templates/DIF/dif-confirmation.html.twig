@@ -36,7 +36,7 @@
                 </h2>
                 <p class="text-gray-500 mb-6 md:mb-8">
                 {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
-                    You have successfully identified a dataset in GRIIDC. The GRIIDC identifier for this dataset is
+                    You have successfully identified a dataset. The GRIIDC identifier for this dataset is
                 {% else %}
                     You have saved an identified dataset. Please return to the form to submit the identified dataset. The GRIIDC identifier is
                 {% endif %}
@@ -50,7 +50,7 @@
                     <a href="{{ url('pelagos_app_ui_dif_default') }}?udi={{dataset.udi}}" class="pagelink">Submit identified dataset</a>.
                 {% endif %}
                 </p>
-                <div class="space-y-4 sm:space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-6 mb-6 md:mb-8">
+                <div class="space-y-4 sm:space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-6 mb-6 md:mb-8 shadow-lg">
                     <dl class="sm:flex items-center justify-left gap-2">
                         <dt class="font-semibold mb-1 sm:mb-0 text-gray-500">Research Group:</dt>
                         <dd class="font-normal text-gray-500">{{ dataset.researchGroup.name }}</dd>
