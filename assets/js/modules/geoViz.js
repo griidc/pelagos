@@ -214,7 +214,9 @@ export default class GeoViz {
 
   goHome() {
     this.map.setZoom(INITIAL_ZOOM, { animate: true });
-    this.map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
+    setTimeout(() => {
+      this.map.panTo(INITIAL_CENTER, { animate: true, duration: 1 });
+    }, 300);
   }
 
   on(eventName, callback) {
