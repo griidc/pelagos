@@ -91,8 +91,7 @@ class DIFController extends AbstractController
         EntityManagerInterface $entityManager,
         Udi $udiUtil,
         EntityEventDispatcher $entityEventDispatcher
-        ): Response
-    {
+    ): Response {
         $dataset = null;
         $dif = null;
         $udi = $request->query->get('udi');
