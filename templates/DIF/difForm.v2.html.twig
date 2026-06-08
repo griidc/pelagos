@@ -207,7 +207,7 @@
 
             <div class="grid grid-cols-3 gap-4" id="submit">
                 <div>
-                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isDRPM ? 'title="DRPM users cannot use save and continue later. Use Update instead." disabled' }}>Save and Continue Later</button>
+                    <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center" {{ isSubmitted ? 'title="This DIF is already submitted" disabled' }}>Save and Continue Later</button>
                 </div>
 
                 <div>

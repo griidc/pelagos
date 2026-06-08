@@ -1246,6 +1246,14 @@ class DIF extends Entity
     }
 
     /**
+     * Whether or not this DIF is Submitted.
+     */
+    public function IsSubmitted(): bool
+    {
+        return self::STATUS_SUBMITTED === $this->status || self::STATUS_APPROVED === $this->status;
+    }
+
+    /**
      * Submit this DIF.
      *
      * This will set the DIF's status to submitted when it's current status is unsubmitted,
