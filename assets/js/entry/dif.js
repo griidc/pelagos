@@ -360,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((response) => response.json())
       .then((json) => {
         const gmlOutput = json.gml;
+        console.warn('GML Output:', gmlOutput);
         document.getElementById('spatialExtentGeometry').value = gmlOutput;
       });
   });
