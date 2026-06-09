@@ -5,3 +5,11 @@
 .custom-pm-icon-brush {
     background-image: url('../images/brush.png');
 }
+
+.custom-pm-icon-text {
+    background-image: url('../images/text.png');
+}
+
+.leaflet-pm-icon-edit {
+    background-image: url('../images/edit-map.png') !important;
+}
