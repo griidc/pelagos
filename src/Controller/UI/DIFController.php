@@ -80,28 +80,6 @@ class DIFController extends AbstractController
     }
 
     /**
-     * This is used for testing the confirmation page without having to submit a DIF.
-     *
-     * @test
-     */
-    #[Route(path: '/difok')]
-    public function confirmTest(Request $request, DatasetRepository $datasetRepository): Response
-    {
-        $udi = $request->query->get('udi');
-        if ($udi !== null && $udi !== '') {
-            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
-            if (!$dataset) {
-                // add to flash bag errror message about dataset not found
-                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
-            }
-        }
-
-        return $this->render('DIF/dif-confirmation.html.twig', [
-            'dataset' => $dataset ?? null,
-        ]);
-    }
-
-    /**
      * The default action for the DIF.
      */
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
@@ -113,8 +91,7 @@ class DIFController extends AbstractController
         EntityManagerInterface $entityManager,
         Udi $udiUtil,
         EntityEventDispatcher $entityEventDispatcher
-        ): Response
-    {
+    ): Response {
         $dataset = null;
         $dif = null;
         $udi = $request->query->get('udi');
@@ -196,6 +173,7 @@ class DIFController extends AbstractController
                     $this->addFlash('success', $actionDone);
                     break;
                 case 'saveAndContinue':
+                    $actionDone = 'DIF Saved';
                     $entityEventDispatcher->dispatch($dif, 'saved_not_submitted');
                     break;
                 default:
@@ -207,10 +185,10 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') && in_array($submitAction, ['approveSubmission', 'unlockSubmission', 'drpmUpdateSubmission'], true)) {
                 return $this->render('DIF/drpm-dif-confirmation.html.twig', [
                     'dataset' => $dataset,
-                    'actionDone' => $actionDone,
+                    'actionDone' => $actionDone ?? '',
                 ]);
             } else {
                 return $this->render('DIF/dif-confirmation.html.twig', [
@@ -230,6 +208,7 @@ class DIFController extends AbstractController
                 'isApprovable' => $dif->isApprovable(),
                 'isApproved' => $dif->isApproved(),
                 'isUnlockable' => $dif->isUnlockable(),
+                'isSubmitted' => $dif->isSubmitted(),
             ]
         );
     }
