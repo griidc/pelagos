@@ -175,7 +175,7 @@ export default class GeoViz {
     this.map.on('pm:update', (e) => {
       const updatedGeojson = e.layer.toGeoJSON();
       if (updatedGeojson) {
-        geoVizEventEmitter.emit('geojsonupdated', { geojson: updatedGeojson });
+        geoVizEventEmitter.emit('geojsonupdated', { geojson: updatedGeojson, updated: true });
       }
     });
 
@@ -183,7 +183,7 @@ export default class GeoViz {
       const updatedGeojson = layer.toGeoJSON();
       drawnLayers.removeLayer(layer);
       if (updatedGeojson) {
-        geoVizEventEmitter.emit('geojsonupdated', { geojson: updatedGeojson });
+        geoVizEventEmitter.emit('geojsonupdated', { geojson: updatedGeojson, removed: true });
       }
     });
 
