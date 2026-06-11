@@ -47,7 +47,7 @@
             {
                 dataField: 'udi',
                 caption: 'UDI',
-                width: 162,
+                width: 164,
                 cellTemplate: function(container, options) {
                     const url = Routing.generate('pelagos_app_ui_dataland_default', { 'udi': options.data.udi } );
                     return $('<a>', { href: url, target: '_blank', class: 'pagelink' }).text(options.displayValue);
