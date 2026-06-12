@@ -7,6 +7,8 @@ use App\Entity\ResearchGroup;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Entity\FundingOrganization;
+use App\Entity\InformationProduct;
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -199,6 +201,57 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             'Reports/ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
         );
+    }
+
+    /**
+     * Research group GRP Information Product report
+     *
+     * @param EntityManagerInterface $entityManager The entity manager.
+     *
+     * @return Response A Symfony Response instance.
+     */
+    #[Route(path: '/report-researchgroup/grp-ip-report', name: 'pelagos_app_ui_grp_inforprod_report')]
+    public function getGrpInfoProdReport(Request $request, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory, string $id = null)
+    {
+
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('template/AdminOnly.html.twig');
+        }
+
+        $csv = [
+            ['Research Group ID', 'Research Group Name', 'Information Products Count', 'Information Product Tags'],
+        ];
+
+        // Fetch all Research Groups.
+        $fundingOrganization = $entityManager->getRepository(FundingOrganization::class)->findOneBy(['name' => 'National Academies of Science, Engineering, Medicine: Gulf Research Program']);
+        $allResearchGroups = $entityManager->getRepository(ResearchGroup::class)->findByFundingOrganization($fundingOrganization);
+
+        // Fetch all Information Products.
+        $allInformationProducts = $entityManager->getRepository(InformationProduct::class)->findAll();
+
+        // Yes, this is O(n*m) but there are not that many research groups or information products.
+        foreach ($allResearchGroups as $rg) {
+            $rgId = $rg->getId();
+            $rgName = $rg->getName();
+            $infoProdCount = 0;
+            $tags = '';
+            foreach ($allInformationProducts as $ip) {
+                if (in_array($rg, $ip->getResearchGroups()->toArray())) {
+                    $infoProdCount++;
+                    $tags = $ip->getTags();
+                }
+            }
+
+            $csv[] = [
+            $rgId,
+            $rgName,
+            $infoProdCount,
+            $tags,
+            ];
+        }
+
+        return $this->writeCsvResponse($csv, 'grp_information_products_' . date(self::REPORTFILENAMEDATETIMEFORMAT) . '.csv');
     }
 
     /**
