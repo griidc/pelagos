@@ -1,5 +1,5 @@
 {% set isDRPM = is_granted('ROLE_DATA_REPOSITORY_MANAGER')  %}
-<form id="regForm" method="post">
+<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
         <div class="mb-4 font-normal text-gray-500">
@@ -16,22 +16,25 @@
                 {% for contact in form.datasetContacts %}
                 <div>
                     {% if contact.vars.data.primaryContact %}
-                        <label for="datasetcontact">Primary Point of Contact</label>
+                        <label class="required" for="datasetcontact">Primary Point of Contact</label>
                     {% else %}
                         <label for="datasetcontact">Additional Point of Contact</label>
                     {% endif %}
                     <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
-                        {% if contact.vars.data.person|default %}
-                        <option selected value="{{contact.vars.data.person.id}}">
-                            {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
+                    {% set selectPerson = contact.vars.data.person.id %}
+
+                    {% for person in researchGroupPeople %}
+                        <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
+                            {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
                         </option>
-                        {% endif %}
+                    {% endfor %}
                     </select>
                 </div>
                 <div>
                     {{ form_widget(contact.primaryContact) }}
                     {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
                 </div>
+                <hr class="my-2 border-gray-300">
 
                 {% endfor %}
             </div>
