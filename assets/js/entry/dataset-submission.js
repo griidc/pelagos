@@ -20,6 +20,79 @@ document.addEventListener('DOMContentLoaded', () => {
     loadWizard: true,
   });
 
+  const spatialExtentRadios = document.getElementsByName('has-extent');
+  const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
+  const spatialExtentDescription = document.getElementById('spatial-extent-description');
+  spatialExtentRadios.forEach((radio) => {
+    const spatialExtentGeometryField = document.getElementById('spatialExtent');
+    const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+    const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
+    const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
+
+    if (spatialExtentDescriptionFieldValue && radio.value === 'no-extent') {
+      spatialExtentGeometry.classList.add('hidden');
+      spatialExtentDescription.classList.remove('hidden');
+      spatialExtentGeometryField.value = '';
+      geoViz.clearMap();
+      const spatialRadio = radio;
+      spatialRadio.checked = true;
+    }
+
+    if (spatialExtentGeometryFieldValue && radio.value === 'yes-extent') {
+      spatialExtentGeometry.classList.remove('hidden');
+      spatialExtentDescription.classList.add('hidden');
+      const spatialRadio = radio;
+      spatialRadio.checked = true;
+      geoViz.fixMapSize();
+      const url = Routing.generate('pelagos_app_gml_to_geojson');
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          gml: spatialExtentGeometryFieldValue,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          const geoJSON = JSON.parse(json.geojson);
+          const geometry = geoJSON ? geoJSON.geometry : null;
+          if (geometry) {
+            geoViz.addFeature(geoJSON);
+          }
+        });
+    }
+
+    radio.addEventListener('change', (e) => {
+      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
+        // eslint-disable-next-line no-alert, no-restricted-globals
+        if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
+          e.preventDefault();
+          // canceling, so set back to previous selection.
+          if (e.target.value === 'yes-extent') {
+            document.getElementById('no-extent').checked = true;
+          } else if (e.target.value === 'no-extent') {
+            document.getElementById('yes-extent').checked = true;
+          }
+          return;
+        }
+      }
+      if (e.target.value === 'yes-extent') {
+        spatialExtentGeometry.classList.remove('hidden');
+        spatialExtentDescription.classList.add('hidden');
+        spatialExtentDescriptionField.value = '';
+        geoViz.fixMapSize();
+      } else if (e.target.value === 'no-extent') {
+        spatialExtentGeometry.classList.add('hidden');
+        spatialExtentDescription.classList.remove('hidden');
+        spatialExtentGeometryField.value = '';
+        geoViz.clearMap();
+      }
+    });
+  });
+
+  const form = document.getElementById('regForm');
   const datasetContacts = document.getElementsByClassName('contactperson');
 
   Array.from(datasetContacts).forEach((contact) => {
