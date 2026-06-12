@@ -618,7 +618,8 @@ class InformationProduct extends Entity
      */
     #[Serializer\VirtualProperty]
     public function getTags(): string
-    {        $tagString = '';
+    {
+        $tagString = '';
         foreach ($this->getProductTypeDescriptors() as $productTypeDescriptor) {
             if ($tagString) {
                 $tagString = $tagString . ', ' . $productTypeDescriptor->getDescription();
