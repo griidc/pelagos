@@ -1,3 +1,7 @@
+/* eslint-disable import/no-cycle, import/no-extraneous-dependencies,
+  import/no-unresolved, import/no-duplicates, import/order,
+  import/no-self-import, import/no-relative-packages,
+  import/no-named-as-default, import/no-named-as-default-member */
 import '../../scss/dataset-submission.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -24,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const funders = document.getElementById('funders_0');
+  const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
     plugins: {
