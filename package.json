@@ -20,8 +20,8 @@
         "html-loader": "^5.1.0",
         "n": "^10.2.0",
         "raw-loader": "^4.0.2",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
         "regenerator-runtime": "^0.14.1",
         "sass-embedded": "1.64",
         "sass-loader": "^13.0.0",
@@ -43,7 +43,7 @@
         "lint": "eslint assets/js --ext .js,.vue"
     },
     "dependencies": {
-        "@alpinejs/collapse": "^3.15.2",
+        "@alpinejs/collapse": "^3.15.12",
         "@geoman-io/leaflet-geoman-free": "^2.19.3",
         "@headlessui/react": "^2.2.1",
         "@heroicons/react": "^2.2.0",
