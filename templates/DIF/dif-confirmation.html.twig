@@ -10,8 +10,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-
-    {{ encore_entry_script_tags('dif') }}
 {% endblock javascripts %}
 
 {% block body %}
@@ -20,6 +18,11 @@
             <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
                 <span class="font-medium">{{ message }}</span>
             </div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+            {# <div class="p-4 mb-4 text-sm text-green-700 rounded-xl bg-green-100" role="alert">
+                <span class="font-medium">Success! {{ message }}</span>
+            </div> #}
         {% endfor %}
         <div>
             <section class="bg-white py-8 antialiased md:py-16">

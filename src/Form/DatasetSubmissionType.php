@@ -10,6 +10,7 @@ use App\Entity\Funder;
 use App\Entity\Keyword;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -53,18 +54,33 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset Title',
                 'required' => true,
             ])
-            ->add('funders', Type\CollectionType::class, [
-                'label' => 'Funders',
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                    'class' => Funder::class,
+            ->add('funders', EntityType::class, [
+                'label' => 'Funder',
+                'class' => Funder::class,
+                'choice_label' => function (Funder $funder) {
+                    return $funder->getName();
+                },
+                'query_builder' => function (EntityRepository $repo) {
+                    return $repo->createQueryBuilder('funder')
+                        ->orderBy('funder.name', 'ASC');
+                },
+                'multiple' => true,
+                'attr' => [
+                    'placeholder' => '[Please select a funder.]',
                 ],
-                'by_reference' => true,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'required' => false,
             ])
+            // ->add('funders', Type\CollectionType::class, [
+            //     'label' => 'Funders',
+            //     'entry_type' => EntityType::class,
+            //     'entry_options' => [
+            //         'class' => Funder::class,
+            //     ],
+            //     'by_reference' => true,
+            //     'allow_add' => true,
+            //     'allow_delete' => true,
+            //     'delete_empty' => true,
+            //     'required' => false,
+            // ])
             ->add('additionalFunders', Type\TextType::class, [
                 'label' => 'Additional Funders',
                 'required' => false,
@@ -99,32 +115,32 @@ class DatasetSubmissionType extends AbstractType
                 'attr' => ['rows' => '5'],
             ])
             ->add('suppParams', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Data Parameters and Units',
+                'label' => 'Data Parameters and Units',
                 'required' => true,
                 'attr' => ['rows' => '5'],
             ])
             ->add('suppMethods', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Methods',
+                'label' => 'Methods',
                 'required' => false,
                 'attr' => ['rows' => '5'],
             ])
             ->add('suppInstruments', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Instruments',
+                'label' => 'Instruments',
                 'required' => false,
                 'attr' => ['rows' => '5'],
             ])
             ->add('suppSampScalesRates', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Sampling Scales and Rates',
+                'label' => 'Sampling Scales and Rates',
                 'required' => false,
                 'attr' => ['rows' => '5'],
             ])
             ->add('suppErrorAnalysis', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Error Analysis',
+                'label' => 'Error Analysis',
                 'required' => false,
                 'attr' => ['rows' => '5'],
             ])
             ->add('suppProvenance', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Provenance and Historical References',
+                'label' => 'Provenance and Historical References',
                 'required' => false,
                 'attr' => ['rows' => '5'],
             ])

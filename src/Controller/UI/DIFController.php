@@ -12,6 +12,7 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
+use App\Event\EntityEventDispatcher;
 use App\Repository\DatasetRepository;
 use App\Repository\FunderRepository;
 use App\Repository\ResearchGroupRepository;
@@ -83,8 +84,14 @@ class DIFController extends AbstractController
      */
     #[Route(path: '/dif', name: 'pelagos_app_ui_dif_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function index(Request $request, FormFactoryInterface $formFactory, DatasetRepository $datasetRepository, EntityManagerInterface $entityManager, Udi $udiUtil): Response
-    {
+    public function index(
+        Request $request,
+        FormFactoryInterface $formFactory,
+        DatasetRepository $datasetRepository,
+        EntityManagerInterface $entityManager,
+        Udi $udiUtil,
+        EntityEventDispatcher $entityEventDispatcher
+    ): Response {
         $dataset = null;
         $dif = null;
         $udi = $request->query->get('udi');
@@ -128,7 +135,7 @@ class DIFController extends AbstractController
             // Fall back to button names in extraData so the action still works without JS.
             $submitAction = $extraData['submitAction'] ?? null;
             if ($submitAction === null) {
-                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'unlockSubmission'] as $buttonName) {
+                foreach (['saveAndSubmit', 'drpmUpdateSubmission', 'approveSubmission', 'unlockSubmission', 'saveAndContinue'] as $buttonName) {
                     if (isset($extraData[$buttonName])) {
                         $submitAction = $buttonName;
                         break;
@@ -147,20 +154,27 @@ class DIFController extends AbstractController
                         $this->addFlash('success', $actionDone);
                     }
                     $dif->submit();
+                    $entityEventDispatcher->dispatch($dif, 'submitted');
                     break;
                 case 'approveSubmission':
                     $dif->approve();
+                    $entityEventDispatcher->dispatch($dif, 'approved');
                     $actionDone = 'DIF approved';
                     $this->addFlash('success', $actionDone);
                     break;
                 case 'unlockSubmission':
                     $dif->unlock();
+                    $entityEventDispatcher->dispatch($dif, 'unlocked');
                     $actionDone = 'DIF unlocked';
                     $this->addFlash('success', $actionDone);
                     break;
                 case 'drpmUpdateSubmission':
                     $actionDone = 'DIF updated';
                     $this->addFlash('success', $actionDone);
+                    break;
+                case 'saveAndContinue':
+                    $actionDone = 'DIF Saved';
+                    $entityEventDispatcher->dispatch($dif, 'saved_not_submitted');
                     break;
                 default:
                     break;
@@ -171,10 +185,10 @@ class DIFController extends AbstractController
 
             $entityManager->flush();
 
-            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') && in_array($submitAction, ['approveSubmission', 'unlockSubmission', 'drpmUpdateSubmission'], true)) {
                 return $this->render('DIF/drpm-dif-confirmation.html.twig', [
                     'dataset' => $dataset,
-                    'actionDone' => $actionDone,
+                    'actionDone' => $actionDone ?? '',
                 ]);
             } else {
                 return $this->render('DIF/dif-confirmation.html.twig', [
@@ -194,6 +208,7 @@ class DIFController extends AbstractController
                 'isApprovable' => $dif->isApprovable(),
                 'isApproved' => $dif->isApproved(),
                 'isUnlockable' => $dif->isUnlockable(),
+                'isSubmitted' => $dif->isSubmitted(),
             ]
         );
     }
