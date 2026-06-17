@@ -31,6 +31,9 @@ module.exports = {
     ],
     'import/no-cycle': 'off',
   },
+  globals: {
+    "$": "readonly"
+  },
   settings: {
     react: {
       version: 'detect', // React version. "detect" automatically picks the version you have installed.
