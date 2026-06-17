@@ -220,7 +220,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         }
 
         $csv = [
-            ['Research Group ID', 'Research Group Name', 'Information Products Count', 'Information Product Tags'],
+            ['Research Group ID', 'Research Group Name', 'Funding Cycle Name', 'Has Information Products', 'Information Product Tags'],
         ];
 
         // Fetch all Research Groups.
@@ -234,6 +234,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         foreach ($allResearchGroups as $rg) {
             $rgId = $rg->getId();
             $rgName = $rg->getName();
+            $fcName = $rg->getFundingCycle()->getName();
             $infoProdCount = 0;
             $tags = '';
             foreach ($allInformationProducts as $ip) {
@@ -246,7 +247,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             $csv[] = [
             $rgId,
             $rgName,
-            $infoProdCount,
+            $fcName,
+            ($infoProdCount > 0) ? 'y' : 'n',
             $tags,
             ];
         }
