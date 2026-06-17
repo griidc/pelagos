@@ -6,10 +6,7 @@ import 'bootstrap';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
-const $ = require('jquery');
 
-global.jQuery = $;
-global.$ = global.jQuery;
 
 require('../../css/template.css');
 require('../../css/superfish.css');
