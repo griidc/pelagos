@@ -12,22 +12,14 @@
         {% endif %}
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-            <div class="grid grid-cols-1 gap-4" id="datasetContacts"
-                    data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
-                    data-prototype="{{ form_widget(form.datasetContacts.vars.prototype)|e('html_attr') }}"
-                >
-                {% for contact in form.datasetContacts %}
-                <div>
-                    {% if contact.vars.data.primaryContact %}
-                        <label class="required" for="datasetcontact">Primary Point of Contact</label>
-                    {% else %}
-                        <div class="flex justify-between items-center">
-                            <label for="datasetcontact">Additional Point of Contact</label>
-                            <button type="button" class="float-right text-sm"><i class="fas fa-trash-alt"></i> Delete Contact</button>
-                        </div>
-                    {% endif %}
-                    <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
-                    {% set selectPerson = contact.vars.data.person.id %}
+            <div class="grid grid-cols-2 gap-4">
+                {# <div>
+                    {{ form_label(form.primaryPointOfContact) }}
+                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
+                    <div class="text-red-600 text-sm font-semibold">
+                        {{ form_errors(form.primaryPointOfContact) }}
+                    </div>
+                </div>
 
                 <div>
                     {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
@@ -80,8 +72,6 @@
                     {% endfor %}
                 </div>
 
-                {% endfor %}
-                <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
             </div>
 
             <div>
