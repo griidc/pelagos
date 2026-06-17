@@ -1,5 +1,5 @@
 {% set isDRPM = is_granted('ROLE_DATA_REPOSITORY_MANAGER')  %}
-<form id="regForm" method="post">
+<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
         <div class="mb-4 font-normal text-gray-500">
@@ -12,66 +12,31 @@
         {% endif %}
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-            <div class="grid grid-cols-2 gap-4">
-                {# <div>
-                    {{ form_label(form.primaryPointOfContact) }}
-                    {{ form_widget(form.primaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                    <div class="text-red-600 text-sm font-semibold">
-                        {{ form_errors(form.primaryPointOfContact) }}
-                    </div>
-                </div>
-
+            <div class="grid grid-cols-1 gap-4">
+                {% for contact in form.datasetContacts %}
                 <div>
-                    {{ form_row(form.secondaryPointOfContact, { attr: { class: 'input-base point-of-contact', disabled: true } }) }}
-                </div> #}
+                    {% if contact.vars.data.primaryContact %}
+                        <label class="required" for="datasetcontact">Primary Point of Contact</label>
+                    {% else %}
+                        <label for="datasetcontact">Additional Point of Contact</label>
+                    {% endif %}
+                    <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                    {% set selectPerson = contact.vars.data.person.id %}
 
-                <div id="dataset-contacts">
-                    {% for contact in form.datasetContacts %}
-                    <table class="tab-table dataset-contacts" index="{{contact.vars.name}}">
-                        <tr>
-                            <td>
-                                <span class="helpSection">
-                                    <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                    <div class="tooltiptext">
-                                        Please use the drop down list to select the person who can be contacted
-                                        about the dataset. If the person is not listed or their contact information
-                                        is incorrect, please contact help@griidc.org.
-                                    </div>
-                                </span>
-                                {% if contact.vars.data.primaryContact %}
-                                    <label for="datasetcontact">Primary Point of Contact</label>
-                                {% else %}
-                                    <button class="deletebutton" type="button">Delete Contact</button>
-                                    <label for="datasetcontact">Additional Point of Contact</label>
-                                {% endif %}
-                                <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
-                                    {% if contact.vars.data.person|default %}
-                                    <option selected value="{{contact.vars.data.person.id}}">
-                                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
-                                    </option>
-                                    {% endif %}
-                                </select>
-                                <label for="contactperson" class="error"></label>
-                                {% include "DatasetSubmission/contact-information.html.twig" %}
-                                {{ form_widget(contact.primaryContact) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="helpSection">
-                                    <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                    <div class="tooltiptext">
-                                        Please select the person’s relationship to the dataset from the drop down
-                                        list.
-                                    </div>
-                                </span>
-                                {{ form_row(contact.role) }}
-                            </td>
-                        </tr>
-                    </table>
+                    {% for person in researchGroupPeople %}
+                        <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
+                            {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
+                        </option>
                     {% endfor %}
+                    </select>
                 </div>
+                <div>
+                    {{ form_widget(contact.primaryContact) }}
+                    {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
+                </div>
+                <hr class="my-2 border-gray-300">
 
+                {% endfor %}
             </div>
 
             <div>
@@ -89,30 +54,105 @@
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
-        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div>
                 {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
             </div>
 
             <div>
+                {{ form_row(form.shortTitle, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
                 {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.purpose, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppParams, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppMethods, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppInstruments, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppSampScalesRates, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppErrorAnalysis, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppProvenance, { attr: { class: 'textarea-base', rows: 3} }) }}
             </div>
         </div>
 
-        <div id="keywords">
+        <span class="text-2xl font-semibold mb-4" id="keywords">Keywords</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
+            <div>
+                {{ form_label(form.themeKeywords) }}
+                <select class="keywordinput" id="theme-keywords" multiple required="required">
+                {% for keyword in form.themeKeywords %}
+                    <option value="{{keyword.vars.value}}" selected="selected">{{keyword.vars.value}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                {{ form_label(form.placeKeywords) }}
+                <select class="keywordinput" id="place-keywords" multiple>
+                {% for keyword in form.placeKeywords %}
+                    <option value="{{keyword.vars.value}}" selected="selected">{{keyword.vars.value}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Topic Category Keyword List</label>
+                <select class="keywordinput" multiple="multiple"size="10" id="topic-keyword-select" keyword="source">
+                    {% set order = 0 %}
+                    {% for keyword in form.topicKeywords.vars.choices %}
+                        {% set found = false  %}
+                        {% for keywordValue in form.topicKeywords.vars.value %}
+                            {% if keyword.value == keywordValue %}
+                                {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }}>{{keyword.label}}</option>
+                        {% set order = order + 1 %}
+                    {% endfor %}
+                </select>
+            </div>
+
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
-            <label>Geographic/Study Area:</label>
-
-            <h3 class="mb-5 text-gray-900">Does the dataset have a defined geographic or study area?</h3>
+            <label>Geographic Study Area:</label>
+            <div class="mb-2 font-normal text-gray-700">
+                <span class="block mb-2">
+                    Please indicate if your dataset is spatial or non-spatial. A dataset has a spatial component if samples were taken at a location, model results describe an area, or if the location is relevant to the dataset. Non-spatial datasets are independent of location.
+                </span>
+                <span class="block">
+                    Define the spatial extent by providing a list of coordinates (in decimal degrees) or drawing on the map. Please refer to the <a href="#" class="pagelink">spatial extent guidance document</a> for more information.
+                </span>
+            </div>
             <ul class="grid w-full gap-6 md:grid-cols-2">
                 <li>
                     <input type="radio" id="yes-extent" name="has-extent" value="yes-extent" class="hidden peer" helper>
                     <label for="yes-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
                         <div class="block">
-                            <div class="w-full">Yes, the dataset has a defined spatial extent.</div>
+                            <div class="w-full">Spatial Data</div>
                         </div>
                         <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -123,7 +163,7 @@
                     <input type="radio" id="no-extent" name="has-extent" value="no-extent" class="hidden peer" helper>
                     <label for="no-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
                         <div class="block">
-                            <div class="w-full">No, the dataset does not have a defined spatial extent.</div>
+                            <div class="w-full">Non-Spatial Data</div>
                         </div>
                         <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -145,11 +185,30 @@
                         {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
                     </div>
                 </div>
+
+                <div>
+                    {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        {{ form_row(form.temporalExtentBeginPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                    </div>
+
+                    <div>
+                        {{ form_row(form.temporalExtentEndPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                    </div>
+                </div>
             </div>
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
-        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
+            <div>
+                FILE SUBMISSION COMPONENT GOES HERE
+            </div>
 
             <input type="hidden" name="submitAction" id="submitAction"/>
             {# <input type="hidden" name="status" id="status" value="{{ status }}"/> #}

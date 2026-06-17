@@ -143,14 +143,18 @@ class DatasetSubmissionController extends AbstractController
             // $createFlag = true;
         }
 
-
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
+
+        $researchGroupPeople = $dataset->getResearchGroup()->getPeople()->toArray();
 
         return $this->render(
             'DatasetSubmission/index.v2.html.twig',
             [
                 'form' => $form,
                 'udi' => $dataset->getUdi(),
+                'researchGroupId' => $dataset->getResearchGroup()->getId(),
+                'datasetId' => $dataset->getId(),
+                'researchGroupPeople' => $researchGroupPeople,
                 // 'status' => $dif->getStatus(),
                 // 'isSubmittable' => $dif->isSubmittable(),
                 // 'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),

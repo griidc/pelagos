@@ -379,8 +379,6 @@ class DIF extends Entity
             $this->setDataset($dataset);
         }
         $this->keywords = new ArrayCollection();
-
-        $this->dataSize = "< 1GB";
     }
 
     /**
@@ -1245,6 +1243,14 @@ class DIF extends Entity
     public function isSubmittable(): bool
     {
         return self::STATUS_UNSUBMITTED === $this->status;
+    }
+
+    /**
+     * Whether or not this DIF is submitted.
+     */
+    public function isSubmitted(): bool
+    {
+        return self::STATUS_SUBMITTED === $this->status || self::STATUS_APPROVED === $this->status;
     }
 
     /**
