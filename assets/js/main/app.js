@@ -4,12 +4,14 @@
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import $ from 'jquery';
 import '../../scss/griidc.scss';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 import GriidcMenu from '../react/components/GriidcMenu';
 
-
+globalThis.jQuery = $;
+globalThis.$ = $;
 
 require('../../css/template.css');
 require('../../css/jira-buttons.css');

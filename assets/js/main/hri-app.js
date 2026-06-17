@@ -3,10 +3,12 @@
  */
 
 import 'bootstrap';
+import $ from 'jquery';
 import templateSwitch from '../vue/utils/template-switch';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
-
+globalThis.jQuery = $;
+globalThis.$ = $;
 
 require('../../css/template.css');
 require('../../css/superfish.css');

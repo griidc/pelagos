@@ -1,7 +1,8 @@
 import * as pelagosUI from './modules/pelagosUI';
+import $ from 'jquery';
 
-
-
+globalThis.jQuery = $;
+globalThis.$ = $;
 global.pelagosUI = pelagosUI;
 
 require('jquery-migrate');
