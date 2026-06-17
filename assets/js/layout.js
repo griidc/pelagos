@@ -1,7 +1,5 @@
 import * as pelagosUI from './modules/pelagosUI';
 
-const $ = require('jquery');
-
 global.jQuery = $;
 global.$ = global.jQuery;
 global.pelagosUI = pelagosUI;
