@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,7 +29,9 @@ use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Handler\EntityHandler;
 use App\Exception\InvalidMetadataException;
 use App\Message\DatasetSubmissionFiler;
+use App\Repository\DatasetRepository;
 use App\Util\ISOMetadataExtractorUtil;
+use App\Util\PersonUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -89,6 +91,81 @@ class DatasetSubmissionController extends AbstractController
         $this->formFactory = $formFactory;
     }
 
+    #[Route(path: '/dataset-submission', name: 'pelagos_app_ui_datasetsubmission_default')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function index(Request $request, FormFactoryInterface $formFactory, PersonUtil $personUtil, DatasetRepository $datasetRepository): Response
+    {
+        $dataset = null;
+        $regId = $request->query->get('regid');
+        $udi = $request->query->get('udi');
+
+        if ($regId !== '' && $regId !== null) {
+            $udi = trim($regId);
+        }
+
+        if ($udi !== null && $udi !== '') {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (!$dataset) {
+                // add to flash bag errror message about dataset not found
+                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+            }
+        }
+
+
+        if (!$dataset instanceof Dataset) {
+            $creator = $personUtil::getPersonFromUser($this->getUser());
+            $dataset = new Dataset();
+            $dataset->setCreator($creator);
+            $datasetSubmission = new DatasetSubmission($dataset);
+            $datasetSubmission->setCreator($creator);
+        }
+
+        $dif = $dataset->getDif();
+        $datasetSubmission = $this->getDatasetSubmission($dataset);
+
+        if ($datasetSubmission instanceof DatasetSubmission == false) {
+            if ($dif->getStatus() == DIF::STATUS_APPROVED) {
+                // This is the first submission, so create a new one based on the DIF.
+                $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
+                $datasetSubmission->setSequence(1);
+
+                // $createFlag = true;
+            }
+        } elseif (
+            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+            and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
+        ) {
+            // The latest submission is complete, so create new one based on it.
+            $datasetSubmission = new DatasetSubmission($datasetSubmission);
+            $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+            // $createFlag = true;
+        }
+
+        $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
+
+        $researchGroupPeople = $dataset->getResearchGroup()->getPeople()->toArray();
+
+        return $this->render(
+            'DatasetSubmission/index.v2.html.twig',
+            [
+                'form' => $form,
+                'udi' => $dataset->getUdi(),
+                'researchGroupId' => $dataset->getResearchGroup()->getId(),
+                'datasetId' => $dataset->getId(),
+                'researchGroupPeople' => $researchGroupPeople,
+                // 'status' => $dif->getStatus(),
+                // 'isSubmittable' => $dif->isSubmittable(),
+                // 'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
+                // 'isApprovable' => $dif->isApprovable(),
+                // 'isApproved' => $dif->isApproved(),
+                // 'isUnlockable' => $dif->isUnlockable(),
+            ]
+        );
+    }
+
+
     /**
      * The default action for Dataset Submission.
      *
@@ -101,7 +178,7 @@ class DatasetSubmissionController extends AbstractController
      * @return Response A Response instance.
      */
     #[IsGranted('ROLE_USER')]
-    #[Route(path: '/dataset-submission', name: 'pelagos_app_ui_datasetsubmission_default', methods: ['GET', 'POST'])]
+    #[Route(path: '/dataset-submission-old', name: 'pelagos_app_ui_datasetsubmission_old', methods: ['GET', 'POST'])]
     public function defaultAction(Request $request, EntityManagerInterface $entityManager)
     {
         $udi = $request->query->get('regid');
