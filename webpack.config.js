@@ -54,6 +54,7 @@ Encore
   .addEntry('login', './assets/js/entry/login.js')
   .addEntry('change-password', './assets/js/entry/change-password.js')
   .addEntry('map-search', './assets/js/entry/map-search.js')
+  .addEntry('dif', './assets/js/entry/dif.js')
   .addEntry('dashboard', './assets/js/entry/dashboard.js')
   .addEntry('inspect-fileset', './assets/js/entry/inspect-fileset.js')
 
@@ -75,6 +76,20 @@ Encore
     '@': path.resolve(__dirname, 'assets', 'js'),
     images: path.resolve(__dirname, 'assets', 'images'),
     vue: Encore.isProduction() ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
+  })
+
+  .addLoader({
+    test: /\.html$/i,
+    loader: 'html-loader',
+    options: {
+    // Optional: minimize in production
+      minimize: Encore.isProduction(),
+    },
+  })
+
+  .addLoader({
+    test: /\.hbs$/i,
+    loader: 'raw-loader',
   })
 
 /*

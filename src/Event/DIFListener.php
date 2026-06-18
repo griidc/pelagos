@@ -108,7 +108,6 @@ class DIFListener extends EventListener
 
         // email DM
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-created.email.twig');
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
         $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
     }
 
@@ -124,7 +123,7 @@ class DIFListener extends EventListener
     protected function getDIF(EntityEvent $event)
     {
         $dif = $event->getEntity();
-        if (DIF::class != get_class($dif)) {
+        if (!$dif instanceof DIF) {
             throw new \Exception('Internal error: handler expects a DIF');
         }
         return $dif;
