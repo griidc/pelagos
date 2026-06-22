@@ -287,8 +287,8 @@ export default class SpatialWizard {
             const list = coordinateListToPairsArray(value);
             const orderCheck = checkCoordinateOrder(list);
 
-            console.log('Checked Order:', order);
-            console.log('Order check result:', orderCheck);
+            console.warn('Checked Order:', order);
+            console.warn('Order check result:', orderCheck);
 
             // WIP
             return true;
@@ -374,6 +374,7 @@ export default class SpatialWizard {
 
       const json = geoViz.getDrawnFeaturesAsGeoJSON();
       if (!json || !json.features || json.features.length === 0) {
+        textPasteForm.reset();
         return;
       }
 
