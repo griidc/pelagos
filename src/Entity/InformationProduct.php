@@ -614,9 +614,8 @@ class InformationProduct extends Entity
     }
 
     /**
-     * Show strings of tags used - this is the product type descriptor and digital resource type descriptor names.
+     * Show tags used as single string, combining the product type descriptor and digital resource type descriptor names.
      */
-    #[Serializer\VirtualProperty]
     public function getTags(): string
     {
         $tagString = '';
@@ -627,7 +626,6 @@ class InformationProduct extends Entity
                 $tagString = $productTypeDescriptor->getDescription();
             }
         }
-
         foreach ($this->getDigitalResourceTypeDescriptors() as $digitalResourceTypeDescriptor) {
             if ($tagString) {
                 $tagString = $tagString . ', ' . $digitalResourceTypeDescriptor->getDescription();
@@ -635,7 +633,6 @@ class InformationProduct extends Entity
                 $tagString = $digitalResourceTypeDescriptor->getDescription();
             }
         }
-
         return $tagString;
     }
 }
