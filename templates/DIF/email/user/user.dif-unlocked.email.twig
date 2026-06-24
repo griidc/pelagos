@@ -4,7 +4,7 @@
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
     GRIIDC has unlocked the Dataset Information Form (DIF) for dataset <a href="{{ vanityurl('pelagos_app_ui_dif_default') }}?udi={{ dif.dataset.udi }}">{{ dif.dataset.udi }}</a>.
-    Please <a href="{{ vanityurl('pelagos_app_ui_dif_default') }}?udi={{ dif.dataset.udi }}">return to the DIF</a> to submit your edits.<br>
+    Please return to the <a href="{{ vanityurl('pelagos_app_ui_dif_default') }}?udi={{ dif.dataset.udi }}">DIF</a> to submit your edits.<br>
     <br>
     Thank you,<br>
     The GRIIDC Team<br>
@@ -13,8 +13,8 @@
 {% block body_text %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-GRIIDC has unlocked the Dataset Information Form (DIF) for dataset {{ vanityurl('pelagos_app_ui_dif_default') }}?udi={{ dif.dataset.udi }}.
-Please return to the DIF to submit your edits.
+GRIIDC has unlocked the Dataset Information Form (DIF) for dataset {{ dif.dataset.udi }}.
+Please return to the DIF at {{ vanityurl('pelagos_app_ui_dif_default') }}?udi={{ dif.dataset.udi }} to submit your edits.
 
 Thank you,
 The GRIIDC Team
