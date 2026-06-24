@@ -20,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * A controller for a Report of Research Groups and related Datasets.
@@ -220,7 +221,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         }
 
         $csv = [
-            ['Research Group ID', 'Research Group Name', 'Funding Cycle Name', 'Has Information Products', 'Information Product Tags'],
+            ['Research Group ID', 'Research Group Name', 'Research Group URL', 'Funding Cycle Name', 'Has Information Products', 'Information Product Tags'],
         ];
 
         // Fetch all Research Groups.
@@ -233,6 +234,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         // Yes, this is O(n*m) but there are not that many research groups or information products.
         foreach ($allResearchGroups as $rg) {
             $rgId = $rg->getId();
+            $rgUrl = $this->generateUrl('pelagos_app_ui_researchgroup_about', ['researchGroup' => $rgId], UrlGeneratorInterface::ABSOLUTE_URL);
             $rgName = $rg->getName();
             $fcName = $rg->getFundingCycle()->getName();
             $infoProdCount = 0;
@@ -247,6 +249,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             $csv[] = [
             $rgId,
             $rgName,
+            $rgUrl,
             $fcName,
             ($infoProdCount > 0) ? 'y' : 'n',
             $tags,
