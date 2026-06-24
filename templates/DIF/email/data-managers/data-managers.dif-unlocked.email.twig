@@ -3,7 +3,7 @@
 {% block body_html %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <br>
-GRIIDC has approved a request to unlock the Dataset Information Form (DIF) for dataset {{ dif.dataset.udi }} submitted by {{ user.firstName }} {{ user.lastName }}.<br>
+GRIIDC has unlocked the Dataset Information Form (DIF) for dataset {{ dif.dataset.udi }} submitted by {{ user.firstName }} {{ user.lastName }}.<br>
 <br>
 Thank you,<br>
 <br>
@@ -16,7 +16,7 @@ href="mailto:help@griidc.org">help@griidc.org</a> for assistance.
 {% block body_text %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-GRIIDC has approved a request to unlock the Dataset Information Form (DIF) for dataset {{ dif.dataset.udi }} submitted by {{ user.firstName }} {{ user.lastName }}.
+GRIIDC has unlocked the Dataset Information Form (DIF) for dataset {{ dif.dataset.udi }} submitted by {{ user.firstName }} {{ user.lastName }}.
 
 Thank you,
 
