@@ -612,4 +612,27 @@ class InformationProduct extends Entity
 
         return $this;
     }
+
+    /**
+     * Show tags used as single string, combining the product type descriptor and digital resource type descriptor names.
+     */
+    public function getTags(): string
+    {
+        $tagString = '';
+        foreach ($this->getProductTypeDescriptors() as $productTypeDescriptor) {
+            if ($tagString) {
+                $tagString = $tagString . ', ' . $productTypeDescriptor->getDescription();
+            } else {
+                $tagString = $productTypeDescriptor->getDescription();
+            }
+        }
+        foreach ($this->getDigitalResourceTypeDescriptors() as $digitalResourceTypeDescriptor) {
+            if ($tagString) {
+                $tagString = $tagString . ', ' . $digitalResourceTypeDescriptor->getDescription();
+            } else {
+                $tagString = $digitalResourceTypeDescriptor->getDescription();
+            }
+        }
+        return $tagString;
+    }
 }
