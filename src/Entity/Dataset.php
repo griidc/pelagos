@@ -360,6 +360,19 @@ class Dataset extends Entity
     }
 
     /**
+     * Get the current Dataset Submission.
+     */
+    public function getActiveDatasetSubmission(): ?DatasetSubmission
+    {
+        $datasetSubmission = (($this->getDatasetSubmissionHistory()->first()) ? $this->getDatasetSubmissionHistory()->first() : null);
+
+        if ($datasetSubmission instanceof DatasetSubmission and $datasetSubmission->getStatus() !== DatasetSubmission::STATUS_INCOMPLETE) {
+            $datasetSubmission = $this->getDatasetSubmission();
+        }
+        return $datasetSubmission;
+    }
+
+    /**
      * Get the Dataset Submission history.
      *
      * @return Collection

@@ -22,6 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * A form type for creating a Dataset Submission form.
+ *
+ * @extends AbstractType<DatasetSubmission>
  */
 class DatasetSubmissionType extends AbstractType
 {
