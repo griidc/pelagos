@@ -647,6 +647,16 @@ class Dataset extends Entity
     }
 
     /**
+     * Set the collection of Funders for this Dataset.
+     */
+    public function setFunders(?Collection $funders): self
+    {
+        $this->funders = $funders;
+
+        return $this;
+    }
+
+    /**
      * Returns a collection of all Funders associated with this Dataset.
      *
      * @return Collection<int, Funder>
