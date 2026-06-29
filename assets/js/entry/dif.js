@@ -334,13 +334,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const geoJSON = geoViz.getDrawnFeaturesAsGeoJSON();
       const combinedFeature = turf.combine(geoJSON);
       geometry = combinedFeature.features.length > 0 ? combinedFeature.features[0].geometry : null;
+
+      if (!geometry) {
+        document.getElementById('spatialExtentGeometry').value = '';
+        return;
+      }
     } else {
       geometry = e.geojson ? e.geojson.geometry : '';
-    }
-
-    if (!geometry) {
-      document.getElementById('spatialExtentGeometry').value = '';
-      return;
+      if (!geometry || e.removed === true) {
+        document.getElementById('spatialExtentGeometry').value = '';
+        return;
+      }
     }
 
     const url = Routing.generate('pelagos_app_geojson_to_gml');
@@ -356,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((response) => response.json())
       .then((json) => {
         const gmlOutput = json.gml;
+        console.warn('GML Output:', gmlOutput);
         document.getElementById('spatialExtentGeometry').value = gmlOutput;
       });
   });
