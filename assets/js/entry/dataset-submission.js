@@ -94,10 +94,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('regForm');
   const datasetContacts = document.getElementsByClassName('contactperson');
+  const contactsContainer = document.querySelector('.dataset-contacts');
+  const contactTemplate = contactsContainer.querySelector('.dataset-contact');
+  const newContactTemplate = contactTemplate.cloneNode(true);
+
+  const addContactButton = document.getElementById('addContactButton');
+  addContactButton.addEventListener('click', () => {
+    const index = parseInt(contactsContainer.getAttribute('data-index'), 10);
+    const newContact = newContactTemplate.cloneNode(true);
+    newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts\[\d+\]/g, `datasetContacts[${index + 1}]`);
+    newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts_\d+_/g, `datasetContacts_${index + 1}_`);
+    newContact.innerHTML = newContact.innerHTML.replace(/Primary/g, 'Additional');
+    const selects = newContact.querySelectorAll('select');
+    Array.from(selects).forEach((select) => {
+      const selectElement = select;
+      selectElement.value = '';
+    });
+    const deleteContactButton = newContact.querySelector('.deleteContactButton');
+    deleteContactButton.classList.remove('hidden');
+    deleteContactButton.addEventListener('click', () => {
+      newContact.style.transition = 'opacity 0.3s ease';
+      newContact.style.opacity = '0';
+      setTimeout(() => {
+        contactsContainer.removeChild(newContact);
+      }, 300);
+    });
+
+    const contact = newContact.querySelector('.contactperson');
+    const contactSelect = new TomSelect(contact, {
+      maxOptions: null,
+      placeholder: '[Please select a contact.]',
+    });
+
+    newContact.style.opacity = '0';
+    newContact.style.transition = 'opacity 0.3s ease';
+    contactsContainer.appendChild(newContact);
+    setTimeout(() => {
+      newContact.style.opacity = '1';
+    }, 10);
+    contactsContainer.setAttribute('data-index', index + 1);
+  });
+
+  const deleteContact = document.getElementsByClassName('deleteContactButton');
+  Array.from(deleteContact).forEach((button) => {
+    button.addEventListener('click', (e) => {
+      const contactElement = e.target.closest('.dataset-contact');
+      contactElement.style.transition = 'opacity 0.3s ease';
+      contactElement.style.opacity = '0';
+      setTimeout(() => {
+        contactsContainer.removeChild(contactElement);
+      }, 300);
+    });
+  });
 
   Array.from(datasetContacts).forEach((contact) => {
     const contactSelect = new TomSelect(contact, {
       maxOptions: null,
+      placeholder: '[Please select a contact.]',
     });
   });
 

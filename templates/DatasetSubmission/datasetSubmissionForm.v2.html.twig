@@ -12,32 +12,43 @@
         {% endif %}
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-            <div class="grid grid-cols-1 gap-4">
+            <div class="grid grid-cols-1 gap-4 dataset-contacts"
+                data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
+            >
                 {% for contact in form.datasetContacts %}
-                <div>
-                    {% if contact.vars.data.primaryContact %}
-                        <label class="required" for="datasetcontact">Primary Point of Contact</label>
-                    {% else %}
-                        <label for="datasetcontact">Additional Point of Contact</label>
-                    {% endif %}
-                    <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
-                    {% set selectPerson = contact.vars.data.person.id %}
+                <div class="dataset-contact">
+                    <div>
+                        {% if contact.vars.data.primaryContact %}
+                            <div class="flex justify-between items-center">
+                                <label class="required" for="datasetcontact">Primary Point of Contact</label>
+                                <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                            </div>
+                        {% else %}
+                            <div class="flex justify-between items-center">
+                                <label for="datasetcontact">Additional Point of Contact</label>
+                                <button type="button" class="float-right text-sm deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                            </div>
+                        {% endif %}
+                        <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                        {% set selectPerson = contact.vars.data.person.id %}
 
-                    {% for person in researchGroupPeople %}
-                        <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
-                            {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
-                        </option>
-                    {% endfor %}
-                    </select>
+                        {% for person in researchGroupPeople %}
+                            <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
+                                {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
+                            </option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        {{ form_widget(contact.primaryContact) }}
+                        {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
+                    </div>
+                    <hr class="my-2 border-gray-300">
                 </div>
-                <div>
-                    {{ form_widget(contact.primaryContact) }}
-                    {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
-                </div>
-                <hr class="my-2 border-gray-300">
-
                 {% endfor %}
             </div>
+
+            <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
 
             <div>
                 {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
@@ -219,6 +230,7 @@
                 </div>
 
                 <span>FILE SUBMISSION COMPONENT GOES HERE</span>
+                <span class="text-2xl">You have not completed all required fields.</span>
             </div>
 
             <input type="hidden" name="submitAction" id="submitAction"/>
