@@ -167,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeKeywords = document.getElementById('themeKeywords');
   const themeKeywordsSelect = new TomSelect(themeKeywords, {
     plugins: ['remove_button', 'drag_drop'],
-    searchField: null,
+    searchField: [],
+    render: {
+      no_results: null,
+    },
     maxOptions: null,
     create: true,
     persist: true,
@@ -176,7 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
     plugins: ['remove_button', 'drag_drop'],
-    searchField: null,
+    searchField: [],
+    render: {
+      no_results: null,
+    },
     maxOptions: null,
     create: true,
     persist: true,
@@ -195,5 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.key === 'Enter' && event.target.tagName !== 'BUTTON' && !event.target.classList.contains('button')) {
       event.preventDefault();
     }
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const successEvent = event;
+    successEvent.currentTarget.submitAction.value = event.submitter.name;
+    successEvent.currentTarget.submit();
   });
 });
