@@ -121,13 +121,9 @@ class DatasetSubmissionController extends AbstractController
 
         $dif = $dataset->getDif();
         $datasetSubmission = $dataset->getActiveDatasetSubmission();
+        $currentUser = PersonUtil::getPersonFromUser($this->getUser());
 
-        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
-            $this->addFlash('warning', 'This submission has already been submitted.');
-            return $this->redirectToRoute('app_ui_dashboard');
-        }
-
-        if ($datasetSubmission->getDataset()->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
+        if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
             $this->addFlash('warning', 'The DIF has not yet been approved for this dataset.');
             return $this->redirectToRoute('app_ui_dashboard');
         }
@@ -139,12 +135,9 @@ class DatasetSubmissionController extends AbstractController
                 $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                 $datasetSubmission->setSequence(1);
 
-                $creator = PersonUtil::getPersonFromUser($this->getUser());
-                if ($creator !== null) {
-                    $datasetSubmission->setCreator($creator);
+                if ($currentUser !== null) {
+                    $datasetSubmission->setCreator($currentUser);
                 }
-
-                // $createFlag = true;
             }
         } elseif (
             $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
@@ -154,7 +147,6 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission = new DatasetSubmission($datasetSubmission);
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-            // $createFlag = true;
         }
 
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
@@ -162,39 +154,49 @@ class DatasetSubmissionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $extraData = $form->getExtraData();
+            $submitAction = $extraData['submitAction'] ?? null;
 
-            if ($submitted) {
+            if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                $this->addFlash('warning', 'This submission has already been submitted.');
+                return $this->redirectToRoute('app_ui_dashboard');
+            }
+
+            if ($submitAction === 'saveAndSubmit') {
                 $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
-                $datasetSubmission->submit($this->getUser()->getPerson());
-            }
 
-
-            // Set files for fileset in queue.
-            $fileset = $datasetSubmission?->getFileset();
-            if ($fileset instanceof Fileset) {
-                foreach ($fileset->getNewFiles() as $file) {
-                    $file->setStatus(File::FILE_IN_QUEUE);
+                if ($currentUser !== null) {
+                    $datasetSubmission->setCreator($currentUser);
+                    $datasetSubmission->submit($currentUser);
                 }
+
+                // Set files for fileset in queue.
+                $fileset = $datasetSubmission?->getFileset();
+                if ($fileset instanceof Fileset) {
+                    foreach ($fileset->getNewFiles() as $file) {
+                        $file->setStatus(File::FILE_IN_QUEUE);
+                    }
+                }
+
+                $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
             }
 
-            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
-
-             if ($datasetSubmission->getSequence() > 1) {
+            if ($datasetSubmission->getSequence() > 1) {
                 $eventName = 'resubmitted';
             } else {
                 $eventName = 'submitted';
             }
 
+            if (!$entityManager->contains($datasetSubmission)) {
+                $entityManager->persist($datasetSubmission);
+            }
 
-
-            // $entityManager->persist($dataset);
-
-            // $entityManager->flush();
+            $entityManager->persist($dataset);
+            $entityManager->flush();
 
             return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
                 'dataset' => $dataset,
             ]);
-
         }
 
         $researchGroupPeople = $dataset->getResearchGroup()->getPeople()->toArray();
