@@ -61,8 +61,11 @@
             <div>
                 {{ form_row(form.authors, { attr: { class: 'input-base'} }) }}
             </div>
-
         </div>
+
+        {% set contact = form.metadataContacts | first %}
+        <input type="hidden" id="metadatacontact" name="{{contact.person.vars.full_name}}" value="{{contact.vars.data.person.id|default}}">
+        <input type="hidden" id="metadatacontactrole" name="{{contact.role.vars.full_name}}" value="{{contact.vars.data.role|default}}">
 
         <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
@@ -112,7 +115,7 @@
 
             <div>
                 {{ form_label(form.themeKeywords) }}
-                <select class="keywordinput" id="theme-keywords" multiple required="required">
+                <select class="keywordinput" id="{{ form.themeKeywords.vars.id }}" multiple required="required" name="{{ form.themeKeywords.vars.full_name }}[]">
                 {% for keyword in form.themeKeywords %}
                     <option value="{{keyword.vars.value}}" selected="selected">{{keyword.vars.value}}</option>
                 {% endfor %}
@@ -121,7 +124,7 @@
 
             <div>
                 {{ form_label(form.placeKeywords) }}
-                <select class="keywordinput" id="place-keywords" multiple>
+                <select class="keywordinput" id="{{ form.placeKeywords.vars.id }}" multiple name="{{ form.placeKeywords.vars.full_name }}[]">
                 {% for keyword in form.placeKeywords %}
                     <option value="{{keyword.vars.value}}" selected="selected">{{keyword.vars.value}}</option>
                 {% endfor %}
@@ -130,7 +133,7 @@
 
             <div>
                 <label>Topic Category Keyword List</label>
-                <select class="keywordinput" multiple="multiple"size="10" id="topic-keyword-select" keyword="source">
+                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" keyword="source" name="{{ form.topicKeywords.vars.full_name }}">
                     {% set order = 0 %}
                     {% for keyword in form.topicKeywords.vars.choices %}
                         {% set found = false  %}
@@ -144,7 +147,6 @@
                     {% endfor %}
                 </select>
             </div>
-
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
@@ -218,7 +220,20 @@
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
 
             <div>
-                <span class="text-2xl">You have not completed all required fields.</span>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        {{ form_row(form.datasetFileTransferType) }}
+                    </div>
+                    <div>
+                        {{ form_row(form.restrictions) }}
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-2xl">You have not completed all required fields.</span>
+                </div>
+
+                <div>FILE SUBMISSION COMPONENT GOES HERE</div>
             </div>
 
             <input type="hidden" name="submitAction" id="submitAction"/>

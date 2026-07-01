@@ -164,22 +164,28 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  const themeKeywords = document.getElementById('theme-keywords');
+  const themeKeywords = document.getElementById('themeKeywords');
   const themeKeywordsSelect = new TomSelect(themeKeywords, {
-    plugins: ['remove_button'],
-    searchField: null,
+    plugins: ['remove_button', 'drag_drop'],
+    searchField: [],
+    render: {
+      no_results: null,
+    },
     maxOptions: null,
     create: true,
-    persist: false,
+    persist: true,
   });
 
-  const placeKeywords = document.getElementById('place-keywords');
+  const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
-    plugins: ['remove_button'],
-    searchField: null,
+    plugins: ['remove_button', 'drag_drop'],
+    searchField: [],
+    render: {
+      no_results: null,
+    },
     maxOptions: null,
     create: true,
-    persist: false,
+    persist: true,
   });
 
   const topicKeywords = document.getElementById('topic-keyword-select');
@@ -188,5 +194,19 @@ document.addEventListener('DOMContentLoaded', () => {
     maxOptions: null,
     create: false,
     persist: false,
+  });
+
+  // Prevent form submission on Enter key press for all fields except buttons
+  form.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && event.target.tagName !== 'BUTTON' && !event.target.classList.contains('button')) {
+      event.preventDefault();
+    }
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const successEvent = event;
+    successEvent.currentTarget.submitAction.value = event.submitter.name;
+    successEvent.currentTarget.submit();
   });
 });
