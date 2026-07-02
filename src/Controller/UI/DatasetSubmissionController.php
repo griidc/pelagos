@@ -24,6 +24,7 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Fileset;
+use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Handler\EntityHandler;
@@ -93,9 +94,12 @@ class DatasetSubmissionController extends AbstractController
 
     #[Route(path: '/dataset-submission', name: 'pelagos_app_ui_datasetsubmission_default')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function index(Request $request, FormFactoryInterface $formFactory, PersonUtil $personUtil, DatasetRepository $datasetRepository): Response
-    {
-        $dataset = null;
+    public function index(
+        Request $request,
+        FormFactoryInterface $formFactory,
+        DatasetRepository $datasetRepository,
+        EntityManagerInterface $entityManager,
+    ): Response {
         $regId = $request->query->get('regid');
         $udi = $request->query->get('udi');
 
@@ -105,32 +109,35 @@ class DatasetSubmissionController extends AbstractController
 
         if ($udi !== null && $udi !== '') {
             $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
-            if (!$dataset) {
+            if (!$dataset instanceof Dataset) {
                 // add to flash bag errror message about dataset not found
                 $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+                return $this->redirectToRoute('app_ui_dashboard');
             }
-        }
-
-
-        if (!$dataset instanceof Dataset) {
-            $creator = $personUtil::getPersonFromUser($this->getUser());
-            $dataset = new Dataset();
-            $dataset->setCreator($creator);
-            $datasetSubmission = new DatasetSubmission($dataset);
-            $datasetSubmission->setCreator($creator);
+        } else {
+            $this->addFlash('warning', 'Please select a dataset here to continue to dataset submission');
+            return $this->redirectToRoute('app_ui_dashboard');
         }
 
         $dif = $dataset->getDif();
-        $datasetSubmission = $this->getDatasetSubmission($dataset);
+        $datasetSubmission = $dataset->getActiveDatasetSubmission();
+        $currentUser = PersonUtil::getPersonFromUser($this->getUser());
 
-        if ($datasetSubmission instanceof DatasetSubmission == false) {
+        if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
+            $this->addFlash('warning', 'The DIF has not yet been approved for this dataset.');
+            return $this->redirectToRoute('app_ui_dashboard');
+        }
+
+        if (!$datasetSubmission instanceof DatasetSubmission) {
             if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                 // This is the first submission, so create a new one based on the DIF.
                 $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
                 $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                 $datasetSubmission->setSequence(1);
 
-                // $createFlag = true;
+                if ($currentUser !== null) {
+                    $datasetSubmission->setCreator($currentUser);
+                }
             }
         } elseif (
             $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
@@ -140,10 +147,57 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission = new DatasetSubmission($datasetSubmission);
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-            // $createFlag = true;
         }
 
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $extraData = $form->getExtraData();
+            $submitAction = $extraData['submitAction'] ?? null;
+
+            if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                $this->addFlash('warning', 'This submission has already been submitted.');
+                return $this->redirectToRoute('app_ui_dashboard');
+            }
+
+            if ($submitAction === 'saveAndSubmit') {
+                $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
+
+                if ($currentUser !== null) {
+                    $datasetSubmission->setCreator($currentUser);
+                    $datasetSubmission->submit($currentUser);
+                }
+
+                // Set files for fileset in queue.
+                $fileset = $datasetSubmission?->getFileset();
+                if ($fileset instanceof Fileset) {
+                    foreach ($fileset->getNewFiles() as $file) {
+                        $file->setStatus(File::FILE_IN_QUEUE);
+                    }
+                }
+
+                $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
+            }
+
+            if ($datasetSubmission->getSequence() > 1) {
+                $eventName = 'resubmitted';
+            } else {
+                $eventName = 'submitted';
+            }
+
+            if (!$entityManager->contains($datasetSubmission)) {
+                $entityManager->persist($datasetSubmission);
+            }
+
+            $entityManager->persist($dataset);
+            $entityManager->flush();
+
+            return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
+                'dataset' => $dataset,
+            ]);
+        }
 
         $researchGroupPeople = $dataset->getResearchGroup()->getPeople()->toArray();
 

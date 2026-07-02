@@ -22,6 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * A form type for creating a Dataset Submission form.
+ *
+ * @extends AbstractType<DatasetSubmission>
  */
 class DatasetSubmissionType extends AbstractType
 {
@@ -104,6 +106,7 @@ class DatasetSubmissionType extends AbstractType
             ])
             ->add('datasetFileTransferType', Type\HiddenType::class, [
                 'required' => false,
+                'data' => DatasetSubmission::TRANSFER_TYPE_HTTP,
             ])
             ->add('shortTitle', Type\TextType::class, [
                 'label' => 'Short Title',
