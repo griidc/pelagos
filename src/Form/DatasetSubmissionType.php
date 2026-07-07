@@ -48,6 +48,7 @@ class DatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -355,7 +356,7 @@ class DatasetSubmissionType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-            if ($data) {
+            if ($data instanceof DatasetSubmission) {
                 if (true === $data->isDatasetFileInColdStorage()) {
                     $form->get('isDatasetFileInColdStorage')->setData(true);
                     $form->get('datasetFileColdStorageArchiveSize')->setData(
@@ -405,6 +406,7 @@ class DatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $entity = $this->formEntity;

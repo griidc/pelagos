@@ -25,13 +25,12 @@
                             </div>
                         {% else %}
                             <div class="flex justify-between items-center">
-                                <label for="datasetcontact">Additional Point of Contact</label>
+                                <label class="required" for="datasetcontact">Additional Point of Contact</label>
                                 <button type="button" class="float-right text-sm deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
                             </div>
                         {% endif %}
-                        <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                        <select class="contactperson w-full" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                         {% set selectPerson = contact.vars.data.person.id %}
-
                         {% for person in researchGroupPeople %}
                             <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
                                 {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
@@ -41,7 +40,7 @@
                     </div>
                     <div>
                         {{ form_widget(contact.primaryContact) }}
-                        {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
+                        {{ form_row(contact.role, { attr: { class: 'input-base contactrole' } }) }}
                     </div>
                     <hr class="my-2 border-gray-300">
                 </div>
@@ -132,8 +131,8 @@
             </div>
 
             <div>
-                <label>Topic Category Keyword List</label>
-                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" keyword="source" name="{{ form.topicKeywords.vars.full_name }}">
+                {{ form_label(form.topicKeywords) }}
+                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" required="required" name="{{ form.topicKeywords.vars.full_name }}">
                     {% set order = 0 %}
                     {% for keyword in form.topicKeywords.vars.choices %}
                         {% set found = false  %}

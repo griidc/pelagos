@@ -9,7 +9,7 @@ import TomSelect from 'tom-select';
 import 'tom-select/dist/css/tom-select.css';
 
 import JustValidate from 'just-validate';
-import JustValidatePluginDate from 'just-validate-plugin-date';
+// import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
@@ -97,6 +97,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactsContainer = document.querySelector('.dataset-contacts');
   const contactTemplate = contactsContainer.querySelector('.dataset-contact');
   const newContactTemplate = contactTemplate.cloneNode(true);
+  const contactSelects = [];
+
+  const makeContactSelect = (contact) => {
+    const contactSelect = new TomSelect(contact, {
+      maxOptions: null,
+      placeholder: '[Please select a contact.]',
+      plugins: {
+        clear_button: {
+          title: 'Remove all selected options',
+        },
+      },
+    });
+    contactSelects.push(contactSelect);
+  };
 
   const addContactButton = document.getElementById('addContactButton');
   addContactButton.addEventListener('click', () => {
@@ -121,10 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const contact = newContact.querySelector('.contactperson');
-    const contactSelect = new TomSelect(contact, {
-      maxOptions: null,
-      placeholder: '[Please select a contact.]',
-    });
+    makeContactSelect(contact);
 
     newContact.style.opacity = '0';
     newContact.style.transition = 'opacity 0.3s ease';
@@ -148,10 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   Array.from(datasetContacts).forEach((contact) => {
-    const contactSelect = new TomSelect(contact, {
-      maxOptions: null,
-      placeholder: '[Please select a contact.]',
-    });
+    makeContactSelect(contact);
   });
 
   const funders = document.getElementById('funders');
@@ -203,10 +211,121 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const successEvent = event;
-    successEvent.currentTarget.submitAction.value = event.submitter.name;
-    successEvent.currentTarget.submit();
+  const formValidate = new JustValidate(form, {
+    errorLabelStyle: {
+      color: '#b81111',
+      fontWeight: 'bold',
+    },
+  });
+
+  formValidate
+    .addField('.contactperson', [
+      {
+        rule: 'required',
+        errorMessage: 'Please select a contact.',
+      },
+    ])
+    .addField('#funders', [
+      {
+        rule: 'required',
+        errorMessage: 'Funder is required.',
+      },
+    ])
+    .addField('#title', [
+      {
+        rule: 'required',
+        errorMessage: 'Title is required.',
+      },
+    ])
+    .addField('#abstract', [
+      {
+        rule: 'required',
+        errorMessage: 'Abstract is required.',
+      },
+    ])
+    .addField('#purpose', [
+      {
+        rule: 'required',
+        errorMessage: 'Purpose is required.',
+      },
+    ])
+    .addField('#themeKeywords', [
+      {
+        rule: 'required',
+        errorMessage: 'Theme keywords are required.',
+      },
+    ])
+    // .addField('#estimatedStartDate', [
+    //   {
+    //     plugin: JustValidatePluginDate(() => ({
+    //       format: 'yyyy-MM-dd',
+    //       required: true,
+    //     })),
+    //     errorMessage: 'Date is required.',
+    //   },
+    //   {
+    //     plugin: JustValidatePluginDate((fields) => ({
+    //       required: true,
+    //       format: 'yyyy-MM-dd',
+    //       isBefore: fields['#estimatedEndDate'].elem.value,
+    //     })),
+    //     errorMessage: 'Date must be before end date.',
+    //   },
+    // ])
+    // .addField('#estimatedEndDate', [
+    //   {
+    //     plugin: JustValidatePluginDate(() => ({
+    //       format: 'yyyy-MM-dd',
+    //       required: true,
+    //     })),
+    //     errorMessage: 'Date is required.',
+    //   },
+    //   {
+    //     plugin: JustValidatePluginDate((fields) => ({
+    //       required: true,
+    //       format: 'yyyy-MM-dd',
+    //       isAfter: fields['#estimatedStartDate'].elem.value,
+    //     })),
+    //     errorMessage: 'Date must be after start date.',
+    //   },
+    // ])
+    .onSuccess((event) => {
+      const successEvent = event;
+      successEvent.currentTarget.submitAction.value = event.submitter.name;
+      successEvent.currentTarget.submit();
+    });
+
+  // on form reset event
+  const resetButton = document.getElementById('resetFormButton');
+  resetButton.addEventListener('click', () => {
+    form.reset(); // reset the form
+    // reset tomSelects
+    setTimeout(() => {
+      // if (researchGroupSelect.isLocked === false) {
+      //   researchGroupSelect.clear();
+      // }
+
+      fundersSelect.clear();
+      contactSelects.forEach((contactSelect) => contactSelect.clear());
+      themeKeywordsSelect.clear();
+      placeKeywordsSelect.clear();
+      topicKeywordsSelect.clear();
+      // populateResearchGroupContacts([]);
+
+      // find all form fields
+      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
+      formFields.forEach((field) => {
+        const formField = field;
+        formField.value = '';
+        formField.removeAttribute('value');
+        formField.removeAttribute('data-value');
+        formField.checked = false;
+      });
+      spatialExtentDescription.classList.add('hidden');
+      spatialExtentGeometry.classList.add('hidden');
+      // loadResearchGroupDowndowns(researchGroupSelect.getValue());
+      formValidate.clearErrors();
+      // researchGroup.focus();
+    });
   });
 });
