@@ -103,12 +103,12 @@ class DIFType extends AbstractType
                 'required' => true,
             ])
             ->add('primaryPointOfContact', ChoiceType::class, [
-                'label' => 'Primary Data Point of Contact:',
+                'label' => 'Primary Point of Contact:',
                 'placeholder' => '[Please select a project first.]',
                 'required' => true,
             ])
             ->add('secondaryPointOfContact', ChoiceType::class, [
-                'label' => 'Additional Data Point of Contact:',
+                'label' => 'Additional Point of Contact:',
                 'placeholder' => '[Please select a project first.]',
                 'required' => false,
             ])
@@ -384,7 +384,7 @@ class DIFType extends AbstractType
 
         $form
         ->add('primaryPointOfContact', ChoiceType::class, [
-            'label' => 'Primary Data Point of Contact:',
+            'label' => 'Primary Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getPrimaryPointOfContact() !== null ? $entity?->getPrimaryPointOfContact()->getId() : '',
             ],
