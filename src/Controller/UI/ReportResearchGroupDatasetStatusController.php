@@ -206,13 +206,9 @@ class ReportResearchGroupDatasetStatusController extends ReportController
 
     /**
      * Research group GRP Information Product report
-     *
-     * @param EntityManagerInterface $entityManager The entity manager.
-     *
-     * @return Response A Symfony Response instance.
      */
     #[Route(path: '/report-researchgroup/grp-ip-report', name: 'pelagos_app_ui_grp_inforprod_report')]
-    public function getGrpInfoProdReport(Request $request, EntityManagerInterface $entityManager, string $fundingOrgName)
+    public function getGrpInfoProdReport(EntityManagerInterface $entityManager): Response
     {
 
         // Checks authorization of users
@@ -224,8 +220,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             ['Research Group ID', 'Research Group Name', 'Research Group URL', 'Funding Cycle Name', 'Has Information Products', 'Information Product Tags'],
         ];
 
-        // Fetch all Research Groups.
-        $fundingOrganization = $entityManager->getRepository(FundingOrganization::class)->findOneBy(['name' => $fundingOrgName]);
+        // Fetch all Research Groups, Funding Organization 15 is the GRP Funding Organization.
+        // This is hard coded because the GRP Funding Organization's Id is not expected to change, but the
+        // name might.
+        $fundingOrganization = $entityManager->getRepository(FundingOrganization::class)->findOneBy(['id' => 15]);
         $allResearchGroups = $entityManager->getRepository(ResearchGroup::class)->findByFundingOrganization($fundingOrganization);
 
         // Fetch all Information Products.
