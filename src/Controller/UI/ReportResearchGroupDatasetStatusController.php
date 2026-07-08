@@ -238,13 +238,17 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             $rgName = $rg->getName();
             $fcName = $rg->getFundingCycle()->getName();
             $infoProdCount = 0;
-            $tags = '';
+            $allTags = [];
             foreach ($allInformationProducts as $ip) {
                 if (in_array($rg, $ip->getResearchGroups()->toArray())) {
                     $infoProdCount++;
-                    $tags = $ip->getTags();
+                    foreach ($ip->getInfoProductTags() as $tag) {
+                        $allTags[] = $tag;
+                    }
                 }
             }
+            $allTags = array_unique($allTags); // Remove duplicates
+            sort($allTags); // Can't sort array_unique() directly, so sort after removing duplicates.
 
             $csv[] = [
             $rgId,
@@ -252,7 +256,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             $rgUrl,
             $fcName,
             ($infoProdCount > 0) ? 'y' : 'n',
-            $tags,
+            implode(', ', $allTags),
             ];
         }
 
