@@ -8,6 +8,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import TomSelect from 'tom-select';
 import 'tom-select/dist/css/tom-select.css';
 
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+
 import JustValidate from 'just-validate';
 import JustValidatePluginDate from 'just-validate-plugin-date';
 
@@ -189,11 +192,25 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const topicKeywords = document.getElementById('topic-keyword-select');
+  const topicKeywordDefinitions = JSON.parse(topicKeywords.dataset.definitions);
   const topicKeywordsSelect = new TomSelect(topicKeywords, {
     plugins: ['remove_button'],
     maxOptions: null,
     create: false,
     persist: false,
+  });
+
+  topicKeywordsSelect.on('dropdown_open', function() {
+    document.querySelectorAll('.ts-dropdown .option').forEach(option => {
+      const value = option.dataset.value;
+      if (!option._tippy) {
+        tippy(option, {
+            content: topicKeywordDefinitions[value]?.description || 'No description available',
+            placement: 'left',
+            delay: [250, 0],
+        });
+      }
+    });
   });
 
   // Prevent form submission on Enter key press for all fields except buttons

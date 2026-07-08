@@ -133,7 +133,7 @@
 
             <div>
                 <label>Topic Category Keyword List</label>
-                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" keyword="source" name="{{ form.topicKeywords.vars.full_name }}">
+                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" keyword="source" name="{{ form.topicKeywords.vars.full_name }}" data-definitions="{{ topicKeywordDefinitions|json_encode|e('html_attr') }}">
                     {% set order = 0 %}
                     {% for keyword in form.topicKeywords.vars.choices %}
                         {% set found = false  %}

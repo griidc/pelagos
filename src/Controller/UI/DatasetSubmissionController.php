@@ -215,6 +215,7 @@ class DatasetSubmissionController extends AbstractController
                 // 'isApprovable' => $dif->isApprovable(),
                 // 'isApproved' => $dif->isApproved(),
                 // 'isUnlockable' => $dif->isUnlockable(),
+                'topicKeywordDefinitions' => DatasetSubmission::TOPIC_KEYWORDS,
             ]
         );
     }
