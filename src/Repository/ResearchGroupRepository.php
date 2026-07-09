@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use App\Entity\ResearchGroup;
+use App\Entity\FundingOrganization;
 use App\Util\FundingOrgFilter;
 
 /**
@@ -118,5 +119,27 @@ class ResearchGroupRepository extends ServiceEntityRepository
         }
 
         return $researchGroups;
+    }
+
+    /**
+     * Get all research groups associated with a specific funding organization.
+     *
+     * @param FundingOrganization $fundingOrganization The funding organization to filter by.
+     * @param array $orderBy Optional sort order (default: name ASC).
+     *
+     * @return ResearchGroup[] Array of research groups for the given funding organization.
+     */
+    public function findByFundingOrganization(FundingOrganization $fundingOrganization, array $orderBy = ['name' => 'ASC']): array
+    {
+        $qb = $this->createQueryBuilder('researchGroup')
+            ->join('researchGroup.fundingCycle', 'fundingCycle')
+            ->where('fundingCycle.fundingOrganization = :fundingOrganization')
+            ->setParameter('fundingOrganization', $fundingOrganization);
+
+        foreach ($orderBy as $field => $order) {
+            $qb->addOrderBy("researchGroup.$field", $order);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }
