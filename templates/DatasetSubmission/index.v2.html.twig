@@ -66,6 +66,28 @@
         .leaflet-control-layers-selector {
             appearance: revert;
         }
+
+        .topic-keyword-option {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .topic-keyword-option-text {
+            font-weight: bold;
+        }
+
+        .topic-keyword-option-description {
+            font-size: 0.75rem;
+            font-style: italic;
+        }
+
+        .topic-keyword-option-description::first-letter {
+            text-transform: uppercase;
+        }
+
+        .topic-keyword-option-description::after {
+            content: ".";
+        }
     </style>
 
 {% endblock stylesheets %}

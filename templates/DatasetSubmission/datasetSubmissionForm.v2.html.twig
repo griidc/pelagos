@@ -141,7 +141,7 @@
                                 {% set found = true %}
                             {% endif %}
                         {% endfor %}
-                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }}>{{keyword.label}}</option>
+                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }} data-description="{{ keyword.attr['description'] }}">{{keyword.label}}</option>
                         {% set order = order + 1 %}
                     {% endfor %}
                 </select>
@@ -185,30 +185,33 @@
             </ul>
 
             <div id="spatial-extent">
-                <div id="spatial-extent-geometry" class="hidden">
+                <div class="spatial-extent-geometry hidden">
                     <div class="grid-col-span-2">
                         {{ form_row(form.spatialExtent, { attr: { class: 'input-base'} }) }}
                         {% include 'DIF/spatial.html.twig' %}
                     </div>
                 </div>
 
-                <div id="spatial-extent-description" class="hidden">
+
+                <div class="grid grid-cols-1 gap-4 spatial-extent-description hidden">
                     <div class="grid-col-span-2">
                         {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
                     </div>
                 </div>
 
-                <div>
-                    {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="spatial-extent-geometry hidden">
                     <div>
-                        {{ form_row(form.temporalExtentBeginPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
                     </div>
 
-                    <div>
-                        {{ form_row(form.temporalExtentEndPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            {{ form_row(form.temporalExtentBeginPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_row(form.temporalExtentEndPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        </div>
                     </div>
                 </div>
             </div>

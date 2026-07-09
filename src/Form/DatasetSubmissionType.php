@@ -167,6 +167,9 @@ class DatasetSubmissionType extends AbstractType
             ->add('topicKeywords', Type\ChoiceType::class, [
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
+                'choice_attr' => function(mixed $choice) {
+                    return ['description' => DatasetSubmission::TOPIC_KEYWORDS[$choice]['description']];
+                },
                 'multiple' => true,
                 'required' => true,
             ])
@@ -391,12 +394,14 @@ class DatasetSubmissionType extends AbstractType
                 $totalBytes = $event->getForm()->get('coldStorageTotalUnpackedSize')->getData();
                 $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
-                if (null !== $size and null !== $hash and null !== $name) {
-                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
-                } else {
-                    $entity->clearDatasetFileColdStorageAttributes();
+                if ($entity instanceof DatasetSubmission) {
+                    if (null !== $size and null !== $hash and null !== $name) {
+                        $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
+                    } else {
+                        $entity->clearDatasetFileColdStorageAttributes();
+                    }
+                    $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
                 }
-                $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
             }
         );
     }
