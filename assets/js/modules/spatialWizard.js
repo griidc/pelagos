@@ -332,8 +332,10 @@ export default class SpatialWizard {
 
         // if featureType is Polygon, add first coordinate pair to the end of the array to close the polygon
         if (featureType === 'Polygon') {
-          if (coordinatePairs[0] !== coordinatePairs[coordinatePairs.length - 1]) {
-            coordinatePairs.push(coordinatePairs[0]);
+          const first = coordinatePairs[0];
+          const last = coordinatePairs[coordinatePairs.length - 1];
+          if (first[0] !== last[0] || first[1] !== last[1]) {
+            coordinatePairs.push([...first]);
           }
           coordinatePairs = [coordinatePairs];
         }
