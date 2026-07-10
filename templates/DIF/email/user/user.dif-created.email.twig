@@ -1,4 +1,4 @@
-{% block subject '[GRIIDC] DIF Created, saved but not yet submitted' %}
+{% block subject '[GRIIDC] DIF Saved But Not Submitted' %}
 
 {% block body_html %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},<br />
@@ -7,7 +7,7 @@ This email is to notify you that a Dataset Information Form (DIF) has been creat
 The DIF {{ dif.dataset.udi }} has been saved, but has not yet been submitted to GRIIDC
 for review and approval. Please return to the
 <a href="{{ absolute_url(path('pelagos_app_ui_dif_default')) }}?udi={{ dif.dataset.udi }}" class="pagelink" target="_blank">DIF</a>
-to review and submit the DIF.<br>
+to submit to GRIIDC.<br>
 <br />
 Thank you,<br />
 <br />
@@ -22,7 +22,7 @@ This email is to notify you that a Dataset Information Form (DIF) has been creat
 The DIF {{ dif.dataset.udi }} has been saved, but has not yet been submitted to GRIIDC
 for review and approval.
 
-Please return to the DIF at {{ absolute_url(path('pelagos_app_ui_dif_default')) }}?udi={{ dif.dataset.udi }} to review and submit the DIF.
+Please return to the DIF at {{ absolute_url(path('pelagos_app_ui_dif_default')) }}?udi={{ dif.dataset.udi }} to submit to GRIIDC.
 
 Thank you,
 
