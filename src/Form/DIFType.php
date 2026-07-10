@@ -391,7 +391,7 @@ class DIFType extends AbstractType
             'placeholder' => '[Please select a project first.]',
         ])
         ->add('secondaryPointOfContact', ChoiceType::class, [
-            'label' => 'Additional Data Point of Contact:',
+            'label' => 'Additional Point of Contact:',
             'attr' => [
                 'data-value' => $entity?->getSecondaryPointOfContact() !== null ? $entity?->getSecondaryPointOfContact()->getId() : '',
             ],
