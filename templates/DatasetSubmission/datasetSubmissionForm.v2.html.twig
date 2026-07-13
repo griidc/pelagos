@@ -19,14 +19,14 @@
                 <div class="dataset-contact">
                     <div class="mb-4">
                         {% if contact.vars.data.primaryContact %}
-                            <div class="flex justify-between items-center">
-                                <label class="required" for="datasetcontact">Primary Point of Contact</label>
-                                <button type="button" class="button button-regular button-form justify-center w-1/4 hidden deleteContactButton mb-4">Delete Contact</button>
+                            <div class="grid grid-cols-3 gap-4 items-center mb-4">
+                                <label class="required col-span-2" for="datasetcontact">Primary Point of Contact</label>
+                                <button type="button" class="button button-regular button-form justify-center w-full hidden deleteContactButton">Delete Contact</button>
                             </div>
                         {% else %}
-                            <div class="flex justify-between items-center">
-                                <label for="datasetcontact">Additional Point of Contact</label>
-                                <button type="button" class="button button-regular button-form justify-center w-1/4 deleteContactButton mb-4">Delete Contact</button>
+                            <div class="grid grid-cols-3 gap-4 items-center mb-4">
+                                <label class="col-span-2" for="datasetcontact">Additional Point of Contact</label>
+                                <button type="button" class="button button-regular button-form justify-center w-full deleteContactButton">Delete Contact</button>
                             </div>
                         {% endif %}
                         <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
@@ -50,7 +50,11 @@
                 {% endfor %}
             </div>
 
-            <button type="button" id="addContactButton" class="button button-regular button-form justify-center w-1/4">Add Contact</button>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <button type="button" id="addContactButton" class="button button-regular button-form justify-center w-full">Add Contact</button>
+                </div>
+            </div>
             <div>
                 {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
             </div>
