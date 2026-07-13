@@ -43,7 +43,7 @@
                         {{ form_widget(contact.primaryContact) }}
                         {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
                     </div>
-                    {% if not contact.vars.data.primaryContact %}
+                    {% if form.datasetContacts|length > 1 %}
                         <hr class="mt-5 border-gray-300">
                     {% endif %}
                 </div>
