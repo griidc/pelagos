@@ -17,16 +17,16 @@
             >
                 {% for contact in form.datasetContacts %}
                 <div class="dataset-contact">
-                    <div>
+                    <div class="mb-4">
                         {% if contact.vars.data.primaryContact %}
                             <div class="flex justify-between items-center">
                                 <label class="required" for="datasetcontact">Primary Point of Contact</label>
-                                <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                                <button type="button" class="button button-regular button-form justify-center w-1/4 hidden deleteContactButton mb-4">Delete Contact</button>
                             </div>
                         {% else %}
                             <div class="flex justify-between items-center">
                                 <label for="datasetcontact">Additional Point of Contact</label>
-                                <button type="button" class="float-right text-sm deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                                <button type="button" class="button button-regular button-form justify-center w-1/4 hidden deleteContactButton mb-4">Delete Contact</button>
                             </div>
                         {% endif %}
                         <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
@@ -43,13 +43,14 @@
                         {{ form_widget(contact.primaryContact) }}
                         {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
                     </div>
-                    <hr class="mt-5 border-gray-600">
+                    {% if not contact.vars.data.primaryContact %}
+                        <hr class="mt-5 border-gray-300">
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
 
-            <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
-
+            <button type="button" id="addContactButton" class="button button-regular button-form justify-center w-1/4">Add Contact</button>
             <div>
                 {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
             </div>
