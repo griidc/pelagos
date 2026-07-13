@@ -138,9 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
       placeholder: '[Please select a contact.]',
     });
 
-    const hr = document.createElement('hr');
-    hr.className = 'mt-5 border-gray-300';
-    newContact.appendChild(hr);
+    const currentHr = document.querySelector('div > hr');
+    if (!currentHr) {
+      const hr = document.createElement('hr');
+      hr.className = 'mt-5 border-gray-300';
+      newContact.appendChild(hr);
+    }
 
     newContact.style.opacity = '0';
     newContact.style.transition = 'opacity 0.3s ease';
