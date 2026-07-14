@@ -1,0 +1,25 @@
+name: Project Build
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux, x64]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Install JS dependencies
+        run: yarn install --immutable
+
+      - name: Build frontend assets
+        run: yarn build
