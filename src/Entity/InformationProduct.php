@@ -612,4 +612,19 @@ class InformationProduct extends Entity
 
         return $this;
     }
+
+    /**
+     * Get tags used for this Information Product, combining both Product Type Descriptors and Digital Resource Type Descriptors.
+     */
+    public function getInfoProductTags(): Collection
+    {
+        $tags = new ArrayCollection();
+        foreach ($this->getProductTypeDescriptors() as $productTypeDescriptor) {
+            $tags->add($productTypeDescriptor->getDescription());
+        }
+        foreach ($this->getDigitalResourceTypeDescriptors() as $digitalResourceTypeDescriptor) {
+            $tags->add($digitalResourceTypeDescriptor->getDescription());
+        }
+        return $tags;
+    }
 }
