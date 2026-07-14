@@ -382,6 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
       successEvent.currentTarget.submit();
     });
 
+  const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
+  spatialExtentDescriptionElement.addEventListener('change', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#spatial-extent');
+    }
+  });
+
   const estimatedStartDate = document.getElementById('temporalExtentBeginPosition');
   estimatedStartDate.addEventListener('changeDate', () => {
     if (formValidate.isSubmitted) {
@@ -434,7 +441,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const gmlOutput = json.gml;
         console.warn('GML Output:', gmlOutput);
         spatialExtent.value = gmlOutput;
-        formValidate.revalidateField('#spatial-extent');
+        if (formValidate.isSubmitted) {
+          formValidate.revalidateField('#spatial-extent');
+        }
       });
   });
 
