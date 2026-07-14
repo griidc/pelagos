@@ -1,18 +1,5 @@
 #/bin/sh
 
-args=("$@")
-
-case ${args[0]} in
-DRUPALGRIIDC)
-    echo 'Setting Encore PublicPath to special pelagos-symfony path for drupal-coexistence'
-    export publicpath="/pelagos-symfony/build"
-    ;;
-*)
-    echo 'Setting Encore PublicPath to /build'
-    export publicpath="/build"
-    ;;
-esac
-
 # Stop MessageMQ
 bin/console messenger:stop-workers
 
@@ -43,5 +30,4 @@ bin/console doctrine:migrations:status
 bin/console fos:elastica:reset
 bin/console fos:elastica:populate
 
-#
 echo "Remember to start consumers with: sudo systemctl start pelagos-messengemq"
