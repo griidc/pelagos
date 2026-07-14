@@ -110,6 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectElement = select;
       selectElement.value = '';
     });
+    const primaryContactCheckbox = newContact.querySelector('input[type="checkbox"][id$="_primaryContact"]');
+    if (primaryContactCheckbox) {
+      primaryContactCheckbox.checked = false;
+    }
     const deleteContactButton = newContact.querySelector('.deleteContactButton');
     deleteContactButton.classList.remove('hidden');
     deleteContactButton.addEventListener('click', () => {
