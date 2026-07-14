@@ -9,11 +9,12 @@ import TomSelect from 'tom-select';
 import 'tom-select/dist/css/tom-select.css';
 
 import JustValidate from 'just-validate';
-// import JustValidatePluginDate from 'just-validate-plugin-date';
+import JustValidatePluginDate from 'just-validate-plugin-date';
 
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 import GeoViz from '../modules/geoViz';
+import * as turf from '@turf/turf';
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
@@ -310,70 +311,157 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Please select at least one topic category keyword.',
       },
     ])
-    // .addField('#estimatedStartDate', [
-    //   {
-    //     plugin: JustValidatePluginDate(() => ({
-    //       format: 'yyyy-MM-dd',
-    //       required: true,
-    //     })),
-    //     errorMessage: 'Date is required.',
-    //   },
-    //   {
-    //     plugin: JustValidatePluginDate((fields) => ({
-    //       required: true,
-    //       format: 'yyyy-MM-dd',
-    //       isBefore: fields['#estimatedEndDate'].elem.value,
-    //     })),
-    //     errorMessage: 'Date must be before end date.',
-    //   },
-    // ])
-    // .addField('#estimatedEndDate', [
-    //   {
-    //     plugin: JustValidatePluginDate(() => ({
-    //       format: 'yyyy-MM-dd',
-    //       required: true,
-    //     })),
-    //     errorMessage: 'Date is required.',
-    //   },
-    //   {
-    //     plugin: JustValidatePluginDate((fields) => ({
-    //       required: true,
-    //       format: 'yyyy-MM-dd',
-    //       isAfter: fields['#estimatedStartDate'].elem.value,
-    //     })),
-    //     errorMessage: 'Date must be after start date.',
-    //   },
-    // ])
+    .addField('#temporalExtentDesc', [
+      {
+        validator: (value, context) => {
+          const temporalExtentDesc = context['#temporalExtentDesc'].elem;
+          if (temporalExtentDesc.checkVisibility() && !temporalExtentDesc.value.trim()) {
+            return false;
+          }
+          return true;
+        },
+        errorMessage: 'Temporal extent description is required.',
+      },
+    ])
+    .addField('#spatial-extent', [
+      {
+        validator: () => {
+          const spatialExtentGeometryElement = document.getElementById('spatialExtent');
+          const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
+          // Check if either the description or geometry field is filled
+          if (spatialExtentDescriptionElement.value.trim()) {
+            return true;
+          }
+          if (spatialExtentGeometryElement.value.trim()) {
+            return true;
+          }
+          return false;
+        },
+        errorMessage: 'Please provide either a spatial extent geometry or a spatial extent description.',
+      },
+    ], {
+      errorsContainer: '#spatial-extent-error',
+    })
+    .addField('#temporalExtentBeginPosition', [
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+          required: true,
+        })),
+        errorMessage: 'Date is required.',
+      },
+      // {
+      //   plugin: JustValidatePluginDate((fields) => ({
+      //     required: true,
+      //     format: 'yyyy-MM-dd',
+      //     isBefore: fields['#temporalExtentEndPosition'].elem.value,
+      //   })),
+      //   errorMessage: 'Date must be before end date.',
+      // },
+    ])
+    .addField('#temporalExtentEndPosition', [
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+          required: true,
+        })),
+        errorMessage: 'Date is required.',
+      },
+      // {
+      //   plugin: JustValidatePluginDate((fields) => ({
+      //     required: true,
+      //     format: 'yyyy-MM-dd',
+      //     isAfter: fields['#temporalExtentBeginPosition'].elem.value,
+      //   })),
+      //   errorMessage: 'Date must be after start date.',
+      // },
+    ])
     .onSuccess((event) => {
       const successEvent = event;
       successEvent.currentTarget.submitAction.value = event.submitter.name;
       successEvent.currentTarget.submit();
     });
 
-  // on form reset event
-  const resetButton = document.getElementById('resetFormButton');
-  resetButton.addEventListener('click', () => {
-    form.reset(); // reset the form
-    // reset tomSelects
-    setTimeout(() => {
-      fundersSelect.clear();
-      contactSelects.forEach((contactSelect) => contactSelect.clear());
-      themeKeywordsSelect.clear();
-      placeKeywordsSelect.clear();
-      topicKeywordsSelect.clear();
-
-      // find all form fields
-      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
-      formFields.forEach((field) => {
-        const formField = field;
-        formField.value = '';
-        formField.removeAttribute('value');
-        formField.removeAttribute('data-value');
-        formField.checked = false;
-      });
-      Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
-      Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
-      formValidate.refresh();
-    });
+  const estimatedStartDate = document.getElementById('temporalExtentBeginPosition');
+  estimatedStartDate.addEventListener('changeDate', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#temporalExtentBeginPosition');
+      formValidate.revalidateField('#temporalExtentEndPosition');
+    }
   });
+
+  const estimatedEndDate = document.getElementById('temporalExtentEndPosition');
+  estimatedEndDate.addEventListener('changeDate', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#temporalExtentBeginPosition');
+      formValidate.revalidateField('#temporalExtentEndPosition');
+    }
+  });
+
+  geoViz.on('geojsonupdated', (e) => {
+    const geometryType = e.geojson ? turf.getType(e.geojson) : '';
+    const spatialExtent = document.getElementById('spatialExtent');
+    let geometry = null;
+    if (geometryType === 'Point') {
+      const geoJSON = geoViz.getDrawnFeaturesAsGeoJSON();
+      const combinedFeature = turf.combine(geoJSON);
+      geometry = combinedFeature.features.length > 0 ? combinedFeature.features[0].geometry : null;
+
+      if (!geometry) {
+        spatialExtent.value = '';
+        return;
+      }
+    } else {
+      geometry = e.geojson ? e.geojson.geometry : '';
+      if (!geometry || e.removed === true) {
+        spatialExtent.value = '';
+        return;
+      }
+    }
+
+    const url = Routing.generate('pelagos_app_geojson_to_gml');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        geometry,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const gmlOutput = json.gml;
+        console.warn('GML Output:', gmlOutput);
+        spatialExtent.value = gmlOutput;
+        formValidate.revalidateField('#spatial-extent');
+      });
+  });
+
+  // on form reset event
+  // const resetButton = document.getElementById('resetFormButton');
+  // resetButton.addEventListener('click', () => {
+  //   form.reset(); // reset the form
+  //   // reset tomSelects
+  //   setTimeout(() => {
+  //     fundersSelect.clear();
+  //     contactSelects.forEach((contactSelect) => contactSelect.clear());
+  //     themeKeywordsSelect.clear();
+  //     placeKeywordsSelect.clear();
+  //     topicKeywordsSelect.clear();
+
+  //     // find all form fields
+  //     const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
+  //     formFields.forEach((field) => {
+  //       const formField = field;
+  //       formField.value = '';
+  //       formField.removeAttribute('value');
+  //       formField.removeAttribute('data-value');
+  //       formField.checked = false;
+  //     });
+  //     Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
+  //     Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+  //     formValidate.refresh();
+  //   });
+  // });
 });
