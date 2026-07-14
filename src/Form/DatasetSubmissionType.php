@@ -48,6 +48,7 @@ class DatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -166,6 +167,9 @@ class DatasetSubmissionType extends AbstractType
             ->add('topicKeywords', Type\ChoiceType::class, [
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
+                'choice_attr' => function(mixed $choice) {
+                    return ['description' => DatasetSubmission::TOPIC_KEYWORDS[$choice]['description']];
+                },
                 'multiple' => true,
                 'required' => true,
             ])
@@ -355,7 +359,7 @@ class DatasetSubmissionType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-            if ($data) {
+            if ($data instanceof DatasetSubmission) {
                 if (true === $data->isDatasetFileInColdStorage()) {
                     $form->get('isDatasetFileInColdStorage')->setData(true);
                     $form->get('datasetFileColdStorageArchiveSize')->setData(
@@ -390,12 +394,14 @@ class DatasetSubmissionType extends AbstractType
                 $totalBytes = $event->getForm()->get('coldStorageTotalUnpackedSize')->getData();
                 $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
-                if (null !== $size and null !== $hash and null !== $name) {
-                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
-                } else {
-                    $entity->clearDatasetFileColdStorageAttributes();
+                if ($entity instanceof DatasetSubmission) {
+                    if (null !== $size and null !== $hash and null !== $name) {
+                        $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
+                    } else {
+                        $entity->clearDatasetFileColdStorageAttributes();
+                    }
+                    $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
                 }
-                $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
             }
         );
     }
@@ -405,6 +411,7 @@ class DatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $entity = $this->formEntity;

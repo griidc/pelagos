@@ -111,12 +111,12 @@ class DIFCrudController extends AbstractCrudController
             ->setLabel('Locked');
 
         $primaryPointOfContactField = AssociationField::new('primaryPointOfContact')
-            ->setLabel('Primary Data Point of Contact')
+            ->setLabel('Primary Point of Contact')
             ->setFormTypeOption('query_builder', $this->createPointOfContactQueryBuilder($dif))
             ->hideOnIndex();
 
         $secondaryPointOfContactField = AssociationField::new('secondaryPointOfContact')
-            ->setLabel('Additional Data Point of Contact')
+            ->setLabel('Additional Point of Contact')
             ->setFormTypeOption('query_builder', $this->createPointOfContactQueryBuilder($dif))
             ->hideOnIndex();
 

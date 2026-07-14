@@ -14,6 +14,7 @@ import JustValidatePluginDate from 'just-validate-plugin-date';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 import GeoViz from '../modules/geoViz';
+import * as turf from '@turf/turf';
 
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
@@ -21,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
-  const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
-  const spatialExtentDescription = document.getElementById('spatial-extent-description');
+  const spatialExtentGeometry = document.getElementsByClassName('spatial-extent-geometry');
+  const spatialExtentDescription = document.getElementsByClassName('spatial-extent-description');
   spatialExtentRadios.forEach((radio) => {
     const spatialExtentGeometryField = document.getElementById('spatialExtent');
     const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
@@ -30,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
 
     if (spatialExtentDescriptionFieldValue && radio.value === 'no-extent') {
-      spatialExtentGeometry.classList.add('hidden');
-      spatialExtentDescription.classList.remove('hidden');
+      Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+      Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
       spatialExtentGeometryField.value = '';
       geoViz.clearMap();
       const spatialRadio = radio;
@@ -39,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (spatialExtentGeometryFieldValue && radio.value === 'yes-extent') {
-      spatialExtentGeometry.classList.remove('hidden');
-      spatialExtentDescription.classList.add('hidden');
+      Array.from(spatialExtentGeometry).forEach((el) => el.classList.remove('hidden'));
+      Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
       const spatialRadio = radio;
       spatialRadio.checked = true;
       geoViz.fixMapSize();
@@ -79,13 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       if (e.target.value === 'yes-extent') {
-        spatialExtentGeometry.classList.remove('hidden');
-        spatialExtentDescription.classList.add('hidden');
+        Array.from(spatialExtentGeometry).forEach((el) => el.classList.remove('hidden'));
+        Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
         spatialExtentDescriptionField.value = '';
         geoViz.fixMapSize();
       } else if (e.target.value === 'no-extent') {
-        spatialExtentGeometry.classList.add('hidden');
-        spatialExtentDescription.classList.remove('hidden');
+        Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+        Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
         spatialExtentGeometryField.value = '';
         geoViz.clearMap();
       }
@@ -97,6 +98,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactsContainer = document.querySelector('.dataset-contacts');
   const contactTemplate = contactsContainer.querySelector('.dataset-contact');
   const newContactTemplate = contactTemplate.cloneNode(true);
+  const contactSelects = [];
+
+  const formValidate = new JustValidate(form, {
+    errorLabelStyle: {
+      color: '#b81111',
+      fontWeight: 'bold',
+    },
+  });
+
+  const makeContactSelect = (contact) => {
+    const contactSelect = new TomSelect(contact, {
+      maxOptions: null,
+      placeholder: '[Please select a contact.]',
+      plugins: {
+        clear_button: {
+          title: 'Remove all selected options',
+        },
+      },
+    });
+    contactSelects.push(contactSelect);
+  };
 
   const addContactButton = document.getElementById('addContactButton');
   addContactButton.addEventListener('click', () => {
@@ -124,11 +146,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300);
     });
 
-    const contact = newContact.querySelector('.contactperson');
-    const contactSelect = new TomSelect(contact, {
-      maxOptions: null,
-      placeholder: '[Please select a contact.]',
-    });
+    const contactPerson = newContact.querySelector('.contactperson');
+    const contactRole = newContact.querySelector('.contactrole');
+    makeContactSelect(contactPerson);
+
+    formValidate
+      .addField(contactPerson, [
+        {
+          rule: 'required',
+          errorMessage: 'Please select a contact.',
+        },
+      ])
+      .addField(contactRole, [
+        {
+          rule: 'required',
+          errorMessage: 'Please select a contact role.',
+        },
+      ]);
 
     newContact.style.opacity = '0';
     newContact.style.transition = 'opacity 0.3s ease';
@@ -152,10 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   Array.from(datasetContacts).forEach((contact) => {
-    const contactSelect = new TomSelect(contact, {
-      maxOptions: null,
-      placeholder: '[Please select a contact.]',
-    });
+    makeContactSelect(contact);
   });
 
   const funders = document.getElementById('funders');
@@ -198,6 +229,14 @@ document.addEventListener('DOMContentLoaded', () => {
     maxOptions: null,
     create: false,
     persist: false,
+    render: {
+      option(data, escape) {
+        return `<div class="topic-keyword-option">
+          <span class="topic-keyword-option-text">${escape(data.text)}</span>
+          <span class="topic-keyword-option-description">${escape(data.description)}</span>
+        </div>`;
+      },
+    },
   });
 
   // Prevent form submission on Enter key press for all fields except buttons
@@ -207,10 +246,235 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const successEvent = event;
-    successEvent.currentTarget.submitAction.value = event.submitter.name;
-    successEvent.currentTarget.submit();
+  const contactPersons = document.querySelectorAll('select.contactperson');
+  contactPersons.forEach((contactPerson) => {
+    formValidate.addField(contactPerson, [
+      {
+        rule: 'required',
+        errorMessage: 'Please select a contact.',
+      },
+    ]);
   });
+
+  const contactRoles = document.querySelectorAll('select.contactrole');
+  contactRoles.forEach((contactRole) => {
+    formValidate.addField(contactRole, [
+      {
+        rule: 'required',
+        errorMessage: 'Please select a contact role.',
+      },
+    ]);
+  });
+
+  formValidate
+    .addField('#authors', [
+      {
+        rule: 'required',
+        errorMessage: 'Please select at least one author.',
+      },
+    ])
+    .addField('#funders', [
+      {
+        rule: 'required',
+        errorMessage: 'Funder is required.',
+      },
+    ])
+    .addField('#title', [
+      {
+        rule: 'required',
+        errorMessage: 'Title is required.',
+      },
+    ])
+    .addField('#abstract', [
+      {
+        rule: 'required',
+        errorMessage: 'Abstract is required.',
+      },
+    ])
+    .addField('#purpose', [
+      {
+        rule: 'required',
+        errorMessage: 'Purpose is required.',
+      },
+    ])
+    .addField('#suppParams', [
+      {
+        rule: 'required',
+        errorMessage: 'Data parameters and units are required.',
+      },
+    ])
+    .addField('#themeKeywords', [
+      {
+        rule: 'required',
+        errorMessage: 'Theme keywords are required.',
+      },
+    ])
+    .addField('#topic-keyword-select', [
+      {
+        rule: 'required',
+        errorMessage: 'Please select at least one topic category keyword.',
+      },
+    ])
+    .addField('#temporalExtentDesc', [
+      {
+        validator: (value, context) => {
+          const temporalExtentDesc = context['#temporalExtentDesc'].elem;
+          if (temporalExtentDesc.checkVisibility() && !temporalExtentDesc.value.trim()) {
+            return false;
+          }
+          return true;
+        },
+        errorMessage: 'Temporal extent description is required.',
+      },
+    ])
+    .addField('#spatial-extent', [
+      {
+        validator: () => {
+          const spatialExtentGeometryElement = document.getElementById('spatialExtent');
+          const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
+          // Check if either the description or geometry field is filled
+          if (spatialExtentDescriptionElement.value.trim()) {
+            return true;
+          }
+          if (spatialExtentGeometryElement.value.trim()) {
+            return true;
+          }
+          return false;
+        },
+        errorMessage: 'Please provide either a spatial extent geometry or a spatial extent description.',
+      },
+    ], {
+      errorsContainer: '#spatial-extent-error',
+    })
+    .addField('#temporalExtentBeginPosition', [
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+          required: true,
+        })),
+        errorMessage: 'Date is required.',
+      },
+      // {
+      //   plugin: JustValidatePluginDate((fields) => ({
+      //     required: true,
+      //     format: 'yyyy-MM-dd',
+      //     isBefore: fields['#temporalExtentEndPosition'].elem.value,
+      //   })),
+      //   errorMessage: 'Date must be before end date.',
+      // },
+    ])
+    .addField('#temporalExtentEndPosition', [
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+          required: true,
+        })),
+        errorMessage: 'Date is required.',
+      },
+      // {
+      //   plugin: JustValidatePluginDate((fields) => ({
+      //     required: true,
+      //     format: 'yyyy-MM-dd',
+      //     isAfter: fields['#temporalExtentBeginPosition'].elem.value,
+      //   })),
+      //   errorMessage: 'Date must be after start date.',
+      // },
+    ])
+    .onSuccess((event) => {
+      const successEvent = event;
+      successEvent.currentTarget.submitAction.value = event.submitter.name;
+      successEvent.currentTarget.submit();
+    });
+
+  const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
+  spatialExtentDescriptionElement.addEventListener('change', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#spatial-extent');
+    }
+  });
+
+  const estimatedStartDate = document.getElementById('temporalExtentBeginPosition');
+  estimatedStartDate.addEventListener('changeDate', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#temporalExtentBeginPosition');
+      formValidate.revalidateField('#temporalExtentEndPosition');
+    }
+  });
+
+  const estimatedEndDate = document.getElementById('temporalExtentEndPosition');
+  estimatedEndDate.addEventListener('changeDate', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#temporalExtentBeginPosition');
+      formValidate.revalidateField('#temporalExtentEndPosition');
+    }
+  });
+
+  geoViz.on('geojsonupdated', (e) => {
+    const geometryType = e.geojson ? turf.getType(e.geojson) : '';
+    const spatialExtent = document.getElementById('spatialExtent');
+    let geometry = null;
+    if (geometryType === 'Point') {
+      const geoJSON = geoViz.getDrawnFeaturesAsGeoJSON();
+      const combinedFeature = turf.combine(geoJSON);
+      geometry = combinedFeature.features.length > 0 ? combinedFeature.features[0].geometry : null;
+
+      if (!geometry) {
+        spatialExtent.value = '';
+        return;
+      }
+    } else {
+      geometry = e.geojson ? e.geojson.geometry : '';
+      if (!geometry || e.removed === true) {
+        spatialExtent.value = '';
+        return;
+      }
+    }
+
+    const url = Routing.generate('pelagos_app_geojson_to_gml');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        geometry,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const gmlOutput = json.gml;
+        console.warn('GML Output:', gmlOutput);
+        spatialExtent.value = gmlOutput;
+        if (formValidate.isSubmitted) {
+          formValidate.revalidateField('#spatial-extent');
+        }
+      });
+  });
+
+  // on form reset event
+  // const resetButton = document.getElementById('resetFormButton');
+  // resetButton.addEventListener('click', () => {
+  //   form.reset(); // reset the form
+  //   // reset tomSelects
+  //   setTimeout(() => {
+  //     fundersSelect.clear();
+  //     contactSelects.forEach((contactSelect) => contactSelect.clear());
+  //     themeKeywordsSelect.clear();
+  //     placeKeywordsSelect.clear();
+  //     topicKeywordsSelect.clear();
+
+  //     // find all form fields
+  //     const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
+  //     formFields.forEach((field) => {
+  //       const formField = field;
+  //       formField.value = '';
+  //       formField.removeAttribute('value');
+  //       formField.removeAttribute('data-value');
+  //       formField.checked = false;
+  //     });
+  //     Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
+  //     Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+  //     formValidate.refresh();
+  //   });
+  // });
 });

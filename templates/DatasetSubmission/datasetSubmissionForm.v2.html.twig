@@ -25,13 +25,12 @@
                             </div>
                         {% else %}
                             <div class="flex justify-between items-center">
-                                <label for="datasetcontact">Additional Point of Contact</label>
+                                <label class="required" for="datasetcontact">Additional Point of Contact</label>
                                 <button type="button" class="float-right text-sm deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
                             </div>
                         {% endif %}
-                        <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                        <select class="contactperson w-full" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                         {% set selectPerson = contact.vars.data.person.id %}
-
                         {% for person in researchGroupPeople %}
                             <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
                                 {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
@@ -41,7 +40,7 @@
                     </div>
                     <div>
                         {{ form_widget(contact.primaryContact) }}
-                        {{ form_row(contact.role, { attr: { class: 'input-base' } }) }}
+                        {{ form_row(contact.role, { attr: { class: 'input-base contactrole' } }) }}
                     </div>
                     <hr class="my-2 border-gray-300">
                 </div>
@@ -132,8 +131,8 @@
             </div>
 
             <div>
-                <label>Topic Category Keyword List</label>
-                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" keyword="source" name="{{ form.topicKeywords.vars.full_name }}">
+                {{ form_label(form.topicKeywords) }}
+                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" required="required" name="{{ form.topicKeywords.vars.full_name }}">
                     {% set order = 0 %}
                     {% for keyword in form.topicKeywords.vars.choices %}
                         {% set found = false  %}
@@ -142,7 +141,7 @@
                                 {% set found = true %}
                             {% endif %}
                         {% endfor %}
-                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }}>{{keyword.label}}</option>
+                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }} data-description="{{ keyword.attr['description'] }}">{{keyword.label}}</option>
                         {% set order = order + 1 %}
                     {% endfor %}
                 </select>
@@ -186,33 +185,38 @@
             </ul>
 
             <div id="spatial-extent">
-                <div id="spatial-extent-geometry" class="hidden">
+                <div class="spatial-extent-geometry hidden">
                     <div class="grid-col-span-2">
                         {{ form_row(form.spatialExtent, { attr: { class: 'input-base'} }) }}
                         {% include 'DIF/spatial.html.twig' %}
                     </div>
                 </div>
 
-                <div id="spatial-extent-description" class="hidden">
+
+                <div class="grid grid-cols-1 gap-4 spatial-extent-description hidden">
                     <div class="grid-col-span-2">
                         {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
                     </div>
                 </div>
 
-                <div>
-                    {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="spatial-extent-geometry hidden">
                     <div>
-                        {{ form_row(form.temporalExtentBeginPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
                     </div>
 
-                    <div>
-                        {{ form_row(form.temporalExtentEndPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            {{ form_row(form.temporalExtentBeginPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_row(form.temporalExtentEndPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        </div>
                     </div>
                 </div>
             </div>
+            <div id="spatial-extent-error"></div>
+
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
@@ -239,17 +243,13 @@
             <input type="hidden" name="submitAction" id="submitAction"/>
             {# <input type="hidden" name="status" id="status" value="{{ status }}"/> #}
 
-            <div class="grid grid-cols-3 gap-4" id="submit">
+            <div class="grid grid-cols-2 gap-4" id="submit">
                 <div>
                     <button type="submit" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center">Save and Continue Later</button>
                 </div>
 
                 <div>
                     <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
-                </div>
-
-                <div>
-                    <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
                 </div>
             </div>
         </div>

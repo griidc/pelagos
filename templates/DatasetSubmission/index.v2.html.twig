@@ -29,11 +29,12 @@
             color: rgb(17 24 39 / var(--tw-text-opacity, 1));
         }
 
-        /* Needed for Funder */
-        .ts-control input#funders-ts-control {
+        .ts-control > input {
             font-size: 0.875rem !important;
             line-height: 1.25rem !important;
+            min-width: 12rem !important;
         }
+
         .ts-control:has(#funders-ts-control) {
             display: flex !important;
             flex-wrap: wrap !important;
@@ -64,6 +65,27 @@
 
         .leaflet-control-layers-selector {
             appearance: revert;
+        }
+
+        .topic-keyword-option {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .topic-keyword-option-text {
+            font-weight: bold;
+        }
+
+        .topic-keyword-option-description {
+            font-size: 0.75rem;
+        }
+
+        .topic-keyword-option-description::first-letter {
+            text-transform: uppercase;
+        }
+
+        .topic-keyword-option-description::after {
+            content: ".";
         }
     </style>
 
