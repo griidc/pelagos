@@ -334,7 +334,7 @@ export default class SpatialWizard {
         if (featureType === 'Polygon') {
           const first = coordinatePairs[0];
           const last = coordinatePairs[coordinatePairs.length - 1];
-          if (first[0] !== last[0] || first[1] !== last[1]) {
+          if (first && last && (first[0] !== last[0] || first[1] !== last[1])) {
             coordinatePairs.push([...first]);
           }
           coordinatePairs = [coordinatePairs];
