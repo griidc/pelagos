@@ -16,6 +16,8 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 import GeoViz from '../modules/geoViz';
 import * as turf from '@turf/turf';
 
+import '../file-manager';
+
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
     loadWizard: true,
@@ -372,37 +374,64 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .addField('#temporalExtentBeginPosition', [
       {
-        plugin: JustValidatePluginDate(() => ({
-          format: 'yyyy-MM-dd',
-          required: true,
-        })),
+        validator: (value, context) => {
+          const temporalExtentBeginPosition = context['#temporalExtentBeginPosition'].elem;
+          if (temporalExtentBeginPosition.checkVisibility() && !temporalExtentBeginPosition.value.trim()) {
+            return false;
+          }
+          return true;
+        },
         errorMessage: 'Date is required.',
       },
-      // {
-      //   plugin: JustValidatePluginDate((fields) => ({
-      //     required: true,
-      //     format: 'yyyy-MM-dd',
-      //     isBefore: fields['#temporalExtentEndPosition'].elem.value,
-      //   })),
-      //   errorMessage: 'Date must be before end date.',
-      // },
-    ])
-    .addField('#temporalExtentEndPosition', [
       {
         plugin: JustValidatePluginDate(() => ({
           format: 'yyyy-MM-dd',
-          required: true,
         })),
+        errorMessage: 'Date must be in the format yyyy-MM-dd.',
+      },
+      {
+        plugin: JustValidatePluginDate((fields) => ({
+          format: 'yyyy-MM-dd',
+          isBefore: fields['#temporalExtentEndPosition'].elem.value,
+        })),
+        errorMessage: 'Date must be before end date.',
+      },
+    ])
+    .addField('#temporalExtentEndPosition', [
+      {
+        validator: (value, context) => {
+          const temporalExtentEndPosition = context['#temporalExtentEndPosition'].elem;
+          if (temporalExtentEndPosition.checkVisibility() && !temporalExtentEndPosition.value.trim()) {
+            return false;
+          }
+          return true;
+        },
         errorMessage: 'Date is required.',
       },
-      // {
-      //   plugin: JustValidatePluginDate((fields) => ({
-      //     required: true,
-      //     format: 'yyyy-MM-dd',
-      //     isAfter: fields['#temporalExtentBeginPosition'].elem.value,
-      //   })),
-      //   errorMessage: 'Date must be after start date.',
-      // },
+      {
+        plugin: JustValidatePluginDate(() => ({
+          format: 'yyyy-MM-dd',
+        })),
+        errorMessage: 'Date must be in the format yyyy-MM-dd.',
+      },
+      {
+        plugin: JustValidatePluginDate((fields) => ({
+          format: 'yyyy-MM-dd',
+          isAfter: fields['#temporalExtentBeginPosition'].elem.value,
+        })),
+        errorMessage: 'Date must be after start date.',
+      },
+    ])
+    .addField('#remotelyHostedUrl', [
+      {
+        validator: (value) => {
+          if (value && URL.canParse(value)) {
+            return true;
+          }
+          return false;
+        },
+        errorMessage: 'Please enter a valid URL.',
+      },
     ])
     .onSuccess((event) => {
       const successEvent = event;
