@@ -224,20 +224,36 @@
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
 
             <div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        {{ form_row(form.datasetFileTransferType) }}
-                    </div>
-                    <div>
-                        {{ form_row(form.restrictions) }}
-                    </div>
+                {{ form_row(form.datasetFileTransferType) }}
+
+                <div class="mb-2 font-normal text-gray-700">
+                    <span class="block mb-2">
+                        You may upload files or folders using Drag and Drop or via the Upload Button.
+                    </span>
                 </div>
 
-                <div>
-                    <span class="text-2xl">You have not completed all required fields.</span>
+                <div id="file-manager">
+                    <div id="dropzone-uploader">
+                        <input id="filesUploaded" name="filesUploaded" type="hidden" value="" class="files">
+                        <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ true }}"></div>
+                    </div>
                 </div>
+            </div>
 
-                <div>FILE SUBMISSION COMPONENT GOES HERE</div>
+            <div>
+                <span class="font-normal text-gray-700 block mb-2">If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.</span>
+                {{ form_label(form.remotelyHostedUrl) }}
+                {{ form_widget(form.remotelyHostedUrl, { attr: {class: 'files input-base'} }) }}
+            </div>
+
+            <label class="required">Restrictions:</label>
+            <div class="flex w-100 flex-col md:flex-row md:items-center gap-4" id="restrictions">
+                {% for key, restrictionItem in form.restrictions.children %}
+                    <div class="flex items-center me-4">
+                        {{ form_widget(restrictionItem, { attr: { class: 'radio-base'} }) }}
+                        <span class="pl-2 choice-label">{{ restrictionItem.vars.label }}</span>
+                    </div>
+                {% endfor %}
             </div>
 
             <input type="hidden" name="submitAction" id="submitAction"/>
@@ -253,25 +269,5 @@
                 </div>
             </div>
         </div>
-        {# {% if isDRPM %}
-        <input type="hidden" id="isDrpm" value='1'>
-        <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
-        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
-            <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
-            <div class="grid grid-cols-3 gap-4 py-2" id="submit">
-                <div>
-                    <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'disabled' }}>Approve</button>
-                </div>
-                <div>
-                    <button type="submit" id="unlockSubmission" name="unlockSubmission" class="button button-regular button-form w-full justify-center" {{ not isUnlockable ? 'disabled' }}>Unlock</button>
-                </div>
-                <div>
-                    <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center">Update</button>
-                </div>
-            <div>
-        </div>
-        {% else %}
-            <input type="hidden" id="isDrpm" value='0'>
-        {% endif %} #}
     </div>
 </form>
