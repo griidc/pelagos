@@ -149,6 +149,11 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         }
 
+        if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
+            $entityManager->persist($datasetSubmission);
+            $entityManager->flush();
+        }
+
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
 
         $form->handleRequest($request);
@@ -185,10 +190,6 @@ class DatasetSubmissionController extends AbstractController
                 $eventName = 'resubmitted';
             } else {
                 $eventName = 'submitted';
-            }
-
-            if (!$entityManager->contains($datasetSubmission)) {
-                $entityManager->persist($datasetSubmission);
             }
 
             $entityManager->persist($dataset);
