@@ -18,6 +18,16 @@ import * as turf from '@turf/turf';
 
 import '../file-manager';
 
+// get query string, if it has paramater regid, then change it to udi.
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('regid')) {
+  const regidValue = urlParams.get('regid');
+  urlParams.delete('regid');
+  urlParams.set('udi', regidValue);
+  const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+  window.history.replaceState({}, '', newUrl);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
     loadWizard: true,
@@ -401,7 +411,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#remotelyHostedUrl', [
       {
         validator: (value) => {
-          if (value && URL.canParse(value)) {
+          if (!value.trim()) {
+            return true;
+          }
+          if (URL.canParse(value)) {
             return true;
           }
           return false;
@@ -416,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
   const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
-  spatialExtentDescriptionElement.addEventListener('change', () => {
+  spatialExtentDescriptionElement.addEventListener('input', () => {
     if (formValidate.isSubmitted) {
       formValidate.revalidateField('#spatial-extent');
     }
