@@ -123,6 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const addContactButton = document.getElementById('addContactButton');
   addContactButton.addEventListener('click', () => {
     const index = parseInt(contactsContainer.getAttribute('data-index'), 10);
+
+    const existingContacts = contactsContainer.querySelectorAll('.dataset-contact');
+    if (existingContacts.length === 1 && !existingContacts[0].querySelector('hr')) {
+      const firstHr = document.createElement('hr');
+      firstHr.className = 'mt-5 border-gray-300';
+      existingContacts[0].appendChild(firstHr);
+    }
     const newContact = newContactTemplate.cloneNode(true);
     newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts\[\d+\]/g, `datasetContacts[${index + 1}]`);
     newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts_\d+_/g, `datasetContacts_${index + 1}_`);
@@ -143,6 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
       newContact.style.opacity = '0';
       setTimeout(() => {
         contactsContainer.removeChild(newContact);
+        const remainingContacts = contactsContainer.querySelectorAll('.dataset-contact');
+        if (remainingContacts.length === 1) {
+          const hrToRemove = remainingContacts[0].querySelector('hr');
+          if (hrToRemove) hrToRemove.remove();
+        }
       }, 300);
     });
 
@@ -164,6 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       ]);
 
+    const currentHr = document.querySelector('div > hr');
+    if (!currentHr) {
+      const hr = document.createElement('hr');
+      hr.className = 'mt-5 border-gray-300';
+      newContact.appendChild(hr);
+    }
+
     newContact.style.opacity = '0';
     newContact.style.transition = 'opacity 0.3s ease';
     contactsContainer.appendChild(newContact);
@@ -181,6 +200,11 @@ document.addEventListener('DOMContentLoaded', () => {
       contactElement.style.opacity = '0';
       setTimeout(() => {
         contactsContainer.removeChild(contactElement);
+        const remainingContacts = contactsContainer.querySelectorAll('.dataset-contact');
+        if (remainingContacts.length === 1) {
+          const hrToRemove = remainingContacts[0].querySelector('hr');
+          if (hrToRemove) hrToRemove.remove();
+        }
       }, 300);
     });
   });
