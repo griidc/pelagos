@@ -24,14 +24,14 @@
     {% set typeText = 'Submission' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED') and dataset.hasDatasetSubmissionHistory %}
     {# Saved Identified Dataset Needs to be Submitted #}
-    {% set linkUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?regid=' ~ dataset.udi %}
+    {% set linkUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?udi=' ~ dataset.udi %}
     {% set linkText = 'Submit' %}
     {% set statusText = 'Saved submission.' %}
     {% set badgeText = 'Draft' %}
     {% set typeText = 'Submission' %}
 {% elseif datasetLifecycleStatus == constant('App\\Enum\\DatasetLifecycleStatus::IDENTIFIED') %}
     {# DIF Approved #}
-    {% set linkUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?regid=' ~ dataset.udi %}
+    {% set linkUrl = url('pelagos_app_ui_datasetsubmission_default') ~ '?udi=' ~ dataset.udi %}
     {% set linkText = 'Submit' %}
     {% set statusText = 'Identified dataset accepted.' %}
     {% set badgeText = 'Accepted' %}

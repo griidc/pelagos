@@ -149,6 +149,11 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         }
 
+        if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
+            $entityManager->persist($datasetSubmission);
+            $entityManager->flush();
+        }
+
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
 
         $form->handleRequest($request);
@@ -187,10 +192,6 @@ class DatasetSubmissionController extends AbstractController
                 $eventName = 'submitted';
             }
 
-            if (!$entityManager->contains($datasetSubmission)) {
-                $entityManager->persist($datasetSubmission);
-            }
-
             $entityManager->persist($dataset);
             $entityManager->flush();
 
@@ -209,6 +210,8 @@ class DatasetSubmissionController extends AbstractController
                 'researchGroupId' => $dataset->getResearchGroup()->getId(),
                 'datasetId' => $dataset->getId(),
                 'researchGroupPeople' => $researchGroupPeople,
+                'datasetSubmission' => $datasetSubmission,
+                'datasetSubmissionLockStatus' => $this->isSubmissionLocked($dataset),
                 // 'status' => $dif->getStatus(),
                 // 'isSubmittable' => $dif->isSubmittable(),
                 // 'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
