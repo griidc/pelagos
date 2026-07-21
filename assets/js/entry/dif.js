@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
+    closeAfterSelect: true,
     hidePlaceholder: true,
     plugins: {
       remove_button: {
@@ -116,6 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const researchGroup = document.getElementById('researchGroup');
   const researchGroupSelect = new TomSelect(researchGroup, {
     maxOptions: null,
+    closeAfterSelect: true,
+    hidePlaceholder: true,
     plugins: [
       'clear_button',
       'dropdown_input',

@@ -38,7 +38,7 @@ class PersonDatasetSubmissionType extends AbstractType
             ->add('role', ChoiceType::class, array(
                 'label' => 'Role',
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
-                'placeholder' => '[Please select a role.]',
+                'placeholder' => 'Please select the person’s relationship to the dataset.',
             ))
             ->add('primaryContact', CheckboxType::class, array(
                 'label' => 'Is Primary Contact',
@@ -52,7 +52,7 @@ class PersonDatasetSubmissionType extends AbstractType
                     'choice_label' => function (Person $value) {
                         return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                     },
-                    'placeholder' => '[Please select a person.]',
+                    'placeholder' => 'Please select a person.',
                 ));
             });
     }

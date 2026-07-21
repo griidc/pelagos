@@ -195,6 +195,11 @@ class DatasetSubmissionController extends AbstractController
             $entityManager->persist($dataset);
             $entityManager->flush();
 
+            $this->entityEventDispatcher->dispatch(
+                $datasetSubmission,
+                $eventName
+            );
+
             return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
                 'dataset' => $dataset,
             ]);
