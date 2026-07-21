@@ -40,7 +40,7 @@
                     </div>
                     <div>
                         {{ form_widget(contact.primaryContact) }}
-                        {{ form_row(contact.role, { attr: { class: 'input-base contactrole' } }) }}
+                        {{ form_row(contact.role, { attr: { class: 'contactrole' } }) }}
                     </div>
                     <hr class="my-2 border-gray-300">
                 </div>
@@ -54,11 +54,11 @@
             </div>
 
             <div>
-                {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
+                {{ form_row(form.additionalFunders, { attr: { class: 'input-base' } }) }}
             </div>
 
             <div>
-                {{ form_row(form.authors, { attr: { class: 'input-base'} }) }}
+                {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
             </div>
         </div>
 
@@ -201,7 +201,7 @@
 
                 <div class="spatial-extent-geometry hidden">
                     <div>
-                        {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
+                        {{ form_row(form.temporalExtentDesc)}}
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -266,6 +266,10 @@
 
                 <div>
                     <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
+                </div>
+
+                <div>
+                    <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
                 </div>
             </div>
         </div>
