@@ -32,7 +32,11 @@
         .ts-control > input {
             font-size: 0.875rem !important;
             line-height: 1.25rem !important;
-            min-width: 100% !important;
+            min-width: fit-content !important;
+        }
+
+        .ts-control > input:not([placeholder=""]) {
+            width: 100% !important;
         }
 
         .ts-control:has(#funders-ts-control) {

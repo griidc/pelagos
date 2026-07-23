@@ -53,10 +53,10 @@ class DatasetSubmissionType extends AbstractType
     {
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $builder
-            ->add('title', Type\TextType::class, [
+            ->add('title', Type\TextareaType::class, [
                 'label' => 'Dataset Title',
                 'required' => true,
-                 'attr' => [
+                'attr' => [
                     'placeholder' => 'Please provide a title that describes the contents of your dataset. This is NOT the title of your project. (200 character maximum)',
                     'rows' => '2',
                     'maxsize' => 200,
@@ -183,7 +183,7 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Provenance and Historical References',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'If existing historical were used as part of the dataset, please provide a description of these data including who created the original dataset (person and/or organization and where the historical data be obtained.',
+                    'placeholder' => 'If existing historical were used as part of the dataset, please provide a description of these data including who created the original dataset (person and/or organization and where the historical data be obtained).',
                     'rows' => '5'
                 ],
             ])
@@ -206,7 +206,7 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Please provide commonly used words or short phrases that describe the geographic areas, locations, or places that describe the dataset.',
+                    'placeholder' => 'Please provide commonly used words or short phrases that describe the geographic areas or locations that describe the dataset.',
                 ],
             ])
             ->add('topicKeywords', Type\ChoiceType::class, [
