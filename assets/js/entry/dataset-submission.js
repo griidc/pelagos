@@ -125,6 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
       placeholder: 'Please select a contact.',
       closeAfterSelect: true,
       hidePlaceholder: true,
+      render: {
+        option(data, escape) {
+          return `<div>
+              ${escape(data.lastname)}, ${escape(data.firstname)} (${escape(data.email)})
+          </div>`;
+        },
+        item(data, escape) {
+          return `<div>${escape(data.lastname)}, ${escape(data.firstname)}</div>`;
+        },
+      },
       plugins: {
         clear_button: {
           title: 'Remove all selected options',
@@ -136,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const roleSelect = new TomSelect(role, {
       hidePlaceholder: true,
       closeAfterSelect: true,
-      placeholder: 'Please select the person’s relationship to the dataset.',
+      placeholder: ' Please select a role.',
     });
 
     contactSelects.push({ contactSelect, roleSelect });
@@ -156,6 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
     newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts\[\d+\]/g, `datasetContacts[${index + 1}]`);
     newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts_\d+_/g, `datasetContacts_${index + 1}_`);
     newContact.innerHTML = newContact.innerHTML.replace(/Primary/g, 'Additional');
+    const hr = newContact.querySelector('.top-hr > hr');
+    hr.classList.remove('hidden');
+
     const selects = newContact.querySelectorAll('select');
     Array.from(selects).forEach((select) => {
       const selectElement = select;
@@ -278,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAfterSelect: true,
     hidePlaceholder: true,
     placeholder:
-      'Please provide commonly used words or short phrases that describe the geographic areas, locations, or places that describe the dataset.',
+      'Please provide commonly used words or short phrases that describe the geographic areas that describe the dataset.',
   });
 
   placeKeywordsSelect.inputState();
@@ -311,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     maxItems: 1,
     closeAfterSelect: true,
     hidePlaceholder: true,
-    placeholder: 'Please select a time period description.',
+    placeholder: 'Please select a description of what the time period represents.',
   });
   temporalExtentDescSelect.inputState();
 

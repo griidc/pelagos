@@ -38,7 +38,7 @@ class PersonDatasetSubmissionType extends AbstractType
             ->add('role', ChoiceType::class, array(
                 'label' => 'Role',
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
-                'placeholder' => 'Please select the person’s relationship to the dataset.',
+                'placeholder' => 'Please select the contact’s relationship to the dataset',
             ))
             ->add('primaryContact', CheckboxType::class, array(
                 'label' => 'Is Primary Contact',
