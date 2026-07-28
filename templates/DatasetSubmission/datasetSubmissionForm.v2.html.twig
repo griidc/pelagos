@@ -12,39 +12,48 @@
         {% endif %}
         <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
             <div class="grid grid-cols-1 gap-4 dataset-contacts"
                 data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
             >
                 {% for contact in form.datasetContacts %}
-                <div class="dataset-contact">
-                    <div>
-                        {% if contact.vars.data.primaryContact %}
-                            <div class="flex justify-between items-center">
-                                <label class="required" for="datasetcontact">Primary Point of Contact</label>
-                                <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
-                            </div>
-                        {% else %}
-                            <div class="flex justify-between items-center">
-                                <label class="required" for="datasetcontact">Additional Point of Contact</label>
-                                <button type="button" class="float-right text-sm deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
-                            </div>
-                        {% endif %}
+                <div class="dataset-contact grid grid-cols-[2fr_1fr] gap-4 w-full relative">
+                    <div class="col-span-2 top-hr">
+                        <hr class="w-full border-gray-300 hidden">
+                    </div>
+                    <div class="absolute top-4 right-0">
+                        <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                    </div>
+                    <div class="w-full">
+                        <div>
+                            <label class="required" for="datasetcontact">
+                                {{ contact.vars.data.primaryContact ? 'Primary Point of Contact' : 'Additional Point of Contact' }}
+                            </label>
+                        </div>
                         <select class="contactperson w-full" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                         {% set selectPerson = contact.vars.data.person.id %}
                         {% for person in researchGroupPeople %}
-                            <option value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}>
+                            <option
+                                value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}
+                                data-email="{{person.emailAddress}}"
+                                data-firstname="{{person.firstName}}"
+                                data-lastname="{{person.lastName}}"
+                            >
                                 {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
                             </option>
                         {% endfor %}
                         </select>
                     </div>
-                    <div>
+                    <div class="w-full">
                         {{ form_widget(contact.primaryContact) }}
-                        {{ form_row(contact.role, { attr: { class: 'input-base contactrole' } }) }}
+                        {{ form_row(contact.role, { attr: { class: 'contactrole' } }) }}
                     </div>
-                    <hr class="my-2 border-gray-300">
+                    <div class="col-span-2 bottom-hr">
+                        <hr class="w-full mt-4 border-gray-300 {{ form.datasetContacts|length > 1 ? '' : 'hidden' }}">
+                    </div>
                 </div>
                 {% endfor %}
+
             </div>
 
             <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
@@ -54,11 +63,11 @@
             </div>
 
             <div>
-                {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
+                {{ form_row(form.additionalFunders, { attr: { class: 'input-base' } }) }}
             </div>
 
             <div>
-                {{ form_row(form.authors, { attr: { class: 'input-base'} }) }}
+                {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
             </div>
         </div>
 
@@ -201,7 +210,7 @@
 
                 <div class="spatial-extent-geometry hidden">
                     <div>
-                        {{ form_row(form.temporalExtentDesc, { attr: { class: 'input-base'} }) }}
+                        {{ form_row(form.temporalExtentDesc)}}
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -266,6 +275,10 @@
 
                 <div>
                     <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
+                </div>
+
+                <div>
+                    <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
                 </div>
             </div>
         </div>

@@ -122,14 +122,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const makeContactSelect = (contact) => {
     const contactSelect = new TomSelect(contact, {
       maxOptions: null,
-      placeholder: '[Please select a contact.]',
+      placeholder: 'Please select a contact.',
+      closeAfterSelect: true,
+      hidePlaceholder: true,
+      render: {
+        option(data, escape) {
+          return `<div>
+              ${escape(data.lastname)}, ${escape(data.firstname)} (${escape(data.email)})
+          </div>`;
+        },
+        item(data, escape) {
+          return `<div>${escape(data.lastname)}, ${escape(data.firstname)}</div>`;
+        },
+      },
       plugins: {
         clear_button: {
           title: 'Remove all selected options',
         },
       },
     });
-    contactSelects.push(contactSelect);
+
+    const role = contact.closest('.dataset-contact').querySelector('.contactrole');
+    const roleSelect = new TomSelect(role, {
+      hidePlaceholder: true,
+      closeAfterSelect: true,
+      placeholder: ' Please select a role.',
+    });
+
+    contactSelects.push({ contactSelect, roleSelect });
   };
 
   const addContactButton = document.getElementById('addContactButton');
@@ -139,6 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
     newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts\[\d+\]/g, `datasetContacts[${index + 1}]`);
     newContact.innerHTML = newContact.innerHTML.replace(/datasetContacts_\d+_/g, `datasetContacts_${index + 1}_`);
     newContact.innerHTML = newContact.innerHTML.replace(/Primary/g, 'Additional');
+    const hr = newContact.querySelector('.top-hr > hr');
+    hr.classList.remove('hidden');
+
     const selects = newContact.querySelectorAll('select');
     Array.from(selects).forEach((select) => {
       const selectElement = select;
@@ -203,6 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
+    closeAfterSelect: true,
+    hidePlaceholder: true,
     maxOptions: null,
     plugins: {
       clear_button: {
@@ -221,7 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
     maxOptions: null,
     create: true,
     persist: true,
+    closeAfterSelect: true,
+    hidePlaceholder: true,
+    placeholder:
+      'Please provide commonly used words or short phrases that describe themes or subjects that describe the dataset.',
   });
+
+  themeKeywordsSelect.inputState();
 
   const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
@@ -233,14 +264,23 @@ document.addEventListener('DOMContentLoaded', () => {
     maxOptions: null,
     create: true,
     persist: true,
+    closeAfterSelect: true,
+    hidePlaceholder: true,
+    placeholder:
+      'Please provide commonly used words or short phrases that describe the geographic areas that describe the dataset.',
   });
+
+  placeKeywordsSelect.inputState();
 
   const topicKeywords = document.getElementById('topic-keyword-select');
   const topicKeywordsSelect = new TomSelect(topicKeywords, {
     plugins: ['remove_button'],
     maxOptions: null,
+    closeAfterSelect: true,
+    hidePlaceholder: true,
     create: false,
     persist: false,
+    placeholder: 'Please provide broad theme keywords pre-defined by the ISO 19115-2 metadata standard used by GRIIDC.',
     render: {
       option(data, escape) {
         return `<div class="topic-keyword-option">
@@ -250,6 +290,19 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     },
   });
+  topicKeywordsSelect.inputState();
+
+  const temporalExtentDesc = document.getElementById('temporalExtentDesc');
+  const temporalExtentDescSelect = new TomSelect(temporalExtentDesc, {
+    searchField: [],
+    create: false,
+    persist: false,
+    maxItems: 1,
+    closeAfterSelect: true,
+    hidePlaceholder: true,
+    placeholder: 'Please select a description of what the time period represents.',
+  });
+  temporalExtentDescSelect.inputState();
 
   // Prevent form submission on Enter key press for all fields except buttons
   form.addEventListener('keydown', (event) => {
@@ -330,8 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentDesc', [
       {
         validator: (value, context) => {
-          const temporalExtentDesc = context['#temporalExtentDesc'].elem;
-          if (temporalExtentDesc.checkVisibility() && !temporalExtentDesc.value.trim()) {
+          const temporalExtentDescElement = context['#temporalExtentDesc'].elem;
+          if (temporalExtentDescElement.checkVisibility() && !temporalExtentDescElement.value.trim()) {
             return false;
           }
           return true;
@@ -494,29 +547,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // on form reset event
-  // const resetButton = document.getElementById('resetFormButton');
-  // resetButton.addEventListener('click', () => {
-  //   form.reset(); // reset the form
-  //   // reset tomSelects
-  //   setTimeout(() => {
-  //     fundersSelect.clear();
-  //     contactSelects.forEach((contactSelect) => contactSelect.clear());
-  //     themeKeywordsSelect.clear();
-  //     placeKeywordsSelect.clear();
-  //     topicKeywordsSelect.clear();
+  const resetButton = document.getElementById('resetFormButton');
+  resetButton.addEventListener('click', () => {
+    form.reset(); // reset the form
+    // reset tomSelects
+    setTimeout(() => {
+      fundersSelect.clear();
+      contactSelects.forEach((select) => {
+        select.contactSelect.clear();
+        select.roleSelect.clear();
+      });
+      themeKeywordsSelect.clear();
+      placeKeywordsSelect.clear();
+      topicKeywordsSelect.clear();
+      temporalExtentDescSelect.clear();
 
-  //     // find all form fields
-  //     const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
-  //     formFields.forEach((field) => {
-  //       const formField = field;
-  //       formField.value = '';
-  //       formField.removeAttribute('value');
-  //       formField.removeAttribute('data-value');
-  //       formField.checked = false;
-  //     });
-  //     Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
-  //     Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
-  //     formValidate.refresh();
-  //   });
-  // });
+      // find all form fields
+      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
+      formFields.forEach((field) => {
+        const formField = field;
+        formField.value = '';
+        formField.removeAttribute('value');
+        formField.removeAttribute('data-value');
+        formField.checked = false;
+      });
+      Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
+      Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+      formValidate.refresh();
+    });
+  });
 });
