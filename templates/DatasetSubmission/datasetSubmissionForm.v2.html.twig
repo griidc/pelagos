@@ -1,4 +1,5 @@
 {% set isDRPM = is_granted('ROLE_DATA_REPOSITORY_MANAGER')  %}
+{% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[85%] mx-auto">
@@ -246,7 +247,7 @@
                 <div id="file-manager">
                     <div id="dropzone-uploader">
                         <input id="filesUploaded" name="filesUploaded" type="hidden" value="" class="files">
-                        <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ true }}"></div>
+                        <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ fileWriteEnabled }}"></div>
                     </div>
                 </div>
             </div>
@@ -268,7 +269,8 @@
             </div>
 
             <input type="hidden" name="submitAction" id="submitAction"/>
-            {# <input type="hidden" name="status" id="status" value="{{ status }}"/> #}
+            <input type="hidden" name="status" id="status" value="{{ status }}"/>
+            <input type="hidden" name="isDRPM" id="isDRPM" value="{{ isDRPM }}"/>
 
             <div class="grid grid-cols-2 gap-4" id="submit">
                 <div>

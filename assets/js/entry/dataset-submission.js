@@ -18,6 +18,13 @@ import * as turf from '@turf/turf';
 
 import '../file-manager';
 
+const DATASET_SUBMISSION_STATES = {
+  STATUS_UNSUBMITTED: '0',
+  STATUS_INCOMPLETE: '1',
+  STATUS_COMPLETE: '2',
+  STATUS_IN_REVIEW: '3',
+};
+
 // get query string, if it has paramater regid, then change it to udi.
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('regid')) {
@@ -34,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const form = document.getElementById('regForm');
+  const status = document.getElementById('status').value;
+  const isDrpm = document.getElementById('isDrpm')?.value === '1';
   const datasetContacts = document.getElementsByClassName('contactperson');
   const contactsContainer = document.querySelector('.dataset-contacts');
   const contactTemplate = contactsContainer.querySelector('.dataset-contact');
@@ -519,6 +528,20 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#temporalExtentEndPosition');
     }
   });
+
+  if (status !== DATASET_SUBMISSION_STATES.STATUS_SUBMITTED && !isDrpm) {
+    const formFields = form.querySelectorAll('input, select, textarea, button');
+    formFields.forEach((field) => {
+      const formField = field;
+      formField.disabled = true;
+    });
+    const tomSelectInstances = Array.from(
+      document.querySelectorAll('.tomselected, .ts-wrapper + select, .ts-wrapper + input'),
+    )
+      .map((element) => element.tomselect)
+      .filter((instance) => instance !== undefined);
+    tomSelectInstances.forEach((instance) => instance.disable());
+  }
 
   geoViz.on('geojsonupdated', (e) => {
     const geometryType = e.geojson ? turf.getType(e.geojson) : '';
