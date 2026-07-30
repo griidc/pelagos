@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (status !== DATASET_SUBMISSION_STATES.STATUS_SUBMITTED && !isDrpm) {
+  if (status !== DATASET_SUBMISSION_STATES.STATUS_UNSUBMITTED && !isDrpm) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;
