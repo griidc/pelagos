@@ -17,7 +17,7 @@ fos_elastica:
                 finder: ~
             properties:
                 udi: ~
-                title: { boost: 3 }
+                title: ~
                 abstract: ~
                 availabilityStatus: ~
                 identifiedStatus: ~
@@ -42,16 +42,16 @@ fos_elastica:
                         datasetFileTransferStatus: ~
                         datasetFileSize: ~
                         restrictions: ~
-                        placeKeywords: { boost: 3 }
-                        themeKeywords: { boost: 3 }
+                        placeKeywords: ~
+                        themeKeywords: ~
                 doi:
                     type: 'nested'
                     properties:
-                        doi: { boost: 3 }
+                        doi: ~
                 publications:
                     type: 'nested'
                     properties:
-                        doi: { boost: 3 }
+                        doi: ~
                 geometry:
                     type: 'text'
                     property_path: false
