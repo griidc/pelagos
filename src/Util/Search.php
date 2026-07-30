@@ -89,7 +89,12 @@ class Search
     /**
      * Search boost for Title, Authors, Theme, and Place Keywords.
      */
-    private const BOOST = '^3';
+    private const BOOST = '^9'; // was previously boosted by 3 at index, and 3 here, so 9 is equivalent to previous boost.
+
+    /**
+     * Search boost for Authors.
+     */
+    private const AUTHOR_BOOST = '^3';
 
     /**
      * Default value for aggregation size to get all aggregation terms.
@@ -537,7 +542,7 @@ class Search
                 self::ELASTIC_INDEX_MAPPING_ABSTRACT,
                 self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
                 self::ELASTIC_INDEX_MAPPING_PLACE_KEYWORDS . self::BOOST,
-                self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_AUTHORS . self::AUTHOR_BOOST,
             ];
         } else {
             $specificField = [$specificField];
@@ -808,6 +813,8 @@ class Search
         $pubDoiNestedQuery->setPath('publications');
         $pubDoiQuery = new Query\MatchPhrase();
         $pubDoiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_PUB_DOI, $queryTerm);
+        // Matching the boost to what we had with previous index boosts
+        $pubDoiQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_PUB_DOI, 3);
         $pubDoiNestedQuery->setQuery($pubDoiQuery);
 
         return $pubDoiNestedQuery;
