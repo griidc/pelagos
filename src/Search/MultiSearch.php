@@ -96,7 +96,32 @@ class MultiSearch
         $queryString = $searchOptions->getQueryString();
         $specifiedField = empty($searchOptions->getField()) ? [] : [$searchOptions->getField()];
 
-        $simpleQuery = new Query\SimpleQueryString($queryString, $specifiedField);
+        $simpleQuery = new Query\SimpleQueryString($queryString);
+
+        // Boosts have moved from index to the queries as index boosts are no longer supported since
+        // moving to Elasticsearch 8. This boosts title, Place/Theme keywords, & DOIs to 3x weight
+        // IFF a specific field isn't being queried. Boost only makes sense to for broad queries.
+        if (empty($specifiedField)) {
+            $simpleQuery->setFields([
+                'title^3',
+                'abstract',
+                'datasetSubmission.authors',
+                'datasetSubmission.themeKeywords^3',
+                'datasetSubmission.placeKeywords^3',
+                'doi.doi^3',
+                'publications.doi^3',
+                'creators',
+                'publisher',
+                'researchGroup.name',
+                'researchGroups.name',
+                'funders.name',
+            ]);
+        } else {
+            // If a field is specified used, add the field to the simpleQuery and don't use boosts. This
+            // is a narrow search.
+            $simpleQuery->setFields($specifiedField);
+        }
+
         $simpleQuery->setParam('flags', 'PHRASE|PREFIX|WHITESPACE');
         $simpleQuery->setDefaultOperator(Query\SimpleQueryString::OPERATOR_AND);
 

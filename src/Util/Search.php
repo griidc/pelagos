@@ -55,6 +55,11 @@ class Search
     public const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
     /**
+     * Elastic index mapping for place keywords.
+     */
+    public const ELASTIC_INDEX_MAPPING_PLACE_KEYWORDS = 'datasetSubmission.placeKeywords';
+
+    /**
      * Elastic index mapping for dataset DOI.
      */
     public const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
@@ -82,9 +87,9 @@ class Search
     ];
 
     /**
-     * Index boost for Title, Authors, Theme Keywords.
+     * Search boost for Title, Authors, Theme, and Place Keywords.
      */
-    private const BOOST = '^2';
+    private const BOOST = '^3';
 
     /**
      * Default value for aggregation size to get all aggregation terms.
@@ -518,7 +523,7 @@ class Search
     }
 
     /**
-     * Get Bool query for fields.
+     * Get Bool query for fields. Add query boost for title, authors, place/theme keywords, & DOIs.
      *
      * @param string     $queryTerm           query term that needs to be searched upon
      * @param string     $specificField       query a specific field for data
@@ -531,6 +536,7 @@ class Search
                 self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
                 self::ELASTIC_INDEX_MAPPING_ABSTRACT,
                 self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
+                self::ELASTIC_INDEX_MAPPING_PLACE_KEYWORDS . self::BOOST,
                 self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST,
             ];
         } else {

@@ -119,10 +119,16 @@ class DatasetIndex
             if (!empty($text)) {
                 $datasetQuery = new Query\MultiMatch();
                 $datasetQuery->setQuery($text);
+                // Boosts have moved from index to the queries as index boosts are no longer supported since
+                // moving to Elasticsearch 8. This boosts title, Place/Theme keywords, & DOIs to 3x weight.
                 $datasetQuery->setFields(
                     array(
-                        'title',
+                        'title^3',
                         'abstract',
+                        'datasetSubmission.placeKeywords^3',
+                        'datasetSubmission.themeKeywords^3',
+                        'doi.doi^3',
+                        'publications.doi^3'
                     )
                 );
                 $textQuery->addShould($datasetQuery);
