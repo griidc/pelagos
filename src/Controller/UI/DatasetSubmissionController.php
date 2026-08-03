@@ -217,7 +217,7 @@ class DatasetSubmissionController extends AbstractController
                 'researchGroupPeople' => $researchGroupPeople,
                 'datasetSubmission' => $datasetSubmission,
                 'datasetSubmissionLockStatus' => $this->isSubmissionLocked($dataset),
-                'status' => $dif->getStatus(),
+                'status' => $datasetSubmission?->getStatus(),
                 'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
                 // 'isSubmittable' => $dif->isSubmittable(),
                 // 'isApprovable' => $dif->isApprovable(),
