@@ -427,7 +427,20 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Temporal extent description is required.',
       },
     ])
-    .addRequiredGroup('#has-extent', 'Please select if your dataset has spatial or non-spatial data.', {
+    .addField('#has-extent', [
+      {
+        validator: () => {
+          const selectedRadio = Array.from(spatialExtentRadios).find((radio) => radio.checked);
+          if (selectedRadio) {
+            return true;
+          }
+          const spatialExentSection = document.getElementById('extent');
+          setTimeout(() => spatialExentSection.scrollIntoView(true), 0);
+          return false;
+        },
+        errorMessage: 'Please select if the dataset has a spatial extent geometry or a spatial extent description.',
+      },
+    ], {
       errorsContainer: '#has-extent-error',
     })
     .addField('#temporalExtentBeginPosition', [
@@ -551,6 +564,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#temporalExtentBeginPosition');
       formValidate.revalidateField('#temporalExtentEndPosition');
     }
+  });
+
+  const spatialExtentSelector = document.getElementsByName('has-extent');
+  Array.from(spatialExtentSelector).forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (formValidate.isSubmitted) {
+        formValidate.revalidateField('#has-extent');
+      }
+    });
   });
 
   if (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE && !isDrpm) {
