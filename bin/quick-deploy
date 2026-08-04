@@ -1,0 +1,5 @@
+#/bin/sh
+
+composer install --no-dev --optimize-autoloader
+yarn run encore prod
+

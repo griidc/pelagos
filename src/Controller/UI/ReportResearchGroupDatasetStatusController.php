@@ -7,6 +7,8 @@ use App\Entity\ResearchGroup;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Entity\FundingOrganization;
+use App\Entity\InformationProduct;
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * A controller for a Report of Research Groups and related Datasets.
@@ -199,6 +202,63 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             'Reports/ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
         );
+    }
+
+    /**
+     * Research group GRP Information Product report
+     */
+    #[Route(path: '/report-researchgroup/grp-ip-report', name: 'pelagos_app_ui_grp_inforprod_report')]
+    public function getGrpInfoProdReport(EntityManagerInterface $entityManager): Response
+    {
+
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('template/AdminOnly.html.twig');
+        }
+
+        $csv = [
+            ['Research Group ID', 'Research Group Name', 'Research Group URL', 'Funding Cycle Name', 'Has Information Products', 'Information Product Tags'],
+        ];
+
+        // Fetch all Research Groups, Funding Organization 15 is the GRP Funding Organization.
+        // This is hard coded because the GRP Funding Organization's Id is not expected to change, but the
+        // name might.
+        $fundingOrganization = $entityManager->getRepository(FundingOrganization::class)->findOneBy(['id' => 15]);
+        $allResearchGroups = $entityManager->getRepository(ResearchGroup::class)->findByFundingOrganization($fundingOrganization);
+
+        // Fetch all Information Products.
+        $allInformationProducts = $entityManager->getRepository(InformationProduct::class)->findAll();
+
+        // Yes, this is O(n*m) but there are not that many research groups or information products.
+        foreach ($allResearchGroups as $rg) {
+            $rgId = $rg->getId();
+            $rgUrl = $this->generateUrl('pelagos_app_ui_researchgroup_about', ['researchGroup' => $rgId], UrlGeneratorInterface::ABSOLUTE_URL);
+            $rgName = $rg->getName();
+            $fcName = $rg->getFundingCycle()->getName();
+            $infoProdCount = 0;
+            $allTags = [];
+            foreach ($allInformationProducts as $ip) {
+                if (in_array($rg, $ip->getResearchGroups()->toArray())) {
+                    $infoProdCount++;
+                    foreach ($ip->getInfoProductTags() as $tag) {
+                        $allTags[] = $tag;
+                    }
+                }
+            }
+            $allTags = array_unique($allTags); // Remove duplicates
+            sort($allTags); // Can't sort array_unique() directly, so sort after removing duplicates.
+
+            $csv[] = [
+            $rgId,
+            $rgName,
+            $rgUrl,
+            $fcName,
+            ($infoProdCount > 0) ? 'y' : 'n',
+            implode(', ', $allTags),
+            ];
+        }
+
+        return $this->writeCsvResponse($csv, 'grp_information_products_' . date(self::REPORTFILENAMEDATETIMEFORMAT) . '.csv');
     }
 
     /**
