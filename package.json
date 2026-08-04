@@ -3,7 +3,7 @@
         "@babel/core": "^7.29.6",
         "@babel/preset-env": "7.29.7",
         "@babel/preset-react": "^7.28.5",
-        "@eslint/eslintrc": "^3.3.5",
+        "@eslint/eslintrc": "^3.3.6",
         "@eslint/js": "^9.0.0",
         "@fortawesome/fontawesome-free": "^6.7.2",
         "@symfony/webpack-encore": "^4.6.1",
