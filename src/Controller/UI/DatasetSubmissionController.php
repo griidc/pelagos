@@ -99,6 +99,7 @@ class DatasetSubmissionController extends AbstractController
         FormFactoryInterface $formFactory,
         DatasetRepository $datasetRepository,
         EntityManagerInterface $entityManager,
+        MessageBusInterface $messageBus,
     ): Response {
         $regId = $request->query->get('regid');
         $udi = $request->query->get('udi');
@@ -184,6 +185,7 @@ class DatasetSubmissionController extends AbstractController
                 }
 
                 $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
+                $messageBus->dispatch(new DatasetSubmissionFiler($datasetSubmission->getId()));
             }
 
             if ($datasetSubmission->getSequence() > 1) {
