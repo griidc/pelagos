@@ -109,6 +109,9 @@ class DIFListener extends EventListener
         // email DM
         $template = $this->twig->load('DIF/email/data-managers/data-managers.dif-created.email.twig');
         $this->sendMailMsg($template, array('dif' => $dif), $this->getDatasetDMs($dif->getDataset()));
+        // email user
+        $template = $this->twig->load('DIF/email/user/user.dif-created.email.twig');
+        $this->sendMailMsg($template, array('dif' => $dif, 'recipient' => array($dif->getCreator())));
     }
 
     /**
