@@ -99,6 +99,8 @@ class DatasetSubmissionController extends AbstractController
         FormFactoryInterface $formFactory,
         DatasetRepository $datasetRepository,
         EntityManagerInterface $entityManager,
+        EntityEventDispatcher $entityEventDispatcher,
+        MessageBusInterface $messageBus,
     ): Response {
         $regId = $request->query->get('regid');
         $udi = $request->query->get('udi');
@@ -121,6 +123,10 @@ class DatasetSubmissionController extends AbstractController
 
         $dif = $dataset->getDif();
         $datasetSubmission = $dataset->getActiveDatasetSubmission();
+        if (!$datasetSubmission instanceof DatasetSubmission) {
+            $this->addFlash('error', 'Dataset submission not found for UDI: ' . $udi);
+            return $this->redirectToRoute('app_ui_dashboard');
+        }
         $currentUser = PersonUtil::getPersonFromUser($this->getUser());
 
         if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
@@ -149,7 +155,7 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         }
 
-        if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
+        if (!$entityManager->contains($datasetSubmission)) {
             $entityManager->persist($datasetSubmission);
             $entityManager->flush();
         }
@@ -158,9 +164,15 @@ class DatasetSubmissionController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $extraData = $form->getExtraData();
             $submitAction = $extraData['submitAction'] ?? null;
+
+            if (!$form->isValid() && $submitAction !== 'saveAndContinue') {
+                return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
+                    'datasetSubmission' => $datasetSubmission,
+                ]);
+            }
 
             if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                 $this->addFlash('warning', 'This submission has already been submitted.');
@@ -176,7 +188,7 @@ class DatasetSubmissionController extends AbstractController
                 }
 
                 // Set files for fileset in queue.
-                $fileset = $datasetSubmission?->getFileset();
+                $fileset = $datasetSubmission->getFileset();
                 if ($fileset instanceof Fileset) {
                     foreach ($fileset->getNewFiles() as $file) {
                         $file->setStatus(File::FILE_IN_QUEUE);
@@ -184,24 +196,35 @@ class DatasetSubmissionController extends AbstractController
                 }
 
                 $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
+                $datasetSubmissionId = $datasetSubmission->getId();
+                if ($datasetSubmissionId !== null) {
+                    $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmissionId);
+                }
             }
 
             if ($datasetSubmission->getSequence() > 1) {
                 $eventName = 'resubmitted';
-            } else {
+            } elseif ($submitAction === 'saveAndSubmit') {
                 $eventName = 'submitted';
+            } else {
+                $eventName = 'saved';
             }
 
             $entityManager->persist($dataset);
             $entityManager->flush();
 
-            $this->entityEventDispatcher->dispatch(
+            $entityEventDispatcher->dispatch(
                 $datasetSubmission,
                 $eventName
             );
 
+
+            if (isset($datasetSubmissionFilerMessage) && $datasetSubmissionFilerMessage instanceof DatasetSubmissionFiler) {
+                $messageBus->dispatch($datasetSubmissionFilerMessage);
+            }
+
             return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
-                'dataset' => $dataset,
+                'datasetSubmission' => $datasetSubmission,
             ]);
         }
 
@@ -227,6 +250,32 @@ class DatasetSubmissionController extends AbstractController
         );
     }
 
+
+    #[Route(path: '/dataset-submission-ok', name: 'pelagos_app_ui_datasetsubmission_ok')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function testOk(Request $request, DatasetRepository $datasetRepository): Response
+    {
+        $udi = $request->query->get('udi');
+
+        if ($udi !== null && $udi !== '') {
+            $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+            if (!$dataset instanceof Dataset) {
+                // add to flash bag errror message about dataset not found
+                $this->addFlash('error', 'Dataset not found for UDI: ' . $udi);
+                return $this->redirectToRoute('app_ui_dashboard');
+            }
+        } else {
+            $this->addFlash('warning', 'Please select a dataset here to continue to dataset submission');
+            return $this->redirectToRoute('app_ui_dashboard');
+        }
+
+        $datasetSubmission = $dataset->getActiveDatasetSubmission();
+
+        return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
+            'datasetSubmission' => $datasetSubmission,
+            ]
+        );
+    }
 
     /**
      * The default action for Dataset Submission.
