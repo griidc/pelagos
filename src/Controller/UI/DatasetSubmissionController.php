@@ -123,10 +123,6 @@ class DatasetSubmissionController extends AbstractController
 
         $dif = $dataset->getDif();
         $datasetSubmission = $dataset->getActiveDatasetSubmission();
-        if (!$datasetSubmission instanceof DatasetSubmission) {
-            $this->addFlash('error', 'Dataset submission not found for UDI: ' . $udi);
-            return $this->redirectToRoute('app_ui_dashboard');
-        }
         $currentUser = PersonUtil::getPersonFromUser($this->getUser());
 
         if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
@@ -155,7 +151,7 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         }
 
-        if (!$entityManager->contains($datasetSubmission)) {
+        if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
             $entityManager->persist($datasetSubmission);
             $entityManager->flush();
         }
@@ -217,7 +213,6 @@ class DatasetSubmissionController extends AbstractController
                 $datasetSubmission,
                 $eventName
             );
-
 
             if (isset($datasetSubmissionFilerMessage) && $datasetSubmissionFilerMessage instanceof DatasetSubmissionFiler) {
                 $messageBus->dispatch($datasetSubmissionFilerMessage);
