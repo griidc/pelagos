@@ -36,9 +36,9 @@
                 </h2>
                 <p class="text-gray-500 mb-6 md:mb-8">
                 {% if datasetSubmission.status == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
-                    You have saved an identified dataset. Please return to the form to submit the identified dataset. The GRIIDC identifier is
-                {% else %}
                     You have successfully submitted a dataset. The GRIIDC identifier for this dataset is
+                {% else %}
+                    You have saved an identified dataset. Please return to the form to submit the identified dataset. The GRIIDC identifier is
                 {% endif %}
                     <a href="{{ url('pelagos_app_ui_dataland_default', {'udi': datasetSubmission.dataset.udi}) }}" class="pagelink">{{ datasetSubmission.dataset.udi }}</a>. A confirmation email has been sent to your inbox.
                 </p>
