@@ -191,7 +191,6 @@ class DatasetSubmissionController extends AbstractController
                     }
                 }
 
-                $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
                 $datasetSubmissionId = $datasetSubmission->getId();
                 if ($datasetSubmissionId !== null) {
                     $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmissionId);
@@ -205,6 +204,8 @@ class DatasetSubmissionController extends AbstractController
             } else {
                 $eventName = 'saved';
             }
+
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_BEING_PROCESSED);
 
             $entityManager->persist($dataset);
             $entityManager->flush();
