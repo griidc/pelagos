@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgis/postgis:14-3.5
+    image: postgis/postgis:18-master
     container_name: postgis
     restart: "no"
     environment:
