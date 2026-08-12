@@ -168,30 +168,35 @@
                     Define the spatial extent by providing a list of coordinates (in decimal degrees) or drawing on the map. Please refer to the <a href="#" class="pagelink">spatial extent guidance document</a> for more information.
                 </span>
             </div>
-            <ul class="grid w-full gap-6 md:grid-cols-2">
-                <li>
-                    <input type="radio" id="yes-extent" name="has-extent" value="yes-extent" class="hidden peer" helper>
-                    <label for="yes-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
-                        <div class="block">
-                            <div class="w-full">Spatial Data</div>
-                        </div>
-                        <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                        </svg>
-                    </label>
-                </li>
-                <li>
-                    <input type="radio" id="no-extent" name="has-extent" value="no-extent" class="hidden peer" helper>
-                    <label for="no-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
-                        <div class="block">
-                            <div class="w-full">Non-Spatial Data</div>
-                        </div>
-                        <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                        </svg>
-                    </label>
-                </li>
-            </ul>
+            <div id="has-extent">
+                <div id="has-extent-error"></div>
+                <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <li>
+                        <input type="radio" id="yes-extent" name="has-extent" value="yes-extent" class="hidden peer" helper>
+                        <label for="yes-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Spatial Data</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                    <li>
+                        <input type="radio" id="no-extent" name="has-extent" value="no-extent" class="hidden peer" helper>
+                        <label for="no-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Non-Spatial Data</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="spatial-extent-error"></div>
 
             <div id="spatial-extent">
                 <div class="spatial-extent-geometry hidden">
@@ -200,7 +205,6 @@
                         {% include 'DIF/spatial.html.twig' %}
                     </div>
                 </div>
-
 
                 <div class="grid grid-cols-1 gap-4 spatial-extent-description hidden">
                     <div class="grid-col-span-2">
@@ -224,8 +228,6 @@
                     </div>
                 </div>
             </div>
-            <div id="spatial-extent-error"></div>
-
         </div>
 
         <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
