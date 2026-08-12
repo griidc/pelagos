@@ -33,6 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
     loadWizard: true,
   });
 
+  const form = document.getElementById('regForm');
+  const datasetContacts = document.getElementsByClassName('contactperson');
+  const contactsContainer = document.querySelector('.dataset-contacts');
+  const contactTemplate = contactsContainer.querySelector('.dataset-contact');
+  const newContactTemplate = contactTemplate.cloneNode(true);
+  const contactSelects = [];
+
+  const formValidate = new JustValidate(form, {
+    errorLabelStyle: {
+      color: '#b81111',
+      fontWeight: 'bold',
+    },
+  });
+
   const spatialExtentRadios = document.getElementsByName('has-extent');
   const spatialExtentGeometry = document.getElementsByClassName('spatial-extent-geometry');
   const spatialExtentDescription = document.getElementsByClassName('spatial-extent-description');
@@ -102,21 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
         spatialExtentGeometryField.value = '';
         geoViz.clearMap();
       }
+
+      formValidate.revalidateGroup('#has-extent');
     });
-  });
-
-  const form = document.getElementById('regForm');
-  const datasetContacts = document.getElementsByClassName('contactperson');
-  const contactsContainer = document.querySelector('.dataset-contacts');
-  const contactTemplate = contactsContainer.querySelector('.dataset-contact');
-  const newContactTemplate = contactTemplate.cloneNode(true);
-  const contactSelects = [];
-
-  const formValidate = new JustValidate(form, {
-    errorLabelStyle: {
-      color: '#b81111',
-      fontWeight: 'bold',
-    },
   });
 
   const makeContactSelect = (contact) => {
@@ -392,24 +394,21 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Temporal extent description is required.',
       },
     ])
-    .addField('#spatial-extent', [
+    .addField('#has-extent', [
       {
         validator: () => {
-          const spatialExtentGeometryElement = document.getElementById('spatialExtent');
-          const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
-          // Check if either the description or geometry field is filled
-          if (spatialExtentDescriptionElement.value.trim()) {
+          const selectedRadio = Array.from(spatialExtentRadios).find((radio) => radio.checked);
+          if (selectedRadio) {
             return true;
           }
-          if (spatialExtentGeometryElement.value.trim()) {
-            return true;
-          }
+          const spatialExentSection = document.getElementById('extent');
+          setTimeout(() => spatialExentSection.scrollIntoView(true), 0);
           return false;
         },
-        errorMessage: 'Please provide either a spatial extent geometry or a spatial extent description.',
+        errorMessage: 'Please select if the dataset has a spatial extent geometry or a spatial extent description.',
       },
     ], {
-      errorsContainer: '#spatial-extent-error',
+      errorsContainer: '#has-extent-error',
     })
     .addField('#temporalExtentBeginPosition', [
       {
@@ -475,6 +474,36 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Please enter a valid URL.',
       },
     ])
+    .addField('#spatial-extent', [
+      {
+        validator: () => {
+          const selectedRadio = Array.from(spatialExtentRadios).find((radio) => radio.checked);
+          if (!selectedRadio) {
+            return true;
+          }
+          const spatialExtentGeometryElement = document.getElementById('spatialExtent');
+          const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
+          // Check if either the description or geometry field is filled
+          if (spatialExtentDescriptionElement.value.trim()) {
+            return true;
+          }
+          if (spatialExtentGeometryElement.value.trim()) {
+            return true;
+          }
+
+          if (!spatialExtentDescriptionElement.value.trim() && spatialExtentDescriptionElement.checkVisibility()) {
+            setTimeout(() => spatialExtentDescriptionElement.focus(), 0);
+          } else {
+            const spatialExentSection = document.getElementById('extent');
+            setTimeout(() => spatialExentSection.scrollIntoView(true), 0);
+          }
+          return false;
+        },
+        errorMessage: 'Please provide either a spatial extent geometry or a spatial extent description.',
+      },
+    ], {
+      errorsContainer: '#spatial-extent-error',
+    })
     .onSuccess((event) => {
       const successEvent = event;
       successEvent.currentTarget.submitAction.value = event.submitter.name;
@@ -502,6 +531,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#temporalExtentBeginPosition');
       formValidate.revalidateField('#temporalExtentEndPosition');
     }
+  });
+
+  const spatialExtentSelector = document.getElementsByName('has-extent');
+  Array.from(spatialExtentSelector).forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (formValidate.isSubmitted) {
+        formValidate.revalidateField('#has-extent');
+      }
+    });
   });
 
   geoViz.on('geojsonupdated', (e) => {
@@ -546,34 +584,43 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
+  const saveButon = document.getElementById('saveAndContinue');
+  saveButon.addEventListener('click', () => {
+    formValidate.destroy();
+    form.submitAction.value = 'saveAndContinue';
+    form.submit();
+  });
+
   // on form reset event
   const resetButton = document.getElementById('resetFormButton');
-  resetButton.addEventListener('click', () => {
-    form.reset(); // reset the form
-    // reset tomSelects
-    setTimeout(() => {
-      fundersSelect.clear();
-      contactSelects.forEach((select) => {
-        select.contactSelect.clear();
-        select.roleSelect.clear();
-      });
-      themeKeywordsSelect.clear();
-      placeKeywordsSelect.clear();
-      topicKeywordsSelect.clear();
-      temporalExtentDescSelect.clear();
+  if (resetButton) {
+    resetButton.addEventListener('click', () => {
+      form.reset(); // reset the form
+      // reset tomSelects
+      setTimeout(() => {
+        fundersSelect.clear();
+        contactSelects.forEach((select) => {
+          select.contactSelect.clear();
+          select.roleSelect.clear();
+        });
+        themeKeywordsSelect.clear();
+        placeKeywordsSelect.clear();
+        topicKeywordsSelect.clear();
+        temporalExtentDescSelect.clear();
 
-      // find all form fields
-      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
-      formFields.forEach((field) => {
-        const formField = field;
-        formField.value = '';
-        formField.removeAttribute('value');
-        formField.removeAttribute('data-value');
-        formField.checked = false;
+        // find all form fields
+        const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
+        formFields.forEach((field) => {
+          const formField = field;
+          formField.value = '';
+          formField.removeAttribute('value');
+          formField.removeAttribute('data-value');
+          formField.checked = false;
+        });
+        Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
+        Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+        formValidate.refresh();
       });
-      Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
-      Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
-      formValidate.refresh();
     });
-  });
+  }
 });
