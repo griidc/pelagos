@@ -67,6 +67,7 @@ final class StatusController extends AbstractController
             'elasticsearch' => $elasticsearchStatus->getResults(),
             'pelagosDatasetCount' => $pelagosDatasetCount->getResults(),
             'fileSystems' => $fileSystemStatus->getResults(),
+            'PelagosRelease' => $_ENV['PELAGOS_RELEASE_VERSION'] ?? 'unknown',
         ];
 
         return new JsonResponse(
