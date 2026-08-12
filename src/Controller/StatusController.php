@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class StatusController extends AbstractController
 {
-    private const STATUS_TOOL_VERSION = '1.0.3';
+    private const STATUS_TOOL_VERSION = '1.0.4';
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -41,6 +41,7 @@ final class StatusController extends AbstractController
         $elasticsearchStatus = $this->getElasticStatus();
         $pelagosDatasetCount = $this->getPelagosDatasetCount();
         $fileSystemStatus = $this->testFilesystemsPaths();
+        $phpStatus = $this->testPhp();
 
         /**
          * @var ArrayCollection<array-key, ServiceStatus> $services
@@ -51,6 +52,7 @@ final class StatusController extends AbstractController
         $services->add($elasticsearchStatus);
         $services->add($fileSystemStatus);
         $services->add($pelagosDatasetCount);
+        $services->add($phpStatus);
 
         $allServicesOk = 0 === $services->filter(function (ServiceStatus $serviceStatus) {
             return ServiceStatus::STATUS_ERROR === $serviceStatus->getStatus();
@@ -60,6 +62,7 @@ final class StatusController extends AbstractController
             'overallStatus' => $allServicesOk ? ServiceStatus::STATUS_OK : ServiceStatus::STATUS_ERROR,
             'version' => self::STATUS_TOOL_VERSION,
             'timestamp' => (new \DateTime())->format('c'),
+            'php' => $phpStatus->getResults(),
             'database' => $databaseStatus->getResults(),
             'elasticsearch' => $elasticsearchStatus->getResults(),
             'pelagosDatasetCount' => $pelagosDatasetCount->getResults(),
@@ -80,9 +83,10 @@ final class StatusController extends AbstractController
         $serviceStatus = new ServiceStatus();
         try {
             $connection = $this->entityManager->getConnection();
-            $connection->executeQuery('SELECT 1');
+            $result = $connection->executeQuery('SELECT version();');
+            $fetchedVersion = $result->fetchOne(); // Fetch the result to ensure the query was successful
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
-            $serviceStatus->setData(['Database connection' => 'Successful']);
+            $serviceStatus->setData(['Database connection' => 'Successful', 'Database Version' => $fetchedVersion]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
@@ -121,6 +125,7 @@ final class StatusController extends AbstractController
         $serviceStatus = new ServiceStatus();
         try {
             $client = $this->elasticaClient;
+            $version = $client->getVersion();
 
             // Get the status of a specific index
             $index = new Index($client, $this->indexName);
@@ -137,6 +142,7 @@ final class StatusController extends AbstractController
             $result = [];
             $result['index'] = $indexStatus;
             $result['status'] = $status;
+            $result['Elasticsearch Version'] = $version;
             $serviceStatus->setData($result);
 
             if (200 === $indexStatus && ('green' == $status || 'yellow' == $status)) {
@@ -177,6 +183,20 @@ final class StatusController extends AbstractController
             } else {
                 $serviceStatus->setData(['info' => "Upload directory is writable: {$uploadDirectory}"]);
             }
+        } catch (\Throwable $e) {
+            $serviceStatus->setThrowable($e);
+        }
+
+        return $serviceStatus;
+    }
+
+    private function testPhp(): ServiceStatus
+    {
+        $serviceStatus = new ServiceStatus();
+        try {
+            $phpVersion = phpversion();
+            $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
+            $serviceStatus->setData(['PHP Version' => $phpVersion]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
