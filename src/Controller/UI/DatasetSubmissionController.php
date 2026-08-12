@@ -138,6 +138,11 @@ class DatasetSubmissionController extends AbstractController
                 if ($currentUser !== null) {
                     $datasetSubmission->setCreator($currentUser);
                 }
+
+                if (!$entityManager->contains($datasetSubmission)) {
+                    $entityManager->persist($datasetSubmission);
+                    $entityManager->flush();
+                }
             }
         } elseif (
             $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
@@ -147,11 +152,6 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission = new DatasetSubmission($datasetSubmission);
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        }
-
-        if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
-            $entityManager->persist($datasetSubmission);
-            $entityManager->flush();
         }
 
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
