@@ -546,34 +546,43 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
+  const saveButon = document.getElementById('saveAndContinue');
+  saveButon.addEventListener('click', () => {
+    formValidate.destroy();
+    form.submitAction.value = 'saveAndContinue';
+    form.submit();
+  });
+
   // on form reset event
   const resetButton = document.getElementById('resetFormButton');
-  resetButton.addEventListener('click', () => {
-    form.reset(); // reset the form
-    // reset tomSelects
-    setTimeout(() => {
-      fundersSelect.clear();
-      contactSelects.forEach((select) => {
-        select.contactSelect.clear();
-        select.roleSelect.clear();
-      });
-      themeKeywordsSelect.clear();
-      placeKeywordsSelect.clear();
-      topicKeywordsSelect.clear();
-      temporalExtentDescSelect.clear();
+  if (resetButton) {
+    resetButton.addEventListener('click', () => {
+      form.reset(); // reset the form
+      // reset tomSelects
+      setTimeout(() => {
+        fundersSelect.clear();
+        contactSelects.forEach((select) => {
+          select.contactSelect.clear();
+          select.roleSelect.clear();
+        });
+        themeKeywordsSelect.clear();
+        placeKeywordsSelect.clear();
+        topicKeywordsSelect.clear();
+        temporalExtentDescSelect.clear();
 
-      // find all form fields
-      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
-      formFields.forEach((field) => {
-        const formField = field;
-        formField.value = '';
-        formField.removeAttribute('value');
-        formField.removeAttribute('data-value');
-        formField.checked = false;
+        // find all form fields
+        const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
+        formFields.forEach((field) => {
+          const formField = field;
+          formField.value = '';
+          formField.removeAttribute('value');
+          formField.removeAttribute('data-value');
+          formField.checked = false;
+        });
+        Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
+        Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+        formValidate.refresh();
       });
-      Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
-      Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
-      formValidate.refresh();
     });
-  });
+  }
 });
