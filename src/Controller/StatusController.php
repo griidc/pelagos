@@ -84,7 +84,7 @@ final class StatusController extends AbstractController
         $serviceStatus = new ServiceStatus();
         try {
             $connection = $this->entityManager->getConnection();
-            $result = $connection->executeQuery('SELECT version();');
+            $result = $connection->executeQuery("SELECT current_setting('server_version_num')");
             $fetchedVersion = $result->fetchOne(); // Fetch the result to ensure the query was successful
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
             $serviceStatus->setData(['Database connection' => 'Successful', 'Database Version' => $fetchedVersion]);
