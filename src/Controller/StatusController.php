@@ -85,9 +85,11 @@ final class StatusController extends AbstractController
         try {
             $connection = $this->entityManager->getConnection();
             $result = $connection->executeQuery("SELECT current_setting('server_version_num')");
-            $fetchedVersion = $result->fetchOne(); // Fetch the result to ensure the query was successful
+            $fetchedVersion = (int)$result->fetchOne();
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
-            $serviceStatus->setData(['connection' => 'Successful', 'version' => $fetchedVersion]);
+            // server_version_num is formed by multiplying the server's major version number by 10000 and adding the minor version number.
+            $decodedVersion = (int)round($fetchedVersion / 10000) . '.' . ($fetchedVersion % 10000);
+            $serviceStatus->setData(['connection' => 'Successful', 'version' => $decodedVersion]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
@@ -143,7 +145,7 @@ final class StatusController extends AbstractController
             $result = [];
             $result['index'] = $indexStatus;
             $result['status'] = $status;
-            $result['Elasticsearch Version'] = $version;
+            $result['version'] = $version;
             $serviceStatus->setData($result);
 
             if (200 === $indexStatus && ('green' == $status || 'yellow' == $status)) {
