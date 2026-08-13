@@ -67,7 +67,7 @@ final class StatusController extends AbstractController
             'elasticsearch' => $elasticsearchStatus->getResults(),
             'pelagosDatasetCount' => $pelagosDatasetCount->getResults(),
             'fileSystems' => $fileSystemStatus->getResults(),
-            'PelagosRelease' => $_ENV['PELAGOS_RELEASE_VERSION'] ?? 'unknown',
+            'pelagosRelease' => $_ENV['PELAGOS_RELEASE_VERSION'] ?? 'unknown',
         ];
 
         return new JsonResponse(
@@ -87,7 +87,7 @@ final class StatusController extends AbstractController
             $result = $connection->executeQuery("SELECT current_setting('server_version_num')");
             $fetchedVersion = $result->fetchOne(); // Fetch the result to ensure the query was successful
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
-            $serviceStatus->setData(['Database connection' => 'Successful', 'Database Version' => $fetchedVersion]);
+            $serviceStatus->setData(['connection' => 'Successful', 'version' => $fetchedVersion]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
@@ -197,7 +197,7 @@ final class StatusController extends AbstractController
         try {
             $phpVersion = phpversion();
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
-            $serviceStatus->setData(['PHP Version' => $phpVersion]);
+            $serviceStatus->setData(['version' => $phpVersion]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
