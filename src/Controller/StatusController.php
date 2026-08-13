@@ -112,7 +112,7 @@ final class StatusController extends AbstractController
                 ->getSingleScalarResult();
 
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
-            $serviceStatus->setData(['Number of Datasets' => (int) $count]);
+            $serviceStatus->setData(['numberOfDatasets' => (int) $count]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
