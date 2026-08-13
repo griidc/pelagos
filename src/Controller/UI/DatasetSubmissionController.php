@@ -125,6 +125,10 @@ class DatasetSubmissionController extends AbstractController
         $datasetSubmission = $dataset->getActiveDatasetSubmission();
         $currentUser = PersonUtil::getPersonFromUser($this->getUser());
 
+        if ($currentUser === null) {
+            throw $this->createAccessDeniedException('You must be logged in to submit a dataset.');
+        }
+
         if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
             $this->addFlash('warning', 'The DIF has not yet been approved for this dataset.');
             return $this->redirectToRoute('app_ui_dashboard');
@@ -136,15 +140,6 @@ class DatasetSubmissionController extends AbstractController
                 $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
                 $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                 $datasetSubmission->setSequence(1);
-
-                if ($currentUser !== null) {
-                    $datasetSubmission->setCreator($currentUser);
-                }
-
-                if (!$entityManager->contains($datasetSubmission)) {
-                    $entityManager->persist($datasetSubmission);
-                    $entityManager->flush();
-                }
             }
         } elseif (
             $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
@@ -154,6 +149,13 @@ class DatasetSubmissionController extends AbstractController
             $datasetSubmission = new DatasetSubmission($datasetSubmission);
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
             $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        }
+
+        if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
+            $datasetSubmission->setCreator($currentUser);
+
+            $entityManager->persist($datasetSubmission);
+            $entityManager->flush();
         }
 
         $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
