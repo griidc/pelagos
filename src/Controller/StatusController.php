@@ -4,11 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Dataset;
 use App\Util\ServiceStatus;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Util\ServiceStatusEngine;
 use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Client;
 use Elastica\Index;
-use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,11 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class StatusController extends AbstractController
 {
-    private const STATUS_TOOL_VERSION = '1.0.4';
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly TransformedFinder $searchPelagosFinder,
         private readonly Client $elasticaClient,
         private readonly int $expectedDatasetCountMin,
         private readonly string $indexName,
@@ -37,42 +33,18 @@ final class StatusController extends AbstractController
     #[Route('/status', name: 'app_status')]
     public function index(): Response
     {
-        $databaseStatus = $this->getDatabaseEngineStatus();
-        $elasticsearchStatus = $this->getElasticStatus();
-        $pelagosDatasetCount = $this->getPelagosDatasetCount();
-        $fileSystemStatus = $this->testFilesystemsPaths();
-        $phpStatus = $this->testPhp();
+        $serviceStatusEngine = new ServiceStatusEngine();
 
-        /**
-         * @var ArrayCollection<array-key, ServiceStatus> $services
-         */
-        $services = new ArrayCollection();
-
-        $services->add($databaseStatus);
-        $services->add($elasticsearchStatus);
-        $services->add($fileSystemStatus);
-        $services->add($pelagosDatasetCount);
-        $services->add($phpStatus);
-
-        $allServicesOk = 0 === $services->filter(function (ServiceStatus $serviceStatus) {
-            return ServiceStatus::STATUS_ERROR === $serviceStatus->getStatus();
-        })->count();
-
-        $status = [
-            'overallStatus' => $allServicesOk ? ServiceStatus::STATUS_OK : ServiceStatus::STATUS_ERROR,
-            'version' => self::STATUS_TOOL_VERSION,
-            'timestamp' => (new \DateTime())->format('c'),
-            'php' => $phpStatus->getResults(),
-            'database' => $databaseStatus->getResults(),
-            'elasticsearch' => $elasticsearchStatus->getResults(),
-            'pelagosDatasetCount' => $pelagosDatasetCount->getResults(),
-            'fileSystems' => $fileSystemStatus->getResults(),
-            'pelagosRelease' => $_ENV['PELAGOS_RELEASE_VERSION'] ?? 'unknown',
-        ];
+        $serviceStatusEngine->add($this->getDatabaseEngineStatus());
+        $serviceStatusEngine->add($this->getElasticStatus());
+        $serviceStatusEngine->add($this->getFilesystemsPathsStatus());
+        $serviceStatusEngine->add($this->getPelagosDatasetCount());
+        $serviceStatusEngine->add($this->getPhpStatus());
+        $serviceStatusEngine->add($this->getPelagosVersion());
 
         return new JsonResponse(
-            data: $status,
-            status: $allServicesOk ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR
+            data: $serviceStatusEngine->getStatusArray(),
+            status: $serviceStatusEngine->areAllServicesOk() ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
 
@@ -81,15 +53,15 @@ final class StatusController extends AbstractController
      */
     private function getDatabaseEngineStatus(): ServiceStatus
     {
-        $serviceStatus = new ServiceStatus();
+        $serviceStatus = new ServiceStatus('database');
         try {
             $connection = $this->entityManager->getConnection();
             $result = $connection->executeQuery("SELECT current_setting('server_version_num')");
+            $isConnected = $connection->isConnected();
             $fetchedVersion = (int)$result->fetchOne();
-            $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
             // server_version_num is formed by multiplying the server's major version number by 10000 and adding the minor version number.
             $decodedVersion = (int)round($fetchedVersion / 10000) . '.' . ($fetchedVersion % 10000);
-            $serviceStatus->setData(['connection' => 'Successful', 'version' => $decodedVersion]);
+            $serviceStatus->setData(['connection' => $isConnected ? 'Successful' : 'Failed', 'version' => $decodedVersion]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
@@ -102,7 +74,7 @@ final class StatusController extends AbstractController
      */
     private function getPelagosDatasetCount(): ServiceStatus
     {
-        $serviceStatus = new ServiceStatus();
+        $serviceStatus = new ServiceStatus('pelagosDatasetCount');
         try {
             $queryBuilder = $this->entityManager->createQueryBuilder();
             $count = $queryBuilder
@@ -111,7 +83,6 @@ final class StatusController extends AbstractController
                 ->getQuery()
                 ->getSingleScalarResult();
 
-            $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
             $serviceStatus->setData(['numberOfDatasets' => (int) $count]);
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
@@ -125,7 +96,7 @@ final class StatusController extends AbstractController
      */
     private function getElasticStatus(): ServiceStatus
     {
-        $serviceStatus = new ServiceStatus();
+        $serviceStatus = new ServiceStatus('elasticsearch');
         try {
             $client = $this->elasticaClient;
             $version = $client->getVersion();
@@ -150,6 +121,8 @@ final class StatusController extends AbstractController
 
             if (200 === $indexStatus && ('green' == $status || 'yellow' == $status)) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
+            } else {
+                $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
             }
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
@@ -161,41 +134,42 @@ final class StatusController extends AbstractController
     /**
      * Test critical filesystem paths.
      */
-    private function testFilesystemsPaths(): ServiceStatus
+    private function getFilesystemsPathsStatus(): ServiceStatus
     {
-        $serviceStatus = new ServiceStatus();
+        $serviceStatus = new ServiceStatus('fileSystems');
+        $info = [];
         try {
             $uploadDirectory = $this->uploadBaseDir . '/upload';
+            $storeDirIsPresent = is_dir($this->storageDir);
             if (!is_dir($this->storageDir)) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
-                $serviceStatus->setData(['error' => "Required storage directory is missing: {$this->storageDir}"]);
-            } else {
-                $serviceStatus->setData(['info' => "Storage directory is present: {$this->storageDir}"]);
             }
+            $info['storageDirIsPresent'] = $storeDirIsPresent;
 
+            $uploadDirIsPresent = is_dir($uploadDirectory);
             if (!is_dir($uploadDirectory)) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
-                $serviceStatus->setData(['error' => "Required upload directory is missing: {$uploadDirectory}"]);
-            } else {
-                $serviceStatus->setData(['info' => "Upload directory is present: {$uploadDirectory}"]);
             }
+            $info['uploadDirIsPresent'] = $uploadDirIsPresent;
 
+
+            $uploadDirIsWritable = is_writable($uploadDirectory);
             if (!is_writable($uploadDirectory)) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
-                $serviceStatus->setData(['error' => "Upload directory is not writable: {$uploadDirectory}"]);
-            } else {
-                $serviceStatus->setData(['info' => "Upload directory is writable: {$uploadDirectory}"]);
             }
+            $info['uploadDirIsWritable'] = $uploadDirIsWritable;
         } catch (\Throwable $e) {
             $serviceStatus->setThrowable($e);
         }
 
+        $serviceStatus->setData($info);
+
         return $serviceStatus;
     }
 
-    private function testPhp(): ServiceStatus
+    private function getPhpStatus(): ServiceStatus
     {
-        $serviceStatus = new ServiceStatus();
+        $serviceStatus = new ServiceStatus('php');
         try {
             $phpVersion = phpversion();
             $serviceStatus->setStatus(ServiceStatus::STATUS_OK);
@@ -204,6 +178,13 @@ final class StatusController extends AbstractController
             $serviceStatus->setThrowable($e);
         }
 
+        return $serviceStatus;
+    }
+
+    private function getPelagosVersion(): ServiceStatus
+    {
+        $serviceStatus = new ServiceStatus('pelagosVersion');
+        $serviceStatus->setData(['version' => $_ENV['PELAGOS_RELEASE_VERSION'] ?? 'unknown']);
         return $serviceStatus;
     }
 }
