@@ -152,7 +152,6 @@ final class StatusController extends AbstractController
             }
             $info['uploadDirIsPresent'] = $uploadDirIsPresent;
 
-
             $uploadDirIsWritable = is_writable($uploadDirectory);
             if (!is_writable($uploadDirectory)) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
