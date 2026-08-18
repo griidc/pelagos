@@ -25,40 +25,51 @@
             </div> #}
         {% endfor %}
         <div>
+            {% set complete = datasetSubmission.status == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
             <section class="bg-white py-8 antialiased md:py-16">
             <div class="mx-auto max-w-2xl px-4 2xl:px-0">
                 <h2 class="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
-                {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
+                {% if complete %}
                     Congratulations!
                 {% else %}
-                    Draft saved.
+                    Draft Saved
                 {% endif %}
                 </h2>
                 <p class="text-gray-500 mb-6 md:mb-8">
-                {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
-                    You have successfully identified a dataset. The GRIIDC identifier for this dataset is
+                {% if complete %}
+                    You have successfully submitted a dataset. The GRIIDC identifier for this dataset is
                 {% else %}
-                    You have saved an identified dataset. Please return to the form to submit the identified dataset. The GRIIDC identifier is
+                    You have saved a dataset submission. Please return to the form to submit the dataset. The GRIIDC identifier is
                 {% endif %}
-                    <a href="{{ url('pelagos_app_ui_dataland_default', {'udi': dataset.udi}) }}" class="pagelink">{{ dataset.udi }}</a>. A confirmation email has been sent to your inbox.
+                    <a href="{{ url('pelagos_app_ui_dataland_default', {'udi': datasetSubmission.dataset.udi}) }}" class="pagelink">{{ datasetSubmission.dataset.udi }}</a>. A confirmation email has been sent to your inbox.
                 </p>
                 <p class="text-gray-500 mb-6 md:mb-8">
                     <span class="font-semibold">Next steps:</span>
-                {% if dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
-                    GRIIDC will review the information and contact you with any questions. Once approved, you will receive a confirmation email and will be able to submit data.
+                {% if complete %}
+                    GRIIDC will review the dataset and contact you with any questions or requests for additional information. Please respond to emails in a timely manner. Once the review is finalized, you will receive an email.
                 {% else %}
-                    <a href="{{ url('pelagos_app_ui_dif_default') }}?udi={{dataset.udi}}" class="pagelink">Submit identified dataset</a>.
+                    <a href="{{ url('pelagos_app_ui_datasetsubmission_default') }}?udi={{datasetSubmission.dataset.udi}}" class="pagelink">Submit dataset</a>.
                 {% endif %}
                 </p>
                 <div class="space-y-4 sm:space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-6 mb-6 md:mb-8 shadow-lg">
                     <dl class="sm:flex items-center justify-left gap-2">
                         <dt class="font-semibold mb-1 sm:mb-0 text-gray-500">Research Group:</dt>
-                        <dd class="font-normal text-gray-500">{{ dataset.researchGroup.name }}</dd>
+                        <dd class="font-normal text-gray-500">{{ datasetSubmission.dataset.researchGroup.name }}</dd>
                     </dl>
                     <dl class="sm:flex items-center justify-left gap-2">
                         <dt class="font-semibold mb-1 sm:mb-0 text-gray-500">Title:</dt>
-                        <dd class="font-normal text-gray-500">{{ dataset.dif.title }}</dd>
+                        <dd class="font-normal text-gray-500">{{ datasetSubmission.title }}</dd>
                     </dl>
+                    {% if complete %}
+                    <dl class="sm:flex items-center justify-left gap-2">
+                        <dt class="font-semibold mb-1 sm:mb-0 text-gray-500">DOI:</dt>
+                        <dd class="font-normal text-gray-500"><a class="pagelink" href="https://doi.org/{{ datasetSubmission.dataset.doi.doi | default('') }}">https://doi.org/{{ datasetSubmission.dataset.doi.doi | default('') }}</a></dd>
+                    </dl>
+                    <dl class="sm:flex items-center justify-left gap-2">
+                        <dt class="font-semibold mb-1 sm:mb-0 text-gray-500">Restrictions:</dt>
+                        <dd class="font-normal text-gray-500">{{ datasetSubmission.restrictions }}</dd>
+                    </dl>
+                    {% endif %}
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="{{ url('app_ui_dashboard') }}" class="button button-regular button-form">View Datasets</a>
