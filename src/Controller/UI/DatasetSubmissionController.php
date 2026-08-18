@@ -125,6 +125,10 @@ class DatasetSubmissionController extends AbstractController
         $datasetSubmission = $dataset->getActiveDatasetSubmission();
         $currentUser = PersonUtil::getPersonFromUser($this->getUser());
 
+        if ($currentUser === null) {
+            throw $this->createAccessDeniedException('You must be logged in to submit a dataset.');
+        }
+
         if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
             $this->addFlash('warning', 'The DIF has not yet been approved for this dataset.');
             return $this->redirectToRoute('app_ui_dashboard');
@@ -136,10 +140,6 @@ class DatasetSubmissionController extends AbstractController
                 $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
                 $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                 $datasetSubmission->setSequence(1);
-
-                if ($currentUser !== null) {
-                    $datasetSubmission->setCreator($currentUser);
-                }
             }
         } elseif (
             $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
@@ -152,6 +152,8 @@ class DatasetSubmissionController extends AbstractController
         }
 
         if ($datasetSubmission instanceof DatasetSubmission && !$entityManager->contains($datasetSubmission)) {
+            $datasetSubmission->setCreator($currentUser);
+
             $entityManager->persist($datasetSubmission);
             $entityManager->flush();
         }
@@ -236,9 +238,9 @@ class DatasetSubmissionController extends AbstractController
                 'researchGroupPeople' => $researchGroupPeople,
                 'datasetSubmission' => $datasetSubmission,
                 'datasetSubmissionLockStatus' => $this->isSubmissionLocked($dataset),
-                // 'status' => $dif->getStatus(),
+                'status' => $datasetSubmission?->getStatus(),
+                'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
                 // 'isSubmittable' => $dif->isSubmittable(),
-                // 'isDRPM' => $this->isGranted('ROLE_DATA_REPOSITORY_MANAGER'),
                 // 'isApprovable' => $dif->isApprovable(),
                 // 'isApproved' => $dif->isApproved(),
                 // 'isUnlockable' => $dif->isUnlockable(),
