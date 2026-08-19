@@ -21,7 +21,7 @@
                             on the left side
                         </li>
                         <li>
-                            <strong>Delete/Rename</strong>: You can perform these actions via the toolbar button or
+                            <strong>Delete/Move/Rename</strong>: You can perform these actions via the toolbar button or
                             right click menu
                         </li>
                         <li>
@@ -154,6 +154,7 @@
             <DxPermissions
                 :delete="writeMode"
                 :upload="writeMode"
+                :move="writeMode"
                 :rename="writeMode"
                 :download="true"/>
             <DxToolbar>
@@ -204,6 +205,7 @@ let destinationDir = '';
 const contextMenuItems = [
   'delete',
   'refresh',
+  'move',
   'rename',
   'download',
 ];
@@ -245,6 +247,21 @@ const deleteItem = (item) => new Promise((resolve, reject) => {
     // eslint-disable-next-line no-undef
     `${Routing.generate('pelagos_api_file_delete')}`
     + `/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}&fileId=${item.dataItem.fileId}`,
+  ).then(() => {
+    myFileManager.$parent.showDownloadZipBtn = false;
+    resolve();
+  }).catch((error) => {
+    myFileManager.$parent.showPopupError(error.request);
+    reject(error);
+  });
+});
+
+const moveItem = (item, destinationDirectory) => new Promise((resolve, reject) => {
+  const newFilePathName = (destinationDirectory.path) ? `${destinationDirectory.path}/${item.name}` : item.name;
+  putApi(
+    // eslint-disable-next-line no-undef
+    `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
+    { newFileFolderPathDir: newFilePathName, path: item.path, isDir: item.isDirectory },
   ).then(() => {
     myFileManager.$parent.showDownloadZipBtn = false;
     resolve();
@@ -490,6 +507,7 @@ export default {
         getItems,
         deleteItem,
         uploadFileChunk,
+        moveItem,
         renameItem,
         downloadItems,
       }),
@@ -598,7 +616,7 @@ export default {
 
     filterMenuItems() {
       return contextMenuItems.filter((item) => {
-        if (item === 'delete' || item === 'refresh' || item === 'rename') {
+        if (item === 'delete' || item === 'refresh' || item === 'move' || item === 'rename') {
           return item;
         }
         return null;
