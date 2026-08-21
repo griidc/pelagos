@@ -120,32 +120,6 @@
   align-items: center;
 }
 
-.jira-buttons-box {
-  display: flex;
-  flex-direction: row;
-  & button {
-    color: color('white');
-    border-style: solid;
-    border-top-color: initial;
-    border-right-color: theme-color('secondary');
-    border-bottom-color: theme-color('secondary');
-    border-left-color: theme-color('secondary');
-    font-size: 9pt;
-    font-family: sans-serif;
-    font-weight: normal;
-    padding: 0 5px;
-    border-width: 0px 1px 1px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    border-radius: 0 0 5px 5px;
-    background-color: theme-color('primary');
-    cursor: pointer;
-    border-top-width: 0;
-    position: relative!important;
-    white-space: nowrap;
-    line-height: 23px;
-  }
-}
-
 .login-info-box {
   top: 0;
   right: 0;
