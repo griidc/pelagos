@@ -108,13 +108,12 @@
                   Clear
                 </button>
                 <div class="mt-3 pt-3 empty-button-div"></div>
-                <!-- Temporary Removed -->
-                <!-- <button
+                <button
                   type="button"
                   id="map-search"
                   class="btn btn-dark map-search-button"
                   @click="dataDiscovery()">Map Search
-                </button> -->
+                </button>
               </div>
             </div>
           </b-form>
