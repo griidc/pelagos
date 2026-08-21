@@ -257,7 +257,7 @@ const deleteItem = (item) => new Promise((resolve, reject) => {
 });
 
 const moveItem = (item, destinationDirectory) => new Promise((resolve, reject) => {
-  const newFilePathName = (destinationDir.path) ? `${destinationDirectory.path}/${item.name}` : item.name;
+  const newFilePathName = (destinationDirectory.path) ? `${destinationDirectory.path}/${item.name}` : item.name;
   putApi(
     // eslint-disable-next-line no-undef
     `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
