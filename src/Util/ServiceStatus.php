@@ -9,9 +9,20 @@ class ServiceStatus
     public const STATUS_OK = 'ok';
     public const STATUS_ERROR = 'error';
 
+    private readonly string $name;
     private string $status = self::STATUS_OK;
     private array $data = [];
     private ?Throwable $error = null;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
     public function setStatus(string $status): self
     {
