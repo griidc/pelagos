@@ -31,9 +31,12 @@ class ServiceStatusEngine
             'timestamp' => (new \DateTime())->format('c'),
         ];
 
+        $services = [];
         foreach ($this->services as $service) {
-            $status = array_merge($status, [$service->getName() => $service->getResults()]);
+            $services[$service->getName()] = $service->getResults();
+
         }
+        $status['services'] = $services;
         return $status;
     }
 
