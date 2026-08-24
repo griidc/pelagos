@@ -130,6 +130,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const filesSectionRadios = document.getElementsByName('has-files');
+  const fileSection = document.getElementsByClassName('files-section');
+  const remoteSection = document.getElementsByClassName('remotely-hosted-section');
+  filesSectionRadios.forEach((radio) => {
+    const filesUploaded = document.getElementById('filesUploaded');
+    const remoteHostedUrl = document.getElementById('remotelyHostedUrl');
+    const filesUploadedCount = filesUploaded.value ?? '';
+    const remoteHostedUrlValue = remoteHostedUrl.value ?? '';
+
+    if (remoteHostedUrlValue && radio.value === 'no-files') {
+      Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
+      Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
+      filesUploaded.value = '';
+      const filesRadio = radio;
+      filesRadio.checked = true;
+    }
+
+    if (filesUploadedCount && radio.value === 'yes-files') {
+      Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
+      Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
+      const filesRadio = radio;
+      filesRadio.checked = true;
+    }
+
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'yes-files') {
+        Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
+        Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
+        // filesUploaded.value = '';
+      } else if (e.target.value === 'no-files') {
+        Array.from(fileSection).forEach((el) => el.classList.add('hidden'));
+        Array.from(remoteSection).forEach((el) => el.classList.remove('hidden'));
+        // remoteHostedUrl.value = '';
+      }
+
+      // formValidate.revalidateGroup('#has-files');
+    });
+  });
+
   const makeContactSelect = (contact) => {
     const contactSelect = new TomSelect(contact, {
       maxOptions: null,
@@ -646,4 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  const mainSection = document.getElementById('mainsection');
+  mainSection.classList.remove('loading');
 });
