@@ -20,7 +20,7 @@
         "eslint-plugin-vue": "^9.33.0",
         "file-loader": "^6.0.0",
         "globals": "^17.6.0",
-        "react": "^19.2.7",
+        "react": "^19.2.8",
         "react-dom": "^19.2.8",
         "regenerator-runtime": "^0.14.1",
         "sass-embedded": "1.64",
