@@ -34,7 +34,6 @@ class ServiceStatusEngine
         $services = [];
         foreach ($this->services as $service) {
             $services[$service->getName()] = $service->getResults();
-
         }
         $status['services'] = $services;
         return $status;
