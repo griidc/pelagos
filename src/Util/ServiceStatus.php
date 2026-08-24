@@ -9,7 +9,7 @@ class ServiceStatus
     public const STATUS_OK = 'ok';
     public const STATUS_ERROR = 'error';
 
-    private string $name;
+    private readonly string $name;
     private string $status = self::STATUS_OK;
     private array $data = [];
     private ?Throwable $error = null;
