@@ -268,7 +268,7 @@ export default {
     },
     dataDiscovery() {
       // eslint-disable-next-line no-undef
-      window.location.href = Routing.generate('pelagos_app_ui_datadiscovery_default');
+      window.location.href = Routing.generate('app_map_search');
     },
   },
   mounted() {
