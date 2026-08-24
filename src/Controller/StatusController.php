@@ -141,19 +141,19 @@ final class StatusController extends AbstractController
         try {
             $uploadDirectory = $this->uploadBaseDir . '/upload';
             $storeDirIsPresent = is_dir($this->storageDir);
-            if (!is_dir($this->storageDir)) {
+            if (!$storeDirIsPresent) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
             }
             $info['storageDirIsPresent'] = $storeDirIsPresent;
 
             $uploadDirIsPresent = is_dir($uploadDirectory);
-            if (!is_dir($uploadDirectory)) {
+            if (!$uploadDirIsPresent) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
             }
             $info['uploadDirIsPresent'] = $uploadDirIsPresent;
 
             $uploadDirIsWritable = is_writable($uploadDirectory);
-            if (!is_writable($uploadDirectory)) {
+            if (!$uploadDirIsWritable) {
                 $serviceStatus->setStatus(ServiceStatus::STATUS_ERROR);
             }
             $info['uploadDirIsWritable'] = $uploadDirIsWritable;
