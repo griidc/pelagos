@@ -24,7 +24,11 @@
 ###############################################################################
 
 # Get function from functions library
-. /etc/init.d/functions
+if [ -f /etc/init.d/functions ]; then
+    . /etc/init.d/functions
+elif [ -f /etc/rc.d/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+fi
 
 prog="pelagos-messagemq-consumer-supervisor"
 
@@ -114,4 +118,8 @@ case "$1" in
         exit 1
 esac
 
-exit 0
+if $success ; then
+    exit 0
+else
+    exit 1
+fi
