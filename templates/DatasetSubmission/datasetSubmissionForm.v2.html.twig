@@ -276,31 +276,31 @@
 
             <div id="files-error"></div>
 
-            <div glass="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-                <div class="files-section hidden">
-                    {{ form_row(form.datasetFileTransferType) }}
+            <div class="files-section hidden">
+                {{ form_row(form.datasetFileTransferType) }}
 
-                    <div class="mb-2 font-normal text-gray-700">
-                        <span class="block mb-2">
-                            You may upload files or folders using Drag and Drop or via the Upload Button.
-                        </span>
-                    </div>
-
-                    <div id="file-manager">
-                        <div id="dropzone-uploader">
-                            <input id="filesUploaded" name="filesUploaded" type="hidden" value="" class="files">
-                            <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ fileWriteEnabled }}"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="remotely-hosted-section hidden">
-                    <span class="font-normal text-gray-700 block mb-2">
-                        If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
+                <div class="mb-2 font-normal text-gray-700">
+                    <span class="block mb-2">
+                        You may upload files or folders using Drag and Drop or via the Upload Button.
                     </span>
-                    {{ form_label(form.remotelyHostedUrl) }}
-                    {{ form_widget(form.remotelyHostedUrl, { attr: {class: 'files input-base'} }) }}
                 </div>
+
+                <div id="files-uploaded-error"></div>
+
+                <div id="file-manager">
+                    <div id="dropzone-uploader">
+                        <input id="filesUploaded" name="filesUploaded" type="hidden" value="" class="files">
+                        <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ fileWriteEnabled }}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="remotely-hosted-section hidden">
+                <span class="font-normal text-gray-700 block mb-2">
+                    If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
+                </span>
+                {{ form_label(form.remotelyHostedUrl) }}
+                {{ form_widget(form.remotelyHostedUrl, { attr: {class: 'files input-base'} }) }}
             </div>
 
             <label class="required">Restrictions:</label>
