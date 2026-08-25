@@ -599,10 +599,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     ])
     .onSuccess((event) => {
-      alert('Form is valid and ready to be submitted!');
-      // const successEvent = event;
-      // successEvent.currentTarget.submitAction.value = event.submitter.name;
-      // successEvent.currentTarget.submit();
+      // alert('Form is valid and ready to be submitted!');
+      const successEvent = event;
+      successEvent.currentTarget.submitAction.value = event.submitter.name;
+      successEvent.currentTarget.submit();
     });
 
   const spatialExtentDescriptionElement = document.getElementById('spatialExtentDescription');
