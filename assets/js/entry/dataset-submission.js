@@ -587,6 +587,22 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#remotelyHostedUrl', [
       {
         validator: (value) => {
+          const remotelyHostedUrlElement = document.getElementById('remotelyHostedUrl');
+          if (value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+            return true;
+          }
+
+          if (!value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+            return false;
+          }
+
+          // Element is not visible, so we don't need to validate it
+          return true;
+        },
+        errorMessage: 'Please provide a remotely hosted URL.',
+      },
+      {
+        validator: (value) => {
           if (!value.trim()) {
             return true;
           }
@@ -599,7 +615,6 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     ])
     .onSuccess((event) => {
-      // alert('Form is valid and ready to be submitted!');
       const successEvent = event;
       successEvent.currentTarget.submitAction.value = event.submitter.name;
       successEvent.currentTarget.submit();
