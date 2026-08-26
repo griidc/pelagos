@@ -2,7 +2,7 @@
 {% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div class="max-w-[85%] mx-auto">
+    <div id="mainsection"class="max-w-[85%] mx-auto loading">
         <div class="mb-4 font-normal text-gray-500">
             <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
             In this step you will submit the dataset by adding additional information and providing files.
@@ -160,7 +160,7 @@
 
         <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
-            <label>Geographic Study Area:</label>
+            <label class="required">Geographic Study Area:</label>
             <div class="mb-2 font-normal text-gray-700">
                 <span class="block mb-2">
                     Please indicate if your dataset is spatial or non-spatial. A dataset has a spatial component if samples were taken at a location, model results describe an area, or if the location is relevant to the dataset. Non-spatial datasets are independent of location.
@@ -233,9 +233,50 @@
 
         <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
 
-        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <label class="required">Dataset File Transfer Details:</label>
+            <div class="mb-2 font-normal text-gray-700">
+                <span class="block mb-2">
+                    There are multiple methods to provide data to GRIIDC.
+                    For datasets under 25 GB, select the Upload Data tab to upload your data.
+                    If your data are over 25 GB, select the Upload Data tab and upload a text document containing a file listing of the dataset.
+                    Once you have submitted the dataset, please contact GRIIDC (help@griidc.org) for further instructions on uploading the data.
+                </span>
+                <span class="block">
+                    If your data are remotely hosted at a GRIIDC approved repository, please select the Remotely Hosted tab and provide the direct URL to the data.
+                </span>
+            </div>
+            <div id="has-files">
+                <div id="has-files-error"></div>
+                <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <li>
+                        <input type="radio" id="yes-files" name="has-files" value="yes-files" class="hidden peer" helper>
+                        <label for="yes-files" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Upload Data</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                    <li>
+                        <input type="radio" id="no-files" name="has-files" value="no-files" class="hidden peer" helper>
+                        <label for="no-files" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Enter URL</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                </ul>
+            </div>
 
-            <div>
+            <div id="files-error"></div>
+
+            <div class="files-section hidden">
                 {{ form_row(form.datasetFileTransferType) }}
 
                 <div class="mb-2 font-normal text-gray-700">
@@ -243,6 +284,8 @@
                         You may upload files or folders using Drag and Drop or via the Upload Button.
                     </span>
                 </div>
+
+                <div id="files-uploaded-error"></div>
 
                 <div id="file-manager">
                     <div id="dropzone-uploader">
@@ -252,8 +295,10 @@
                 </div>
             </div>
 
-            <div>
-                <span class="font-normal text-gray-700 block mb-2">If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.</span>
+            <div class="remotely-hosted-section hidden">
+                <span class="font-normal text-gray-700 block mb-2">
+                    If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
+                </span>
                 {{ form_label(form.remotelyHostedUrl) }}
                 {{ form_widget(form.remotelyHostedUrl, { attr: {class: 'files input-base'} }) }}
             </div>
