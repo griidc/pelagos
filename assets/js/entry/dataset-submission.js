@@ -126,11 +126,15 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (e.target.value === 'no-extent') {
         Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
         Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
-        spatialExtentGeometryField.value = '';
+        const temporalExtentDescriptionTomSelect = temporalExtentDescriptionField.tomselect;
+        if (temporalExtentDescriptionTomSelect) {
+          temporalExtentDescriptionTomSelect.clear();
+        }
         temporalExtentDescriptionField.value = '';
         temporalExtentDescriptionField.selectedIndex = 0;
         temporalExtentBeginPositionField.value = '';
         temporalExtentEndPositionField.value = '';
+        spatialExtentGeometryField.value = '';
 
         geoViz.clearMap();
       }
