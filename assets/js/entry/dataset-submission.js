@@ -62,6 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
   spatialExtentRadios.forEach((radio) => {
     const spatialExtentGeometryField = document.getElementById('spatialExtent');
     const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+    const temporalExtentDescriptionField = document.getElementById('temporalExtentDesc');
+    const temporalExtentBeginPositionField = document.getElementById('temporalExtentBeginPosition');
+    const temporalExtentEndPositionField = document.getElementById('temporalExtentEndPosition');
+
     const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
     const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
 
@@ -123,6 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
         Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
         Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
         spatialExtentGeometryField.value = '';
+        temporalExtentDescriptionField.value = '';
+        temporalExtentDescriptionField.selectedIndex = 0;
+        temporalExtentBeginPositionField.value = '';
+        temporalExtentEndPositionField.value = '';
+
         geoViz.clearMap();
       }
 
