@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   filesSectionRadios.forEach((radio) => {
     const filesUploaded = document.getElementById('filesUploaded');
     const remoteHostedUrl = document.getElementById('remotelyHostedUrl');
-    const filesUploadedCount = filesUploaded.value ?? '';
+    const filesUploadedValue = filesUploaded.value ?? '';
     const remoteHostedUrlValue = remoteHostedUrl.value ?? '';
 
     if (remoteHostedUrlValue && radio.value === 'no-files') {
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       filesRadio.checked = true;
     }
 
-    if (filesUploadedCount && radio.value === 'yes-files') {
+    if (filesUploadedValue && radio.value === 'yes-files') {
       Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
       Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
       const filesRadio = radio;
