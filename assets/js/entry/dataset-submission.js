@@ -62,6 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
   spatialExtentRadios.forEach((radio) => {
     const spatialExtentGeometryField = document.getElementById('spatialExtent');
     const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+    const temporalExtentDescriptionField = document.getElementById('temporalExtentDesc');
+    const temporalExtentBeginPositionField = document.getElementById('temporalExtentBeginPosition');
+    const temporalExtentEndPositionField = document.getElementById('temporalExtentEndPosition');
+
     const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
     const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
 
@@ -122,7 +126,16 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (e.target.value === 'no-extent') {
         Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
         Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
+        const temporalExtentDescriptionTomSelect = temporalExtentDescriptionField.tomselect;
+        if (temporalExtentDescriptionTomSelect) {
+          temporalExtentDescriptionTomSelect.clear();
+        }
+        temporalExtentDescriptionField.value = '';
+        temporalExtentDescriptionField.selectedIndex = 0;
+        temporalExtentBeginPositionField.value = '';
+        temporalExtentEndPositionField.value = '';
         spatialExtentGeometryField.value = '';
+
         geoViz.clearMap();
       }
 
@@ -136,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   filesSectionRadios.forEach((radio) => {
     const filesUploaded = document.getElementById('filesUploaded');
     const remoteHostedUrl = document.getElementById('remotelyHostedUrl');
-    const filesUploadedCount = filesUploaded.value ?? '';
+    const filesUploadedValue = filesUploaded.value ?? '';
     const remoteHostedUrlValue = remoteHostedUrl.value ?? '';
 
     if (remoteHostedUrlValue && radio.value === 'no-files') {
@@ -147,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       filesRadio.checked = true;
     }
 
-    if (filesUploadedCount && radio.value === 'yes-files') {
+    if (filesUploadedValue && radio.value === 'yes-files') {
       Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
       Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
       const filesRadio = radio;
