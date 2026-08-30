@@ -12,10 +12,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alpinejs/collapse@npm:^3.15.12":
-  version: 3.15.12
-  resolution: "@alpinejs/collapse@npm:3.15.12"
-  checksum: 10c0/72228157cae6a682f35fbc7fe1ad4651e12d561cfcc8ebdc6e4837a2dcdde00974269d1bc881f0de3e08f4730e8124e8ceb52852590e457c674e614a968e1225
+"@alpinejs/collapse@npm:^3.16.3":
+  version: 3.16.3
+  resolution: "@alpinejs/collapse@npm:3.16.3"
+  checksum: 10c0/eade0bf09df876bbafcb910b3041c741c67eb09279584fd4de6665a73a7f76967e96116c0a12b6bfe11ff9cd9f86c4cb6c73831c8ba9fcf472d6f5779fdffca5
   languageName: node
   linkType: hard
 
@@ -9962,7 +9962,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@alpinejs/collapse": "npm:^3.15.12"
+    "@alpinejs/collapse": "npm:^3.16.3"
     "@babel/core": "npm:^7.29.6"
     "@babel/preset-env": "npm:7.29.7"
     "@babel/preset-react": "npm:^7.28.5"
