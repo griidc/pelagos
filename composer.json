@@ -31,7 +31,7 @@
         "friendsofsymfony/elastica-bundle": "^6.1.0",
         "friendsofsymfony/jsrouting-bundle": "^3.0",
         "friendsofsymfony/rest-bundle": "^3.0",
-        "guzzlehttp/guzzle": "^7.6",
+        "guzzlehttp/guzzle": "^8.1",
         "hidehalo/nanoid-php": "^2.0",
         "jms/serializer-bundle": "^5.0",
         "knplabs/knp-snappy-bundle": "^1.10",
