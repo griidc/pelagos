@@ -153,18 +153,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const remoteHostedUrlValue = remoteHostedUrl.value ?? '';
 
     if (remoteHostedUrlValue && radio.value === 'no-files') {
-      Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
-      Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
-      filesUploaded.value = '';
-      const filesRadio = radio;
-      filesRadio.checked = true;
+      Array.from(remoteSection).forEach((el) => el.classList.remove('hidden'));
+      Array.from(fileSection).forEach((el) => el.classList.add('hidden'));
+      // filesUploaded.value = '';
+      const selectedRadio = radio;
+      selectedRadio.checked = true;
     }
 
     if (filesUploadedValue && radio.value === 'yes-files') {
       Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
       Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
-      const filesRadio = radio;
-      filesRadio.checked = true;
+      const selectedRadio = radio;
+      selectedRadio.checked = true;
     }
 
     radio.addEventListener('change', (e) => {
@@ -667,6 +667,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const filesUploadedSelector = document.getElementById('filesUploaded');
   filesUploadedSelector.addEventListener('change', () => {
+    const yesFilesRadio = document.getElementById('yes-files');
+    if (yesFilesRadio && filesUploadedSelector.value === 'valid') {
+      yesFilesRadio.click();
+    }
     if (formValidate.isSubmitted) {
       formValidate.revalidateField('#filesUploaded');
     }
