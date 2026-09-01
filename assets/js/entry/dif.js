@@ -183,9 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
         plugin: JustValidatePluginDate((fields) => ({
           required: true,
           format: 'yyyy-MM-dd',
-          isBefore: fields['#estimatedEndDate'].elem.value,
+          isBeforeOrEqual: fields['#estimatedEndDate'].elem.value,
         })),
-        errorMessage: 'Date must be before end date.',
+        errorMessage: 'Date must be before (or on) end date.',
       },
     ])
     .addField('#estimatedEndDate', [
@@ -200,9 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
         plugin: JustValidatePluginDate((fields) => ({
           required: true,
           format: 'yyyy-MM-dd',
-          isAfter: fields['#estimatedStartDate'].elem.value,
+          isAfterOrEqual: fields['#estimatedStartDate'].elem.value,
         })),
-        errorMessage: 'Date must be after start date.',
+        errorMessage: 'Date must be after (or on) start date.',
       },
     ])
     .onSuccess((event) => {
