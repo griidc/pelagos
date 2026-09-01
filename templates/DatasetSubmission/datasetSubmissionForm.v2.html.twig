@@ -60,15 +60,14 @@
             <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
 
             <div>
+                {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
+            </div>
+            <div>
                 {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
             </div>
 
             <div>
                 {{ form_row(form.additionalFunders, { attr: { class: 'input-base' } }) }}
-            </div>
-
-            <div>
-                {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
             </div>
         </div>
 
