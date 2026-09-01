@@ -269,9 +269,9 @@ class DatasetSubmissionController extends AbstractController
 
         $datasetSubmission = $dataset->getActiveDatasetSubmission();
 
-        return $this->render('DatasetSubmission/datasetSubmission-confirmation.html.twig', [
-            'datasetSubmission' => $datasetSubmission,
-            ]
+        return $this->render(
+            'DatasetSubmission/datasetSubmission-confirmation.html.twig',
+            ['datasetSubmission' => $datasetSubmission,]
         );
     }
 

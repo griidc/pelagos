@@ -212,7 +212,7 @@ class DatasetSubmissionType extends AbstractType
             ->add('topicKeywords', Type\ChoiceType::class, [
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
-                'choice_attr' => function(mixed $choice) {
+                'choice_attr' => function (mixed $choice) {
                     return ['description' => DatasetSubmission::TOPIC_KEYWORDS[$choice]['description']];
                 },
                 'multiple' => true,
