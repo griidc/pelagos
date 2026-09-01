@@ -516,9 +516,9 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         plugin: JustValidatePluginDate((fields) => ({
           format: 'yyyy-MM-dd',
-          isAfter: fields['#temporalExtentBeginPosition'].elem.value,
+          isAfterOrEqual: fields['#temporalExtentBeginPosition'].elem.value,
         })),
-        errorMessage: 'Date must be after start date.',
+        errorMessage: 'End date must be on or after start date.',
       },
     ])
     .addField('#spatial-extent', [
