@@ -62,6 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
   spatialExtentRadios.forEach((radio) => {
     const spatialExtentGeometryField = document.getElementById('spatialExtent');
     const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
+    const temporalExtentDescriptionField = document.getElementById('temporalExtentDesc');
+    const temporalExtentBeginPositionField = document.getElementById('temporalExtentBeginPosition');
+    const temporalExtentEndPositionField = document.getElementById('temporalExtentEndPosition');
+
     const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
     const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
 
@@ -122,11 +126,59 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (e.target.value === 'no-extent') {
         Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
         Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
+        const temporalExtentDescriptionTomSelect = temporalExtentDescriptionField.tomselect;
+        if (temporalExtentDescriptionTomSelect) {
+          temporalExtentDescriptionTomSelect.clear();
+        }
+        temporalExtentDescriptionField.value = '';
+        temporalExtentDescriptionField.selectedIndex = 0;
+        temporalExtentBeginPositionField.value = '';
+        temporalExtentEndPositionField.value = '';
         spatialExtentGeometryField.value = '';
+
         geoViz.clearMap();
       }
 
-      formValidate.revalidateGroup('#has-extent');
+      formValidate.revalidateField('#has-extent');
+    });
+  });
+
+  const filesSectionRadios = document.getElementsByName('has-files');
+  const fileSection = document.getElementsByClassName('files-section');
+  const remoteSection = document.getElementsByClassName('remotely-hosted-section');
+  filesSectionRadios.forEach((radio) => {
+    const filesUploaded = document.getElementById('filesUploaded');
+    const remoteHostedUrl = document.getElementById('remotelyHostedUrl');
+    const filesUploadedValue = filesUploaded.value ?? '';
+    const remoteHostedUrlValue = remoteHostedUrl.value ?? '';
+
+    if (remoteHostedUrlValue && radio.value === 'no-files') {
+      Array.from(remoteSection).forEach((el) => el.classList.remove('hidden'));
+      Array.from(fileSection).forEach((el) => el.classList.add('hidden'));
+      // filesUploaded.value = '';
+      const selectedRadio = radio;
+      selectedRadio.checked = true;
+    }
+
+    if (filesUploadedValue && radio.value === 'yes-files') {
+      Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
+      Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
+      const selectedRadio = radio;
+      selectedRadio.checked = true;
+    }
+
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'yes-files') {
+        Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
+        Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
+        // filesUploaded.value = '';
+      } else if (e.target.value === 'no-files') {
+        Array.from(fileSection).forEach((el) => el.classList.add('hidden'));
+        Array.from(remoteSection).forEach((el) => el.classList.remove('hidden'));
+        // remoteHostedUrl.value = '';
+      }
+
+      formValidate.revalidateField('#has-files');
     });
   });
 
@@ -469,20 +521,6 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Date must be after start date.',
       },
     ])
-    .addField('#remotelyHostedUrl', [
-      {
-        validator: (value) => {
-          if (!value.trim()) {
-            return true;
-          }
-          if (URL.canParse(value)) {
-            return true;
-          }
-          return false;
-        },
-        errorMessage: 'Please enter a valid URL.',
-      },
-    ])
     .addField('#spatial-extent', [
       {
         validator: () => {
@@ -513,6 +551,82 @@ document.addEventListener('DOMContentLoaded', () => {
     ], {
       errorsContainer: '#spatial-extent-error',
     })
+    .addField('#has-files', [
+      {
+        validator: () => {
+          const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
+          if (selectedRadio) {
+            return true;
+          }
+          const hasFilesSection = document.getElementById('submit');
+          setTimeout(() => hasFilesSection.scrollIntoView(true), 0);
+          return false;
+        },
+        errorMessage: 'Please select if the dataset has files or is remotely hosted.',
+      },
+    ], {
+      errorsContainer: '#has-files-error',
+    })
+    .addField('#filesUploaded', [
+      {
+        validator: () => {
+          const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
+          if (!selectedRadio) {
+            return true;
+          }
+          const filesUploadedElement = document.getElementById('filesUploaded');
+          const remotelyHostedUrlElement = document.getElementById('remotelyHostedUrl');
+          // Check if either the file section or remote section is filled
+          if (filesUploadedElement.value === 'valid') {
+            return true;
+          }
+          if (remotelyHostedUrlElement.value.trim()) {
+            return true;
+          }
+
+          if (!filesUploadedElement.value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+            setTimeout(() => remotelyHostedUrlElement.focus(), 0);
+          } else {
+            const submitSection = document.getElementById('submit');
+            setTimeout(() => submitSection.scrollIntoView(true), 0);
+          }
+          return false;
+        },
+        errorMessage: 'Please provide files or a remotely hosted URL.',
+      },
+    ], {
+      errorsContainer: '#files-uploaded-error',
+    })
+    .addField('#remotelyHostedUrl', [
+      {
+        validator: (value) => {
+          const remotelyHostedUrlElement = document.getElementById('remotelyHostedUrl');
+          if (value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+            return true;
+          }
+
+          if (!value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+            return false;
+          }
+
+          // Element is not visible, so we don't need to validate it
+          return true;
+        },
+        errorMessage: 'Please provide a remotely hosted URL.',
+      },
+      {
+        validator: (value) => {
+          if (!value.trim()) {
+            return true;
+          }
+          if (URL.canParse(value)) {
+            return true;
+          }
+          return false;
+        },
+        errorMessage: 'Please enter a valid URL.',
+      },
+    ])
     .onSuccess((event) => {
       const successEvent = event;
       successEvent.currentTarget.submitAction.value = event.submitter.name;
@@ -549,6 +663,24 @@ document.addEventListener('DOMContentLoaded', () => {
         formValidate.revalidateField('#has-extent');
       }
     });
+  });
+
+  const filesUploadedSelector = document.getElementById('filesUploaded');
+  filesUploadedSelector.addEventListener('change', () => {
+    const yesFilesRadio = document.getElementById('yes-files');
+    if (yesFilesRadio && filesUploadedSelector.value === 'valid') {
+      yesFilesRadio.click();
+    }
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#filesUploaded');
+    }
+  });
+
+  const remotelyHostedUrlSelector = document.getElementById('remotelyHostedUrl');
+  remotelyHostedUrlSelector.addEventListener('input', () => {
+    if (formValidate.isSubmitted) {
+      formValidate.revalidateField('#remotelyHostedUrl');
+    }
   });
 
   if (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE && !isDrpm) {
@@ -646,4 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  const mainSection = document.getElementById('mainsection');
+  mainSection.classList.remove('loading');
 });
