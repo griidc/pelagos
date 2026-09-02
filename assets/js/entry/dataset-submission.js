@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
           format: 'yyyy-MM-dd',
           isBeforeOrEqual: fields['#temporalExtentEndPosition'].elem.value,
         })),
-        errorMessage: 'Date must be before (or on) end date.',
+        errorMessage: 'Date cannot be after end date.',
       },
     ])
     .addField('#temporalExtentEndPosition', [
@@ -518,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
           format: 'yyyy-MM-dd',
           isAfterOrEqual: fields['#temporalExtentBeginPosition'].elem.value,
         })),
-        errorMessage: 'Date must be after (or on) start date.',
+        errorMessage: 'Date cannot be before start date.',
       },
     ])
     .addField('#spatial-extent', [
