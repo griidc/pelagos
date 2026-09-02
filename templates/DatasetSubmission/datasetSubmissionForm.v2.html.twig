@@ -2,16 +2,10 @@
 {% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div id="mainsection"class="max-w-[85%] mx-auto loading">
-        <div class="mb-4 font-normal text-gray-500">
-            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
-            In this step you will submit the dataset by adding additional information and providing files.
-            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
-        </div>
-        {% if udi is not empty %}
-             <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
-        {% endif %}
-        <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
+    <div id="mainsection" class="max-w-[95%] mx-auto loading">
+
+        <section id="contact" data-form-section>
+        <div class="text-2xl font-semibold mb-4">Dataset Contact</div>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
 
             <div class="grid grid-cols-1 gap-4 dataset-contacts"
@@ -75,8 +69,14 @@
         {% set contact = form.metadataContacts | first %}
         <input type="hidden" id="metadatacontact" name="{{contact.person.vars.full_name}}" value="{{contact.vars.data.person.id|default}}">
         <input type="hidden" id="metadatacontactrole" name="{{contact.role.vars.full_name}}" value="{{contact.vars.data.role|default}}">
+        <div class="flex justify-between gap-4">
+            <button type="button" class="button button-regular button-form" disabled>Previous</button>
+            <button type="button" class="button button-regular button-form" onclick="showSection('information')">Next</button>
+        </div>
+        </section>
 
-        <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
+        <section id="information" data-form-section class="hidden">
+        <div class="text-2xl font-semibold mb-4">Dataset Information</div>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div>
                 {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
@@ -118,8 +118,14 @@
                 {{ form_row(form.suppProvenance, { attr: { class: 'textarea-base', rows: 3} }) }}
             </div>
         </div>
+        <div class="flex justify-between gap-4">
+            <button type="button" class="button button-regular button-form" onclick="showSection('contact')">Previous</button>
+            <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Next</button>
+        </div>
+        </section>
 
-        <span class="text-2xl font-semibold mb-4" id="keywords">Keywords</span>
+        <section id="keywords" data-form-section class="hidden">
+        <div class="text-2xl font-semibold mb-4">Keywords</div>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
 
             <div>
@@ -157,8 +163,14 @@
                 </select>
             </div>
         </div>
+        <div class="flex justify-between gap-4">
+            <button type="button" class="button button-regular button-form" onclick="showSection('information')">Previous</button>
+            <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Next</button>
+        </div>
+        </section>
 
-        <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
+        <section id="extent" data-form-section class="hidden">
+        <div class="text-2xl font-semibold mb-4">Dataset Extent</div>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
             <label class="required">Geographic Study Area:</label>
             <div class="mb-2 font-normal text-gray-700">
@@ -230,8 +242,14 @@
                 </div>
             </div>
         </div>
+        <div class="flex justify-between gap-4">
+            <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Previous</button>
+            <button type="button" class="button button-regular button-form" onclick="showSection('submit')">Next</button>
+        </div>
+        </section>
 
-        <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
+        <section id="submit" data-form-section class="hidden">
+        <div class="text-2xl font-semibold mb-4">Submit</div>
 
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
             <label class="required">Dataset File Transfer Details:</label>
@@ -317,7 +335,7 @@
             <input type="hidden" name="status" id="status" value="{{ status }}"/>
             <input type="hidden" name="isDrpm" id="isDrpm" value="{{ isDRPM }}"/>
 
-            <div class="grid grid-cols-2 gap-4" id="submit">
+            <div class="grid grid-cols-2 gap-4" id="submit-actions">
                 <div>
                     <button type="button" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center">Save and Continue Later</button>
                 </div>
@@ -333,5 +351,10 @@
                 {% endif %}
             </div>
         </div>
+        <div class="flex justify-between gap-4">
+            <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Previous</button>
+            <button type="button" class="button button-regular button-form" disabled>Next</button>
+        </div>
+        </section>
     </div>
 </form>
