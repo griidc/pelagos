@@ -36,10 +36,6 @@ if (urlParams.has('regid')) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
-    loadWizard: true,
-  });
-
   const form = document.getElementById('regForm');
   const status = document.getElementById('status').value;
   const isDrpm = document.getElementById('isDrpm')?.value === '1';
@@ -48,6 +44,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactTemplate = contactsContainer.querySelector('.dataset-contact');
   const newContactTemplate = contactTemplate.cloneNode(true);
   const contactSelects = [];
+  const locked = (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE && !isDrpm);
+
+  const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
+    loadWizard: !locked,
+    showEditControls: !locked,
+    showDrawControls: !locked,
+    showHomeButton: !locked,
+    allowDragging: !locked,
+    allowZoom: !locked,
+    allowFullScreen: !locked,
+  });
 
   const formValidate = new JustValidate(form, {
     errorLabelStyle: {
@@ -683,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE && !isDrpm) {
+  if (locked) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;
