@@ -1,0 +1,336 @@
+{% set isDRPM = is_granted('ROLE_DATA_REPOSITORY_MANAGER')  %}
+{% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
+<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    <div id="mainsection"class="max-w-[85%] mx-auto loading">
+        <div class="mb-4 font-normal text-gray-500">
+            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
+            In this step you will submit the dataset by adding additional information and providing files.
+            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
+        </div>
+        {% if udi is not empty %}
+             <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
+        <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
+            <div class="grid grid-cols-1 gap-4 dataset-contacts"
+                data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
+            >
+                {% for contact in form.datasetContacts %}
+                <div class="dataset-contact grid grid-cols-[2fr_1fr] gap-4 w-full relative">
+                    <div class="col-span-2 top-hr">
+                        <hr class="w-full border-gray-300 hidden">
+                    </div>
+                    <div class="absolute top-4 right-0">
+                        <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                    </div>
+                    <div class="w-full">
+                        <div>
+                            <label class="required" for="datasetcontact">
+                                {{ contact.vars.data.primaryContact ? 'Primary Point of Contact' : 'Additional Point of Contact' }}
+                            </label>
+                        </div>
+                        <select class="contactperson w-full" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                        {% set selectPerson = contact.vars.data.person.id %}
+                        {% for person in researchGroupPeople %}
+                            <option
+                                value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}
+                                data-email="{{person.emailAddress}}"
+                                data-firstname="{{person.firstName}}"
+                                data-lastname="{{person.lastName}}"
+                            >
+                                {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
+                            </option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w-full">
+                        {{ form_widget(contact.primaryContact) }}
+                        {{ form_row(contact.role, { attr: { class: 'contactrole' } }) }}
+                    </div>
+                    <div class="col-span-2 bottom-hr">
+                        <hr class="w-full mt-4 border-gray-300 {{ form.datasetContacts|length > 1 ? '' : 'hidden' }}">
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
+
+            <div>
+                {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
+            </div>
+            <div>
+                {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.additionalFunders, { attr: { class: 'input-base' } }) }}
+            </div>
+        </div>
+
+        {% set contact = form.metadataContacts | first %}
+        <input type="hidden" id="metadatacontact" name="{{contact.person.vars.full_name}}" value="{{contact.vars.data.person.id|default}}">
+        <input type="hidden" id="metadatacontactrole" name="{{contact.role.vars.full_name}}" value="{{contact.vars.data.role|default}}">
+
+        <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+            <div>
+                {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.shortTitle, { attr: { class: 'input-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.abstract, { attr: { class: 'textarea-base'} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.purpose, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppParams, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppMethods, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppInstruments, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppSampScalesRates, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppErrorAnalysis, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.suppProvenance, { attr: { class: 'textarea-base', rows: 3} }) }}
+            </div>
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="keywords">Keywords</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
+            <div>
+                {{ form_label(form.themeKeywords) }}
+                <select class="keywordinput" id="{{ form.themeKeywords.vars.id }}" multiple required="required" name="{{ form.themeKeywords.vars.full_name }}[]">
+                {% for keyword in form.themeKeywords %}
+                    <option value="{{keyword.vars.value}}" selected="selected">{{keyword.vars.value}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                {{ form_label(form.placeKeywords) }}
+                <select class="keywordinput" id="{{ form.placeKeywords.vars.id }}" multiple name="{{ form.placeKeywords.vars.full_name }}[]">
+                {% for keyword in form.placeKeywords %}
+                    <option value="{{keyword.vars.value}}" selected="selected">{{keyword.vars.value}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                {{ form_label(form.topicKeywords) }}
+                <select class="keywordinput" multiple="multiple" size="10" id="topic-keyword-select" required="required" name="{{ form.topicKeywords.vars.full_name }}">
+                    {% set order = 0 %}
+                    {% for keyword in form.topicKeywords.vars.choices %}
+                        {% set found = false  %}
+                        {% for keywordValue in form.topicKeywords.vars.value %}
+                            {% if keyword.value == keywordValue %}
+                                {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+                        <option value="{{keyword.value}}" order="{{order}}" {{ (found) ? 'selected' : '' }} data-description="{{ keyword.attr['description'] }}">{{keyword.label}}</option>
+                        {% set order = order + 1 %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <label class="required">Geographic Study Area:</label>
+            <div class="mb-2 font-normal text-gray-700">
+                <span class="block mb-2">
+                    Please indicate if your dataset is spatial or non-spatial. A dataset has a spatial component if samples were taken at a location, model results describe an area, or if the location is relevant to the dataset. Non-spatial datasets are independent of location.
+                </span>
+                <span class="block">
+                    Define the spatial extent by providing a list of coordinates (in decimal degrees) or drawing on the map. Please refer to the <a href="#" class="pagelink">spatial extent guidance document</a> for more information.
+                </span>
+            </div>
+            <div id="has-extent">
+                <div id="has-extent-error"></div>
+                <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <li>
+                        <input type="radio" id="yes-extent" name="has-extent" value="yes-extent" class="hidden peer" helper>
+                        <label for="yes-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Spatial Data</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                    <li>
+                        <input type="radio" id="no-extent" name="has-extent" value="no-extent" class="hidden peer" helper>
+                        <label for="no-extent" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Non-Spatial Data</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="spatial-extent-error"></div>
+
+            <div id="spatial-extent">
+                <div class="spatial-extent-geometry hidden">
+                    <div class="grid-col-span-2">
+                        {{ form_row(form.spatialExtent, { attr: { class: 'input-base'} }) }}
+                        {% include 'DIF/spatial.html.twig' %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 spatial-extent-description hidden">
+                    <div class="grid-col-span-2">
+                        {{ form_row(form.spatialExtentDescription, { attr: { class: 'input-base'} }) }}
+                    </div>
+                </div>
+
+                <div class="spatial-extent-geometry hidden">
+                    <div>
+                        {{ form_row(form.temporalExtentDesc)}}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            {{ form_row(form.temporalExtentBeginPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_row(form.temporalExtentEndPosition, { attr: { class: 'input-base', 'datepicker': '', 'datepicker-autohide': '', 'datepicker-format': 'yyyy-mm-dd'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
+
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <label class="required">Dataset File Transfer Details:</label>
+            <div class="mb-2 font-normal text-gray-700">
+                <span class="block mb-2">
+                    There are multiple methods to provide data to GRIIDC.
+                    For datasets under 25 GB, select the Upload Data tab to upload your data.
+                    If your data are over 25 GB, select the Upload Data tab and upload a text document containing a file listing of the dataset.
+                    Once you have submitted the dataset, please contact GRIIDC (help@griidc.org) for further instructions on uploading the data.
+                </span>
+                <span class="block">
+                    If your data are remotely hosted at a GRIIDC approved repository, please select the Remotely Hosted tab and provide the direct URL to the data.
+                </span>
+            </div>
+            <div id="has-files">
+                <div id="has-files-error"></div>
+                <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <li>
+                        <input type="radio" id="yes-files" name="has-files" value="yes-files" class="hidden peer" helper>
+                        <label for="yes-files" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Upload Data</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                    <li>
+                        <input type="radio" id="no-files" name="has-files" value="no-files" class="hidden peer" helper>
+                        <label for="no-files" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">
+                            <div class="block">
+                                <div class="w-full">Enter URL</div>
+                            </div>
+                            <svg class="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="files-error"></div>
+
+            <div class="files-section hidden">
+                {{ form_row(form.datasetFileTransferType) }}
+
+                <div class="mb-2 font-normal text-gray-700">
+                    <span class="block mb-2">
+                        You may upload files or folders using Drag and Drop or via the Upload Button.
+                    </span>
+                </div>
+
+                <div id="files-uploaded-error"></div>
+
+                <div id="file-manager">
+                    <div id="dropzone-uploader">
+                        <input id="filesUploaded" name="filesUploaded" type="hidden" value="" class="files">
+                        <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ fileWriteEnabled }}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="remotely-hosted-section hidden">
+                <span class="font-normal text-gray-700 block mb-2">
+                    If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
+                </span>
+                {{ form_label(form.remotelyHostedUrl) }}
+                {{ form_widget(form.remotelyHostedUrl, { attr: {class: 'files input-base'} }) }}
+            </div>
+
+            <label class="required">Restrictions:</label>
+            <div class="flex w-100 flex-col md:flex-row md:items-center gap-4" id="restrictions">
+                {% for key, restrictionItem in form.restrictions.children %}
+                    <div class="flex items-center me-4">
+                        {{ form_widget(restrictionItem, { attr: { class: 'radio-base'} }) }}
+                        <span class="pl-2 choice-label">{{ restrictionItem.vars.label }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <input type="hidden" name="submitAction" id="submitAction"/>
+            <input type="hidden" name="status" id="status" value="{{ status }}"/>
+            <input type="hidden" name="isDrpm" id="isDrpm" value="{{ isDRPM }}"/>
+
+            <div class="grid grid-cols-2 gap-4" id="submit">
+                <div>
+                    <button type="button" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center">Save and Continue Later</button>
+                </div>
+
+                <div>
+                    <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
+                </div>
+
+                {% if isDRPM %}
+                <div>
+                    <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>

@@ -32,4 +32,15 @@
   .button-pill {
     @apply rounded-full bg-blue-500 text-white focus-visible:bg-blue-800 hover:bg-blue-800 py-[0.78rem] px-[1.875rem] h-[2.688rem] text-sm;
   }
+
+  /*
+  Button form, for GRIIDC-styled buttons
+  */
+  .button-form {
+    @apply box-border h-[2.275rem] min-h-[2.275rem] max-h-[2.275rem] py-0;
+  }
+
+  .button[disabled] {
+    @apply bg-blue-600 cursor-not-allowed opacity-50;
+  }
 }

@@ -79,24 +79,18 @@ class DIF extends Entity
 
     /**
      * The primary point of contact for this DIF.
-     *
-     * @var Person
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[ORM\ManyToOne(targetEntity: Person::class)]
     #[Serializer\MaxDepth(1)]
     #[Assert\NotBlank(message: 'Primary Point of Contact is required')]
-    protected $primaryPointOfContact;
+    protected ?Person $primaryPointOfContact = null;
 
     /**
      * The secondary point of contact for this DIF.
-     *
-     * @var Person
-     *
      */
-    #[ORM\ManyToOne(targetEntity: 'Person')]
+    #[ORM\ManyToOne(targetEntity: Person::class)]
     #[Serializer\MaxDepth(1)]
-    protected $secondaryPointOfContact;
+    protected ?Person $secondaryPointOfContact = null;
 
     /**
      * The abstract for this DIF.
@@ -379,7 +373,7 @@ class DIF extends Entity
      *
      * @param Dataset $dataset the dataset this DIF identifies
      */
-    public function __construct(Dataset $dataset = null)
+    public function __construct(?Dataset $dataset = null)
     {
         if (null !== $dataset) {
             $this->setDataset($dataset);
@@ -495,7 +489,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setPrimaryPointOfContact(Person $primaryPointOfContact = null)
+    public function setPrimaryPointOfContact(?Person $primaryPointOfContact = null)
     {
         $this->primaryPointOfContact = $primaryPointOfContact;
     }
@@ -503,9 +497,9 @@ class DIF extends Entity
     /**
      * Gets the primary point of contact for this DIF.
      *
-     * @return Person the primary point of contact for this DIF
+     * @return Person|null the primary point of contact for this DIF
      */
-    public function getPrimaryPointOfContact()
+    public function getPrimaryPointOfContact(): ?Person
     {
         return $this->primaryPointOfContact;
     }
@@ -517,7 +511,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setSecondaryPointOfContact(Person $secondaryPointOfContact = null)
+    public function setSecondaryPointOfContact(?Person $secondaryPointOfContact = null)
     {
         $this->secondaryPointOfContact = $secondaryPointOfContact;
     }
@@ -525,9 +519,9 @@ class DIF extends Entity
     /**
      * Gets the secondary point of contact for this DIF.
      *
-     * @return Person the secondary point of contact for this DIF
+     * @return Person|null the secondary point of contact for this DIF
      */
-    public function getSecondaryPointOfContact()
+    public function getSecondaryPointOfContact(): ?Person
     {
         return $this->secondaryPointOfContact;
     }
@@ -1252,6 +1246,14 @@ class DIF extends Entity
     }
 
     /**
+     * Whether or not this DIF is submitted.
+     */
+    public function isSubmitted(): bool
+    {
+        return self::STATUS_SUBMITTED === $this->status || self::STATUS_APPROVED === $this->status;
+    }
+
+    /**
      * Submit this DIF.
      *
      * This will set the DIF's status to submitted when it's current status is unsubmitted,
@@ -1307,41 +1309,13 @@ class DIF extends Entity
     }
 
     /**
-     * Whether or not this DIF can be rejected.
+     * Whether or not this DIF can be unlocked/rejected.
      *
-     * @return bool true if this DIF can be rejected, False otherwise
-     */
-    public function isRejectable()
-    {
-        return self::STATUS_SUBMITTED === $this->status;
-    }
-
-    /**
-     * Reject this DIF.
-     *
-     * This will set the DIF's status to unsubmitted when its current status is submitted,
-     *
-     * @return void
-     *
-     * @throws \Exception when a DIF's status is anything other than unsubmitted
-     */
-    public function reject()
-    {
-        if ($this->isRejectable()) {
-            $this->setStatus(self::STATUS_UNSUBMITTED);
-        } else {
-            throw new \Exception('Can only reject a submitted DIF');
-        }
-    }
-
-    /**
-     * Whether or not this DIF can be unlocked.
-     *
-     * @return bool true if this DIF can be unlocked, False otherwise
+     * @return bool true if this DIF can be unlocked/rejected, False otherwise
      */
     public function isUnlockable()
     {
-        return self::STATUS_APPROVED === $this->status;
+        return (self::STATUS_APPROVED === $this->status || self::STATUS_SUBMITTED === $this->status);
     }
 
     /**
@@ -1358,7 +1332,7 @@ class DIF extends Entity
         if ($this->isUnlockable()) {
             $this->setStatus(self::STATUS_UNSUBMITTED);
         } else {
-            throw new \Exception('Can only unlock an approved DIF');
+            throw new \Exception('Can only unlock a submitted or approved DIF');
         }
     }
 
@@ -1380,7 +1354,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    protected function setStatus(int $status)
+    private function setStatus(int $status)
     {
         $this->status = $status;
         $this->updateIdentifiedStatus();
@@ -1453,7 +1427,20 @@ class DIF extends Entity
     }
 
     /**
-     * Get the funders for this Dataset.
+     * Set the funders for this DIF.
+     */
+    public function setFunders(Collection $funders): self
+    {
+        $dataset = $this->getDataset();
+        if ($dataset instanceof Dataset) {
+            $dataset->setFunders($funders);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the funders for this DIF.
      */
     public function getFunders(): ?Collection
     {

@@ -17,6 +17,7 @@
 {% block body %}
     <div class="max-w-screen-xl mx-auto py-6">
     {% include 'LandingPages/changeTab.html.twig' %}
+    {% include 'Dashboard/flashes.html.twig' %}
     <h2>{{ app.user.person.firstName ~ ' ' ~ app.user.person.lastName }} Profile</h2>
     <div class="md:flex border border-gray-300 text-lg">
         <ul class="not-prose flex-column space-y space-y-4 md:me-4 mb-4 md:mb-0 bg-black bg-opacity-[0.03] p-2 relative w-1/4">
