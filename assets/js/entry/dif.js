@@ -107,11 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     maxOptions: null,
     closeAfterSelect: true,
     hidePlaceholder: true,
-    plugins: {
-      remove_button: {
-        title: 'Remove this funder',
-      },
-    },
+    plugins: ['remove_button', 'clear_button'],
   });
 
   const researchGroup = document.getElementById('researchGroup');
