@@ -6,6 +6,11 @@
 
         <section id="contact" data-form-section>
         <div class="text-2xl font-semibold mb-4">Dataset Contact</div>
+        <div class="border border-gray-300 p-4 rounded-lg mb-4 bg-gray-50">
+            <span class="font-normal text-gray-700 block mb-2">
+                The dataset contact is the person who will be contacted regarding questions about the dataset. The primary point of contact is required and additional points of contact are optional.
+            </span>
+        </div>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
 
             <div class="grid grid-cols-1 gap-4 dataset-contacts"
@@ -51,7 +56,7 @@
 
             </div>
 
-            <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
+            <button type="button" id="addContactButton" class="w-fit button button-inverted button-form">Add Contact</button>
 
             <div>
                 {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
