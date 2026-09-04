@@ -111,11 +111,21 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 
     <script>
-        function highlightRow(elementId) {
-            const element = document.querySelector(elementId);
-            if (element) {
-                element.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
-            }
+        function showSection(sectionId) {
+            document.querySelectorAll('[data-form-section]').forEach((section) => {
+                section.classList.toggle('hidden', section.id !== sectionId);
+            });
+            requestAnimationFrame(() => {
+                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            document.querySelectorAll('[data-section-button]').forEach((button) => {
+                const isActive = button.dataset.sectionButton === sectionId;
+                button.setAttribute('aria-selected', isActive);
+                button.classList.toggle('bg-gray-100', !isActive);
+                button.classList.toggle('border-gray-100', !isActive);
+                button.classList.toggle('bg-blue-50', isActive);
+                button.classList.toggle('border-blue-600', isActive);
+            });
         }
     </script>
 {% endblock javascripts %}
@@ -128,45 +138,53 @@
             </div>
         {% endfor %}
 
-        <h2>Dataset Submission Form</h2>
+        <h2>Submit Data</h2>
+        {# <div class="mb-4 font-normal text-gray-500 border border-gray-300 p-4 rounded-lg bg-gray-50">
+            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
+            In this step you will submit the dataset by adding additional information and providing files.
+            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
+        </div> #}
+        {% if udi is not empty %}
+             <div class="text-xl mb-4 bg-white border border-gray-300 p-4 rounded-lg">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
 
         <div class="flex flex-1 gap-6 not-prose">
             <div class="w-1/6 sticky top-6 h-fit w-64 shrink">
                 <ol class="space-y-4">
-                    <li onclick="highlightRow('#contact')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li>
+                        <button type="button" data-section-button="contact" aria-selected="true" onclick="showSection('contact')" class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-blue-50 border border-blue-600 rounded-lg">
                             <div class="flex items-center justify-between">
-                                    <h3 class="font-medium">Dataset Contact</h3>
+                                <h3 class="font-medium">Dataset Contact</h3><i class="fa-solid fa-check text-green-500"></i>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#information')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li>
+                        <button type="button" data-section-button="information" aria-selected="false" onclick="showSection('information')" class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Dataset Information</h3>
+                                <h3 class="font-medium ">Dataset Information</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#keywords')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li>
+                        <button type="button" data-section-button="keywords" aria-selected="false" onclick="showSection('keywords')" class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Keywords</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#extent')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li>
+                        <button type="button" data-section-button="extent" aria-selected="false" onclick="showSection('extent')" class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Data Extent</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#submit')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li>
+                        <button type="button" data-section-button="submit" aria-selected="false" onclick="showSection('submit')" class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Submit</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
                 </ol>
             </div>
