@@ -23,8 +23,19 @@ const DIF_STATES = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('difForm');
+  const status = document.getElementById('status').value;
+  const isDrpm = document.getElementById('isDrpm')?.value === '1';
+  const locked = (status !== DIF_STATES.UNSUBMITTED && !isDrpm);
+
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
-    loadWizard: true,
+    loadWizard: !locked,
+    showEditControls: !locked,
+    showDrawControls: !locked,
+    showHomeButton: !locked,
+    allowDragging: !locked,
+    allowZoom: !locked,
+    allowFullScreen: !locked,
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
@@ -99,9 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const form = document.getElementById('difForm');
-  const status = document.getElementById('status').value;
-  const isDrpm = document.getElementById('isDrpm')?.value === '1';
+
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
@@ -320,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (status !== DIF_STATES.UNSUBMITTED && !isDrpm) {
+  if (locked) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
       const formField = field;

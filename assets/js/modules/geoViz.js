@@ -38,6 +38,12 @@ const drawnLayers = new Leaflet.FeatureGroup();
 export default class GeoViz {
   constructor(element, options = {}) {
     const loadWizard = options.loadWizard !== undefined ? options.loadWizard : false;
+    const showEditControls = options.showEditControls !== undefined ? options.showEditControls : true;
+    const showDrawControls = options.showDrawControls !== undefined ? options.showDrawControls : true;
+    const showHomeButton = options.showHomeButton !== undefined ? options.showHomeButton : true;
+    const allowDragging = options.allowDragging !== undefined ? options.allowDragging : true;
+    const allowZoom = options.allowZoom !== undefined ? options.allowZoom : true;
+    const allowFullScreen = options.allowFullScreen !== undefined ? options.allowFullScreen : true;
 
     this.isFullScreen = () => isFullScreen;
 
@@ -48,18 +54,27 @@ export default class GeoViz {
       attributionControl: true,
       worldCopyJump: true,
       layers: [ArcGISImagery],
+      dragging: allowDragging,
+      zoomControl: allowZoom,
+      scrollWheelZoom: allowZoom,
+      doubleClickZoom: allowZoom,
+      touchZoom: allowZoom,
+      boxZoom: allowZoom,
+      keyboard: allowZoom,
     });
 
     drawnLayers.addTo(this.map);
 
-    this.map.addControl(
-      new FullScreen({
-        position: 'topleft',
-        forcePseudoFullscreen: true,
-        title: 'Full screen',
-        titleCancel: 'Exit full screen',
-      }),
-    );
+    if (allowFullScreen) {
+      this.map.addControl(
+        new FullScreen({
+          position: 'topleft',
+          forcePseudoFullscreen: true,
+          title: 'Full screen',
+          titleCancel: 'Exit full screen',
+        }),
+      );
+    }
 
     this.map.on('enterFullscreen', () => {
       isFullScreen = true;
@@ -112,6 +127,9 @@ export default class GeoViz {
       dragMode: false,
       removalMode: true,
       rotateMode: false,
+      editControls: showEditControls,
+      drawControls: showDrawControls,
+      customControls: showHomeButton,
     });
 
     this.map.pm.Toolbar.copyDrawControl('CircleMarker', {
@@ -245,6 +263,6 @@ export default class GeoViz {
     });
     drawnLayer.addTo(this.map);
     drawnLayers.addLayer(drawnLayer);
-    this.map.fitBounds(drawnLayer.getBounds(), { animate: true, maxZoom: 6 });
+    this.map.fitBounds(drawnLayer.getBounds(), { animate: true, maxZoom: 6, padding: [20, 20] });
   }
 }
