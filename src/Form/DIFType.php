@@ -95,7 +95,6 @@ class DIFType extends AbstractType
         $builder
             ->add('title', TextareaType::class, [
                 'attr' => [
-                    'placeholder' => 'Please provide a title that describes the contents of your dataset. This is NOT the title of your project. (200 character maximum)',
                     'rows' => '2',
                     'maxsize' => 200,
                 ],
@@ -115,7 +114,6 @@ class DIFType extends AbstractType
             ->add('abstract', TextareaType::class, [
                 'attr' => [
                     'rows' => 6,
-                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated. (4000 character maximum)',
                     'maxlength' => 4000,
                 ],
                 'label' => 'Dataset Abstract:',
@@ -164,7 +162,6 @@ class DIFType extends AbstractType
                 'label' => 'Data Parameters and Units:',
                 'attr' => [
                     'rows' => 3,
-                    'placeholder' => 'Please provide any parameters and units. For example: wind speed (km/hr), salinity (ppt), temperature (degrees C).',
                 ],
                 'required' => false,
             ])
@@ -237,22 +234,14 @@ class DIFType extends AbstractType
                         ->orderBy('funder.name', 'ASC');
                 },
                 'multiple' => true,
-                'attr' => [
-                    'placeholder' => '[Please select a funder.]',
-                ],
             ])
             ->add('additionalFunders', TextType::class, [
                 'label' => 'Additional Funders',
                 'required' => false,
-                'attr' => [
-                    'placeholder' => '[Please add any additional funders not on the dropdown.]',
-                ],
-
             ])
             ->add('spatialExtentDescription', TextareaType::class, [
                 'label' => 'Description:',
                 'attr' => [
-                    'placeholder' => 'Please provide a short statement describing why this dataset does not have a spatial component. Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved."',
                     'rows' => 5,
                 ],
                 'required' => false,
@@ -296,7 +285,6 @@ class DIFType extends AbstractType
             ->add('remarks', TextareaType::class, [
                 'attr' => [
                     'rows' => 3,
-                    'placeholder' => 'Please provide any additional information that would help GRIIDC understand the contents or format of your dataset.',
                 ],
                 'label' => 'Remarks:',
                 'required' => false,
