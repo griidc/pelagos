@@ -2969,19 +2969,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/reactivity@npm:~3.1.1":
-  version: 3.1.5
-  resolution: "@vue/reactivity@npm:3.1.5"
+"@vue/reactivity@npm:~3.5.40":
+  version: 3.5.42
+  resolution: "@vue/reactivity@npm:3.5.42"
   dependencies:
-    "@vue/shared": "npm:3.1.5"
-  checksum: 10c0/1c38aeb73725b3825bea793194334b232388236f0b06b04471508a77cb55d71841e3eb2f345ab6812c76569918aa8f019e4cdf59ec9cefbab7625bb2bc26eb58
+    "@vue/shared": "npm:3.5.42"
+  checksum: 10c0/05cfa78438ab140d0b7dca46b73eedbcd507858435328d99a7dcfc2da619cd03be23184fa3618bc7fc716b02eee79c9795b938ca1764201e21695e61d6a7e86a
   languageName: node
   linkType: hard
 
-"@vue/shared@npm:3.1.5":
-  version: 3.1.5
-  resolution: "@vue/shared@npm:3.1.5"
-  checksum: 10c0/197aa5bdd370177d26ca7a178bb3d3d2332cee2c8e67000bd2bb91b1ffc571d5489fab3a65f38a32e941dc8182d1cd6c6af6e294bb9ea13e01eafdde475319ea
+"@vue/shared@npm:3.5.42":
+  version: 3.5.42
+  resolution: "@vue/shared@npm:3.5.42"
+  checksum: 10c0/9926d037d7956d1ca50b4bf20497c4663dd37e6bafa117be5df49d3929c8ec4ffc0ee5d3983805e86cdea5f8f9f7c1f3a0cbeb8f956e1812909635198f21a048
   languageName: node
   linkType: hard
 
@@ -3323,12 +3323,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alpinejs@npm:^3.15.12":
-  version: 3.15.12
-  resolution: "alpinejs@npm:3.15.12"
+"alpinejs@npm:^3.16.3":
+  version: 3.16.3
+  resolution: "alpinejs@npm:3.16.3"
   dependencies:
-    "@vue/reactivity": "npm:~3.1.1"
-  checksum: 10c0/fc81d0cb2675c106f01c813478dd14df846b286e616f807f899607d84086534ccf4fcd237462bc08ff825d94e9745e97cfe10b5c3b022b4f5e6fbc459be72cff
+    "@vue/reactivity": "npm:~3.5.40"
+  checksum: 10c0/1c370dd12e1bf51eee4c9d66d613a20f5b117eff7d81c3ce25f48a18f1a5c4ea8d3f9ec43a920d0a1fa924f43fef0a81abbe6079a14a07e95cbb27fb42f44e5e
   languageName: node
   linkType: hard
 
@@ -9976,7 +9976,7 @@ __metadata:
     "@tailwindcss/typography": "npm:^0.5.20"
     "@vue/babel-helper-vue-jsx-merge-props": "npm:^1.0.0"
     "@vue/babel-preset-jsx": "npm:^1.1.2"
-    alpinejs: "npm:^3.15.12"
+    alpinejs: "npm:^3.16.3"
     autoprefixer: "npm:^10.5.4"
     axios: "npm:^1.19.0"
     baseline-browser-mapping: "npm:^2.11.16"
