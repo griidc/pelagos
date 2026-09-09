@@ -39,12 +39,10 @@
 {% block htmlbody %}
 
     {% if isMaintenanceMode() %}
-    <div class="bootstrap sticky-top w-auto text-center"
-         style="background-color:{{ getMaintenanceModeColor() }}; text-align: center">
+    <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
         {{ getMaintenanceModeText() }}.
     </div>
-    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top"
-         style="background-color:{{ getMaintenanceModeColor() }}">
+    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
         {{ getMaintenanceModeText() }}.
     </div>
     {% endif %}
