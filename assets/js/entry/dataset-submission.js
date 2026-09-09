@@ -310,9 +310,6 @@ document.addEventListener('DOMContentLoaded', () => {
     create: true,
     persist: true,
     closeAfterSelect: true,
-    hidePlaceholder: true,
-    placeholder:
-      'Please provide commonly used words or short phrases that describe themes or subjects that describe the dataset.',
   });
 
   themeKeywordsSelect.inputState();
@@ -328,9 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
     create: true,
     persist: true,
     closeAfterSelect: true,
-    hidePlaceholder: true,
-    placeholder:
-      'Please provide commonly used words or short phrases that describe the geographic areas that describe the dataset.',
   });
 
   placeKeywordsSelect.inputState();
@@ -340,10 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
     plugins: ['remove_button'],
     maxOptions: null,
     closeAfterSelect: true,
-    hidePlaceholder: true,
     create: false,
     persist: false,
-    placeholder: 'Please provide broad theme keywords pre-defined by the ISO 19115-2 metadata standard used by GRIIDC.',
     render: {
       option(data, escape) {
         return `<div class="topic-keyword-option">
@@ -362,8 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
     persist: false,
     maxItems: 1,
     closeAfterSelect: true,
-    hidePlaceholder: true,
-    placeholder: 'Please select a description of what the time period represents.',
   });
   temporalExtentDescSelect.inputState();
 
