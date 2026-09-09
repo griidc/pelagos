@@ -19,4 +19,11 @@
         @apply w-4 h-4 text-blue-600 bg-gray-100 border border-gray-300 rounded-sm focus:ring-blue-500;
 
     }
+
+    .input-base[disabled],
+    .textarea-base[disabled],
+    .radio-base[disabled],
+    .checkbox-base[disabled] {
+        @apply text-gray-400 ;
+    }
 }

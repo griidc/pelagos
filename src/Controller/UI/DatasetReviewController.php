@@ -13,6 +13,7 @@ use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 use App\Event\EntityEventDispatcher;
+use App\Form\DatasetSubmissionReviewType;
 use App\Form\DatasetSubmissionType;
 use App\Handler\EntityHandler;
 use App\Message\DatasetSubmissionFiler;
@@ -292,7 +293,7 @@ class DatasetReviewController extends AbstractController
 
         $form = $this->formFactory->createNamed(
             '',
-            DatasetSubmissionType::class,
+            DatasetSubmissionReviewType::class,
             $datasetSubmission,
             [
                 'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', ['id' => $datasetSubmissionId]),
@@ -432,7 +433,7 @@ class DatasetReviewController extends AbstractController
         $eventName = 'end_review';
         $form = $this->formFactory->createNamed(
             '',
-            DatasetSubmissionType::class,
+            DatasetSubmissionReviewType::class,
             $datasetSubmission
         );
 

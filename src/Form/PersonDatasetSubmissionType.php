@@ -15,6 +15,8 @@ use App\Entity\PersonDatasetSubmission;
 
 /**
  * A form for creating Person to Dataset Submission links.
+ *
+ * @extends AbstractType<PersonDatasetSubmission>
  */
 class PersonDatasetSubmissionType extends AbstractType
 {
@@ -28,6 +30,7 @@ class PersonDatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -35,7 +38,7 @@ class PersonDatasetSubmissionType extends AbstractType
             ->add('role', ChoiceType::class, array(
                 'label' => 'Role',
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
-                'placeholder' => '[Please Select a Role]',
+                'placeholder' => 'Please select the contact’s relationship to the dataset',
             ))
             ->add('primaryContact', CheckboxType::class, array(
                 'label' => 'Is Primary Contact',
@@ -46,10 +49,10 @@ class PersonDatasetSubmissionType extends AbstractType
                 $event->getForm()->add('person', EntityType::class, array(
                     'label' => 'Person',
                     'class' => Person::class,
-                    'choice_label' => function ($value, $key, $index) {
+                    'choice_label' => function (Person $value) {
                         return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                     },
-                    'placeholder' => '[Please Select a Person]',
+                    'placeholder' => 'Please select a person.',
                 ));
             });
     }
@@ -61,6 +64,7 @@ class PersonDatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
