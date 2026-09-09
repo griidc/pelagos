@@ -205,11 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<div>${escape(data.lastname)}, ${escape(data.firstname)}</div>`;
         },
       },
-      plugins: {
-        clear_button: {
-          title: 'Remove all selected options',
-        },
-      },
+      plugins: ['clear_button'],
     });
 
     const role = contact.closest('.dataset-contact').querySelector('.contactrole');
@@ -299,16 +295,12 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAfterSelect: true,
     hidePlaceholder: true,
     maxOptions: null,
-    plugins: {
-      clear_button: {
-        title: 'Remove all selected options',
-      },
-    },
+    plugins: ['clear_button', 'remove_button'],
   });
 
   const themeKeywords = document.getElementById('themeKeywords');
   const themeKeywordsSelect = new TomSelect(themeKeywords, {
-    plugins: ['remove_button', 'drag_drop'],
+    plugins: ['remove_button', 'drag_drop', 'clear_button'],
     searchField: [],
     render: {
       no_results: null,
@@ -326,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
-    plugins: ['remove_button', 'drag_drop'],
+    plugins: ['remove_button', 'drag_drop', 'clear_button'],
     searchField: [],
     render: {
       no_results: null,
@@ -344,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const topicKeywords = document.getElementById('topic-keyword-select');
   const topicKeywordsSelect = new TomSelect(topicKeywords, {
-    plugins: ['remove_button'],
+    plugins: ['remove_button', 'clear_button'],
     maxOptions: null,
     closeAfterSelect: true,
     hidePlaceholder: true,
