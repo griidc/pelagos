@@ -192,9 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const makeContactSelect = (contact) => {
     const contactSelect = new TomSelect(contact, {
       maxOptions: null,
-      placeholder: 'Please select a contact.',
       closeAfterSelect: true,
-      hidePlaceholder: true,
       render: {
         option(data, escape) {
           return `<div>
@@ -210,9 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const role = contact.closest('.dataset-contact').querySelector('.contactrole');
     const roleSelect = new TomSelect(role, {
-      hidePlaceholder: true,
       closeAfterSelect: true,
-      placeholder: ' Please select a role.',
+      maxItems: 1,
     });
 
     contactSelects.push({ contactSelect, roleSelect });
