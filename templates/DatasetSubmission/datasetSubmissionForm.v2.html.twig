@@ -2,7 +2,7 @@
 {% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div id="mainsection"class="max-w-[85%] mx-auto loading">
+    <div id="mainsection"class="max-w-[95%] mx-auto loading">
         <div class="mb-4 font-normal text-gray-500">
             <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
             In this step you will submit the dataset by adding additional information and providing files.
