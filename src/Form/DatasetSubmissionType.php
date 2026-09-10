@@ -57,7 +57,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset Title',
                 'required' => true,
                 'attr' => [
-                    'placeholder' => 'Please provide a title that describes the contents of your dataset. This is NOT the title of your project. (200 character maximum)',
                     'rows' => '2',
                     'maxsize' => 200,
                 ],
@@ -73,44 +72,22 @@ class DatasetSubmissionType extends AbstractType
                         ->orderBy('funder.name', 'ASC');
                 },
                 'multiple' => true,
-                'attr' => [
-                    'placeholder' => 'Please select a funder.',
-                ],
             ])
-            // ->add('funders', Type\CollectionType::class, [
-            //     'label' => 'Funders',
-            //     'entry_type' => EntityType::class,
-            //     'entry_options' => [
-            //         'class' => Funder::class,
-            //     ],
-            //     'by_reference' => true,
-            //     'allow_add' => true,
-            //     'allow_delete' => true,
-            //     'delete_empty' => true,
-            //     'required' => false,
-            // ])
             ->add('additionalFunders', Type\TextType::class, [
                 'label' => 'Additional Funders',
                 'required' => false,
-                'attr' => [
-                    'placeholder' => 'Please add any additional funders not on the dropdown.',
-                ],
             ])
             ->add('abstract', Type\TextareaType::class, [
                 'label' => 'Dataset Abstract',
                 'required' => true,
                 'attr' => [
                     'rows' => 6,
-                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated. (4000 character maximum)',
                     'maxlength' => 4000,
                 ],
             ])
             ->add('authors', Type\TextType::class, [
                 'label' => 'Dataset Author(s)',
                 'required' => true,
-                'attr' => [
-                    'placeholder' => 'Please provide a list of authors who should be acknowledged if these data are cited in published materials.',
-                ],
             ])
             ->add('restrictions', Type\ChoiceType::class, [
                 'choices' => DatasetSubmission::getRestrictionsChoices(),
@@ -127,15 +104,11 @@ class DatasetSubmissionType extends AbstractType
             ->add('shortTitle', Type\TextType::class, [
                 'label' => 'Short Title',
                 'required' => false,
-                'attr' => [
-                    'placeholder' => 'Please provide a short name or alternative title for the dataset.',
-                ],
             ])
             ->add('purpose', Type\TextareaType::class, [
                 'label' => 'Purpose',
                 'required' => true,
                 'attr' => [
-                    'placeholder' => 'Please provide a summary of the reason why the data were collected or generated.',
                     'rows' => '5',
                 ],
             ])
@@ -143,7 +116,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Data Parameters and Units',
                 'required' => true,
                 'attr' => [
-                    'placeholder' => 'Please provide a list of the parameters/variables and units included in the dataset.',
                     'rows' => '5'
                 ],
             ])
@@ -151,7 +123,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Methods',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Please provide a brief description of methods used to acquire the data included in the dataset.',
                     'rows' => '5',
                 ],
             ])
@@ -159,7 +130,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Instruments',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Please provide a list of instruments used to acquire the data included in the dataset.',
                     'rows' => '5',
                 ],
             ])
@@ -167,15 +137,13 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Sampling Scales and Rates',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Please provide a description of spatial and temporal scales and rates that were used to collect or generate the data.',
-                    'rows' => '5'
+                    'rows' => '5',
                 ],
             ])
             ->add('suppErrorAnalysis', Type\TextareaType::class, [
                 'label' => 'Error Analysis',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Please provide a description of any error or uncertainty analysis completed on the final data and the results of the analysis.',
                     'rows' => '5',
                 ],
             ])
@@ -183,7 +151,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Provenance and Historical References',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'If existing historical were used as part of the dataset, please provide a description of these data including who created the original dataset (person and/or organization and where the historical data be obtained).',
                     'rows' => '5'
                 ],
             ])
@@ -194,9 +161,6 @@ class DatasetSubmissionType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-                'attr' => [
-                    'placeholder' => 'Please provide commonly used words or short phrases that describe themes or subjects that describe the dataset.',
-                ],
             ])
             ->add('placeKeywords', Type\CollectionType::class, [
                 'label' => 'Place Keywords',
@@ -205,9 +169,6 @@ class DatasetSubmissionType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => false,
-                'attr' => [
-                    'placeholder' => 'Please provide commonly used words or short phrases that describe the geographic areas or locations that describe the dataset.',
-                ],
             ])
             ->add('topicKeywords', Type\ChoiceType::class, [
                 'label' => 'Topic Category Keywords',
@@ -217,9 +178,6 @@ class DatasetSubmissionType extends AbstractType
                 },
                 'multiple' => true,
                 'required' => true,
-                'attr' => [
-                    'placeholder' => 'Please provide broad theme keywords pre-defined by the ISO 19115-2 metadata standard used by GRIIDC.',
-                ],
             ])
             ->add('keywords', Type\CollectionType::class, [
                 'label' => 'Keywords',
