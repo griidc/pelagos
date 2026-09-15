@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
     maxOptions: null,
