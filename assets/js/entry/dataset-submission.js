@@ -656,6 +656,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const revalidateDatesOnBlur = () => {
+    if (estimatedStartDate.value.trim() && estimatedEndDate.value.trim()) {
+      formValidate.revalidateField('#temporalExtentBeginPosition');
+      formValidate.revalidateField('#temporalExtentEndPosition');
+    }
+  };
+  estimatedStartDate.addEventListener('blur', revalidateDatesOnBlur);
+  estimatedEndDate.addEventListener('blur', revalidateDatesOnBlur);
+
   const spatialExtentSelector = document.getElementsByName('has-extent');
   Array.from(spatialExtentSelector).forEach((radio) => {
     radio.addEventListener('change', () => {
