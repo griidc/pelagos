@@ -227,6 +227,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const revalidateDatesOnBlur = () => {
+    if (estimatedStartDate.value.trim() && estimatedEndDate.value.trim()) {
+      formValidate.revalidateField('#estimatedStartDate');
+      formValidate.revalidateField('#estimatedEndDate');
+    }
+  };
+  estimatedStartDate.addEventListener('blur', revalidateDatesOnBlur);
+  estimatedEndDate.addEventListener('blur', revalidateDatesOnBlur);
+
   function populateResearchGroupContacts(contacts) {
     const pointOfContactDropdowns = document.querySelectorAll('.point-of-contact');
     pointOfContactDropdowns.forEach((element) => {
