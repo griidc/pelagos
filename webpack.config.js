@@ -137,4 +137,8 @@ Encore
   )
 
   .enableIntegrityHashes();
-module.exports = Encore.getWebpackConfig();
+const config = Encore.getWebpackConfig();
+config.ignoreWarnings = [
+  /export 'default' \(imported as 'style\d+'\) was not found in .*\.vue\?vue&type=style.*module has no exports/,
+];
+module.exports = config;
