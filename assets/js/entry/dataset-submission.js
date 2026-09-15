@@ -696,6 +696,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tomSelectInstances.forEach((instance) => instance.disable());
   }
 
+  document.addEventListener('sectionChange', (event) => {
+    if (event.detail && event.detail.section === 'extent') {
+      geoViz.redrawMap();
+    }
+  });
+
   geoViz.on('geojsonupdated', (e) => {
     const geometryType = e.geojson ? turf.getType(e.geojson) : '';
     const spatialExtent = document.getElementById('spatialExtent');
