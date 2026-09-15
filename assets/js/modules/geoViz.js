@@ -255,6 +255,13 @@ export default class GeoViz {
     drawnLayers.clearLayers();
   }
 
+  redrawMap() {
+    setTimeout(() => {
+      this.map.invalidateSize(true);
+      this.map.fitBounds(drawnLayers.getBounds(), { animate: true, maxZoom: 6, padding: [20, 20] });
+    }, 10);
+  }
+
   addFeature(geojson) {
     this.clearMap();
     drawnLayer = Leaflet.geoJSON(geojson, {
