@@ -35,7 +35,7 @@
     {% endblock %}
 </head>
 
-<body>
+<body class="{% if isMaintenanceMode() %}maintenance-mode{% endif %}">
 {% block htmlbody %}
 
     {% if isMaintenanceMode() %}
