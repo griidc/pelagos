@@ -1,7 +1,19 @@
 <form id="difForm" method="post">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <section id="contact" data-form-section>
-        <div class="text-2xl font-semibold mb-4">Dataset Contact</div>
+    <div class="max-w-[85%] mx-auto">
+        <div class="mb-4 font-normal text-gray-500">
+            <span>
+                The GRIIDC dataset submission process consists of two steps, identifying and submitting the data.
+                In this step, you will identify the dataset by selecting the project title from the drop-down menu.
+                The red asterisk indicates required fields. For a listing of datasets, please visit the
+                <a href="{{ path('app_ui_dashboard') }}" class="pagelink" target="_blank">User Dashboard.</a> Please contact
+                <a href="mailto:help@griidc.org" class="pagelink">help@griidc.org</a> with any questions.
+            </span>
+        </div>
+        {% if udi is not empty %}
+             <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
+        <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div>
                 {{ form_label(form.researchGroup) }}
@@ -30,16 +42,10 @@
             <div>
                 {{ form_row(form.additionalFunders, { attr: { class: 'input-base'} }) }}
             </div>
+
         </div>
 
-        <div class="flex justify-between gap-4">
-            <button type="button" class="button button-regular button-form" disabled>Previous</button>
-            <button type="button" class="button button-regular button-form" onclick="showSection('information')">Next</button>
-        </div>
-    </section>
-
-    <section id="information" data-form-section class="hidden">
-        <div class="text-2xl font-semibold mb-4">Dataset Information</div>
+        <span class="text-2xl font-semibold mb-4" id="information">Dataset Information</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
             <div>
                 {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
@@ -133,19 +139,11 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-between gap-4">
-            <button type="button" class="button button-regular button-form" onclick="showSection('contact')">Previous</button>
-            <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Next</button>
-        </div>
-    </section>
 
-    <section id="keywords" data-form-section class="hidden">
         <div id="keywords">
         </div>
-    </section>
 
-    <section id="extent" data-form-section class="hidden">
-        <div class="text-2xl font-semibold mb-4">Dataset Extent</div>
+        <span class="text-2xl font-semibold mb-4" id="extent">Dataset Extent</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <label>Geographic Study Area:</label>
             <div class="mb-2 font-normal text-gray-700">
@@ -181,7 +179,7 @@
                 </li>
             </ul>
 
-            <div id="spatial-extent" class="hidden">
+            <div id="spatial-extent">
                 <div id="spatial-extent-geometry" class="hidden">
                     <div class="grid-col-span-2">
                         {{ form_row(form.spatialExtentGeometry, { attr: { class: 'input-base'} }) }}
@@ -197,14 +195,7 @@
             </div>
         </div>
 
-        <div class="flex justify-between gap-4">
-            <button type="button" class="button button-regular button-form" onclick="showSection('information')">Previous</button>
-            <button type="button" class="button button-regular button-form" onclick="showSection('submit')">Next</button>
-        </div>
-    </section>
-
-    <section id="submit" data-form-section class="hidden">
-        <div class="text-2xl font-semibold mb-4">Submit</div>
+        <span class="text-2xl font-semibold mb-4" id="submit">Submit</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
             <div>
                 {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
@@ -233,17 +224,9 @@
                 </div>
             </div>
         </div>
-
-        <div class="flex justify-between gap-4">
-            <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Previous</button>
-            <button type="button" class="button button-regular button-form" disabled>Next</button>
-        </div>
-    </section>
-
-    <div>
         {% if isDRPM %}
         <input type="hidden" id="isDrpm" value='1'>
-        <div class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</div>
+        <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
         <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
             <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
             <div class="grid grid-cols-3 gap-4 py-2" id="submit">
@@ -256,7 +239,7 @@
                 <div>
                     <button type="submit" id="drpmUpdateSubmission" name="drpmUpdateSubmission" class="button button-regular button-form w-full justify-center" title="This button allows a DRPM to update a DIF without changing states.">Update</button>
                 </div>
-            </div>
+            <div>
         </div>
         {% else %}
             <input type="hidden" id="isDrpm" value='0'>
