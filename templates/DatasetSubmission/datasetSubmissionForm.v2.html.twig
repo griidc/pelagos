@@ -2,47 +2,34 @@
 {% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div id="mainsection"class="max-w-[95%] mx-auto loading">
-        <section id="contact" data-form-section>
-            <div class="text-2xl font-semibold mb-4">Dataset Contact</div>
-            <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-                <div class="grid grid-cols-1 gap-4 dataset-contacts"
-                    data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
-                >
-                    {% for contact in form.datasetContacts %}
-                    <div class="dataset-contact grid grid-cols-[2fr_1fr] gap-4 w-full relative">
-                        <div class="col-span-2 top-hr">
-                            <hr class="w-full border-gray-300 hidden">
-                        </div>
-                        <div class="absolute top-4 right-0">
-                            <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
-                        </div>
-                        <div class="w-full">
-                            <div>
-                                <label class="required" for="datasetcontact">
-                                    {{ contact.vars.data.primaryContact ? 'Primary Point of Contact' : 'Additional Point of Contact' }}
-                                </label>
-                            </div>
-                            <select class="contactperson w-full" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
-                            {% set selectPerson = contact.vars.data.person.id %}
-                            {% for person in researchGroupPeople %}
-                                <option
-                                    value="{{person.id}}" {{ (selectPerson == person.id) ? 'selected' : '' }}
-                                    data-email="{{person.emailAddress}}"
-                                    data-firstname="{{person.firstName}}"
-                                    data-lastname="{{person.lastName}}"
-                                >
-                                    {{person.lastName}}, {{person.firstName}} ({{person.emailAddress}})
-                                </option>
-                            {% endfor %}
-                            </select>
-                        </div>
-                        <div class="w-full">
-                            {{ form_widget(contact.primaryContact) }}
-                            {{ form_row(contact.role, { attr: { class: 'contactrole' } }) }}
-                        </div>
-                        <div class="col-span-2 bottom-hr">
-                            <hr class="w-full mt-4 border-gray-300 {{ form.datasetContacts|length > 1 ? '' : 'hidden' }}">
+    <div id="mainsection"class="max-w-[85%] mx-auto loading">
+        <div class="mb-4 font-normal text-gray-500">
+            <span>The GRIIDC dataset submission process consists of two steps, identify and submitting the data.
+            In this step you will submit the dataset by adding additional information and providing files.
+            The red asterisk indicates required fields. Please contact <a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> with any questions.</span>
+        </div>
+        {% if udi is not empty %}
+             <div class="text-3xl mb-4">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
+        <span id="contact" class="text-2xl font-semibold mb-4">Dataset Contact</span>
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+
+            <div class="grid grid-cols-1 gap-4 dataset-contacts"
+                data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
+            >
+                {% for contact in form.datasetContacts %}
+                <div class="dataset-contact grid grid-cols-[5fr_3fr] gap-4 w-full relative">
+                    <div class="col-span-2 top-hr">
+                        <hr class="w-full border-gray-300 hidden">
+                    </div>
+                    <div class="absolute top-4 right-0">
+                        <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
+                    </div>
+                    <div class="w-full">
+                        <div>
+                            <label class="required" for="datasetcontact">
+                                {{ contact.vars.data.primaryContact ? 'Primary Point of Contact' : 'Additional Point of Contact' }}
+                            </label>
                         </div>
                     </div>
                     {% endfor %}
