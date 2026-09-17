@@ -9,7 +9,7 @@ use App\Exception\InvalidGmlException;
 /**
  * This is a utility class for dealing with envelope calculation.
  */
-class Geometry
+class GeometryUtil
 {
     /**
      * An instance of a Doctrine EntityManager class.
@@ -105,7 +105,7 @@ class Geometry
      *
      * @throws InvalidGmlException When PG Driver cannot process the supplied GML.
      *
-     * @return string WKT string for the GML geometry.
+     * @return string WKT string for the GML GeometryUtil.
      */
     public function convertGmlToWkt(string $gml)
     {
@@ -134,7 +134,7 @@ class Geometry
     /**
      * Convert GML to GeoJSON representation
      *
-     * @param string $gml Textual GML of geometry.
+     * @param string $gml Textual GML of GeometryUtil.
      * @param string $udi Dataset UDI.
      * @param string $id  Identifier for feature.
      *
@@ -149,6 +149,27 @@ class Geometry
             $statement->bindValue('gml', $gml);
             $statement->bindValue('id', $id);
             $statement->bindValue('name', $udi);
+            $result = $statement->executeQuery();
+        } catch (DriverException $e) {
+            throw new InvalidGmlException($e->getMessage());
+        }
+        return $result->fetchOne();
+    }
+
+    /**
+     * Convert GeoJSON to GML representation
+     *
+     * @param string $geojson Textual GeoJSON of GeometryUtil.
+     *
+     * @throws InvalidGmlException When PG Driver cannot process the supplied GeoJSON.
+     */
+    public function convertGeoJSONtoGml(string $geojson): string
+    {
+        $sql = "SELECT ST_AsGML(3, ST_GeomFromGeoJSON(:geojson), 6, 17)";
+        $connection = $this->entityManager->getConnection();
+        $statement = $connection->prepare($sql);
+        try {
+            $statement->bindValue('geojson', $geojson);
             $result = $statement->executeQuery();
         } catch (DriverException $e) {
             throw new InvalidGmlException($e->getMessage());

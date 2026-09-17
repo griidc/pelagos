@@ -1,0 +1,151 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dataset Information Form{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('dif') }}
+
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <style>
+        .ts-control {
+            border-style: var(--tw-border-style);
+            display: block;
+            width: 100%;
+            border-radius: 0.5rem;
+            border-width: 1px;
+            --tw-border-opacity: 1;
+            border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+            --tw-bg-opacity: 1;
+            background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+            padding: 0.625rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+        }
+
+        /* Needed for Project Title */
+        #researchGroup-ts-control > input {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+
+        /* Needed for Funder */
+        .ts-control input#funders-ts-control {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+        }
+        .ts-control:has(#funders-ts-control) {
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+
+        .ts-control:focus {
+            --tw-border-opacity: 1;
+            border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
+        }
+
+        .ts-dropdown .ts-dropdown-content {
+            max-height: 440px;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.50);
+        }
+
+        .choice-label {
+            font-weight: normal;
+            display: inline;
+        }
+
+        label.required::before
+        {
+            font-weight: bold; color:#b81111;
+            content:"*";
+        }
+
+        .leaflet-control-layers-selector {
+            appearance: revert;
+        }
+    </style>
+
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('dif') }}
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+    <script>
+        function highlightRow(elementId) {
+            const element = document.querySelector(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+            }
+        }
+    </script>
+{% endblock javascripts %}
+
+{% block body %}
+    <div class="max-w-screen-xl mx-auto py-6">
+        {% for message in app.flashes('error') %}
+            <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
+                <span class="font-medium">{{ message }}</span>
+            </div>
+        {% endfor %}
+
+        <h2>Dataset Information Form</h2>
+
+        <div class="flex flex-1 gap-6 not-prose">
+            <div class="w-1/6 sticky top-6 h-fit">
+                <ol class="space-y-4 w-64">
+                    <li onclick="highlightRow('#contact')" style="cursor: pointer;">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                    <h3 class="font-medium">Dataset Contact</h3>
+                            </div>
+                        </div>
+                    </li>
+                    <li onclick="highlightRow('#information')" style="cursor: pointer;">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Dataset Information</h3>
+                            </div>
+                        </div>
+                    </li>
+                    <li onclick="highlightRow('#keywords')" style="cursor: pointer;display: none;">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Keywords</h3>
+                            </div>
+                        </div>
+                    </li>
+                    <li onclick="highlightRow('#extent')" style="cursor: pointer;">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Data Extent</h3>
+                            </div>
+                        </div>
+                    </li>
+                    <li onclick="highlightRow('#submit')" style="cursor: pointer;">
+                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium">Submit</h3>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <div id="formcontent" class="w-5/6">
+               {% include 'DIF/difForm.v2.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
