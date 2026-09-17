@@ -83,11 +83,22 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 
     <script>
-        function highlightRow(elementId) {
-            const element = document.querySelector(elementId);
-            if (element) {
-                element.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
-            }
+        function showSection(sectionId) {
+            document.dispatchEvent(new CustomEvent('sectionChange', { detail: { section: sectionId } }));
+            document.querySelectorAll('[data-form-section]').forEach((section) => {
+                section.classList.toggle('hidden', section.id !== sectionId);
+            });
+            requestAnimationFrame(() => {
+                document.scrollIntoView({ behavior: 'instant', block: 'start' });
+            });
+            document.querySelectorAll('[data-section-button]').forEach((button) => {
+                const isActive = button.dataset.sectionButton === sectionId;
+                button.setAttribute('aria-selected', isActive);
+                button.classList.toggle('bg-gray-100', !isActive);
+                button.classList.toggle('border-gray-100', !isActive);
+                button.classList.toggle('bg-blue-50', isActive);
+                button.classList.toggle('border-blue-600', isActive);
+            });
         }
     </script>
 {% endblock javascripts %}
@@ -102,43 +113,48 @@
 
         <h2>Dataset Information Form</h2>
 
+        {% if udi is not empty %}
+            <div  class="border p-4 text-xl mb-4 rounded-lg">Unique Dataset Identifier (UDI): {{ udi }}</div>
+        {% endif %}
+
         <div class="flex flex-1 gap-6 not-prose">
-            <div class="w-1/6 sticky top-6 h-fit">
+            <div class="w-1/6 sticky top-6 h-fit w-64 shrink">
                 <ol class="space-y-4 w-64">
-                    <li onclick="highlightRow('#contact')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li style="cursor: pointer;">
+                        <button
+                            type="button" data-section-button="contact" aria-selected="true" onclick="showSection('contact')"
+                            class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-blue-50 border border-blue-600 rounded-lg">
                             <div class="flex items-center justify-between">
-                                    <h3 class="font-medium">Dataset Contact</h3>
+                                <h3 class="font-medium">Dataset Contact</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#information')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li style="cursor: pointer;">
+                        <button
+                            type="button" data-section-button="information" aria-selected="false" onclick="showSection('information')"
+                            class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-300 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Dataset Information</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#keywords')" style="cursor: pointer;display: none;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
-                            <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Keywords</h3>
-                            </div>
-                        </div>
-                    </li>
-                    <li onclick="highlightRow('#extent')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li style="cursor: pointer;">
+                        <button
+                            type="button" data-section-button="extent" aria-selected="false" onclick="showSection('extent')"
+                            class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-300 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Data Extent</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
-                    <li onclick="highlightRow('#submit')" style="cursor: pointer;">
-                        <div class="lg:w-full w-3/4 p-4 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg" role="alert">
+                    <li style="cursor: pointer;">
+                        <button
+                            type="button" data-section-button="submit" aria-selected="false" onclick="showSection('submit')"
+                            class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-300 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Submit</h3>
                             </div>
-                        </div>
+                        </button>
                     </li>
                 </ol>
             </div>
