@@ -353,13 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   temporalExtentDescSelect.inputState();
 
-  // Prevent form submission on Enter key press for all fields except buttons
-  form.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && event.target.tagName !== 'BUTTON' && !event.target.classList.contains('button')) {
-      event.preventDefault();
-    }
-  });
-
   const contactPersons = document.querySelectorAll('select.contactperson');
   contactPersons.forEach((contactPerson) => {
     formValidate.addField(contactPerson, [
