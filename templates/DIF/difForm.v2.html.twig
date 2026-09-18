@@ -2,8 +2,8 @@
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[95%] mx-auto">
         <section id="contact" data-form-section>
-            <div class="text-2xl font-semibold mb-4">Dataset Contact</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+                <div class="text-2xl font-semibold">Dataset Contact</div>
                 <div>
                     {{ form_label(form.researchGroup) }}
                     {{ form_widget(form.researchGroup) }}
@@ -41,8 +41,8 @@
         </section>
 
         <section id="information" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4">Dataset Information</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+                <div class="text-2xl font-semibold">Dataset Information</div>
                 <div>
                     {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
                 </div>
@@ -148,8 +148,8 @@
         </section>
 
         <section id="extent" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4">Dataset Extent</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+                <div class="text-2xl font-semibold">Dataset Extent</div>
                 <label>Geographic Study Area:</label>
                 <div class="mb-2 font-normal text-gray-700">
                     <span class="block mb-2">
@@ -207,8 +207,8 @@
         </section>
 
         <section id="submit" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4" id="submit">Submit</div>
-            <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
+            <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4" >
+                <div class="text-2xl font-semibold">Submit</div>
                 <div>
                     {{ form_row(form.remarks, { attr: { class: 'textarea-base'} }) }}
                 </div>

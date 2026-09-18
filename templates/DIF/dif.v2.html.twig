@@ -89,7 +89,7 @@
                 section.classList.toggle('hidden', section.id !== sectionId);
             });
             requestAnimationFrame(() => {
-                document.scrollIntoView({ behavior: 'instant', block: 'start' });
+                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'instant', block: 'start' });
             });
             document.querySelectorAll('[data-section-button]').forEach((button) => {
                 const isActive = button.dataset.sectionButton === sectionId;
@@ -114,7 +114,7 @@
         <h2>Dataset Information Form</h2>
 
         {% if udi is not empty %}
-            <div  class="border p-4 text-xl mb-4 rounded-lg">Unique Dataset Identifier (UDI): {{ udi }}</div>
+            <div  class="border p-4 text-xl mb-4 rounded-lg mr-6">Unique Dataset Identifier (UDI): {{ udi }}</div>
         {% endif %}
 
         <div class="flex flex-1 gap-6 not-prose">
