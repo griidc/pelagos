@@ -2,10 +2,10 @@
 {% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div id="mainsection"class="max-w-[95%] mx-auto loading">
+    <div id="mainsection"class="max-w-[95%] mx-auto unloading">
         <section id="contact" data-form-section>
-            <div class="text-2xl font-semibold mb-4">Dataset Contact</div>
-            <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+            <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4">
+                <div class="text-2xl font-semibold">Dataset Contact</div>
                 <div class="grid grid-cols-1 gap-4 dataset-contacts"
                     data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
                 >
@@ -46,7 +46,6 @@
                         </div>
                     </div>
                     {% endfor %}
-
                 </div>
 
                 <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
@@ -54,6 +53,7 @@
                 <div>
                     {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
                 </div>
+
                 <div>
                     {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
                 </div>
@@ -74,8 +74,8 @@
         </section>
 
         <section id="information" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4" id="">Dataset Information</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
+            <div class="text-2xl font-semibold">Dataset Information</div>
                 <div>
                     {{ form_row(form.title, { attr: { class: 'input-base'} }) }}
                 </div>
@@ -123,9 +123,8 @@
         </section>
 
         <section id="keywords" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4">Keywords</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
-
+            <div class="text-2xl font-semibold">Keywords</div>
                 <div>
                     {{ form_label(form.themeKeywords) }}
                     <select class="keywordinput" id="{{ form.themeKeywords.vars.id }}" multiple required="required" name="{{ form.themeKeywords.vars.full_name }}[]">
@@ -168,8 +167,8 @@
         </section>
 
         <section id="extent" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4">Dataset Extent</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <div class="text-2xl font-semibold">Dataset Extent</div>
                 <label class="required">Geographic Study Area:</label>
                 <div class="mb-2 font-normal text-gray-700">
                     <span class="block mb-2">
@@ -247,8 +246,8 @@
         </section>
 
         <section id="submit" data-form-section class="hidden">
-            <div class="text-2xl font-semibold mb-4">Submit</div>
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
+            <div class="text-2xl font-semibold">Submit</div>
                 <label class="required">Dataset File Transfer Details:</label>
                 <div class="mb-2 font-normal text-gray-700">
                     <span class="block mb-2">
