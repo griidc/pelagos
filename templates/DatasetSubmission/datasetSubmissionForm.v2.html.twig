@@ -3,7 +3,7 @@
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div id="mainsection"class="max-w-[95%] mx-auto unloading">
-        <section id="contact" data-form-section>
+        <section id="contact" data-form-section data-button-error-container="#contact-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4">
                 <div class="text-2xl font-semibold">Dataset Contact</div>
                 <div class="grid grid-cols-1 gap-4 dataset-contacts"
@@ -73,7 +73,7 @@
             </div>
         </section>
 
-        <section id="information" data-form-section class="hidden">
+        <section id="information" data-form-section class="hidden" data-button-error-container="#information-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div class="text-2xl font-semibold">Dataset Information</div>
                 <div>
@@ -122,7 +122,7 @@
             </div>
         </section>
 
-        <section id="keywords" data-form-section class="hidden">
+        <section id="keywords" data-form-section class="hidden" data-button-error-container="#keywords-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
             <div class="text-2xl font-semibold">Keywords</div>
                 <div>
@@ -166,7 +166,7 @@
             </div>
         </section>
 
-        <section id="extent" data-form-section class="hidden">
+        <section id="extent" data-form-section class="hidden" data-button-error-container="#extent-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
             <div class="text-2xl font-semibold">Dataset Extent</div>
                 <label class="required">Geographic Study Area:</label>
@@ -245,7 +245,7 @@
             </div>
         </section>
 
-        <section id="submit" data-form-section class="hidden">
+        <section id="submit" data-form-section class="hidden" data-button-error-container="#submit-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
             <div class="text-2xl font-semibold">Submit</div>
                 <label class="required">Dataset File Transfer Details:</label>
