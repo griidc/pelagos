@@ -3,7 +3,6 @@
 namespace App\Util;
 
 use App\Entity\Account;
-use App\Util\Ldap\Ldap;
 use App\Handler\EntityHandler;
 use App\Exception\AccountAlreadyPOSIXEnabledException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,13 +18,6 @@ class POSIXifyAccount
      * @var EntityManagerInterface
      */
     protected $entityManager;
-
-    /**
-     * The pelagos LDAP component.
-     *
-     * @var ldap
-     */
-    protected $ldap;
 
     /**
      * The Pelagos entity handler.
@@ -59,7 +51,6 @@ class POSIXifyAccount
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager          The entity manager to use in querybuilder.
-     * @param Ldap                   $ldap                   The instance of the LDAPClient class.
      * @param EntityHandler          $entityHandler          The Pelagos entity handler to handle updates.
      * @param integer                $posixStartingUidNumber The value to start creating user ID number entries at.
      * @param integer                $posixGidNumber         The value to set group ID to.
@@ -67,14 +58,12 @@ class POSIXifyAccount
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Ldap $ldap,
         EntityHandler $entityHandler,
         int $posixStartingUidNumber,
         int $posixGidNumber,
         string $homedirPrefix
     ) {
         $this->entityManager = $entityManager;
-        $this->ldap = $ldap;
         $this->entityHandler = $entityHandler;
         $this->posixStartingUidNumber = $posixStartingUidNumber;
         $this->posixGidNumber = $posixGidNumber;
@@ -101,8 +90,6 @@ class POSIXifyAccount
         // Update account's POSIX attributes.
         $account->makePosix($uidNumber, $this->posixGidNumber, $this->homedirPrefix);
 
-        // Update LDAP with this modified Account (via Person).
-        $this->ldap->updatePerson($account->getPerson());
         // Persist changes.
         $this->entityHandler->update($account);
     }

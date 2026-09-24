@@ -111,14 +111,6 @@ services:
         $gcmdVersionYear: "%env(GCMD_VERSION_YEAR)%"
         $anzsrcVersion: "%env(ANZSRC_VERSION)%"
 
-    App\Util\Ldap\Ldap:
-        $ldapBindDn: "%env(LDAP_BIND_DN)%"
-        $ldapBindPw: "%env(LDAP_BIND_PW)%"
-        $peopleOu: "%env(LDAP_PEOPLE_OU)%"
-
-    App\Util\Ldap\LdapClient:
-        $host: "%env(LDAP_HOST)%"
-
     App\Util\DatasetIndex:
         autowire: false
         arguments: ["@fos_elastica.index.pelagos"]
