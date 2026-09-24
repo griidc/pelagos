@@ -604,7 +604,10 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Please enter a valid URL.',
       },
     ])
-    .onValidate(() => {
+    .onValidate(({ isSubmitted }) => {
+      if (!isSubmitted) {
+        return;
+      }
       const sections = document.querySelectorAll('section[data-form-section]');
       Array.from(sections).forEach((section) => {
         let valid = true;
@@ -614,12 +617,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const buttonErrorContainer = document.querySelector(section.dataset.buttonErrorContainer);
         if (buttonErrorContainer) {
-          buttonErrorContainer?.classList.remove('hidden');
+          buttonErrorContainer?.classList.remove('hidden', 'fa-xmark', 'fa-check', 'error-label', 'success-label');
           if (valid) {
-            buttonErrorContainer?.classList.remove('fa-xmark', 'error-label');
             buttonErrorContainer?.classList.add('fa-check', 'success-label');
           } else {
-            buttonErrorContainer?.classList.remove('fa-check', 'success-label');
             buttonErrorContainer?.classList.add('fa-xmark', 'error-label');
           }
         }
