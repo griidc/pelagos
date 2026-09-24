@@ -57,10 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const formValidate = new JustValidate(form, {
-    errorLabelStyle: {
-      color: '#b81111',
-      fontWeight: 'bold',
-    },
+    errorLabelCssClass: 'error-label',
+    successLabelCssClass: 'success-label',
   });
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
@@ -606,6 +604,28 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Please enter a valid URL.',
       },
     ])
+    .onValidate(({ isSubmitted }) => {
+      if (!isSubmitted) {
+        return;
+      }
+      const sections = document.querySelectorAll('section[data-form-section]');
+      Array.from(sections).forEach((section) => {
+        let valid = true;
+        const errorFields = section.querySelectorAll('.just-validate-error-field');
+        if (errorFields.length > 0) {
+          valid = false;
+        }
+        const buttonErrorContainer = document.querySelector(section.dataset.buttonErrorContainer);
+        if (buttonErrorContainer) {
+          buttonErrorContainer?.classList.remove('hidden', 'fa-xmark', 'fa-check', 'error-label', 'success-label');
+          if (valid) {
+            buttonErrorContainer?.classList.add('fa-check', 'success-label');
+          } else {
+            buttonErrorContainer?.classList.add('fa-xmark', 'error-label');
+          }
+        }
+      });
+    })
     .onSuccess((event) => {
       const successEvent = event;
       successEvent.currentTarget.submitAction.value = event.submitter.name;
