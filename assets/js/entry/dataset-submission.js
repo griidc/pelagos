@@ -468,9 +468,9 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         plugin: JustValidatePluginDate((fields) => ({
           format: 'yyyy-MM-dd',
-          isBefore: fields['#temporalExtentEndPosition'].elem.value,
+          isBeforeOrEqual: fields['#temporalExtentEndPosition'].elem.value,
         })),
-        errorMessage: 'Date must be before end date.',
+        errorMessage: 'Date cannot be after end date.',
       },
     ])
     .addField('#temporalExtentEndPosition', [
@@ -493,9 +493,9 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         plugin: JustValidatePluginDate((fields) => ({
           format: 'yyyy-MM-dd',
-          isAfter: fields['#temporalExtentBeginPosition'].elem.value,
+          isAfterOrEqual: fields['#temporalExtentBeginPosition'].elem.value,
         })),
-        errorMessage: 'Date must be after start date.',
+        errorMessage: 'Date cannot be before start date.',
       },
     ])
     .addField('#spatial-extent', [
@@ -654,6 +654,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#temporalExtentEndPosition');
     }
   });
+
+  const revalidateDatesOnBlur = () => {
+    if (estimatedStartDate.value.trim() && estimatedEndDate.value.trim()) {
+      formValidate.revalidateField('#temporalExtentBeginPosition');
+      formValidate.revalidateField('#temporalExtentEndPosition');
+    }
+  };
+  estimatedStartDate.addEventListener('blur', revalidateDatesOnBlur);
+  estimatedEndDate.addEventListener('blur', revalidateDatesOnBlur);
 
   const spatialExtentSelector = document.getElementsByName('has-extent');
   Array.from(spatialExtentSelector).forEach((radio) => {

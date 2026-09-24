@@ -187,9 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
         plugin: JustValidatePluginDate((fields) => ({
           required: true,
           format: 'yyyy-MM-dd',
-          isBefore: fields['#estimatedEndDate'].elem.value,
+          isBeforeOrEqual: fields['#estimatedEndDate'].elem.value,
         })),
-        errorMessage: 'Date must be before end date.',
+        errorMessage: 'Date cannot be after end date.',
       },
     ])
     .addField('#estimatedEndDate', [
@@ -204,9 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
         plugin: JustValidatePluginDate((fields) => ({
           required: true,
           format: 'yyyy-MM-dd',
-          isAfter: fields['#estimatedStartDate'].elem.value,
+          isAfterOrEqual: fields['#estimatedStartDate'].elem.value,
         })),
-        errorMessage: 'Date must be after start date.',
+        errorMessage: 'Date cannot be before start date.',
       },
     ])
     .onValidate(({ isSubmitted }) => {
@@ -252,6 +252,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#estimatedEndDate');
     }
   });
+
+  const revalidateDatesOnBlur = () => {
+    if (estimatedStartDate.value.trim() && estimatedEndDate.value.trim()) {
+      formValidate.revalidateField('#estimatedStartDate');
+      formValidate.revalidateField('#estimatedEndDate');
+    }
+  };
+  estimatedStartDate.addEventListener('blur', revalidateDatesOnBlur);
+  estimatedEndDate.addEventListener('blur', revalidateDatesOnBlur);
 
   function populateResearchGroupContacts(contacts) {
     const pointOfContactDropdowns = document.querySelectorAll('.point-of-contact');
