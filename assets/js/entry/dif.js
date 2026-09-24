@@ -342,6 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  document.addEventListener('sectionChange', (event) => {
+    if (event.detail && event.detail.section === 'extent') {
+      geoViz.redrawMap();
+    }
+  });
+
   geoViz.on('geojsonupdated', (e) => {
     const geometryType = e.geojson ? turf.getType(e.geojson) : '';
     let geometry = null;
