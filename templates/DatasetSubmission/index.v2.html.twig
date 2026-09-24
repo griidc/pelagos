@@ -94,6 +94,16 @@
         .topic-keyword-option-description::after {
             content: ".";
         }
+
+        .error-label {
+            color: #b81111;
+            font-weight: bold;
+        }
+
+        .success-label {
+            color: #15803d;
+            font-weight: bold;
+        }
     </style>
 
 {% endblock stylesheets %}
@@ -148,7 +158,7 @@
                             type="button" data-section-button="contact" aria-selected="true" onclick="showSection('contact')"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-blue-50 border border-blue-600 rounded-lg">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Dataset Contact</h3>
+                                <h3 class="font-medium">Dataset Contact</h3><i id="contact-error" class="fa-solid hidden"></i>
                             </div>
                         </button>
                     </li>
@@ -157,7 +167,7 @@
                             type="button" data-section-button="information" aria-selected="true" onclick="showSection('information')"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Dataset Information</h3>
+                                <h3 class="font-medium">Dataset Information</h3><i id="information-error" class="fa-solid hidden"></i>
                             </div>
                         </button>
                     </li>
@@ -166,7 +176,7 @@
                             type="button" data-section-button="keywords" aria-selected="true" onclick="showSection('keywords')"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Keywords</h3>
+                                <h3 class="font-medium">Keywords</h3><i id="keywords-error" class="fa-solid hidden"></i>
                             </div>
                         </button>
                     </li>
@@ -175,7 +185,7 @@
                             type="button" data-section-button="extent" aria-selected="true" onclick="showSection('extent')"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Data Extent</h3>
+                                <h3 class="font-medium">Data Extent</h3><i id="extent-error" class="fa-solid hidden"></i>
                             </div>
                         </button>
                     </li>
@@ -184,7 +194,7 @@
                             type="button" data-section-button="submit" aria-selected="true" onclick="showSection('submit')"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-medium">Submit</h3>
+                                <h3 class="font-medium">Submit</h3><i id="submit-error" class="fa-solid hidden"></i>
                             </div>
                         </button>
                     </li>
