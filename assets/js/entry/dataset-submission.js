@@ -605,9 +605,6 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     ])
     .onValidate(({ isSubmitted }) => {
-      if (!isSubmitted) {
-        return;
-      }
       const sections = document.querySelectorAll('section[data-form-section]');
       Array.from(sections).forEach((section) => {
         let valid = true;
@@ -616,8 +613,8 @@ document.addEventListener('DOMContentLoaded', () => {
           valid = false;
         }
         const buttonErrorContainer = document.querySelector(section.dataset.buttonErrorContainer);
-        if (buttonErrorContainer) {
-          buttonErrorContainer?.classList.remove('hidden', 'fa-xmark', 'fa-check', 'error-label', 'success-label');
+        buttonErrorContainer?.classList.remove('hidden', 'fa-xmark', 'fa-check', 'error-label', 'success-label');
+        if (isSubmitted) {
           if (valid) {
             buttonErrorContainer?.classList.add('fa-check', 'success-label');
           } else {
