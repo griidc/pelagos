@@ -10,12 +10,10 @@
                     data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
                 >
                     {% for contact in form.datasetContacts %}
-                    <div class="dataset-contact grid grid-cols-[5fr_3fr] gap-4 w-full relative">
-                        <div class="col-span-2 top-hr">
+
+                    <div class="dataset-contact grid grid-cols-[5fr_3fr_0fr] gap-4 w-full">
+                        <div class="col-span-3 top-hr">
                             <hr class="w-full border-gray-300 hidden">
-                        </div>
-                        <div class="absolute top-4 right-0">
-                            <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
                         </div>
                         <div class="w-full">
                             <div>
@@ -41,6 +39,10 @@
                             {{ form_widget(contact.primaryContact) }}
                             {{ form_row(contact.role, { attr: { class: 'contactrole' } }) }}
                         </div>
+                        <div class="grid items-center justify-center">
+                            <div></div>
+                            <button type="button" class="hidden deleteContactButton button button-regular button-form">Delete</button>
+                        </div>
                         <div class="col-span-2 bottom-hr">
                             <hr class="w-full mt-4 border-gray-300 {{ form.datasetContacts|length > 1 ? '' : 'hidden' }}">
                         </div>
@@ -48,13 +50,15 @@
                     {% endfor %}
                 </div>
 
-                <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
+                <div class="mb-4">
+                    <button type="button" id="addContactButton" class="text-left text-sm button button-regular button-form">Add Contact</button>
+                </div>
 
-                <div>
+                <div class="mb-4">
                     {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
                 </div>
 
-                <div>
+                <div class="mb-4">
                     {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
                 </div>
 
