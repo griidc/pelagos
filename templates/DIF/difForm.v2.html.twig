@@ -1,7 +1,7 @@
 <form id="difForm" method="post">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div class="max-w-[95%] mx-auto">
-        <section id="contact" data-form-section>
+        <section id="contact" data-form-section data-button-error-container="#contact-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
                 <div class="text-2xl font-semibold">Dataset Contact</div>
                 <div>
@@ -40,7 +40,7 @@
             </div>
         </section>
 
-        <section id="information" data-form-section class="hidden">
+        <section id="information" data-form-section data-button-error-container="#information-error" class="hidden">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4">
                 <div class="text-2xl font-semibold">Dataset Information</div>
                 <div>
@@ -142,12 +142,12 @@
             </div>
         </section>
 
-        <section id="keywords" data-form-section class="hidden">
+        <section id="keywords" data-form-section class="hidden" data-button-error-container="#keyword-error">
             <div>
             </div>
         </section>
 
-        <section id="extent" data-form-section class="hidden">
+        <section id="extent" data-form-section class="hidden" data-button-error-container="#extent-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
                 <div class="text-2xl font-semibold">Dataset Extent</div>
                 <label>Geographic Study Area:</label>
@@ -206,7 +206,7 @@
             </div>
         </section>
 
-        <section id="submit" data-form-section class="hidden">
+        <section id="submit" data-form-section class="hidden" data-button-error-container="#submit-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4" >
                 <div class="text-2xl font-semibold">Submit</div>
                 <div>
