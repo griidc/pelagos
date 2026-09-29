@@ -202,12 +202,28 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       },
       plugins: ['clear_button'],
+      onInitialize() {
+        this.control_input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            // Stop the enter key from reaching the form and submitting it
+            e.preventDefault();
+          }
+        });
+      },
     });
 
     const role = contact.closest('.dataset-contact').querySelector('.contactrole');
     const roleSelect = new TomSelect(role, {
       closeAfterSelect: true,
       maxItems: 1,
+      onInitialize() {
+        this.control_input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            // Stop the enter key from reaching the form and submitting it
+            e.preventDefault();
+          }
+        });
+      },
     });
 
     contactSelects.push({ contactSelect, roleSelect });
@@ -287,6 +303,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     closeAfterSelect: true,
     hidePlaceholder: true,
     maxOptions: null,
@@ -295,6 +319,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const themeKeywords = document.getElementById('themeKeywords');
   const themeKeywordsSelect = new TomSelect(themeKeywords, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     plugins: ['remove_button', 'drag_drop', 'clear_button'],
     searchField: [],
     render: {
@@ -310,6 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     plugins: ['remove_button', 'drag_drop', 'clear_button'],
     searchField: [],
     render: {
@@ -325,6 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const topicKeywords = document.getElementById('topic-keyword-select');
   const topicKeywordsSelect = new TomSelect(topicKeywords, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     plugins: ['remove_button', 'clear_button'],
     maxOptions: null,
     closeAfterSelect: true,
@@ -343,6 +391,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const temporalExtentDesc = document.getElementById('temporalExtentDesc');
   const temporalExtentDescSelect = new TomSelect(temporalExtentDesc, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     searchField: [],
     create: false,
     persist: false,
