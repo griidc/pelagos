@@ -99,7 +99,7 @@
                 section.classList.toggle('hidden', section.id !== sectionId);
             });
             requestAnimationFrame(() => {
-                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+                document.body.scrollIntoView({ behavior: 'instant', block: 'start' });
             });
             document.querySelectorAll('[data-section-button]').forEach((button) => {
                 const isActive = button.dataset.sectionButton === sectionId;
