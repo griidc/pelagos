@@ -741,6 +741,9 @@ document.addEventListener('DOMContentLoaded', () => {
     radio.addEventListener('change', () => {
       if (formValidate.isSubmitted) {
         formValidate.revalidateField('#has-extent');
+        formValidate.revalidateField('#temporalExtentDesc');
+        formValidate.revalidateField('#temporalExtentBeginPosition');
+        formValidate.revalidateField('#temporalExtentEndPosition');
       }
     });
   });
