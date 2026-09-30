@@ -135,8 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (temporalExtentDescriptionTomSelect) {
           temporalExtentDescriptionTomSelect.clear();
         }
-        temporalExtentDescriptionField.value = '';
         temporalExtentDescriptionField.selectedIndex = 0;
+        temporalExtentDescriptionField.value = '';
         temporalExtentBeginPositionField.value = '';
         temporalExtentEndPositionField.value = '';
         spatialExtentGeometryField.value = '';
@@ -479,10 +479,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentDesc', [
       {
         validator: (value, context) => {
+          const selectedSpatialExtent = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           const temporalExtentDescElement = context['#temporalExtentDesc'].elem;
-          if (temporalExtentDescElement.checkVisibility() && !temporalExtentDescElement.value.trim()) {
+
+          if (
+            selectedSpatialExtent
+            && selectedSpatialExtent.value === 'yes-extent'
+            && !temporalExtentDescElement.value.trim()
+          ) {
             return false;
           }
+
           return true;
         },
         errorMessage: 'Temporal extent description is required.',
@@ -507,10 +514,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentBeginPosition', [
       {
         validator: (value, context) => {
+          const selectedSpatialExtent = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           const temporalExtentBeginPosition = context['#temporalExtentBeginPosition'].elem;
-          if (temporalExtentBeginPosition.checkVisibility() && !temporalExtentBeginPosition.value.trim()) {
+
+          if (
+            selectedSpatialExtent
+            && selectedSpatialExtent.value === 'yes-extent'
+            && !temporalExtentBeginPosition.value.trim()) {
             return false;
           }
+
           return true;
         },
         errorMessage: 'Date is required.',
@@ -532,10 +545,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentEndPosition', [
       {
         validator: (value, context) => {
+          const selectedSpatialExtent = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           const temporalExtentEndPosition = context['#temporalExtentEndPosition'].elem;
-          if (temporalExtentEndPosition.checkVisibility() && !temporalExtentEndPosition.value.trim()) {
+
+          if (
+            selectedSpatialExtent
+            && selectedSpatialExtent.value === 'yes-extent'
+            && !temporalExtentEndPosition.value.trim()) {
             return false;
           }
+
           return true;
         },
         errorMessage: 'Date is required.',
