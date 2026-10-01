@@ -135,8 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (temporalExtentDescriptionTomSelect) {
           temporalExtentDescriptionTomSelect.clear();
         }
-        temporalExtentDescriptionField.value = '';
         temporalExtentDescriptionField.selectedIndex = 0;
+        temporalExtentDescriptionField.value = '';
         temporalExtentBeginPositionField.value = '';
         temporalExtentEndPositionField.value = '';
         spatialExtentGeometryField.value = '';
@@ -202,12 +202,28 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       },
       plugins: ['clear_button'],
+      onInitialize() {
+        this.control_input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            // Stop the enter key from reaching the form and submitting it
+            e.preventDefault();
+          }
+        });
+      },
     });
 
     const role = contact.closest('.dataset-contact').querySelector('.contactrole');
     const roleSelect = new TomSelect(role, {
       closeAfterSelect: true,
       maxItems: 1,
+      onInitialize() {
+        this.control_input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            // Stop the enter key from reaching the form and submitting it
+            e.preventDefault();
+          }
+        });
+      },
     });
 
     contactSelects.push({ contactSelect, roleSelect });
@@ -287,6 +303,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const funders = document.getElementById('funders');
   const fundersSelect = new TomSelect(funders, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     closeAfterSelect: true,
     hidePlaceholder: true,
     maxOptions: null,
@@ -295,6 +319,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const themeKeywords = document.getElementById('themeKeywords');
   const themeKeywordsSelect = new TomSelect(themeKeywords, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     plugins: ['remove_button', 'drag_drop', 'clear_button'],
     searchField: [],
     render: {
@@ -310,6 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     plugins: ['remove_button', 'drag_drop', 'clear_button'],
     searchField: [],
     render: {
@@ -325,6 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const topicKeywords = document.getElementById('topic-keyword-select');
   const topicKeywordsSelect = new TomSelect(topicKeywords, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     plugins: ['remove_button', 'clear_button'],
     maxOptions: null,
     closeAfterSelect: true,
@@ -343,6 +391,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const temporalExtentDesc = document.getElementById('temporalExtentDesc');
   const temporalExtentDescSelect = new TomSelect(temporalExtentDesc, {
+    onInitialize() {
+      this.control_input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          // Stop the enter key from reaching the form and submitting it
+          e.preventDefault();
+        }
+      });
+    },
     searchField: [],
     create: false,
     persist: false,
@@ -423,10 +479,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentDesc', [
       {
         validator: (value, context) => {
+          const selectedSpatialExtent = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           const temporalExtentDescElement = context['#temporalExtentDesc'].elem;
-          if (temporalExtentDescElement.checkVisibility() && !temporalExtentDescElement.value.trim()) {
+
+          if (
+            selectedSpatialExtent
+            && selectedSpatialExtent.value === 'yes-extent'
+            && !temporalExtentDescElement.value.trim()
+          ) {
             return false;
           }
+
           return true;
         },
         errorMessage: 'Temporal extent description is required.',
@@ -439,8 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (selectedRadio) {
             return true;
           }
-          const spatialExentSection = document.getElementById('extent');
-          setTimeout(() => spatialExentSection.scrollIntoView(true), 0);
+
           return false;
         },
         errorMessage: 'Please select if the dataset has a spatial extent geometry or a spatial extent description.',
@@ -451,10 +513,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentBeginPosition', [
       {
         validator: (value, context) => {
+          const selectedSpatialExtent = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           const temporalExtentBeginPosition = context['#temporalExtentBeginPosition'].elem;
-          if (temporalExtentBeginPosition.checkVisibility() && !temporalExtentBeginPosition.value.trim()) {
+
+          if (
+            selectedSpatialExtent
+            && selectedSpatialExtent.value === 'yes-extent'
+            && !temporalExtentBeginPosition.value.trim()) {
             return false;
           }
+
           return true;
         },
         errorMessage: 'Date is required.',
@@ -476,10 +544,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#temporalExtentEndPosition', [
       {
         validator: (value, context) => {
+          const selectedSpatialExtent = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           const temporalExtentEndPosition = context['#temporalExtentEndPosition'].elem;
-          if (temporalExtentEndPosition.checkVisibility() && !temporalExtentEndPosition.value.trim()) {
+
+          if (
+            selectedSpatialExtent
+            && selectedSpatialExtent.value === 'yes-extent'
+            && !temporalExtentEndPosition.value.trim()) {
             return false;
           }
+
           return true;
         },
         errorMessage: 'Date is required.',
@@ -515,12 +589,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
           }
 
-          if (!spatialExtentDescriptionElement.value.trim() && spatialExtentDescriptionElement.checkVisibility()) {
+          if (!spatialExtentDescriptionElement.value.trim() && selectedRadio.value === 'no-extent') {
             setTimeout(() => spatialExtentDescriptionElement.focus(), 0);
-          } else {
-            const spatialExentSection = document.getElementById('extent');
-            setTimeout(() => spatialExentSection.scrollIntoView(true), 0);
           }
+
           return false;
         },
         errorMessage: 'Please provide either a spatial extent geometry or a spatial extent description.',
@@ -561,11 +633,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
           }
 
-          if (!filesUploadedElement.value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+          if (!filesUploadedElement.value.trim() && selectedRadio.value === 'no-files') {
             setTimeout(() => remotelyHostedUrlElement.focus(), 0);
-          } else {
-            const submitSection = document.getElementById('submit');
-            setTimeout(() => submitSection.scrollIntoView(true), 0);
           }
           return false;
         },
@@ -577,12 +646,12 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#remotelyHostedUrl', [
       {
         validator: (value) => {
-          const remotelyHostedUrlElement = document.getElementById('remotelyHostedUrl');
-          if (value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+          const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
+          if (value.trim() && selectedRadio.value === 'no-files') {
             return true;
           }
 
-          if (!value.trim() && remotelyHostedUrlElement.checkVisibility()) {
+          if (!value.trim() && selectedRadio.value === 'no-files') {
             return false;
           }
 
@@ -666,6 +735,10 @@ document.addEventListener('DOMContentLoaded', () => {
     radio.addEventListener('change', () => {
       if (formValidate.isSubmitted) {
         formValidate.revalidateField('#has-extent');
+        formValidate.revalidateField('#temporalExtentDesc');
+        formValidate.revalidateField('#temporalExtentBeginPosition');
+        formValidate.revalidateField('#temporalExtentEndPosition');
+        formValidate.revalidateField('#spatialExtentDescription');
       }
     });
   });
