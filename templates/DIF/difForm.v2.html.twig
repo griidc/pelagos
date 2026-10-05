@@ -245,10 +245,10 @@
 
         {% if isDRPM %}
         <input type="hidden" id="isDrpm" value='1'>
-        <span class="text-2xl font-semibold mb-4" id="submit">Additional Data Manager Controls</span>
-        <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4  grid gap-4" >
-            <span class="font-semibold">The current DIF state is <i>{{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</i></span></label>
-            <div class="grid grid-cols-3 gap-4 py-2" id="submit">
+        <div class="bg-white border border-gray-300 p-4 rounded-lg mt-4 mb-4 grid gap-4" >
+            <span class="text-2xl font-semibold" id="submit">Additional Data Manager Controls</span>
+            <span class="font-semibold">DIF state: {{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</span></label>
+            <div class="grid grid-cols-3 gap-2" id="submit">
                 <div>
                     <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form w-full justify-center" {{ not isApprovable ? 'title="Only DIFs in the submitted state can be approved." disabled' }}>Approve</button>
                 </div>
