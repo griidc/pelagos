@@ -317,6 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
     plugins: ['clear_button', 'remove_button'],
   });
 
+  fundersSelect.sync();
+
   const themeKeywords = document.getElementById('themeKeywords');
   const themeKeywordsSelect = new TomSelect(themeKeywords, {
     onInitialize() {
@@ -338,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAfterSelect: true,
   });
 
-  themeKeywordsSelect.inputState();
+  themeKeywordsSelect.sync();
 
   const placeKeywords = document.getElementById('placeKeywords');
   const placeKeywordsSelect = new TomSelect(placeKeywords, {
@@ -361,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAfterSelect: true,
   });
 
-  placeKeywordsSelect.inputState();
+  placeKeywordsSelect.sync();
 
   const topicKeywords = document.getElementById('topic-keyword-select');
   const topicKeywordsSelect = new TomSelect(topicKeywords, {
@@ -387,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     },
   });
-  topicKeywordsSelect.inputState();
+  topicKeywordsSelect.sync();
 
   const temporalExtentDesc = document.getElementById('temporalExtentDesc');
   const temporalExtentDescSelect = new TomSelect(temporalExtentDesc, {
@@ -405,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
     maxItems: 1,
     closeAfterSelect: true,
   });
-  temporalExtentDescSelect.inputState();
+  temporalExtentDescSelect.sync();
 
   const contactPersons = document.querySelectorAll('select.contactperson');
   contactPersons.forEach((contactPerson) => {
@@ -823,45 +825,16 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  const saveButon = document.getElementById('saveAndContinue');
-  saveButon.addEventListener('click', () => {
+  function saveForm() {
     formValidate.destroy();
     form.submitAction.value = 'saveAndContinue';
     form.submit();
-  });
-
-  // on form reset event
-  const resetButton = document.getElementById('resetFormButton');
-  if (resetButton) {
-    resetButton.addEventListener('click', () => {
-      form.reset(); // reset the form
-      // reset tomSelects
-      setTimeout(() => {
-        fundersSelect.clear();
-        contactSelects.forEach((select) => {
-          select.contactSelect.clear();
-          select.roleSelect.clear();
-        });
-        themeKeywordsSelect.clear();
-        placeKeywordsSelect.clear();
-        topicKeywordsSelect.clear();
-        temporalExtentDescSelect.clear();
-
-        // find all form fields
-        const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
-        formFields.forEach((field) => {
-          const formField = field;
-          formField.value = '';
-          formField.removeAttribute('value');
-          formField.removeAttribute('data-value');
-          formField.checked = false;
-        });
-        Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
-        Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
-        formValidate.refresh();
-      });
-    });
   }
+
+  const saveButon = document.getElementById('saveAndContinue');
+  saveButon.addEventListener('click', () => {
+    saveForm();
+  });
 
   const mainSection = document.getElementById('mainsection');
   mainSection.classList.remove('loading');
