@@ -20,17 +20,11 @@
         'icon': 'fa-solid fa-circle-info'
     }
 } %}
-{# Build a local copy of the flashes so a test message can be injected for manual QA. #}
+
 {% set flashes = {} %}
 {% for label, messages in app.flashes %}
     {% set flashes = flashes|merge({ (label): messages }) %}
 {% endfor %}
-
-{# TEST MESSAGE - always visible, for manual QA of Flowbite styling/dismiss behavior. Remove before merging. #}
-{% set flashes = flashes|merge({ 'success': (flashes.success|default([]))|merge(['TEST success banner: this always displays for QA purposes. Remove once styling is confirmed.']) }) %}
-{% set flashes = flashes|merge({ 'warning': (flashes.warning|default([]))|merge(['TEST warning banner: this always displays for QA purposes. Remove once styling is confirmed.']) }) %}
-{% set flashes = flashes|merge({ 'error': (flashes.error|default([]))|merge(['TEST error banner: this always displays for QA purposes. Remove once styling is confirmed.']) }) %}
-{% set flashes = flashes|merge({ 'default': (flashes.default|default([]))|merge(['TEST default banner: this always displays for QA purposes. Remove once styling is confirmed.']) }) %}
 
 {% set flashIndex = 0 %}
 {% for label, messages in flashes %}
