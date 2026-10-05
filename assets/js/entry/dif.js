@@ -321,36 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
     researchGroupSelect.unlock();
   }
 
-  // on form reset event
-  const resetButton = document.getElementById('resetFormButton');
-  resetButton.addEventListener('click', () => {
-    form.reset(); // reset the form
-    // reset tomSelects
-    setTimeout(() => {
-      if (researchGroupSelect.isLocked === false) {
-        researchGroupSelect.clear();
-      }
-
-      fundersSelect.clear();
-      populateResearchGroupContacts([]);
-
-      // find all form fields
-      const formFields = form.querySelectorAll('input:not([helper]), select, textarea');
-      formFields.forEach((field) => {
-        const formField = field;
-        formField.value = '';
-        formField.removeAttribute('value');
-        formField.removeAttribute('data-value');
-        formField.checked = false;
-      });
-      spatialExtentDescription.classList.add('hidden');
-      spatialExtentGeometry.classList.add('hidden');
-      loadResearchGroupDowndowns(researchGroupSelect.getValue());
-      formValidate.refresh();
-      researchGroup.focus();
-    });
-  });
-
   if (locked) {
     const formFields = form.querySelectorAll('input, select, textarea, button');
     formFields.forEach((field) => {
