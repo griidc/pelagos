@@ -1,6 +1,6 @@
 <form id="difForm" method="post">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div class="max-w-[95%] mx-auto">
+    <div id="mainsection" class="max-w-[95%] mx-auto loading">
         <section id="contact" data-form-section data-button-error-container="#contact-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4 grid gap-4">
                 <div class="text-2xl font-semibold">Dataset Contact</div>
@@ -37,7 +37,7 @@
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" disabled>Previous</button>
                 <div class="flex justify-between gap-4">
-                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="submit" class="button button-inverted button-form" saveAndContinue>Save</button>
                     <button type="button" class="button button-regular button-form" onclick="showSection('information')">Next</button>
                 </div>
             </div>
@@ -142,7 +142,7 @@
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('contact')">Previous</button>
                 <div class="flex justify-between gap-4">
-                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="submit" class="button button-inverted button-form" saveAndContinue>Save</button>
                     <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Next</button>
                 </div>
             </div>
@@ -209,7 +209,7 @@
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('information')">Previous</button>
                 <div class="flex justify-between gap-4">
-                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="submit" class="button button-inverted button-form" saveAndContinue>Save</button>
                     <button type="button" class="button button-regular button-form" onclick="showSection('submit')">Next</button>
                 </div>
             </div>
@@ -249,7 +249,7 @@
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Previous</button>
                 <div class="flex justify-between gap-4">
-                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="submit" class="button button-inverted button-form" saveAndContinue>Save</button>
                     <button type="submit" class="button button-regular button-form" id="saveAndSubmit" name="saveAndSubmit">Submit</button>
                 </div>
             </div>

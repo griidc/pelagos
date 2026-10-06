@@ -341,8 +341,11 @@ document.addEventListener('DOMContentLoaded', () => {
   Array.from(saveButon).forEach((btn) => btn.addEventListener('click', () => {
     // formValidate.destroy();
     form.submitAction.value = 'saveAndContinue';
-    form.submit();
+    form.dispatchEvent(new Event('submit', { bubbles: true }));
   }));
+
+  const mainSection = document.getElementById('mainsection');
+  mainSection?.classList.remove('loading');
 
   geoViz.on('geojsonupdated', (e) => {
     const geometryType = e.geojson ? turf.getType(e.geojson) : '';

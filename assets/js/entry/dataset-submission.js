@@ -833,5 +833,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   const mainSection = document.getElementById('mainsection');
-  mainSection.classList.remove('loading');
+  mainSection?.classList.remove('loading');
 });
