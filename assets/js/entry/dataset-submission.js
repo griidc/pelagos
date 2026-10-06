@@ -825,16 +825,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  function saveForm() {
+  const saveButon = document.querySelectorAll('[saveAndContinue]');
+  Array.from(saveButon).forEach((btn) => btn.addEventListener('click', () => {
     formValidate.destroy();
     form.submitAction.value = 'saveAndContinue';
     form.submit();
-  }
-
-  const saveButon = document.getElementById('saveAndContinue');
-  saveButon.addEventListener('click', () => {
-    saveForm();
-  });
+  }));
 
   const mainSection = document.getElementById('mainsection');
   mainSection.classList.remove('loading');
