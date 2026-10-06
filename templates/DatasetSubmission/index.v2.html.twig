@@ -17,7 +17,10 @@
         .loading select,
         .loading textarea,
         .loading button {
-            visibility: hidden;
+            filter: grayscale(80%) blur(10px);
+            opacity: .5;
+            transition: filter 2s;
+            transition: opacity 200ms;
         }
 
         .ts-control {
