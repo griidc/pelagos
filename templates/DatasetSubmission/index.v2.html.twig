@@ -17,7 +17,10 @@
         .loading select,
         .loading textarea,
         .loading button {
-            visibility: hidden;
+            filter: grayscale(80%) blur(10px);
+            opacity: .5;
+            transition: filter 2s;
+            transition: opacity 200ms;
         }
 
         .ts-control {
@@ -122,7 +125,7 @@
                 section.classList.toggle('hidden', section.id !== sectionId);
             });
             requestAnimationFrame(() => {
-                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+                document.body.scrollIntoView({ behavior: 'instant', block: 'start'});
             });
             document.querySelectorAll('[data-section-button]').forEach((button) => {
                 const isActive = button.dataset.sectionButton === sectionId;
