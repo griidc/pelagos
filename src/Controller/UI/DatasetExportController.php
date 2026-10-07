@@ -7,7 +7,7 @@ use App\Entity\DOI;
 use App\Enum\DatasetLifecycleStatus;
 use App\Repository\DatasetRepository;
 use App\Util\FundingOrgFilter;
-use App\Util\Geometry;
+use App\Util\GeometryUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -70,7 +70,7 @@ class DatasetExportController extends ReportController
         //process result query into an array with organized data
         $currentIndex = 0;
         // used to calculate bounding-box envelope from too-complex for CSV GML.
-        $geometryUtil = new Geometry($entityManager);
+        $geometryUtil = new GeometryUtil($entityManager);
 
         foreach ($results as $result) {
             $dataset = $datasetRepository->findOneBy(array('udi' => $result['udi']));
