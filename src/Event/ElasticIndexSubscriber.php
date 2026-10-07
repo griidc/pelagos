@@ -7,7 +7,7 @@ use App\Entity\InformationProduct;
 use App\Enum\KeywordType;
 use App\Exception\InvalidGmlException;
 use App\Twig\Extensions as TwigExtentions;
-use App\Util\Geometry;
+use App\Util\GeometryUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\ElasticaBundle\Event\PostTransformEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,16 +20,16 @@ class ElasticIndexSubscriber implements EventSubscriberInterface
     /**
      * The Geometry utility service.
      *
-     * @var Geometry
+     * @var GeometryUtil
      */
     protected $geometryUtil;
 
     /**
      * Constructor.
      *
-     * @param Geometry $geometryUtil The Geometry utility service.
+     * @param GeometryUtil $geometryUtil The Geometry utility service.
      */
-    public function __construct(Geometry $geometryUtil)
+    public function __construct(GeometryUtil $geometryUtil)
     {
         $this->geometryUtil = $geometryUtil;
     }
