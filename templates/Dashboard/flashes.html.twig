@@ -31,10 +31,10 @@
     {% set style = flashStyles[label]|default(flashStyles['default']) %}
     {% for message in messages %}
         {% set flashIndex = flashIndex + 1 %}
-        <div id="flash-banner-{{ flashIndex }}" class="flex items-center p-4 mb-4 text-sm rounded-lg {{ style.bg }} {{ style.text }}" role="alert">
+        <div id="flash-banner-{{ flashIndex }}" class="flex items-center p-4 mb-4 text-lg rounded-lg {{ style.bg }} {{ style.text }}" role="alert">
             <i class="{{ style.icon }} shrink-0 w-4 h-4 me-3" aria-hidden="true"></i>
             <span class="sr-only">{{ label|capitalize }}</span>
-            <div class="font-medium">
+            <div>
                 {{ message }}
             </div>
             <button
