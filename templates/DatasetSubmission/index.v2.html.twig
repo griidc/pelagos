@@ -12,12 +12,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <style>
-        .loading label,
-        .loading input,
-        .loading select,
-        .loading textarea,
-        .loading button {
-            visibility: hidden;
+        .loading {
+            opacity: 0;
         }
 
         .ts-control {
@@ -122,7 +118,7 @@
                 section.classList.toggle('hidden', section.id !== sectionId);
             });
             requestAnimationFrame(() => {
-                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+                document.body.scrollIntoView({ behavior: 'instant', block: 'start'});
             });
             document.querySelectorAll('[data-section-button]').forEach((button) => {
                 const isActive = button.dataset.sectionButton === sectionId;
@@ -137,7 +133,7 @@
 {% endblock javascripts %}
 
 {% block body %}
-    <div class="max-w-screen-xl mx-auto py-6">
+    <div class="max-w-screen-xl mx-auto py-6 loading" id="mainsection">
         {% for message in app.flashes('error') %}
             <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
                 <span class="font-medium">{{ message }}</span>
