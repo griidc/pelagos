@@ -12,15 +12,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <style>
-        .loading label,
-        .loading input,
-        .loading select,
-        .loading textarea,
-        .loading button {
-            filter: grayscale(80%) blur(10px);
-            opacity: .5;
-            transition: filter 2s;
-            transition: opacity 200ms;
+        .loading {
+            opacity: 0;
         }
 
         .ts-control {
@@ -140,7 +133,7 @@
 {% endblock javascripts %}
 
 {% block body %}
-    <div class="max-w-screen-xl mx-auto py-6">
+    <div class="max-w-screen-xl mx-auto py-6 loading" id="mainsection">
         {% for message in app.flashes('error') %}
             <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
                 <span class="font-medium">{{ message }}</span>
