@@ -119,11 +119,8 @@
 
 {% block body %}
     <div id="mainsection" class="max-w-screen-xl mx-auto py-6 loading">
-        {% for message in app.flashes('error') %}
-            <div class="p-4 mb-4 text-sm text-rose-900 rounded-xl bg-rose-50" role="alert">
-                <span class="font-medium">{{ message }}</span>
-            </div>
-        {% endfor %}
+        {% include 'Dashboard/flashes.html.twig' %}
+
 
         <h2>Dataset Information Form</h2>
 
