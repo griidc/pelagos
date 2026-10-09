@@ -246,7 +246,7 @@
         <div class="bg-white border border-gray-300 p-4 rounded-lg mt-8 grid gap-4" >
             <span class="text-2xl font-semibold" id="submit">Additional Data Manager Controls</span>
             <span class="font-semibold">DIF state: {{ {0: 'Unsubmitted', 1: 'Submitted', 2: 'Approved'}[status] ?? 'Unknown' }}</span></label>
-            <div class="flex justify-left gap-2" id="submit">
+            <div class="flex justify-center gap-2" id="submit">
                 <div>
                     <button type="submit" id="approveSubmission" name="approveSubmission" class="button button-regular button-form justify-left" {{ not isApprovable ? 'title="Only DIFs in the submitted state can be approved." disabled' }}>Approve</button>
                 </div>
