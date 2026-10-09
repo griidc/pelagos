@@ -12,6 +12,7 @@ use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -30,6 +31,7 @@ class ZipDatasetFilesHandler
         private readonly FileRepository $fileRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly Datastore $datastore,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -48,39 +50,56 @@ class ZipDatasetFilesHandler
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . str_replace(':', '.', $udi) . '.zip';
         $loggingContext['UDI'] = $udi;
         $loggingContext['destination_path'] = $destinationPath;
-        $fileset = $datasetSubmission->getFileset();
-        if (!$fileset instanceof Fileset) {
-            $this->logger->info('Not a fileset', $loggingContext);
+
+        $lock = $this->lockFactory->createLock('zip_dataset_files_' . $datasetSubmissionId, ttl: 14400, autoRelease: true);
+
+        if (!$lock->acquire()) {
+            $this->logger->warning(sprintf(
+                'Zip dataset files for submission ID %d (UDI: %s) is already in progress; skipping duplicate run.',
+                $datasetSubmissionId,
+                $udi
+            ), $loggingContext);
 
             return;
         }
-        $fileIds = [];
-        foreach ($fileset->getProcessedFiles() as $file) {
-            $fileIds[] = $file->getId();
-        }
-        $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
+
         try {
-            $this->logger->info('Zipfile opened.', $loggingContext);
-            $resource = Utils::tryFopen($destinationPath, 'w+');
-            $outputStream = Utils::streamFor($resource);
-            $this->zipFiles->start($outputStream, basename($destinationPath));
-            foreach ($filesInfo as $fileItemInfo) {
-                $this->logger->info('adding file: ' . $fileItemInfo['filePathName'] . '.', $loggingContext);
-                $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
-            }
-            $this->zipFiles->finish();
-            $this->logger->info('Zipfile closed. ', $loggingContext);
             $fileset = $datasetSubmission->getFileset();
-            $fileset->setZipFilePath($destinationPath);
-            $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
-            $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));
-            fclose($resource);
-            $this->entityManager->flush();
-        } catch (\Exception $exception) {
-            $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()), $loggingContext);
+            if (!$fileset instanceof Fileset) {
+                $this->logger->info('Not a fileset', $loggingContext);
 
-            return;
+                return;
+            }
+            $fileIds = [];
+            foreach ($fileset->getProcessedFiles() as $file) {
+                $fileIds[] = $file->getId();
+            }
+            $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
+            try {
+                $this->logger->info('Zipfile opened.', $loggingContext);
+                $resource = Utils::tryFopen($destinationPath, 'w+');
+                $outputStream = Utils::streamFor($resource);
+                $this->zipFiles->start($outputStream, basename($destinationPath));
+                foreach ($filesInfo as $fileItemInfo) {
+                    $this->logger->info('adding file: ' . $fileItemInfo['filePathName'] . '.', $loggingContext);
+                    $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
+                }
+                $this->zipFiles->finish();
+                $this->logger->info('Zipfile closed. ', $loggingContext);
+                $fileset = $datasetSubmission->getFileset();
+                $fileset->setZipFilePath($destinationPath);
+                $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
+                $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));
+                fclose($resource);
+                $this->entityManager->flush();
+            } catch (\Exception $exception) {
+                $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()), $loggingContext);
+
+                return;
+            }
+            $this->logger->info('ZipDatasetFilesHandler worker finished.', $loggingContext);
+        } finally {
+            $lock->release();
         }
-        $this->logger->info('ZipDatasetFilesHandler worker finished.', $loggingContext);
     }
 }

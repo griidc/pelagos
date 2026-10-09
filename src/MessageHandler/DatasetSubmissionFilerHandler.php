@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Utils as GuzzlePsr7Utils;
 use League\Flysystem\FilesystemException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -33,6 +34,7 @@ class DatasetSubmissionFilerHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly EntityEventDispatcher $entityEventDispatcher,
         private readonly Datastore $datastore,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -50,36 +52,55 @@ class DatasetSubmissionFilerHandler
 
             return;
         }
+
+        if ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED) {
+            $this->logger->info(sprintf('Dataset submission ID %d already completed; skipping.', $datasetSubmissionId));
+
+            return;
+        }
+
+        $lock = $this->lockFactory->createLock('dataset_submission_filer_' . $datasetSubmissionId, ttl: 14400, autoRelease: true);
+
+        if (!$lock->acquire()) {
+            $this->logger->warning(sprintf(
+                'Dataset submission filer for ID %d is already in progress; skipping duplicate run.',
+                $datasetSubmissionId
+            ));
+
+            return;
+        }
+
         $dataset = $datasetSubmission?->getDataset();
         $udi = $dataset?->getUdi();
         $loggingContext = ['dataset_id' => $dataset?->getId(), 'udi' => $udi, 'dataset_submission_id' => $datasetSubmissionId, 'process_id' => getmypid()];
-        // Log processing start.
-        $this->logger->info('Dataset submission process started', $loggingContext);
 
-        $fileset = $datasetSubmission?->getFileset();
-        if ($fileset instanceof Fileset) {
-            foreach ($fileset->getQueuedFiles() as $file) {
-                if ($file instanceof File) {
-                    $this->processFile($file, $loggingContext);
-                } else {
-                    $this->logger->alert('File object does not exist');
+        try {
+            $this->logger->info('Dataset submission process started', $loggingContext);
+
+            $fileset = $datasetSubmission?->getFileset();
+            if ($fileset instanceof Fileset) {
+                foreach ($fileset->getQueuedFiles() as $file) {
+                    if ($file instanceof File) {
+                        $this->processFile($file, $loggingContext);
+                    } else {
+                        $this->logger->alert('File object does not exist');
+                    }
                 }
             }
+
+            $this->logger->info('Dataset submission all files done', $loggingContext);
+
+            $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+
+            $dataset->updateAvailabilityStatus();
+
+            $this->logger->info('Flushing data', $loggingContext);
+            $this->entityManager->flush();
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
+            $this->logger->info('Dataset submission process completed', $loggingContext);
+        } finally {
+            $lock->release();
         }
-
-        $this->logger->info('Dataset submission all files done', $loggingContext);
-
-        // Set Transfer Status to complete.
-        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-        // Dispatch entity event.
-
-        // Update dataset's availability status
-        $dataset->updateAvailabilityStatus();
-
-        $this->logger->info('Flushing data', $loggingContext);
-        $this->entityManager->flush();
-        $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
-        $this->logger->info('Dataset submission process completed', $loggingContext);
     }
 
     /**

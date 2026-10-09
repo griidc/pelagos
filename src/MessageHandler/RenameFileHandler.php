@@ -8,6 +8,7 @@ use App\Repository\FileRepository;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -24,6 +25,7 @@ class RenameFileHandler
         private readonly FileRepository $fileRepository,
         private readonly LoggerInterface $logger,
         private readonly Datastore $dataStore,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -36,18 +38,30 @@ class RenameFileHandler
         $this->logger->info(sprintf('Rename File worker started with ID: %d', $fileId));
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
-            $filePhysicalPath = $file->getPhysicalFilePath();
-            if (File::FILE_DELETED === $file->getStatus()) {
-                $this->logger->info(sprintf('Marking File as deleted for ID: %d', $fileId));
-                $newFilePath = $filePhysicalPath . Datastore::MARK_FILE_AS_DELETED;
-                $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $newFilePath, true);
-            } else {
-                $this->logger->info(sprintf('File is renamed on disk for ID: %d', $fileId));
-                $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $file->getFileset()->getFileRootPath() . $file->getFilePathName());
+            $lock = $this->lockFactory->createLock('rename_file_' . $fileId, ttl: 300, autoRelease: true);
+
+            if (!$lock->acquire()) {
+                $this->logger->warning(sprintf('Rename for file ID %d is already in progress; skipping duplicate run.', $fileId));
+
+                return;
             }
-            $file->setPhysicalFilePath($newFilePath);
-            $this->entityManager->flush();
-            $this->logger->info('Rename File worker completed');
+
+            try {
+                $filePhysicalPath = $file->getPhysicalFilePath();
+                if (File::FILE_DELETED === $file->getStatus()) {
+                    $this->logger->info(sprintf('Marking File as deleted for ID: %d', $fileId));
+                    $newFilePath = $filePhysicalPath . Datastore::MARK_FILE_AS_DELETED;
+                    $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $newFilePath, true);
+                } else {
+                    $this->logger->info(sprintf('File is renamed on disk for ID: %d', $fileId));
+                    $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $file->getFileset()->getFileRootPath() . $file->getFilePathName());
+                }
+                $file->setPhysicalFilePath($newFilePath);
+                $this->entityManager->flush();
+                $this->logger->info('Rename File worker completed');
+            } finally {
+                $lock->release();
+            }
         } else {
             $this->logger->alert(sprintf('No file found for ID: %d', $fileId));
         }
