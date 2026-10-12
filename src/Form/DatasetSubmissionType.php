@@ -209,7 +209,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
                 'required' => true,
-                'placeholder' => 'Please select a time period description.',
             ])
             ->add('temporalExtentBeginPosition', Type\DateType::class, [
                 'label' => 'Start Date',
