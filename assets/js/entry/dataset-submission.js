@@ -466,6 +466,12 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Data parameters and units are required.',
       },
     ])
+    .addField('#suppMethods', [
+      {
+        rule: 'required',
+        errorMessage: 'Methods are required.',
+      },
+    ])
     .addField('#themeKeywords', [
       {
         rule: 'required',
@@ -636,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           if (!filesUploadedElement.value.trim() && selectedRadio.value === 'no-files') {
-            setTimeout(() => remotelyHostedUrlElement.focus(), 0);
+            setTimeout(() => filesUploadedElement.focus(), 0);
           }
           return false;
         },
@@ -649,6 +655,10 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         validator: (value) => {
           const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
+          if (!selectedRadio) {
+            return true;
+          }
+
           if (value.trim() && selectedRadio.value === 'no-files') {
             return true;
           }

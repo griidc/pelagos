@@ -121,7 +121,7 @@ class DatasetSubmissionType extends AbstractType
             ])
             ->add('suppMethods', Type\TextareaType::class, [
                 'label' => 'Methods',
-                'required' => false,
+                'required' => true,
                 'attr' => [
                     'rows' => '5',
                 ],
