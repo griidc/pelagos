@@ -429,6 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ]);
   });
 
+  let validatingRelatedFunder = false;
+
   formValidate
     .addField('#authors', [
       {
@@ -438,8 +440,46 @@ document.addEventListener('DOMContentLoaded', () => {
     ])
     .addField('#funders', [
       {
-        rule: 'required',
-        errorMessage: 'Funder is required.',
+        validator: (value, context) => {
+          const additionalFundersElement = context['#additionalFunders'].elem;
+          if (formValidate.isSubmitted && !validatingRelatedFunder) {
+            validatingRelatedFunder = true;
+            try {
+              additionalFundersElement.dispatchEvent(new Event('input'));
+            } finally {
+              validatingRelatedFunder = false;
+            }
+          }
+
+          if (!value.trim() && !additionalFundersElement.value.trim()) {
+            return false;
+          }
+
+          return true;
+        },
+        errorMessage: 'Funder, or additional funder, is required.',
+      },
+    ])
+    .addField('#additionalFunders', [
+      {
+        validator: (value, context) => {
+          const fundersElement = context['#funders'].elem;
+          if (formValidate.isSubmitted && !validatingRelatedFunder) {
+            validatingRelatedFunder = true;
+            try {
+              fundersElement.dispatchEvent(new Event('input'));
+            } finally {
+              validatingRelatedFunder = false;
+            }
+          }
+
+          if (!value.trim() && !fundersElement.value.trim()) {
+            return false;
+          }
+
+          return true;
+        },
+        errorMessage: 'Funder, or additional funder, is required.',
       },
     ])
     .addField('#title', [
