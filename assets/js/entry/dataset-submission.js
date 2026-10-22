@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           return true;
         },
-        errorMessage: 'Funder, or additional funder, is required.',
+        errorMessage: 'Funder is required.',
       },
     ])
     .addField('#additionalFunders', [
@@ -473,13 +473,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          if (!value.trim() && !fundersElement.value.trim()) {
-            return false;
-          }
-
+          // this fields is not required
           return true;
         },
-        errorMessage: 'Funder, or additional funder, is required.',
+        errorMessage: 'Additional funder is required if no primary funder is provided.',
       },
     ])
     .addField('#title', [
