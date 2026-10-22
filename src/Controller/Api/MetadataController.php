@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Exception\InvalidGmlException;
-use App\Util\Geometry;
+use App\Util\GeometryUtil;
 use App\Util\Metadata;
 
 /**
@@ -23,22 +23,19 @@ class MetadataController extends EntityController
     /**
      * Get a single Metadata for a given id.
      *
-     * @param Request  $request         The request object.
-     * @param Geometry $geoUtil         Geometry Utility.
-     * @param Metadata $metadataUtility Metadata Utility.
-     *
-     *
+     * @param Request      $request         The request object.
+     * @param GeometryUtil $geoUtil         Geometry Utility.
+     * @param Metadata     $metadataUtility Metadata Utility.
      *
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
      * @throws BadRequestHttpException When the DIF is Unsubmitted.
      *
-     *
      * @return Response
      */
     #[View(serializerEnableMaxDepthChecks: true)]
     #[Route(path: '/api/metadata', name: 'pelagos_api_metadata_get', methods: ['GET'], defaults: ['_format' => 'json'])]
-    public function getAction(Request $request, Geometry $geoUtil, Metadata $metadataUtility)
+    public function getAction(Request $request, GeometryUtil $geoUtil, Metadata $metadataUtility)
     {
         $params = $request->query->all();
         $datasets = $this->entityHandler->getBy(Dataset::class, $params);
