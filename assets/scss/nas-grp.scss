@@ -120,10 +120,18 @@
   align-items: center;
 }
 
+.maintenance-mode .login-bar {
+  padding-top: 22px;
+}
+
 .login-info-box {
   top: 0;
   right: 0;
   color: theme-color('secondary');
+}
+
+.maintenance-mode .login-info-box {
+  top: 20px;
 }
 
 #main-wrapper {
