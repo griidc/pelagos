@@ -121,7 +121,7 @@ class DatasetSubmissionType extends AbstractType
             ])
             ->add('suppMethods', Type\TextareaType::class, [
                 'label' => 'Methods',
-                'required' => false,
+                'required' => true,
                 'attr' => [
                     'rows' => '5',
                 ],
@@ -209,7 +209,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
                 'required' => true,
-                'placeholder' => 'Please select a time period description.',
             ])
             ->add('temporalExtentBeginPosition', Type\DateType::class, [
                 'label' => 'Start Date',
