@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs';
 import collapse from '@alpinejs/collapse';
 import tippy from 'tippy.js';
+import { initDismisses } from 'flowbite';
 import 'tippy.js/dist/tippy.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../modules/cardClick';
@@ -16,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   tippy('[data-tippy-content]', {
     // options
   });
+
+  initDismisses();
 });
 
 const toggleAllExpanded = (expanded) => {

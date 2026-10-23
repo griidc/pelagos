@@ -2,7 +2,7 @@
 {% set fileWriteEnabled = is_granted('ROLE_DATA_REPOSITORY_MANAGER') or (datasetSubmissionLockStatus == false) %}
 <form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    <div id="mainsection"class="max-w-[95%] mx-auto unloading">
+    <div  class="max-w-[95%] mx-auto ">
         <section id="contact" data-form-section data-button-error-container="#contact-error">
             <div class="bg-white border border-gray-300 p-4 rounded-lg mb-4">
                 <div class="text-2xl font-semibold">Dataset Contact</div>
@@ -10,12 +10,10 @@
                     data-index="{{ form.datasetContacts|length > 0 ? form.datasetContacts|last.vars.name + 1 : 0 }}"
                 >
                     {% for contact in form.datasetContacts %}
-                    <div class="dataset-contact grid grid-cols-[5fr_3fr] gap-4 w-full relative">
-                        <div class="col-span-2 top-hr">
+
+                    <div class="dataset-contact grid grid-cols-[10fr_6fr_2fr] gap-4 w-full">
+                        <div class="col-span-3 top-hr">
                             <hr class="w-full border-gray-300 hidden">
-                        </div>
-                        <div class="absolute top-4 right-0">
-                            <button type="button" class="float-right text-sm hidden deleteContactButton"><i class="fas fa-trash-alt"></i> Delete Contact</button>
                         </div>
                         <div class="w-full">
                             <div>
@@ -41,6 +39,10 @@
                             {{ form_widget(contact.primaryContact) }}
                             {{ form_row(contact.role, { attr: { class: 'contactrole' } }) }}
                         </div>
+                        <div class="grid items-center justify-center">
+                            <div></div>
+                            <button type="button" class="hidden deleteContactButton button button-regular button-form">Delete</button>
+                        </div>
                         <div class="col-span-2 bottom-hr">
                             <hr class="w-full mt-4 border-gray-300 {{ form.datasetContacts|length > 1 ? '' : 'hidden' }}">
                         </div>
@@ -48,13 +50,15 @@
                     {% endfor %}
                 </div>
 
-                <button type="button" id="addContactButton" class="text-left text-sm"><i class="fas fa-plus"></i> Add Contact</button>
+                <div class="mb-4">
+                    <button type="button" id="addContactButton" class="text-left text-sm button button-regular button-form">Add Contact</button>
+                </div>
 
-                <div>
+                <div class="mb-4">
                     {{ form_row(form.authors, { attr: { class: 'input-base' } }) }}
                 </div>
 
-                <div>
+                <div class="mb-4">
                     {{ form_row(form.funders, { attr: { multiple: 'multiple'} }) }}
                 </div>
 
@@ -69,7 +73,10 @@
 
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" disabled>Previous</button>
-                <button type="button" class="button button-regular button-form" onclick="showSection('information')">Next</button>
+                <div class="flex justify-between gap-4">
+                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="button" class="button button-regular button-form" onclick="showSection('information')">Next</button>
+                </div>
             </div>
         </section>
 
@@ -118,7 +125,10 @@
             </div>
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('contact')">Previous</button>
-                <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Next</button>
+                <div class="flex justify-between gap-4">
+                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Next</button>
+                </div>
             </div>
         </section>
 
@@ -162,7 +172,10 @@
             </div>
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('information')">Previous</button>
-                <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Next</button>
+                <div class="flex justify-between gap-4">
+                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Next</button>
+                </div>
             </div>
         </section>
 
@@ -241,7 +254,10 @@
             </div>
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Previous</button>
-                <button type="button" class="button button-regular button-form" onclick="showSection('submit')">Next</button>
+                <div class="flex justify-between gap-4">
+                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="button" class="button button-regular button-form" onclick="showSection('submit')">Next</button>
+                </div>
             </div>
         </section>
 
@@ -330,26 +346,13 @@
                 <input type="hidden" name="submitAction" id="submitAction"/>
                 <input type="hidden" name="status" id="status" value="{{ status }}"/>
                 <input type="hidden" name="isDrpm" id="isDrpm" value="{{ isDRPM }}"/>
-
-                <div class="grid grid-cols-2 gap-4" id="submit">
-                    <div>
-                        <button type="button" id="saveAndContinue" name="saveAndContinue" class="button button-regular button-form w-full justify-center">Save and Continue Later</button>
-                    </div>
-
-                    <div>
-                        <button type="submit" id="saveAndSubmit" name="saveAndSubmit" class="button button-regular button-form w-full justify-center">Submit to GRIIDC</button>
-                    </div>
-
-                    {% if isDRPM %}
-                    <div>
-                        <button type="button" id="resetFormButton" name="resetFormButton" class="button button-regular button-form w-full justify-center">Reset Form</button>
-                    </div>
-                    {% endif %}
-                </div>
             </div>
             <div class="flex justify-between gap-4">
                 <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Previous</button>
-                <button type="button" class="button button-regular button-form" disabled="disabled">Next</button>
+                <div class="flex justify-between gap-4">
+                    <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
+                    <button type="submit" class="button button-regular button-form" id="saveAndSubmit" name="saveAndSubmit">Submit</button>
+                </div>
             </div>
         </section>
 
