@@ -112,23 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 
     <script>
-        function showSection(sectionId) {
-            document.dispatchEvent(new CustomEvent('sectionChange', { detail: { section: sectionId } }));
-            document.querySelectorAll('[data-form-section]').forEach((section) => {
-                section.classList.toggle('hidden', section.id !== sectionId);
-            });
-            requestAnimationFrame(() => {
-                document.body.scrollIntoView({ behavior: 'instant', block: 'start'});
-            });
-            document.querySelectorAll('[data-section-button]').forEach((button) => {
-                const isActive = button.dataset.sectionButton === sectionId;
-                button.setAttribute('aria-selected', isActive);
-                button.classList.toggle('bg-gray-100', !isActive);
-                button.classList.toggle('border-gray-100', !isActive);
-                button.classList.toggle('bg-blue-50', isActive);
-                button.classList.toggle('border-blue-600', isActive);
-            });
-        }
+
     </script>
 {% endblock javascripts %}
 
@@ -151,7 +135,7 @@
                 <ol class="space-y-4">
                     <li style="cursor: pointer;">
                         <button
-                            type="button" data-section-button="contact" aria-selected="true" onclick="showSection('contact')"
+                            type="button" data-section-button="contact" aria-selected="true" data-showsection="contact"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-blue-50 border border-blue-600 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Dataset Contact</h3><i id="contact-error" class="fa-solid hidden"></i>
@@ -160,7 +144,7 @@
                     </li>
                     <li style="cursor: pointer;">
                         <button
-                            type="button" data-section-button="information" aria-selected="true" onclick="showSection('information')"
+                            type="button" data-section-button="information" aria-selected="true" data-showsection="information"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Dataset Information</h3><i id="information-error" class="fa-solid hidden"></i>
@@ -169,7 +153,7 @@
                     </li>
                     <li style="cursor: pointer;">
                         <button
-                            type="button" data-section-button="keywords" aria-selected="true" onclick="showSection('keywords')"
+                            type="button" data-section-button="keywords" aria-selected="true" data-showsection="keywords"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Keywords</h3><i id="keywords-error" class="fa-solid hidden"></i>
@@ -178,7 +162,7 @@
                     </li>
                     <li style="cursor: pointer;">
                         <button
-                            type="button" data-section-button="extent" aria-selected="true" onclick="showSection('extent')"
+                            type="button" data-section-button="extent" aria-selected="true" data-showsection="extent"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Data Extent</h3><i id="extent-error" class="fa-solid hidden"></i>
@@ -187,7 +171,7 @@
                     </li>
                     <li style="cursor: pointer;">
                         <button
-                            type="button" data-section-button="submit" aria-selected="true" onclick="showSection('submit')"
+                            type="button" data-section-button="submit" aria-selected="true" data-showsection="submit"
                             class="lg:w-full w-3/4 p-4 text-left text-gray-900 bg-gray-100 border border-gray-100 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-medium">Submit</h3><i id="submit-error" class="fa-solid hidden"></i>

@@ -839,8 +839,47 @@ document.addEventListener('DOMContentLoaded', () => {
   Array.from(saveButon).forEach((btn) => btn.addEventListener('click', () => {
     formValidate.destroy();
     form.submitAction.value = 'saveAndContinue';
-    form.submit();
+    form.dispatchEvent(new Event('submit', { bubbles: true }));
   }));
+
+  function showSection(sectionId) {
+    document.dispatchEvent(new CustomEvent('sectionChange', { detail: { section: sectionId } }));
+    document.querySelectorAll('[data-form-section]').forEach((section) => {
+      section.classList.toggle('hidden', section.id !== sectionId);
+    });
+    requestAnimationFrame(() => {
+      document.body.scrollIntoView({ behavior: 'instant', block: 'start' });
+    });
+    document.querySelectorAll('[data-section-button]').forEach((button) => {
+      const isActive = button.dataset.sectionButton === sectionId;
+      button.setAttribute('aria-selected', isActive);
+      button.classList.toggle('bg-gray-100', !isActive);
+      button.classList.toggle('border-gray-100', !isActive);
+      button.classList.toggle('bg-blue-50', isActive);
+      button.classList.toggle('border-blue-600', isActive);
+    });
+  }
+
+  function switchToSection(sectionId) {
+    if (sectionId === 'submit') {
+      console.log('Revalidating form before showing submit section', sectionId);
+      if (!formValidate.isSubmitted) {
+        form.dispatchEvent(new Event('submit', { bubbles: true }));
+      } else if (formValidate.isValid) {
+        showSection(sectionId);
+      }
+    } else {
+      showSection(sectionId);
+    }
+  }
+
+  const showSectionButtons = document.querySelectorAll('[data-showsection]');
+  showSectionButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const sectionId = button.dataset.showsection;
+      switchToSection(sectionId);
+    });
+  });
 
   const mainSection = document.getElementById('mainsection');
   mainSection?.classList.remove('loading');

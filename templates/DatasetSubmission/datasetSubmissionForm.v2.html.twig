@@ -75,7 +75,7 @@
                 <button type="button" class="button button-regular button-form" disabled>Previous</button>
                 <div class="flex justify-between gap-4">
                     <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
-                    <button type="button" class="button button-regular button-form" onclick="showSection('information')">Next</button>
+                    <button type="button" class="button button-regular button-form" data-showsection="information">Next</button>
                 </div>
             </div>
         </section>
@@ -124,10 +124,10 @@
                 </div>
             </div>
             <div class="flex justify-between gap-4">
-                <button type="button" class="button button-regular button-form" onclick="showSection('contact')">Previous</button>
+                <button type="button" class="button button-regular button-form" data-showsection="contact">Previous</button>
                 <div class="flex justify-between gap-4">
                     <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
-                    <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Next</button>
+                    <button type="button" class="button button-regular button-form" data-showsection="keywords">Next</button>
                 </div>
             </div>
         </section>
@@ -171,10 +171,10 @@
                 </div>
             </div>
             <div class="flex justify-between gap-4">
-                <button type="button" class="button button-regular button-form" onclick="showSection('information')">Previous</button>
+                <button type="button" class="button button-regular button-form" data-showsection="information">Previous</button>
                 <div class="flex justify-between gap-4">
                     <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
-                    <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Next</button>
+                    <button type="button" class="button button-regular button-form" data-showsection="extent">Next</button>
                 </div>
             </div>
         </section>
@@ -253,10 +253,10 @@
                 </div>
             </div>
             <div class="flex justify-between gap-4">
-                <button type="button" class="button button-regular button-form" onclick="showSection('keywords')">Previous</button>
+                <button type="button" class="button button-regular button-form" data-showsection="keywords">Previous</button>
                 <div class="flex justify-between gap-4">
                     <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
-                    <button type="button" class="button button-regular button-form" onclick="showSection('submit')">Next</button>
+                    <button type="button" class="button button-regular button-form" data-showsection="submit">Next</button>
                 </div>
             </div>
         </section>
@@ -351,7 +351,7 @@
                 <input type="hidden" name="isDrpm" id="isDrpm" value="{{ isDRPM }}"/>
             </div>
             <div class="flex justify-between gap-4">
-                <button type="button" class="button button-regular button-form" onclick="showSection('extent')">Previous</button>
+                <button type="button" class="button button-regular button-form" data-showsection="extent">Previous</button>
                 <div class="flex justify-between gap-4">
                     <button type="button" class="button button-inverted button-form" saveAndContinue>Save</button>
                     <button type="submit" class="button button-regular button-form" id="saveAndSubmit" name="saveAndSubmit">Submit</button>
