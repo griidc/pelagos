@@ -2,7 +2,11 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Dataset;
 use App\Repository\DatasetRepository;
+use App\Repository\FundingCycleRepository;
+use App\Repository\FundingOrganizationRepository;
+use App\Repository\ResearchGroupRepository;
 use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Snappy\Pdf as KnpSnappyPdf;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -68,5 +72,111 @@ class ReportDatasetMonitoring extends ReportController
             $knpSnappyPdf->getOutput($pageUrl),
             $pdfFilename
         );
+    }
+
+    /**
+     * Test Route.
+     */
+    #[Route('/dataset-monitoring-test', name: 'pelagos_app_ui_report_dataset_monitoring_test')]
+    public function getDatasetsAsCSV(
+        Request $request,
+        DatasetRepository $datasetRepository, 
+        ResearchGroupRepository $researchGroupRepository,
+        FundingCycleRepository $fundingCycleRepository,
+        FundingOrganizationRepository $fundingOrganizationRepository
+    ): Response
+    {
+
+        $researchGroupId = $request->query->get('researchGroup');
+        $fundingCycleId = $request->query->get('fundingCycle');
+        $fundingOrganizationId = $request->query->get('fundingOrganization');
+        
+        $data = $this->generateCSVHeader() . "\n";
+
+        // Base retrieval logic based the most specific granularity of the request parameters provided.
+        if ($researchGroupId) {
+            $researchGroup = $researchGroupRepository->find($researchGroupId);
+            if ($researchGroup) {
+                $datasets = $researchGroup->getDatasets();
+                if ($datasets->count() > 0) {
+                    foreach ($datasets as $dataset) {
+                        $data .= $this->getDatasetCSVData($dataset) . "\n";
+                    }
+                } else {
+                    $researchGroupName = $researchGroup->getName();
+                    $data .= ",,,,,$researchGroupName,,";
+                }
+            }
+        } elseif ($fundingCycleId) {
+            $fundingCycle = $fundingCycleRepository->find($fundingCycleId);
+            if ($fundingCycle) {
+                $researchGroups = $fundingCycle->getResearchGroups();
+                foreach ($researchGroups as $researchGroup) {
+                    $datasets = $researchGroup->getDatasets();
+                    foreach ($datasets as $dataset) {
+                        $data .= $this->getDatasetCSVData($dataset) . "\n";
+                    }
+                }
+            }
+        } else if ($fundingOrganizationId) {
+            $fundingOrganization = $fundingOrganizationRepository->find($fundingOrganizationId);
+            if ($fundingOrganization) {
+                $fundingCycles = $fundingOrganization->getFundingCycles();
+                foreach ($fundingCycles as $fundingCycle) {
+                    $researchGroups = $fundingCycle->getResearchGroups();
+                    foreach ($researchGroups as $researchGroup) {
+                        $datasets = $researchGroup->getDatasets();
+                        foreach ($datasets as $dataset) {
+                            $data .= $this->getDatasetCSVData($dataset) . "\n";
+                        }
+                    }
+                }
+            }
+        } else {
+            // If no specific filter is provided, retrieve all datasets
+            $datasets = $datasetRepository->findAll();
+            foreach ($datasets as $dataset) {
+                $data .= $this->getDatasetCSVData($dataset) . "\n";
+            }
+        }
+
+        return new Response($data, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="dataset.csv"',
+        ]);
+
+    }
+
+    private function queryResearchGroups
+    private function generateCSVHeader(): string
+    {
+        $csv = '';
+        $csv .= '"UDI",';
+        $csv .= '"DOI",';
+        $csv .= '"Title",';
+        $csv .= '"Status",';
+        $csv .= '"Research Group",';
+        $csv .= '"Funding Cycle",';
+        $csv .= '"Funding Organization"';
+
+        return $csv;
+    }
+
+    private function getDatasetCSVData(Dataset $dataset): string
+    {
+        $researchGroup = $dataset->getResearchGroup();
+        $fundingCycle = $researchGroup->getFundingCycle();
+        $fundingOrganization = $fundingCycle->getFundingOrganization();
+
+        $csv = '';
+        $csv .= '"' . $dataset->getUdi() . '",';
+        $csv .= '"' . $dataset->getDoi() . '",';
+        $csv .= '"' . $dataset->getTitle() . '",';
+        $csv .= '"' . $dataset->getStatus() . '",';
+        $csv .= '"' . $researchGroup->getName() . '",';
+        $csv .= '"' . $fundingCycle->getName() . '",';
+        $csv .= '"' . $fundingOrganization->getName() . '"';
+
+        return $csv;
     }
 }
