@@ -258,7 +258,10 @@ export default class GeoViz {
   redrawMap() {
     setTimeout(() => {
       this.map.invalidateSize(true);
-      this.map.fitBounds(drawnLayers.getBounds(), { animate: true, maxZoom: 6, padding: [20, 20] });
+      const bounds = drawnLayers.getBounds();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, { animate: true, maxZoom: 6, padding: [20, 20] });
+      }
     }, 10);
   }
 
