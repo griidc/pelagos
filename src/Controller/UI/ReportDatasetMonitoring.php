@@ -154,6 +154,12 @@ class ReportDatasetMonitoring extends ReportController
         ];
 
         $csvBody = $serializer->serialize($reportRows, 'csv', $context);
+        // Prepend UTF-8 BOM to ensure proper encoding in Excel 
+        // This is kind of ugly, but works, unlike the Symfony 
+        // serializer's 'output_utf8_bom' option, which doesn't 
+        // work in this case because I'm manually overriding the
+        // headers since I really don't like the Entity/DTO headers
+        // that the serializer generates by default.
         $response = new Response("\xEF\xBB\xBF".$headerRow.$csvBody);
 
         $response->headers->set(
