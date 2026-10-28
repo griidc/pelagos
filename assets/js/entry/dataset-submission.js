@@ -18,6 +18,8 @@ import * as turf from '@turf/turf';
 
 import '../file-manager';
 
+import FlashMessage from '../modules/flashMessage';
+
 const DATASET_SUBMISSION_STATES = {
   STATUS_UNSUBMITTED: '0',
   STATUS_INCOMPLETE: '1',
@@ -429,6 +431,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ]);
   });
 
+  const flashMessage = new FlashMessage(
+    document.getElementById('flash-container'),
+    'Please complete all required fields.',
+    'error',
+  );
+
   formValidate
     .addField('#authors', [
       {
@@ -685,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage: 'Please enter a valid URL.',
       },
     ])
-    .onValidate(({ isSubmitted }) => {
+    .onValidate(({ isValid, isSubmitted }) => {
       const sections = document.querySelectorAll('section[data-form-section]');
       Array.from(sections).forEach((section) => {
         let valid = true;
@@ -703,6 +711,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       });
+
+      console.log('Validation status:', isValid, 'Submitted:', isSubmitted);
+
+      if (!isValid && isSubmitted) {
+        console.log('Showing flash message');
+        flashMessage.show();
+      }
     })
     .onSuccess((event) => {
       const successEvent = event;
@@ -860,24 +875,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function switchToSection(sectionId) {
-    if (sectionId === 'submit') {
-      console.log('Revalidating form before showing submit section', sectionId);
-      if (!formValidate.isSubmitted) {
-        form.dispatchEvent(new Event('submit', { bubbles: true }));
-      } else if (formValidate.isValid) {
-        showSection(sectionId);
-      }
-    } else {
-      showSection(sectionId);
-    }
-  }
-
   const showSectionButtons = document.querySelectorAll('[data-showsection]');
   showSectionButtons.forEach((button) => {
     button.addEventListener('click', () => {
       const sectionId = button.dataset.showsection;
-      switchToSection(sectionId);
+      showSection(sectionId);
     });
   });
 
