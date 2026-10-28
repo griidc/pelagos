@@ -2,7 +2,7 @@
 
 namespace App\Controller\UI;
 
-use App\Dto\DatasetMonitoringCsvRow;
+use App\DataTypeObjects\DatasetMonitoringCsvRow;
 use App\Repository\DatasetRepository;
 use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;

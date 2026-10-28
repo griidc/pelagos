@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto;
+namespace App\DataTypeObjects;
 
 use App\Entity\Dataset;
 
