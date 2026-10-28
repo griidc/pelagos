@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTypeObjects;
+namespace App\DataTransferObject;
 
 use App\Entity\Dataset;
 
@@ -19,7 +19,8 @@ final class DatasetMonitoringCsvRow
         public string $researchGroup = '',
         public string $fundingCycle = '',
         public string $fundingOrganization = '',
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a DatasetMonitoringCsvRow instance from a Dataset entity.
@@ -47,8 +48,8 @@ final class DatasetMonitoringCsvRow
     }
 
     /**
-     * Creates an empty DatasetMonitoringCsvRow instance with only research group, 
-     * funding cycle, and funding organization. This is again for convienience to 
+     * Creates an empty DatasetMonitoringCsvRow instance with only research group,
+     * funding cycle, and funding organization. This is again for convienience to
      * more easily create a valid CSV row representation with only the specified fields.
      *
      * @param string $researchGroup

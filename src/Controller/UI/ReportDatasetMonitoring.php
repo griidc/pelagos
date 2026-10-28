@@ -2,7 +2,7 @@
 
 namespace App\Controller\UI;
 
-use App\DataTypeObjects\DatasetMonitoringCsvRow;
+use App\DataTransferObject\DatasetMonitoringCsvRow;
 use App\Repository\DatasetRepository;
 use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
@@ -80,13 +80,12 @@ class ReportDatasetMonitoring extends ReportController
     #[Route('/dataset-monitoring-report-csv', name: 'pelagos_app_ui_report_dataset_monitoring_csv')]
     public function getDatasetsAsCSV(
         Request $request,
-        DatasetRepository $datasetRepository, 
+        DatasetRepository $datasetRepository,
         ResearchGroupRepository $researchGroupRepository,
         FundingCycleRepository $fundingCycleRepository,
         FundingOrganizationRepository $fundingOrganizationRepository,
         SerializerInterface $serializer
-    ): Response
-    {
+    ): Response {
 
         $researchGroupId = $request->query->get('researchGroup');
         $fundingCycleId = $request->query->get('fundingCycle');
@@ -111,7 +110,7 @@ class ReportDatasetMonitoring extends ReportController
                         $this->getDatasetsByResearchGroup($researchGroup->getId(), $researchGroupRepository)
                     );
                 }
-            } 
+            }
         } elseif ($fundingOrganizationId !== null && $fundingOrganizationId !== '') {
             $fundingOrganization = $fundingOrganizationRepository->find((int) $fundingOrganizationId);
             if ($fundingOrganization) {
@@ -137,7 +136,7 @@ class ReportDatasetMonitoring extends ReportController
         $csvFilename = 'DatasetMonitoringReport-' .
             (new \DateTime('now'))->format('Ymd\THis') .
             '.csv';
-        
+
         $headerRow = implode(',', [
             'UDI',
             'DOI',
@@ -146,7 +145,7 @@ class ReportDatasetMonitoring extends ReportController
             'Research Group',
             'Funding Cycle',
             'Funding Organization',
-        ])."\r\n";
+        ]) . "\r\n";
 
         $context = [
             'no_headers' => true, // allows override of Entity/DTO headers with our own header row
@@ -154,13 +153,13 @@ class ReportDatasetMonitoring extends ReportController
         ];
 
         $csvBody = $serializer->serialize($reportRows, 'csv', $context);
-        // Prepend UTF-8 BOM to ensure proper encoding in Excel 
-        // This is kind of ugly, but works, unlike the Symfony 
-        // serializer's 'output_utf8_bom' option, which doesn't 
+        // Prepend UTF-8 BOM to ensure proper encoding in Excel
+        // This is kind of ugly, but works, unlike the Symfony
+        // serializer's 'output_utf8_bom' option, which doesn't
         // work in this case because I'm manually overriding the
         // headers since I really don't like the Entity/DTO headers
         // that the serializer generates by default.
-        $response = new Response("\xEF\xBB\xBF".$headerRow.$csvBody);
+        $response = new Response("\xEF\xBB\xBF" . $headerRow . $csvBody);
 
         $response->headers->set(
             'Content-disposition',
@@ -181,10 +180,9 @@ class ReportDatasetMonitoring extends ReportController
      * @return DatasetMonitoringCsvRow[]
      */
     private function getDatasetsByResearchGroup(
-        int $researchGroupId, 
+        int $researchGroupId,
         ResearchGroupRepository $researchGroupRepository,
-    ): array
-    {
+    ): array {
         $researchGroup = $researchGroupRepository->find($researchGroupId);
 
         /* @var DatasetMonitoringCsvRow[] $datasetRows */
@@ -201,9 +199,9 @@ class ReportDatasetMonitoring extends ReportController
                         researchGroup: $researchGroup->getName(),
                         fundingCycle: $researchGroup->getFundingCycle()->getName(),
                         fundingOrganization: $researchGroup->getFundingCycle()->getFundingOrganization()->getName(),
-                    ); 
+                    );
             }
         }
         return $datasetRows;
-    }   
+    }
 }
