@@ -2,6 +2,33 @@ select,textarea {
     width:100%;
 }
 
+select#researchGroup option {
+    white-space:normal;
+    overflow-wrap:anywhere;
+    text-align:left;
+}
+
+@supports (appearance: base-select) {
+    select#researchGroup,
+    select#researchGroup::picker(select) {
+        appearance: base-select;
+    }
+
+    select#researchGroup {
+        background-image: none;
+        padding-right: .5em;
+    }
+
+    select#researchGroup::picker(select) {
+        box-sizing: border-box;
+        min-inline-size: anchor-size(width);
+        max-inline-size: anchor-size(width);
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-block-size: 60vh;
+    }
+}
+
 label:not(.button)
 {
     font-weight: bold;
