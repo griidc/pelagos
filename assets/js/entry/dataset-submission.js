@@ -20,6 +20,8 @@ import '../file-manager';
 
 import FlashMessage from '../modules/flashMessage';
 
+import { Modal } from 'flowbite';
+
 const DATASET_SUBMISSION_STATES = {
   STATUS_UNSUBMITTED: '0',
   STATUS_INCOMPLETE: '1',
@@ -62,6 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
     errorLabelCssClass: 'error-label',
     successLabelCssClass: 'success-label',
   });
+
+  const confirmExtentDialog = new Modal(
+    document.getElementById('confirm-extent-modal'),
+    {
+      backdrop: 'static',
+      placement: 'center',
+      closable: false,
+      backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
+    },
+    {
+      id: 'confirm-extent-modal',
+      override: true,
+    },
+  );
 
   const spatialExtentRadios = document.getElementsByName('has-extent');
   const spatialExtentGeometry = document.getElementsByClassName('spatial-extent-geometry');
@@ -112,19 +128,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     radio.addEventListener('change', (e) => {
-      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
-        // eslint-disable-next-line no-alert, no-restricted-globals
-        if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
-          e.preventDefault();
-          // canceling, so set back to previous selection.
-          if (e.target.value === 'yes-extent') {
-            document.getElementById('no-extent').checked = true;
-          } else if (e.target.value === 'no-extent') {
-            document.getElementById('yes-extent').checked = true;
+      if (spatialExtentGeometryField.value || spatialExtentDescriptionField.value) {
+        e.preventDefault();
+        confirmExtentDialog.show();
+
+        const confirmExtentModalPromise = new Promise((resolve) => {
+          document.querySelector('[data-confirm-yes="confirm-extent-modal"]').addEventListener('click', () => {
+            confirmExtentDialog.hide();
+            resolve(true);
+          });
+          document.querySelector('[data-confirm-no="confirm-extent-modal"]').addEventListener('click', () => {
+            confirmExtentDialog.hide();
+            resolve(false);
+          });
+        });
+
+        confirmExtentModalPromise.then((confirmed) => {
+          if (!confirmed) {
+            // canceling, so set back to previous selection.
+            if (e.target.value === 'yes-extent') {
+              document.getElementById('no-extent').checked = true;
+            } else if (e.target.value === 'no-extent') {
+              document.getElementById('yes-extent').checked = true;
+            }
+          } else if (confirmed) {
+            if (e.target.value === 'yes-extent') {
+              Array.from(spatialExtentGeometry).forEach((el) => el.classList.remove('hidden'));
+              Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
+              spatialExtentDescriptionField.value = '';
+              geoViz.fixMapSize();
+            } else if (e.target.value === 'no-extent') {
+              Array.from(spatialExtentGeometry).forEach((el) => el.classList.add('hidden'));
+              Array.from(spatialExtentDescription).forEach((el) => el.classList.remove('hidden'));
+              const temporalExtentDescriptionTomSelect = temporalExtentDescriptionField.tomselect;
+              if (temporalExtentDescriptionTomSelect) {
+                temporalExtentDescriptionTomSelect.clear();
+              }
+              temporalExtentDescriptionField.selectedIndex = 0;
+              temporalExtentDescriptionField.value = '';
+              temporalExtentBeginPositionField.value = '';
+              temporalExtentEndPositionField.value = '';
+              spatialExtentGeometryField.value = '';
+
+              geoViz.clearMap();
+            }
+
+            formValidate.revalidateField('#has-extent');
           }
-          return;
-        }
+        });
+
+        return;
       }
+
       if (e.target.value === 'yes-extent') {
         Array.from(spatialExtentGeometry).forEach((el) => el.classList.remove('hidden'));
         Array.from(spatialExtentDescription).forEach((el) => el.classList.add('hidden'));
@@ -150,13 +205,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const confirmFilesDialog = new Modal(
+    document.getElementById('confirm-files-modal'),
+    {
+      backdrop: 'static',
+      placement: 'center',
+      closable: false,
+      backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
+    },
+    {
+      id: 'confirm-files-modal',
+      override: true,
+    },
+  );
+
   const filesSectionRadios = document.getElementsByName('has-files');
   const fileSection = document.getElementsByClassName('files-section');
   const remoteSection = document.getElementsByClassName('remotely-hosted-section');
   filesSectionRadios.forEach((radio) => {
     const filesUploaded = document.getElementById('filesUploaded');
     const remoteHostedUrl = document.getElementById('remotelyHostedUrl');
-    const filesUploadedValue = filesUploaded.value ?? '';
     const remoteHostedUrlValue = remoteHostedUrl.value ?? '';
 
     if (remoteHostedUrlValue && radio.value === 'no-files') {
@@ -167,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedRadio.checked = true;
     }
 
-    if (filesUploadedValue && radio.value === 'yes-files') {
+    if (filesUploaded.value && radio.value === 'yes-files') {
       Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
       Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
       const selectedRadio = radio;
@@ -175,6 +243,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     radio.addEventListener('change', (e) => {
+      if (filesUploaded.value === 'valid' || remoteHostedUrl.value) {
+        // e.preventDefault();
+        confirmFilesDialog.show();
+        // canceling, so set back to previous selection.
+        // if (e.target.value === 'yes-files') {
+        //   document.getElementById('no-files').checked = true;
+        // } else if (e.target.value === 'no-files') {
+        //   document.getElementById('yes-files').checked = true;
+        // }
+        document.querySelector('[data-confirm-yes="confirm-files-modal"]').addEventListener('click', () => {
+          confirmFilesDialog.hide();
+        });
+        // return;
+      }
+
       if (e.target.value === 'yes-files') {
         Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
         Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
