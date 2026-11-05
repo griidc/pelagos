@@ -27,6 +27,14 @@
   }
 
   /*
+  Button red
+  */
+  .button-red,
+  a.button-red {
+    @apply bg-red-600 text-white focus-visible:bg-red-800 hover:bg-red-800 focus-visible:text-white hover:text-white hover:bg-red-800 hover:border-red-800;
+  }
+
+  /*
   Button pill
   */
   .button-pill {
@@ -41,6 +49,8 @@
   }
 
   .button[disabled] {
-    @apply bg-blue-600 cursor-not-allowed opacity-50;
+    @apply cursor-not-allowed opacity-50;
   }
+
+
 }
