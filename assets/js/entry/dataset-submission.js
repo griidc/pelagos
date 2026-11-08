@@ -711,8 +711,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#spatial-extent', [
       {
         validator: () => {
+          spatialExtentRadios.forEach((radio) => {
+            radio.nextElementSibling.classList.remove('error-radio');
+          });
           const selectedRadio = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           if (!selectedRadio) {
+            spatialExtentRadios.forEach((radio) => {
+              radio.nextElementSibling.classList.add('error-radio');
+            });
             return true;
           }
           const spatialExtentGeometryElement = document.getElementById('spatialExtent');
@@ -832,10 +838,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      console.log('Validation status:', isValid, 'Submitted:', isSubmitted);
-
       if (!isValid && isSubmitted) {
-        console.log('Showing flash message');
         flashMessage.show();
       }
     })
@@ -885,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formValidate.revalidateField('#temporalExtentDesc');
         formValidate.revalidateField('#temporalExtentBeginPosition');
         formValidate.revalidateField('#temporalExtentEndPosition');
-        formValidate.revalidateField('#spatialExtentDescription');
+        formValidate.revalidateField('#spatial-extent');
       }
     });
   });
