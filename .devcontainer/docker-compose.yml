@@ -1,0 +1,38 @@
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+    command: ["sleep", "infinity"]
+    ports:
+      - 5432:5432
+      - 9200:9200
+    # extra_hosts:
+    #   - "database:127.0.0.1"
+    #   - "elasticsearch:127.0.0.1"
+    #   - "postgis:127.0.0.1"
+
+  database:
+    image: postgis/postgis:18-3.6
+    container_name: postgis
+    restart: "no"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    labels:
+      com.symfony.server.service-ignore: true
+    network_mode: service:devcontainer
+    depends_on:
+      - devcontainer
+
+  elasticsearch:
+    image: elastic/elasticsearch:7.17.28
+    container_name: elasticsearch
+    restart: "no"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    network_mode: service:devcontainer
+    depends_on:
+      - devcontainer

@@ -3,12 +3,20 @@
 {
 	"name": "Pelagos Development Container",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:bookworm",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"runServices": [
+		"devcontainer",
+		"database",
+		"elasticsearch"
+	],
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	// Features to add to the dev container. More info: https://containers.dev/features
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:latest": {},
+		// "ghcr.io/devcontainers/features/docker-in-docker:latest": {},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:latest": {},
 		"ghcr.io/rails/devcontainer/features/postgres-client:latest": {},
-		"ghcr.io/devcontainers/features/node:latest": {
+		"ghcr.io/devcontainers/features/node:2.1.2": {
 			"installYarnUsingApt": true,
 			"version": "lts",
 			"npmVersion": "latest",
@@ -23,7 +31,6 @@
 		"ghcr.io/shyim/devcontainers-features/symfony-cli:latest": {}
 	},
 
-
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
@@ -36,10 +43,10 @@
 				"mansoorkhan96.php-cs-fixer"
 			]
     	}
-	}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [5432, 9200]
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
