@@ -205,20 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const confirmFilesDialog = new Modal(
-    document.getElementById('confirm-files-modal'),
-    {
-      backdrop: 'static',
-      placement: 'center',
-      closable: false,
-      backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
-    },
-    {
-      id: 'confirm-files-modal',
-      override: true,
-    },
-  );
-
   const filesSectionRadios = document.getElementsByName('has-files');
   const fileSection = document.getElementsByClassName('files-section');
   const remoteSection = document.getElementsByClassName('remotely-hosted-section');
@@ -243,21 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     radio.addEventListener('change', (e) => {
-      if (filesUploaded.value === 'valid' || remoteHostedUrl.value) {
-        // e.preventDefault();
-        confirmFilesDialog.show();
-        // canceling, so set back to previous selection.
-        // if (e.target.value === 'yes-files') {
-        //   document.getElementById('no-files').checked = true;
-        // } else if (e.target.value === 'no-files') {
-        //   document.getElementById('yes-files').checked = true;
-        // }
-        document.querySelector('[data-confirm-yes="confirm-files-modal"]').addEventListener('click', () => {
-          confirmFilesDialog.hide();
-        });
-        // return;
-      }
-
       if (e.target.value === 'yes-files') {
         Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
         Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));

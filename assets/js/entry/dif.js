@@ -16,6 +16,8 @@ import FullScreenModal from '../modules/fullScreenModal';
 import * as turf from '@turf/turf';
 import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
+import { Modal } from 'flowbite';
+
 const DIF_STATES = {
   UNSUBMITTED: '0',
   SUBMITTED: '1',
@@ -38,16 +40,35 @@ document.addEventListener('DOMContentLoaded', () => {
     allowFullScreen: !locked,
   });
 
+  const confirmExtentDialog = new Modal(
+    document.getElementById('confirm-extent-modal'),
+    {
+      backdrop: 'static',
+      placement: 'center',
+      closable: false,
+      backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
+    },
+    {
+      id: 'confirm-extent-modal',
+      override: true,
+    },
+  );
+
+  const formValidate = new JustValidate(form, {
+    errorLabelStyle: {
+      color: '#b81111',
+      fontWeight: 'bold',
+    },
+  });
+
   const spatialExtentRadios = document.getElementsByName('has-extent');
   const spatialExtentGeometry = document.getElementById('spatial-extent-geometry');
   const spatialExtentDescription = document.getElementById('spatial-extent-description');
   spatialExtentRadios.forEach((radio) => {
     const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
     const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
-    const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
-    const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
 
-    if (spatialExtentDescriptionFieldValue && radio.value === 'no-extent') {
+    if (spatialExtentDescriptionField.value && radio.value === 'no-extent') {
       spatialExtentGeometry.classList.add('hidden');
       spatialExtentDescription.classList.remove('hidden');
       spatialExtentGeometryField.value = '';
@@ -56,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       spatialRadio.checked = true;
     }
 
-    if (spatialExtentGeometryFieldValue && radio.value === 'yes-extent') {
+    if (spatialExtentGeometryField.value && radio.value === 'yes-extent') {
       spatialExtentGeometry.classList.remove('hidden');
       spatialExtentDescription.classList.add('hidden');
       const spatialRadio = radio;
@@ -69,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          gml: spatialExtentGeometryFieldValue,
+          gml: spatialExtentGeometryField.value,
         }),
       })
         .then((response) => response.json())
@@ -83,19 +104,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     radio.addEventListener('change', (e) => {
-      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
-        // eslint-disable-next-line no-alert, no-restricted-globals
-        if (!confirm('Changing this option will clear any existing information. Do you want to continue?')) {
-          e.preventDefault();
-          // canceling, so set back to previous selection.
-          if (e.target.value === 'yes-extent') {
-            document.getElementById('no-extent').checked = true;
-          } else if (e.target.value === 'no-extent') {
-            document.getElementById('yes-extent').checked = true;
+      if (spatialExtentDescriptionField.value || spatialExtentGeometryField.value) {
+        e.preventDefault();
+        confirmExtentDialog.show();
+
+        const confirmExtentModalPromise = new Promise((resolve) => {
+          document.querySelector('[data-confirm-yes="confirm-extent-modal"]').addEventListener('click', () => {
+            confirmExtentDialog.hide();
+            resolve(true);
+          });
+          document.querySelector('[data-confirm-no="confirm-extent-modal"]').addEventListener('click', () => {
+            confirmExtentDialog.hide();
+            resolve(false);
+          });
+        });
+
+        confirmExtentModalPromise.then((confirmed) => {
+          if (!confirmed) {
+            // canceling, so set back to previous selection.
+            if (e.target.value === 'yes-extent') {
+              document.getElementById('no-extent').checked = true;
+            } else if (e.target.value === 'no-extent') {
+              document.getElementById('yes-extent').checked = true;
+            }
+          } else if (confirmed) {
+            if (e.target.value === 'yes-extent') {
+              spatialExtentGeometry.classList.remove('hidden');
+              spatialExtentDescription.classList.add('hidden');
+              spatialExtentDescriptionField.value = '';
+              geoViz.fixMapSize();
+            } else if (e.target.value === 'no-extent') {
+              spatialExtentGeometry.classList.add('hidden');
+              spatialExtentDescription.classList.remove('hidden');
+              spatialExtentGeometryField.value = '';
+              geoViz.clearMap();
+            }
+
+            formValidate.revalidateField('#has-extent');
           }
-          return;
-        }
+        });
+
+        return;
       }
+
       if (e.target.value === 'yes-extent') {
         spatialExtentGeometry.classList.remove('hidden');
         spatialExtentDescription.classList.add('hidden');
@@ -131,13 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
       option(data, escape) {
         return `<div locked="${escape(data.locked)}">${escape(data.text)}</div>`;
       },
-    },
-  });
-
-  const formValidate = new JustValidate(form, {
-    errorLabelStyle: {
-      color: '#b81111',
-      fontWeight: 'bold',
     },
   });
 
