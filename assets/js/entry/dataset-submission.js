@@ -205,20 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const confirmFilesDialog = new Modal(
-    document.getElementById('confirm-files-modal'),
-    {
-      backdrop: 'static',
-      placement: 'center',
-      closable: false,
-      backdropClasses: 'z-[9998] bg-gray-900/70 fixed inset-0',
-    },
-    {
-      id: 'confirm-files-modal',
-      override: true,
-    },
-  );
-
   const filesSectionRadios = document.getElementsByName('has-files');
   const fileSection = document.getElementsByClassName('files-section');
   const remoteSection = document.getElementsByClassName('remotely-hosted-section');
@@ -243,21 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     radio.addEventListener('change', (e) => {
-      if (filesUploaded.value === 'valid' || remoteHostedUrl.value) {
-        // e.preventDefault();
-        confirmFilesDialog.show();
-        // canceling, so set back to previous selection.
-        // if (e.target.value === 'yes-files') {
-        //   document.getElementById('no-files').checked = true;
-        // } else if (e.target.value === 'no-files') {
-        //   document.getElementById('yes-files').checked = true;
-        // }
-        document.querySelector('[data-confirm-yes="confirm-files-modal"]').addEventListener('click', () => {
-          confirmFilesDialog.hide();
-        });
-        // return;
-      }
-
       if (e.target.value === 'yes-files') {
         Array.from(fileSection).forEach((el) => el.classList.remove('hidden'));
         Array.from(remoteSection).forEach((el) => el.classList.add('hidden'));
@@ -711,8 +682,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#spatial-extent', [
       {
         validator: () => {
+          spatialExtentRadios.forEach((radio) => {
+            radio.nextElementSibling.classList.remove('error-radio');
+          });
           const selectedRadio = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           if (!selectedRadio) {
+            spatialExtentRadios.forEach((radio) => {
+              radio.nextElementSibling.classList.add('error-radio');
+            });
             return true;
           }
           const spatialExtentGeometryElement = document.getElementById('spatialExtent');
@@ -739,13 +716,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#has-files', [
       {
         validator: () => {
+          filesSectionRadios.forEach((radio) => {
+            radio.nextElementSibling.classList.remove('error-radio');
+          });
           const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
-          if (selectedRadio) {
-            return true;
+          if (!selectedRadio) {
+            filesSectionRadios.forEach((radio) => {
+              radio.nextElementSibling.classList.add('error-radio');
+            });
+            return false;
           }
-          const hasFilesSection = document.getElementById('submit');
-          setTimeout(() => hasFilesSection.scrollIntoView(true), 0);
-          return false;
+          return true;
         },
         errorMessage: 'Please select if the dataset has files or is remotely hosted.',
       },
@@ -832,10 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      console.log('Validation status:', isValid, 'Submitted:', isSubmitted);
-
       if (!isValid && isSubmitted) {
-        console.log('Showing flash message');
         flashMessage.show();
       }
     })
@@ -885,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formValidate.revalidateField('#temporalExtentDesc');
         formValidate.revalidateField('#temporalExtentBeginPosition');
         formValidate.revalidateField('#temporalExtentEndPosition');
-        formValidate.revalidateField('#spatialExtentDescription');
+        formValidate.revalidateField('#spatial-extent');
       }
     });
   });
