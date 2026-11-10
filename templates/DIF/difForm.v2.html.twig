@@ -263,3 +263,25 @@
         {% endif %}
     </div>
 </form>
+
+<div id="confirm-extent-modal" tabindex="-1"
+     style="z-index: 9999;"
+     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-sm">
+            <div class="p-4 md:p-5 text-center">
+                <div class="mb-4">
+                    <p>Changing this option will clear existing spatial extent information.</p>
+                </div>
+                <h3 class="mb-5 text-lg font-normal text-gray-500">Are you sure?</h3>
+                <button data-confirm-yes="confirm-extent-modal" type="button" class="button button-red button-form">
+                    Yes, I'm sure
+                </button>
+                <button data-confirm-no="confirm-extent-modal" type="button" class="button button-regular button-form">
+                    No, cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
