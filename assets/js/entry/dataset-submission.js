@@ -716,13 +716,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#has-files', [
       {
         validator: () => {
+          filesSectionRadios.forEach((radio) => {
+            radio.nextElementSibling.classList.remove('error-radio');
+          });
           const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
-          if (selectedRadio) {
-            return true;
+          if (!selectedRadio) {
+            filesSectionRadios.forEach((radio) => {
+              radio.nextElementSibling.classList.add('error-radio');
+            });
+            return false;
           }
-          const hasFilesSection = document.getElementById('submit');
-          setTimeout(() => hasFilesSection.scrollIntoView(true), 0);
-          return false;
+          return true;
         },
         errorMessage: 'Please select if the dataset has files or is remotely hosted.',
       },
