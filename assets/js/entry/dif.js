@@ -67,10 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
   spatialExtentRadios.forEach((radio) => {
     const spatialExtentGeometryField = document.getElementById('spatialExtentGeometry');
     const spatialExtentDescriptionField = document.getElementById('spatialExtentDescription');
-    const spatialExtentGeometryFieldValue = spatialExtentGeometryField.value ?? '';
-    const spatialExtentDescriptionFieldValue = spatialExtentDescriptionField.value ?? '';
 
-    if (spatialExtentDescriptionFieldValue && radio.value === 'no-extent') {
+    if (spatialExtentDescriptionField.value && radio.value === 'no-extent') {
       spatialExtentGeometry.classList.add('hidden');
       spatialExtentDescription.classList.remove('hidden');
       spatialExtentGeometryField.value = '';
@@ -79,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       spatialRadio.checked = true;
     }
 
-    if (spatialExtentGeometryFieldValue && radio.value === 'yes-extent') {
+    if (spatialExtentGeometryField.value && radio.value === 'yes-extent') {
       spatialExtentGeometry.classList.remove('hidden');
       spatialExtentDescription.classList.add('hidden');
       const spatialRadio = radio;
@@ -92,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          gml: spatialExtentGeometryFieldValue,
+          gml: spatialExtentGeometryField.value,
         }),
       })
         .then((response) => response.json())
@@ -106,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     radio.addEventListener('change', (e) => {
-      if (spatialExtentDescriptionFieldValue || spatialExtentGeometryFieldValue) {
+      if (spatialExtentDescriptionField.value || spatialExtentGeometryField.value) {
         e.preventDefault();
         confirmExtentDialog.show();
 
