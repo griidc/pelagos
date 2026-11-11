@@ -3,6 +3,7 @@
 namespace App\Controller\UI;
 
 use App\DataTransferObject\DatasetMonitoringCsvRow;
+use App\Enum\DatasetLifecycleStatus;
 use App\Repository\DatasetRepository;
 use App\Repository\FundingCycleRepository;
 use App\Repository\FundingOrganizationRepository;
@@ -190,16 +191,32 @@ class ReportDatasetMonitoring extends ReportController
 
         if ($researchGroup) {
             $datasets = $researchGroup->getDatasets();
-            if ($datasets->count() > 0) {
-                foreach ($datasets as $dataset) {
-                    $datasetRows[] = DatasetMonitoringCsvRow::fromDataset($dataset);
-                }
+            if ($datasets->count() == 0) {
+                $datasetRows[] = DatasetMonitoringCsvRow::emptyDatasetRow(
+                    researchGroup: $researchGroup->getName(),
+                    fundingCycle: $researchGroup->getFundingCycle()->getName(),
+                    fundingOrganization: $researchGroup->getFundingCycle()->getFundingOrganization()->getName(),
+                );
             } else {
+                $rowsAddedCount = count($datasetRows);
+                foreach ($datasets as $dataset) {
+                    if (in_array($dataset->getDatasetLifecycleStatus(), [
+                        DatasetLifecycleStatus::AVAILABLE,
+                        DatasetLifecycleStatus::RESTRICTED,
+                        DatasetLifecycleStatus::SUBMITTED,
+                        DatasetLifecycleStatus::IDENTIFIED
+                    ])) {
+                        $datasetRows[] = DatasetMonitoringCsvRow::fromDataset($dataset);
+                    }
+                }
+                // semi-ugly edge case: also add an empty row if no datasets matched the desired statuses
+                if (count($datasetRows) === $rowsAddedCount) {
                     $datasetRows[] = DatasetMonitoringCsvRow::emptyDatasetRow(
                         researchGroup: $researchGroup->getName(),
                         fundingCycle: $researchGroup->getFundingCycle()->getName(),
                         fundingOrganization: $researchGroup->getFundingCycle()->getFundingOrganization()->getName(),
                     );
+                }
             }
         }
         return $datasetRows;
