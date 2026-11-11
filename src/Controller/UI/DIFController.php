@@ -21,6 +21,7 @@ use App\Util\PersonUtil;
 use App\Util\Udi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\SubmitButton;
 
@@ -79,6 +80,20 @@ class DIFController extends AbstractController
         );
     }
 
+
+    /**
+     * Redirect to DIF by research group.
+     */
+    #[Route(path: '/dif/{researchGroup}', name: 'pelagos_app_ui_dif_rg')]
+    public function difByResearchGroup(
+        Request $request,
+        ResearchGroup $researchGroup
+    ): Response {
+        $request->getSession()->set('researchGroup', $researchGroup->getId());
+
+        return $this->redirectToRoute('pelagos_app_ui_dif_default');
+    }
+
     /**
      * The default action for the DIF.
      */
@@ -90,11 +105,11 @@ class DIFController extends AbstractController
         DatasetRepository $datasetRepository,
         EntityManagerInterface $entityManager,
         Udi $udiUtil,
-        EntityEventDispatcher $entityEventDispatcher
+        EntityEventDispatcher $entityEventDispatcher,
+        #[MapQueryParameter] ?string $udi,
     ): Response {
         $dataset = null;
         $dif = null;
-        $udi = $request->query->get('udi');
         if ($udi !== null && $udi !== '') {
             $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
             if (!$dataset) {
@@ -105,12 +120,19 @@ class DIFController extends AbstractController
             }
         }
 
+        $session = $request->getSession();
+        $researchGroupId = $session->get('researchGroup');
+        $session->remove('researchGroup');
+
         if (!$dataset instanceof Dataset) {
             $creator = PersonUtil::getPersonFromUser($this->getUser());
             $dataset = new Dataset();
             $dataset->setCreator($creator);
             $dif = new DIF($dataset);
             $dif->setCreator($creator);
+            if ($researchGroupId !== null) {
+                $dif->setResearchGroup($entityManager->getRepository(ResearchGroup::class)->find($researchGroupId));
+            }
         }
 
         $form = $formFactory->createNamed('', DIFType::class, $dif);

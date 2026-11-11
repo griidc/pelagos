@@ -92,7 +92,7 @@
                     </span>
                 {% else %}
                 <a
-                    href="{{ path('pelagos_app_ui_dif_default') }}"
+                    href="{{ path('pelagos_app_ui_dif_rg', {'researchGroup': researchGroup.id}) }}"
                     class="text-blue-800 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-600 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                     data-tippy-content="Create New Dataset"
                 >
