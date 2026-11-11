@@ -28,7 +28,8 @@
 			"version": "8.4",
 			"extensionsExtra": "xdebug,ldap,tidy"
 		},
-		"ghcr.io/shyim/devcontainers-features/symfony-cli:latest": {}
+		"ghcr.io/shyim/devcontainers-features/symfony-cli:latest": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
 
 	// Configure tool-specific properties.
