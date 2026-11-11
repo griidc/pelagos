@@ -40,7 +40,7 @@ final class DatasetMonitoringCsvRow
             doi: $dataset->getDoi() ?? '',
             title: $dataset->getTitle() ?? '',
             // Status source changed per PELAGOS-5634 request.
-            status: $dataset->getDatasetLifecycleStatus()->value,
+            status: $dataset->getDatasetLifecycleStatus()->value ?? '',
             researchGroup: $rg->getName() ?? '',
             fundingCycle: $fc->getName() ?? '',
             fundingOrganization: $fo->getName() ?? '',
