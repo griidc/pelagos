@@ -682,8 +682,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#spatial-extent', [
       {
         validator: () => {
+          spatialExtentRadios.forEach((radio) => {
+            radio.nextElementSibling.classList.remove('error-radio');
+          });
           const selectedRadio = Array.from(spatialExtentRadios).find((radio) => radio.checked);
           if (!selectedRadio) {
+            spatialExtentRadios.forEach((radio) => {
+              radio.nextElementSibling.classList.add('error-radio');
+            });
             return true;
           }
           const spatialExtentGeometryElement = document.getElementById('spatialExtent');
@@ -710,13 +716,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .addField('#has-files', [
       {
         validator: () => {
+          filesSectionRadios.forEach((radio) => {
+            radio.nextElementSibling.classList.remove('error-radio');
+          });
           const selectedRadio = Array.from(filesSectionRadios).find((radio) => radio.checked);
-          if (selectedRadio) {
-            return true;
+          if (!selectedRadio) {
+            filesSectionRadios.forEach((radio) => {
+              radio.nextElementSibling.classList.add('error-radio');
+            });
+            return false;
           }
-          const hasFilesSection = document.getElementById('submit');
-          setTimeout(() => hasFilesSection.scrollIntoView(true), 0);
-          return false;
+          return true;
         },
         errorMessage: 'Please select if the dataset has files or is remotely hosted.',
       },
@@ -853,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formValidate.revalidateField('#temporalExtentDesc');
         formValidate.revalidateField('#temporalExtentBeginPosition');
         formValidate.revalidateField('#temporalExtentEndPosition');
-        formValidate.revalidateField('#spatialExtentDescription');
+        formValidate.revalidateField('#spatial-extent');
       }
     });
   });
