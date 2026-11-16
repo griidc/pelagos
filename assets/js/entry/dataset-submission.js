@@ -803,10 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      console.log('Validation status:', isValid, 'Submitted:', isSubmitted);
-
       if (!isValid && isSubmitted) {
-        console.log('Showing flash message');
         flashMessage.show();
       }
     })
@@ -891,6 +888,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .map((element) => element.tomselect)
       .filter((instance) => instance !== undefined);
     tomSelectInstances.forEach((instance) => instance.disable());
+
+    const lockedMessage = new FlashMessage(
+      document.getElementById('flash-container'),
+      'This Dataset Submission has been locked, and can not be edited',
+      'warning',
+    );
+    lockedMessage.show();
   }
 
   document.addEventListener('sectionChange', (event) => {
