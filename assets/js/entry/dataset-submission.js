@@ -42,13 +42,13 @@ if (urlParams.has('regid')) {
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('regForm');
   const status = document.getElementById('status').value;
-  const isDrpm = document.getElementById('isDrpm')?.value === '1';
+  // const isDrpm = document.getElementById('isDrpm')?.value === '1';
   const datasetContacts = document.getElementsByClassName('contactperson');
   const contactsContainer = document.querySelector('.dataset-contacts');
   const contactTemplate = contactsContainer.querySelector('.dataset-contact');
   const newContactTemplate = contactTemplate.cloneNode(true);
   const contactSelects = [];
-  const locked = (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE && !isDrpm);
+  const locked = (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE);
 
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
     loadWizard: !locked,
@@ -901,7 +901,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lockedMessage = new FlashMessage(
       document.getElementById('flash-container'),
-      'This Dataset Submission has been locked, and can not be edited',
+      'This dataset has been locked for editing. Please contact '
+      + '<a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> if revisions are required.',
       'warning',
     );
     lockedMessage.show();

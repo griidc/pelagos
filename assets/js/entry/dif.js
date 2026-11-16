@@ -378,7 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lockedMessage = new FlashMessage(
       document.getElementById('flash-container'),
-      'This DIF has been locked, and can not be edited',
+      'This DIF has been locked for editing. Please contact '
+      + '<a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> if revisions are required.',
       'warning',
     );
     lockedMessage.show();
