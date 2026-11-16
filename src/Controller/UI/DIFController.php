@@ -84,7 +84,7 @@ class DIFController extends AbstractController
     /**
      * Redirect to DIF by research group.
      */
-    #[Route(path: '/dif/{researchGroup}', name: 'pelagos_app_ui_dif_rg')]
+    #[Route(path: '/dif/{researchGroup}', name: 'pelagos_app_ui_dif_rg', requirements: ['researchGroup' => '\d+'])]
     public function difByResearchGroup(
         Request $request,
         ResearchGroup $researchGroup
