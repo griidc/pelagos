@@ -11,9 +11,14 @@
         <div class="card-body">
             <p class="card-text text-dark">
                 <u>Funded By:</u> <br />
-                {% for funder in dataset.funders|default %}
-                    <span> {{ funder.name }}</span><br />
-                {% endfor %}
+                {% if dataset.funders|default %}
+                    {% for funder in dataset.funders|default %}
+                        <span> {{ funder.name }}</span><br />
+                    {% endfor %}
+                {% else %}
+                    {{ dataset.researchGroup.fundingCycle.fundingOrganization.name }}
+                {% endif %}
+
             </p>
             {% if dataset.researchGroup.fundingCycle.fundingOrganization.id not in excludedFundingCycleList %}
                 <p class="card-text text-dark">
