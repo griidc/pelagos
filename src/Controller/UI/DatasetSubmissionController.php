@@ -117,7 +117,7 @@ class DatasetSubmissionController extends AbstractController
                 return $this->redirectToRoute('app_ui_dashboard');
             }
         } else {
-            $this->addFlash('warning', 'Please select a dataset here to continue to dataset submission');
+            $this->addFlash('warning', 'Please select a dataset from the dashboard to upload data.');
             return $this->redirectToRoute('app_ui_dashboard');
         }
 
@@ -263,7 +263,7 @@ class DatasetSubmissionController extends AbstractController
                 return $this->redirectToRoute('app_ui_dashboard');
             }
         } else {
-            $this->addFlash('warning', 'Please select a dataset here to continue to dataset submission');
+            $this->addFlash('warning', 'Please select a dataset from the dashboard to upload data.');
             return $this->redirectToRoute('app_ui_dashboard');
         }
 
