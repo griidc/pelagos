@@ -215,7 +215,7 @@
       </div>
     </b-form>
     <DxPopup
-        :visible.sync="ipCreatedSuccessModal"
+        v-model:visible="ipCreatedSuccessModal"
         :drag-enabled="false"
         :close-on-outside-click="true"
         :show-title="true"
@@ -223,7 +223,7 @@
         :height="200"
         title="Success!"
         container=".dx-viewport">
-      <template>
+      <template #default>
         <div>
           <h6>
             {{ ipSuccessModalText }}
@@ -235,7 +235,7 @@
       </template>
     </DxPopup>
     <DxPopup
-        :visible.sync="errorDialog"
+        v-model:visible="errorDialog"
         :drag-enabled="false"
         :close-on-outside-click="true"
         :show-title="true"
@@ -243,7 +243,7 @@
         :height="200"
         title="Error!"
         container=".dx-viewport">
-      <template>
+      <template #default>
         <p>
           <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
           {{ errorMessage }}
@@ -251,7 +251,7 @@
       </template>
     </DxPopup>
     <DxPopup
-        :visible.sync="deleteConfirmationDialog"
+        v-model:visible="deleteConfirmationDialog"
         :close-on-outside-click="false"
         :show-title="false"
         position="center"
@@ -262,7 +262,7 @@
         :shading="true"
         shading-color="rgba(0,0,0,0.4)"
     >
-      <template>
+      <template #default>
         <div class="confirmation-dialog">
           <p>
             <b>Do you really want to delete this Information Product?</b>
@@ -297,6 +297,7 @@ import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
 import DxTagBox from 'devextreme-vue/tag-box';
 import DataSource from 'devextreme/data/data_source';
+import { truncate } from '../../utils/filters';
 
 Dropzone.autoDiscover = false;
 
@@ -477,7 +478,7 @@ export default {
           if (researchGroup.shortName) {
             researchGroupShortName = researchGroup.shortName;
           } else {
-            researchGroupShortName = this.$options.filters.truncate(researchGroup.name, 50);
+            researchGroupShortName = truncate(researchGroup.name, 50);
           }
         }
       });
@@ -499,7 +500,7 @@ export default {
         if (researchGroup.shortName) {
           researchGroupShortName = researchGroup.shortName;
         } else {
-          researchGroupShortName = this.$options.filters.truncate(researchGroup.name, 50);
+          researchGroupShortName = truncate(researchGroup.name, 50);
         }
 
         if (this.addedRgShortName === researchGroupShortName) {

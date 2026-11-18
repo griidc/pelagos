@@ -41,7 +41,7 @@
               v-bind:key="index"
               :facet-info="facetInfo"
               :facet-name="getFacetLabel(name)"
-              v-on="$listeners"
+              @facetClicked="$emit('facetClicked', $event)"
               :formValues="formValues"
             />
           </div>

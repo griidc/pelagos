@@ -1,6 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -19,9 +20,22 @@ Encore
   .setManifestKeyPrefix('build/')
 
 // Enable Vue js
-  .enableVueLoader(() => {}, {
-    runtimeCompilerBuild: false,
+  .enableVueLoader((options) => {
+    // eslint-disable-next-line no-param-reassign
+    options.compilerOptions = {
+      compatConfig: {
+        MODE: 2,
+      },
+    };
+  }, {
+    version: 3,
+    runtimeCompilerBuild: true,
   })
+  .addPlugin(new webpack.DefinePlugin({
+    __VUE_OPTIONS_API__: JSON.stringify(true),
+    __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
+  }))
 
   .addPlugin(new Dotenv({ path: './.env.local', defaults: '.env' }))
 
@@ -74,7 +88,7 @@ Encore
   .addAliases({
     '@': path.resolve(__dirname, 'assets', 'js'),
     images: path.resolve(__dirname, 'assets', 'images'),
-    vue: Encore.isProduction() ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
+    vue: '@vue/compat',
   })
 
 /*
