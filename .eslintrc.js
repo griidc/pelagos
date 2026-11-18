@@ -29,10 +29,11 @@ module.exports = {
         vue: 'never',
       },
     ],
+    'import/no-cycle': 'off',
   },
   settings: {
-    "react": {
-      "version": "detect", // React version. "detect" automatically picks the version you have installed.
+    react: {
+      version: 'detect', // React version. "detect" automatically picks the version you have installed.
     },
     'import/resolver': {
       alias: {

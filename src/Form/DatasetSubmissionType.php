@@ -10,6 +10,7 @@ use App\Entity\Funder;
 use App\Entity\Keyword;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -21,6 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * A form type for creating a Dataset Submission form.
+ *
+ * @extends AbstractType<DatasetSubmission>
  */
 class DatasetSubmissionType extends AbstractType
 {
@@ -45,25 +48,30 @@ class DatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $builder
-            ->add('title', Type\TextType::class, [
+            ->add('title', Type\TextareaType::class, [
                 'label' => 'Dataset Title',
                 'required' => true,
-            ])
-            ->add('funders', Type\CollectionType::class, [
-                'label' => 'Funders',
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                    'class' => Funder::class,
+                'attr' => [
+                    'rows' => '2',
+                    'maxsize' => 200,
                 ],
-                'by_reference' => true,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'required' => false,
+            ])
+            ->add('funders', EntityType::class, [
+                'label' => 'Funder',
+                'class' => Funder::class,
+                'choice_label' => function (Funder $funder) {
+                    return $funder->getName();
+                },
+                'query_builder' => function (EntityRepository $repo) {
+                    return $repo->createQueryBuilder('funder')
+                        ->orderBy('funder.name', 'ASC');
+                },
+                'multiple' => true,
             ])
             ->add('additionalFunders', Type\TextType::class, [
                 'label' => 'Additional Funders',
@@ -72,7 +80,10 @@ class DatasetSubmissionType extends AbstractType
             ->add('abstract', Type\TextareaType::class, [
                 'label' => 'Dataset Abstract',
                 'required' => true,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => 6,
+                    'maxlength' => 4000,
+                ],
             ])
             ->add('authors', Type\TextType::class, [
                 'label' => 'Dataset Author(s)',
@@ -88,6 +99,7 @@ class DatasetSubmissionType extends AbstractType
             ])
             ->add('datasetFileTransferType', Type\HiddenType::class, [
                 'required' => false,
+                'data' => DatasetSubmission::TRANSFER_TYPE_HTTP,
             ])
             ->add('shortTitle', Type\TextType::class, [
                 'label' => 'Short Title',
@@ -96,37 +108,51 @@ class DatasetSubmissionType extends AbstractType
             ->add('purpose', Type\TextareaType::class, [
                 'label' => 'Purpose',
                 'required' => true,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => '5',
+                ],
             ])
             ->add('suppParams', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Data Parameters and Units',
+                'label' => 'Data Parameters and Units',
                 'required' => true,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => '5'
+                ],
             ])
             ->add('suppMethods', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Methods',
-                'required' => false,
-                'attr' => ['rows' => '5'],
+                'label' => 'Methods',
+                'required' => true,
+                'attr' => [
+                    'rows' => '5',
+                ],
             ])
             ->add('suppInstruments', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Instruments',
+                'label' => 'Instruments',
                 'required' => false,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => '5',
+                ],
             ])
             ->add('suppSampScalesRates', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Sampling Scales and Rates',
+                'label' => 'Sampling Scales and Rates',
                 'required' => false,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => '5',
+                ],
             ])
             ->add('suppErrorAnalysis', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Error Analysis',
+                'label' => 'Error Analysis',
                 'required' => false,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => '5',
+                ],
             ])
             ->add('suppProvenance', Type\TextareaType::class, [
-                'label' => 'Supplemental Information - Provenance and Historical References',
+                'label' => 'Provenance and Historical References',
                 'required' => false,
-                'attr' => ['rows' => '5'],
+                'attr' => [
+                    'rows' => '5'
+                ],
             ])
             ->add('themeKeywords', Type\CollectionType::class, [
                 'label' => 'Theme Keywords',
@@ -147,6 +173,9 @@ class DatasetSubmissionType extends AbstractType
             ->add('topicKeywords', Type\ChoiceType::class, [
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
+                'choice_attr' => function (mixed $choice) {
+                    return ['description' => DatasetSubmission::TOPIC_KEYWORDS[$choice]['description']];
+                },
                 'multiple' => true,
                 'required' => true,
             ])
@@ -180,7 +209,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
                 'required' => true,
-                'placeholder' => '[Please Select a Time Period Description]',
             ])
             ->add('temporalExtentBeginPosition', Type\DateType::class, [
                 'label' => 'Start Date',
@@ -336,7 +364,7 @@ class DatasetSubmissionType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-            if ($data) {
+            if ($data instanceof DatasetSubmission) {
                 if (true === $data->isDatasetFileInColdStorage()) {
                     $form->get('isDatasetFileInColdStorage')->setData(true);
                     $form->get('datasetFileColdStorageArchiveSize')->setData(
@@ -371,12 +399,14 @@ class DatasetSubmissionType extends AbstractType
                 $totalBytes = $event->getForm()->get('coldStorageTotalUnpackedSize')->getData();
                 $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
-                if (null !== $size and null !== $hash and null !== $name) {
-                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
-                } else {
-                    $entity->clearDatasetFileColdStorageAttributes();
+                if ($entity instanceof DatasetSubmission) {
+                    if (null !== $size and null !== $hash and null !== $name) {
+                        $entity->setDatasetFileColdStorageAttributes($size, $hash, $name, $totalCount, $totalBytes);
+                    } else {
+                        $entity->clearDatasetFileColdStorageAttributes();
+                    }
+                    $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
                 }
-                $entity->setTitle(preg_replace("/(\r|\n)/", ' ', $title));
             }
         );
     }
@@ -386,6 +416,7 @@ class DatasetSubmissionType extends AbstractType
      *
      * @return void
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $entity = $this->formEntity;
