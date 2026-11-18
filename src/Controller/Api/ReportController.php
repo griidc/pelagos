@@ -73,9 +73,7 @@ class ReportController extends AbstractController
     }
 
     /**
-     * Datasets and Keywords Report. This report is subsite aware if called directly via the route. The method
-     * can be used by other routes to generate the report for different funding organizations if
-     * the short name of the funding organization is provided to the call.
+     * Datasets and Keywords Report. This report can be called with different serialization groups.
      */
     #[Route(path: '/api/datasets-keywords-report', name: 'pelagos_api_datasets_keywords_report', methods: ['GET'])]
     #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
@@ -84,6 +82,42 @@ class ReportController extends AbstractController
         DatasetRepository $datasetRepository,
         SerializerInterface $serialzer,
         ?string $shortName,
+    ): Response {
+        return $this->generateDatasetAndKeywordsReport(
+            $fundingOrganizationRepository,
+            $datasetRepository,
+            $serialzer,
+            $shortName,
+            'all-datasets-keywords-report'
+        );
+    }
+
+    /**
+     * GRP Datasets and Keywords Report
+     * Generates a CSV report of GRP datasets and their associated keywords. This is specific to the NAS/GRP funding organization.
+     */
+    #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    public function getGrpDatasetsAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
+        SerializerInterface $serialzer,
+    ): Response {
+        return $this->generateDatasetAndKeywordsReport(
+            $fundingOrganizationRepository,
+            $datasetRepository,
+            $serialzer,
+            'NAS',
+            'grp-datasets-keywords-report'
+        );
+    }
+
+    private function generateDatasetAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
+        SerializerInterface $serializer,
+        ?string $shortName,
+        string $group,
     ): Response {
         if (null !== $shortName) {
             $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => $shortName]);
@@ -103,7 +137,7 @@ class ReportController extends AbstractController
         });
 
         $contextBuilder = (new ObjectNormalizerContextBuilder())
-        ->withGroups(['grp-dk-report']);
+        ->withGroups([$group]);
 
         $contextBuilder = (new CsvEncoderContextBuilder())
         ->withContext($contextBuilder)
@@ -116,10 +150,10 @@ class ReportController extends AbstractController
             'doi',
         ]);
 
-        $data = $serialzer->serialize($datasets, 'csv', $contextBuilder->toArray());
+        $data = $serializer->serialize($datasets, 'csv', $contextBuilder->toArray());
 
-        if (null !== $shortName) {
-            $csvFilename = $shortName . '-Dataset-Keywords-Report-' .
+        if ('NAS' === $shortName) {
+            $csvFilename = 'GRP-Dataset-Keywords-Report-' .
             (new \DateTime('now'))->format('Ymd\THis') .
             '.csv';
         } else {
@@ -129,25 +163,6 @@ class ReportController extends AbstractController
         }
 
         return $this->createCsvResponse($data, $csvFilename);
-    }
-
-    /**
-     * GRP Datasets and Keywords Report
-     * Generates a CSV report of GRP datasets and their associated keywords. This is specific to the NAS/GRP funding organization.
-     */
-    #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
-    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
-    public function getGrpDatasetsAndKeywordsReport(
-        FundingOrganizationRepository $fundingOrganizationRepository,
-        DatasetRepository $datasetRepository,
-        SerializerInterface $serialzer,
-    ): Response {
-        return $this->getDatasetAndKeywordsReport(
-            $fundingOrganizationRepository,
-            $datasetRepository,
-            $serialzer,
-            'NAS'
-        );
     }
 
     /**

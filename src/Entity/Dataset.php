@@ -1169,7 +1169,7 @@ class Dataset extends Entity
     /**
      * Get a link to the dataset landing page.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getLandingPage(): string
     {
         return 'https://grp.griidc.org/data/' . $this->getUdi();
