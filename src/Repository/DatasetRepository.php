@@ -11,6 +11,8 @@ use App\Entity\FundingOrganization;
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -294,6 +296,16 @@ class DatasetRepository extends ServiceEntityRepository
         $query = $qb->getQuery();
 
         return $query->getSingleScalarResult();
+    }
+
+    /**
+     * Find all datasets as a Collection.
+     *
+     * @return Collection<int, Dataset>
+     */
+    public function findAllAsCollection(): Collection
+    {
+        return new ArrayCollection($this->findAll());
     }
 
     /**

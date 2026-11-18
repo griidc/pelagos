@@ -73,17 +73,24 @@ class ReportController extends AbstractController
     }
 
     /**
-     * Datasets and Keywords Report.
+     * Datasets and Keywords Report. This report is subsite aware if called directly via the route. The method
+     * can be used by other routes to generate the report for different funding organizations if
+     * the short name of the funding organization is provided to the call.
      */
-    #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
+    #[Route(path: '/api/datasets-keywords-report', name: 'pelagos_api_datasets_keywords_report', methods: ['GET'])]
     #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
-    public function getGrpDatasetAndKeywordsReport(
+    public function getDatasetAndKeywordsReport(
         FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
         SerializerInterface $serialzer,
+        ?string $shortName,
     ): Response {
-        $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
-
-        $datasets = $fundingOrganization?->getDatasets();
+        if (null !== $shortName) {
+            $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => $shortName]);
+            $datasets = $fundingOrganization?->getDatasets();
+        } else {
+            $datasets = $datasetRepository->findAllAsCollection();
+        }
 
         $datasets = $datasets->filter(function (Dataset $dataset) {
             return DatasetLifecycleStatus::NONE !== $dataset->getDatasetLifecycleStatus();
@@ -111,11 +118,36 @@ class ReportController extends AbstractController
 
         $data = $serialzer->serialize($datasets, 'csv', $contextBuilder->toArray());
 
-        $csvFilename = 'GRP-Dataset-Keywords-Report-' .
-        (new \DateTime('now'))->format('Ymd\THis') .
-        '.csv';
+        if (null !== $shortName) {
+            $csvFilename = $shortName . '-Dataset-Keywords-Report-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+        } else {
+            $csvFilename = 'Dataset-Keywords-Report-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+        }
 
         return $this->createCsvResponse($data, $csvFilename);
+    }
+
+    /**
+     * GRP Datasets and Keywords Report
+     * Generates a CSV report of GRP datasets and their associated keywords. This is specific to the NAS/GRP funding organization.
+     */
+    #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    public function getGrpDatasetsAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
+        SerializerInterface $serialzer,
+    ): Response {
+        return $this->getDatasetAndKeywordsReport(
+            $fundingOrganizationRepository,
+            $datasetRepository,
+            $serialzer,
+            'NAS'
+        );
     }
 
     /**
