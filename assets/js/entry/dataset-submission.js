@@ -42,13 +42,13 @@ if (urlParams.has('regid')) {
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('regForm');
   const status = document.getElementById('status').value;
-  const isDrpm = document.getElementById('isDrpm')?.value === '1';
+  // const isDrpm = document.getElementById('isDrpm')?.value === '1';
   const datasetContacts = document.getElementsByClassName('contactperson');
   const contactsContainer = document.querySelector('.dataset-contacts');
   const contactTemplate = contactsContainer.querySelector('.dataset-contact');
   const newContactTemplate = contactTemplate.cloneNode(true);
   const contactSelects = [];
-  const locked = (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE && !isDrpm);
+  const locked = (status !== DATASET_SUBMISSION_STATES.STATUS_INCOMPLETE);
 
   const geoViz = new GeoViz(document.getElementById('leaflet-map'), {
     loadWizard: !locked,
@@ -203,6 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       formValidate.revalidateField('#has-extent');
     });
+  });
+
+  let filesButtonClickedResolve;
+  const ableToLock = new Promise((resolve) => {
+    filesButtonClickedResolve = resolve;
   });
 
   const filesSectionRadios = document.getElementsByName('has-files');
@@ -873,6 +878,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const yesFilesRadio = document.getElementById('yes-files');
     if (yesFilesRadio && filesUploadedSelector.value === 'valid') {
       yesFilesRadio.click();
+      setTimeout(() => {
+        filesButtonClickedResolve();
+      }, 300);
     }
     if (formValidate.isSubmitted) {
       formValidate.revalidateField('#filesUploaded');
@@ -885,20 +893,6 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#remotelyHostedUrl');
     }
   });
-
-  if (locked) {
-    const formFields = form.querySelectorAll('input, select, textarea, button');
-    formFields.forEach((field) => {
-      const formField = field;
-      formField.disabled = true;
-    });
-    const tomSelectInstances = Array.from(
-      document.querySelectorAll('.tomselected, .ts-wrapper + select, .ts-wrapper + input'),
-    )
-      .map((element) => element.tomselect)
-      .filter((instance) => instance !== undefined);
-    tomSelectInstances.forEach((instance) => instance.disable());
-  }
 
   document.addEventListener('sectionChange', (event) => {
     if (event.detail && event.detail.section === 'extent') {
@@ -983,4 +977,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const mainSection = document.getElementById('mainsection');
   mainSection?.classList.remove('loading');
+
+  if (locked) {
+    if (filesUploadedSelector.value === 'valid') {
+      filesButtonClickedResolve();
+    }
+    ableToLock.then(() => {
+      const formFields = form.querySelectorAll('input.peer');
+      formFields.forEach((field) => {
+        const formField = field;
+        formField.disabled = true;
+      });
+    });
+    const formFields = form.querySelectorAll('input:not(.peer), select, textarea, button');
+    formFields.forEach((field) => {
+      const formField = field;
+      formField.disabled = true;
+    });
+    const tomSelectInstances = Array.from(
+      document.querySelectorAll('.tomselected, .ts-wrapper + select, .ts-wrapper + input'),
+    )
+      .map((element) => element.tomselect)
+      .filter((instance) => instance !== undefined);
+    tomSelectInstances.forEach((instance) => instance.disable());
+
+    const lockedMessage = new FlashMessage(
+      document.getElementById('flash-container'),
+      'This dataset has been locked for editing. Please contact '
+      + '<a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> if revisions are required.',
+      'warning',
+    );
+    lockedMessage.show();
+  }
 });
