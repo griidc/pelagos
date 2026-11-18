@@ -78,7 +78,7 @@
         "symfony/phpunit-bridge": "8.0.*",
         "symfony/stopwatch": "7.4.*",
         "symfony/web-profiler-bundle": "7.4.*",
-        "vimeo/psalm": "^6.0"
+        "vimeo/psalm": "^7.6"
     },
     "config": {
         "preferred-install": {
