@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 
 import * as Leaflet from 'leaflet';
@@ -70,9 +70,7 @@ if (typeof (leafletMap) !== 'undefined' && leafletMap != null) {
 const fileManagerElement = document.getElementById('file-manager-app');
 if (fileManagerElement) {
   const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#file-manager-app',
+  const fileManagerApp = createApp({
     data() {
       return {
         datasetSubmissionId,
@@ -81,17 +79,14 @@ if (fileManagerElement) {
     components: { FileManager },
     template: '<FileManager :datasetSubId="datasetSubmissionId" :writeMode="false"/>',
   });
+  fileManagerApp.mount('#file-manager-app');
 }
 
 // Mount Download button vue component
 const downloadZipElement = document.getElementById('download-zip');
 if (downloadZipElement) {
   const datasetId = downloadZipElement.dataset.id;
-  Vue.use(BootstrapVue);
-  Vue.use(IconsPlugin);
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#download-zip',
+  const downloadZipApp = createApp({
     components: { DownloadZipBtn },
     data() {
       return {
@@ -100,15 +95,15 @@ if (downloadZipElement) {
     },
     template: '<DownloadZipBtn :id="datasetId"/>',
   });
+  downloadZipApp.use(BootstrapVue);
+  downloadZipApp.use(IconsPlugin);
+  downloadZipApp.mount('#download-zip');
 }
 
 // Mount Help Modal vue component
 const helpBtnElement = document.getElementById('help-btn');
 if (helpBtnElement) {
-  Vue.use(BootstrapVue);
-  // eslint-disable-next-line no-new
-  new Vue({
-    el: '#help-btn',
+  const helpBtnApp = createApp({
     components: { HelpModal },
     data() {
       return {
@@ -144,6 +139,8 @@ if (helpBtnElement) {
     </div>
   </HelpModal>`,
   });
+  helpBtnApp.use(BootstrapVue);
+  helpBtnApp.mount('#help-btn');
 }
 
 const metadataDownloadBtn = document.getElementById('metadata-download');

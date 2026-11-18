@@ -28,7 +28,7 @@ module.exports = defineConfig([{
         parserOptions: {},
     },
 
-    extends: compat.extends("plugin:vue/essential", "airbnb-base", "plugin:react/recommended"),
+    extends: compat.extends("plugin:vue/vue3-essential", "airbnb-base", "plugin:react/recommended"),
 
     plugins: {
         vue,

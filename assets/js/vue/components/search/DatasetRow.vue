@@ -18,7 +18,7 @@
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
-                        Published on {{ datasetRowData.acceptedDate | localDate }}
+                        Published on {{ localDate(datasetRowData.acceptedDate) }}
                     </div>
                     <div v-if="datasetRowData.availabilityStatus !== 7 && fileFormat()">
                         File Format: {{ fileFormat() }}
@@ -78,8 +78,6 @@ export default {
       }
       return this.datasetRowData.coldStorage ?? false;
     },
-  },
-  filters: {
     localDate(date) {
       return new Date(date).toLocaleDateString('en-CA');
     },

@@ -7,7 +7,7 @@
                 :sub-title="person.label" style="min-width: 18rem; max-width: 27rem; cursor: pointer;"
                 @click="openUrl(person)">
             <b-card-text>
-                {{ person.person.organization | truncate(75) }}
+                {{ truncateText(person.person.organization, 75) }}
             </b-card-text>
             <b-card-text class="text-muted">
                 {{ person.person.emailAddress }}
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { truncate, sort } from '../../utils/filters';
+
 export default {
   name: 'PeopleTab',
   props: {
@@ -28,9 +30,12 @@ export default {
     };
   },
   created() {
-    this.sortedPeople = this.$options.filters.sort('person.lastName', this.personResearchGroups);
+    this.sortedPeople = sort('person.lastName', this.personResearchGroups);
   },
   methods: {
+    truncateText(text, length) {
+      return truncate(text, length);
+    },
     openUrl(person) {
       // eslint-disable-next-line no-undef
       const url = `${Routing.generate('app_person_land', { person: person.person.id })}`;

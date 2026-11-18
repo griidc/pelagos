@@ -1,12 +1,9 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import { BootstrapVue } from 'bootstrap-vue';
 import '../css/grp-home.css';
 import FundingCyclesList from './vue/components/FundingCyclesList.vue';
-import filters from './vue/utils/filters';
 
-Vue.use(BootstrapVue);
-Vue.filter('truncate', (text, length) => filters.truncate(text, length));
-new Vue({
+const app = createApp({
   components: { FundingCyclesList },
   data() {
     return {
@@ -15,4 +12,7 @@ new Vue({
     };
   },
   template: '<FundingCyclesList :fundingCycles="fundingCycles" :projectDirectors="projectDirectors"/>',
-}).$mount('#picklist');
+});
+
+app.use(BootstrapVue);
+app.mount('#picklist');

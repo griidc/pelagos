@@ -9,13 +9,13 @@
     </b-button>
     <DxPopup
       :title="helpBtnTitle"
-      :visible.sync="showHelpDialog"
+      v-model:visible="showHelpDialog"
       :close-on-outside-click="true"
       :show-title="true"
       :width="width"
       :height="height"
     >
-      <template>
+      <template #default>
         <slot></slot>
       </template>
     </DxPopup>
