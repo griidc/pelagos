@@ -65,14 +65,23 @@ function GeoViz()
             displayInLayerSwitcher: true
         });
 
-        var usgsTopoBaseMap = new OpenLayers.Layer.XYZ(
-            'test',
-            'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/${z}/${y}/${x}',
+        var esriImagery = new OpenLayers.Layer.XYZ(
+            "Esri World Imagery",
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}",
             {
-                maxZoom: 20,
                 sphericalMercator: true,
                 isBaseLayer: true,
-                attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+                attribution: "Tiles © Esri"
+            }
+        );
+
+        var esriLabels = new OpenLayers.Layer.XYZ(
+            "Esri Boundaries & Places",
+            "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/${z}/${y}/${x}",
+            {
+                sphericalMercator: true,
+                isBaseLayer: false, // Must be false so it overlays the basemap
+                attribution: "Labels © Esri"
             }
         );
 
@@ -80,7 +89,7 @@ function GeoViz()
 
         map = new OpenLayers.Map(
         {
-            layers: [usgsTopoBaseMap],
+            layers: [esriImagery, esriLabels],
             center: new OpenLayers.LonLat(lon, lat).transform("EPSG:4326", "EPSG:900913"),
             zoom: zoom,
             div: DIV,
