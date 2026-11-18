@@ -53,7 +53,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Viewers');
         yield MenuItem::linkToCrud('Logged Actions', 'fas fa-search', LogActionItem::class);
-        yield MenuItem::linkToCrud('DIFs', 'fas fa-search', DIF::class);
         yield MenuItem::linkToCrud('Datasets', 'fas fa-search', Dataset::class);
         yield MenuItem::linkToCrud('Dataset Submissions', 'fas fa-search', DatasetSubmission::class);
 
@@ -62,6 +61,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('IP Digital Resource Descriptor', 'fas fa-list-alt', DigitalResourceTypeDescriptor::class);
 
         yield MenuItem::section('PODS');
+        yield MenuItem::linkToCrud('DIFs', 'fas fa-list-alt', DIF::class);
         yield MenuItem::linkToCrud('Funding Organization', 'fas fa-list-alt', FundingOrganization::class);
         yield MenuItem::linkToCrud('Funding Cycle', 'fas fa-list-alt', FundingCycle::class);
         yield MenuItem::linkToCrud('Research Groups', 'fas fa-list-alt', ResearchGroup::class);

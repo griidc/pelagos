@@ -3,13 +3,13 @@
 namespace App\Controller\UI;
 
 use App\Handler\EntityHandler;
-use App\Util\Geometry;
+use App\Util\GeometryUtil;
 use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
 use App\Enum\DatasetLifecycleStatus;
@@ -25,7 +25,7 @@ class DatalandController extends AbstractController
     /**
      * Geometry.
      *
-     * @var Geometry
+     * @var GeometryUtil
      */
     protected $geoUtil;
 
@@ -54,11 +54,11 @@ class DatalandController extends AbstractController
      * Dataland Controller constructor.
      *
      * @param EntityHandler $entityHandler        The Entity Handler.
-     * @param Geometry      $geoUtil              The Geomtery Util.
+     * @param GeometryUtil  $geoUtil              The Geometry Util.
      * @param Metadata      $metadataUtil         The Metadata Util.
      * @param string        $issueTrackingBaseUrl The base URL for the GRIIDC issuetracker (Jira).
      */
-    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
+    public function __construct(EntityHandler $entityHandler, GeometryUtil $geoUtil, Metadata $metadataUtil, string $issueTrackingBaseUrl)
     {
         $this->entityHandler = $entityHandler;
         $this->geoUtil = $geoUtil;
@@ -326,7 +326,7 @@ class DatalandController extends AbstractController
     }
 
     #[Route('/data/json/{dataset}', name: 'pelagos_app_ui_dataland_get_json', methods: ['GET', 'HEAD'])]
-    public function getjson(Dataset $dataset, Geometry $geometryUtil): Response
+    public function getjson(Dataset $dataset, GeometryUtil $geometryUtil): Response
     {
         $geoJson = '{}';
         $udi = $dataset->getUdi();
