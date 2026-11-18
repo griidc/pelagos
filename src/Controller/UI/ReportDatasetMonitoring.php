@@ -200,12 +200,17 @@ class ReportDatasetMonitoring extends ReportController
             } else {
                 $rowsAddedCount = count($datasetRows);
                 foreach ($datasets as $dataset) {
-                    if (in_array($dataset->getDatasetLifecycleStatus(), [
-                        DatasetLifecycleStatus::AVAILABLE,
-                        DatasetLifecycleStatus::RESTRICTED,
-                        DatasetLifecycleStatus::SUBMITTED,
-                        DatasetLifecycleStatus::IDENTIFIED
-                    ])) {
+                    if (
+                        in_array(
+                            $dataset->getDatasetLifecycleStatus(),
+                            [
+                                DatasetLifecycleStatus::AVAILABLE,
+                                DatasetLifecycleStatus::RESTRICTED,
+                                DatasetLifecycleStatus::SUBMITTED,
+                                DatasetLifecycleStatus::IDENTIFIED
+                            ]
+                        )
+                    ) {
                         $datasetRows[] = DatasetMonitoringCsvRow::fromDataset($dataset);
                     }
                 }
