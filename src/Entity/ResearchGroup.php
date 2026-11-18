@@ -64,7 +64,7 @@ class ResearchGroup extends Entity implements EntityInterface
     #[ORM\Column(type: 'citext', options: ['collation' => 'POSIX'])]
     #[Serializer\Groups(['overview', 'search'])]
     #[Assert\NotBlank(message: 'Name is required')]
-    #[Groups(['grp-dp-report', 'grp-dk-report', 'grp-people-accounts-report'])]
+    #[Groups(['grp-dp-report', 'grp-datasets-keywords-report', 'all-datasets-keywords-report', 'grp-people-accounts-report'])]
     #[SerializedName('researchGroupName')]
     protected $name;
 
@@ -329,7 +329,7 @@ class ResearchGroup extends Entity implements EntityInterface
     /**
      * Get the name of the Funding Cycle for this Research Group.
      */
-    #[Groups(['grp-dp-report', 'grp-dk-report', 'grp-people-accounts-report'])]
+    #[Groups(['grp-dp-report', 'grp-datasets-keywords-report', 'all-datasets-keywords-report', 'grp-people-accounts-report'])]
     public function getFundingCycleName(): string
     {
         return $this->fundingCycle->getName();
