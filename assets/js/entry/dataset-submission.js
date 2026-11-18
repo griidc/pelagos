@@ -205,6 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  let filesButtonClickedResolve;
+  const ableToLock = new Promise((resolve) => {
+    filesButtonClickedResolve = resolve;
+  });
+
   const filesSectionRadios = document.getElementsByName('has-files');
   const fileSection = document.getElementsByClassName('files-section');
   const remoteSection = document.getElementsByClassName('remotely-hosted-section');
@@ -873,6 +878,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const yesFilesRadio = document.getElementById('yes-files');
     if (yesFilesRadio && filesUploadedSelector.value === 'valid') {
       yesFilesRadio.click();
+      setTimeout(() => {
+        filesButtonClickedResolve();
+      }, 300);
     }
     if (formValidate.isSubmitted) {
       formValidate.revalidateField('#filesUploaded');
@@ -885,28 +893,6 @@ document.addEventListener('DOMContentLoaded', () => {
       formValidate.revalidateField('#remotelyHostedUrl');
     }
   });
-
-  if (locked) {
-    const formFields = form.querySelectorAll('input, select, textarea, button');
-    formFields.forEach((field) => {
-      const formField = field;
-      formField.disabled = true;
-    });
-    const tomSelectInstances = Array.from(
-      document.querySelectorAll('.tomselected, .ts-wrapper + select, .ts-wrapper + input'),
-    )
-      .map((element) => element.tomselect)
-      .filter((instance) => instance !== undefined);
-    tomSelectInstances.forEach((instance) => instance.disable());
-
-    const lockedMessage = new FlashMessage(
-      document.getElementById('flash-container'),
-      'This dataset has been locked for editing. Please contact '
-      + '<a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> if revisions are required.',
-      'warning',
-    );
-    lockedMessage.show();
-  }
 
   document.addEventListener('sectionChange', (event) => {
     if (event.detail && event.detail.section === 'extent') {
@@ -991,4 +977,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const mainSection = document.getElementById('mainsection');
   mainSection?.classList.remove('loading');
+
+  if (locked) {
+    if (filesUploadedSelector.value === 'valid') {
+      filesButtonClickedResolve();
+    }
+    ableToLock.then(() => {
+      const formFields = form.querySelectorAll('input.peer');
+      formFields.forEach((field) => {
+        const formField = field;
+        formField.disabled = true;
+      });
+    });
+    const formFields = form.querySelectorAll('input:not(.peer), select, textarea, button');
+    formFields.forEach((field) => {
+      const formField = field;
+      formField.disabled = true;
+    });
+    const tomSelectInstances = Array.from(
+      document.querySelectorAll('.tomselected, .ts-wrapper + select, .ts-wrapper + input'),
+    )
+      .map((element) => element.tomselect)
+      .filter((instance) => instance !== undefined);
+    tomSelectInstances.forEach((instance) => instance.disable());
+
+    const lockedMessage = new FlashMessage(
+      document.getElementById('flash-container'),
+      'This dataset has been locked for editing. Please contact '
+      + '<a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> if revisions are required.',
+      'warning',
+    );
+    lockedMessage.show();
+  }
 });
