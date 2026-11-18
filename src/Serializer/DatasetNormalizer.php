@@ -18,13 +18,13 @@ class DatasetNormalizer implements NormalizerInterface
 
         if ($object instanceof Dataset && is_array($data) && isset($data['landingPage'])) {
             $groups = $context['groups'] ?? [];
-            
-            $host = match($groups) {
+
+            $host = match ($groups) {
                 ['grp-datasets-keywords-report'] => 'grp.griidc.org',
                 ['all-datasets-keywords-report'] => 'data.griidc.org',
                 default => 'data.griidc.org',
             };
-            
+
             $udi = $object->getUdi();
             $data['landingPage'] = 'https://' . $host . '/data/' . $udi;
         }
@@ -44,4 +44,3 @@ class DatasetNormalizer implements NormalizerInterface
         ];
     }
 }
-
