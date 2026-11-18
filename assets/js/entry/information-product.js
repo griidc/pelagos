@@ -1,17 +1,14 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import InformationProductApp from '@/vue/InformationProductApp';
 import '../../css/search-ui.css';
-import filters from '@/vue/utils/filters';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
-Vue.filter('truncate', (text, length) => filters.truncate(text, length));
-
-// eslint-disable-next-line no-new
-new Vue({
-  el: '#information-product',
+const app = createApp({
   components: { InformationProductApp },
   template: '<InformationProductApp/>',
 });
+
+app.use(BootstrapVue);
+app.use(IconsPlugin);
+app.mount('#information-product');

@@ -2,14 +2,14 @@
     <div>
         <div id="upload-file-button"></div>
         <DxPopup
-            :visible.sync="showHelpPopup"
+            v-model:visible="showHelpPopup"
             :drag-enabled="false"
             :close-on-outside-click="true"
             :show-title="true"
             :width="400"
             :height="350"
             title="File Uploader Help">
-            <template>
+            <template #default>
                 <div id="textBlock">
                     <h3 style="margin-top: 0">
                         You can upload multiple files/folders, add files to an existing dataset, or replace/delete
@@ -34,36 +34,36 @@
         </DxPopup>
         <DxPopup
             :title="errorTitle"
-            :visible.sync="isPopupVisible"
+            v-model:visible="isPopupVisible"
             :close-on-outside-click="true"
             :show-title="true"
             :showCloseButton="!showLoginButton"
             :closeOnOutsideClick="!showLoginButton"
             :width="300"
             :height="250">
-            <template>
+            <template #default>
                 <p>
                     <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
                     {{ errorMessage }}
                 </p>
+                <DxToolbarItem
+                  widget="dxButton"
+                  location="center"
+                  toolbar="bottom"
+                  :visible="showLoginButton"
+                  :options="loginButtonOptions">
+                </DxToolbarItem>
             </template>
-            <DxToolbarItem
-              widget="dxButton"
-              location="center"
-              toolbar="bottom"
-              :visible.sync="showLoginButton"
-              :options="loginButtonOptions">
-            </DxToolbarItem>
         </DxPopup>
         <DxPopup
             title="Duplicate Filenames"
-            :visible.sync="isRenamedPopupVisible"
+            v-model:visible="isRenamedPopupVisible"
             :close-on-outside-click="true"
             @hidden="onHideRename"
             :show-title="true"
             :width="500"
             :height="200">
-            <template>
+            <template #default>
                 <p>
                     <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
                     <i><b>{{ filesRenamed }}</b></i> duplicate filenames were detected in the uploaded files.<br>
@@ -73,7 +73,7 @@
             </template>
         </DxPopup>
         <DxPopup
-            :visible.sync="loadingVisible"
+            v-model:visible="loadingVisible"
             :close-on-outside-click="false"
             :show-title="false"
             position="center"
@@ -84,7 +84,7 @@
             :shading="true"
             shading-color="rgba(0,0,0,0.4)"
         >
-            <template>
+            <template #default>
                 <div class="progress-dialog">
                     <p>
                         <b>Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}</b>
@@ -111,7 +111,7 @@
             </template>
         </DxPopup>
         <DxPopup
-            :visible.sync="downloadPopup"
+            v-model:visible="downloadPopup"
             :close-on-outside-click="false"
             :show-title="false"
             position="center"
@@ -122,7 +122,7 @@
             :shading="true"
             shading-color="rgba(0,0,0,0.4)"
         >
-            <template>
+            <template #default>
                 <div class="progress-dialog">
                     <p>
                         <b>Downloaded {{ humanSize(downloadedSize) }} of {{ humanSize(totalDownloadSize) }}</b>
@@ -214,6 +214,7 @@ const ZERO_FILE = 'zero file';
 
 let fileManagerResolve = [];
 
+let fileManagerComponent;
 let myFileManager;
 let myDropzone;
 
@@ -236,7 +237,7 @@ const getItems = (pathInfo) => new Promise((resolve, reject) => {
     filesUploaded.dispatchEvent(event);
   }).catch((error) => {
     if (error.response) {
-      myFileManager.$parent.showPopupError(error.request);
+      fileManagerComponent.showPopupError(error.request);
     }
     reject(error);
   });
@@ -248,10 +249,10 @@ const deleteItem = (item) => new Promise((resolve, reject) => {
     `${Routing.generate('pelagos_api_file_delete')}`
     + `/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}&fileId=${item.dataItem.fileId}`,
   ).then(() => {
-    myFileManager.$parent.showDownloadZipBtn = false;
+    fileManagerComponent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.request);
+    fileManagerComponent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -263,10 +264,10 @@ const moveItem = (item, destinationDirectory) => new Promise((resolve, reject) =
     `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
     { newFileFolderPathDir: newFilePathName, path: item.path, isDir: item.isDirectory },
   ).then(() => {
-    myFileManager.$parent.showDownloadZipBtn = false;
+    fileManagerComponent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.request);
+    fileManagerComponent.showPopupError(error.request);
     reject(error);
   });
 });
@@ -278,21 +279,21 @@ const renameItem = (item, name) => new Promise((resolve, reject) => {
     `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
     { newFileFolderPathDir: newFilePathName, path: item.path, isDir: item.isDirectory },
   ).then(() => {
-    myFileManager.$parent.showDownloadZipBtn = false;
+    fileManagerComponent.showDownloadZipBtn = false;
     resolve();
   }).catch((error) => {
-    myFileManager.$parent.showPopupError(error.request);
+    fileManagerComponent.showPopupError(error.request);
     reject(error);
   });
 });
 
 const downloadItems = (items) => new Promise((resolve, reject) => {
-  myFileManager.$parent.resetDownloadAttrs();
+  fileManagerComponent.resetDownloadAttrs();
   let itemsProcessed = 0;
-  myFileManager.$parent.totalDownloadSize = Object.values(items).reduce((t, { size }) => t + size, 0);
-  myFileManager.$parent.totalDownloads = items.length;
+  fileManagerComponent.totalDownloadSize = Object.values(items).reduce((t, { size }) => t + size, 0);
+  fileManagerComponent.totalDownloads = items.length;
   const progressItems = [];
-  myFileManager.$parent.downloadPopup = true;
+  fileManagerComponent.downloadPopup = true;
 
   items.forEach((item, key) => {
     getApi(
@@ -304,7 +305,7 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
         responseType: 'blob',
         onDownloadProgress(progressEvent) {
           progressItems[key].size = progressEvent.loaded;
-          myFileManager.$parent.downloadedSize = Object.values(progressItems).reduce((t, { size }) => t + size, 0);
+          fileManagerComponent.downloadedSize = Object.values(progressItems).reduce((t, { size }) => t + size, 0);
         },
         cancelToken: new CancelToken((c) => {
           // An executor function receives a cancel function as a parameter
@@ -315,7 +316,7 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
       const url = `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`;
       // eslint-disable-next-line no-shadow
       downloadApi(url, config).then((response) => {
-        if (myFileManager.$parent.downloadPopup) {
+        if (fileManagerComponent.downloadPopup) {
           const href = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = href;
@@ -324,20 +325,20 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
           document.body.appendChild(link);
           link.click();
           itemsProcessed += 1;
-          myFileManager.$parent.downloadedFiles += 1;
+          fileManagerComponent.downloadedFiles += 1;
         }
       }).then(() => {
         if (items.length === itemsProcessed) {
           resolve();
-          myFileManager.$parent.resetDownloadAttrs();
+          fileManagerComponent.resetDownloadAttrs();
         }
         resolve();
       }).catch((error) => {
-        myFileManager.$parent.showPopupError(error.request);
+        fileManagerComponent.showPopupError(error.request);
         reject(error);
       });
     }).catch((error) => {
-      myFileManager.$parent.showPopupError(error.request);
+      fileManagerComponent.showPopupError(error.request);
       reject(error);
     });
   });
@@ -346,7 +347,7 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
   destinationDir = destinationDirectory.path;
   return new Promise((resolve) => {
-    myFileManager.$parent.showDownloadZipBtn = false;
+    fileManagerComponent.showDownloadZipBtn = false;
     fileManagerResolve.push(resolve);
   });
 };
@@ -377,7 +378,7 @@ const addFileToDataset = (file, done) => {
     chunkData,
   ).then((response) => {
     if (response.data.isRenamed === true) {
-      myFileManager.$parent.filesRenamed += 1;
+      fileManagerComponent.filesRenamed += 1;
     }
     if (file.size === 0) {
       done(ZERO_FILE);
@@ -421,15 +422,15 @@ const initDropzone = () => {
         file.status = 'success';
         return;
       }
-      myFileManager.$parent.showPopupError(xhr);
+      fileManagerComponent.showPopupError(xhr);
     },
     uploadprogress(file) {
       if (file.xhr.status === 204) {
-        if (myFileManager.$parent.totalFileSize
-          > (myFileManager.$parent.doneFileSize + file.upload.chunks[0].bytesSent)) {
-          myFileManager.$parent.doneFileSize += file.upload.chunks[0].bytesSent;
+        if (fileManagerComponent.totalFileSize
+          > (fileManagerComponent.doneFileSize + file.upload.chunks[0].bytesSent)) {
+          fileManagerComponent.doneFileSize += file.upload.chunks[0].bytesSent;
         } else {
-          myFileManager.$parent.doneFileSize = myFileManager.$parent.totalFileSize;
+          fileManagerComponent.doneFileSize = fileManagerComponent.totalFileSize;
         }
       }
     },
@@ -440,22 +441,22 @@ const initDropzone = () => {
   });
 
   myDropzone.on('addedfile', (file) => {
-    myFileManager.$parent.queueFile(file.size);
+    fileManagerComponent.queueFile(file.size);
   });
 
   myDropzone.on('processing', () => {
-    myFileManager.$parent.loadingVisible = true;
+    fileManagerComponent.loadingVisible = true;
   });
 
   myDropzone.on('success', () => {
-    myFileManager.$parent.completeFile();
+    fileManagerComponent.completeFile();
   });
 
   myDropzone.on('queuecomplete', function queueComplete() {
     myFileManager.instance.refresh();
     myFileManager.instance.repaint();
     this.removeAllFiles();
-    myFileManager.$parent.isRenamedPopupVisible = myFileManager.$parent.filesRenamed > 0;
+    fileManagerComponent.isRenamedPopupVisible = fileManagerComponent.filesRenamed > 0;
   });
 
   myDropzone.on('totaluploadprogress', (uploadProgress) => {
@@ -557,6 +558,7 @@ export default {
   },
 
   mounted() {
+    fileManagerComponent = this;
     if (this.writeMode) {
       initDropzone();
     }

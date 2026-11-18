@@ -17,10 +17,10 @@
     <b-card-text class="d-flex justify-content-between" >
       <div v-if="Object.keys(informationProduct).length > 0">
         <div v-if="informationProduct.creators" style="max-width: 550px">
-          Creators: {{ informationProduct.creators | truncate(100) }}
+          Creators: {{ truncateText(informationProduct.creators, 100) }}
         </div>
         <div v-if="informationProduct.publisher">
-          Publisher: {{ informationProduct.publisher | truncate(100) }}
+          Publisher: {{ truncateText(informationProduct.publisher, 100) }}
         </div>
       </div>
       <div>
@@ -41,6 +41,7 @@
 
 <script>
 import xbytes from 'xbytes';
+import { truncate } from '../../utils/filters';
 
 export default {
   name: 'InformationProductCard',
@@ -48,6 +49,9 @@ export default {
     informationProduct: Object,
   },
   methods: {
+    truncateText(text, length) {
+      return truncate(text, length);
+    },
     humanSize(fileSize) {
       return xbytes(fileSize);
     },

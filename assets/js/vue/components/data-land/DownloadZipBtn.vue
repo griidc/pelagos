@@ -7,12 +7,12 @@
         </b-button>
         <DxPopup
             :title="buttonTitle"
-            :visible.sync="showDownloadDialog"
+            v-model:visible="showDownloadDialog"
             :close-on-outside-click="true"
             :show-title="true"
             :width="500"
             :height="500">
-            <template>
+            <template #default>
                 <div v-if="datasetInfo.remotelyHosted">
                     <h3>The dataset you selected is hosted by an external repository.</h3>
                     <div>
