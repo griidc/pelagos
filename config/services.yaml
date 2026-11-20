@@ -237,3 +237,9 @@ services:
         bind:
             string $exportPath: '%env(EXPORT_REVIEW_PATH)%'
             string $datastorePath: '%env(DATA_STORE_DIRECTORY)%'
+
+    App\Serializer\DatasetNormalizer:
+        arguments:
+            $normalizer: '@serializer.normalizer.object'
+        tags:
+            - { name: 'serializer.normalizer', priority: 100 }
