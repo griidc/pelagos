@@ -121,16 +121,23 @@ class ReportController extends AbstractController
     ): Response {
         if (null !== $shortName) {
             $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => $shortName]);
-            $datasets = $fundingOrganization?->getDatasets();
+            $datasets = $fundingOrganization?->getDatasets()?->toArray() ?? [];
         } else {
-            $datasets = $datasetRepository->findAllAsCollection();
+            $datasets = $datasetRepository->findAllAsCollection()->toArray();
         }
 
-        $datasets = $datasets->filter(function (Dataset $dataset) {
-            return DatasetLifecycleStatus::NONE !== $dataset->getDatasetLifecycleStatus();
+        $allowedLifecycleStatuses = [
+            DatasetLifecycleStatus::RESTRICTED,
+            DatasetLifecycleStatus::AVAILABLE,
+            DatasetLifecycleStatus::IDENTIFIED,
+            DatasetLifecycleStatus::SUBMITTED,
+        ];
+
+        $datasets = array_filter($datasets, function (Dataset $dataset) use ($allowedLifecycleStatuses) {
+            return in_array($dataset->getDatasetLifecycleStatus(), $allowedLifecycleStatuses, true);
         });
 
-        $datasets = $datasets->toArray();
+        $datasets = array_values($datasets);
 
         usort($datasets, function (Dataset $a, Dataset $b) {
             return $a->getFundingCycleName() <=> $b->getFundingCycleName();
