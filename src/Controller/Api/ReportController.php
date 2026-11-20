@@ -73,9 +73,7 @@ class ReportController extends AbstractController
     }
 
     /**
-     * Datasets and Keywords Report. This report is subsite aware if called directly via the route. The method
-     * can be used by other routes to generate the report for different funding organizations if
-     * the short name of the funding organization is provided to the call.
+     * Datasets and Keywords Report. This report can be called with different serialization groups.
      */
     #[Route(path: '/api/datasets-keywords-report', name: 'pelagos_api_datasets_keywords_report', methods: ['GET'])]
     #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
@@ -85,50 +83,13 @@ class ReportController extends AbstractController
         SerializerInterface $serialzer,
         ?string $shortName,
     ): Response {
-        if (null !== $shortName) {
-            $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => $shortName]);
-            $datasets = $fundingOrganization?->getDatasets();
-        } else {
-            $datasets = $datasetRepository->findAllAsCollection();
-        }
-
-        $datasets = $datasets->filter(function (Dataset $dataset) {
-            return DatasetLifecycleStatus::NONE !== $dataset->getDatasetLifecycleStatus();
-        });
-
-        $datasets = $datasets->toArray();
-
-        usort($datasets, function (Dataset $a, Dataset $b) {
-            return $a->getFundingCycleName() <=> $b->getFundingCycleName();
-        });
-
-        $contextBuilder = (new ObjectNormalizerContextBuilder())
-        ->withGroups(['grp-dk-report']);
-
-        $contextBuilder = (new CsvEncoderContextBuilder())
-        ->withContext($contextBuilder)
-        ->withOutputUtf8Bom(true)
-        ->withHeaders([
-            'fundingCycleName',
-            'researchGroupName',
-            'udi',
-            'title',
-            'doi',
-        ]);
-
-        $data = $serialzer->serialize($datasets, 'csv', $contextBuilder->toArray());
-
-        if (null !== $shortName) {
-            $csvFilename = $shortName . '-Dataset-Keywords-Report-' .
-            (new \DateTime('now'))->format('Ymd\THis') .
-            '.csv';
-        } else {
-            $csvFilename = 'Dataset-Keywords-Report-' .
-            (new \DateTime('now'))->format('Ymd\THis') .
-            '.csv';
-        }
-
-        return $this->createCsvResponse($data, $csvFilename);
+        return $this->generateDatasetAndKeywordsReport(
+            $fundingOrganizationRepository,
+            $datasetRepository,
+            $serialzer,
+            $shortName,
+            'all-datasets-keywords-report'
+        );
     }
 
     /**
@@ -142,12 +103,73 @@ class ReportController extends AbstractController
         DatasetRepository $datasetRepository,
         SerializerInterface $serialzer,
     ): Response {
-        return $this->getDatasetAndKeywordsReport(
+        return $this->generateDatasetAndKeywordsReport(
             $fundingOrganizationRepository,
             $datasetRepository,
             $serialzer,
-            'NAS'
+            'NAS',
+            'grp-datasets-keywords-report'
         );
+    }
+
+    private function generateDatasetAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
+        SerializerInterface $serializer,
+        ?string $shortName,
+        string $group,
+    ): Response {
+        if (null !== $shortName) {
+            $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => $shortName]);
+            $datasets = $fundingOrganization?->getDatasets()?->toArray() ?? [];
+        } else {
+            $datasets = $datasetRepository->findAllAsCollection()->toArray();
+        }
+
+        $allowedLifecycleStatuses = [
+            DatasetLifecycleStatus::RESTRICTED,
+            DatasetLifecycleStatus::AVAILABLE,
+            DatasetLifecycleStatus::IDENTIFIED,
+            DatasetLifecycleStatus::SUBMITTED,
+        ];
+
+        $datasets = array_filter($datasets, function (Dataset $dataset) use ($allowedLifecycleStatuses) {
+            return in_array($dataset->getDatasetLifecycleStatus(), $allowedLifecycleStatuses, true);
+        });
+
+        $datasets = array_values($datasets);
+
+        usort($datasets, function (Dataset $a, Dataset $b) {
+            return $a->getFundingCycleName() <=> $b->getFundingCycleName();
+        });
+
+        $contextBuilder = (new ObjectNormalizerContextBuilder())
+        ->withGroups([$group]);
+
+        $contextBuilder = (new CsvEncoderContextBuilder())
+        ->withContext($contextBuilder)
+        ->withOutputUtf8Bom(true)
+        ->withHeaders([
+            'fundingCycleName',
+            'researchGroupName',
+            'udi',
+            'title',
+            'doi',
+        ]);
+
+        $data = $serializer->serialize($datasets, 'csv', $contextBuilder->toArray());
+
+        if ('NAS' === $shortName) {
+            $csvFilename = 'GRP-Dataset-Keywords-Report-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+        } else {
+            $csvFilename = 'Dataset-Keywords-Report-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+        }
+
+        return $this->createCsvResponse($data, $csvFilename);
     }
 
     /**

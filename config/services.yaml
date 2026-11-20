@@ -16,7 +16,6 @@ parameters:
     main_site: '%env(MAINSITE)%'
     sitemap_min_date: '%env(SITEMAP_MIN_DATE)%'
     esri_api_key: '%env(ESRI_API_KEY)%'
-    dataset_landing_page_host: '%env(DATASET_LANDING_PAGE_HOST)%'
 
 services:
     # default configuration for services in *this* file
@@ -31,10 +30,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    App\Util\DatasetLandingPageHost:
-        bind:
-            $host: '%dataset_landing_page_host%'
 
     App\Util\MaintenanceMode:
         bind:

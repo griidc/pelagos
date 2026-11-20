@@ -3,14 +3,12 @@
 namespace App\Serializer;
 
 use App\Entity\Dataset;
-use App\Util\DatasetLandingPageHost;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class DatasetNormalizer implements NormalizerInterface
 {
     public function __construct(
         private NormalizerInterface $normalizer,
-        private DatasetLandingPageHost $landingPageHost,
     ) {
     }
 
@@ -18,12 +16,17 @@ class DatasetNormalizer implements NormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        if ($object instanceof Dataset && is_array($data)) {
-            if (isset($data['landingPage'])) {
-                $host = $this->landingPageHost->getHost();
-                $udi = $object->getUdi();
-                $data['landingPage'] = 'https://' . $host . '/data/' . $udi;
-            }
+        if ($object instanceof Dataset && is_array($data) && isset($data['landingPage'])) {
+            $groups = $context['groups'] ?? [];
+
+            $host = match ($groups) {
+                ['grp-datasets-keywords-report'] => 'grp.griidc.org',
+                ['all-datasets-keywords-report'] => 'data.griidc.org',
+                default => 'data.griidc.org',
+            };
+
+            $udi = $object->getUdi();
+            $data['landingPage'] = 'https://' . $host . '/data/' . $udi;
         }
 
         return $data;
