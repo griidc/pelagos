@@ -1,6 +1,6 @@
 {% set isDRPM = is_granted('ROLE_DATA_REPOSITORY_MANAGER')  %}
 {% set fileWriteEnabled = (datasetSubmissionLockStatus == false) %}
-<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
+<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}" data-dataset-submission="{{ datasetSubmission.id }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div  class="max-w-[95%] mx-auto ">
         <section id="contact" data-form-section data-button-error-container="#contact-error">
@@ -359,6 +359,36 @@
     </div>
 </form>
 
+<style>
+    @keyframes saving-pulse {
+        50% { opacity: .45; transform: scale(.85); }
+    }
+
+    #hourglass-loader .saving-indicator {
+        animation: saving-pulse 1.2s ease-in-out infinite;
+    }
+
+    #hourglass-loader.hideglass {
+        opacity: 0;
+        transform: translateY(0.5rem);
+        pointer-events: none;
+    }
+
+    #hourglass-loader {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity .25s ease, transform .25s ease;
+    }
+</style>
+<div id="hourglass-loader" class="hideglass fixed top-8 right-8 z-50 flex items-center gap-3 px-5 py-4" role="status" aria-live="polite">
+    <div id="toast-simple" class="flex items-center w-full max-w-xs p-4 space-x-4 rtl:space-x-reverse text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm" role="alert">
+    <svg class="w-5 h-5 text-blue-600 rotate-45" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 17 8 2L9 1 1 19l8-2Zm0 0V9"/>
+    </svg>
+    <div class="ps-4 text-sm font-normal">Dataset saved successfully.</div>
+</div>
+</div>
+
 <div id="confirm-extent-modal" tabindex="-1"
      style="z-index: 9999;"
      class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
@@ -380,3 +410,5 @@
         </div>
     </div>
 </div>
+
+

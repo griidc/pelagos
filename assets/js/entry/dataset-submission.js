@@ -942,11 +942,47 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  const saveButon = document.querySelectorAll('[saveAndContinue]');
-  Array.from(saveButon).forEach((btn) => btn.addEventListener('click', () => {
-    formValidate.destroy();
-    form.submitAction.value = 'saveAndContinue';
-    form.dispatchEvent(new Event('submit', { bubbles: true }));
+  const saveSubmission = () => {
+    form.submitAction.value = 'save';
+    // get formdata
+    const formData = new FormData(form);
+    const { datasetSubmission } = form.dataset;
+    // submit form data to put route
+    const url = Routing.generate('pelagos_api_dataset_submission_save', { datasetSubmission });
+    return fetch(url, {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log('Form submission response:', json);
+      })
+      .catch((error) => {
+        console.error('Form submission error:', error);
+      });
+  };
+
+  const saveButton = document.querySelectorAll('[saveAndContinue]');
+  Array.from(saveButton).forEach((btn) => btn.addEventListener('click', (e) => {
+    e.target.disabled = true;
+    const hourGlassLoader = document.getElementById('hourglass-loader');
+    hourGlassLoader?.classList.remove('hideglass');
+    const saveMessage = new FlashMessage(
+      document.getElementById('flash-container'),
+      'Dataset saved successfully.',
+      'success',
+    );
+    saveMessage.show();
+    saveSubmission().finally(() => {
+      setTimeout(() => {
+        hourGlassLoader?.classList.add('hideglass');
+        e.target.disabled = false;
+        saveMessage.hide();
+      }, 1000);
+    });
+    // formValidate.destroy();
+    // form.submitAction.value = 'saveAndContinue';
+    // form.dispatchEvent(new Event('submit', { bubbles: true }));
   }));
 
   function showSection(sectionId) {
@@ -972,6 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => {
       const sectionId = button.dataset.showsection;
       showSection(sectionId);
+      saveSubmission();
     });
   });
 
@@ -979,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
   mainSection?.classList.remove('loading');
 
   if (locked) {
-    if (filesUploadedSelector.value === 'valid') {
+    if (filesUploadedSelector.value === 'valid' || remotelyHostedUrlSelector.value !== '') {
       filesButtonClickedResolve();
     }
     ableToLock.then(() => {
