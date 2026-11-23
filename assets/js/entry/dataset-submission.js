@@ -979,7 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
   mainSection?.classList.remove('loading');
 
   if (locked) {
-    if (filesUploadedSelector.value === 'valid') {
+    if (filesUploadedSelector.value === 'valid' || remotelyHostedUrlSelector.value !== '') {
       filesButtonClickedResolve();
     }
     ableToLock.then(() => {
