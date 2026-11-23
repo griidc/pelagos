@@ -18,6 +18,8 @@ import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources
 
 import { Modal } from 'flowbite';
 
+import FlashMessage from '../modules/flashMessage';
+
 const DIF_STATES = {
   UNSUBMITTED: '0',
   SUBMITTED: '1',
@@ -373,6 +375,14 @@ document.addEventListener('DOMContentLoaded', () => {
       fundersSelect.disable();
       formField.disabled = true;
     });
+
+    const lockedMessage = new FlashMessage(
+      document.getElementById('flash-container'),
+      'This DIF has been locked for editing. Please contact '
+      + '<a class="pagelink" href="mailto:help@griidc.org">help@griidc.org</a> if revisions are required.',
+      'warning',
+    );
+    lockedMessage.show();
   }
 
   document.addEventListener('sectionChange', (event) => {
