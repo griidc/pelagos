@@ -1,0 +1,34 @@
+{
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:latest": {
+      "version": "1.10.1",
+      "resolved": "ghcr.io/devcontainers/features/docker-outside-of-docker@sha256:698f5900fac471e046c6e9d4333fec88c0e8d952c713494fa0712dce80baeca0",
+      "integrity": "sha256:698f5900fac471e046c6e9d4333fec88c0e8d952c713494fa0712dce80baeca0"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "1.1.3",
+      "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:bd7ab48a832228f633239277552c30b353867fef2e5b037e064b4e64f0b843f2",
+      "integrity": "sha256:bd7ab48a832228f633239277552c30b353867fef2e5b037e064b4e64f0b843f2"
+    },
+    "ghcr.io/devcontainers/features/node:2.1.2": {
+      "version": "2.1.2",
+      "resolved": "ghcr.io/devcontainers/features/node@sha256:20ac718cc67e7999a9d3fbb8387f1a3a5d53ecbd41fe7c075ebadb8e9b431b17",
+      "integrity": "sha256:20ac718cc67e7999a9d3fbb8387f1a3a5d53ecbd41fe7c075ebadb8e9b431b17"
+    },
+    "ghcr.io/rails/devcontainer/features/postgres-client:latest": {
+      "version": "1.2.0",
+      "resolved": "ghcr.io/rails/devcontainer/features/postgres-client@sha256:7e6b118646d6e0d82a9ec06e81ad1b5406f7042f0279d35fff3a7a612be7a050",
+      "integrity": "sha256:7e6b118646d6e0d82a9ec06e81ad1b5406f7042f0279d35fff3a7a612be7a050"
+    },
+    "ghcr.io/shyim/devcontainers-features/php:latest": {
+      "version": "0.1.5",
+      "resolved": "ghcr.io/shyim/devcontainers-features/php@sha256:74c3fd56f9d5516ef8037f4fea07a66a3435988134343eb0760f1c77653c402c",
+      "integrity": "sha256:74c3fd56f9d5516ef8037f4fea07a66a3435988134343eb0760f1c77653c402c"
+    },
+    "ghcr.io/shyim/devcontainers-features/symfony-cli:latest": {
+      "version": "0.0.1",
+      "resolved": "ghcr.io/shyim/devcontainers-features/symfony-cli@sha256:e8ab1b214a8b2288660ee0575d492224323bd48012361300489d0783081877b6",
+      "integrity": "sha256:e8ab1b214a8b2288660ee0575d492224323bd48012361300489d0783081877b6"
+    }
+  }
+}
