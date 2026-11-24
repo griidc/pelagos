@@ -252,7 +252,7 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Saves the dataset submission with the submitted data.
      */
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('CAN_EDIT', subject: 'datasetSubmission')]
     #[Route(path: '/api/datasetSubmission/{datasetSubmission}', name: 'pelagos_api_dataset_submission_save', methods: ['POST'])]
     public function saveSubmission(DatasetSubmission $datasetSubmission, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $entityManager) : Response
     {
