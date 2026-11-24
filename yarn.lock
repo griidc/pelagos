@@ -6369,10 +6369,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.6.0":
-  version: 17.6.0
-  resolution: "globals@npm:17.6.0"
-  checksum: 10c0/cf94fb4329cc5c68cf81018fd68324f413181ee169f0235b0b33b82bc93fe7825a21beea951f83a80e8e4bbdad9c0c80515a145b5fd4b5cb52f2a80db899a93f
+"globals@npm:^17.14.0":
+  version: 17.14.0
+  resolution: "globals@npm:17.14.0"
+  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
   languageName: node
   linkType: hard
 
@@ -9969,7 +9969,7 @@ __metadata:
     exceljs: "npm:^4.3.0"
     file-loader: "npm:^6.0.0"
     file-saver: "npm:^2.0.5"
-    globals: "npm:^17.6.0"
+    globals: "npm:^17.14.0"
     jquery: "npm:^3.5.1"
     jquery-migrate: "npm:^3.6.0"
     jquery-ui: "npm:<1.14.0"
