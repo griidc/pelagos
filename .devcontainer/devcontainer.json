@@ -1,0 +1,55 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+	"name": "Pelagos Development Container",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"runServices": [
+		"devcontainer",
+		"database",
+		"elasticsearch"
+	],
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Features to add to the dev container. More info: https://containers.dev/features
+	"features": {
+		// "ghcr.io/devcontainers/features/docker-in-docker:latest": {},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:latest": {},
+		"ghcr.io/rails/devcontainer/features/postgres-client:latest": {},
+		"ghcr.io/devcontainers/features/node:2.1.2": {
+			"installYarnUsingApt": true,
+			"version": "lts",
+			"npmVersion": "latest",
+			"pnpmVersion": "none",
+			"nvmVersion": "none"
+		},
+		"ghcr.io/shyim/devcontainers-features/php:latest": {
+			"installComposer": true,
+			"version": "8.4",
+			"extensionsExtra": "xdebug,ldap,tidy"
+		},
+		"ghcr.io/shyim/devcontainers-features/symfony-cli:latest": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			// Extensions will automatically install inside the container
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"SanderRonde.phpstan-vscode",
+				"mblode.twig-language-2",
+				"getpsalm.psalm-vscode-plugin",
+				"mansoorkhan96.php-cs-fixer"
+			]
+    	}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [5432, 9200]
+
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
