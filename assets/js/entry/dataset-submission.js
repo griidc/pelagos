@@ -965,24 +965,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveButton = document.querySelectorAll('[saveAndContinue]');
   Array.from(saveButton).forEach((btn) => btn.addEventListener('click', (e) => {
     e.target.disabled = true;
-    const hourGlassLoader = document.getElementById('hourglass-loader');
-    hourGlassLoader?.classList.remove('hideglass');
     const saveMessage = new FlashMessage(
       document.getElementById('flash-container'),
       'Dataset saved successfully.',
       'success',
     );
-    saveMessage.show();
+
     saveSubmission().finally(() => {
+      saveMessage.show();
       setTimeout(() => {
-        hourGlassLoader?.classList.add('hideglass');
         e.target.disabled = false;
         saveMessage.hide();
-      }, 1000);
+      }, 5000);
     });
-    // formValidate.destroy();
-    // form.submitAction.value = 'saveAndContinue';
-    // form.dispatchEvent(new Event('submit', { bubbles: true }));
   }));
 
   function showSection(sectionId) {
