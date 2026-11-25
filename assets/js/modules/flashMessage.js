@@ -56,13 +56,20 @@ export default class FlashMessage {
     let triggerEl;
     let dismiss;
 
+    this.hide = () => {
+      if (dismiss) {
+        dismiss.hide();
+        this.destroy();
+      }
+    };
+
     this.destroy = () => {
       if (dismiss) {
         dismiss.destroyAndRemoveInstance();
+        targetEl = null;
+        triggerEl = null;
+        dismiss = null;
       }
-      targetEl = null;
-      triggerEl = null;
-      dismiss = null;
     };
 
     this.show = () => {
@@ -73,7 +80,7 @@ export default class FlashMessage {
       triggerEl = targetEl.querySelector('[data-dismiss-target]');
       dismiss = new Dismiss(targetEl, triggerEl);
       triggerEl.addEventListener('click', () => {
-        this.destroy();
+        this.hide();
       });
     };
   }

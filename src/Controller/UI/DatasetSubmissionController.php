@@ -34,6 +34,7 @@ use App\Repository\DatasetRepository;
 use App\Util\ISOMetadataExtractorUtil;
 use App\Util\PersonUtil;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -248,6 +249,34 @@ class DatasetSubmissionController extends AbstractController
         );
     }
 
+    /**
+     * Saves the dataset submission with the submitted data.
+     */
+    #[IsGranted('CAN_EDIT', subject: 'datasetSubmission')]
+    #[Route(path: '/api/datasetSubmission/{datasetSubmission}', name: 'pelagos_api_dataset_submission_save', methods: ['POST'])]
+    public function saveSubmission(DatasetSubmission $datasetSubmission, Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $entityManager) : Response
+    {
+        $statusData = ['success' => true];
+        $statusCode = 200;
+
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            $statusData = ['error' => 'This submission has already been submitted'];
+            $statusCode = Response::HTTP_BAD_REQUEST;
+        } else {
+            $form = $formFactory->createNamed('', DatasetSubmissionType::class, $datasetSubmission);
+            $form->handleRequest($request);
+
+            $currentUser = PersonUtil::getPersonFromUser($this->getUser());
+            if ($currentUser instanceof Person) {
+                $datasetSubmission->setModifier($currentUser);
+            }
+            $entityManager->persist($datasetSubmission);
+            $entityManager->flush();
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'updated');
+        }
+
+        return new JsonResponse($statusData, $statusCode);
+    }
 
     #[Route(path: '/dataset-submission-ok', name: 'pelagos_app_ui_datasetsubmission_ok')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]

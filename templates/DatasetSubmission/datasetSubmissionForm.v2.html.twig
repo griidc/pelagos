@@ -1,6 +1,6 @@
 {% set isDRPM = is_granted('ROLE_DATA_REPOSITORY_MANAGER')  %}
 {% set fileWriteEnabled = (datasetSubmissionLockStatus == false) %}
-<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}">
+<form id="regForm" method="post" data-research-group-id="{{ researchGroupId }}" data-dataset-id="{{ datasetId }}" data-udi="{{ udi }}" data-dataset-submission="{{ datasetSubmission.id }}">
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     <div  class="max-w-[95%] mx-auto ">
         <section id="contact" data-form-section data-button-error-container="#contact-error">
@@ -380,3 +380,5 @@
         </div>
     </div>
 </div>
+
+
