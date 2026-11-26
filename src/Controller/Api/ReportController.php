@@ -73,30 +73,78 @@ class ReportController extends AbstractController
     }
 
     /**
-     * Datasets and Keywords Report.
+     * Datasets and Keywords Report. This report can be called with different serialization groups.
+     */
+    #[Route(path: '/api/datasets-keywords-report', name: 'pelagos_api_datasets_keywords_report', methods: ['GET'])]
+    #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
+    public function getDatasetAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
+        SerializerInterface $serialzer,
+        ?string $shortName,
+    ): Response {
+        return $this->generateDatasetAndKeywordsReport(
+            $fundingOrganizationRepository,
+            $datasetRepository,
+            $serialzer,
+            $shortName,
+            'all-datasets-keywords-report'
+        );
+    }
+
+    /**
+     * GRP Datasets and Keywords Report
+     * Generates a CSV report of GRP datasets and their associated keywords. This is specific to the NAS/GRP funding organization.
      */
     #[Route(path: '/api/grp-datasets-keywords-report', name: 'pelagos_api_grp_datasets_keywords_report', methods: ['GET'])]
     #[IsGranted(Account::ROLE_DATA_REPOSITORY_MANAGER)]
-    public function getGrpDatasetAndKeywordsReport(
+    public function getGrpDatasetsAndKeywordsReport(
         FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
         SerializerInterface $serialzer,
     ): Response {
-        $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => 'NAS']);
+        return $this->generateDatasetAndKeywordsReport(
+            $fundingOrganizationRepository,
+            $datasetRepository,
+            $serialzer,
+            'NAS',
+            'grp-datasets-keywords-report'
+        );
+    }
 
-        $datasets = $fundingOrganization?->getDatasets();
+    private function generateDatasetAndKeywordsReport(
+        FundingOrganizationRepository $fundingOrganizationRepository,
+        DatasetRepository $datasetRepository,
+        SerializerInterface $serializer,
+        ?string $shortName,
+        string $group,
+    ): Response {
+        if (null !== $shortName) {
+            $fundingOrganization = $fundingOrganizationRepository->findOneBy(['shortName' => $shortName]);
+            $datasets = $fundingOrganization?->getDatasets()?->toArray() ?? [];
+        } else {
+            $datasets = $datasetRepository->findAllAsCollection()->toArray();
+        }
 
-        $datasets = $datasets->filter(function (Dataset $dataset) {
-            return DatasetLifecycleStatus::NONE !== $dataset->getDatasetLifecycleStatus();
+        $allowedLifecycleStatuses = [
+            DatasetLifecycleStatus::RESTRICTED,
+            DatasetLifecycleStatus::AVAILABLE,
+            DatasetLifecycleStatus::IDENTIFIED,
+            DatasetLifecycleStatus::SUBMITTED,
+        ];
+
+        $datasets = array_filter($datasets, function (Dataset $dataset) use ($allowedLifecycleStatuses) {
+            return in_array($dataset->getDatasetLifecycleStatus(), $allowedLifecycleStatuses, true);
         });
 
-        $datasets = $datasets->toArray();
+        $datasets = array_values($datasets);
 
         usort($datasets, function (Dataset $a, Dataset $b) {
             return $a->getFundingCycleName() <=> $b->getFundingCycleName();
         });
 
         $contextBuilder = (new ObjectNormalizerContextBuilder())
-        ->withGroups(['grp-dk-report']);
+        ->withGroups([$group]);
 
         $contextBuilder = (new CsvEncoderContextBuilder())
         ->withContext($contextBuilder)
@@ -109,11 +157,17 @@ class ReportController extends AbstractController
             'doi',
         ]);
 
-        $data = $serialzer->serialize($datasets, 'csv', $contextBuilder->toArray());
+        $data = $serializer->serialize($datasets, 'csv', $contextBuilder->toArray());
 
-        $csvFilename = 'GRP-Dataset-Keywords-Report-' .
-        (new \DateTime('now'))->format('Ymd\THis') .
-        '.csv';
+        if ('NAS' === $shortName) {
+            $csvFilename = 'GRP-Dataset-Keywords-Report-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+        } else {
+            $csvFilename = 'Dataset-Keywords-Report-' .
+            (new \DateTime('now'))->format('Ymd\THis') .
+            '.csv';
+        }
 
         return $this->createCsvResponse($data, $csvFilename);
     }

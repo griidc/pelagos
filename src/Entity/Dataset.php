@@ -99,7 +99,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report', 'remotely-hosted-dataset-report', 'search', 'cold-stored-report', 'cold-storage-candidate'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report', 'remotely-hosted-dataset-report', 'search', 'cold-stored-report', 'cold-storage-candidate'])]
     protected $udi;
 
     /**
@@ -109,7 +109,7 @@ class Dataset extends Entity
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[Serializer\Groups(['card', 'search'])]
-    #[Groups(['grp-dk-report', 'search'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report', 'search'])]
     protected $title;
 
     /**
@@ -468,7 +468,7 @@ class Dataset extends Entity
     /**
      * Get the DOI string for this Dataset.
      */
-    #[Groups(['grp-dk-report', 'search'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report', 'search'])]
     #[SerializedName('doi')]
     public function getDoiString(): string
     {
@@ -946,7 +946,7 @@ class Dataset extends Entity
     /**
      * Does this Dataset have a spatial extent?
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     #[SerializedName('hasSpatialExtent')]
     public function hasSpatialExtent(): string
     {
@@ -1159,7 +1159,7 @@ class Dataset extends Entity
     /**
      * Get Dataset Lifecycle Status as a string.
      */
-    #[Groups(['grp-dk-report', 'search', 'cold-storage-candidate'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report', 'search', 'cold-storage-candidate'])]
     #[SerializedName('datasetLifecycleStatus')]
     public function getDatasetLifecycleStatusString(): string
     {
@@ -1169,7 +1169,7 @@ class Dataset extends Entity
     /**
      * Get a link to the dataset landing page.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getLandingPage(): string
     {
         return 'https://grp.griidc.org/data/' . $this->getUdi();
@@ -1178,7 +1178,7 @@ class Dataset extends Entity
     /**
      * Get ANZRC keywords as a string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getAnzsrcKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_ANZSRC);
@@ -1188,7 +1188,7 @@ class Dataset extends Entity
     /**
      * Get GCMD keywords as a string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getGcmdKeywords(): ?string
     {
         $keywords = $this->getKeywordsByType(KeywordType::TYPE_GCMD);
@@ -1221,7 +1221,7 @@ class Dataset extends Entity
     /**
      * Get theme keywords as string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getThemeKeywords(): ?string
     {
         $keywords = $this->getDatasetSubmission()?->getThemeKeywords();
@@ -1232,7 +1232,7 @@ class Dataset extends Entity
     /**
      * Get place keywords as string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getPlaceKeywords(): ?string
     {
         $keywords = $this->getDatasetSubmission()?->getPlaceKeywords();
@@ -1243,7 +1243,7 @@ class Dataset extends Entity
     /**
      * Get topic keywords as string.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getTopicKeywords(): ?string
     {
         $keywords = $this->getDatasetSubmission()?->getTopicKeywords();
@@ -1266,7 +1266,7 @@ class Dataset extends Entity
     /**
      * Get the dataset's Research Group name.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getResearchGroupName(): string
     {
         return $this->getResearchGroup()->getName();
@@ -1275,7 +1275,7 @@ class Dataset extends Entity
     /**
      * Get the dataset's Funding Cycle name.
      */
-    #[Groups(['grp-dk-report'])]
+    #[Groups(['grp-datasets-keywords-report', 'all-datasets-keywords-report'])]
     public function getFundingCycleName(): string
     {
         return $this->getResearchGroup()->getFundingCycle()->getName();
